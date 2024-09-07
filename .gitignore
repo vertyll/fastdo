@@ -1,0 +1,12 @@
+# Os files
+.DS_Store
+Thumbs.db
+
+# Build files
+dist
+
+# Node
+node_modules
+
+# Turbo
+.turbo

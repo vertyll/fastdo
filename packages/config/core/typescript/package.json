@@ -1,0 +1,10 @@
+{
+  "name": "@repo/typescript-config",
+  "description": "TypeScript configurations for monorepo projects.",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "typescript-nestjs.json",
+    "typescript-angular.json"
+  ]
+}

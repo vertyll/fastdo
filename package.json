@@ -1,0 +1,19 @@
+{
+  "name": "fastprod",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo turbo:dev",
+    "format": "turbo format",
+    "lint": "turbo lint"
+  },
+  "private": true,
+  "devDependencies": {
+    "turbo": "^2.1.1"
+  },
+  "packageManager": "pnpm@9.5.0",
+  "engines": {
+    "node": ">=20.15.0",
+    "pnpm": ">=9.5.0"
+  }
+}
