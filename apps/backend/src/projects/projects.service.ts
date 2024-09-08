@@ -1,38 +1,32 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { GetAllProjectsSearchParams } from './dto/get-all-projects-search-params.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { Project } from './entities/project.entity';
-import { ProjectQueryBuilder } from './utils/project-query.builder';
+import { Injectable } from "@nestjs/common";
+import { CreateProjectDto } from "./dto/create-project.dto";
+import { GetAllProjectsSearchParams } from "./dto/get-all-projects-search-params.dto";
+import { UpdateProjectDto } from "./dto/update-project.dto";
+import { Project } from "./entities/project.entity";
+import { ProjectRepository } from "./repositories/project.repository";
 
 @Injectable()
 export class ProjectsService {
-  constructor(
-    @InjectRepository(Project) private projectsRepository: Repository<Project>,
-    private queryBuilder: ProjectQueryBuilder,
-  ) {}
+  constructor(private projectRepository: ProjectRepository) {}
 
   async findAll(params: GetAllProjectsSearchParams): Promise<Project[]> {
-    const query = this.queryBuilder.buildQuery(this.projectsRepository, params);
-    return query.getMany();
+    return this.projectRepository.findAllWithParams(params);
   }
 
   create(createProjectDto: CreateProjectDto): Promise<Project> {
-    const project = this.projectsRepository.create(createProjectDto);
-    return this.projectsRepository.save(project);
+    const project = this.projectRepository.create(createProjectDto);
+    return this.projectRepository.save(project);
   }
 
   findOne(id: number): Promise<Project> {
-    return this.projectsRepository.findOneOrFail({ where: { id } });
+    return this.projectRepository.findOneOrFail({ where: { id } });
   }
 
   async update(
     id: number,
-    updateProjectDto: UpdateProjectDto,
+    updateProjectDto: UpdateProjectDto
   ): Promise<Project> {
-    await this.projectsRepository.update(id, {
+    await this.projectRepository.update(id, {
       ...updateProjectDto,
       updatedAt: new Date(),
     });
@@ -40,6 +34,6 @@ export class ProjectsService {
   }
 
   async remove(id: number): Promise<void> {
-    await this.projectsRepository.delete(id);
+    await this.projectRepository.delete(id);
   }
 }

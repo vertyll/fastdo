@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { ProjectsService } from './projects.service';
-import { ProjectQueryBuilder } from './utils/project-query.builder';
+import { ProjectQueryBuilder } from './repositories/project.repository';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;

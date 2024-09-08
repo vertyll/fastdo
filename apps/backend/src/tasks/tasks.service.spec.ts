@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { TasksService } from './tasks.service';
-import { TaskQueryBuilder } from './utils/task-query.builder';
+import { TaskQueryBuilder } from './repositories/task.repository';
 
 describe('TasksService', () => {
   let service: TasksService;
