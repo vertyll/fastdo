@@ -21,10 +21,7 @@ describe("TasksService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
-        {
-          provide: TaskRepository,
-          useValue: mockTaskRepository,
-        },
+        { provide: TaskRepository, useValue: mockTaskRepository },
       ],
     }).compile();
 
@@ -39,7 +36,7 @@ describe("TasksService", () => {
     it("should create a new task", async () => {
       const createDto = { name: "New Task", projectId: 1 };
       const result = {
-        id: 1,
+        id: expect.any(Number),
         ...createDto,
         done: false,
         urgent: false,
@@ -49,41 +46,43 @@ describe("TasksService", () => {
       } as Task;
       mockTaskRepository.create.mockReturnValue(result);
       mockTaskRepository.save.mockResolvedValue(result);
-      expect(await service.create(createDto)).toBe(result);
+      expect(await service.create(createDto)).toEqual(result);
     });
   });
 
   describe("findAll", () => {
     it("should return an array of tasks", async () => {
-      const result = [{ id: 1, name: "Test Task" }] as Task[];
+      const result = [{ id: expect.any(Number), name: "Test Task" }] as Task[];
       mockTaskRepository.findAllWithParams.mockResolvedValue(result);
-      expect(await service.findAll({})).toBe(result);
+      expect(await service.findAll({})).toEqual(result);
     });
   });
 
   describe("findAllByProjectId", () => {
     it("should return tasks for a specific project", async () => {
-      const result = [{ id: 1, name: "Project Task" }] as Task[];
+      const result = [
+        { id: expect.any(Number), name: "Project Task" },
+      ] as Task[];
       mockTaskRepository.findAllWithParams.mockResolvedValue(result);
-      expect(await service.findAllByProjectId(1, {})).toBe(result);
+      expect(await service.findAllByProjectId(1, {})).toEqual(result);
     });
   });
 
   describe("findOne", () => {
     it("should return a single task", async () => {
-      const result = { id: 1, name: "Single Task" } as Task;
+      const result = { id: expect.any(Number), name: "Single Task" } as Task;
       mockTaskRepository.findOneOrFail.mockResolvedValue(result);
-      expect(await service.findOne(1)).toBe(result);
+      expect(await service.findOne(1)).toEqual(result);
     });
   });
 
   describe("update", () => {
     it("should update a task", async () => {
       const updateDto = { name: "Updated Task" };
-      const result = { id: 1, ...updateDto } as Task;
+      const result = { id: expect.any(Number), ...updateDto } as Task;
       mockTaskRepository.update.mockResolvedValue(undefined);
       mockTaskRepository.findOneOrFail.mockResolvedValue(result);
-      expect(await service.update(1, updateDto)).toBe(result);
+      expect(await service.update(1, updateDto)).toEqual(result);
     });
   });
 

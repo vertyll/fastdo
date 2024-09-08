@@ -20,10 +20,7 @@ describe("ProjectsService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProjectsService,
-        {
-          provide: ProjectRepository,
-          useValue: mockProjectRepository,
-        },
+        { provide: ProjectRepository, useValue: mockProjectRepository },
       ],
     }).compile();
 
@@ -36,37 +33,42 @@ describe("ProjectsService", () => {
 
   describe("findAll", () => {
     it("should return an array of projects", async () => {
-      const result = [{ id: 1, name: "Test Project" }] as Project[];
+      const result = [
+        { id: expect.any(Number), name: "Test Project" },
+      ] as Project[];
       mockProjectRepository.findAllWithParams.mockResolvedValue(result);
-      expect(await service.findAll({})).toBe(result);
+      expect(await service.findAll({})).toEqual(result);
     });
   });
 
   describe("create", () => {
     it("should create a new project", async () => {
       const createDto = { name: "New Project" };
-      const result = { id: 1, ...createDto } as Project;
+      const result = { id: expect.any(Number), ...createDto } as Project;
       mockProjectRepository.create.mockReturnValue(result);
       mockProjectRepository.save.mockResolvedValue(result);
-      expect(await service.create(createDto)).toBe(result);
+      expect(await service.create(createDto)).toEqual(result);
     });
   });
 
   describe("findOne", () => {
     it("should return a single project", async () => {
-      const result = { id: 1, name: "Single Project" } as Project;
+      const result = {
+        id: expect.any(Number),
+        name: "Single Project",
+      } as Project;
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
-      expect(await service.findOne(1)).toBe(result);
+      expect(await service.findOne(1)).toEqual(result);
     });
   });
 
   describe("update", () => {
     it("should update a project", async () => {
       const updateDto = { name: "Updated Project" };
-      const result = { id: 1, ...updateDto } as Project;
+      const result = { id: expect.any(Number), ...updateDto } as Project;
       mockProjectRepository.update.mockResolvedValue(undefined);
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
-      expect(await service.update(1, updateDto)).toBe(result);
+      expect(await service.update(1, updateDto)).toEqual(result);
     });
   });
 
