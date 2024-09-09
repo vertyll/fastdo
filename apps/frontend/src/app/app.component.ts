@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { TaskListPageComponent } from './task/task-list.page.component';
-import { ProjectListPageComponent } from './project/project-list.page.component';
+import { ProjectListPageComponent } from './project/project-list/project-list.page.component';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TasksStateService } from './task/data-access/tasks.state.service';
 import { ProjectsStateService } from './project/data-access/projects.state.service';
-import { ProjectsService } from './project/data-access/project.service';
+import { ProjectsService } from './project/data-access/projects.service';
+import { TaskListPageComponent } from './task/task-list/task-list.page.component';
 
 @Component({
   selector: 'app-root',

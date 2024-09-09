@@ -1,18 +1,25 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import appConfig from './config/app.config';
-import { ProjectsModule } from './projects/projects.module';
-import { TasksModule } from './tasks/tasks.module';
+import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import appConfig from "./config/app.config";
+import { ProjectsModule } from "./projects/projects.module";
+import { TasksModule } from "./tasks/tasks.module";
+import { CommonModule } from "./common/common.module";
+import { AuthModule } from "./auth/auth.module";
+import { UsersModule } from "./users/users.module";
+import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
+import { APP_GUARD } from "@nestjs/core";
+import { JwtMiddleware } from "./common/middleware/jwt.middleware";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
-        type: 'postgres',
+        type: "postgres",
         host: process.env.DATABASE_HOST,
         port: +process.env.DATABASE_PORT,
         username: process.env.DATABASE_USER,
@@ -28,8 +35,27 @@ import { TasksModule } from './tasks/tasks.module';
     }),
     TasksModule,
     ProjectsModule,
+    CommonModule,
+    AuthModule,
+    UsersModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: "60m" },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes({ path: "*", method: RequestMethod.ALL });
+  }
+}

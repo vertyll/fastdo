@@ -3,6 +3,7 @@ import { Project } from '../model/Project';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/utils/list-state.type';
+import { environment } from 'src/environments/environment';
 
 export type GetAllProjectsSearchParams = {
   q: string;
@@ -24,7 +25,7 @@ export type LoadingState = {
   providedIn: 'root',
 })
 export class ProjectsApiService {
-  private URL = 'http://localhost:3000';
+  private URL = environment.backendUrl;
 
   private http = inject(HttpClient);
 

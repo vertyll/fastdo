@@ -1,20 +1,20 @@
 import { Component, inject } from '@angular/core';
-import { Project } from './model/Project';
-import { ListState, LIST_STATE_VALUE } from '../utils/list-state.type';
+import { Project } from '../model/Project';
+import { ListState, LIST_STATE_VALUE } from '../../utils/list-state.type';
 import { SubmitTextComponent } from '@ui/submit-text.component';
 import { RouterLink } from '@angular/router';
-import { ProjectsApiService } from './data-access/projects.api.service';
+import { ProjectsApiService } from '../data-access/projects.api.service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { featherCalendar, featherEdit } from '@ng-icons/feather-icons';
-import { CustomDatePipe } from '../utils/pipes/custom-date.pipe';
+import { CustomDatePipe } from '../../utils/pipes/custom-date.pipe';
 import {
   ProjectsListFiltersComponent,
   ProjectsListFiltersFormValue,
-} from './ui/project-list-filters.component';
+} from '../ui/project-list-filters.component';
 import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
 import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
-import { getAllProjectsSearchParams } from './data-access/projects-filters.adapter';
-import { ProjectsStateService } from './data-access/projects.state.service';
+import { getAllProjectsSearchParams } from '../data-access/projects-filters.adapter';
+import { ProjectsStateService } from '../data-access/projects.state.service';
 
 interface GetAllProjectsSearchParams {
   q: string;
@@ -143,7 +143,7 @@ export class ProjectListPageComponent {
           state: LIST_STATE_VALUE.SUCCESS,
           results: projects,
         };
-        this.projectsStateService.setProjectList(projects); // Dodaj tę linię
+        this.projectsStateService.setProjectList(projects);
       },
       error: (err) => {
         this.listState = {

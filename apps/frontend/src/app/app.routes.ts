@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { ProjectListPageComponent } from './project/project-list.page.component';
-import { TaskListPageComponent } from './task/task-list.page.component';
+import { ProjectListPageComponent } from './project/project-list/project-list.page.component';
+import { TaskListPageComponent } from './task/task-list/task-list.page.component';
 
 export const routes: Routes = [
   {

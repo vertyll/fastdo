@@ -5,24 +5,24 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { LIST_STATE_VALUE } from '../utils/list-state.type';
+import { LIST_STATE_VALUE } from '../../utils/list-state.type';
 import { SubmitTextComponent } from '@ui/submit-text.component';
 import {
   TasksListFiltersComponent,
   TasksListFiltersFormValue,
-} from './ui/task-list-filters.component';
-import { getAllTasksSearchParams } from './data-access/tasks-filters.adapter';
+} from '../ui/task-list-filters.component';
+import { getAllTasksSearchParams } from '../data-access/tasks-filters.adapter';
 import { NgIconComponent } from '@ng-icons/core';
-import { AppConfigStateService } from '../config/config.state.service';
-import { GetAllTasksSearchParams } from './data-access/tasks.api.service';
+import { AppConfigStateService } from '../../config/config.state.service';
+import { GetAllTasksSearchParams } from '../data-access/tasks.api.service';
 import { AsyncPipe } from '@angular/common';
-import { TasksListComponent } from './ui/tasks-list.component';
-import { TasksKanbanViewComponent } from './ui/task-kanban.component';
+import { TasksListComponent } from '../ui/tasks-list.component';
+import { TasksKanbanViewComponent } from '../ui/task-kanban.component';
 import {
   TasksListViewMode,
   TasksListViewModeComponent,
-} from './ui/task-list-view-mode.component';
-import { TasksService } from './data-access/task.service';
+} from '../ui/task-list-view-mode.component';
+import { TasksService } from '../data-access/tasks.service';
 import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, map, switchMap } from 'rxjs';
 

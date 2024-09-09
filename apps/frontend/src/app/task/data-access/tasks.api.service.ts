@@ -3,6 +3,7 @@ import { Task } from '../model/Task';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, delay, map, tap } from 'rxjs';
 import { FetchingError } from 'src/app/utils/list-state.type';
+import { environment } from 'src/environments/environment';
 
 export type TaskUpdatePayload = {
   done?: boolean;
@@ -32,7 +33,7 @@ export type GetAllTasksSearchParams = {
   providedIn: 'root',
 })
 export class TasksApiService {
-  private URL = 'http://localhost:3000';
+  private URL = environment.backendUrl;
 
   private http = inject(HttpClient);
 
