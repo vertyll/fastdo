@@ -27,7 +27,7 @@ export class User {
   dateCreation: Date;
 
   @Column({ type: "timestamp", nullable: true })
-  dateDodification: Date;
+  dateModyfication: Date;
 
   @OneToMany(() => UserRole, (userRole) => userRole.user)
   userRoles: Relation<UserRole[]>;

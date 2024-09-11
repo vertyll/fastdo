@@ -18,7 +18,7 @@ export class JwtMiddleware implements NestMiddleware {
         const payload = this.verifyToken(token);
         req["user"] = payload;
       } catch (e) {
-        throw new UnauthorizedException("Nieprawidłowy token");
+        throw new UnauthorizedException("Invalid token");
       }
     }
 
@@ -34,7 +34,7 @@ export class JwtMiddleware implements NestMiddleware {
     try {
       return this.jwt.verify(token);
     } catch (e) {
-      console.log("Błąd weryfikacji tokenu: ", e.message);
+      console.log("Error verifying token", e.message);
       throw e;
     }
   }

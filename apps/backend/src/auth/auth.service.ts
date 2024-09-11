@@ -22,10 +22,16 @@ export class AuthService {
       const { password, ...result } = user;
       return result;
     }
+
     return null;
   }
 
   async register(registerDto: RegisterDto) {
+    const user = await this.usersService.findByEmail(registerDto.email);
+    if (user) {
+      throw new UnauthorizedException("User already exists");
+    }
+
     const { email, password } = registerDto;
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.usersService.create({
@@ -41,10 +47,13 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
+
     const roles = await this.rolesService.getUserRoles(user.id);
     const payload = { email: user.email, sub: user.id, roles };
+    const token = this.jwtService.sign(payload);
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: token,
     };
   }
 }

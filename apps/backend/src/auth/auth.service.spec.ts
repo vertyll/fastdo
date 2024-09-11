@@ -59,7 +59,7 @@ describe("AuthService", () => {
       password: await bcrypt.hash("password", 10),
       isActive: true,
       dateCreation: new Date(),
-      dateDodification: null,
+      dateModyfication: null,
       userRoles: [],
     };
     jest.spyOn(usersService, "findByEmail").mockResolvedValue(user);
@@ -70,7 +70,7 @@ describe("AuthService", () => {
       email: "test@example.com",
       isActive: true,
       dateCreation: expect.any(Date),
-      dateDodification: null,
+      dateModyfication: null,
       userRoles: [],
     });
   });
@@ -108,7 +108,7 @@ describe("AuthService", () => {
       password: hashedPassword,
       isActive: true,
       dateCreation: new Date(),
-      dateDodification: null,
+      dateModyfication: null,
       userRoles: [],
     };
 

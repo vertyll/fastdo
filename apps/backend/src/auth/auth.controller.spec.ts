@@ -47,7 +47,7 @@ describe("AuthController", () => {
       password: "password",
       isActive: true,
       dateCreation: new Date(),
-      dateDodification: new Date(),
+      dateModyfication: new Date(),
       userRoles: [],
     });
 
@@ -58,7 +58,7 @@ describe("AuthController", () => {
       password: "password",
       isActive: true,
       dateCreation: expect.any(Date),
-      dateDodification: expect.any(Date),
+      dateModyfication: expect.any(Date),
       userRoles: [],
     });
     expect(authService.register).toHaveBeenCalledWith(registerDto);
