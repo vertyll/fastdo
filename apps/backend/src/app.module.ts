@@ -10,8 +10,6 @@ import { TasksModule } from "./tasks/tasks.module";
 import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
-import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
-import { APP_GUARD } from "@nestjs/core";
 import { JwtMiddleware } from "./common/middleware/jwt.middleware";
 import { JwtModule } from "@nestjs/jwt";
 import { RolesModule } from "./roles/roles.module";
@@ -46,13 +44,7 @@ import { RolesModule } from "./roles/roles.module";
     }),
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
