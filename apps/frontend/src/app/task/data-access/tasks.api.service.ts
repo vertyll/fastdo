@@ -6,9 +6,9 @@ import { FetchingError } from 'src/app/utils/list-state.type';
 import { environment } from 'src/environments/environment';
 
 export type TaskUpdatePayload = {
-  done?: boolean;
+  isDone?: boolean;
   name?: string;
-  urgent?: boolean;
+  isUrgent?: boolean;
 };
 
 export type LoadingState = {
@@ -19,10 +19,10 @@ export type LoadingState = {
 
 export type GetAllTasksSearchParams = {
   q: string;
-  sortBy: 'createdAt';
+  sortBy: 'dateCreation';
   orderBy: 'desc' | 'asc';
   done_like?: 'true' | 'false' | '';
-  urgent_like?: 'true' | '';
+  is_urgent_like?: 'true' | '';
   createdFrom?: string;
   createdTo?: string;
   updatedFrom?: string;

@@ -9,12 +9,12 @@ export class GetAllProjectsSearchParams {
 
   @ApiProperty({
     required: false,
-    enum: ['createdAt', 'updatedAt', 'name'],
+    enum: ['dateCreation', 'dateModification', 'name'],
     description: 'Field to sort by',
   })
   @IsOptional()
   @IsString()
-  @IsIn(['createdAt', 'updatedAt', 'name'])
+  @IsIn(['dateCreation', 'dateModification', 'name'])
   sortBy?: string;
 
   @ApiProperty({

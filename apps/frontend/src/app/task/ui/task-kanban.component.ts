@@ -21,8 +21,8 @@ import { Task } from '../model/Task';
 })
 export class TasksKanbanViewComponent {
   @Input({ required: true }) set tasks(value: Task[]) {
-    this.todos = value.filter((task) => !task.done);
-    this.tasksDone = value.filter((task) => task.done);
+    this.todos = value.filter((task) => !task.isDone);
+    this.tasksDone = value.filter((task) => task.isDone);
   }
 
   todos: Task[] = [];

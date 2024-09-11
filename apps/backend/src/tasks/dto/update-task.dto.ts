@@ -7,10 +7,10 @@ export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   name?: string;
 
   @ApiProperty({ required: false })
-  done?: boolean;
+  isDone?: boolean;
 
   @ApiProperty({ required: false })
-  urgent?: boolean;
+  isUrgent?: boolean;
 
   @ApiProperty({ required: false })
   projectId?: number;

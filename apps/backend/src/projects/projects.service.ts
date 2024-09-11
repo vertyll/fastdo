@@ -28,7 +28,7 @@ export class ProjectsService {
   ): Promise<Project> {
     await this.projectRepository.update(id, {
       ...updateProjectDto,
-      updatedAt: new Date(),
+      dateModification: new Date(),
     });
     return this.findOne(id);
   }

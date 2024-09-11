@@ -1,7 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
-import { Project } from '../../projects/entities/project.entity';
+import { Project } from "../../projects/entities/project.entity";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Relation,
+} from "typeorm";
 
-@Entity()
+@Entity("task")
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
@@ -10,17 +17,21 @@ export class Task {
   name: string;
 
   @Column({ default: false })
-  done: boolean;
+  isDone: boolean;
 
   @Column({ default: false })
-  urgent: boolean;
+  isUrgent: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  @Column()
+  projectId: number;
 
-  @Column({ type: 'timestamp', nullable: true })
-  updatedAt: Date;
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  dateCreation: Date;
 
-  @ManyToOne(() => Project, project => project.tasks)
+  @Column({ type: "timestamp", nullable: true })
+  dateModification: Date;
+
+  @ManyToOne(() => Project, (project) => project.tasks)
+  @JoinColumn({ name: "project_id" })
   project: Relation<Project>;
 }

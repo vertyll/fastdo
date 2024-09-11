@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { TasksService } from "./tasks.service";
 import { TaskRepository } from "./repositories/task.repository";
 import { Task } from "./entities/task.entity";
-import { Project } from "src/projects/entities/project.entity";
+import { Project } from "../projects/entities/project.entity";
 
 describe("TasksService", () => {
   let service: TasksService;
@@ -38,10 +38,10 @@ describe("TasksService", () => {
       const result = {
         id: expect.any(Number),
         ...createDto,
-        done: false,
-        urgent: false,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
+        isDone: false,
+        isUrgent: false,
+        dateCreation: expect.any(Date),
+        dateModification: expect.any(Date),
         project: { id: 1 } as Project,
       } as Task;
       mockTaskRepository.create.mockReturnValue(result);

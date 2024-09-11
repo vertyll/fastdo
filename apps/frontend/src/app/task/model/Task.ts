@@ -1,10 +1,10 @@
 export type Task = {
   id: number;
-  done: boolean;
+  isDone: boolean;
   name: string;
-  createdAt: string;
-  updatedAt: string | null;
-  urgent: boolean;
+  dateCreation: string;
+  dateModification: string | null;
+  isUrgent: boolean;
   project: {
     id: number;
     name: string;

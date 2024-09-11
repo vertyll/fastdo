@@ -19,10 +19,10 @@ export class TaskRepository extends Repository<Task> {
       .select([
         "task.id",
         "task.name",
-        "task.done",
-        "task.urgent",
-        "task.createdAt",
-        "task.updatedAt",
+        "task.isDone",
+        "task.isUrgent",
+        "task.dateCreation",
+        "task.dateModification",
         "project.id",
         "project.name",
       ]);
@@ -36,13 +36,13 @@ export class TaskRepository extends Repository<Task> {
     }
 
     if (params.done_like === "true") {
-      query.andWhere("task.done = :done", { done: true });
+      query.andWhere("task.isDone = :isDone", { isDone: true });
     } else if (params.done_like === "false") {
-      query.andWhere("task.done = :done", { done: false });
+      query.andWhere("task.isDone = :isDone", { isDone: false });
     }
 
     if (params.urgent_like === "true") {
-      query.andWhere("task.urgent = :urgent", { urgent: true });
+      query.andWhere("task.isUrgent = :isUrgent", { isUrgent: true });
     }
 
     if (params.sortBy && params.orderBy) {
@@ -51,29 +51,29 @@ export class TaskRepository extends Repository<Task> {
         params.orderBy.toUpperCase() as "ASC" | "DESC"
       );
     } else {
-      query.orderBy("task.createdAt", "DESC");
+      query.orderBy("task.dateCreation", "DESC");
     }
 
     if (params.createdFrom && params.createdFrom !== "") {
-      query.andWhere("task.createdAt >= :createdFrom", {
+      query.andWhere("task.dateCreation >= :createdFrom", {
         createdFrom: params.createdFrom,
       });
     }
 
     if (params.createdTo && params.createdTo !== "") {
-      query.andWhere("task.createdAt <= :createdTo", {
+      query.andWhere("task.dateCreation <= :createdTo", {
         createdTo: params.createdTo,
       });
     }
 
     if (params.updatedFrom && params.updatedFrom !== "") {
-      query.andWhere("task.updatedAt >= :updatedFrom", {
+      query.andWhere("task.dateModification >= :updatedFrom", {
         updatedFrom: params.updatedFrom,
       });
     }
 
     if (params.updatedTo && params.updatedTo !== "") {
-      query.andWhere("task.updatedAt <= :updatedTo", {
+      query.andWhere("task.dateModification <= :updatedTo", {
         updatedTo: params.updatedTo,
       });
     }

@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 
 export type GetAllProjectsSearchParams = {
   q: string;
-  sortBy: 'createdAt' | 'name';
+  sortBy: 'dateCreation' | 'name';
   orderBy: 'desc' | 'asc';
   createdFrom?: string;
   createdTo?: string;

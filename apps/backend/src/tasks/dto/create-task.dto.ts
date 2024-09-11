@@ -9,12 +9,12 @@ export class CreateTaskDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  done?: boolean;
+  isDone?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  urgent?: boolean;
+  isUrgent?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()

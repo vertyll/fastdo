@@ -18,13 +18,13 @@ export class TasksStateService {
   setTaskList(tasks: Task[]) {
     this.state$.next({
       tasks,
-      urgentCount: tasks.filter((task) => task.urgent).length,
+      urgentCount: tasks.filter((task) => task.isUrgent).length,
     });
   }
 
   addTask(task: Task) {
     const updatedTasks = [...this.state$.value.tasks, task];
-    const updatedUrgentCount = updatedTasks.filter((t) => t.urgent).length;
+    const updatedUrgentCount = updatedTasks.filter((t) => t.isUrgent).length;
 
     this.state$.next({
       tasks: updatedTasks,
@@ -36,7 +36,7 @@ export class TasksStateService {
     const updatedTasks = this.state$.value.tasks.map((task) =>
       task.id === updatedTask.id ? updatedTask : task,
     );
-    const updatedUrgentCount = updatedTasks.filter((t) => t.urgent).length;
+    const updatedUrgentCount = updatedTasks.filter((t) => t.isUrgent).length;
 
     this.state$.next({
       tasks: updatedTasks,
@@ -51,7 +51,7 @@ export class TasksStateService {
 
     this.state$.next({
       tasks: updatedTasks,
-      urgentCount: updatedTasks.filter((task) => task.urgent).length,
+      urgentCount: updatedTasks.filter((task) => task.isUrgent).length,
     });
   }
 }

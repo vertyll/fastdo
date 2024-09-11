@@ -97,7 +97,7 @@ import { distinctUntilChanged, map, switchMap } from 'rxjs';
 export class TaskListPageComponent {
   @Input() projectId?: string;
   @Input() view?: TasksListViewMode;
-  @Input({ transform: booleanAttribute }) urgent?: boolean;
+  @Input({ transform: booleanAttribute }) isUrgent?: boolean;
 
   private tasksService = inject(TasksService);
   private route = inject(ActivatedRoute);
@@ -126,8 +126,8 @@ export class TaskListPageComponent {
           const searchParams = getAllTasksSearchParams({
             q: '',
             status: 'ALL',
-            sortBy: 'createdAt',
-            urgent: this.urgent,
+            sortBy: 'dateCreation',
+            isUrgent: this.isUrgent,
             orderBy: 'desc',
             createdFrom: '',
             createdTo: '',
@@ -151,7 +151,7 @@ export class TaskListPageComponent {
   handleFiltersChange(filters: TasksListFiltersFormValue): void {
     const searchParams = getAllTasksSearchParams({
       ...filters,
-      urgent: this.urgent,
+      isUrgent: this.isUrgent,
     });
     this.getAllTasks(searchParams).subscribe();
   }

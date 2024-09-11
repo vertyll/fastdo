@@ -6,11 +6,13 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import appConfig from "../config/app.config";
+import { RolesModule } from "../roles/roles.module";
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    RolesModule,
     JwtModule.register({
       secret: appConfig().jwt.secret,
       signOptions: { expiresIn: "60m" },

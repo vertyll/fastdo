@@ -10,7 +10,7 @@ import { featherChevronDown, featherChevronUp } from '@ng-icons/feather-icons';
 
 type ProjectsListFiltersForm = FormGroup<{
   q: FormControl<string>;
-  sortBy: FormControl<'name' | 'createdAt'>;
+  sortBy: FormControl<'name' | 'dateCreation'>;
   orderBy: FormControl<'asc' | 'desc'>;
   createdFrom: FormControl<string>;
   createdTo: FormControl<string>;
@@ -20,7 +20,7 @@ type ProjectsListFiltersForm = FormGroup<{
 
 export interface ProjectsListFiltersFormValue {
   q?: string;
-  sortBy?: 'name' | 'createdAt';
+  sortBy?: 'name' | 'dateCreation';
   orderBy?: 'asc' | 'desc';
   createdFrom?: string;
   createdTo?: string;
@@ -121,7 +121,7 @@ export class ProjectsListFiltersComponent implements OnInit {
 
   form: ProjectsListFiltersForm = this.formBuilder.group({
     q: [''],
-    sortBy: ['createdAt' as 'createdAt' | 'name'],
+    sortBy: ['dateCreation' as 'dateCreation' | 'name'],
     orderBy: ['desc' as 'asc' | 'desc'],
     createdFrom: [''],
     createdTo: [''],
@@ -177,8 +177,8 @@ export class ProjectsListFiltersComponent implements OnInit {
   getFieldOptions(field: string): { value: string; label: string }[] {
     if (field === 'sortBy') {
       return [
-        { value: 'createdAt', label: 'Created at' },
-        { value: 'updatedAt', label: 'Updated at' },
+        { value: 'dateCreation', label: 'Created at' },
+        { value: 'dateModification', label: 'Updated at' },
         { value: 'name', label: 'Name' },
       ];
     } else if (field === 'orderBy') {

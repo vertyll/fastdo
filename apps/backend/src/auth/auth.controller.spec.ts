@@ -41,14 +41,15 @@ describe("AuthController", () => {
 
   it("should call register method", async () => {
     const registerDto = { email: "test@example.com", password: "password" };
-    jest
-      .spyOn(authService, "register")
-      .mockResolvedValue({
-        id: 1,
-        email: "test@example.com",
-        password: "password",
-        isActive: true,
-      });
+    jest.spyOn(authService, "register").mockResolvedValue({
+      id: 1,
+      email: "test@example.com",
+      password: "password",
+      isActive: true,
+      dateCreation: new Date(),
+      dateDodification: new Date(),
+      userRoles: [],
+    });
 
     const result = await controller.register(registerDto);
     expect(result).toEqual({
@@ -56,10 +57,10 @@ describe("AuthController", () => {
       email: "test@example.com",
       password: "password",
       isActive: true,
+      dateCreation: expect.any(Date),
+      dateDodification: expect.any(Date),
+      userRoles: [],
     });
-    expect(authService.register).toHaveBeenCalledWith(
-      registerDto.email,
-      registerDto.password
-    );
+    expect(authService.register).toHaveBeenCalledWith(registerDto);
   });
 });

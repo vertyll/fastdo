@@ -19,25 +19,25 @@ export class ProjectRepository extends Repository<Project> {
     }
 
     if (params.createdFrom && params.createdFrom !== "") {
-      query.andWhere("project.createdAt >= :createdFrom", {
+      query.andWhere("project.dateCreation >= :createdFrom", {
         createdFrom: params.createdFrom,
       });
     }
 
     if (params.createdTo && params.createdTo !== "") {
-      query.andWhere("project.createdAt <= :createdTo", {
+      query.andWhere("project.dateCreation <= :createdTo", {
         createdTo: params.createdTo,
       });
     }
 
     if (params.updatedFrom && params.updatedFrom !== "") {
-      query.andWhere("project.updatedAt >= :updatedFrom", {
+      query.andWhere("project.dateModification >= :updatedFrom", {
         updatedFrom: params.updatedFrom,
       });
     }
 
     if (params.updatedTo && params.updatedTo !== "") {
-      query.andWhere("project.updatedAt <= :updatedTo", {
+      query.andWhere("project.dateModification <= :updatedTo", {
         updatedTo: params.updatedTo,
       });
     }
@@ -48,7 +48,7 @@ export class ProjectRepository extends Repository<Project> {
         params.orderBy.toUpperCase() as "ASC" | "DESC"
       );
     } else {
-      query.orderBy("project.createdAt", "DESC");
+      query.orderBy("project.dateCreation", "DESC");
     }
 
     return query.getMany();

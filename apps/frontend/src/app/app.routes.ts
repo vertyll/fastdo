@@ -24,7 +24,7 @@ export const routes: Routes = [
       {
         path: 'urgent',
         data: {
-          urgent: true,
+          isUrgent: true,
         },
         component: TaskListPageComponent,
       },

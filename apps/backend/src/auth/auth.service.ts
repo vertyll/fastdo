@@ -1,13 +1,18 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
+import { RolesService } from "../roles/roles.service";
+import { Role } from "../common/enums/role.enum";
+import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private rolesService: RolesService
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -20,15 +25,26 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+  async register(registerDto: RegisterDto) {
+    const { email, password } = registerDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await this.usersService.create({
+      email,
+      password: hashedPassword,
+    });
+    await this.rolesService.addRoleToUser(newUser.id, Role.User);
+    return newUser;
+  }
+
+  async login(loginDto: LoginDto) {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    const roles = await this.rolesService.getUserRoles(user.id);
+    const payload = { email: user.email, sub: user.id, roles };
     return {
       access_token: this.jwtService.sign(payload),
     };
-  }
-
-  async register(email: string, password: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return this.usersService.create({ email, password: hashedPassword });
   }
 }

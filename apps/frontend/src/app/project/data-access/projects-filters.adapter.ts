@@ -7,7 +7,7 @@ export function getAllProjectsSearchParams(
   let searchParams: GetAllProjectsSearchParams = {
     q: formValue.q || '',
     sortBy:
-      (formValue.sortBy as 'createdAt' | 'name' | undefined) || 'createdAt',
+      (formValue.sortBy as 'dateCreation' | 'name' | undefined) || 'dateCreation',
     orderBy: formValue.orderBy || 'desc',
     createdFrom: formValue.createdFrom,
     createdTo: formValue.createdTo,

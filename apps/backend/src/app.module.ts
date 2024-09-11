@@ -14,6 +14,7 @@ import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtMiddleware } from "./common/middleware/jwt.middleware";
 import { JwtModule } from "@nestjs/jwt";
+import { RolesModule } from "./roles/roles.module";
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { JwtModule } from "@nestjs/jwt";
     CommonModule,
     AuthModule,
     UsersModule,
+    RolesModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "60m" },

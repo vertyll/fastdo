@@ -24,7 +24,7 @@ import { RouterLink } from '@angular/router';
   template: `
     <div
       class="rounded-md shadow-md p-4 block"
-      [class.bg-green-300]="task.done"
+      [class.bg-green-300]="task.isDone"
     >
       <button
         class="w-full"
@@ -42,7 +42,7 @@ import { RouterLink } from '@angular/router';
               [value]="task.name"
             />
           } @else {
-            <span [class.line-through]="task.done">
+            <span [class.line-through]="task.isDone">
               {{ task.name }}
             </span>
           }
@@ -65,7 +65,7 @@ import { RouterLink } from '@angular/router';
           >
             <ng-icon
               [name]="
-                task.urgent ? 'bootstrapBookmarkFill' : 'bootstrapBookmark'
+                task.isUrgent ? 'bootstrapBookmarkFill' : 'bootstrapBookmark'
               "
               class="text-sm"
             />
@@ -73,14 +73,14 @@ import { RouterLink } from '@angular/router';
           <div class="flex flex-col items-end text-xs">
             <div class="flex items-center">
               <span class="pr-1"
-                >Created: {{ task.createdAt | customDate }}</span
+                >Created: {{ task.dateCreation | customDate }}</span
               >
               <ng-icon name="featherCalendar" class="text-sm" />
             </div>
-            @if (task.updatedAt) {
+            @if (task.dateModification) {
               <div class="flex items-center">
                 <span class="pr-1"
-                  >Updated: {{ task.updatedAt | customDate }}</span
+                  >Updated: {{ task.dateModification | customDate }}</span
                 >
                 <ng-icon name="featherCalendar" class="text-sm" />
               </div>
@@ -103,7 +103,7 @@ export class TaskCardComponent {
   isSingleClick = true;
 
   updateTaskUrgentStatus() {
-    this.update.emit({ urgent: !this.task.urgent });
+    this.update.emit({ isUrgent: !this.task.isUrgent });
   }
 
   updateTaskName(updatedName: string) {
@@ -117,7 +117,7 @@ export class TaskCardComponent {
 
     setTimeout(() => {
       if (this.isSingleClick) {
-        this.update.emit({ done: !this.task.done });
+        this.update.emit({ isDone: !this.task.isDone });
       }
     }, 200);
   }

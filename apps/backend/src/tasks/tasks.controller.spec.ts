@@ -35,15 +35,15 @@ describe("TasksController", () => {
       const createdTask: Task = {
         id: 1,
         ...taskDto,
-        done: false,
-        urgent: false,
-        createdAt: new Date(),
-        updatedAt: null,
+        isDone: false,
+        isUrgent: false,
+        dateCreation: new Date(),
+        dateModification: null,
         project: {
           id: 1,
           name: "Test Project",
-          createdAt: new Date(),
-          updatedAt: null,
+          dateCreation: new Date(),
+          dateModification: null,
           tasks: [],
         },
       };
@@ -59,10 +59,11 @@ describe("TasksController", () => {
         {
           id: 1,
           name: "Test Task",
-          done: false,
-          urgent: false,
-          createdAt: new Date(),
-          updatedAt: null,
+          isDone: false,
+          isUrgent: false,
+          projectId: 1,
+          dateCreation: new Date(),
+          dateModification: null,
           project: null,
         },
       ];
@@ -77,15 +78,16 @@ describe("TasksController", () => {
         {
           id: 1,
           name: "Project Task",
-          done: false,
-          urgent: false,
-          createdAt: new Date(),
-          updatedAt: null,
+          isDone: false,
+          isUrgent: false,
+          projectId: 1,
+          dateCreation: new Date(),
+          dateModification: null,
           project: {
             id: 1,
             name: "Test Project",
-            createdAt: new Date(),
-            updatedAt: null,
+            dateCreation: new Date(),
+            dateModification: null,
             tasks: [],
           },
         },
@@ -100,10 +102,11 @@ describe("TasksController", () => {
       const result: Task = {
         id: 1,
         name: "Single Task",
-        done: false,
-        urgent: false,
-        createdAt: new Date(),
-        updatedAt: null,
+        isDone: false,
+        isUrgent: false,
+        projectId: 1,
+        dateCreation: new Date(),
+        dateModification: null,
         project: null,
       };
       mockTasksService.findOne.mockResolvedValue(result);
@@ -117,10 +120,11 @@ describe("TasksController", () => {
       const result: Task = {
         id: 1,
         ...updateDto,
-        done: false,
-        urgent: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        isDone: false,
+        isUrgent: false,
+        projectId: 1,
+        dateCreation: new Date(),
+        dateModification: new Date(),
         project: null,
       };
       mockTasksService.update.mockResolvedValue(result);

@@ -18,7 +18,7 @@ import { ProjectsStateService } from '../data-access/projects.state.service';
 
 interface GetAllProjectsSearchParams {
   q: string;
-  sortBy: 'name' | 'createdAt';
+  sortBy: 'name' | 'dateCreation';
   orderBy: 'asc' | 'desc';
   createdFrom?: string;
   createdTo?: string;
@@ -82,12 +82,12 @@ interface GetAllProjectsSearchParams {
                 <div class="flex flex-col text-gray-600 text-sm mt-2">
                   <div class="flex items-center">
                     <ng-icon name="featherCalendar" class="mr-1"></ng-icon>
-                    <span>Created: {{ project.createdAt | customDate }}</span>
+                    <span>Created: {{ project.dateCreation | customDate }}</span>
                   </div>
-                  @if (project.updatedAt) {
+                  @if (project.dateModification) {
                     <div class="flex items-center mt-1">
                       <ng-icon name="featherCalendar" class="mr-1"></ng-icon>
-                      <span>Updated: {{ project.updatedAt | customDate }}</span>
+                      <span>Updated: {{ project.dateModification | customDate }}</span>
                     </div>
                   }
                 </div>

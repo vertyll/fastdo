@@ -7,10 +7,10 @@ export class GetAllTasksSearchParams {
   @IsString()
   q?: string;
 
-  @ApiProperty({ required: false, enum: ['createdAt', 'updatedAt', 'name'] })
+  @ApiProperty({ required: false, enum: ['dateCreation', 'dateModification', 'name'] })
   @IsOptional()
   @IsString()
-  @IsIn(['createdAt', 'updatedAt', 'name'])
+  @IsIn(['dateCreation', 'dateModification', 'name'])
   sortBy?: string;
 
   @ApiProperty({ required: false, enum: ['asc', 'desc'] })

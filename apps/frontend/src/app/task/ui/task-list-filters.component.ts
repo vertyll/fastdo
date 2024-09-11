@@ -12,7 +12,7 @@ import { featherChevronDown, featherChevronUp } from '@ng-icons/feather-icons';
 type TasksListFiltersForm = FormGroup<{
   q: FormControl<string>;
   status: FormControl<TaskStatus>;
-  sortBy: FormControl<'createdAt' | 'updatedAt' | 'name'>;
+  sortBy: FormControl<'dateCreation' | 'dateModification' | 'name'>;
   orderBy: FormControl<'asc' | 'desc'>;
   createdFrom: FormControl<string>;
   createdTo: FormControl<string>;
@@ -23,7 +23,7 @@ type TasksListFiltersForm = FormGroup<{
 export type TasksListFiltersFormValue = {
   q: string;
   status: TaskStatus;
-  sortBy: 'createdAt' | 'updatedAt' | 'name';
+  sortBy: 'dateCreation' | 'dateModification' | 'name';
   orderBy: 'asc' | 'desc';
   createdFrom: string;
   createdTo: string;
@@ -129,7 +129,7 @@ export class TasksListFiltersComponent implements OnInit {
   form: TasksListFiltersForm = this.formBuilder.group({
     q: [''],
     status: [TASK_STATUS.ALL as TaskStatus],
-    sortBy: ['createdAt' as 'createdAt' | 'updatedAt' | 'name'],
+    sortBy: ['dateCreation' as 'dateCreation' | 'dateModification' | 'name'],
     orderBy: ['desc' as 'asc' | 'desc'],
     createdFrom: [''],
     createdTo: [''],
@@ -193,8 +193,8 @@ export class TasksListFiltersComponent implements OnInit {
       ];
     } else if (field === 'sortBy') {
       return [
-        { value: 'createdAt', label: 'Created at' },
-        { value: 'updatedAt', label: 'Updated at' },
+        { value: 'dateCreation', label: 'Created at' },
+        { value: 'dateModification', label: 'Updated at' },
         { value: 'name', label: 'Name' },
       ];
     } else if (field === 'orderBy') {

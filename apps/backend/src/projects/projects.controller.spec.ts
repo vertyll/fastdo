@@ -46,8 +46,8 @@ describe("ProjectsController", () => {
         {
           id: 1,
           name: "Test Project",
-          createdAt: new Date(),
-          updatedAt: null,
+          dateCreation: new Date(),
+          dateModification: null,
           tasks: [],
         },
       ];
@@ -63,8 +63,8 @@ describe("ProjectsController", () => {
       const result: Project = {
         id: 1,
         ...createDto,
-        createdAt: new Date(),
-        updatedAt: null,
+        dateCreation: new Date(),
+        dateModification: null,
         tasks: [],
       };
       mockProjectsService.create.mockResolvedValue(result);
@@ -77,8 +77,8 @@ describe("ProjectsController", () => {
       const result: Project = {
         id: 1,
         name: "Single Project",
-        createdAt: new Date(),
-        updatedAt: null,
+        dateCreation: new Date(),
+        dateModification: null,
         tasks: [],
       };
       mockProjectsService.findOne.mockResolvedValue(result);
@@ -92,8 +92,8 @@ describe("ProjectsController", () => {
       const result: Project = {
         id: 1,
         ...updateDto,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        dateCreation: new Date(),
+        dateModification: new Date(),
         tasks: [],
       };
       mockProjectsService.update.mockResolvedValue(result);
