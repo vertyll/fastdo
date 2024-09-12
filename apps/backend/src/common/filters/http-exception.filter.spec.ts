@@ -26,7 +26,7 @@ describe("HttpExceptionFilter", () => {
     filter = module.get<HttpExceptionFilter>(HttpExceptionFilter);
   });
 
-  it("powinien logować błąd", () => {
+  it("should log the error", () => {
     const mockException = new HttpException(
       "Test error",
       HttpStatus.BAD_REQUEST
@@ -35,7 +35,7 @@ describe("HttpExceptionFilter", () => {
       switchToHttp: () => ({
         getResponse: () => ({
           status: jest.fn().mockReturnThis(),
-          json: jest.fn(),
+          send: jest.fn(),
         }),
         getRequest: () => ({
           url: "/test",

@@ -39,7 +39,9 @@ describe("ApiKeyGuard", () => {
       getHandler: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue({
-          header: jest.fn().mockReturnValue("test-api-key"),
+          headers: {
+            "x-api-key": "test-api-key",
+          },
         }),
       }),
     } as unknown as ExecutionContext;
@@ -54,7 +56,9 @@ describe("ApiKeyGuard", () => {
       getHandler: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue({
-          header: jest.fn().mockReturnValue("incorrect-api-key"),
+          headers: {
+            "x-api-key": "incorrect-api-key",
+          },
         }),
       }),
     } as unknown as ExecutionContext;

@@ -3,11 +3,14 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  Logger,
 } from "@nestjs/common";
 import { FastifyRequest, FastifyReply } from "fastify";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: Logger = new Logger()) {}
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
@@ -21,5 +24,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
       method: request.method,
       message: exception.message || null,
     });
+
+    this.logger.error(
+      `${request.method} ${request.url}`,
+      exception.stack,
+      "HttpExceptionFilter"
+    );
   }
 }

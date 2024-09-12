@@ -1,7 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { JwtService } from "@nestjs/jwt";
 import { JwtMiddleware } from "./jwt.middleware";
-import { UnauthorizedException } from "@nestjs/common";
 
 describe("JwtMiddleware", () => {
   let middleware: JwtMiddleware;
@@ -14,7 +13,10 @@ describe("JwtMiddleware", () => {
   };
 
   const mockResponse = () => {
-    const res: any = {};
+    const res: any = {
+      statusCode: 200,
+      end: jest.fn(),
+    };
     return res;
   };
 
@@ -68,8 +70,12 @@ describe("JwtMiddleware", () => {
       throw new Error("Invalid token");
     });
 
-    expect(() => middleware.use(req, mockResponse(), mockNext)).toThrow(
-      UnauthorizedException
+    const res = mockResponse();
+    middleware.use(req, res, mockNext);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.end).toHaveBeenCalledWith(
+      JSON.stringify({ message: "Invalid token" })
     );
     expect(mockNext).not.toHaveBeenCalled();
   });
