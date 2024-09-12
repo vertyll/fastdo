@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
-import { Request } from "express";
+import { FastifyRequest } from "fastify";
 import { Observable } from "rxjs";
 import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
@@ -19,8 +19,8 @@ export class ApiKeyGuard implements CanActivate {
     if (isPublic) {
       return true;
     }
-    const request = context.switchToHttp().getRequest<Request>();
-    const authHeader = request.header("Authorization");
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
+    const authHeader = request.headers["x-api-key"];
     return authHeader === this.configService.get("API_KEY");
   }
 }

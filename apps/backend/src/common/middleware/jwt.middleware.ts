@@ -4,29 +4,42 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Request, Response, NextFunction } from "express";
+import { FastifyRequest, FastifyReply } from "fastify";
+
+declare module "fastify" {
+  interface FastifyRequest {
+    user?: any;
+  }
+}
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(private jwt: JwtService) {}
 
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: FastifyRequest["raw"], res: FastifyReply["raw"], next: () => void) {
     const token = this.extractTokenFromHeader(req);
 
     if (token) {
       try {
         const payload = this.verifyToken(token);
-        req["user"] = payload;
+        (req as any).user = payload;
       } catch (e) {
-        throw new UnauthorizedException("Invalid token");
+        res.statusCode = 401;
+        res.end(JSON.stringify({ message: "Invalid token" }));
+        return;
       }
     }
 
     next();
   }
 
-  private extractTokenFromHeader(req: Request): string | undefined {
-    const [type, token] = req.headers.authorization?.split(" ") ?? [];
+  private extractTokenFromHeader(
+    req: FastifyRequest["raw"]
+  ): string | undefined {
+    const authorization = req.headers.authorization;
+    if (!authorization) return undefined;
+
+    const [type, token] = authorization.split(" ");
     return type === "Bearer" ? token : undefined;
   }
 
@@ -35,7 +48,7 @@ export class JwtMiddleware implements NestMiddleware {
       return this.jwt.verify(token);
     } catch (e) {
       console.log("Error verifying token", e.message);
-      throw e;
+      throw new UnauthorizedException("Invalid token");
     }
   }
 }
