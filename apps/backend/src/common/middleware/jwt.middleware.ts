@@ -25,7 +25,15 @@ export class JwtMiddleware implements NestMiddleware {
         (req as any).user = payload;
       } catch (e) {
         res.statusCode = 401;
-        res.end(JSON.stringify({ message: "Invalid token" }));
+        res.end(
+          JSON.stringify({
+            statusCode: 401,
+            timestamp: new Date().toISOString(),
+            path: req.url,
+            method: req.method,
+            message: "Invalid token",
+          })
+        );
         return;
       }
     }
