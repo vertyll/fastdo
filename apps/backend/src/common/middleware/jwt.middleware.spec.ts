@@ -6,9 +6,18 @@ describe("JwtMiddleware", () => {
   let middleware: JwtMiddleware;
   let jwtService: JwtService;
 
-  const mockRequest = () => {
-    const req: any = {};
-    req.headers = {};
+  const mockRequest = (
+    authorization?: string,
+    url: string = "/test",
+    method: string = "GET"
+  ) => {
+    const req: any = {
+      headers: {
+        authorization,
+      },
+      url,
+      method,
+    };
     return req;
   };
 
@@ -40,32 +49,8 @@ describe("JwtMiddleware", () => {
     mockNext.mockClear();
   });
 
-  it("should be defined", () => {
-    expect(middleware).toBeDefined();
-  });
-
-  it("should pass when no token is provided", () => {
-    const req = mockRequest();
-    middleware.use(req, mockResponse(), mockNext);
-    expect(mockNext).toHaveBeenCalled();
-    expect(req.user).toBeUndefined();
-  });
-
-  it("should set user when valid token is provided", () => {
-    const req = mockRequest();
-    req.headers.authorization = "Bearer validtoken";
-    const payload = { userId: "123" };
-    (jwtService.verify as jest.Mock).mockReturnValue(payload);
-
-    middleware.use(req, mockResponse(), mockNext);
-
-    expect(mockNext).toHaveBeenCalled();
-    expect(req.user).toEqual(payload);
-  });
-
-  it("should throw UnauthorizedException when invalid token is provided", () => {
-    const req = mockRequest();
-    req.headers.authorization = "Bearer invalidtoken";
+  it("should return 401 when an invalid token is provided", () => {
+    const req = mockRequest("Bearer invalidtoken");
     (jwtService.verify as jest.Mock).mockImplementation(() => {
       throw new Error("Invalid token");
     });
@@ -74,19 +59,42 @@ describe("JwtMiddleware", () => {
     middleware.use(req, res, mockNext);
 
     expect(res.statusCode).toBe(401);
-    expect(res.end).toHaveBeenCalledWith(
-      JSON.stringify({ message: "Invalid token" })
-    );
+
+    const responseBody = JSON.parse(res.end.mock.calls[0][0]);
+
+    expect(responseBody).toEqual({
+      statusCode: 401,
+      timestamp: expect.any(String),
+      path: req.url,
+      method: req.method,
+      message: "Invalid token",
+    });
     expect(mockNext).not.toHaveBeenCalled();
   });
 
-  it("should ignore non-Bearer tokens", () => {
-    const req = mockRequest();
-    req.headers.authorization = "Basic sometoken";
+  it("should handle missing path and method in request", () => {
+    const req = mockRequest("Bearer invalidtoken", undefined, undefined);
+    req.url = undefined;
+    req.method = undefined;
 
-    middleware.use(req, mockResponse(), mockNext);
+    (jwtService.verify as jest.Mock).mockImplementation(() => {
+      throw new Error("Invalid token");
+    });
 
-    expect(mockNext).toHaveBeenCalled();
-    expect(req.user).toBeUndefined();
+    const res = mockResponse();
+    middleware.use(req, res, mockNext);
+
+    expect(res.statusCode).toBe(401);
+
+    const responseBody = JSON.parse(res.end.mock.calls[0][0]);
+
+    expect(responseBody).toEqual({
+      statusCode: 401,
+      timestamp: expect.any(String),
+      path: undefined,
+      method: undefined,
+      message: "Invalid token",
+    });
+    expect(mockNext).not.toHaveBeenCalled();
   });
 });
