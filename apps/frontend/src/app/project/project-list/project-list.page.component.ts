@@ -3,7 +3,6 @@ import { Project } from '../model/Project';
 import { ListState, LIST_STATE_VALUE } from '../../utils/list-state.type';
 import { SubmitTextComponent } from '@ui/submit-text.component';
 import { RouterLink } from '@angular/router';
-import { ProjectsApiService } from '../data-access/projects.api.service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { featherCalendar, featherEdit } from '@ng-icons/feather-icons';
 import { CustomDatePipe } from '../../utils/pipes/custom-date.pipe';
@@ -15,6 +14,7 @@ import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
 import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
 import { getAllProjectsSearchParams } from '../data-access/projects-filters.adapter';
 import { ProjectsStateService } from '../data-access/projects.state.service';
+import { ProjectsService } from '../data-access/projects.service';
 
 interface GetAllProjectsSearchParams {
   q: string;
@@ -82,12 +82,17 @@ interface GetAllProjectsSearchParams {
                 <div class="flex flex-col text-gray-600 text-sm mt-2">
                   <div class="flex items-center">
                     <ng-icon name="featherCalendar" class="mr-1"></ng-icon>
-                    <span>Created: {{ project.dateCreation | customDate }}</span>
+                    <span
+                      >Created: {{ project.dateCreation | customDate }}</span
+                    >
                   </div>
                   @if (project.dateModification) {
                     <div class="flex items-center mt-1">
                       <ng-icon name="featherCalendar" class="mr-1"></ng-icon>
-                      <span>Updated: {{ project.dateModification | customDate }}</span>
+                      <span
+                        >Updated:
+                        {{ project.dateModification | customDate }}</span
+                      >
                     </div>
                   }
                 </div>
@@ -123,7 +128,7 @@ interface GetAllProjectsSearchParams {
   viewProviders: [provideIcons({ featherCalendar, featherEdit })],
 })
 export class ProjectListPageComponent {
-  private projectsApiService = inject(ProjectsApiService);
+  private projectsService = inject(ProjectsService);
   private projectsStateService = inject(ProjectsStateService);
 
   listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
@@ -136,7 +141,7 @@ export class ProjectListPageComponent {
   getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
     this.listState = { state: LIST_STATE_VALUE.LOADING };
 
-    this.projectsApiService.getAll(searchParams).subscribe({
+    this.projectsService.getAll(searchParams).subscribe({
       next: (response) => {
         const projects = response.body || [];
         this.listState = {
@@ -155,7 +160,7 @@ export class ProjectListPageComponent {
   }
 
   addProject(name: string, projects: Project[]): void {
-    this.projectsApiService.add(name).subscribe({
+    this.projectsService.add(name).subscribe({
       next: (project) => {
         this.projectsStateService.addProject(project);
         this.listState = {
@@ -182,7 +187,7 @@ export class ProjectListPageComponent {
   }
 
   updateProjectName(id: number, newName: string) {
-    this.projectsApiService.update(id, newName).subscribe({
+    this.projectsService.update(id, newName).subscribe({
       next: (updatedProject) => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
           this.listState = {
@@ -202,7 +207,7 @@ export class ProjectListPageComponent {
   }
 
   deleteProject(id: number) {
-    this.projectsApiService.delete(id).subscribe({
+    this.projectsService.delete(id).subscribe({
       next: () => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
           this.listState = {
