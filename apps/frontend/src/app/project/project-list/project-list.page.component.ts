@@ -120,7 +120,7 @@ interface GetAllProjectsSearchParams {
           </p>
         }
         @case (listStateValue.LOADING) {
-          <p class="text-gray-600">Loading projects...</p>
+          <p class="text-gray-600">Loading...</p>
         }
       }
     </div>

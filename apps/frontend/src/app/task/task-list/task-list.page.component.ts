@@ -83,12 +83,12 @@ import { distinctUntilChanged, map, switchMap } from 'rxjs';
           }
         }
         @case (listStateValue.ERROR) {
-          <p>
+          <p class="text-red-500">
             {{ listState.error.message }}
           </p>
         }
         @case (listStateValue.LOADING) {
-          <p>Loading...</p>
+          <p class="text-gray-600">Loading...</p>
         }
       }
     }
