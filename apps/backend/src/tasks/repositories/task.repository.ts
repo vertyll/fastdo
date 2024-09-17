@@ -35,13 +35,13 @@ export class TaskRepository extends Repository<Task> {
       query.andWhere("task.name LIKE :q", { q: `%${params.q}%` });
     }
 
-    if (params.done_like === "true") {
+    if (params.is_done === "true") {
       query.andWhere("task.isDone = :isDone", { isDone: true });
-    } else if (params.done_like === "false") {
+    } else if (params.is_done === "false") {
       query.andWhere("task.isDone = :isDone", { isDone: false });
     }
 
-    if (params.urgent_like === "true") {
+    if (params.is_urgent === "true") {
       query.andWhere("task.isUrgent = :isUrgent", { isUrgent: true });
     }
 

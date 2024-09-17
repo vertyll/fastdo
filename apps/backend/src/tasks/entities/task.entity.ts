@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn,
   Relation,
 } from "typeorm";
 
@@ -22,7 +21,7 @@ export class Task {
   @Column({ default: false })
   isUrgent: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   projectId: number;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
@@ -31,7 +30,6 @@ export class Task {
   @Column({ type: "timestamp", nullable: true })
   dateModification: Date;
 
-  @ManyToOne(() => Project, (project) => project.tasks)
-  @JoinColumn({ name: "project_id" })
+  @ManyToOne(() => Project, (project) => project.tasks, { nullable: true })
   project: Relation<Project>;
 }

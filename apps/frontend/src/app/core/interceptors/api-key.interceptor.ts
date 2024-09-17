@@ -5,7 +5,7 @@ export const apiKeyInterceptor: HttpInterceptorFn = (req, next) => {
   const apiKey = environment.apiKey;
   const modifiedReq = req.clone({
     setHeaders: {
-      Authorization: apiKey,
+      'x-api-key': apiKey,
     },
   });
   return next(modifiedReq);

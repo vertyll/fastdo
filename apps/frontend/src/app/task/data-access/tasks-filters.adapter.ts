@@ -16,13 +16,13 @@ export function getAllTasksSearchParams(
   };
 
   if (formValue.status === TASK_STATUS.TODO) {
-    searchParams.done_like = 'false';
+    searchParams.is_done = 'false';
   } else if (formValue.status === TASK_STATUS.DONE) {
-    searchParams.done_like = 'true';
+    searchParams.is_done = 'true';
   }
 
   if (formValue.isUrgent) {
-    searchParams.is_urgent_like = 'true';
+    searchParams.is_urgent = 'true';
   }
 
   return searchParams;

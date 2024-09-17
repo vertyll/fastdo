@@ -23,13 +23,13 @@ export class GetAllTasksSearchParams {
   @IsOptional()
   @IsString()
   @IsIn(['true', 'false', ''])
-  done_like?: 'true' | 'false' | '';
+  is_done?: 'true' | 'false' | '';
 
   @ApiProperty({ required: false, enum: ['true', ''] })
   @IsOptional()
   @IsString()
   @IsIn(['true', ''])
-  urgent_like?: 'true' | '';
+  is_urgent?: 'true' | '';
 
   @ApiProperty({
     required: false,

@@ -21,8 +21,8 @@ export type GetAllTasksSearchParams = {
   q: string;
   sortBy: 'dateCreation';
   orderBy: 'desc' | 'asc';
-  done_like?: 'true' | 'false' | '';
-  is_urgent_like?: 'true' | '';
+  is_done?: 'true' | 'false' | '';
+  is_urgent?: 'true' | '';
   createdFrom?: string;
   createdTo?: string;
   updatedFrom?: string;
