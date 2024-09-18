@@ -69,7 +69,7 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('access_token', response.access_token);
           this.router.navigate(['/tasks']);
         },
         error: (err) => {

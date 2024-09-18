@@ -15,7 +15,7 @@ export const ErrorInterceptor: HttpInterceptorFn = (
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        localStorage.removeItem('token');
+        localStorage.removeItem('access_token');
       }
       return throwError(() => error);
     }),
