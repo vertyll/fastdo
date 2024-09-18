@@ -40,7 +40,7 @@ import { RolesModule } from "./roles/roles.module";
     RolesModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: "60m" },
+      signOptions: { expiresIn: "90d" },
     }),
   ],
   controllers: [AppController],
