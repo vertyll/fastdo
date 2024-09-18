@@ -10,6 +10,7 @@ import { TasksStateService } from './task/data-access/tasks.state.service';
 import { ProjectsStateService } from './project/data-access/projects.state.service';
 import { ProjectsService } from './project/data-access/projects.service';
 import { AuthService } from './auth/data-access/auth.service';
+import { TasksService } from './task/data-access/tasks.service';
 
 @Component({
   selector: 'app-root',
@@ -55,7 +56,7 @@ import { AuthService } from './auth/data-access/auth.service';
             <a routerLink="/tasks" routerLinkActive="font-bold">Tasks</a>
           </li>
           <li>
-            <a routerLink="/projects" routerLinkActive="font-bold">Projects</a>
+            <a routerLink="/projects" routerLinkActive="font-bold">Projects ({{projectCount}})</a>
           </li>
           <li class="ml-auto">
             <a routerLink="/tasks/urgent" routerLinkActive="font-bold"
@@ -77,6 +78,7 @@ export class AppComponent {
   tasksStateService = inject(TasksStateService);
   projectsStateService = inject(ProjectsStateService);
   projectsService = inject(ProjectsService);
+  tasksService = inject(TasksService);
   authService = inject(AuthService);
   router = inject(Router);
 
@@ -86,6 +88,7 @@ export class AppComponent {
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.projectsService.getAll().subscribe();
+      this.tasksService.getAll().subscribe();
       this.tasksStateService.value$.subscribe((state) => {
         this.urgentCount = state.urgentCount;
       });
