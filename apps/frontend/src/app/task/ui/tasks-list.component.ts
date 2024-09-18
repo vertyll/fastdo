@@ -7,6 +7,8 @@ import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
 import { TaskCardComponent } from './task-card.component';
 import { TaskUpdatePayload } from '../data-access/tasks.api.service';
 import { TasksService } from '../data-access/tasks.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
 
 @Component({
   selector: 'app-tasks-list',
@@ -39,6 +41,7 @@ export class TasksListComponent {
   @Input({ required: true }) tasks: Task[] = [];
 
   private tasksService = inject(TasksService);
+  private notificationService = inject(NotificationService);
 
   delete(taskId: number) {
     this.tasksService.delete(taskId).subscribe({
@@ -61,6 +64,11 @@ export class TasksListComponent {
             return task;
           }
         });
+
+        this.notificationService.showNotification(
+          'Task updated successfully',
+          NotificationType.success,
+        );
       },
       error: (res) => {
         alert(res.message);
