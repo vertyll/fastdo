@@ -21,11 +21,11 @@ export class NotificationService {
       duration: duration,
       verticalPosition: verticalPosition,
       panelClass:
-        type === 'info'
+        type === NotificationType.info
           ? ['info-snackbar']
-          : type === 'success'
+          : type === NotificationType.success
             ? ['success-snackbar']
-            : type === 'error'
+            : type === NotificationType.error
               ? ['error-snackbar']
               : ['info'],
     });
