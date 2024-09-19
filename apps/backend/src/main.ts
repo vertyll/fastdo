@@ -1,4 +1,4 @@
-import { Logger, ValidationPipe } from "@nestjs/common";
+import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
@@ -30,7 +30,7 @@ async function bootstrap() {
     })
   );
 
-  app.useGlobalFilters(new HttpExceptionFilter(new Logger()));
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(
     // new WrapResponseInterceptor(),
     new TimeoutInterceptor()

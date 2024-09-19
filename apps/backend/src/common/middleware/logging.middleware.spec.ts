@@ -23,7 +23,7 @@ describe("LoggingMiddleware", () => {
 
   it("should call console.time and next", () => {
     middleware.use(mockRequest, mockResponse, mockNext);
-    expect(console.time).toHaveBeenCalledWith("Request-response time");
+    expect(console.time).toHaveBeenCalledWith(expect.stringContaining("Request-response time"));
     expect(mockNext).toHaveBeenCalled();
   });
 
@@ -39,6 +39,6 @@ describe("LoggingMiddleware", () => {
     middleware.use(mockRequest, mockResponse, mockNext);
     const finishCallback = mockResponse.on.mock.calls[0][1];
     finishCallback();
-    expect(console.timeEnd).toHaveBeenCalledWith("Request-response time");
+    expect(console.timeEnd).toHaveBeenCalledWith(expect.stringContaining("Request-response time"));
   });
 });

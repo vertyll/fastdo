@@ -14,7 +14,7 @@ import { AuthService } from '../data-access/auth.service';
   imports: [ReactiveFormsModule],
   template: `
     <div
-      class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md"
+      class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
       <h2 class="text-2xl font-bold mb-4">Login</h2>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -33,6 +33,9 @@ import { AuthService } from '../data-access/auth.service';
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
+        @if (errorMessage) {
+          <div class="text-red-500 mb-2">{{ errorMessage }}</div>
+        }
         <button
           type="submit"
           class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
@@ -53,6 +56,7 @@ import { AuthService } from '../data-access/auth.service';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -73,7 +77,11 @@ export class LoginComponent {
           this.router.navigate(['/tasks']);
         },
         error: (err) => {
-          console.error('Błąd logowania:', err);
+          if (err.error && err.error.message) {
+            this.errorMessage = err.error.message;
+          } else {
+            this.errorMessage = 'An error occurred during registration.';
+          }
         },
       });
     }

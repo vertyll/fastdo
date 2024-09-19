@@ -9,7 +9,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: Logger = new Logger()) {}
+  private readonly logger = new Logger(HttpExceptionFilter.name);
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -17,18 +17,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<FastifyRequest>();
     const status = exception.getStatus();
 
-    response.status(status).send({
+    const responseBody = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
       method: request.method,
       message: exception.message || null,
-    });
+    };
 
     this.logger.error(
       `${request.method} ${request.url}`,
       exception.stack,
       "HttpExceptionFilter"
     );
+
+    response.status(status).send(responseBody);
   }
 }
