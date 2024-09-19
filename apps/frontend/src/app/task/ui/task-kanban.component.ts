@@ -25,6 +25,6 @@ export class TasksKanbanViewComponent {
     this.tasksDone = value.filter((task) => task.isDone);
   }
 
-  todos: Task[] = [];
-  tasksDone: Task[] = [];
+  protected todos: Task[] = [];
+  protected tasksDone: Task[] = [];
 }

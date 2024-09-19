@@ -99,16 +99,17 @@ export class TaskListPageComponent {
   @Input() view?: TasksListViewMode;
   @Input({ transform: booleanAttribute }) isUrgent?: boolean;
 
-  private tasksService = inject(TasksService);
-  private route = inject(ActivatedRoute);
+  private readonly tasksService = inject(TasksService);
+  private readonly route = inject(ActivatedRoute);
   protected showHowToUse = false;
+  protected readonly configStateService = inject(AppConfigStateService);
+  protected readonly $view = computed(
+    () => this.configStateService.$value().tasksListView,
+  );
+  protected readonly listStateValue = LIST_STATE_VALUE;
+  protected listState$ = this.tasksService.listState$;
 
-  configStateService = inject(AppConfigStateService);
-  $view = computed(() => this.configStateService.$value().tasksListView);
-  listStateValue = LIST_STATE_VALUE;
-  listState$ = this.tasksService.listState$;
-
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.view) {
       this.configStateService.updateTasksListView(this.view);
     }
@@ -116,7 +117,7 @@ export class TaskListPageComponent {
     this.initializeTaskList();
   }
 
-  private initializeTaskList() {
+  private initializeTaskList(): void {
     this.route.params
       .pipe(
         map((params) => params['projectId']),
@@ -140,7 +141,7 @@ export class TaskListPageComponent {
       .subscribe();
   }
 
-  private getAllTasks(searchParams: GetAllTasksSearchParams) {
+  private getAllTasks(searchParams: GetAllTasksSearchParams): any {
     if (this.projectId) {
       return this.tasksService.getAllByProjectId(this.projectId, searchParams);
     } else {

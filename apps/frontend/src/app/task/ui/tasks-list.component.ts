@@ -40,10 +40,10 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 export class TasksListComponent {
   @Input({ required: true }) tasks: Task[] = [];
 
-  private tasksService = inject(TasksService);
-  private notificationService = inject(NotificationService);
+  private readonly tasksService = inject(TasksService);
+  private readonly notificationService = inject(NotificationService);
 
-  delete(taskId: number) {
+  delete(taskId: number): void {
     this.tasksService.delete(taskId).subscribe({
       next: () => {
         this.tasks = this.tasks.filter((task) => task.id !== taskId);
@@ -54,7 +54,7 @@ export class TasksListComponent {
     });
   }
 
-  updateTask(taskId: number, updatedTask: TaskUpdatePayload) {
+  updateTask(taskId: number, updatedTask: TaskUpdatePayload): void {
     this.tasksService.update(taskId, updatedTask).subscribe({
       next: (res) => {
         this.tasks = this.tasks.map((task) => {

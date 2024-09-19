@@ -7,22 +7,19 @@ const initialState = {
   urgentCount: 0,
 };
 
-type TasksStateValue = typeof initialState;
-
 @Injectable({ providedIn: 'root' })
 export class TasksStateService {
-  private state$ = new BehaviorSubject(initialState);
+  private readonly state$ = new BehaviorSubject(initialState);
+  public value$ = this.state$.asObservable();
 
-  value$ = this.state$.asObservable();
-
-  setTaskList(tasks: Task[]) {
+  setTaskList(tasks: Task[]): void {
     this.state$.next({
       tasks,
       urgentCount: tasks.filter((task) => task.isUrgent).length,
     });
   }
 
-  addTask(task: Task) {
+  addTask(task: Task): void {
     const updatedTasks = [...this.state$.value.tasks, task];
     const updatedUrgentCount = updatedTasks.filter((t) => t.isUrgent).length;
 
@@ -32,7 +29,7 @@ export class TasksStateService {
     });
   }
 
-  updateTask(updatedTask: Task) {
+  updateTask(updatedTask: Task): void {
     const updatedTasks = this.state$.value.tasks.map((task) =>
       task.id === updatedTask.id ? updatedTask : task,
     );
@@ -44,7 +41,7 @@ export class TasksStateService {
     });
   }
 
-  removeTask(taskId: Task['id']) {
+  removeTask(taskId: Task['id']): void {
     const updatedTasks = this.state$.value.tasks.filter((task) => {
       return task.id !== taskId;
     });

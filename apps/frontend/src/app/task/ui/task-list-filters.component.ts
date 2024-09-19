@@ -147,11 +147,11 @@ export class TasksListFiltersComponent implements OnInit {
     'updatedFrom',
     'updatedTo',
   ];
-  visibleFields = this.allFields.slice(0, 6);
-  showAllFilters = false;
-  activeFilters: { key: string; label: string; value: string }[] = [];
+  protected visibleFields = this.allFields.slice(0, 6);
+  protected showAllFilters: boolean = false;
+  protected activeFilters: { key: string; label: string; value: string }[] = [];
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.updateActiveFilters();
     this.form.valueChanges.subscribe(() => {
       this.updateActiveFilters();
@@ -159,7 +159,7 @@ export class TasksListFiltersComponent implements OnInit {
     });
   }
 
-  toggleFilters() {
+  toggleFilters(): void {
     this.showAllFilters = !this.showAllFilters;
     this.visibleFields = this.showAllFilters
       ? this.allFields
@@ -218,7 +218,7 @@ export class TasksListFiltersComponent implements OnInit {
     return field === 'q' ? 'Enter task name' : '';
   }
 
-  updateActiveFilters() {
+  updateActiveFilters(): void {
     const formValues = this.form.getRawValue();
     this.activeFilters = Object.entries(formValues)
       .filter(
@@ -249,7 +249,7 @@ export class TasksListFiltersComponent implements OnInit {
     }
   }
 
-  removeAllFilters() {
+  removeAllFilters(): void {
     const { sortBy, orderBy } = this.form.value;
     this.form.reset({ sortBy, orderBy });
     this.updateActiveFilters();

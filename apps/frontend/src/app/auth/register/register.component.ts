@@ -68,14 +68,14 @@ import { Router } from '@angular/router';
   styles: [],
 })
 export class RegisterComponent implements OnInit {
-  registerForm: FormGroup;
-  passwordMismatch: boolean = false;
-  errorMessage: string | null = null;
+  protected registerForm: FormGroup;
+  protected passwordMismatch: boolean = false;
+  protected errorMessage: string | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    protected router: Router,
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    protected readonly router: Router,
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -84,20 +84,20 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void{
     this.registerForm.valueChanges.subscribe(() => {
       this.checkPasswords();
-      this.errorMessage = null; // Resetuj wiadomość o błędzie przy każdej zmianie wartości formularza
+      this.errorMessage = null;
     });
   }
 
-  checkPasswords() {
+  checkPasswords(): void {
     const password = this.registerForm.get('password')?.value;
     const confirmPassword = this.registerForm.get('confirmPassword')?.value;
     this.passwordMismatch = password !== confirmPassword;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.checkPasswords();
 
     if (this.registerForm.valid && !this.passwordMismatch) {

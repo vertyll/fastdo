@@ -5,7 +5,7 @@ import {
   TaskUpdatePayload,
   TasksApiService,
 } from './tasks.api.service';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { TasksStateService } from './tasks.state.service';
 import { createListState } from 'src/app/utils/create-list-state';
 
@@ -13,10 +13,9 @@ import { createListState } from 'src/app/utils/create-list-state';
   providedIn: 'root',
 })
 export class TasksService {
-  private httpService = inject(TasksApiService);
-  public state = inject(TasksStateService);
-
-  private loadingState$ = toObservable(this.httpService.$loadingState);
+  private readonly httpService = inject(TasksApiService);
+  private readonly loadingState$ = toObservable(this.httpService.$loadingState);
+  public readonly state = inject(TasksStateService);
 
   listState$ = createListState(
     this.state.value$,
@@ -24,7 +23,7 @@ export class TasksService {
     (state) => state.tasks,
   );
 
-  getAll(searchParams?: GetAllTasksSearchParams) {
+  getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
       tap((response) => {
         if (response.body) {
@@ -34,7 +33,7 @@ export class TasksService {
     );
   }
 
-  getAllByProjectId(projectId: string, searchParams: GetAllTasksSearchParams) {
+  getAllByProjectId(projectId: string, searchParams: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap((response) => {
         if (response.body) {
@@ -44,7 +43,7 @@ export class TasksService {
     );
   }
 
-  delete(taskId: number) {
+  delete(taskId: number): Observable<any> {
     return this.httpService.delete(taskId).pipe(
       tap(() => {
         this.state.removeTask(taskId);
@@ -52,7 +51,7 @@ export class TasksService {
     );
   }
 
-  update(taskId: number, payload: TaskUpdatePayload) {
+  update(taskId: number, payload: TaskUpdatePayload): Observable<any> {
     return this.httpService.update(taskId, payload).pipe(
       tap((task) => {
         this.state.updateTask(task);
@@ -60,7 +59,7 @@ export class TasksService {
     );
   }
 
-  add(name: string, projectId?: string) {
+  add(name: string, projectId?: string): Observable<any> {
     return this.httpService.add(name, projectId).pipe(
       tap((task) => {
         this.state.addTask(task);

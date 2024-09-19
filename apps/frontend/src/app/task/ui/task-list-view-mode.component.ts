@@ -30,7 +30,7 @@ export type TasksListViewMode = 'kanban' | 'list';
   `,
 })
 export class TasksListViewModeComponent {
-  $view = input<TasksListViewMode>('list');
+  public readonly $view = input<TasksListViewMode>('list');
 
   @Output() updateTasksListView = new EventEmitter<TasksListViewMode>();
 }

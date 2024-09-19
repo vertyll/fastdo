@@ -15,7 +15,7 @@ export class AppConfigStateService {
 
   $value = this.state.asReadonly();
 
-  updateTasksListView(value: TasksListViewMode) {
+  updateTasksListView(value: TasksListViewMode): void {
     this.state.update((state) => {
       return {
         ...state,

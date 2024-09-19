@@ -128,13 +128,13 @@ interface GetAllProjectsSearchParams {
   viewProviders: [provideIcons({ featherCalendar, featherEdit })],
 })
 export class ProjectListPageComponent {
-  private projectsService = inject(ProjectsService);
-  private projectsStateService = inject(ProjectsStateService);
+  private readonly projectsService = inject(ProjectsService);
+  private readonly projectsStateService = inject(ProjectsStateService);
 
   listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
   listStateValue = LIST_STATE_VALUE;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getAllProjects();
   }
 
@@ -162,7 +162,6 @@ export class ProjectListPageComponent {
   addProject(name: string, projects: Project[]): void {
     this.projectsService.add(name).subscribe({
       next: (project) => {
-        this.projectsStateService.addProject(project);
         this.listState = {
           state: LIST_STATE_VALUE.SUCCESS,
           results: [...projects, project],
@@ -182,11 +181,11 @@ export class ProjectListPageComponent {
     this.getAllProjects(searchParams);
   }
 
-  toggleEditMode(project: Project) {
+  toggleEditMode(project: Project): void {
     project.editMode = !project.editMode;
   }
 
-  updateProjectName(id: number, newName: string) {
+  updateProjectName(id: number, newName: string): void {
     this.projectsService.update(id, newName).subscribe({
       next: (updatedProject) => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
@@ -206,7 +205,7 @@ export class ProjectListPageComponent {
     });
   }
 
-  deleteProject(id: number) {
+  deleteProject(id: number): void {
     this.projectsService.delete(id).subscribe({
       next: () => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {

@@ -4,27 +4,24 @@ import { TaskListPageComponent } from './task/task-list/task-list.page.component
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { UserDashboardComponent } from './dashboard/user-dashboard/user-dashboard';
 import { PublicDashboardComponent } from './dashboard/public-dashboard/public-dashboard';
 
 export const routes: Routes = [
   {
     path: '',
     component: PublicDashboardComponent,
+    title: 'Dashboard',
     pathMatch: 'full',
   },
   {
     path: 'login',
+    title: 'Logowanie',
     component: LoginComponent,
   },
   {
     path: 'register',
+    title: 'Rejestracja',
     component: RegisterComponent,
-  },
-  {
-    path: 'dashboard',
-    component: UserDashboardComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'projects',

@@ -55,13 +55,13 @@ import { AuthService } from '../data-access/auth.service';
   styles: [],
 })
 export class LoginComponent {
-  loginForm: FormGroup;
-  errorMessage: string | null = null;
+  protected loginForm: FormGroup;
+  protected errorMessage: string | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    protected router: Router,
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    protected readonly router: Router,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -69,7 +69,7 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {

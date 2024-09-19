@@ -17,9 +17,8 @@ export interface RegisterDto {
   providedIn: 'root',
 })
 export class AuthService {
-  private URL = environment.backendUrl;
-
-  private http = inject(HttpClient);
+  private readonly URL = environment.backendUrl;
+  private readonly http = inject(HttpClient);
 
   login(dto: LoginDto): Observable<{ access_token: string }> {
     return this.http.post<{ access_token: string }>(
@@ -36,7 +35,7 @@ export class AuthService {
     return !!localStorage.getItem('access_token');
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('access_token');
   }
 }

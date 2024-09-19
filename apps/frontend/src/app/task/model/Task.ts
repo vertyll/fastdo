@@ -5,8 +5,10 @@ export type Task = {
   dateCreation: string;
   dateModification: string | null;
   isUrgent: boolean;
-  project: {
-    id: number;
-    name: string;
-  } | null;
+  project: Project | null;
+};
+
+type Project = {
+  id: number;
+  name: string;
 };

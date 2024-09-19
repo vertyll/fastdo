@@ -98,21 +98,20 @@ export class TaskCardComponent {
   @Output() update = new EventEmitter<TaskUpdatePayload>();
   @Output() delete = new EventEmitter<void>();
 
-  editMode = false;
+  protected editMode: boolean = false;
+  private isSingleClick: boolean = true;
 
-  isSingleClick = true;
-
-  updateTaskUrgentStatus() {
+  updateTaskUrgentStatus(): void {
     this.update.emit({ isUrgent: !this.task.isUrgent });
   }
 
-  updateTaskName(updatedName: string) {
+  updateTaskName(updatedName: string): void {
     this.update.emit({ name: updatedName });
 
     this.editMode = false;
   }
 
-  handleSingleClick() {
+  handleSingleClick(): void {
     this.isSingleClick = true;
 
     setTimeout(() => {
@@ -122,7 +121,7 @@ export class TaskCardComponent {
     }, 200);
   }
 
-  switchToEditMode() {
+  switchToEditMode(): void {
     this.isSingleClick = false;
     this.editMode = true;
   }

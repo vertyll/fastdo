@@ -25,13 +25,12 @@ export type LoadingState = {
   providedIn: 'root',
 })
 export class ProjectsApiService {
-  private URL = environment.backendUrl;
+  private readonly URL = environment.backendUrl;
+  private readonly http = inject(HttpClient);
 
-  private http = inject(HttpClient);
-
-  private $idle = signal(true);
-  private $loading = signal(false);
-  private $error = signal<FetchingError | null>(null);
+  private readonly $idle = signal(true);
+  private readonly $loading = signal(false);
+  private readonly $error = signal<FetchingError | null>(null);
 
   $loadingState = computed(() => {
     return {
@@ -68,17 +67,17 @@ export class ProjectsApiService {
     );
   }
 
-  delete(projectId: number) {
+  delete(projectId: number): Observable<any> {
     return this.http.delete(`${this.URL}/projects/${projectId}`);
   }
 
-  update(projectId: number, name: string) {
+  update(projectId: number, name: string): Observable<Project> {
     return this.http.patch<Project>(`${this.URL}/projects/${projectId}`, {
       name,
     });
   }
 
-  add(name: string) {
+  add(name: string): Observable<Project> {
     return this.http.post<Project>(`${this.URL}/projects`, { name });
   }
 }

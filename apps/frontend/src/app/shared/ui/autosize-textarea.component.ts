@@ -23,7 +23,7 @@ export class AutosizeTextareaComponent {
 
   @Output() submitText = new EventEmitter<string>();
 
-  protected emit(textarea: HTMLTextAreaElement) {
+  protected emit(textarea: HTMLTextAreaElement): void {
     this.submitText.emit(textarea.value.trim());
 
     if (this.clearAfterEmit) {
@@ -31,7 +31,7 @@ export class AutosizeTextareaComponent {
     }
   }
 
-  protected calcHeight(textarea: HTMLTextAreaElement) {
+  protected calcHeight(textarea: HTMLTextAreaElement): void {
     textarea.style.height = textarea.scrollHeight + 'px';
   }
 }

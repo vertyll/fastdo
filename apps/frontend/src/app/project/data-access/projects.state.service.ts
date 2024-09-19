@@ -6,21 +6,19 @@ const initialState = {
   projects: [] as Project[],
 };
 
-type ProjectsStateValue = typeof initialState;
-
 @Injectable({ providedIn: 'root' })
 export class ProjectsStateService {
-  private state$ = new BehaviorSubject(initialState);
+  private readonly state$ = new BehaviorSubject(initialState);
 
   value$ = this.state$.asObservable();
 
-  setProjectList(projects: Project[]) {
+  setProjectList(projects: Project[]): void {
     this.state$.next({
       projects,
     });
   }
 
-  addProject(project: Project) {
+  addProject(project: Project): void {
     const updatedProjects = [...this.state$.value.projects, project];
 
     this.state$.next({
@@ -28,7 +26,7 @@ export class ProjectsStateService {
     });
   }
 
-  updateProject(updatedProject: Project) {
+  updateProject(updatedProject: Project): void {
     const updatedProjects = this.state$.value.projects.map((project) =>
       project.id === updatedProject.id ? updatedProject : project,
     );
@@ -38,7 +36,7 @@ export class ProjectsStateService {
     });
   }
 
-  removeProject(projectId: Project['id']) {
+  removeProject(projectId: Project['id']): void {
     const updatedProjects = this.state$.value.projects.filter((project) => {
       return project.id !== projectId;
     });

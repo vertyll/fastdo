@@ -33,13 +33,11 @@ export type GetAllTasksSearchParams = {
   providedIn: 'root',
 })
 export class TasksApiService {
-  private URL = environment.backendUrl;
-
-  private http = inject(HttpClient);
-
-  private $idle = signal(true);
-  private $loading = signal(false);
-  private $error = signal<FetchingError | null>(null);
+  private readonly URL = environment.backendUrl;
+  private readonly http = inject(HttpClient);
+  private readonly $idle = signal(true);
+  private readonly $loading = signal(false);
+  private readonly $error = signal<FetchingError | null>(null);
 
   $loadingState = computed(() => {
     return {
@@ -67,7 +65,7 @@ export class TasksApiService {
     );
   }
 
-  getAll(searchParams?: GetAllTasksSearchParams) {
+  getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.withLoadingState(
       this.http.get<Task[]>(`${this.URL}/tasks`, {
         observe: 'response',
@@ -76,7 +74,7 @@ export class TasksApiService {
     );
   }
 
-  getAllByProjectId(projectId: string, searchParams: GetAllTasksSearchParams) {
+  getAllByProjectId(projectId: string, searchParams: GetAllTasksSearchParams): Observable<any> {
     return this.withLoadingState(
       this.http.get<Task[]>(`${this.URL}/tasks/project/${projectId}`, {
         observe: 'response',
@@ -84,15 +82,15 @@ export class TasksApiService {
       }),
     );
   }
-  delete(taskId: number) {
+  delete(taskId: number): Observable<any> {
     return this.http.delete(`${this.URL}/tasks/${taskId}`);
   }
 
-  update(taskId: number, payload: TaskUpdatePayload) {
+  update(taskId: number, payload: TaskUpdatePayload): Observable<Task> {
     return this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload);
   }
 
-  add(name: string, projectId?: string) {
+  add(name: string, projectId?: string): Observable<Task> {
     return this.http.post<Task>(`${this.URL}/tasks`, { name, projectId });
   }
 }
