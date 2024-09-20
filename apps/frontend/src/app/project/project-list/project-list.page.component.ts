@@ -18,7 +18,6 @@ import { ProjectsService } from '../data-access/project.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
-import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
 
 interface GetAllProjectsSearchParams {
