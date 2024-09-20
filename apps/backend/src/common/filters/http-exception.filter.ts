@@ -23,8 +23,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       path: request.url,
       method: request.method,
       message: this.formatGeneralMessage(exception),
-      fields: this.extractFields(exception),
     };
+
+    const fields = this.extractFields(exception);
+    if (fields) {
+      responseBody.fields = fields;
+    }
 
     this.logger.error(
       `${request.method} ${request.url}`,
@@ -57,7 +61,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = exception.getResponse();
     if (typeof response === "object" && response.hasOwnProperty("message")) {
       if (Array.isArray(response["message"])) {
-        return response["message"]
+        const fields = response["message"]
           .map((msg: any) => {
             if (typeof msg === "object" && msg.field) {
               return { field: msg.field, errors: msg.errors || [] };
@@ -65,6 +69,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             return null;
           })
           .filter((msg: any) => msg !== null);
+        return fields.length > 0 ? fields : null;
       }
     }
     return null;
