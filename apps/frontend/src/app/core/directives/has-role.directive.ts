@@ -14,7 +14,7 @@ import { Role } from 'src/app/shared/enums/role.enum';
   standalone: true,
 })
 export class HasRoleDirective implements OnInit {
-  @Input('appHasRole') roles!: Role[];
+  @Input('appHasRole') allowedRoles!: Role[] | Role;
   private isVisible = false;
 
   private templateRef = inject(TemplateRef<any>);
@@ -26,7 +26,10 @@ export class HasRoleDirective implements OnInit {
     if (!userRoles) {
       this.viewContainer.clear();
     } else {
-      const hasRole = this.roles.some((role) => userRoles.includes(role));
+      const roles = Array.isArray(this.allowedRoles)
+        ? this.allowedRoles
+        : [this.allowedRoles];
+      const hasRole = roles.some((role) => userRoles.includes(role));
       if (hasRole && !this.isVisible) {
         this.viewContainer.createEmbeddedView(this.templateRef);
         this.isVisible = true;

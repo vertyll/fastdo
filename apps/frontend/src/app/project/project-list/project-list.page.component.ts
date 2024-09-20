@@ -19,6 +19,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
+import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
 
 interface GetAllProjectsSearchParams {
   q: string;
@@ -41,6 +42,7 @@ interface GetAllProjectsSearchParams {
     ProjectsListFiltersComponent,
     RemoveItemButtonComponent,
     AutosizeTextareaComponent,
+    HasRoleDirective,
   ],
   template: `
     <div class="flex flex-col items-center mb-6">
@@ -65,7 +67,7 @@ interface GetAllProjectsSearchParams {
               >
                 <header class="flex justify-end">
                   <app-remove-item-button
-                    *HasRoleDirective="'Role.Admin'"
+                    *appHasRole="[role.Admin]"
                     (confirm)="deleteProject(project.id)"
                   />
                 </header>
@@ -103,7 +105,7 @@ interface GetAllProjectsSearchParams {
                 </div>
                 <footer class="pt-2 flex justify-between items-center mt-auto">
                   <button
-                    *HasRoleDirective="'Role.Admin'"
+                    *appHasRole="[role.Admin]"
                     class="flex items-center"
                     (click)="toggleEditMode(project)"
                   >
