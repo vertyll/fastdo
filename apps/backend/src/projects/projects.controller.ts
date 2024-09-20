@@ -43,6 +43,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a project' })
   @ApiBody({ type: UpdateProjectDto })
   @ApiResponse({
