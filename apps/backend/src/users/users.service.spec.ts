@@ -1,13 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "./users.service";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { User } from "./entities/user.entity";
-import { Repository } from "typeorm";
+import { UserRepository } from "./repositories/user.repository";
 
 describe("UsersService", () => {
   let service: UsersService;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let repository: Repository<User>;
+  let repository: UserRepository;
 
   const mockRepository = {
     findOne: jest.fn(),
@@ -20,14 +18,14 @@ describe("UsersService", () => {
       providers: [
         UsersService,
         {
-          provide: getRepositoryToken(User),
+          provide: UserRepository,
           useValue: mockRepository,
         },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    repository = module.get<UserRepository>(UserRepository);
   });
 
   it("should be defined", () => {
