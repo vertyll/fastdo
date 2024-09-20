@@ -12,11 +12,13 @@ import {
 } from '../ui/project-list-filters.component';
 import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
 import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
-import { getAllProjectsSearchParams } from '../data-access/projects-filters.adapter';
-import { ProjectsStateService } from '../data-access/projects.state.service';
-import { ProjectsService } from '../data-access/projects.service';
+import { getAllProjectsSearchParams } from '../data-access/project-filters.adapter';
+import { ProjectsStateService } from '../data-access/project.state.service';
+import { ProjectsService } from '../data-access/project.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { Role } from 'src/app/shared/enums/role.enum';
+import { AuthService } from 'src/app/auth/data-access/auth.service';
 
 interface GetAllProjectsSearchParams {
   q: string;
@@ -63,6 +65,7 @@ interface GetAllProjectsSearchParams {
               >
                 <header class="flex justify-end">
                   <app-remove-item-button
+                    *HasRoleDirective="'Role.Admin'"
                     (confirm)="deleteProject(project.id)"
                   />
                 </header>
@@ -100,6 +103,7 @@ interface GetAllProjectsSearchParams {
                 </div>
                 <footer class="pt-2 flex justify-between items-center mt-auto">
                   <button
+                    *HasRoleDirective="'Role.Admin'"
                     class="flex items-center"
                     (click)="toggleEditMode(project)"
                   >
@@ -133,6 +137,7 @@ export class ProjectListPageComponent {
   private readonly projectsService = inject(ProjectsService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);
+  protected readonly role = Role;
 
   listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
   listStateValue = LIST_STATE_VALUE;

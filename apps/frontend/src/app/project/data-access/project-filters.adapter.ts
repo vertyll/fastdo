@@ -1,5 +1,5 @@
 import { ProjectsListFiltersFormValue } from '../ui/project-list-filters.component';
-import { GetAllProjectsSearchParams } from './projects.api.service';
+import { GetAllProjectsSearchParams } from './project.api.service';
 
 export function getAllProjectsSearchParams(
   formValue: ProjectsListFiltersFormValue,

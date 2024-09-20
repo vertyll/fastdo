@@ -6,8 +6,8 @@ import { createListState } from 'src/app/utils/create-list-state';
 import {
   GetAllProjectsSearchParams,
   ProjectsApiService,
-} from './projects.api.service';
-import { ProjectsStateService } from './projects.state.service';
+} from './project.api.service';
+import { ProjectsStateService } from './project.state.service';
 
 @Injectable({
   providedIn: 'root',

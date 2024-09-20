@@ -72,15 +72,14 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          localStorage.setItem('access_token', response.access_token);
+        next: (res) => {
           this.router.navigate(['/tasks']);
         },
         error: (err) => {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = 'An error occurred during registration.';
+            this.errorMessage = 'An error occurred during login.';
           }
         },
       });

@@ -4,9 +4,9 @@ import {
   GetAllTasksSearchParams,
   TaskUpdatePayload,
   TasksApiService,
-} from './tasks.api.service';
+} from './task.api.service';
 import { Observable, tap } from 'rxjs';
-import { TasksStateService } from './tasks.state.service';
+import { TasksStateService } from './task.state.service';
 import { createListState } from 'src/app/utils/create-list-state';
 
 @Injectable({

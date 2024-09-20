@@ -8,7 +8,7 @@ import {
   bootstrapBookmark,
   bootstrapBookmarkFill,
 } from '@ng-icons/bootstrap-icons';
-import { TaskUpdatePayload } from '../data-access/tasks.api.service';
+import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
 
 @Component({

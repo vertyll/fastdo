@@ -1,11 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { TasksStateService } from './task/data-access/tasks.state.service';
-import { ProjectsStateService } from './project/data-access/projects.state.service';
-import { ProjectsService } from './project/data-access/projects.service';
+import { TasksStateService } from './task/data-access/task.state.service';
+import { ProjectsStateService } from './project/data-access/project.state.service';
+import { ProjectsService } from './project/data-access/project.service';
 import { AuthService } from './auth/data-access/auth.service';
-import { TasksService } from './task/data-access/tasks.service';
+import { TasksService } from './task/data-access/task.service';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { Role } from './shared/enums/role.enum';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,20 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
     `
       main {
         @apply px-12;
+      }
+      .info-panel {
+        @apply fixed bottom-0 right-0 bg-gray-800 text-white p-4 transition-transform transform translate-x-full;
+        width: calc(100% - 40px);
+      }
+      .info-panel.open {
+        @apply translate-x-0;
+      }
+      .toggle-button {
+        @apply fixed bottom-0 right-0 bg-orange-500 text-white p-4 cursor-pointer flex items-center justify-center;
+        z-index: 10;
+        width: 40px;
+        height: 40px;
+        user-select: none;
       }
     `,
   ],
@@ -36,9 +51,21 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
     <main class="grid pt-4">
       <router-outlet />
     </main>
+    <div class="toggle-button" (click)="togglePanel()">
+      @if (!panelOpen) {
+        <span>&#8592;</span>
+      } @else {
+        <span>&#8594;</span>
+      }
+    </div>
+    <div class="info-panel" [class.open]="panelOpen">
+      <div>Your roles: {{ userRoles?.join(', ') }}</div>
+      <div>Current time: {{ currentTime }}</div>
+      <div>Browser info: {{ browserInfo }}</div>
+    </div>
   `,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private readonly tasksStateService = inject(TasksStateService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly projectsService = inject(ProjectsService);
@@ -46,8 +73,12 @@ export class AppComponent {
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
 
-  protected urgentCount = 0;
-  protected projectCount = 0;
+  protected urgentCount: number = 0;
+  protected projectCount: number = 0;
+  protected userRoles: Role[] | null = null;
+  protected panelOpen: boolean = false;
+  protected currentTime: string = '';
+  protected browserInfo: string = '';
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
@@ -60,5 +91,22 @@ export class AppComponent {
         this.projectCount = state.projects.length;
       });
     }
+    this.userRoles = this.authService.getUserRoles();
+    this.updateTime();
+    this.browserInfo = this.getBrowserInfo();
+    setInterval(() => this.updateTime(), 1000);
+  }
+
+  togglePanel(): void {
+    this.panelOpen = !this.panelOpen;
+  }
+
+  updateTime(): void {
+    const now = new Date();
+    this.currentTime = now.toLocaleTimeString();
+  }
+
+  getBrowserInfo(): string {
+    return `User Agent: ${navigator.userAgent}, Language: ${navigator.language}`;
   }
 }

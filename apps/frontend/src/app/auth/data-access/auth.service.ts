@@ -1,17 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
-export interface LoginDto {
-  email: string;
-  password: string;
-}
-
-export interface RegisterDto {
-  email: string;
-  password: string;
-}
+import { LoginModel } from '../models/login.model';
+import { RegisterModel } from '../models/register.model';
+import { jwtDecode } from 'jwt-decode';
+import { Role } from '../../shared/enums/role.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -19,15 +13,20 @@ export interface RegisterDto {
 export class AuthService {
   private readonly URL = environment.backendUrl;
   private readonly http = inject(HttpClient);
+  private roles: Role[] | null = null;
 
-  login(dto: LoginDto): Observable<{ access_token: string }> {
-    return this.http.post<{ access_token: string }>(
-      `${this.URL}/auth/login`,
-      dto,
-    );
+  login(dto: LoginModel): Observable<{ access_token: string }> {
+    return this.http
+      .post<{ access_token: string }>(`${this.URL}/auth/login`, dto)
+      .pipe(
+        tap((response) => {
+          localStorage.setItem('access_token', response.access_token);
+          this.decodeToken(response.access_token);
+        }),
+      );
   }
 
-  register(dto: RegisterDto): Observable<any> {
+  register(dto: RegisterModel): Observable<any> {
     return this.http.post(`${this.URL}/auth/register`, dto);
   }
 
@@ -37,5 +36,16 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('access_token');
+    this.roles = null;
+  }
+
+  private decodeToken(token: string): void {
+    const decodedToken: any = jwtDecode(token);
+    this.roles = decodedToken.roles || null;
+  }
+
+  getUserRoles(): Role[] | null {
+    this.decodeToken(localStorage.getItem('access_token') || '');
+    return this.roles;
   }
 }

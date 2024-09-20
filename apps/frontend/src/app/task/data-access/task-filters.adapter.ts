@@ -1,6 +1,6 @@
 import { TASK_STATUS } from '../model/task-status.enum';
 import { TasksListFiltersFormValue } from '../ui/task-list-filters.component';
-import { GetAllTasksSearchParams } from './tasks.api.service';
+import { GetAllTasksSearchParams } from './task.api.service';
 
 export function getAllTasksSearchParams(
   formValue: TasksListFiltersFormValue & { isUrgent?: boolean },

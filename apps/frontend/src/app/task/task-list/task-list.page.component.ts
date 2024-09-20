@@ -11,23 +11,23 @@ import {
   TasksListFiltersComponent,
   TasksListFiltersFormValue,
 } from '../ui/task-list-filters.component';
-import { getAllTasksSearchParams } from '../data-access/tasks-filters.adapter';
+import { getAllTasksSearchParams } from '../data-access/task-filters.adapter';
 import { NgIconComponent } from '@ng-icons/core';
 import { AppConfigStateService } from '../../config/config.state.service';
-import { GetAllTasksSearchParams } from '../data-access/tasks.api.service';
+import { GetAllTasksSearchParams } from '../data-access/task.api.service';
 import { AsyncPipe } from '@angular/common';
-import { TasksListComponent } from '../ui/tasks-list.component';
+import { TasksListComponent } from '../ui/task-list.component';
 import { TasksKanbanViewComponent } from '../ui/task-kanban.component';
 import {
   TasksListViewMode,
   TasksListViewModeComponent,
 } from '../ui/task-list-view-mode.component';
-import { TasksService } from '../data-access/tasks.service';
+import { TasksService } from '../data-access/task.service';
 import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, map, switchMap } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { ProjectsService } from 'src/app/project/data-access/projects.service';
+import { ProjectsService } from 'src/app/project/data-access/project.service';
 
 @Component({
   selector: 'app-task-list-page',
@@ -47,7 +47,9 @@ import { ProjectsService } from 'src/app/project/data-access/projects.service';
         @if (!projectName) {
           <h2 class="text-2xl font-bold mb-4">All tasks</h2>
         } @else {
-          <h2 class="text-2xl font-bold mb-4">Tasks for {{ projectName }}</h2>
+          <h2 class="text-2xl font-bold mb-4">
+            Tasks for project: {{ projectName }}
+          </h2>
         }
         <app-submit-text
           (submitText)="
