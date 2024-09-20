@@ -25,6 +25,8 @@ import {
 import { TasksService } from '../data-access/tasks.service';
 import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, map, switchMap } from 'rxjs';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
 
 @Component({
   selector: 'app-task-list-page',
@@ -101,6 +103,7 @@ export class TaskListPageComponent {
 
   private readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);
+  private readonly notificationService = inject(NotificationService);
   protected showHowToUse = false;
   protected readonly configStateService = inject(AppConfigStateService);
   protected readonly $view = computed(
@@ -163,8 +166,24 @@ export class TaskListPageComponent {
         console.log('Task added successfully');
         this.initializeTaskList();
       },
-      error: (error) => {
-        console.error('Error adding task:', error);
+      error: (err) => {
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred while adding the task',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
+        this.notificationService.showNotification(
+          'Task added successfully',
+          NotificationType.success,
+        );
       },
     });
   }

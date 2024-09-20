@@ -6,6 +6,7 @@ import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatCommonModule } from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +14,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([apiKeyInterceptor, AuthInterceptor, ErrorInterceptor]),
     ),
     provideRouter(routes, withComponentInputBinding()),
-    importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(BrowserAnimationsModule, MatCommonModule),
   ],
 };

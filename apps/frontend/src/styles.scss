@@ -4,5 +4,46 @@
 @tailwind utilities;
 
 html {
-    font-family: system-ui;
+  font-family: system-ui;
+}
+
+.success-snackbar,
+.error-snackbar,
+.info-snackbar {
+  text-align: center;
+  top: 0 !important;
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+
+  .mdc-snackbar__surface,
+  .mat-mdc-snack-bar-label {
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+    color: white !important;
+    border-radius: 10px !important;
+    font-size: 15px !important;
+  }
+
+  .mdc-button__label {
+    color: yellow !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    font-size: 17px;
+  }
+}
+
+.success-snackbar .mdc-snackbar__surface,
+.success-snackbar .mat-mdc-snack-bar-label {
+  background-color: #198754 !important;
+}
+
+.error-snackbar .mdc-snackbar__surface,
+.error-snackbar .mat-mdc-snack-bar-label {
+  background-color: #dc3545 !important;
+}
+
+.info-snackbar .mdc-snackbar__surface,
+.info-snackbar .mat-mdc-snack-bar-label {
+  background-color: gray !important;
 }

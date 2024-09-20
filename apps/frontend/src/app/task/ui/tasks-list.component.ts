@@ -48,8 +48,24 @@ export class TasksListComponent {
       next: () => {
         this.tasks = this.tasks.filter((task) => task.id !== taskId);
       },
-      error: (res) => {
-        alert(res.message);
+      error: (err) => {
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred while deleting the task',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
+        this.notificationService.showNotification(
+          'Task deleted successfully',
+          NotificationType.success,
+        );
       },
     });
   }
@@ -64,14 +80,25 @@ export class TasksListComponent {
             return task;
           }
         });
-
+      },
+      error: (res) => {
+        if (res.error && res.error.message) {
+          this.notificationService.showNotification(
+            res.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred while updating the task',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
         this.notificationService.showNotification(
           'Task updated successfully',
           NotificationType.success,
         );
-      },
-      error: (res) => {
-        alert(res.message);
       },
     });
   }

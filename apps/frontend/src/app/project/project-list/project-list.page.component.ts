@@ -15,6 +15,8 @@ import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
 import { getAllProjectsSearchParams } from '../data-access/projects-filters.adapter';
 import { ProjectsStateService } from '../data-access/projects.state.service';
 import { ProjectsService } from '../data-access/projects.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
 
 interface GetAllProjectsSearchParams {
   q: string;
@@ -130,6 +132,7 @@ interface GetAllProjectsSearchParams {
 export class ProjectListPageComponent {
   private readonly projectsService = inject(ProjectsService);
   private readonly projectsStateService = inject(ProjectsStateService);
+  private readonly notificationService = inject(NotificationService);
 
   listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
   listStateValue = LIST_STATE_VALUE;
@@ -155,6 +158,18 @@ export class ProjectListPageComponent {
           state: LIST_STATE_VALUE.ERROR,
           error: err,
         };
+
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred fetching the projects.',
+            NotificationType.error,
+          );
+        }
       },
     });
   }
@@ -172,6 +187,24 @@ export class ProjectListPageComponent {
           state: LIST_STATE_VALUE.ERROR,
           error: err,
         };
+
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred creating the project.',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
+        this.notificationService.showNotification(
+          'Project created successfully.',
+          NotificationType.success,
+        );
       },
     });
   }
@@ -200,7 +233,23 @@ export class ProjectListPageComponent {
         }
       },
       error: (err) => {
-        console.error('Error updating project:', err);
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred updating the project.',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
+        this.notificationService.showNotification(
+          'Project updated successfully.',
+          NotificationType.success,
+        );
       },
     });
   }
@@ -219,7 +268,23 @@ export class ProjectListPageComponent {
         }
       },
       error: (err) => {
-        console.error('Błąd podczas usuwania projektu:', err);
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred deleting the project.',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
+        this.notificationService.showNotification(
+          'Project deleted successfully.',
+          NotificationType.success,
+        );
       },
     });
   }
