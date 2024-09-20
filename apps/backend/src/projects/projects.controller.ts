@@ -6,6 +6,8 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsService } from './projects.service';
+import { Role } from '../common/enums/role.enum';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -55,6 +57,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Remove a project' })
   @ApiResponse({
     status: 204,
