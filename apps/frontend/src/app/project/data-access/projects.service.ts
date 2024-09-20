@@ -56,4 +56,8 @@ export class ProjectsService {
       }),
     );
   }
+
+  getProjectById(projectId: number): Observable<any> {
+    return this.httpService.getById(projectId);
+  }
 }

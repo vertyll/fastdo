@@ -27,6 +27,7 @@ import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, map, switchMap } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { ProjectsService } from 'src/app/project/data-access/projects.service';
 
 @Component({
   selector: 'app-task-list-page',
@@ -43,7 +44,11 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
   template: `
     @if (listState$ | async; as listState) {
       <div class="flex flex-col items-center">
-        <h2 class="text-2xl font-bold mb-4">Tasks</h2>
+        @if (!projectName) {
+          <h2 class="text-2xl font-bold mb-4">All tasks</h2>
+        } @else {
+          <h2 class="text-2xl font-bold mb-4">Tasks for {{ projectName }}</h2>
+        }
         <app-submit-text
           (submitText)="
             listState.state === listStateValue.SUCCESS && addTask($event)
@@ -104,6 +109,7 @@ export class TaskListPageComponent {
   private readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
+  private readonly projectsService = inject(ProjectsService);
   protected showHowToUse = false;
   protected readonly configStateService = inject(AppConfigStateService);
   protected readonly $view = computed(
@@ -111,12 +117,12 @@ export class TaskListPageComponent {
   );
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected listState$ = this.tasksService.listState$;
+  protected projectName!: string;
 
   ngOnInit(): void {
     if (this.view) {
       this.configStateService.updateTasksListView(this.view);
     }
-
     this.initializeTaskList();
   }
 
@@ -127,6 +133,9 @@ export class TaskListPageComponent {
         distinctUntilChanged(),
         switchMap((projectId) => {
           this.projectId = projectId;
+          if (projectId) {
+            this.loadProjectName(projectId);
+          }
           const searchParams = getAllTasksSearchParams({
             q: '',
             status: 'ALL',
@@ -142,6 +151,12 @@ export class TaskListPageComponent {
         }),
       )
       .subscribe();
+  }
+
+  private loadProjectName(projectId: number): void {
+    this.projectsService.getProjectById(projectId).subscribe((project) => {
+      this.projectName = project.name;
+    });
   }
 
   private getAllTasks(searchParams: GetAllTasksSearchParams): any {

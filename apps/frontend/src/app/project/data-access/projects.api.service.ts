@@ -80,4 +80,8 @@ export class ProjectsApiService {
   add(name: string): Observable<Project> {
     return this.http.post<Project>(`${this.URL}/projects`, { name });
   }
+
+  getById(projectId: number): Observable<Project> {
+    return this.http.get<Project>(`${this.URL}/projects/${projectId}`);
+  }
 }
