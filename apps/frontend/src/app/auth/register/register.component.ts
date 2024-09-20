@@ -7,6 +7,9 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../data-access/auth.service';
 import { Router } from '@angular/router';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { passwordValidator } from '../validators/password.validator';
 
 @Component({
   selector: 'app-register',
@@ -43,8 +46,22 @@ import { Router } from '@angular/router';
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
+        @if (emailErrors.length > 0) {
+          <div class="text-red-500 mb-2">
+            @for (error of emailErrors; track error) {
+              <div>{{ error }}</div>
+            }
+          </div>
+        }
         @if (passwordMismatch) {
           <div class="text-red-500 mb-2">Passwords do not match.</div>
+        }
+        @if (passwordErrors.length > 0) {
+          <div class="text-red-500 mb-2">
+            @for (error of passwordErrors; track error) {
+              <div>{{ error }}</div>
+            }
+          </div>
         }
         @if (errorMessage) {
           <div class="text-red-500 mb-2">{{ errorMessage }}</div>
@@ -70,24 +87,29 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit {
   protected registerForm: FormGroup;
   protected passwordMismatch: boolean = false;
+  protected passwordErrors: string[] = [];
+  protected emailErrors: string[] = [];
   protected errorMessage: string | null = null;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     protected readonly router: Router,
+    protected readonly notificationService: NotificationService,
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required, passwordValidator]],
       confirmPassword: ['', [Validators.required]],
     });
   }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     this.registerForm.valueChanges.subscribe(() => {
       this.checkPasswords();
       this.errorMessage = null;
+      this.passwordErrors = this.getPasswordErrors();
+      this.emailErrors = this.getEmailErrors();
     });
   }
 
@@ -95,6 +117,36 @@ export class RegisterComponent implements OnInit {
     const password = this.registerForm.get('password')?.value;
     const confirmPassword = this.registerForm.get('confirmPassword')?.value;
     this.passwordMismatch = password !== confirmPassword;
+  }
+
+  getPasswordErrors(): string[] {
+    const passwordControl = this.registerForm.get('password');
+    const errors: string[] = [];
+    if (passwordControl?.hasError('required')) {
+      errors.push('Password is required.');
+    }
+    if (passwordControl?.hasError('minlength')) {
+      errors.push('Password must be at least 8 characters long.');
+    }
+    if (passwordControl?.hasError('uppercase')) {
+      errors.push('Password must contain at least one uppercase letter.');
+    }
+    if (passwordControl?.hasError('specialCharacter')) {
+      errors.push('Password must contain at least one special character.');
+    }
+    return errors;
+  }
+
+  getEmailErrors(): string[] {
+    const emailControl = this.registerForm.get('email');
+    const errors: string[] = [];
+    if (emailControl?.hasError('required')) {
+      errors.push('Email is required.');
+    }
+    if (emailControl?.hasError('email')) {
+      errors.push('Email must be a valid email address.');
+    }
+    return errors;
   }
 
   onSubmit(): void {
@@ -112,6 +164,12 @@ export class RegisterComponent implements OnInit {
           } else {
             this.errorMessage = 'An error occurred during registration.';
           }
+        },
+        complete: () => {
+          this.notificationService.showNotification(
+            'Registration successful. Please log in.',
+            NotificationType.success,
+          );
         },
       });
     }
