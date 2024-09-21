@@ -7,11 +7,12 @@ import { AuthService } from './auth/data-access/auth.service';
 import { TasksService } from './task/data-access/task.service';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { Role } from './shared/enums/role.enum';
+import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent],
+  imports: [RouterOutlet, NavbarComponent, CookieBannerComponent],
   styles: [
     `
       main {
@@ -51,18 +52,21 @@ import { Role } from './shared/enums/role.enum';
     <main class="grid pt-4">
       <router-outlet />
     </main>
-    <div class="toggle-button" (click)="togglePanel()">
-      @if (!panelOpen) {
-        <span>&#8592;</span>
-      } @else {
-        <span>&#8594;</span>
-      }
-    </div>
+    @if (isLoggedIn) {
+      <div class="toggle-button" (click)="togglePanel()">
+        @if (!panelOpen) {
+          <span>&#8592;</span>
+        } @else {
+          <span>&#8594;</span>
+        }
+      </div>
+    }
     <div class="info-panel" [class.open]="panelOpen">
       <div>Your roles: {{ userRoles?.join(', ') }}</div>
       <div>Current time: {{ currentTime }}</div>
       <div>Browser info: {{ browserInfo }}</div>
     </div>
+    <app-cookie-banner></app-cookie-banner>
   `,
 })
 export class AppComponent implements OnInit {
@@ -79,6 +83,7 @@ export class AppComponent implements OnInit {
   protected panelOpen: boolean = false;
   protected currentTime: string = '';
   protected browserInfo: string = '';
+  protected isLoggedIn: boolean = false;
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
@@ -91,6 +96,7 @@ export class AppComponent implements OnInit {
         this.projectCount = state.projects.length;
       });
     }
+    this.isLoggedIn = this.authService.isLoggedIn();
     this.userRoles = this.authService.getUserRoles();
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
