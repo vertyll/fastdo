@@ -31,6 +31,10 @@ export class AuthService {
     if (user) {
       throw new UnauthorizedException("User already exists");
     }
+    const role = await this.rolesService.findRoleByName(Role.User);
+    if (!role) {
+      throw new UnauthorizedException("Role does not exist");
+    }
 
     const { email, password } = registerDto;
     const hashedPassword = await bcrypt.hash(password, 10);
