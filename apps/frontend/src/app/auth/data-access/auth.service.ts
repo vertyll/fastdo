@@ -1,51 +1,59 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { Injectable, inject } from '@angular/core';
+import { Observable, tap, map } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 import { LoginModel } from '../models/login.model';
 import { RegisterModel } from '../models/register.model';
-import { jwtDecode } from 'jwt-decode';
 import { Role } from '../../shared/enums/role.enum';
+import { AuthApiService } from './auth.api.service';
+import { AuthStateService } from './auth.state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly URL = environment.backendUrl;
-  private readonly http = inject(HttpClient);
-  private roles: Role[] | null = null;
+  private readonly authApiService = inject(AuthApiService);
+  private readonly authStateService = inject(AuthStateService);
 
-  login(dto: LoginModel): Observable<{ access_token: string }> {
-    return this.http
-      .post<{ access_token: string }>(`${this.URL}/auth/login`, dto)
-      .pipe(
-        tap((response) => {
-          localStorage.setItem('access_token', response.access_token);
-          this.decodeToken(response.access_token);
-        }),
-      );
+  authState$ = this.authStateService.getState();
+
+  login(dto: LoginModel): Observable<void> {
+    return this.authApiService.login(dto).pipe(
+      tap((response) => {
+        localStorage.setItem('access_token', response.access_token);
+        this.decodeToken(response.access_token);
+      }),
+      map(() => void 0),
+    );
   }
 
   register(dto: RegisterModel): Observable<any> {
-    return this.http.post(`${this.URL}/auth/register`, dto);
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('access_token');
+    return this.authApiService.register(dto);
   }
 
   logout(): void {
     localStorage.removeItem('access_token');
-    this.roles = null;
+    this.authStateService.clear();
+  }
+
+  isLoggedIn(): boolean {
+    return this.authStateService.getState()().isLoggedIn;
+  }
+
+  getUserRoles(): Role[] | null {
+    return this.authStateService.getState()().roles;
+  }
+
+  initializeAuth(): void {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      this.decodeToken(token);
+    }
   }
 
   private decodeToken(token: string): void {
     const decodedToken: any = jwtDecode(token);
-    this.roles = decodedToken.roles || null;
-  }
-
-  getUserRoles(): Role[] | null {
-    this.decodeToken(localStorage.getItem('access_token') || '');
-    return this.roles;
+    const roles = decodedToken.roles || null;
+    this.authStateService.setLoggedIn(true);
+    this.authStateService.setRoles(roles);
   }
 }
