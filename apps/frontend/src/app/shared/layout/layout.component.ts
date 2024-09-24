@@ -28,16 +28,6 @@ import { InfoPanelComponent } from '../components/info-panel/info-panel.componen
     `,
   ],
   template: `
-    <h1
-      class="text-orange-500 uppercase py-4 text-2xl text-center bg-black cursor-pointer"
-      (click)="
-        authService.isLoggedIn()
-          ? router.navigate(['/tasks'])
-          : router.navigate(['/'])
-      "
-    >
-      todolist
-    </h1>
     <app-navbar
       [urgentCount]="urgentCount()"
       [projectCount]="projectCount()"

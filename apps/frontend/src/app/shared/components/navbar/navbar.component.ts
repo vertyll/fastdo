@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
   styles: [
     `
       nav {
-        @apply px-12;
+        @apply px-12 border-t-4 border-b-4 border-black;
       }
       .menu-open {
         @apply fixed inset-0 bg-black bg-opacity-50 z-50;
@@ -25,6 +25,15 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
   template: `
     <nav class="bg-orange-300 py-4">
       <div class="flex justify-between items-center">
+        <span
+          (click)="
+            authService.isLoggedIn()
+              ? router.navigate(['/tasks'])
+              : router.navigate(['/'])
+          "
+          class="border-2 border-black text-orange-500 font-bold px-2 py-1 mx-4 cursor-pointer"
+          >FASTDO</span
+        >
         <ul class="hidden md:flex gap-6">
           @if (authService.isLoggedIn()) {
             <li>
@@ -136,7 +145,7 @@ export class NavbarComponent {
   @Input() projectCount: number = 0;
   protected readonly authService = inject(AuthService);
   protected menuOpen: boolean = false;
-  private readonly router = inject(Router);
+  protected readonly router = inject(Router);
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
