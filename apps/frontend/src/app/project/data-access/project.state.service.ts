@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Project } from '../model/Project';
+import { Project } from '../models/Project';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsStateService {

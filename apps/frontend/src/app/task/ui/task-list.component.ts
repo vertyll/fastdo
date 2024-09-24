@@ -1,14 +1,14 @@
 import { Component, Input, inject } from '@angular/core';
-import { Task } from '../model/Task';
+import { Task } from '../models/Task';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { featherCalendar } from '@ng-icons/feather-icons';
-import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
-import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
+import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button/remove-item-button.component';
 import { TaskCardComponent } from './task-card.component';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { TasksService } from '../data-access/task.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea/autosize-textarea.component';
 
 @Component({
   selector: 'app-tasks-list',

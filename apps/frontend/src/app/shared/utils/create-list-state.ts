@@ -1,6 +1,6 @@
 import { Observable, combineLatest, map } from "rxjs";
-import { LoadingState } from "../task/data-access/task.api.service";
-import { ListState, LIST_STATE_VALUE } from "./list-state.type";
+import { LoadingState } from "../../task/data-access/task.api.service";
+import { ListState, LIST_STATE_VALUE } from "../types/list-state.type";
 
 export function createListState<S, R extends Array<unknown>>(
   state$: Observable<S>,

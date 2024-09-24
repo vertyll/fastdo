@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { CreateProjectDto } from "./dto/create-project.dto";
-import { GetAllProjectsSearchParams } from "./dto/get-all-projects-search-params.dto";
-import { UpdateProjectDto } from "./dto/update-project.dto";
+import { CreateProjectDto } from "./dtos/create-project.dto";
+import { GetAllProjectsSearchParams } from "./dtos/get-all-projects-search-params.dto";
+import { UpdateProjectDto } from "./dtos/update-project.dto";
 import { Project } from "./entities/project.entity";
 import { ProjectRepository } from "./repositories/project.repository";
 

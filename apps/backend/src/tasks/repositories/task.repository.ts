@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
-import { GetAllTasksSearchParams } from "../dto/get-all-tasks-search-params.dto";
+import { GetAllTasksSearchParams } from "../dtos/get-all-tasks-search-params.dto";
 import { Task } from "../entities/task.entity";
 
 @Injectable()

@@ -9,9 +9,9 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CreateTaskDto } from "./dto/create-task.dto";
-import { GetAllTasksSearchParams } from "./dto/get-all-tasks-search-params.dto";
-import { UpdateTaskDto } from "./dto/update-task.dto";
+import { CreateTaskDto } from "./dtos/create-task.dto";
+import { GetAllTasksSearchParams } from "./dtos/get-all-tasks-search-params.dto";
+import { UpdateTaskDto } from "./dtos/update-task.dto";
 import { TasksService } from "./tasks.service";
 
 @ApiTags("tasks")

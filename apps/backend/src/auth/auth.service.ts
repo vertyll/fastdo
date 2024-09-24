@@ -4,8 +4,8 @@ import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
 import { RolesService } from "../roles/roles.service";
 import { Role } from "../common/enums/role.enum";
-import { RegisterDto } from "./dto/register.dto";
-import { LoginDto } from "./dto/login.dto";
+import { LoginDto } from "./dtos/login.dto";
+import { RegisterDto } from "./dtos/register.dto";
 
 @Injectable()
 export class AuthService {

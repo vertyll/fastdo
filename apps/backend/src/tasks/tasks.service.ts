@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Project } from "src/projects/entities/project.entity";
-import { CreateTaskDto } from "./dto/create-task.dto";
-import { GetAllTasksSearchParams } from "./dto/get-all-tasks-search-params.dto";
-import { UpdateTaskDto } from "./dto/update-task.dto";
+import { CreateTaskDto } from "./dtos/create-task.dto";
+import { GetAllTasksSearchParams } from "./dtos/get-all-tasks-search-params.dto";
+import { UpdateTaskDto } from "./dtos/update-task.dto";
 import { Task } from "./entities/task.entity";
 import { TaskRepository } from "./repositories/task.repository";
 

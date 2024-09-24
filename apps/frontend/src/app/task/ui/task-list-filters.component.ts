@@ -5,7 +5,7 @@ import {
   NonNullableFormBuilder,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { TASK_STATUS, TaskStatus } from '../model/task-status.enum';
+import { TASK_STATUS, TaskStatus } from '../enums/task-status.enum';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { featherChevronDown, featherChevronUp } from '@ng-icons/feather-icons';
 

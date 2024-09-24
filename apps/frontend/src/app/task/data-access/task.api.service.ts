@@ -1,9 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Task } from '../model/Task';
+import { Task } from '../models/Task';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, delay, map, tap } from 'rxjs';
-import { FetchingError } from 'src/app/utils/list-state.type';
 import { environment } from 'src/environments/environment';
+import { FetchingError } from 'src/app/shared/types/list-state.type';
 
 export type TaskUpdatePayload = {
   isDone?: boolean;
@@ -74,7 +74,10 @@ export class TasksApiService {
     );
   }
 
-  getAllByProjectId(projectId: string, searchParams: GetAllTasksSearchParams): Observable<any> {
+  getAllByProjectId(
+    projectId: string,
+    searchParams: GetAllTasksSearchParams,
+  ): Observable<any> {
     return this.withLoadingState(
       this.http.get<Task[]>(`${this.URL}/tasks/project/${projectId}`, {
         observe: 'response',

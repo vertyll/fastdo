@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap, map } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { LoginModel } from '../models/login.model';
-import { RegisterModel } from '../models/register.model';
+import { Login } from '../models/Login';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
+import { Register } from '../models/Register';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +16,7 @@ export class AuthService {
   isLoggedIn = this.authStateService.isLoggedIn;
   userRoles = this.authStateService.roles;
 
-  login(dto: LoginModel): Observable<void> {
+  login(dto: Login): Observable<void> {
     return this.authApiService.login(dto).pipe(
       tap((response) => {
         localStorage.setItem('access_token', response.access_token);
@@ -26,7 +26,7 @@ export class AuthService {
     );
   }
 
-  register(dto: RegisterModel): Observable<any> {
+  register(dto: Register): Observable<any> {
     return this.authApiService.register(dto);
   }
 

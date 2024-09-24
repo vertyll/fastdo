@@ -1,17 +1,18 @@
 import { Component, inject } from '@angular/core';
-import { Project } from '../model/Project';
-import { ListState, LIST_STATE_VALUE } from '../../utils/list-state.type';
-import { SubmitTextComponent } from '@ui/submit-text.component';
+import { Project } from '../models/Project';
+import {
+  ListState,
+  LIST_STATE_VALUE,
+} from '../../shared/types/list-state.type';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { featherCalendar, featherEdit } from '@ng-icons/feather-icons';
-import { CustomDatePipe } from '../../utils/pipes/custom-date.pipe';
+import { CustomDatePipe } from '../../shared/pipes/custom-date.pipe';
 import {
   ProjectsListFiltersComponent,
   ProjectsListFiltersFormValue,
 } from '../ui/project-list-filters.component';
-import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
-import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
+import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button/remove-item-button.component';
 import { getAllProjectsSearchParams } from '../data-access/project-filters.adapter';
 import { ProjectsStateService } from '../data-access/project.state.service';
 import { ProjectsService } from '../data-access/project.service';
@@ -19,6 +20,8 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
 import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
+import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea/autosize-textarea.component';
+import { SubmitTextComponent } from 'src/app/shared/components/submit-text/submit-text.component';
 
 interface GetAllProjectsSearchParams {
   q: string;

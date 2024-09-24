@@ -6,8 +6,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { LIST_STATE_VALUE } from '../../utils/list-state.type';
-import { SubmitTextComponent } from '@ui/submit-text.component';
+import { LIST_STATE_VALUE } from '../../shared/types/list-state.type';
 import {
   TasksListFiltersComponent,
   TasksListFiltersFormValue,
@@ -25,12 +24,12 @@ import {
 } from '../ui/task-list-view-mode.component';
 import { TasksService } from '../data-access/task.service';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, distinctUntilChanged, map, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, map, switchMap } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
-import { Task } from '../model/Task';
 import { TasksStateService } from '../data-access/task.state.service';
+import { SubmitTextComponent } from 'src/app/shared/components/submit-text/submit-text.component';
 
 @Component({
   selector: 'app-task-list-page',

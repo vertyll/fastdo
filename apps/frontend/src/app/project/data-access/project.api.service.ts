@@ -1,9 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Project } from '../model/Project';
+import { Project } from '../models/Project';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
-import { FetchingError } from 'src/app/utils/list-state.type';
 import { environment } from 'src/environments/environment';
+import { FetchingError } from 'src/app/shared/types/list-state.type';
 
 export type GetAllProjectsSearchParams = {
   q: string;

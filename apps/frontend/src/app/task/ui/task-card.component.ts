@@ -1,15 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Task } from '../model/Task';
-import { RemoveItemButtonComponent } from '@ui/remove-item-button.component';
-import { AutosizeTextareaComponent } from '@ui/autosize-textarea.component';
+import { Task } from '../models/Task';
+import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { CustomDatePipe } from 'src/app/utils/pipes/custom-date.pipe';
+import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
 import {
   bootstrapBookmark,
   bootstrapBookmarkFill,
 } from '@ng-icons/bootstrap-icons';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
+import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea/autosize-textarea.component';
 
 @Component({
   selector: 'app-task-card',

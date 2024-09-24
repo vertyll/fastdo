@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { GetAllProjectsSearchParams } from './dto/get-all-projects-search-params.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { CreateProjectDto } from './dtos/create-project.dto';
+import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';
+import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Project } from './entities/project.entity';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsService } from './projects.service';

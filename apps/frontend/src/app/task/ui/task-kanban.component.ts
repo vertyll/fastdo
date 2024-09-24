@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TasksListComponent } from './task-list.component';
-import { Task } from '../model/Task';
+import { Task } from '../models/Task';
 
 @Component({
   standalone: true,

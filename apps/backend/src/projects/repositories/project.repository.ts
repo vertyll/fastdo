@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
-import { GetAllProjectsSearchParams } from "../dto/get-all-projects-search-params.dto";
+import { GetAllProjectsSearchParams } from "../dtos/get-all-projects-search-params.dto";
 import { Project } from "../entities/project.entity";
 
 @Injectable()
