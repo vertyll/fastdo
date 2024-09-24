@@ -5,10 +5,10 @@ import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ProjectsStateService } from 'src/app/project/data-access/project.state.service';
 import { TasksService } from 'src/app/task/data-access/task.service';
 import { TasksStateService } from 'src/app/task/data-access/task.state.service';
-import { CookieBannerComponent } from '../components/cookie-banner/cookie-banner.component';
-import { NavbarComponent } from '../components/navbar/navbar.component';
-import { FooterComponent } from '../components/footer/footer.component';
-import { InfoPanelComponent } from '../components/info-panel/info-panel.component';
+import { CookieBannerComponent } from '../components/cookie-banner.component';
+import { NavbarComponent } from '../components/navbar.component';
+import { FooterComponent } from '../components/footer.component';
+import { InfoPanelComponent } from '../components/info-panel.component';
 
 @Component({
   selector: 'app-layout',

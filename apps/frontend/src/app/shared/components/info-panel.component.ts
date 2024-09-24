@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { AuthService } from 'src/app/auth/data-access/auth.service';
 
 @Component({
   selector: 'app-info-panel',

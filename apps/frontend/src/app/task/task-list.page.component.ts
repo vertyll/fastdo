@@ -6,30 +6,30 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { LIST_STATE_VALUE } from '../../shared/types/list-state.type';
+import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import {
   TasksListFiltersComponent,
   TasksListFiltersFormValue,
-} from '../ui/task-list-filters.component';
-import { getAllTasksSearchParams } from '../data-access/task-filters.adapter';
+} from './ui/task-list-filters.component';
+import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { NgIconComponent } from '@ng-icons/core';
-import { AppConfigStateService } from '../../config/config.state.service';
-import { GetAllTasksSearchParams } from '../data-access/task.api.service';
+import { AppConfigStateService } from '../config/config.state.service';
+import { GetAllTasksSearchParams } from './data-access/task.api.service';
 import { AsyncPipe } from '@angular/common';
-import { TasksListComponent } from '../ui/task-list.component';
-import { TasksKanbanViewComponent } from '../ui/task-kanban.component';
+import { TasksListComponent } from './ui/task-list.component';
+import { TasksKanbanViewComponent } from './ui/task-kanban.component';
 import {
   TasksListViewMode,
   TasksListViewModeComponent,
-} from '../ui/task-list-view-mode.component';
-import { TasksService } from '../data-access/task.service';
+} from './ui/task-list-view-mode.component';
+import { TasksService } from './data-access/task.service';
 import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, map, switchMap } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
-import { TasksStateService } from '../data-access/task.state.service';
-import { SubmitTextComponent } from 'src/app/shared/components/submit-text/submit-text.component';
+import { TasksStateService } from './data-access/task.state.service';
+import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
 
 @Component({
   selector: 'app-task-list-page',
