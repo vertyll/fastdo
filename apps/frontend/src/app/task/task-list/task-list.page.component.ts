@@ -44,7 +44,7 @@ import { SubmitTextComponent } from 'src/app/shared/components/submit-text/submi
     AsyncPipe,
   ],
   template: `
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col gap-4">
       @if (!projectName) {
         <h2 class="text-2xl font-bold mb-4">All tasks</h2>
       } @else {

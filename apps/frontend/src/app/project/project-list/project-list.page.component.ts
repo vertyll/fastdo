@@ -47,7 +47,7 @@ interface GetAllProjectsSearchParams {
     HasRoleDirective,
   ],
   template: `
-    <div class="flex flex-col items-center mb-6">
+    <div class="flex flex-col mb-6 gap-4">
       <h2 class="text-2xl font-bold mb-4">Projects</h2>
       <app-submit-text
         (submitText)="
