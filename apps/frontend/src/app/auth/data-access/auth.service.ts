@@ -3,7 +3,6 @@ import { Observable, tap, map } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { LoginModel } from '../models/login.model';
 import { RegisterModel } from '../models/register.model';
-import { Role } from '../../shared/enums/role.enum';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
 
@@ -14,7 +13,8 @@ export class AuthService {
   private readonly authApiService = inject(AuthApiService);
   private readonly authStateService = inject(AuthStateService);
 
-  authState$ = this.authStateService.getState();
+  isLoggedIn = this.authStateService.isLoggedIn;
+  userRoles = this.authStateService.roles;
 
   login(dto: LoginModel): Observable<void> {
     return this.authApiService.login(dto).pipe(
@@ -33,14 +33,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('access_token');
     this.authStateService.clear();
-  }
-
-  isLoggedIn(): boolean {
-    return this.authStateService.getState()().isLoggedIn;
-  }
-
-  getUserRoles(): Role[] | null {
-    return this.authStateService.getState()().roles;
   }
 
   initializeAuth(): void {

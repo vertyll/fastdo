@@ -1,48 +1,32 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { Project } from '../model/Project';
-import { BehaviorSubject } from 'rxjs';
-
-const initialState = {
-  projects: [] as Project[],
-};
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsStateService {
-  private readonly state$ = new BehaviorSubject(initialState);
+  private projectsSignal = signal<Project[]>([]);
 
-  value$ = this.state$.asObservable();
+  projects = computed(() => this.projectsSignal());
+  projectCount = computed(() => this.projectsSignal().length);
 
   setProjectList(projects: Project[]): void {
-    this.state$.next({
-      projects,
-    });
+    this.projectsSignal.set(projects);
   }
 
   addProject(project: Project): void {
-    const updatedProjects = [...this.state$.value.projects, project];
-
-    this.state$.next({
-      projects: updatedProjects,
-    });
+    this.projectsSignal.update((projects) => [...projects, project]);
   }
 
   updateProject(updatedProject: Project): void {
-    const updatedProjects = this.state$.value.projects.map((project) =>
-      project.id === updatedProject.id ? updatedProject : project,
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === updatedProject.id ? updatedProject : project,
+      ),
     );
-
-    this.state$.next({
-      projects: updatedProjects,
-    });
   }
 
   removeProject(projectId: Project['id']): void {
-    const updatedProjects = this.state$.value.projects.filter((project) => {
-      return project.id !== projectId;
-    });
-
-    this.state$.next({
-      projects: updatedProjects,
-    });
+    this.projectsSignal.update((projects) =>
+      projects.filter((project) => project.id !== projectId),
+    );
   }
 }

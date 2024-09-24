@@ -1,5 +1,4 @@
-import { Injectable, inject } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { Injectable, inject, effect, computed } from '@angular/core';
 import {
   GetAllTasksSearchParams,
   TaskUpdatePayload,
@@ -7,21 +6,21 @@ import {
 } from './task.api.service';
 import { Observable, tap } from 'rxjs';
 import { TasksStateService } from './task.state.service';
-import { createListState } from 'src/app/utils/create-list-state';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TasksService {
   private readonly httpService = inject(TasksApiService);
-  private readonly loadingState$ = toObservable(this.httpService.$loadingState);
-  public readonly state = inject(TasksStateService);
+  private readonly state = inject(TasksStateService);
 
-  listState$ = createListState(
-    this.state.value$,
-    this.loadingState$,
-    (state) => state.tasks,
-  );
+  tasks = this.state.tasks;
+  urgentCount = this.state.urgentCount;
+
+  listState = computed(() => ({
+    items: this.tasks(),
+    loading: this.httpService.$loadingState().loading,
+  }));
 
   getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
@@ -33,7 +32,10 @@ export class TasksService {
     );
   }
 
-  getAllByProjectId(projectId: string, searchParams: GetAllTasksSearchParams): Observable<any> {
+  getAllByProjectId(
+    projectId: string,
+    searchParams: GetAllTasksSearchParams,
+  ): Observable<any> {
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap((response) => {
         if (response.body) {

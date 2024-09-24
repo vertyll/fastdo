@@ -1,8 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-
-import { map, Observable, tap } from 'rxjs';
-import { createListState } from 'src/app/utils/create-list-state';
+import { Injectable, inject, effect, computed } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import {
   GetAllProjectsSearchParams,
   ProjectsApiService,
@@ -14,14 +11,15 @@ import { ProjectsStateService } from './project.state.service';
 })
 export class ProjectsService {
   private readonly httpService = inject(ProjectsApiService);
-  private readonly loadingState$ = toObservable(this.httpService.$loadingState);
-  public state = inject(ProjectsStateService);
+  private readonly state = inject(ProjectsStateService);
 
-  listState$ = createListState(
-    this.state.value$,
-    this.loadingState$,
-    (state) => state.projects,
-  );
+  projects = this.state.projects;
+  projectCount = this.state.projectCount;
+
+  listState = computed(() => ({
+    items: this.projects(),
+    loading: this.httpService.$loadingState().loading,
+  }));
 
   getAll(searchParams?: GetAllProjectsSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(

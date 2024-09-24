@@ -1,54 +1,32 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { Task } from '../model/Task';
-import { BehaviorSubject } from 'rxjs';
-
-const initialState = {
-  tasks: [] as Task[],
-  urgentCount: 0,
-};
 
 @Injectable({ providedIn: 'root' })
 export class TasksStateService {
-  private readonly state$ = new BehaviorSubject(initialState);
-  public value$ = this.state$.asObservable();
+  private tasksSignal = signal<Task[]>([]);
+
+  tasks = computed(() => this.tasksSignal());
+  urgentCount = computed(
+    () => this.tasksSignal().filter((task) => task.isUrgent).length,
+  );
 
   setTaskList(tasks: Task[]): void {
-    this.state$.next({
-      tasks,
-      urgentCount: tasks.filter((task) => task.isUrgent).length,
-    });
+    this.tasksSignal.set(tasks);
   }
 
   addTask(task: Task): void {
-    const updatedTasks = [...this.state$.value.tasks, task];
-    const updatedUrgentCount = updatedTasks.filter((t) => t.isUrgent).length;
-
-    this.state$.next({
-      tasks: updatedTasks,
-      urgentCount: updatedUrgentCount,
-    });
+    this.tasksSignal.update((tasks) => [...tasks, task]);
   }
 
   updateTask(updatedTask: Task): void {
-    const updatedTasks = this.state$.value.tasks.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task,
+    this.tasksSignal.update((tasks) =>
+      tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
     );
-    const updatedUrgentCount = updatedTasks.filter((t) => t.isUrgent).length;
-
-    this.state$.next({
-      tasks: updatedTasks,
-      urgentCount: updatedUrgentCount,
-    });
   }
 
   removeTask(taskId: Task['id']): void {
-    const updatedTasks = this.state$.value.tasks.filter((task) => {
-      return task.id !== taskId;
-    });
-
-    this.state$.next({
-      tasks: updatedTasks,
-      urgentCount: updatedTasks.filter((task) => task.isUrgent).length,
-    });
+    this.tasksSignal.update((tasks) =>
+      tasks.filter((task) => task.id !== taskId),
+    );
   }
 }

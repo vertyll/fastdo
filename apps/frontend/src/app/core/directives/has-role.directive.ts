@@ -22,7 +22,7 @@ export class HasRoleDirective implements OnInit {
   private authService = inject(AuthService);
 
   ngOnInit() {
-    const userRoles = this.authService.getUserRoles();
+    const userRoles = this.authService.userRoles();
     if (!userRoles) {
       this.viewContainer.clear();
     } else {

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { Role } from '../../shared/enums/role.enum';
 
 export interface AuthState {
@@ -15,9 +15,8 @@ export class AuthStateService {
     roles: null,
   });
 
-  getState() {
-    return this.authState.asReadonly();
-  }
+  isLoggedIn = computed(() => this.authState().isLoggedIn);
+  roles = computed(() => this.authState().roles);
 
   setLoggedIn(isLoggedIn: boolean) {
     this.authState.update((state) => ({ ...state, isLoggedIn }));

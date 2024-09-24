@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { TasksStateService } from './task/data-access/task.state.service';
 import { ProjectsStateService } from './project/data-access/project.state.service';
@@ -6,7 +6,6 @@ import { ProjectsService } from './project/data-access/project.service';
 import { AuthService } from './auth/data-access/auth.service';
 import { TasksService } from './task/data-access/task.service';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
-import { Role } from './shared/enums/role.enum';
 import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 
 @Component({
@@ -46,13 +45,13 @@ import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-
       todolist
     </h1>
     <app-navbar
-      [urgentCount]="urgentCount"
-      [projectCount]="projectCount"
+      [urgentCount]="urgentCount()"
+      [projectCount]="projectCount()"
     ></app-navbar>
     <main class="grid pt-4">
       <router-outlet />
     </main>
-    @if (isLoggedIn) {
+    @if (isLoggedIn()) {
       <div class="toggle-button" (click)="togglePanel()">
         @if (!panelOpen) {
           <span>&#8592;</span>
@@ -62,7 +61,7 @@ import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-
       </div>
     }
     <div class="info-panel" [class.open]="panelOpen">
-      <div>Your roles: {{ userRoles?.join(', ') }}</div>
+      <div>Your roles: {{ userRolesString() }}</div>
       <div>Current time: {{ currentTime }}</div>
       <div>Browser info: {{ browserInfo }}</div>
     </div>
@@ -76,28 +75,31 @@ export class AppComponent implements OnInit {
   private readonly tasksService = inject(TasksService);
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
-
-  protected urgentCount: number = 0;
-  protected projectCount: number = 0;
-  protected userRoles: Role[] | null = null;
+  protected urgentCount = this.tasksStateService.urgentCount;
+  protected projectCount = this.projectsStateService.projectCount;
+  protected isLoggedIn = this.authService.isLoggedIn;
+  protected userRoles = this.authService.userRoles;
+  protected userRolesString = computed(
+    () => this.userRoles()?.join(', ') || '',
+  );
   protected panelOpen: boolean = false;
   protected currentTime: string = '';
   protected browserInfo: string = '';
-  protected isLoggedIn: boolean = false;
+
+  constructor() {
+    effect(
+      () => {
+        if (this.isLoggedIn()) {
+          this.projectsService.getAll().subscribe();
+          this.tasksService.getAll().subscribe();
+        }
+      },
+      { allowSignalWrites: true },
+    );
+  }
 
   ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
-      this.projectsService.getAll().subscribe();
-      this.tasksService.getAll().subscribe();
-      this.tasksStateService.value$.subscribe((state) => {
-        this.urgentCount = state.urgentCount;
-      });
-      this.projectsStateService.value$.subscribe((state) => {
-        this.projectCount = state.projects.length;
-      });
-    }
-    this.isLoggedIn = this.authService.isLoggedIn();
-    this.userRoles = this.authService.getUserRoles();
+    this.authService.initializeAuth();
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
     setInterval(() => this.updateTime(), 1000);

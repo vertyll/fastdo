@@ -4,6 +4,7 @@ import {
   booleanAttribute,
   computed,
   inject,
+  OnInit,
 } from '@angular/core';
 import { LIST_STATE_VALUE } from '../../utils/list-state.type';
 import { SubmitTextComponent } from '@ui/submit-text.component';
@@ -24,10 +25,12 @@ import {
 } from '../ui/task-list-view-mode.component';
 import { TasksService } from '../data-access/task.service';
 import { ActivatedRoute } from '@angular/router';
-import { distinctUntilChanged, map, switchMap } from 'rxjs';
+import { Observable, distinctUntilChanged, map, switchMap, tap } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
+import { Task } from '../model/Task';
+import { TasksStateService } from '../data-access/task.state.service';
 
 @Component({
   selector: 'app-task-list-page',
@@ -42,68 +45,52 @@ import { ProjectsService } from 'src/app/project/data-access/project.service';
     AsyncPipe,
   ],
   template: `
-    @if (listState$ | async; as listState) {
-      <div class="flex flex-col items-center">
-        @if (!projectName) {
-          <h2 class="text-2xl font-bold mb-4">All tasks</h2>
-        } @else {
-          <h2 class="text-2xl font-bold mb-4">
-            Tasks for project: {{ projectName }}
-          </h2>
-        }
-        <app-submit-text
-          (submitText)="
-            listState.state === listStateValue.SUCCESS && addTask($event)
-          "
-        />
-        <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
-      </div>
-
-      <div class="how-to-use-section">
-        <button (click)="showHowToUse = !showHowToUse">
-          <span class="font-semibold">How to use</span>
-          @if (showHowToUse) {
-            <span>[-]</span>
-          } @else {
-            <span>[+]</span>
-          }
-        </button>
-
-        @if (showHowToUse) {
-          <div>
-            <p>Change name: double click to edit task name</p>
-            <p>Change name without saving: press esc</p>
-            <p>Change status: click on the task</p>
-          </div>
-        }
-      </div>
-
-      <app-tasks-list-view-mode
-        [$view]="$view()"
-        (updateTasksListView)="configStateService.updateTasksListView($event)"
-      />
-
-      @switch (listState.state) {
-        @case (listStateValue.SUCCESS) {
-          @if ($view() === 'list') {
-            <app-tasks-list class="block mt-4" [tasks]="listState.results" />
-          } @else {
-            <app-tasks-kanban-view [tasks]="listState.results" />
-          }
-        }
-        @case (listStateValue.ERROR) {
-          <p class="text-red-500">
-            {{ listState.error.message }}
-          </p>
-        }
-        @case (listStateValue.LOADING) {
-          <p class="text-gray-600">Loading...</p>
-        }
+    <div class="flex flex-col items-center">
+      @if (!projectName) {
+        <h2 class="text-2xl font-bold mb-4">All tasks</h2>
+      } @else {
+        <h2 class="text-2xl font-bold mb-4">
+          Tasks for project: {{ projectName }}
+        </h2>
       }
+      <app-submit-text (submitText)="addTask($event)" />
+      <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
+    </div>
+
+    <div class="how-to-use-section">
+      <button (click)="showHowToUse = !showHowToUse">
+        <span class="font-semibold">How to use</span>
+        @if (showHowToUse) {
+          <span>[-]</span>
+        } @else {
+          <span>[+]</span>
+        }
+      </button>
+
+      @if (showHowToUse) {
+        <div>
+          <p>Change name: double click to edit task name</p>
+          <p>Change name without saving: press esc</p>
+          <p>Change status: click on the task</p>
+        </div>
+      }
+    </div>
+
+    <app-tasks-list-view-mode
+      [$view]="$view()"
+      (updateTasksListView)="configStateService.updateTasksListView($event)"
+    />
+
+    @if ($view() === 'list') {
+      <app-tasks-list class="block mt-4" [tasks]="tasksStateService.tasks()" />
+    } @else {
+      <app-tasks-kanban-view [tasks]="tasksStateService.tasks()" />
     }
+
+    <p>Urgent tasks count: {{ tasksStateService.urgentCount() }}</p>
   `,
 })
-export class TaskListPageComponent {
+export class TaskListPageComponent implements OnInit {
   @Input() projectId?: string;
   @Input() view?: TasksListViewMode;
   @Input({ transform: booleanAttribute }) isUrgent?: boolean;
@@ -114,11 +101,11 @@ export class TaskListPageComponent {
   private readonly projectsService = inject(ProjectsService);
   protected showHowToUse = false;
   protected readonly configStateService = inject(AppConfigStateService);
+  protected readonly tasksStateService = inject(TasksStateService);
   protected readonly $view = computed(
     () => this.configStateService.$value().tasksListView,
   );
   protected readonly listStateValue = LIST_STATE_VALUE;
-  protected listState$ = this.tasksService.listState$;
   protected projectName!: string;
 
   ngOnInit(): void {
@@ -180,7 +167,6 @@ export class TaskListPageComponent {
   addTask(name: string): void {
     this.tasksService.add(name, this.projectId).subscribe({
       next: () => {
-        console.log('Task added successfully');
         this.initializeTaskList();
       },
       error: (err) => {
