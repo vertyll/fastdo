@@ -4,7 +4,7 @@ import { TaskListPageComponent } from './task/task-list/task-list.page.component
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { PublicDashboardComponent } from './dashboard/public-dashboard/public-dashboard';
+import { PublicDashboardComponent } from './dashboard/public-dashboard/public-dashboard.component';
 
 export const routes: Routes = [
   {
