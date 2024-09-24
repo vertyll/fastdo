@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../data-access/auth.service';
+import { AuthService } from './data-access/auth.service';
 
 @Component({
   selector: 'app-login',

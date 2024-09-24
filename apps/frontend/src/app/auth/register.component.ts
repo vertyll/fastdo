@@ -5,11 +5,11 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { AuthService } from '../data-access/auth.service';
 import { Router } from '@angular/router';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { passwordValidator } from '../validators/password.validator';
+import { AuthService } from './data-access/auth.service';
+import { passwordValidator } from './validators/password.validator';
 
 @Component({
   selector: 'app-register',
