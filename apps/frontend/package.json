@@ -21,7 +21,6 @@
     "@angular/platform-browser-dynamic": "^18.1.0",
     "@angular/router": "^18.1.0",
     "@ng-icons/core": "^25.2.0",
-    "@ng-icons/feather-icons": "^25.2.0",
     "@ng-icons/heroicons": "^29.5.0",
     "jwt-decode": "^4.0.0",
     "rxjs": "~7.8.0",
