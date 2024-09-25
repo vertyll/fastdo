@@ -125,7 +125,7 @@ export class TaskListPageComponent implements OnInit {
   }
 
   protected addTask(name: string): void {
-    const validation = validateTaskName(this.projectName);
+    const validation = validateTaskName(name);
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,
