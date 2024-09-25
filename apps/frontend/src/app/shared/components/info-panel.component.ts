@@ -1,8 +1,15 @@
 import { Component, Input } from '@angular/core';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {
+  bootstrapArrowLeft,
+  bootstrapArrowRight,
+} from '@ng-icons/bootstrap-icons';
 
 @Component({
   selector: 'app-info-panel',
   standalone: true,
+  imports: [NgIconComponent],
+  providers: [provideIcons({ bootstrapArrowLeft, bootstrapArrowRight })],
   styles: [
     `
       .info-panel {
@@ -26,15 +33,24 @@ import { Component, Input } from '@angular/core';
       <div>
         <div class="toggle-button" (click)="togglePanel()">
           @if (!panelOpen) {
-            <span>&#8592;</span>
+            <ng-icon name="bootstrapArrowLeft"></ng-icon>
           } @else {
-            <span>&#8594;</span>
+            <ng-icon name="bootstrapArrowRight"></ng-icon>
           }
         </div>
         <div class="info-panel" [class.open]="panelOpen">
-          <div>Your roles: {{ userRolesString }}</div>
-          <div>Current time: {{ currentTime }}</div>
-          <div>Browser info: {{ browserInfo }}</div>
+          <div>
+            <b>User roles</b>:
+            <span class="text-green-500"> {{ userRolesString }} </span>
+          </div>
+          <div>
+            <b>Current time</b>:
+            <span class="text-green-500"> {{ currentTime }} </span>
+          </div>
+          <div>
+            <b>Browser info</b>:
+            {{ browserInfo }}
+          </div>
         </div>
       </div>
     }
