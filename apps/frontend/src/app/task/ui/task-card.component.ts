@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Task } from '../models/Task';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -8,6 +8,9 @@ import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
+import { validateTaskName } from '../validators/task-name.validator';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
 
 @Component({
   selector: 'app-task-card',
@@ -94,6 +97,7 @@ export class TaskCardComponent {
   @Output() update = new EventEmitter<TaskUpdatePayload>();
   @Output() delete = new EventEmitter<void>();
 
+  protected readonly notificationService = inject(NotificationService);
   protected editMode: boolean = false;
   private isSingleClick: boolean = true;
 
@@ -102,6 +106,15 @@ export class TaskCardComponent {
   }
 
   protected updateTaskName(updatedName: string): void {
+    const validation = validateTaskName(updatedName);
+    if (!validation.isValid) {
+      this.notificationService.showNotification(
+        validation.error!,
+        NotificationType.error,
+      );
+      return;
+    }
+
     this.update.emit({ name: updatedName });
 
     this.editMode = false;

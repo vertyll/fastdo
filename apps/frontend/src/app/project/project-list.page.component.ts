@@ -148,12 +148,7 @@ export class ProjectListPageComponent {
   }
 
   protected addProject(name: string, projects: Project[]): void {
-    const validation = validateProjectName(name);
-    if (!validation.isValid) {
-      this.notificationService.showNotification(
-        validation.error!,
-        NotificationType.error,
-      );
+    if (!this.handleProjectNameValidation(name)) {
       return;
     }
 
@@ -201,6 +196,10 @@ export class ProjectListPageComponent {
   }
 
   protected updateProjectName(id: number, newName: string): void {
+    if (!this.handleProjectNameValidation(newName)) {
+      return;
+    }
+
     this.projectsService.update(id, newName).subscribe({
       next: (updatedProject) => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
@@ -302,5 +301,17 @@ export class ProjectListPageComponent {
         }
       },
     });
+  }
+
+  private handleProjectNameValidation(name: string): boolean {
+    const validation = validateProjectName(name);
+    if (!validation.isValid) {
+      this.notificationService.showNotification(
+        validation.error!,
+        NotificationType.error,
+      );
+      return false;
+    }
+    return true;
   }
 }
