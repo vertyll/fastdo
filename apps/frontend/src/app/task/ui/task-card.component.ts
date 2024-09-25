@@ -3,10 +3,8 @@ import { Task } from '../models/Task';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
-import {
-  bootstrapBookmark,
-  bootstrapBookmarkFill,
-} from '@ng-icons/bootstrap-icons';
+import { heroBookmark } from '@ng-icons/heroicons/outline';
+import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
@@ -64,9 +62,7 @@ import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-te
             (click)="updateTaskUrgentStatus(); $event.stopPropagation()"
           >
             <ng-icon
-              [name]="
-                task.isUrgent ? 'bootstrapBookmarkFill' : 'bootstrapBookmark'
-              "
+              [name]="task.isUrgent ? 'heroBookmarkSolid' : 'heroBookmark'"
               class="text-sm"
             />
           </button>
@@ -91,7 +87,7 @@ import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-te
     </div>
   `,
   styles: [],
-  viewProviders: [provideIcons({ bootstrapBookmarkFill, bootstrapBookmark })],
+  viewProviders: [provideIcons({ heroBookmark, heroBookmarkSolid })],
 })
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;
