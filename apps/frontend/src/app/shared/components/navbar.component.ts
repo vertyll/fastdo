@@ -1,11 +1,13 @@
 import { Component, inject, Input } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-
+import { heroBars4 } from '@ng-icons/heroicons/outline';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, NgIconComponent],
+  viewProviders: provideIcons({ heroBars4 }),
   styles: [
     `
       nav {
@@ -76,21 +78,11 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
             </li>
           }
         </ul>
-        <button class="md:hidden ml-auto" (click)="toggleMenu()">
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16m-7 6h7"
-            ></path>
-          </svg>
+        <button
+          class="md:hidden ml-auto flex items-center justify-center"
+          (click)="toggleMenu()"
+        >
+          <ng-icon name="heroBars4" size="24"></ng-icon>
         </button>
       </div>
       <div [class.menu-open]="menuOpen" (click)="closeMenu()">
