@@ -201,6 +201,9 @@ importers:
       '@ng-icons/feather-icons':
         specifier: ^25.2.0
         version: 25.6.1
+      '@ng-icons/heroicons':
+        specifier: ^29.5.0
+        version: 29.5.0
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
@@ -1897,6 +1900,9 @@ packages:
 
   '@ng-icons/feather-icons@25.6.1':
     resolution: {integrity: sha512-fxGulzoJdJ9wjdh6BWsFeeYVz7QuNLu1A6CPhNadt9V8YM7WflnONDyjBg7uFFEccr3e9zMyf5Hd5E3EUmWQsg==}
+
+  '@ng-icons/heroicons@29.5.0':
+    resolution: {integrity: sha512-v4u2/yaliPxh90haLR9dps2dbCmR5BeBi6l6P+YI4uv76LctmnSe9vOqqK16/Jt0FcXIY8ye35guVCXfyJqt+Q==}
 
   '@ngtools/webpack@18.2.4':
     resolution: {integrity: sha512-JVDRexu3q7lg2oqJG36RtX7cqTheoZRwg2HhMV8hYXUDL0fyOrv2galwTCgXrx7vAjlx45L2uR2kuWbgW0VVcQ==}
@@ -8844,6 +8850,10 @@ snapshots:
       tslib: 2.7.0
 
   '@ng-icons/feather-icons@25.6.1':
+    dependencies:
+      tslib: 2.7.0
+
+  '@ng-icons/heroicons@29.5.0':
     dependencies:
       tslib: 2.7.0
 
