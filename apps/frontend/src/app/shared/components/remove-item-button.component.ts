@@ -1,19 +1,17 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  featherTrash2,
-  featherUser,
-  featherCheck,
-  featherX,
-} from '@ng-icons/feather-icons';
+  heroTrash,
+  heroUser,
+  heroCheck,
+  heroXMark,
+} from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-remove-item-button',
   standalone: true,
   imports: [NgIconComponent],
-  viewProviders: [
-    provideIcons({ featherTrash2, featherUser, featherCheck, featherX }),
-  ],
+  viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
   template: `
     <div
       (click)="removeMode && $event.stopPropagation()"
@@ -34,20 +32,20 @@ import {
           (click)="removeMode = true; $event.stopPropagation()"
           class="flex hover:bg-white hover:rounded-full"
         >
-          <ng-icon name="featherTrash2" class="icon--hover" />
+          <ng-icon name="heroTrash" class="icon--hover" />
         </button>
       } @else {
         <button
           (click)="removeMode = false; $event.stopPropagation()"
           class="flex mr-1"
         >
-          <ng-icon name="featherX" class="hover:bg-white icon--hover" />
+          <ng-icon name="heroXMark" class="hover:bg-white icon--hover" />
         </button>
         <button
           (click)="confirm.emit(); removeMode = false; $event.stopPropagation()"
           class="flex pr-2"
         >
-          <ng-icon name="featherCheck" class="hover:bg-white icon--hover" />
+          <ng-icon name="heroCheck" class="hover:bg-white icon--hover" />
         </button>
       }
     </div>

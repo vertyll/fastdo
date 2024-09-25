@@ -1,7 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
 import { Task } from '../models/Task';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { featherCalendar } from '@ng-icons/feather-icons';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
 import { TaskCardComponent } from './task-card.component';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
@@ -13,9 +11,7 @@ import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-te
 @Component({
   selector: 'app-tasks-list',
   standalone: true,
-  viewProviders: [provideIcons({ featherCalendar })],
   imports: [
-    NgIconComponent,
     RemoveItemButtonComponent,
     AutosizeTextareaComponent,
     TaskCardComponent,

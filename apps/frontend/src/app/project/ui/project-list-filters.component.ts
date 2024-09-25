@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { featherChevronDown, featherChevronUp } from '@ng-icons/feather-icons';
+import { heroChevronDown, heroChevronUp } from '@ng-icons/heroicons/outline';
 
 type ProjectsListFiltersForm = FormGroup<{
   q: FormControl<string>;
@@ -32,7 +32,7 @@ export interface ProjectsListFiltersFormValue {
   standalone: true,
   selector: 'app-projects-list-filters',
   imports: [ReactiveFormsModule, NgIconComponent],
-  viewProviders: [provideIcons({ featherChevronDown, featherChevronUp })],
+  viewProviders: [provideIcons({ heroChevronDown, heroChevronUp })],
   template: `
     <form
       [formGroup]="form"
@@ -76,7 +76,7 @@ export interface ProjectsListFiltersFormValue {
           class="text-blue-500 hover:text-blue-700"
         >
           <ng-icon
-            [name]="showAllFilters ? 'featherChevronUp' : 'featherChevronDown'"
+            [name]="showAllFilters ? 'heroChevronUp' : 'heroChevronDown'"
             size="24"
           />
         </button>

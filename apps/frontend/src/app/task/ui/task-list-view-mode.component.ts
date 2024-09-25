@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Output, input } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { featherColumns, featherList } from '@ng-icons/feather-icons';
+import { heroSquares2x2, heroBars3 } from '@ng-icons/heroicons/outline';
 
 export type TasksListViewMode = 'kanban' | 'list';
 
 @Component({
   standalone: true,
   imports: [NgIconComponent],
-  viewProviders: [provideIcons({ featherList, featherColumns })],
+  viewProviders: [provideIcons({ heroSquares2x2, heroBars3 })],
   selector: 'app-tasks-list-view-mode',
   template: `
     <div class="flex gap-4 items-center my-4">
@@ -17,14 +17,14 @@ export type TasksListViewMode = 'kanban' | 'list';
         class="flex"
         [class.text-green-500]="$view() === 'list'"
       >
-        <ng-icon name="featherList" />
+        <ng-icon name="heroBars3" />
       </button>
       <button
         (click)="updateTasksListView.emit('kanban')"
         class="flex"
         [class.text-green-500]="$view() === 'kanban'"
       >
-        <ng-icon name="featherColumns" />
+        <ng-icon name="heroSquares2x2" />
       </button>
     </div>
   `,

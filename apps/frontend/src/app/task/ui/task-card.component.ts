@@ -71,14 +71,14 @@ import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-te
               <span class="pr-1"
                 >Created: {{ task.dateCreation | customDate }}</span
               >
-              <ng-icon name="featherCalendar" class="text-sm" />
+              <ng-icon name="heroCalendar" class="text-sm" />
             </div>
             @if (task.dateModification) {
               <div class="flex items-center">
                 <span class="pr-1"
                   >Updated: {{ task.dateModification | customDate }}</span
                 >
-                <ng-icon name="featherCalendar" class="text-sm" />
+                <ng-icon name="heroCalendar" class="text-sm" />
               </div>
             }
           </div>

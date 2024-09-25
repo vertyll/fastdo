@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { TASK_STATUS, TaskStatus } from '../enums/task-status.enum';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { featherChevronDown, featherChevronUp } from '@ng-icons/feather-icons';
+import { heroChevronDown, heroChevronUp } from '@ng-icons/heroicons/outline';
 
 type TasksListFiltersForm = FormGroup<{
   q: FormControl<string>;
@@ -35,7 +35,7 @@ export type TasksListFiltersFormValue = {
   standalone: true,
   selector: 'app-tasks-list-filters',
   imports: [ReactiveFormsModule, NgIconComponent],
-  viewProviders: [provideIcons({ featherChevronDown, featherChevronUp })],
+  viewProviders: [provideIcons({ heroChevronDown, heroChevronUp })],
   template: `
     <form
       [formGroup]="form"
@@ -79,7 +79,7 @@ export type TasksListFiltersFormValue = {
           class="text-blue-500 hover:text-blue-700"
         >
           <ng-icon
-            [name]="showAllFilters ? 'featherChevronUp' : 'featherChevronDown'"
+            [name]="showAllFilters ? 'heroChevronUp' : 'heroChevronDown'"
             size="24"
           />
         </button>

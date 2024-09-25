@@ -3,7 +3,7 @@ import { Project } from './models/Project';
 import { ListState, LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { featherCalendar, featherEdit } from '@ng-icons/feather-icons';
+import { heroCalendar, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import {
   ProjectsListFiltersComponent,
@@ -87,14 +87,14 @@ interface GetAllProjectsSearchParams {
                 </section>
                 <div class="flex flex-col text-gray-600 text-sm mt-2">
                   <div class="flex items-center">
-                    <ng-icon name="featherCalendar" class="mr-1"></ng-icon>
+                    <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
                     <span
                       >Created: {{ project.dateCreation | customDate }}</span
                     >
                   </div>
                   @if (project.dateModification) {
                     <div class="flex items-center mt-1">
-                      <ng-icon name="featherCalendar" class="mr-1"></ng-icon>
+                      <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
                       <span
                         >Updated:
                         {{ project.dateModification | customDate }}</span
@@ -108,7 +108,7 @@ interface GetAllProjectsSearchParams {
                     class="flex items-center"
                     (click)="toggleEditMode(project)"
                   >
-                    <ng-icon name="featherEdit" class="text-sm" />
+                    <ng-icon name="heroPencilSquare" class="text-sm" />
                   </button>
                   <a
                     [routerLink]="['/tasks', project.id]"
@@ -132,7 +132,7 @@ interface GetAllProjectsSearchParams {
       }
     </div>
   `,
-  viewProviders: [provideIcons({ featherCalendar, featherEdit })],
+  viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })],
 })
 export class ProjectListPageComponent {
   private readonly projectsService = inject(ProjectsService);
