@@ -39,7 +39,7 @@ export type TasksListFiltersFormValue = {
   template: `
     <form
       [formGroup]="form"
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      class="bg-white shadow-md rounded px-8 pt-6 pb-4 mb-4"
     >
       <div class="mb-4 grid grid-cols-1 md:grid-cols-6 gap-4">
         @for (field of visibleFields; track field) {
