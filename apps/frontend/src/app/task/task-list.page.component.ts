@@ -5,6 +5,7 @@ import {
   computed,
   inject,
   OnInit,
+  Signal,
 } from '@angular/core';
 import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import {
@@ -98,13 +99,13 @@ export class TaskListPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
   private readonly projectsService = inject(ProjectsService);
-  protected showHowToUse = false;
   protected readonly configStateService = inject(AppConfigStateService);
   protected readonly tasksStateService = inject(TasksStateService);
   protected readonly $view = computed(
     () => this.configStateService.$value().tasksListView,
   );
   protected readonly listStateValue = LIST_STATE_VALUE;
+  protected showHowToUse: boolean = false;
   protected projectName!: string;
 
   ngOnInit(): void {
@@ -112,6 +113,41 @@ export class TaskListPageComponent implements OnInit {
       this.configStateService.updateTasksListView(this.view);
     }
     this.initializeTaskList();
+  }
+
+  protected handleFiltersChange(filters: TasksListFiltersFormValue): void {
+    const searchParams = getAllTasksSearchParams({
+      ...filters,
+      isUrgent: this.isUrgent,
+    });
+    this.getAllTasks(searchParams).subscribe();
+  }
+
+  protected addTask(name: string): void {
+    this.tasksService.add(name, this.projectId).subscribe({
+      next: () => {
+        this.initializeTaskList();
+      },
+      error: (err) => {
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred while adding the task',
+            NotificationType.error,
+          );
+        }
+      },
+      complete: () => {
+        this.notificationService.showNotification(
+          'Task added successfully',
+          NotificationType.success,
+        );
+      },
+    });
   }
 
   private initializeTaskList(): void {
@@ -153,40 +189,5 @@ export class TaskListPageComponent implements OnInit {
     } else {
       return this.tasksService.getAll(searchParams);
     }
-  }
-
-  handleFiltersChange(filters: TasksListFiltersFormValue): void {
-    const searchParams = getAllTasksSearchParams({
-      ...filters,
-      isUrgent: this.isUrgent,
-    });
-    this.getAllTasks(searchParams).subscribe();
-  }
-
-  addTask(name: string): void {
-    this.tasksService.add(name, this.projectId).subscribe({
-      next: () => {
-        this.initializeTaskList();
-      },
-      error: (err) => {
-        if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationType.error,
-          );
-        } else {
-          this.notificationService.showNotification(
-            'An error occurred while adding the task',
-            NotificationType.error,
-          );
-        }
-      },
-      complete: () => {
-        this.notificationService.showNotification(
-          'Task added successfully',
-          NotificationType.success,
-        );
-      },
-    });
   }
 }

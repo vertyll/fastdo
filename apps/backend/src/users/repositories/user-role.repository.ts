@@ -4,7 +4,7 @@ import { UserRole } from "../entities/user-role.entity";
 
 @Injectable()
 export class UserRoleRepository extends Repository<UserRole> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(UserRole, dataSource.createEntityManager());
   }
 }

@@ -101,17 +101,17 @@ export class TaskCardComponent {
   protected editMode: boolean = false;
   private isSingleClick: boolean = true;
 
-  updateTaskUrgentStatus(): void {
+  protected updateTaskUrgentStatus(): void {
     this.update.emit({ isUrgent: !this.task.isUrgent });
   }
 
-  updateTaskName(updatedName: string): void {
+  protected updateTaskName(updatedName: string): void {
     this.update.emit({ name: updatedName });
 
     this.editMode = false;
   }
 
-  handleSingleClick(): void {
+  protected handleSingleClick(): void {
     this.isSingleClick = true;
 
     setTimeout(() => {
@@ -121,7 +121,7 @@ export class TaskCardComponent {
     }, 200);
   }
 
-  switchToEditMode(): void {
+  protected switchToEditMode(): void {
     this.isSingleClick = false;
     this.editMode = true;
   }

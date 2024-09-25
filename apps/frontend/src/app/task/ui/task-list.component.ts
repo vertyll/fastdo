@@ -43,7 +43,7 @@ export class TasksListComponent {
   private readonly tasksService = inject(TasksService);
   private readonly notificationService = inject(NotificationService);
 
-  delete(taskId: number): void {
+  protected delete(taskId: number): void {
     this.tasksService.delete(taskId).subscribe({
       next: () => {
         this.tasks = this.tasks.filter((task) => task.id !== taskId);
@@ -70,7 +70,7 @@ export class TasksListComponent {
     });
   }
 
-  updateTask(taskId: number, updatedTask: TaskUpdatePayload): void {
+  protected updateTask(taskId: number, updatedTask: TaskUpdatePayload): void {
     this.tasksService.update(taskId, updatedTask).subscribe({
       next: (res) => {
         this.tasks = this.tasks.map((task) => {

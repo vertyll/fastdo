@@ -141,21 +141,21 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
   `,
 })
 export class NavbarComponent {
+  protected readonly authService = inject(AuthService);
+  protected readonly router = inject(Router);
   @Input() urgentCount: number = 0;
   @Input() projectCount: number = 0;
-  protected readonly authService = inject(AuthService);
   protected menuOpen: boolean = false;
-  protected readonly router = inject(Router);
 
-  toggleMenu(): void {
+  protected toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
 
-  closeMenu(): void {
+  protected closeMenu(): void {
     this.menuOpen = false;
   }
 
-  logout(): void {
+  protected logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
   }

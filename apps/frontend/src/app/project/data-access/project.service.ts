@@ -1,4 +1,4 @@
-import { Injectable, inject, effect, computed } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {
   GetAllProjectsSearchParams,
@@ -13,15 +13,7 @@ export class ProjectsService {
   private readonly httpService = inject(ProjectsApiService);
   private readonly state = inject(ProjectsStateService);
 
-  projects = this.state.projects;
-  projectCount = this.state.projectCount;
-
-  listState = computed(() => ({
-    items: this.projects(),
-    loading: this.httpService.$loadingState().loading,
-  }));
-
-  getAll(searchParams?: GetAllProjectsSearchParams): Observable<any> {
+  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
       tap((response) => {
         if (response.body) {
@@ -31,7 +23,7 @@ export class ProjectsService {
     );
   }
 
-  delete(projectId: number): Observable<any> {
+  public delete(projectId: number): Observable<any> {
     return this.httpService.delete(projectId).pipe(
       tap(() => {
         this.state.removeProject(projectId);
@@ -39,7 +31,7 @@ export class ProjectsService {
     );
   }
 
-  update(projectId: number, name: string): Observable<any> {
+  public update(projectId: number, name: string): Observable<any> {
     return this.httpService.update(projectId, name).pipe(
       tap((project) => {
         this.state.updateProject(project);
@@ -47,7 +39,7 @@ export class ProjectsService {
     );
   }
 
-  add(name: string): Observable<any> {
+  public add(name: string): Observable<any> {
     return this.httpService.add(name).pipe(
       tap((project) => {
         this.state.addProject(project);
@@ -55,7 +47,7 @@ export class ProjectsService {
     );
   }
 
-  getProjectById(projectId: number): Observable<any> {
+  public getProjectById(projectId: number): Observable<any> {
     return this.httpService.getById(projectId);
   }
 }

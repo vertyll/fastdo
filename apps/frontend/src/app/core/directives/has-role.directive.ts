@@ -15,13 +15,12 @@ import { Role } from 'src/app/shared/enums/role.enum';
 })
 export class HasRoleDirective implements OnInit {
   @Input('appHasRole') allowedRoles!: Role[] | Role;
-  private isVisible = false;
-
   private templateRef = inject(TemplateRef<any>);
   private viewContainer = inject(ViewContainerRef);
   private authService = inject(AuthService);
+  private isVisible: boolean = false;
 
-  ngOnInit() {
+  ngOnInit(): void {
     const userRoles = this.authService.userRoles();
     if (!userRoles) {
       this.viewContainer.clear();

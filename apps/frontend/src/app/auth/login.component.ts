@@ -55,7 +55,7 @@ import { AuthService } from './data-access/auth.service';
   styles: [],
 })
 export class LoginComponent {
-  protected loginForm: FormGroup;
+  protected readonly loginForm: FormGroup;
   protected errorMessage: string | null = null;
 
   constructor(
@@ -69,7 +69,7 @@ export class LoginComponent {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {

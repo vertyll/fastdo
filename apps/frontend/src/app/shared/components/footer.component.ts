@@ -28,5 +28,5 @@ import { Component } from '@angular/core';
   `,
 })
 export class FooterComponent {
-  currentYear = new Date().getFullYear();
+  protected currentYear: number = new Date().getFullYear();
 }

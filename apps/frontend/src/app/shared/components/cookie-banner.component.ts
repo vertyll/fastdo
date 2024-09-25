@@ -37,7 +37,7 @@ export class CookieBannerComponent implements OnInit {
     }
   }
 
-  acceptCookies(): void {
+  protected acceptCookies(): void {
     localStorage.setItem('cookies_accepted', 'true');
     this.showBanner = false;
   }

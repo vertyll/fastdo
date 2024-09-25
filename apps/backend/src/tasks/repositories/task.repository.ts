@@ -5,11 +5,11 @@ import { Task } from "../entities/task.entity";
 
 @Injectable()
 export class TaskRepository extends Repository<Task> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(Task, dataSource.createEntityManager());
   }
 
-  async findAllWithParams(
+  public async findAllWithParams(
     params: GetAllTasksSearchParams,
     projectId?: number
   ): Promise<Task[]> {

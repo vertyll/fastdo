@@ -4,17 +4,17 @@ import { UserRepository } from "./repositories/user.repository";
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UserRepository) {}
+  constructor(private readonly usersRepository: UserRepository) {}
 
-  async findOne(id: number): Promise<User | undefined> {
+  public async findOne(id: number): Promise<User | undefined> {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  async findByEmail(email: string): Promise<User | undefined> {
+  public async findByEmail(email: string): Promise<User | undefined> {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async create(user: Partial<User>): Promise<User> {
+  public async create(user: Partial<User>): Promise<User> {
     const newUser = this.usersRepository.create(user);
     return this.usersRepository.save(newUser);
   }

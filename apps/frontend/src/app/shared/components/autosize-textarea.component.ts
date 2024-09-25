@@ -17,11 +17,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styles: [],
 })
 export class AutosizeTextareaComponent {
-  @Input() placeholder = '';
-  @Input() value = '';
-  @Input() clearAfterEmit = false;
+  @Input() placeholder: string = '';
+  @Input() value: string = '';
+  @Input() clearAfterEmit: boolean = false;
 
-  @Output() submitText = new EventEmitter<string>();
+  @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
 
   protected emit(textarea: HTMLTextAreaElement): void {
     this.submitText.emit(textarea.value.trim());

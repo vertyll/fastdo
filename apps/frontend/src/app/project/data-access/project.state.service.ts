@@ -5,18 +5,18 @@ import { Project } from '../models/Project';
 export class ProjectsStateService {
   private projectsSignal = signal<Project[]>([]);
 
-  projects = computed(() => this.projectsSignal());
-  projectCount = computed(() => this.projectsSignal().length);
+  public projects = computed(() => this.projectsSignal());
+  public projectCount = computed(() => this.projectsSignal().length);
 
-  setProjectList(projects: Project[]): void {
+  public setProjectList(projects: Project[]): void {
     this.projectsSignal.set(projects);
   }
 
-  addProject(project: Project): void {
+  public addProject(project: Project): void {
     this.projectsSignal.update((projects) => [...projects, project]);
   }
 
-  updateProject(updatedProject: Project): void {
+  public updateProject(updatedProject: Project): void {
     this.projectsSignal.update((projects) =>
       projects.map((project) =>
         project.id === updatedProject.id ? updatedProject : project,
@@ -24,7 +24,7 @@ export class ProjectsStateService {
     );
   }
 
-  removeProject(projectId: Project['id']): void {
+  public removeProject(projectId: Project['id']): void {
     this.projectsSignal.update((projects) =>
       projects.filter((project) => project.id !== projectId),
     );

@@ -5,11 +5,11 @@ import { Project } from "../entities/project.entity";
 
 @Injectable()
 export class ProjectRepository extends Repository<Project> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(Project, dataSource.createEntityManager());
   }
 
-  async findAllWithParams(
+  public async findAllWithParams(
     params: GetAllProjectsSearchParams
   ): Promise<Project[]> {
     const query = this.dataSource.createQueryBuilder(Project, "project");

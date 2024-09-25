@@ -10,23 +10,23 @@ export interface AuthState {
   providedIn: 'root',
 })
 export class AuthStateService {
-  private authState = signal<AuthState>({
+  private readonly authState = signal<AuthState>({
     isLoggedIn: false,
     roles: null,
   });
 
-  isLoggedIn = computed(() => this.authState().isLoggedIn);
-  roles = computed(() => this.authState().roles);
+  public readonly isLoggedIn = computed(() => this.authState().isLoggedIn);
+  public readonly roles = computed(() => this.authState().roles);
 
-  setLoggedIn(isLoggedIn: boolean) {
+  public setLoggedIn(isLoggedIn: boolean) {
     this.authState.update((state) => ({ ...state, isLoggedIn }));
   }
 
-  setRoles(roles: Role[] | null) {
+  public setRoles(roles: Role[] | null) {
     this.authState.update((state) => ({ ...state, roles }));
   }
 
-  clear() {
+  public clear() {
     this.authState.set({
       isLoggedIn: false,
       roles: null,

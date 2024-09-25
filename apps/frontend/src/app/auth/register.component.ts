@@ -85,7 +85,7 @@ import { passwordValidator } from './validators/password.validator';
   styles: [],
 })
 export class RegisterComponent implements OnInit {
-  protected registerForm: FormGroup;
+  protected readonly registerForm: FormGroup;
   protected passwordMismatch: boolean = false;
   protected passwordErrors: string[] = [];
   protected emailErrors: string[] = [];
@@ -113,43 +113,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  checkPasswords(): void {
-    const password = this.registerForm.get('password')?.value;
-    const confirmPassword = this.registerForm.get('confirmPassword')?.value;
-    this.passwordMismatch = password !== confirmPassword;
-  }
-
-  getPasswordErrors(): string[] {
-    const passwordControl = this.registerForm.get('password');
-    const errors: string[] = [];
-    if (passwordControl?.hasError('required')) {
-      errors.push('Password is required.');
-    }
-    if (passwordControl?.hasError('minlength')) {
-      errors.push('Password must be at least 8 characters long.');
-    }
-    if (passwordControl?.hasError('uppercase')) {
-      errors.push('Password must contain at least one uppercase letter.');
-    }
-    if (passwordControl?.hasError('specialCharacter')) {
-      errors.push('Password must contain at least one special character.');
-    }
-    return errors;
-  }
-
-  getEmailErrors(): string[] {
-    const emailControl = this.registerForm.get('email');
-    const errors: string[] = [];
-    if (emailControl?.hasError('required')) {
-      errors.push('Email is required.');
-    }
-    if (emailControl?.hasError('email')) {
-      errors.push('Email must be a valid email address.');
-    }
-    return errors;
-  }
-
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.checkPasswords();
 
     if (this.registerForm.valid && !this.passwordMismatch) {
@@ -173,5 +137,41 @@ export class RegisterComponent implements OnInit {
         },
       });
     }
+  }
+
+  private checkPasswords(): void {
+    const password = this.registerForm.get('password')?.value;
+    const confirmPassword = this.registerForm.get('confirmPassword')?.value;
+    this.passwordMismatch = password !== confirmPassword;
+  }
+
+  private getPasswordErrors(): string[] {
+    const passwordControl = this.registerForm.get('password');
+    const errors: string[] = [];
+    if (passwordControl?.hasError('required')) {
+      errors.push('Password is required.');
+    }
+    if (passwordControl?.hasError('minlength')) {
+      errors.push('Password must be at least 8 characters long.');
+    }
+    if (passwordControl?.hasError('uppercase')) {
+      errors.push('Password must contain at least one uppercase letter.');
+    }
+    if (passwordControl?.hasError('specialCharacter')) {
+      errors.push('Password must contain at least one special character.');
+    }
+    return errors;
+  }
+
+  private getEmailErrors(): string[] {
+    const emailControl = this.registerForm.get('email');
+    const errors: string[] = [];
+    if (emailControl?.hasError('required')) {
+      errors.push('Email is required.');
+    }
+    if (emailControl?.hasError('email')) {
+      errors.push('Email must be a valid email address.');
+    }
+    return errors;
   }
 }

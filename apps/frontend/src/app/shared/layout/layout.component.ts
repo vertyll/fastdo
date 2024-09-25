@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  Signal,
+} from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
@@ -9,6 +16,7 @@ import { CookieBannerComponent } from '../components/cookie-banner.component';
 import { NavbarComponent } from '../components/navbar.component';
 import { FooterComponent } from '../components/footer.component';
 import { InfoPanelComponent } from '../components/info-panel.component';
+import { Role } from '../enums/role.enum';
 
 @Component({
   selector: 'app-layout',
@@ -84,16 +92,16 @@ export class LayoutComponent implements OnInit {
     setInterval(() => this.updateTime(), 1000);
   }
 
-  togglePanel(): void {
+  protected togglePanel(): void {
     this.panelOpen = !this.panelOpen;
   }
 
-  updateTime(): void {
+  private updateTime(): void {
     const now = new Date();
     this.currentTime = now.toLocaleTimeString();
   }
 
-  getBrowserInfo(): string {
+  private getBrowserInfo(): string {
     return `User Agent: ${navigator.userAgent}, Language: ${navigator.language}`;
   }
 }

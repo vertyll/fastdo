@@ -14,9 +14,13 @@ declare module "fastify" {
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-  constructor(private jwt: JwtService) {}
+  constructor(private readonly jwt: JwtService) {}
 
-  use(req: FastifyRequest["raw"], res: FastifyReply["raw"], next: () => void) {
+  public use(
+    req: FastifyRequest["raw"],
+    res: FastifyReply["raw"],
+    next: () => void
+  ) {
     const token = this.extractTokenFromHeader(req);
 
     if (token) {

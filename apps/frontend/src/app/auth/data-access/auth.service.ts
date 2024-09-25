@@ -13,10 +13,10 @@ export class AuthService {
   private readonly authApiService = inject(AuthApiService);
   private readonly authStateService = inject(AuthStateService);
 
-  isLoggedIn = this.authStateService.isLoggedIn;
-  userRoles = this.authStateService.roles;
+  public readonly isLoggedIn = this.authStateService.isLoggedIn;
+  public readonly userRoles = this.authStateService.roles;
 
-  login(dto: LoginDto): Observable<void> {
+  public login(dto: LoginDto): Observable<void> {
     return this.authApiService.login(dto).pipe(
       tap((response) => {
         localStorage.setItem('access_token', response.access_token);
@@ -26,16 +26,16 @@ export class AuthService {
     );
   }
 
-  register(dto: RegisterDto): Observable<any> {
+  public register(dto: RegisterDto): Observable<any> {
     return this.authApiService.register(dto);
   }
 
-  logout(): void {
+  public logout(): void {
     localStorage.removeItem('access_token');
     this.authStateService.clear();
   }
 
-  initializeAuth(): void {
+  public initializeAuth(): void {
     const token = localStorage.getItem('access_token');
     if (token) {
       this.decodeToken(token);

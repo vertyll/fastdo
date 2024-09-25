@@ -1,9 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Project } from './models/Project';
-import {
-  ListState,
-  LIST_STATE_VALUE,
-} from '../shared/types/list-state.type';
+import { ListState, LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { featherCalendar, featherEdit } from '@ng-icons/feather-icons';
@@ -142,48 +139,14 @@ export class ProjectListPageComponent {
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);
   protected readonly role = Role;
-
-  listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
-  listStateValue = LIST_STATE_VALUE;
+  protected readonly listStateValue = LIST_STATE_VALUE;
+  protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
 
   ngOnInit(): void {
     this.getAllProjects();
   }
 
-  getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
-    this.listState = { state: LIST_STATE_VALUE.LOADING };
-
-    this.projectsService.getAll(searchParams).subscribe({
-      next: (response) => {
-        const projects = response.body || [];
-        this.listState = {
-          state: LIST_STATE_VALUE.SUCCESS,
-          results: projects,
-        };
-        this.projectsStateService.setProjectList(projects);
-      },
-      error: (err) => {
-        this.listState = {
-          state: LIST_STATE_VALUE.ERROR,
-          error: err,
-        };
-
-        if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationType.error,
-          );
-        } else {
-          this.notificationService.showNotification(
-            'An error occurred fetching the projects.',
-            NotificationType.error,
-          );
-        }
-      },
-    });
-  }
-
-  addProject(name: string, projects: Project[]): void {
+  protected addProject(name: string, projects: Project[]): void {
     this.projectsService.add(name).subscribe({
       next: (project) => {
         this.listState = {
@@ -218,16 +181,16 @@ export class ProjectListPageComponent {
     });
   }
 
-  handleFiltersChange(filters: ProjectsListFiltersFormValue): void {
+  protected handleFiltersChange(filters: ProjectsListFiltersFormValue): void {
     const searchParams = getAllProjectsSearchParams(filters);
     this.getAllProjects(searchParams);
   }
 
-  toggleEditMode(project: Project): void {
+  protected toggleEditMode(project: Project): void {
     project.editMode = !project.editMode;
   }
 
-  updateProjectName(id: number, newName: string): void {
+  protected updateProjectName(id: number, newName: string): void {
     this.projectsService.update(id, newName).subscribe({
       next: (updatedProject) => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
@@ -263,7 +226,7 @@ export class ProjectListPageComponent {
     });
   }
 
-  deleteProject(id: number): void {
+  protected deleteProject(id: number): void {
     this.projectsService.delete(id).subscribe({
       next: () => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
@@ -294,6 +257,39 @@ export class ProjectListPageComponent {
           'Project deleted successfully.',
           NotificationType.success,
         );
+      },
+    });
+  }
+
+  private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
+    this.listState = { state: LIST_STATE_VALUE.LOADING };
+
+    this.projectsService.getAll(searchParams).subscribe({
+      next: (response) => {
+        const projects = response.body || [];
+        this.listState = {
+          state: LIST_STATE_VALUE.SUCCESS,
+          results: projects,
+        };
+        this.projectsStateService.setProjectList(projects);
+      },
+      error: (err) => {
+        this.listState = {
+          state: LIST_STATE_VALUE.ERROR,
+          error: err,
+        };
+
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            'An error occurred fetching the projects.',
+            NotificationType.error,
+          );
+        }
       },
     });
   }

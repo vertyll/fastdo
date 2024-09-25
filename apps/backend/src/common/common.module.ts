@@ -24,7 +24,7 @@ import { RolesGuard } from "./guards/roles.guard";
   ],
 })
 export class CommonModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  public configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes("*");
   }
 }

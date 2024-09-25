@@ -9,6 +9,13 @@ import { map } from "rxjs/operators";
 
 @Injectable()
 export class SnakeToCamelCaseInterceptor implements NestInterceptor {
+  public intercept(
+    context: ExecutionContext,
+    next: CallHandler
+  ): Observable<any> {
+    return next.handle().pipe(map((data) => this.keysToCamel(data)));
+  }
+
   private toCamel(s: string): string {
     return s.replace(/([-_][a-z])/gi, ($1) => {
       return $1.toUpperCase().replace("-", "").replace("_", "");
@@ -34,9 +41,5 @@ export class SnakeToCamelCaseInterceptor implements NestInterceptor {
       });
     }
     return obj;
-  }
-
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(map((data) => this.keysToCamel(data)));
   }
 }

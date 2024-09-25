@@ -12,10 +12,9 @@ export class AppConfigStateService {
   private state = signal<AppConfigState>({
     tasksListView: 'list',
   });
+  public readonly $value = this.state.asReadonly();
 
-  $value = this.state.asReadonly();
-
-  updateTasksListView(value: TasksListViewMode): void {
+  public updateTasksListView(value: TasksListViewMode): void {
     this.state.update((state) => {
       return {
         ...state,

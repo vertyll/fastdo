@@ -13,16 +13,9 @@ import { TasksStateService } from './task.state.service';
 export class TasksService {
   private readonly httpService = inject(TasksApiService);
   private readonly state = inject(TasksStateService);
+  private readonly tasks = this.state.tasks;
 
-  tasks = this.state.tasks;
-  urgentCount = this.state.urgentCount;
-
-  listState = computed(() => ({
-    items: this.tasks(),
-    loading: this.httpService.$loadingState().loading,
-  }));
-
-  getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
+  public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
       tap((response) => {
         if (response.body) {
@@ -32,7 +25,7 @@ export class TasksService {
     );
   }
 
-  getAllByProjectId(
+  public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
   ): Observable<any> {
@@ -45,7 +38,7 @@ export class TasksService {
     );
   }
 
-  delete(taskId: number): Observable<any> {
+  public delete(taskId: number): Observable<any> {
     return this.httpService.delete(taskId).pipe(
       tap(() => {
         this.state.removeTask(taskId);
@@ -53,7 +46,7 @@ export class TasksService {
     );
   }
 
-  update(taskId: number, payload: TaskUpdatePayload): Observable<any> {
+  public update(taskId: number, payload: TaskUpdatePayload): Observable<any> {
     return this.httpService.update(taskId, payload).pipe(
       tap((task) => {
         this.state.updateTask(task);
@@ -61,7 +54,7 @@ export class TasksService {
     );
   }
 
-  add(name: string, projectId?: string): Observable<any> {
+  public add(name: string, projectId?: string): Observable<any> {
     return this.httpService.add(name, projectId).pipe(
       tap((task) => {
         this.state.addTask(task);

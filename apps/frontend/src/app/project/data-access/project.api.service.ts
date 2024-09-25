@@ -32,15 +32,34 @@ export class ProjectsApiService {
   private readonly $loading = signal(false);
   private readonly $error = signal<FetchingError | null>(null);
 
-  $loadingState = computed(() => {
-    return {
-      idle: this.$idle(),
-      loading: this.$loading(),
-      error: this.$error(),
-    };
-  });
+  public getAll(searchParams?: GetAllProjectsSearchParams) {
+    return this.withLoadingState(
+      this.http.get<Project[]>(`${this.URL}/projects`, {
+        observe: 'response',
+        params: searchParams,
+      }),
+    );
+  }
 
-  withLoadingState<T>(source$: Observable<T>): Observable<T> {
+  public delete(projectId: number): Observable<any> {
+    return this.http.delete(`${this.URL}/projects/${projectId}`);
+  }
+
+  public update(projectId: number, name: string): Observable<Project> {
+    return this.http.patch<Project>(`${this.URL}/projects/${projectId}`, {
+      name,
+    });
+  }
+
+  public add(name: string): Observable<Project> {
+    return this.http.post<Project>(`${this.URL}/projects`, { name });
+  }
+
+  public getById(projectId: number): Observable<Project> {
+    return this.http.get<Project>(`${this.URL}/projects/${projectId}`);
+  }
+
+  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
     this.$idle.set(false);
     this.$error.set(null);
     this.$loading.set(true);
@@ -56,32 +75,5 @@ export class ProjectsApiService {
         this.$loading.set(false);
       }),
     );
-  }
-
-  getAll(searchParams?: GetAllProjectsSearchParams) {
-    return this.withLoadingState(
-      this.http.get<Project[]>(`${this.URL}/projects`, {
-        observe: 'response',
-        params: searchParams,
-      }),
-    );
-  }
-
-  delete(projectId: number): Observable<any> {
-    return this.http.delete(`${this.URL}/projects/${projectId}`);
-  }
-
-  update(projectId: number, name: string): Observable<Project> {
-    return this.http.patch<Project>(`${this.URL}/projects/${projectId}`, {
-      name,
-    });
-  }
-
-  add(name: string): Observable<Project> {
-    return this.http.post<Project>(`${this.URL}/projects`, { name });
-  }
-
-  getById(projectId: number): Observable<Project> {
-    return this.http.get<Project>(`${this.URL}/projects/${projectId}`);
   }
 }

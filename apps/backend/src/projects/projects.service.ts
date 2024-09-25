@@ -7,22 +7,22 @@ import { ProjectRepository } from "./repositories/project.repository";
 
 @Injectable()
 export class ProjectsService {
-  constructor(private projectRepository: ProjectRepository) {}
+  constructor(private readonly projectRepository: ProjectRepository) {}
 
-  async findAll(params: GetAllProjectsSearchParams): Promise<Project[]> {
+  public async findAll(params: GetAllProjectsSearchParams): Promise<Project[]> {
     return this.projectRepository.findAllWithParams(params);
   }
 
-  create(createProjectDto: CreateProjectDto): Promise<Project> {
+  public create(createProjectDto: CreateProjectDto): Promise<Project> {
     const project = this.projectRepository.create(createProjectDto);
     return this.projectRepository.save(project);
   }
 
-  findOne(id: number): Promise<Project> {
+  public findOne(id: number): Promise<Project> {
     return this.projectRepository.findOneOrFail({ where: { id } });
   }
 
-  async update(
+  public async update(
     id: number,
     updateProjectDto: UpdateProjectDto
   ): Promise<Project> {
@@ -33,7 +33,7 @@ export class ProjectsService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  public async remove(id: number): Promise<void> {
     await this.projectRepository.delete(id);
   }
 }

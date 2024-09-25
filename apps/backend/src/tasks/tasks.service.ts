@@ -8,9 +8,9 @@ import { TaskRepository } from "./repositories/task.repository";
 
 @Injectable()
 export class TasksService {
-  constructor(private taskRepository: TaskRepository) {}
+  constructor(private readonly taskRepository: TaskRepository) {}
 
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+  public async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const task = this.taskRepository.create(createTaskDto);
     if (createTaskDto.projectId) {
       task.project = { id: createTaskDto.projectId } as Project;
@@ -18,22 +18,22 @@ export class TasksService {
     return this.taskRepository.save(task);
   }
 
-  async findAll(params: GetAllTasksSearchParams): Promise<Task[]> {
+  public async findAll(params: GetAllTasksSearchParams): Promise<Task[]> {
     return this.taskRepository.findAllWithParams(params);
   }
 
-  async findAllByProjectId(
+  public async findAllByProjectId(
     projectId: number,
     params: GetAllTasksSearchParams
   ): Promise<Task[]> {
     return this.taskRepository.findAllWithParams(params, projectId);
   }
 
-  findOne(id: number): Promise<Task> {
+  public findOne(id: number): Promise<Task> {
     return this.taskRepository.findOneOrFail({ where: { id } });
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+  public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
     await this.taskRepository.update(id, {
       ...updateTaskDto,
       dateModification: new Date(),
@@ -41,11 +41,11 @@ export class TasksService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  public async remove(id: number): Promise<void> {
     await this.taskRepository.delete(id);
   }
 
-  async removeByProjectId(projectId: number): Promise<void> {
+  public async removeByProjectId(projectId: number): Promise<void> {
     await this.taskRepository.delete({ project: { id: projectId } });
   }
 }

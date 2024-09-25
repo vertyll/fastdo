@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class CustomDatePipe implements PipeTransform {
-  transform(value: number | string | Date): string {
+  public transform(value: number | string | Date): string {
     if (!value) return '';
 
     let date: Date;

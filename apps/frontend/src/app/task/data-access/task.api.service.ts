@@ -39,15 +39,40 @@ export class TasksApiService {
   private readonly $loading = signal(false);
   private readonly $error = signal<FetchingError | null>(null);
 
-  $loadingState = computed(() => {
-    return {
-      idle: this.$idle(),
-      loading: this.$loading(),
-      error: this.$error(),
-    };
-  });
+  public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
+    return this.withLoadingState(
+      this.http.get<Task[]>(`${this.URL}/tasks`, {
+        observe: 'response',
+        params: searchParams,
+      }),
+    );
+  }
 
-  withLoadingState<T>(source$: Observable<T>): Observable<T> {
+  public getAllByProjectId(
+    projectId: string,
+    searchParams: GetAllTasksSearchParams,
+  ): Observable<any> {
+    return this.withLoadingState(
+      this.http.get<Task[]>(`${this.URL}/tasks/project/${projectId}`, {
+        observe: 'response',
+        params: searchParams,
+      }),
+    );
+  }
+
+  public delete(taskId: number): Observable<any> {
+    return this.http.delete(`${this.URL}/tasks/${taskId}`);
+  }
+
+  public update(taskId: number, payload: TaskUpdatePayload): Observable<Task> {
+    return this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload);
+  }
+
+  public add(name: string, projectId?: string): Observable<Task> {
+    return this.http.post<Task>(`${this.URL}/tasks`, { name, projectId });
+  }
+
+  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
     this.$idle.set(false);
     this.$error.set(null);
     this.$loading.set(true);
@@ -63,37 +88,5 @@ export class TasksApiService {
         this.$loading.set(false);
       }),
     );
-  }
-
-  getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
-    return this.withLoadingState(
-      this.http.get<Task[]>(`${this.URL}/tasks`, {
-        observe: 'response',
-        params: searchParams,
-      }),
-    );
-  }
-
-  getAllByProjectId(
-    projectId: string,
-    searchParams: GetAllTasksSearchParams,
-  ): Observable<any> {
-    return this.withLoadingState(
-      this.http.get<Task[]>(`${this.URL}/tasks/project/${projectId}`, {
-        observe: 'response',
-        params: searchParams,
-      }),
-    );
-  }
-  delete(taskId: number): Observable<any> {
-    return this.http.delete(`${this.URL}/tasks/${taskId}`);
-  }
-
-  update(taskId: number, payload: TaskUpdatePayload): Observable<Task> {
-    return this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload);
-  }
-
-  add(name: string, projectId?: string): Observable<Task> {
-    return this.http.post<Task>(`${this.URL}/tasks`, { name, projectId });
   }
 }

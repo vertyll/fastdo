@@ -159,14 +159,14 @@ export class TasksListFiltersComponent implements OnInit {
     });
   }
 
-  toggleFilters(): void {
+  protected toggleFilters(): void {
     this.showAllFilters = !this.showAllFilters;
     this.visibleFields = this.showAllFilters
       ? this.allFields
       : this.allFields.slice(0, 6);
   }
 
-  getFieldLabel(field: string): string {
+  protected getFieldLabel(field: string): string {
     const labels: { [key: string]: string } = {
       q: 'Search',
       status: 'Status',
@@ -180,11 +180,11 @@ export class TasksListFiltersComponent implements OnInit {
     return labels[field] || field;
   }
 
-  isSelectField(field: string): boolean {
+  protected isSelectField(field: string): boolean {
     return ['status', 'sortBy', 'orderBy'].includes(field);
   }
 
-  getFieldOptions(field: string): { value: string; label: string }[] {
+  protected getFieldOptions(field: string): { value: string; label: string }[] {
     if (field === 'status') {
       return [
         { value: TASK_STATUS.ALL, label: 'All' },
@@ -206,7 +206,7 @@ export class TasksListFiltersComponent implements OnInit {
     return [];
   }
 
-  getFieldType(field: string): string {
+  protected getFieldType(field: string): string {
     return ['createdFrom', 'createdTo', 'updatedFrom', 'updatedTo'].includes(
       field,
     )
@@ -214,11 +214,24 @@ export class TasksListFiltersComponent implements OnInit {
       : 'text';
   }
 
-  getFieldPlaceholder(field: string): string {
+  protected getFieldPlaceholder(field: string): string {
     return field === 'q' ? 'Enter task name' : '';
   }
 
-  updateActiveFilters(): void {
+  protected removeFilter(key: string): void {
+    if (key in this.form.controls) {
+      (this.form.get(key) as FormControl<string>)?.setValue('');
+    }
+  }
+
+  protected removeAllFilters(): void {
+    const { sortBy, orderBy } = this.form.value;
+    this.form.reset({ sortBy, orderBy });
+    this.updateActiveFilters();
+    this.filtersChange.emit(this.form.getRawValue());
+  }
+
+  private updateActiveFilters(): void {
     const formValues = this.form.getRawValue();
     this.activeFilters = Object.entries(formValues)
       .filter(
@@ -233,7 +246,7 @@ export class TasksListFiltersComponent implements OnInit {
       }));
   }
 
-  formatFilterValue(key: string, value: string): string {
+  private formatFilterValue(key: string, value: string): string {
     if (this.isSelectField(key)) {
       const option = this.getFieldOptions(key).find(
         (opt) => opt.value === value,
@@ -241,18 +254,5 @@ export class TasksListFiltersComponent implements OnInit {
       return option ? option.label : value;
     }
     return value;
-  }
-
-  removeFilter(key: string) {
-    if (key in this.form.controls) {
-      (this.form.get(key) as FormControl<string>)?.setValue('');
-    }
-  }
-
-  removeAllFilters(): void {
-    const { sortBy, orderBy } = this.form.value;
-    this.form.reset({ sortBy, orderBy });
-    this.updateActiveFilters();
-    this.filtersChange.emit(this.form.getRawValue());
   }
 }

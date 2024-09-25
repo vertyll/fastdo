@@ -61,7 +61,7 @@ import {
   ],
 })
 export class RemoveItemButtonComponent {
-  @Output() confirm = new EventEmitter<void>();
+  @Output() confirm: EventEmitter<void> = new EventEmitter<void>();
 
   protected removeMode: boolean = false;
 }

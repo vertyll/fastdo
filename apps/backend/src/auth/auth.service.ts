@@ -10,12 +10,12 @@ import { RegisterDto } from "./dtos/register.dto";
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-    private rolesService: RolesService
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly rolesService: RolesService
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
+  public async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,7 +26,7 @@ export class AuthService {
     return null;
   }
 
-  async register(registerDto: RegisterDto) {
+  public async register(registerDto: RegisterDto) {
     const user = await this.usersService.findByEmail(registerDto.email);
     if (user) {
       throw new UnauthorizedException("User already exists");
@@ -46,7 +46,7 @@ export class AuthService {
     return newUser;
   }
 
-  async login(loginDto: LoginDto) {
+  public async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
       throw new UnauthorizedException();
