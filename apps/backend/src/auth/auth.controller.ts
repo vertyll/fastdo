@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from "@nestjs/common";
+import { Controller, Post, Body, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "../common/guards/local-auth.guard";
 import { Public } from "../common/decorators/public.decorator";
@@ -27,7 +20,6 @@ export class AuthController {
 
   @Public()
   @Post("register")
-  @UsePipes(new ValidationPipe({ transform: true }))
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }

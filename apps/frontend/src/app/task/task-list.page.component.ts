@@ -31,6 +31,7 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
+import { validateTaskName } from './validators/task-name.validator';
 
 @Component({
   selector: 'app-task-list-page',
@@ -124,6 +125,15 @@ export class TaskListPageComponent implements OnInit {
   }
 
   protected addTask(name: string): void {
+    const validation = validateTaskName(this.projectName);
+    if (!validation.isValid) {
+      this.notificationService.showNotification(
+        validation.error!,
+        NotificationType.error,
+      );
+      return;
+    }
+
     this.tasksService.add(name, this.projectId).subscribe({
       next: () => {
         this.initializeTaskList();

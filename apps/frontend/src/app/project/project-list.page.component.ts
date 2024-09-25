@@ -19,6 +19,7 @@ import { Role } from 'src/app/shared/enums/role.enum';
 import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
 import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
+import { validateProjectName } from './validators/project-name.validator';
 
 interface GetAllProjectsSearchParams {
   q: string;
@@ -147,6 +148,15 @@ export class ProjectListPageComponent {
   }
 
   protected addProject(name: string, projects: Project[]): void {
+    const validation = validateProjectName(name);
+    if (!validation.isValid) {
+      this.notificationService.showNotification(
+        validation.error!,
+        NotificationType.error,
+      );
+      return;
+    }
+
     this.projectsService.add(name).subscribe({
       next: (project) => {
         this.listState = {
