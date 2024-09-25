@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
   styles: [
     `
       nav {
-        @apply px-12 border-t-4 border-b-4 border-black;
+        @apply px-12 border-t-4 border-b-4 rounded-bl-xl rounded-br-xl border-black;
       }
       .menu-open {
         @apply fixed inset-0 bg-black bg-opacity-50 z-50;
@@ -31,7 +31,7 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
               ? router.navigate(['/tasks'])
               : router.navigate(['/'])
           "
-          class="border-2 border-black text-orange-500 font-bold px-2 py-1 mx-4 cursor-pointer"
+          class="border-2 border-black text-black font-bold px-2 py-1 mx-4 cursor-pointer"
           >FASTDO</span
         >
         <ul class="hidden md:flex gap-6">
