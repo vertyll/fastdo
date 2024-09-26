@@ -2,6 +2,8 @@
 
 Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego projektu. Aplikacja składa się z monorepo, w którym mamy do dyspozycji oddzielny back-end jak i front-end.
 
+## Link: http://fastdo.vertyll.usermd.net/
+
 ## Stos technologiczny
 
 ### Front-end:
