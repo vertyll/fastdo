@@ -20,16 +20,7 @@ import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
 import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
 import { validateProjectName } from './validators/project-name.validator';
-
-interface GetAllProjectsSearchParams {
-  q: string;
-  sortBy: 'name' | 'dateCreation';
-  orderBy: 'asc' | 'desc';
-  createdFrom?: string;
-  createdTo?: string;
-  updatedFrom?: string;
-  updatedTo?: string;
-}
+import { GetAllProjectsSearchParams } from './data-access/project.api.service';
 
 @Component({
   selector: 'app-project-list-page',
@@ -80,7 +71,7 @@ interface GetAllProjectsSearchParams {
                     />
                   } @else {
                     <h3
-                      class="text-xl font-semibold mb-2 text-blue-600 hover:text-blue-800"
+                      class="text-xl font-semibold mb-2 text-blue-600 hover:text-blue-800 break-all"
                     >
                       {{ project.name }}
                     </h3>
@@ -133,6 +124,13 @@ interface GetAllProjectsSearchParams {
       }
     </div>
   `,
+  styles: [
+    `
+      .break-all {
+        word-break: break-all;
+      }
+    `,
+  ],
   viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })],
 })
 export class ProjectListPageComponent {
