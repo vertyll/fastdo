@@ -24,18 +24,18 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
   ],
   template: `
     <div
-      class="rounded-md shadow-md p-4 block"
+      class="rounded-md shadow-md p-4 block w-full"
       [class.bg-green-300]="task.isDone"
     >
       <button
-        class="w-full"
+        class="w-full text-left"
         (click)="!editMode && handleSingleClick()"
         (dblclick)="switchToEditMode()"
       >
         <header class="flex justify-end">
           <app-remove-item-button (confirm)="delete.emit()" />
         </header>
-        <section class="text-left">
+        <section class="text-left break-all">
           @if (editMode) {
             <app-autosize-textarea
               (keyup.escape)="editMode = false"
@@ -43,13 +43,13 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
               [value]="task.name"
             />
           } @else {
-            <span [class.line-through]="task.isDone">
+            <span [class.line-through]="task.isDone" class="block w-full">
               {{ task.name }}
             </span>
           }
         </section>
         @if (task.project) {
-          <section class="text-left text-sm mt-2">
+          <section class="text-left text-sm mt-2 break-all">
             <span>For project: </span>
             <a
               [routerLink]="['/tasks', task.project.id]"
@@ -89,7 +89,11 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
       </button>
     </div>
   `,
-  styles: [],
+  styles: [`
+    .break-all {
+      word-break: break-all;
+    }
+  `],
   viewProviders: [provideIcons({ heroBookmark, heroBookmarkSolid })],
 })
 export class TaskCardComponent {
