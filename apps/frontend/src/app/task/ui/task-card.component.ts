@@ -3,7 +3,7 @@ import { Task } from '../models/Task';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
-import { heroBookmark } from '@ng-icons/heroicons/outline';
+import { heroBookmark, heroCalendar } from '@ng-icons/heroicons/outline';
 import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
@@ -94,7 +94,7 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
       word-break: break-all;
     }
   `],
-  viewProviders: [provideIcons({ heroBookmark, heroBookmarkSolid })],
+  viewProviders: [provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar })],
 })
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;
