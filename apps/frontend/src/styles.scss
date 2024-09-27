@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,8 +14,12 @@ html {
   text-align: center;
   top: 0 !important;
   position: fixed !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 90% !important;
+  max-width: 600px !important;
 
   .mdc-snackbar__surface,
   .mat-mdc-snack-bar-label {
@@ -24,6 +28,8 @@ html {
     color: white !important;
     border-radius: 10px !important;
     font-size: 15px !important;
+    word-break: break-word !important;
+    white-space: normal !important;
   }
 
   .mdc-button__label {
@@ -47,4 +53,21 @@ html {
 .info-snackbar .mdc-snackbar__surface,
 .info-snackbar .mat-mdc-snack-bar-label {
   background-color: gray !important;
+}
+
+@media (max-width: 600px) {
+  .success-snackbar,
+  .error-snackbar,
+  .info-snackbar {
+    width: 95% !important;
+
+    .mdc-snackbar__surface,
+    .mat-mdc-snack-bar-label {
+      font-size: 14px !important;
+    }
+
+    .mdc-button__label {
+      font-size: 15px;
+    }
+  }
 }
