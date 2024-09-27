@@ -25,6 +25,13 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 - Turborepo w celu automatyzacji skryptów i zarządzania strukturą monorepo
 - ESLint i Dprint do statycznej analizy kodu i utrzymania jednolitej jakości kodu
 
+## Zdjęcia poglądowe
+
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/1.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/2.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/3.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/4.png)
+
 ## Instrukcja instalacji projektu
 
 - Pobieramy projekt na lokalne środowisko
