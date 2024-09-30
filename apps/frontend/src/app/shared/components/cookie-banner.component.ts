@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { getCookie, setCookie } from '../utils/cookies';
 
 @Component({
   selector: 'app-cookie-banner',
@@ -31,31 +32,14 @@ export class CookieBannerComponent implements OnInit {
   showBanner: boolean = false;
 
   ngOnInit(): void {
-    const cookiesAccepted = this.getCookie('cookies_accepted');
+    const cookiesAccepted = getCookie('cookies_accepted');
     if (!cookiesAccepted) {
       this.showBanner = true;
     }
   }
 
   acceptCookies(): void {
-    this.setCookie('cookies_accepted', 'true', 365);
+    setCookie('cookies_accepted', 'true', 365);
     this.showBanner = false;
-  }
-
-  private setCookie(name: string, value: string, days: number): void {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    const expires = 'expires=' + date.toUTCString();
-    document.cookie = `${name}=${value};${expires};path=/`;
-  }
-
-  private getCookie(name: string): string | null {
-    const nameEQ = name + '=';
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i].trim();
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
   }
 }
