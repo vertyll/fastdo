@@ -1,0 +1,120 @@
+{
+  "Base": {
+    "loading": "Ładowanie...",
+    "accept": "Akceptuj",
+    "appName": "FastDo",
+    "logout": "Wyloguj",
+    "login": "Zaloguj",
+    "register": "Zarejestruj",
+    "add": "Dodaj"
+  },
+  "Filters": {
+    "search": "Szukaj",
+    "status": "Status",
+    "sortBy": "Sortuj według",
+    "orderBy": "Kolejność",
+    "createdFrom": "Utworzony od",
+    "createdTo": "Utworzony do",
+    "updatedFrom": "Zaktualizowany od",
+    "updatedTo": "Zaktualizowany do",
+    "showLessFilters": "Pokaż mniej filtrów",
+    "showMoreFilters": "Pokaż więcej filtrów",
+    "clearFilters": "Wyczyść filtry",
+    "filtersSet": "Wybrane filtry",
+    "statusAll": "Wszystkie",
+    "statusTodo": "Do zrobienia",
+    "statusDone": "Zrobione",
+    "sortByName": "Nazwa",
+    "sortByCreatedAt": "Data utworzenia",
+    "sortByUpdatedAt": "Data aktualizacji",
+    "orderByAsc": "Rosnąco",
+    "orderByDesc": "Malejąco"
+  },
+  "Auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Hasło",
+    "loginButton": "Zaloguj",
+    "dontHaveAccount": "Nie masz konta? Zarejestruj się",
+    "unknownLoginError": "Wystąpił błąd podczas logowania",
+    "register": "Rejestracja",
+    "confirmPassword": "Potwierdź hasło",
+    "passwordDoNotMatch": "Hasła nie są takie same",
+    "registerButton": "Zarejestruj",
+    "alreadyHaveAccount": "Masz już konto? Zaloguj się",
+    "unknownRegisterError": "Wystąpił błąd podczas rejestracji",
+    "registerSuccess": "Rejestracja zakończona sukcesem",
+    "passwordRequired": "Hasło jest wymagane.",
+    "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków.",
+    "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",
+    "passwordSpecialCharacter": "Hasło musi zawierać co najmniej jeden znak specjalny.",
+    "emailRequired": "Email jest wymagany.",
+    "emailInvalid": "Email musi być prawidłowym adresem email."
+  },
+  "Dashboard": {
+    "title": "FastDo - todo list app"
+  },
+  "Project": {
+    "title": "Projekty",
+    "projectNameMinLength": "Nazwa projektu musi mieć co najmniej 3 znaki.",
+    "created": "Utworzono",
+    "modified": "Zaktualizowano",
+    "viewTasks": "Zobacz zadania",
+    "createError": "Wystąpił błąd podczas tworzenia projektu",
+    "createSuccess": "Projekt został utworzony",
+    "updateError": "Wystąpił błąd podczas aktualizacji projektu",
+    "updateSuccess": "Projekt został zaktualizowany",
+    "deleteError": "Wystąpił błąd podczas usuwania projektu",
+    "deleteSuccess": "Projekt został usunięty",
+    "getAllError": "Wystąpił błąd podczas pobierania projektów"
+  },
+  "Task": {
+    "forProject": "Dla projektu",
+    "created": "Utworzono",
+    "modified": "Zaktualizowano",
+    "todo": "Do zrobienia",
+    "done": "Zrobione",
+    "viewMode": "Tryb przeglądania",
+    "emptyList": "Brak zadań",
+    "deleteError": "Wystąpił błąd podczas usuwania zadania",
+    "deleteSuccess": "Zadanie zostało usunięte",
+    "updateError": "Wystąpił błąd podczas aktualizacji zadania",
+    "updateSuccess": "Zadanie zostało zaktualizowane",
+    "taskNameMinLength": "Nazwa zadania musi mieć co najmniej 3 znaki.",
+    "title": "Wszystkie zadania",
+    "taskForProject": "Zadania dla projektu",
+    "howToUse": "Jak używać?",
+    "changeNameDoc": "Zmień nazwę: kliknij dwa razy aby edytować nazwę zadania",
+    "changeNameWithoutSaveDoc": "Zmiana nazwy bez zapisywania: naciśnij klawisz ESC",
+    "changeStatusDoc": "Zmień status: kliknij na zadanie",
+    "urgentTaskCount": "Liczba pilnych zadań",
+    "addError": "Wystąpił błąd podczas dodawania zadania",
+    "addSuccess": "Zadanie zostało dodane"
+  },
+  "CookiesBanner": {
+    "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."
+  },
+  "Footer": {
+    "text": "Todo List App - Mikołaj Gawron"
+  },
+  "InfoPanel": {
+    "userRoles": "Role użytkownika",
+    "currentTime": "Aktualny czas",
+    "browserInfo": "Informacje o przeglądarce"
+  },
+  "Navbar": {
+    "tasks": "Zadania",
+    "projects": "Projekty",
+    "urgent": "Pilne"
+  },
+  "RemoveItemButton": {
+    "areYouSure": " Czy na pewno chcesz usunąć ten element?"
+  },
+  "BrowserInfo": {
+    "userAgent": "Agent użytkownika",
+    "language": "Język"
+  },
+  "Date": {
+    "invalidDate": "Nieprawidłowa data"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "Base": {
+    "loading": "Loading...",
+    "accept": "Accept",
+    "appName": "FastDo",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "add": "Add"
+  },
+  "Filters": {
+    "search": "Search",
+    "status": "Status",
+    "sortBy": "Sort by",
+    "orderBy": "Order by",
+    "createdFrom": "Created from",
+    "createdTo": "Created to",
+    "updatedFrom": "Updated from",
+    "updatedTo": "Updated to",
+    "showLessFilters": "Show less filters",
+    "showMoreFilters": "Show more filters",
+    "clearFilters": "Clear filters",
+    "filtersSet": "Selected filters",
+    "statusAll": "All",
+    "statusTodo": "To do",
+    "statusDone": "Done",
+    "sortByName": "Name",
+    "sortByCreatedAt": "Creation date",
+    "sortByUpdatedAt": "Update date",
+    "orderByAsc": "Ascending",
+    "orderByDesc": "Descending"
+  },
+  "Auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Login",
+    "dontHaveAccount": "Don't have an account? Register",
+    "unknownLoginError": "An error occurred during login",
+    "register": "Register",
+    "confirmPassword": "Confirm password",
+    "passwordDoNotMatch": "Passwords do not match",
+    "registerButton": "Register",
+    "alreadyHaveAccount": "Already have an account? Login",
+    "unknownRegisterError": "An error occurred during registration",
+    "registerSuccess": "Registration successful",
+    "passwordRequired": "Password is required.",
+    "passwordMinLength": "Password must be at least 8 characters long.",
+    "passwordUppercase": "Password must contain at least one uppercase letter.",
+    "passwordSpecialCharacter": "Password must contain at least one special character.",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Email must be a valid email address."
+  },
+  "Dashboard": {
+    "title": "FastDo - todo list app"
+  },
+  "Project": {
+    "title": "Projects",
+    "projectNameMinLength": "Project name must be at least 3 characters long.",
+    "created": "Created",
+    "modified": "Updated",
+    "viewTasks": "View tasks",
+    "createError": "An error occurred while creating the project",
+    "createSuccess": "Project created successfully",
+    "updateError": "An error occurred while updating the project",
+    "updateSuccess": "Project updated successfully",
+    "deleteError": "An error occurred while deleting the project",
+    "deleteSuccess": "Project deleted successfully",
+    "getAllError": "An error occurred while fetching projects"
+  },
+  "Task": {
+    "forProject": "For project",
+    "created": "Created",
+    "modified": "Updated",
+    "todo": "To do",
+    "done": "Done",
+    "viewMode": "View mode",
+    "emptyList": "No tasks",
+    "deleteError": "An error occurred while deleting the task",
+    "deleteSuccess": "Task deleted successfully",
+    "updateError": "An error occurred while updating the task",
+    "updateSuccess": "Task updated successfully",
+    "taskNameMinLength": "Task name must be at least 3 characters long.",
+    "title": "All tasks",
+    "taskForProject": "Tasks for project",
+    "howToUse": "How to use?",
+    "changeNameDoc": "Change name: double-click to edit task name",
+    "changeNameWithoutSaveDoc": "Change name without saving: press ESC key",
+    "changeStatusDoc": "Change status: click on the task",
+    "urgentTaskCount": "Number of urgent tasks",
+    "addError": "An error occurred while adding the task",
+    "addSuccess": "Task added successfully"
+  },
+  "CookiesBanner": {
+    "text": "This site uses cookies to improve your experience. By using our site, you agree to our use of cookies."
+  },
+  "Footer": {
+    "text": "Todo List App - Mikołaj Gawron"
+  },
+  "InfoPanel": {
+    "userRoles": "User roles",
+    "currentTime": "Current time",
+    "browserInfo": "Browser information"
+  },
+  "Navbar": {
+    "tasks": "Tasks",
+    "projects": "Projects",
+    "urgent": "Urgent"
+  },
+  "RemoveItemButton": {
+    "areYouSure": "Are you sure you want to delete this item?"
+  },
+  "BrowserInfo": {
+    "userAgent": "User agent",
+    "language": "Language"
+  },
+  "Date": {
+    "invalidDate": "Invalid date"
+  }
+}
