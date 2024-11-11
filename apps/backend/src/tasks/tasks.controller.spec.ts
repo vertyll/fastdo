@@ -37,6 +37,10 @@ describe("TasksController", () => {
         ...taskDto,
         isDone: false,
         isUrgent: false,
+        priority: {
+          id: 1,
+          name: "Low",
+        },
         dateCreation: new Date(),
         dateModification: null,
         project: {
@@ -62,6 +66,10 @@ describe("TasksController", () => {
           isDone: false,
           isUrgent: false,
           projectId: 1,
+          priority: {
+            id: 1,
+            name: "Low",
+          },
           dateCreation: new Date(),
           dateModification: null,
           project: null,
@@ -81,6 +89,10 @@ describe("TasksController", () => {
           isDone: false,
           isUrgent: false,
           projectId: 1,
+          priority: {
+            id: 1,
+            name: "Low",
+          },
           dateCreation: new Date(),
           dateModification: null,
           project: {
@@ -105,6 +117,10 @@ describe("TasksController", () => {
         isDone: false,
         isUrgent: false,
         projectId: 1,
+        priority: {
+          id: 1,
+          name: "Low",
+        },
         dateCreation: new Date(),
         dateModification: null,
         project: null,
@@ -123,6 +139,10 @@ describe("TasksController", () => {
         isDone: false,
         isUrgent: false,
         projectId: 1,
+        priority: {
+          id: 1,
+          name: "Low",
+        },
         dateCreation: new Date(),
         dateModification: new Date(),
         project: null,

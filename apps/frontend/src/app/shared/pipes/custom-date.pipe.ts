@@ -1,10 +1,13 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'customDate',
   standalone: true,
 })
 export class CustomDatePipe implements PipeTransform {
+  private readonly translateService = inject(TranslateService);
+
   public transform(value: number | string | Date): string {
     if (!value) return '';
 
@@ -19,7 +22,8 @@ export class CustomDatePipe implements PipeTransform {
     }
 
     if (isNaN(date.getTime())) {
-      console.error('Invalid date:', value);
+      const errorMessage = this.translateService.instant('Date.invalidDate');
+      console.error(errorMessage, value);
       return '';
     }
 

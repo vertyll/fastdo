@@ -6,6 +6,7 @@ import {
   ManyToOne,
   Relation,
 } from "typeorm";
+import { Priority } from "./priority.entity";
 
 @Entity("task")
 export class Task {
@@ -32,4 +33,7 @@ export class Task {
 
   @ManyToOne(() => Project, (project) => project.tasks, { nullable: true })
   project: Relation<Project>;
+
+  @ManyToOne(() => Priority, (priority) => priority.id, { nullable: true })
+  priority: Relation<Priority>;
 }

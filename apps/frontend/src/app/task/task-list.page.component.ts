@@ -5,18 +5,12 @@ import {
   computed,
   inject,
   OnInit,
-  Signal,
 } from '@angular/core';
 import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
-import {
-  TasksListFiltersComponent,
-  TasksListFiltersFormValue,
-} from './ui/task-list-filters.component';
+import { TasksListFiltersComponent } from './ui/task-list-filters.component';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
-import { NgIconComponent } from '@ng-icons/core';
 import { AppConfigStateService } from '../config/config.state.service';
 import { GetAllTasksSearchParams } from './data-access/task.api.service';
-import { AsyncPipe } from '@angular/common';
 import { TasksListComponent } from './ui/task-list.component';
 import { TasksKanbanViewComponent } from './ui/task-kanban.component';
 import {
@@ -31,7 +25,9 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
-import { validateTaskName } from './validators/task-name.validator';
+import { TasksListFiltersConfig } from '../shared/types/filter.types';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TaskNameValidator } from './validators/task-name.validator';
 
 @Component({
   selector: 'app-task-list-page',
@@ -40,18 +36,20 @@ import { validateTaskName } from './validators/task-name.validator';
     TasksListComponent,
     SubmitTextComponent,
     TasksListFiltersComponent,
-    NgIconComponent,
     TasksKanbanViewComponent,
     TasksListViewModeComponent,
-    AsyncPipe,
+    TranslateModule,
   ],
   template: `
     <div class="flex flex-col gap-4">
       @if (!projectName) {
-        <h2 class="text-2xl font-bold mb-4">All tasks</h2>
+        <h2 class="text-2xl font-bold mb-4">
+          {{ 'Task.title' | translate }}
+        </h2>
       } @else {
         <h2 class="text-2xl font-bold mb-4">
-          Tasks for project: {{ projectName }}
+          {{ 'Task.forProject' | translate }}
+          : {{ projectName }}
         </h2>
       }
       <app-submit-text (submitText)="addTask($event)" />
@@ -60,7 +58,9 @@ import { validateTaskName } from './validators/task-name.validator';
 
     <div class="how-to-use-section">
       <button (click)="showHowToUse = !showHowToUse">
-        <span class="font-semibold">How to use</span>
+        <span class="font-semibold">
+          {{ 'Task.howToUse' | translate }}
+        </span>
         @if (showHowToUse) {
           <span>[-]</span>
         } @else {
@@ -70,9 +70,15 @@ import { validateTaskName } from './validators/task-name.validator';
 
       @if (showHowToUse) {
         <div>
-          <p>Change name: double click to edit task name</p>
-          <p>Change name without saving: press esc</p>
-          <p>Change status: click on the task</p>
+          <p>
+            {{ 'Task.changeNameDoc' | translate }}
+          </p>
+          <p>
+            {{ 'Task.changeNameWithoutSaveDoc' | translate }}
+          </p>
+          <p>
+            {{ 'Task.changeStatusDoc' | translate }}
+          </p>
         </div>
       }
     </div>
@@ -88,7 +94,10 @@ import { validateTaskName } from './validators/task-name.validator';
       <app-tasks-kanban-view [tasks]="tasksStateService.tasks()" />
     }
 
-    <p>Urgent tasks count: {{ tasksStateService.urgentCount() }}</p>
+    <p>
+      {{ 'Task.urgentTaskCount' | translate }}:
+      {{ tasksStateService.urgentCount() }}
+    </p>
   `,
 })
 export class TaskListPageComponent implements OnInit {
@@ -100,6 +109,8 @@ export class TaskListPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
   private readonly projectsService = inject(ProjectsService);
+  private readonly taskNameValidator = inject(TaskNameValidator);
+  private readonly translateService = inject(TranslateService);
   protected readonly configStateService = inject(AppConfigStateService);
   protected readonly tasksStateService = inject(TasksStateService);
   protected readonly $view = computed(
@@ -116,7 +127,7 @@ export class TaskListPageComponent implements OnInit {
     this.initializeTaskList();
   }
 
-  protected handleFiltersChange(filters: TasksListFiltersFormValue): void {
+  protected handleFiltersChange(filters: TasksListFiltersConfig): void {
     const searchParams = getAllTasksSearchParams({
       ...filters,
       isUrgent: this.isUrgent,
@@ -125,7 +136,7 @@ export class TaskListPageComponent implements OnInit {
   }
 
   protected addTask(name: string): void {
-    const validation = validateTaskName(name);
+    const validation = this.taskNameValidator.validateTaskName(name);
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,
@@ -146,14 +157,14 @@ export class TaskListPageComponent implements OnInit {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred while adding the task',
+            this.translateService.instant('Task.addError'),
             NotificationType.error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
-          'Task added successfully',
+          this.translateService.instant('Task.addSuccess'),
           NotificationType.success,
         );
       },

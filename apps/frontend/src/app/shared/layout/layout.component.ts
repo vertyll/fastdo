@@ -1,12 +1,5 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  Signal,
-} from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ProjectsStateService } from 'src/app/project/data-access/project.state.service';
@@ -17,12 +10,12 @@ import { NavbarComponent } from '../components/navbar.component';
 import { FooterComponent } from '../components/footer.component';
 import { InfoPanelComponent } from '../components/info-panel.component';
 import { Role } from '../enums/role.enum';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [
-    RouterOutlet,
     NavbarComponent,
     CookieBannerComponent,
     FooterComponent,
@@ -61,6 +54,7 @@ export class LayoutComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
   private readonly tasksService = inject(TasksService);
   protected readonly authService = inject(AuthService);
+  protected readonly translateService = inject(TranslateService);
   protected readonly router = inject(Router);
   protected urgentCount = this.tasksStateService.urgentCount;
   protected projectCount = this.projectsStateService.projectCount;
@@ -102,6 +96,10 @@ export class LayoutComponent implements OnInit {
   }
 
   private getBrowserInfo(): string {
-    return `User Agent: ${navigator.userAgent}, Language: ${navigator.language}`;
+    const userAgent = navigator.userAgent;
+    const language = navigator.language;
+    const translatedUserAgent = this.translateService.instant('BrowserInfo.userAgent');
+    const translatedLanguage = this.translateService.instant('BrowserInfo.language');
+    return `${translatedUserAgent}: ${userAgent}, ${translatedLanguage}: ${language}`;
   }
 }

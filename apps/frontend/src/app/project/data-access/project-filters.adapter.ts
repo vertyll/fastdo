@@ -1,8 +1,8 @@
-import { ProjectsListFiltersFormValue } from '../ui/project-list-filters.component';
+import { ProjectListFiltersConfig } from 'src/app/shared/types/filter.types';
 import { GetAllProjectsSearchParams } from './project.api.service';
 
 export function getAllProjectsSearchParams(
-  formValue: ProjectsListFiltersFormValue,
+  formValue: ProjectListFiltersConfig,
 ): GetAllProjectsSearchParams {
   let searchParams: GetAllProjectsSearchParams = {
     q: formValue.q || '',

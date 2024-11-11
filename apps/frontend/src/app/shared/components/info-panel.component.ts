@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroArrowRight } from '@ng-icons/heroicons/outline';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-info-panel',
   standalone: true,
-  imports: [NgIconComponent],
+  imports: [NgIconComponent, TranslateModule],
   providers: [provideIcons({ heroArrowLeft, heroArrowRight })],
   template: `
     @if (isLoggedIn()) {
@@ -25,15 +26,16 @@ import { heroArrowLeft, heroArrowRight } from '@ng-icons/heroicons/outline';
           [class.translate-x-full]="!panelOpen"
         >
           <div>
-            <b>User roles</b>:
+            <b>{{ 'InfoPanel.userRoles' | translate }}</b
+            >:
             <span class="text-green-500"> {{ userRolesString }} </span>
           </div>
           <div>
-            <b>Current time</b>:
+            <b> {{ 'InfoPanel.currentTime' | translate }} </b>:
             <span class="text-green-500"> {{ currentTime }} </span>
           </div>
           <div>
-            <b>Browser info</b>:
+            <b> {{ 'InfoPanel.browserInfo' | translate }} </b>:
             {{ browserInfo }}
           </div>
         </div>

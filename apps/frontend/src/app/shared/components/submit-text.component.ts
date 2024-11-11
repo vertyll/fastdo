@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-submit-text',
+  imports: [TranslateModule],
   standalone: true,
   template: `
     <div>
@@ -14,7 +16,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
         (click)="submitText.emit(textInput.value); textInput.value = ''"
         class="border border-orange-400 ml-4 px-4"
       >
-        Add
+        {{ 'Base.add' | translate }}
       </button>
     </div>
   `,

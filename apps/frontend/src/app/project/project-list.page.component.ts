@@ -5,10 +5,6 @@ import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
-import {
-  ProjectsListFiltersComponent,
-  ProjectsListFiltersFormValue,
-} from './ui/project-list-filters.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsStateService } from './data-access/project.state.service';
@@ -19,8 +15,11 @@ import { Role } from 'src/app/shared/enums/role.enum';
 import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
 import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
-import { validateProjectName } from './validators/project-name.validator';
 import { GetAllProjectsSearchParams } from './data-access/project.api.service';
+import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
+import { ProjectListFiltersConfig } from '../shared/types/filter.types';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ProjectNameValidator } from './validators/project-name.validator';
 
 @Component({
   selector: 'app-project-list-page',
@@ -34,10 +33,11 @@ import { GetAllProjectsSearchParams } from './data-access/project.api.service';
     RemoveItemButtonComponent,
     AutosizeTextareaComponent,
     HasRoleDirective,
+    TranslateModule,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
-      <h2 class="text-2xl font-bold mb-4">Projects</h2>
+      <h2 class="text-2xl font-bold mb-4">{{ 'Project.title' | translate }}</h2>
       <app-submit-text
         (submitText)="
           listState.state === listStateValue.SUCCESS &&
@@ -81,14 +81,15 @@ import { GetAllProjectsSearchParams } from './data-access/project.api.service';
                   <div class="flex items-center">
                     <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
                     <span
-                      >Created: {{ project.dateCreation | customDate }}</span
+                      >{{ 'Project.created' | translate }}:
+                      {{ project.dateCreation | customDate }}</span
                     >
                   </div>
                   @if (project.dateModification) {
                     <div class="flex items-center mt-1">
                       <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
                       <span
-                        >Updated:
+                        >{{ 'Project.modified' | translate }}:
                         {{ project.dateModification | customDate }}</span
                       >
                     </div>
@@ -106,7 +107,7 @@ import { GetAllProjectsSearchParams } from './data-access/project.api.service';
                     [routerLink]="['/tasks', project.id]"
                     class="text-blue-500 hover:underline"
                   >
-                    View task
+                    {{ 'Project.viewTasks' | translate }}
                   </a>
                 </footer>
               </div>
@@ -119,7 +120,7 @@ import { GetAllProjectsSearchParams } from './data-access/project.api.service';
           </p>
         }
         @case (listStateValue.LOADING) {
-          <p class="text-gray-600">Loading...</p>
+          <p class="text-gray-600">{{ 'Base.loading' | translate }}</p>
         }
       }
     </div>
@@ -137,6 +138,8 @@ export class ProjectListPageComponent {
   private readonly projectsService = inject(ProjectsService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);
+  private readonly translateService = inject(TranslateService);
+  private readonly projectNameValidator = inject(ProjectNameValidator);
   protected readonly role = Role;
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
@@ -170,21 +173,21 @@ export class ProjectListPageComponent {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred creating the project.',
+            this.translateService.instant('Project.createError'),
             NotificationType.error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
-          'Project created successfully.',
+          this.translateService.instant('Project.createSuccess'),
           NotificationType.success,
         );
       },
     });
   }
 
-  protected handleFiltersChange(filters: ProjectsListFiltersFormValue): void {
+  protected handleFiltersChange(filters: ProjectListFiltersConfig): void {
     const searchParams = getAllProjectsSearchParams(filters);
     this.getAllProjects(searchParams);
   }
@@ -219,14 +222,14 @@ export class ProjectListPageComponent {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred updating the project.',
+            this.translateService.instant('Project.updateError'),
             NotificationType.error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
-          'Project updated successfully.',
+          this.translateService.instant('Project.updateSuccess'),
           NotificationType.success,
         );
       },
@@ -254,14 +257,14 @@ export class ProjectListPageComponent {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred deleting the project.',
+            this.translateService.instant('Project.deleteError'),
             NotificationType.error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
-          'Project deleted successfully.',
+          this.translateService.instant('Project.deleteSuccess'),
           NotificationType.success,
         );
       },
@@ -293,7 +296,7 @@ export class ProjectListPageComponent {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred fetching the projects.',
+            this.translateService.instant('Project.getAllError'),
             NotificationType.error,
           );
         }
@@ -302,7 +305,7 @@ export class ProjectListPageComponent {
   }
 
   private handleProjectNameValidation(name: string): boolean {
-    const validation = validateProjectName(name);
+    const validation = this.projectNameValidator.validateProjectName(name);
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,

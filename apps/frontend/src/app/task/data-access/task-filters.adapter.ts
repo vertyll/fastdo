@@ -1,9 +1,9 @@
+import { TasksListFiltersConfig } from 'src/app/shared/types/filter.types';
 import { TASK_STATUS } from '../enums/task-status.enum';
-import { TasksListFiltersFormValue } from '../ui/task-list-filters.component';
 import { GetAllTasksSearchParams } from './task.api.service';
 
 export function getAllTasksSearchParams(
-  formValue: TasksListFiltersFormValue & { isUrgent?: boolean },
+  formValue: TasksListFiltersConfig & { isUrgent?: boolean },
 ): GetAllTasksSearchParams {
   let searchParams: GetAllTasksSearchParams = {
     q: formValue.q || '',

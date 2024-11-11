@@ -6,11 +6,12 @@ import {
   heroCheck,
   heroXMark,
 } from '@ng-icons/heroicons/outline';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-remove-item-button',
   standalone: true,
-  imports: [NgIconComponent],
+  imports: [NgIconComponent, TranslateModule],
   viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
   template: `
     <div
@@ -24,8 +25,9 @@ import {
         [class.invisible]="!removeMode"
         [class.-translate-x-6]="removeMode"
         [class.bg-red-700]="removeMode"
-        >Are you sure?</span
       >
+        {{ 'RemoveItemButton.areYouSure' | translate }}
+      </span>
 
       @if (!removeMode; as value) {
         <button

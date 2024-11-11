@@ -1,12 +1,19 @@
-export function validateTaskName(taskName: string): {
-  isValid: boolean;
-  error?: string;
-} {
-  if (!taskName || taskName.length < 3) {
-    return {
-      isValid: false,
-      error: 'Task name must be at least 3 characters long',
-    };
+import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class TaskNameValidator {
+  constructor(private translateService: TranslateService) {}
+
+  validateTaskName(taskName: string): { isValid: boolean; error?: string } {
+    if (!taskName || taskName.length < 3) {
+      return {
+        isValid: false,
+        error: this.translateService.instant('Auth.taskNameMinLength'),
+      };
+    }
+    return { isValid: true };
   }
-  return { isValid: true };
 }

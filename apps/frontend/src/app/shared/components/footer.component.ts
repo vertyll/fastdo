@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
+  imports: [TranslateModule],
   styles: [
     `
       .page-container {
@@ -23,7 +25,7 @@ import { Component } from '@angular/core';
       <div class="content">
         <ng-content></ng-content>
       </div>
-      <footer>&copy; {{ currentYear }} Todo List App - Mikołaj Gawron</footer>
+      <footer>&copy; {{ currentYear }} {{ 'Footer.text' | translate }}</footer>
     </div>
   `,
 })

@@ -7,25 +7,30 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './data-access/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
-      <h2 class="text-2xl font-bold mb-4">Login</h2>
+      <h2 class="text-2xl font-bold mb-4">{{ 'Auth.login' | translate }}</h2>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <label for="email" class="block mb-2">Email:</label>
+        <label for="email" class="block mb-2"
+          >{{ 'Auth.email' | translate }}:</label
+        >
         <input
           id="email"
           formControlName="email"
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <label for="password" class="block mb-2">Password:</label>
+        <label for="password" class="block mb-2"
+          >{{ 'Auth.password' | translate }}:</label
+        >
         <input
           id="password"
           type="password"
@@ -40,14 +45,14 @@ import { AuthService } from './data-access/auth.service';
           type="submit"
           class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
         >
-          Login
+          {{ 'Auth.loginButton' | translate }}
         </button>
         <button
           type="button"
           (click)="router.navigate(['/register'])"
           class="mt-4 text-blue-500 hover:underline"
         >
-          Don't have an account? Register here.
+          {{ 'Auth.dontHaveAccount' | translate }}
         </button>
       </form>
     </div>
@@ -62,6 +67,7 @@ export class LoginComponent {
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     protected readonly router: Router,
+    private readonly translateService: TranslateService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -79,7 +85,9 @@ export class LoginComponent {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = 'An error occurred during login.';
+            this.errorMessage = this.translateService.instant(
+              'Auth.unknownLoginError',
+            );
           }
         },
       });

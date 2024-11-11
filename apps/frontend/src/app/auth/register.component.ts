@@ -10,25 +10,30 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { AuthService } from './data-access/auth.service';
 import { passwordValidator } from './validators/password.validator';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
-      <h2 class="text-2xl font-bold mb-4">Register</h2>
+      <h2 class="text-2xl font-bold mb-4">{{ 'Auth.register' | translate }}</h2>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <label for="email" class="block mb-2">Email:</label>
+        <label for="email" class="block mb-2"
+          >{{ 'Auth.email' | translate }}:</label
+        >
         <input
           id="email"
           formControlName="email"
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <label for="password" class="block mb-2">Password:</label>
+        <label for="password" class="block mb-2"
+          >{{ 'Auth.password' | translate }}:</label
+        >
         <input
           id="password"
           type="password"
@@ -37,7 +42,7 @@ import { passwordValidator } from './validators/password.validator';
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
         <label for="confirmPassword" class="block mb-2"
-          >Confirm Password:</label
+          >{{ 'Auth.confirmPassword' | translate }}:</label
         >
         <input
           id="confirmPassword"
@@ -54,7 +59,9 @@ import { passwordValidator } from './validators/password.validator';
           </div>
         }
         @if (passwordMismatch) {
-          <div class="text-red-500 mb-2">Passwords do not match.</div>
+          <div class="text-red-500 mb-2">
+            {{ 'Auth.passwordDoNotMatch' | translate }}
+          </div>
         }
         @if (passwordErrors.length > 0) {
           <div class="text-red-500 mb-2">
@@ -70,14 +77,14 @@ import { passwordValidator } from './validators/password.validator';
           type="submit"
           class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
         >
-          Register
+          {{ 'Auth.registerButton' | translate }}
         </button>
         <button
           type="button"
           (click)="router.navigate(['/login'])"
           class="mt-4 text-blue-500 hover:underline"
         >
-          Already have an account? Login here.
+          {{ 'Auth.alreadyHaveAccount' | translate }}
         </button>
       </form>
     </div>
@@ -96,6 +103,7 @@ export class RegisterComponent implements OnInit {
     private readonly authService: AuthService,
     protected readonly router: Router,
     protected readonly notificationService: NotificationService,
+    private readonly translateService: TranslateService,
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -126,12 +134,14 @@ export class RegisterComponent implements OnInit {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = 'An error occurred during registration.';
+            this.errorMessage = this.translateService.instant(
+              'Auth.unknownRegisterError',
+            );
           }
         },
         complete: () => {
           this.notificationService.showNotification(
-            'Registration successful. Please log in.',
+            this.translateService.instant('Auth.registerSuccess'),
             NotificationType.success,
           );
         },
@@ -149,28 +159,28 @@ export class RegisterComponent implements OnInit {
     const passwordControl = this.registerForm.get('password');
     const errors: string[] = [];
     if (passwordControl?.hasError('required')) {
-      errors.push('Password is required.');
+      errors.push(this.translateService.instant('Auth.passwordRequired'));
     }
     if (passwordControl?.hasError('minlength')) {
-      errors.push('Password must be at least 8 characters long.');
+      errors.push(this.translateService.instant('Auth.passwordMinLength'));
     }
     if (passwordControl?.hasError('uppercase')) {
-      errors.push('Password must contain at least one uppercase letter.');
+      errors.push(this.translateService.instant('Auth.passwordUppercase'));
     }
     if (passwordControl?.hasError('specialCharacter')) {
-      errors.push('Password must contain at least one special character.');
+      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
     }
     return errors;
   }
-
+  
   private getEmailErrors(): string[] {
     const emailControl = this.registerForm.get('email');
     const errors: string[] = [];
     if (emailControl?.hasError('required')) {
-      errors.push('Email is required.');
+      errors.push(this.translateService.instant('Auth.emailRequired'));
     }
     if (emailControl?.hasError('email')) {
-      errors.push('Email must be a valid email address.');
+      errors.push(this.translateService.instant('Auth.emailInvalid'));
     }
     return errors;
   }

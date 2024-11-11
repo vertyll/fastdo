@@ -1,19 +1,24 @@
 import { Component, Input } from '@angular/core';
 import { TasksListComponent } from './task-list.component';
 import { Task } from '../models/Task';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   selector: 'app-tasks-kanban-view',
-  imports: [TasksListComponent],
+  imports: [TasksListComponent, TranslateModule],
   template: `
     <section class="flex gap-4">
       <div class="w-1/2">
-        <p class="font-semibold text-xl">Todo</p>
+        <p class="font-semibold text-xl">
+          {{ 'Task.todo' | translate }}
+        </p>
         <app-tasks-list class="block mt-4" [tasks]="todos" />
       </div>
       <div class="w-1/2">
-        <p class="font-semibold text-xl">Done</p>
+        <p class="font-semibold text-xl">
+          {{ 'Task.done' | translate }}
+        </p>
         <app-tasks-list class="block mt-4" [tasks]="tasksDone" />
       </div>
     </section>

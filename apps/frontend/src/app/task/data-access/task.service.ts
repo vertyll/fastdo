@@ -1,4 +1,4 @@
-import { Injectable, inject, effect, computed } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   GetAllTasksSearchParams,
   TaskUpdatePayload,
@@ -13,7 +13,6 @@ import { TasksStateService } from './task.state.service';
 export class TasksService {
   private readonly httpService = inject(TasksApiService);
   private readonly state = inject(TasksStateService);
-  private readonly tasks = this.state.tasks;
 
   public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(

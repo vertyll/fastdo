@@ -4,9 +4,10 @@ import { Task } from "./entities/task.entity";
 import { TasksController } from "./tasks.controller";
 import { TasksService } from "./tasks.service";
 import { TaskRepository } from "./repositories/task.repository";
+import { Priority } from "./entities/priority.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task])],
+  imports: [TypeOrmModule.forFeature([Task, Priority])],
   controllers: [TasksController],
   providers: [TasksService, TaskRepository],
   exports: [TasksService],

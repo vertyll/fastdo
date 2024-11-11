@@ -3,10 +3,11 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { heroBars4 } from '@ng-icons/heroicons/outline';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgIconComponent],
+  imports: [RouterLink, RouterLinkActive, NgIconComponent, TranslateModule],
   viewProviders: provideIcons({ heroBars4 }),
   styles: [
     `
@@ -34,8 +35,9 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
               : router.navigate(['/'])
           "
           class="border-2 border-black text-black font-bold px-2 py-1 mx-4 cursor-pointer"
-          >FASTDO</span
         >
+          {{ 'Base.appName' | translate }}
+        </span>
         <ul class="hidden md:flex gap-6">
           @if (authService.isLoggedIn()) {
             <li>
@@ -43,16 +45,18 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
                 routerLink="/tasks"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >Tasks</a
               >
+                {{ 'Navbar.tasks' | translate }}
+              </a>
             </li>
             <li>
               <a
                 routerLink="/projects"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >Projects ({{ projectCount }})</a
               >
+                {{ 'Navbar.projects' | translate }} ({{ projectCount }})
+              </a>
             </li>
           }
         </ul>
@@ -63,18 +67,25 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
                 routerLink="/tasks/urgent"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >Urgent ({{ urgentCount }})</a
               >
+                {{ 'Navbar.urgent' | translate }} ({{ urgentCount }})
+              </a>
             </li>
             <li>
-              <button (click)="logout()" class="text-red-500">Logout</button>
+              <button (click)="logout()" class="text-red-500">
+                {{ 'Base.logout' | translate }}
+              </button>
             </li>
           } @else {
             <li>
-              <a routerLink="/login" (click)="closeMenu()">Login</a>
+              <a routerLink="/login" (click)="closeMenu()">
+                {{ 'Base.login' | translate }}
+              </a>
             </li>
             <li>
-              <a routerLink="/register" (click)="closeMenu()">Register</a>
+              <a routerLink="/register" (click)="closeMenu()">
+                {{ 'Base.register' | translate }}
+              </a>
             </li>
           }
         </ul>
@@ -93,10 +104,14 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
         >
           @if (!authService.isLoggedIn(); as loggedIn) {
             <li>
-              <a routerLink="/login" (click)="closeMenu()">Login</a>
+              <a routerLink="/login" (click)="closeMenu()">
+                {{ 'Base.login' | translate }}
+              </a>
             </li>
             <li>
-              <a routerLink="/register" (click)="closeMenu()">Register</a>
+              <a routerLink="/register" (click)="closeMenu()">
+                {{ 'Base.register' | translate }}
+              </a>
             </li>
           } @else {
             <li>
@@ -104,7 +119,9 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
                 routerLink="/tasks"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >Tasks</a
+                >
+                {{ 'Navbar.tasks' | translate }}
+                </a
               >
             </li>
             <li>
@@ -112,7 +129,9 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
                 routerLink="/projects"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >Projects ({{ projectCount }})</a
+                >
+                {{ 'Navbar.projects' | translate }}
+                ({{ projectCount }})</a
               >
             </li>
             <li>
@@ -120,11 +139,15 @@ import { heroBars4 } from '@ng-icons/heroicons/outline';
                 routerLink="/tasks/urgent"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >Urgent ({{ urgentCount }})</a
+                >
+                {{ 'Navbar.urgent' | translate }}
+                ({{ urgentCount }})</a
               >
             </li>
             <li>
-              <button (click)="logout()" class="text-red-500">Logout</button>
+              <button (click)="logout()" class="text-red-500">
+                {{ 'Base.logout' | translate }}
+              </button>
             </li>
           }
         </ul>

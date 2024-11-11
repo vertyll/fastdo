@@ -1,21 +1,16 @@
 import { Component, Input, inject } from '@angular/core';
 import { Task } from '../models/Task';
-import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
 import { TaskCardComponent } from './task-card.component';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { TasksService } from '../data-access/task.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tasks-list',
   standalone: true,
-  imports: [
-    RemoveItemButtonComponent,
-    AutosizeTextareaComponent,
-    TaskCardComponent,
-  ],
+  imports: [TaskCardComponent, TranslateModule],
   template: `
     <ul>
       @for (task of tasks; track task.id) {
@@ -27,7 +22,9 @@ import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-te
           />
         </li>
       } @empty {
-        <p>No tasks</p>
+        <p>
+          {{ 'Task.emptyList' | translate }}
+        </p>
       }
     </ul>
   `,
@@ -38,6 +35,7 @@ export class TasksListComponent {
 
   private readonly tasksService = inject(TasksService);
   private readonly notificationService = inject(NotificationService);
+  private readonly translateService = inject(TranslateService);
 
   protected delete(taskId: number): void {
     this.tasksService.delete(taskId).subscribe({
@@ -52,14 +50,14 @@ export class TasksListComponent {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred while deleting the task',
+            this.translateService.instant('Task.deleteError'),
             NotificationType.error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
-          'Task deleted successfully',
+          this.translateService.instant('Task.deleteSuccess'),
           NotificationType.success,
         );
       },
@@ -85,14 +83,14 @@ export class TasksListComponent {
           );
         } else {
           this.notificationService.showNotification(
-            'An error occurred while updating the task',
+            this.translateService.instant('Task.updateError'),
             NotificationType.error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
-          'Task updated successfully',
+          this.translateService.instant('Task.updateSuccess'),
           NotificationType.success,
         );
       },

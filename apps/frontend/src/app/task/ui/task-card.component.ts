@@ -8,9 +8,10 @@ import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
-import { validateTaskName } from '../validators/task-name.validator';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { TranslateModule } from '@ngx-translate/core';
+import { TaskNameValidator } from '../validators/task-name.validator';
 
 @Component({
   selector: 'app-task-card',
@@ -21,6 +22,7 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
     AutosizeTextareaComponent,
     NgIconComponent,
     RouterLink,
+    TranslateModule,
   ],
   template: `
     <div
@@ -50,7 +52,7 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
         </section>
         @if (task.project) {
           <section class="text-left text-sm mt-2 break-all">
-            <span>For project: </span>
+            <span>{{ 'Task.forProject' | translate }}: </span>
             <a
               [routerLink]="['/tasks', task.project.id]"
               class="text-blue-500 hover:underline"
@@ -71,15 +73,17 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
           </button>
           <div class="flex flex-col items-end text-xs">
             <div class="flex items-center">
-              <span class="pr-1"
-                >Created: {{ task.dateCreation | customDate }}</span
+              <span class="pr-1">
+                {{ 'Task.created' | translate }}
+                : {{ task.dateCreation | customDate }}</span
               >
               <ng-icon name="heroCalendar" class="text-sm" />
             </div>
             @if (task.dateModification) {
               <div class="flex items-center">
-                <span class="pr-1"
-                  >Updated: {{ task.dateModification | customDate }}</span
+                <span class="pr-1">
+                  {{ 'Task.modifed' | translate }}
+                  : {{ task.dateModification | customDate }}</span
                 >
                 <ng-icon name="heroCalendar" class="text-sm" />
               </div>
@@ -89,12 +93,16 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
       </button>
     </div>
   `,
-  styles: [`
-    .break-all {
-      word-break: break-all;
-    }
-  `],
-  viewProviders: [provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar })],
+  styles: [
+    `
+      .break-all {
+        word-break: break-all;
+      }
+    `,
+  ],
+  viewProviders: [
+    provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar }),
+  ],
 })
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;
@@ -102,6 +110,7 @@ export class TaskCardComponent {
   @Output() delete = new EventEmitter<void>();
 
   protected readonly notificationService = inject(NotificationService);
+  protected readonly taskNameValidator = inject(TaskNameValidator);
   protected editMode: boolean = false;
   private isSingleClick: boolean = true;
 
@@ -110,7 +119,7 @@ export class TaskCardComponent {
   }
 
   protected updateTaskName(updatedName: string): void {
-    const validation = validateTaskName(updatedName);
+    const validation = this.taskNameValidator.validateTaskName(updatedName);
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,
