@@ -18,42 +18,51 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   standalone: true,
   selector: 'app-editable-multi-select',
-  template: ` <div>
-    <ng-select
-      [multiple]="multiple"
-      bindLabel="label"
-      [searchable]="true"
-      (change)="onSelectChange($event)"
-      [(ngModel)]="selectValue"
-      [maxSelectedItems]="maxSelectedItems"
-      [id]="id"
-      notFoundText="{{ 'Basic.noItemsFound' | translate }}"
-      (search)="onSelectSearch($event)"
-      [minTermLength]="minTermLength"
-      [addTag]="allowAddTag ? addTag : false"
-      [addTagText]="
-        allowAddTag ? ('EditableMultiSelect.addTagsAdHoc' | translate) : null
-      "
-      [placeholder]="placeholder"
-    >
-      @for (item of dataArray; track $index) {
-        <ng-option [value]="item.id">
-          {{ item.name }}
-        </ng-option>
-      }
-    </ng-select>
-  </div>`,
+  template: `
+    <div class="relative">
+      <ng-select
+        [multiple]="multiple"
+        bindLabel="label"
+        [searchable]="true"
+        (change)="onSelectChange($event)"
+        [(ngModel)]="selectValue"
+        [maxSelectedItems]="maxSelectedItems"
+        [id]="id"
+        notFoundText="{{ 'Base.noItemsFound' | translate }}"
+        (search)="onSelectSearch($event)"
+        [minTermLength]="minTermLength"
+        [addTag]="allowAddTag ? addTag : false"
+        [addTagText]="
+          allowAddTag ? ('EditableMultiSelect.addTagsAdHoc' | translate) : null
+        "
+        class="block px-2 pb-2.5 pt-3 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+      >
+        @for (item of dataArray; track $index) {
+          <ng-option [value]="item.id">
+            {{ item.name }}
+          </ng-option>
+        }
+      </ng-select>
+      <label
+        [for]="id"
+        class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-4"
+      >
+        {{ placeholder }}
+      </label>
+    </div>
+  `,
   styles: `
-    .ng-select-taggable::after {
-      content: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-pencil' viewBox='0 0 16 16'%3e%3cpath d='M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z'/%3e%3c/svg%3e");
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      right: 55px;
-      filter: invert(62%) sepia(3%) saturate(6%) hue-rotate(335deg)
-        brightness(91%) contrast(81%);
+    ::ng-deep ng-dropdown-panel {
+      background-color: white;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 0.7rem;
+      z-index: 10;
+      left: 0;
     }
   `,
+
   imports: [
     CommonModule,
     NgSelectComponent,

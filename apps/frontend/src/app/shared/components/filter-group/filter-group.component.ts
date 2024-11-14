@@ -34,65 +34,67 @@ import {
   selector: 'app-filter-group',
   standalone: true,
   template: `
-    <div>
-      <div>
-        <form [formGroup]="form">
-          <div>
-            @for (filter of filters.slice(0, 4); track $index) {
-              <div>
-                @switch (filter.type) {
-                  @case ('text') {
-                    <app-text-filter
-                      [control]="getFormControl(filter.formControlName)"
-                      [id]="filter.formControlName"
-                      [label]="translateService.instant(filter.labelKey)"
-                    />
-                  }
-                  @case ('number') {
-                    <app-number-filter
-                      [control]="getFormControl(filter.formControlName)"
-                      [id]="filter.formControlName"
-                      [label]="translateService.instant(filter.labelKey)"
-                    />
-                  }
-                  @case ('date') {
-                    <app-date-filter
-                      [control]="getFormControl(filter.formControlName)"
-                      [id]="filter.formControlName"
-                      [label]="translateService.instant(filter.labelKey)"
-                    />
-                  }
-                  @case ('select') {
-                    <app-select-filter
-                      [control]="getFormControl(filter.formControlName)"
-                      [id]="filter.formControlName"
-                      [label]="translateService.instant(filter.labelKey)"
-                      [options]="filter.options || []"
-                    />
-                  }
-                  @case ('checkSelect') {
-                    <app-check-select-filter
-                      [control]="getFormControl(filter.formControlName)"
-                      [id]="filter.formControlName"
-                      [label]="translateService.instant(filter.labelKey)"
-                      [options]="filter.options || []"
-                    />
-                  }
-                  @case ('editableMultiSelect') {
-                    <app-editable-multi-select
-                      [formControlName]="filter.formControlName"
-                      [id]="filter.formControlName"
-                      [dataArray]="filter.multiselectOptions || []"
-                      [maxSelectedItems]="filter.maxSelectedItems || 1"
-                      [minTermLength]="filter.minTermLength || 1"
-                      [allowAddTag]="filter.allowAddTag || false"
-                      (onSearch)="onFilterSearch($event, filter)"
-                      [placeholder]="translateService.instant(filter.labelKey)"
-                    />
-                  }
+    <div class="p-4">
+      <form [formGroup]="form" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          @for (filter of filters.slice(0, 4); track $index) {
+            <div>
+              @switch (filter.type) {
+                @case ('text') {
+                  <app-text-filter
+                    [control]="getFormControl(filter.formControlName)"
+                    [id]="filter.formControlName"
+                    [label]="translateService.instant(filter.labelKey)"
+                  />
                 }
-              </div>
-            }
+                @case ('number') {
+                  <app-number-filter
+                    [control]="getFormControl(filter.formControlName)"
+                    [id]="filter.formControlName"
+                    [label]="translateService.instant(filter.labelKey)"
+                  />
+                }
+                @case ('date') {
+                  <app-date-filter
+                    [control]="getFormControl(filter.formControlName)"
+                    [id]="filter.formControlName"
+                    [label]="translateService.instant(filter.labelKey)"
+                  />
+                }
+                @case ('select') {
+                  <app-select-filter
+                    [control]="getFormControl(filter.formControlName)"
+                    [id]="filter.formControlName"
+                    [label]="translateService.instant(filter.labelKey)"
+                    [options]="filter.options || []"
+                  />
+                }
+                @case ('checkSelect') {
+                  <app-check-select-filter
+                    [control]="getFormControl(filter.formControlName)"
+                    [id]="filter.formControlName"
+                    [label]="translateService.instant(filter.labelKey)"
+                    [options]="filter.options || []"
+                  />
+                }
+                @case ('editableMultiSelect') {
+                  <app-editable-multi-select
+                    [formControlName]="filter.formControlName"
+                    [id]="filter.formControlName"
+                    [dataArray]="filter.multiselectOptions || []"
+                    [maxSelectedItems]="filter.maxSelectedItems || 1"
+                    [minTermLength]="filter.minTermLength || 1"
+                    [allowAddTag]="filter.allowAddTag || false"
+                    (onSearch)="onFilterSearch($event, filter)"
+                    [placeholder]="translateService.instant(filter.labelKey)"
+                  />
+                }
+              }
+            </div>
+          }
+        </div>
+        @if (filters.length > 4) {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             @for (filter of filters.slice(4); let i = $index; track $index) {
               <div [class.hidden]="!showAllFilters">
                 @switch (filter.type) {
@@ -149,123 +151,51 @@ import {
               </div>
             }
           </div>
-          @if (filters.length > 4) {
-            <div>
-              <button type="button" (click)="toggleFilters()">
-                {{
-                  showAllFilters
-                    ? ('Filters.showLessFilters' | translate)
-                    : ('Filters.showMoreFilters' | translate)
-                }}
-              </button>
-            </div>
-          }
-        </form>
-        @if (filledFilters.length) {
-          <p>
+          <div class="text-center mt-4">
+            <button
+              type="button"
+              (click)="toggleFilters()"
+              class="text-blue-600"
+            >
+              {{
+                showAllFilters
+                  ? ('Filters.showLessFilters' | translate)
+                  : ('Filters.showMoreFilters' | translate)
+              }}
+            </button>
+          </div>
+        }
+      </form>
+      @if (filledFilters.length) {
+        <div class="mt-4">
+          <p class="text-sm text-gray-600">
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
             @for (filter of filledFilters; track $index) {
-              <span>
+              <span class="mr-2">
                 {{ translateService.instant('Filters.' + filter.id) }}: ({{
                   filter.value
                 }})
               </span>
             }
-            <span (click)="clearFilters()">
+            <span (click)="clearFilters()" class="text-blue-600 cursor-pointer">
               <b>{{ 'Filters.clearFilters' | translate }}</b>
             </span>
           </p>
-        }
-      </div>
+        </div>
+      }
     </div>
   `,
-  styles: `
-    :host {
-      width: 100%;
-    }
-
-    .filled-filters {
-      margin: 0.5rem;
-      color: var(--gray-color);
-      font-size: 0.8rem;
-    }
-
-    .clear-filters {
-      display: inline-flex;
-      align-items: center;
-      margin-left: 0.5rem;
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    #mobile-filters-button {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-
-      ion-icon {
-        font-size: 1.4rem;
-        margin-right: 1rem;
+  styles: [
+    `
+      :host {
+        width: 100%;
       }
 
-      p {
-        font-weight: 600;
-        letter-spacing: 1px;
+      .hidden {
+        display: none;
       }
-    }
-
-    #filters-content {
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.5s ease;
-
-      &:not(.hidden) {
-        max-height: var(--max-height);
-      }
-    }
-
-    ::ng-deep {
-      .ng-select.custom-form-select {
-        padding: 0;
-        border: none;
-
-        .ng-select-container {
-          height: calc(3.5rem + calc(var(--bs-border-width) * 2));
-          padding: 0.375rem 0.75rem;
-          font-size: 1rem;
-          width: 100%;
-          font-weight: 400;
-          line-height: 1.5;
-          color: var(--bs-body-color);
-          background-color: var(--bs-body-bg);
-          background-clip: padding-box;
-          border: var(--bs-border-width) solid var(--bs-border-color);
-          border-radius: var(--bs-border-radius);
-          transition:
-            border-color 0.15s ease-in-out,
-            box-shadow 0.15s ease-in-out;
-
-          .ng-value-container {
-            padding: 0;
-          }
-
-          .ng-placeholder {
-            color: var(--bs-placeholder-color);
-          }
-        }
-
-        &.ng-select-opened > .ng-select-container {
-          border-color: #86b7fe;
-          outline: 0;
-          box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-      }
-    }
-  `,
+    `,
+  ],
   imports: [
     CommonModule,
     TranslateModule,
@@ -365,8 +295,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private subscribeToLanguageChanges(): void {
-    this.langChangeSubscription = this.translateService.onLangChange.subscribe(() =>
-      this.getFilledFilters(),
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe(
+      () => this.getFilledFilters(),
     );
   }
 
@@ -578,7 +508,9 @@ export class FilterGroupComponent<T extends Record<string, any>>
     value: any,
   ): string {
     const foundOption = options.find((option) => option.value == value);
-    return foundOption ? this.translateService.instant(foundOption.label) : value;
+    return foundOption
+      ? this.translateService.instant(foundOption.label)
+      : value;
   }
 
   private resetFormAndNavigate(): void {

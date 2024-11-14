@@ -6,7 +6,8 @@
     "logout": "Wyloguj",
     "login": "Zaloguj",
     "register": "Zarejestruj",
-    "add": "Dodaj"
+    "add": "Dodaj",
+    "noItemsFound": "Nie znaleziono elementów"
   },
   "Filters": {
     "search": "Szukaj",
@@ -116,5 +117,8 @@
   },
   "Date": {
     "invalidDate": "Nieprawidłowa data"
+  },
+  "EditableMultiSelect": {
+    "addTagsAdHoc": "Dodaj tag"
   }
 }
