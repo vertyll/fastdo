@@ -121,5 +121,17 @@
   },
   "EditableMultiSelect": {
     "addTagsAdHoc": "Dodaj tag"
+  },
+  "FormValidationMessage": {
+    "required": "To pole jest wymagane",
+    "minLength": "To pole musi mieć co najmniej {minLength} znaków",
+    "email": "To pole musi być prawidłowym adresem email",
+    "password": "To pole musi zawierać co najmniej jedną wielką literę, cyfrę i znak specjalny",
+    "min": "Wartość musi być większa lub równa {minValue}",
+    "max": "Wartość musi być mniejsza lub równa {maxValue}",
+    "maxLength": "To pole może mieć maksymalnie {maxLength} znaków",
+    "passwordMatch": "Hasła muszą się zgadzać",
+    "pattern": "To pole musi spełniać określony wzorzec",
+    "mismatchingPasswords": "Hasła nie są zgodne"
   }
 }

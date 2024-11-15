@@ -25,5 +25,5 @@ export class InputComponent {
   @Input() control!: FormControl;
   @Input() id!: string;
   @Input() type: InputType = 'text';
-  @Input() placeholder = ' ';
+  @Input() placeholder = '';
 }

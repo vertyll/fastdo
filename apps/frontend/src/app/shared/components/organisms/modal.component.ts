@@ -18,12 +18,14 @@ import { AdDirective } from '../../directives/ad.directive';
 import { ModalService } from '../../services/modal.service';
 import { ModalConfig } from '../../interfaces/modal.interface';
 import { SpinnerComponent } from '../atoms/spinner.component';
-import { InputMessageComponent } from '../atoms/input.message.component';
+import { ErrorMessageComponent } from '../atoms/error.message.component';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { CheckboxComponent } from '../atoms/checkbox.component';
 import { InputComponent } from '../atoms/input.component';
 import { ButtonComponent } from '../atoms/button.component';
 import { TextareaComponent } from '../atoms/textarea-component';
+import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
 
 @Component({
   selector: 'app-modal',
@@ -32,13 +34,15 @@ import { TextareaComponent } from '../atoms/textarea-component';
     CommonModule,
     ReactiveFormsModule,
     SpinnerComponent,
-    InputMessageComponent,
     InputInvalidPipe,
     CheckboxComponent,
     InputComponent,
     TextareaComponent,
     ButtonComponent,
+    ErrorMessageComponent,
+    NgIconComponent,
   ],
+  viewProviders: [provideIcons({ heroXMarkSolid })],
   template: `
     <div
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -51,8 +55,14 @@ import { TextareaComponent } from '../atoms/textarea-component';
         class="w-full max-w-lg bg-white rounded-lg shadow-lg"
         role="document"
       >
-        <div class="px-6 py-4 border-b">
+        <div class="px-6 py-4 border-b flex justify-between items-center">
           <h4 class="text-xl font-semibold">{{ config?.options?.title }}</h4>
+          <button (click)="closeModalIconHandler()" aria-label="Close">
+            <ng-icon
+              name="heroXMarkSolid"
+              class="w-6 h-6 text-gray-500 hover:text-gray-700"
+            ></ng-icon>
+          </button>
         </div>
 
         <div class="px-6 py-4">
@@ -142,7 +152,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
                     }
                   </div>
 
-                  <app-input-message [input]="form.get(input.id)" />
+                  <app-error-message [input]="form.get(input.id)" />
                 </div>
               }
 
@@ -222,7 +232,10 @@ export class ModalComponent implements OnInit, OnDestroy {
   }
 
   private initializeForm(): void {
-    if (!this.config?.options?.inputs?.length) {
+    if (
+      !Array.isArray(this.config?.options?.inputs) ||
+      !this.config.options.inputs.length
+    ) {
       this.form = new FormGroup({});
       return;
     }
@@ -254,7 +267,12 @@ export class ModalComponent implements OnInit, OnDestroy {
   }
 
   private initializeDynamicComponents(): void {
-    if (!this.adHost || !this.config?.options?.components?.length) return;
+    if (
+      !this.adHost ||
+      !Array.isArray(this.config?.options?.components) ||
+      !this.config.options.components.length
+    )
+      return;
 
     const viewContainerRef = this.adHost.viewContainerRef;
     viewContainerRef.clear();
@@ -275,6 +293,10 @@ export class ModalComponent implements OnInit, OnDestroy {
     if (button.handler) {
       button.handler();
     }
+    this.modalService.close();
+  }
+
+  protected closeModalIconHandler(): void {
     this.modalService.close();
   }
 
