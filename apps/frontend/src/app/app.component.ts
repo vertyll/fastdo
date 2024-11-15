@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LayoutComponent } from './shared/layout/layout.component';
+import { LayoutComponent } from './shared/components/templates/layout.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RouterOutlet } from '@angular/router';
 

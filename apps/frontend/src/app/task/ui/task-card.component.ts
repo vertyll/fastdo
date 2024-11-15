@@ -1,13 +1,13 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Task } from '../models/Task';
-import { RemoveItemButtonComponent } from 'src/app/shared/components/remove-item-button.component';
+import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
 import { heroBookmark, heroCalendar } from '@ng-icons/heroicons/outline';
 import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { RouterLink } from '@angular/router';
-import { AutosizeTextareaComponent } from 'src/app/shared/components/autosize-textarea.component';
+import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { TranslateModule } from '@ngx-translate/core';

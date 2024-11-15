@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FilterGroupComponent } from 'src/app/shared/components/filter-group/filter-group.component';
+import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
 import {
   PROJECT_LIST_FILTERS,
   ProjectListFiltersConfig,

@@ -15,12 +15,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
-import { DateFilterComponent } from './date-filter.component';
-import { NumberFilterComponent } from './number-filter.component';
-import { SelectFilterComponent } from './select-filter.component';
-import { TextFilterComponent } from './text-filter.component';
-import { CheckSelectFilterComponent } from './check-select-filter.component';
-import { EditableMultiSelectComponent } from '../editable-multi-select.component';
+import { CheckSelectFilterComponent } from '../molecules/check-select-filter.component';
+import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
 import { FilterMetadata, FilterValue } from '../../interfaces/filter.interface';
 import { FiltersService } from '../../services/filter.service';
 import { PlatformService } from '../../services/platform.service';
@@ -29,40 +25,45 @@ import {
   ClearPartial,
   ClearFilter,
 } from '../../store/filter/filter.actions';
+import { InputFieldComponent } from '../molecules/input-field.component';
+import { SelectFieldComponent } from '../molecules/select-field.component';
 
 @Component({
   selector: 'app-filter-group',
   standalone: true,
   template: `
-    <div class="p-4">
+    <div>
       <form [formGroup]="form" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           @for (filter of filters.slice(0, 4); track $index) {
             <div>
               @switch (filter.type) {
                 @case ('text') {
-                  <app-text-filter
+                  <app-input-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
+                    [type]="'text'"
                   />
                 }
                 @case ('number') {
-                  <app-number-filter
+                  <app-input-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
+                    [type]="'number'"
                   />
                 }
                 @case ('date') {
-                  <app-date-filter
+                  <app-input-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
+                    [type]="'date'"
                   />
                 }
                 @case ('select') {
-                  <app-select-filter
+                  <app-select-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
@@ -99,28 +100,31 @@ import {
               <div [class.hidden]="!showAllFilters">
                 @switch (filter.type) {
                   @case ('text') {
-                    <app-text-filter
+                    <app-input-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
+                      [type]="'text'"
                     />
                   }
                   @case ('number') {
-                    <app-number-filter
+                    <app-input-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
+                      [type]="'number'"
                     />
                   }
                   @case ('date') {
-                    <app-date-filter
+                    <app-input-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
+                      [type]="'date'"
                     />
                   }
                   @case ('select') {
-                    <app-select-filter
+                    <app-select-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
@@ -200,12 +204,10 @@ import {
     CommonModule,
     TranslateModule,
     ReactiveFormsModule,
-    TextFilterComponent,
-    SelectFilterComponent,
-    DateFilterComponent,
-    NumberFilterComponent,
     CheckSelectFilterComponent,
     EditableMultiSelectComponent,
+    InputFieldComponent,
+    SelectFieldComponent,
   ],
 })
 export class FilterGroupComponent<T extends Record<string, any>>

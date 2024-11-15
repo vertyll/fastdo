@@ -5,11 +5,10 @@ import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ProjectsStateService } from 'src/app/project/data-access/project.state.service';
 import { TasksService } from 'src/app/task/data-access/task.service';
 import { TasksStateService } from 'src/app/task/data-access/task.state.service';
-import { CookieBannerComponent } from '../components/cookie-banner.component';
-import { NavbarComponent } from '../components/navbar.component';
-import { FooterComponent } from '../components/footer.component';
-import { InfoPanelComponent } from '../components/info-panel.component';
-import { Role } from '../enums/role.enum';
+import { CookieBannerComponent } from '../molecules/cookie-banner.component';
+import { NavbarComponent } from '../organisms/navbar.component';
+import { FooterComponent } from '../organisms/footer.component';
+import { InfoPanelComponent } from '../organisms/info-panel.component';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -98,8 +97,12 @@ export class LayoutComponent implements OnInit {
   private getBrowserInfo(): string {
     const userAgent = navigator.userAgent;
     const language = navigator.language;
-    const translatedUserAgent = this.translateService.instant('BrowserInfo.userAgent');
-    const translatedLanguage = this.translateService.instant('BrowserInfo.language');
+    const translatedUserAgent = this.translateService.instant(
+      'BrowserInfo.userAgent',
+    );
+    const translatedLanguage = this.translateService.instant(
+      'BrowserInfo.language',
+    );
     return `${translatedUserAgent}: ${userAgent}, ${translatedLanguage}: ${language}`;
   }
 }

@@ -14,6 +14,7 @@ import {
 } from '@angular/forms';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
+import { LabelComponent } from '../atoms/label.component';
 
 @Component({
   standalone: true,
@@ -43,12 +44,7 @@ import { TranslateModule } from '@ngx-translate/core';
           </ng-option>
         }
       </ng-select>
-      <label
-        [for]="id"
-        class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-4"
-      >
-        {{ placeholder }}
-      </label>
+      <app-label [forId]="id">{{ placeholder }}</app-label>
     </div>
   `,
   styles: `
@@ -69,6 +65,7 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule,
     FormsModule,
     NgSelectModule,
+    LabelComponent,
   ],
   providers: [
     {
@@ -81,29 +78,21 @@ import { TranslateModule } from '@ngx-translate/core';
 export class EditableMultiSelectComponent
   implements ControlValueAccessor, OnChanges, Validators
 {
-  @Input()
-  dataArray!: any[];
-  @Input()
-  maxSelectedItems!: number;
-  @Input()
-  multiple: boolean = true;
-  @Input()
-  id!: string;
-  @Input()
-  minTermLength: number = 0;
-  @Input()
-  allowAddTag: boolean = true;
-  @Input()
-  placeholder: string = '';
+  @Input() dataArray!: any[];
+  @Input() maxSelectedItems!: number;
+  @Input() multiple: boolean = true;
+  @Input() id!: string;
+  @Input() minTermLength: number = 0;
+  @Input() allowAddTag: boolean = true;
+  @Input() placeholder: string = '';
 
-  @Output()
-  onSearch = new EventEmitter();
+  @Output() onSearch = new EventEmitter();
 
-  selectValue: any;
-  touched = false;
+  protected selectValue: any;
 
-  onChange = (value: any) => {};
-  onTouched = () => {};
+  private touched = false;
+  private onChange = (value: any) => {};
+  private onTouched = () => {};
 
   ngOnChanges(): void {
     this.dataArray?.map((c, i) => {
@@ -111,36 +100,36 @@ export class EditableMultiSelectComponent
     });
   }
 
-  onSelectChange(inputValue: any) {
+  public registerOnChange(onChange: any) {
+    this.onChange = onChange;
+  }
+
+  public registerOnTouched(onTouched: any) {
+    this.onTouched = onTouched;
+  }
+
+  public writeValue(value: any) {
+    this.selectValue = value;
+  }
+
+  protected onSelectChange(inputValue: any) {
     this.markAsTouched();
     this.selectValue = inputValue;
     this.onChange(this.selectValue);
   }
 
-  onSelectSearch(event: any) {
+  protected onSelectSearch(event: any) {
     this.onSearch.emit(event);
   }
 
-  registerOnChange(onChange: any) {
-    this.onChange = onChange;
-  }
+  protected addTag = (term: string) => {
+    return { label: term };
+  };
 
-  registerOnTouched(onTouched: any) {
-    this.onTouched = onTouched;
-  }
-
-  markAsTouched() {
+  private markAsTouched() {
     if (!this.touched) {
       this.onTouched();
       this.touched = true;
     }
   }
-
-  writeValue(value: any) {
-    this.selectValue = value;
-  }
-
-  addTag = (term: string) => {
-    return { label: term };
-  };
 }

@@ -24,7 +24,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { TasksStateService } from './data-access/task.state.service';
-import { SubmitTextComponent } from 'src/app/shared/components/submit-text.component';
+import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
 import { TasksListFiltersConfig } from '../shared/types/filter.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TaskNameValidator } from './validators/task-name.validator';
