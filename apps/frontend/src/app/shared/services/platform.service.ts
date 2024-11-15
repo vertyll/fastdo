@@ -54,12 +54,6 @@ export class PlatformService implements OnDestroy {
     return this._isPlatformBrowser;
   }
 
-  private updateIsMobile() {
-    if (this.isPlatformBrowser) {
-      this.isMobile = window.innerWidth < mobileWindowMaxWidth;
-    }
-  }
-
   set isMobile(val) {
     this._isMobile = val;
     this.isMobile$.next(val);
@@ -67,5 +61,11 @@ export class PlatformService implements OnDestroy {
 
   get isMobile() {
     return this._isMobile;
+  }
+
+  private updateIsMobile() {
+    if (this.isPlatformBrowser) {
+      this.isMobile = window.innerWidth < mobileWindowMaxWidth;
+    }
   }
 }

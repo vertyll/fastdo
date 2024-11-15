@@ -34,7 +34,7 @@ export class SubmitTextComponent {
   @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
   textControl = new FormControl('');
 
-  emitText(): void {
+  protected emitText(): void {
     const text = this.textControl.value?.trim();
     if (text) {
       this.submitText.emit(text);

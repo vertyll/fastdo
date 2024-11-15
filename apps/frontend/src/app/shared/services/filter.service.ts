@@ -4,7 +4,7 @@ import { FilterMetadata } from '../interfaces/filter.interface';
 
 @Injectable({ providedIn: 'root' })
 export class FiltersService {
-  createForm(filters: FilterMetadata[]): FormGroup {
+  public createForm(filters: FilterMetadata[]): FormGroup {
     const group: any = {};
     filters.forEach((filter) => {
       switch (filter.type) {
@@ -22,7 +22,7 @@ export class FiltersService {
     return new FormGroup(group);
   }
 
-  createDefaultFormValues(filters: FilterMetadata[]): any {
+  public createDefaultFormValues(filters: FilterMetadata[]): any {
     const values: any = {};
     filters.forEach((filter) => {
       values[filter.formControlName] =

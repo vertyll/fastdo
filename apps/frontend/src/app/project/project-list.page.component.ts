@@ -20,6 +20,8 @@ import { ProjectsListFiltersComponent } from './ui/project-list-filters.componen
 import { ProjectListFiltersConfig } from '../shared/types/filter.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProjectNameValidator } from './validators/project-name.validator';
+import { ModalService } from '../shared/services/modal.service';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-project-list-page',
@@ -34,10 +36,18 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     AutosizeTextareaComponent,
     HasRoleDirective,
     TranslateModule,
+    ButtonComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <h2 class="text-2xl font-bold mb-4">{{ 'Project.title' | translate }}</h2>
+      <app-button
+        *appHasRole="[role.Admin]"
+        (click)="openStartDesigningPhaseModal()"
+        class="w-40"
+      >
+        {{ 'Project.startDesigningPhase' | translate }}
+      </app-button>
       <app-submit-text
         (submitText)="
           listState.state === listStateValue.SUCCESS &&
@@ -140,6 +150,7 @@ export class ProjectListPageComponent {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
+  private readonly modalService = inject(ModalService);
   protected readonly role = Role;
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
@@ -314,5 +325,44 @@ export class ProjectListPageComponent {
       return false;
     }
     return true;
+  }
+
+  protected openStartDesigningPhaseModal(): void {
+    this.modalService.present({
+      title: 'test',
+      inputs: [
+        {
+          id: 'test1',
+          type: 'select',
+          required: true,
+          label: 'test1',
+        },
+        {
+          id: 'test2',
+          type: 'number',
+          required: true,
+          label: 'test2',
+        },
+        {
+          id: 'test3',
+          type: 'checkbox',
+          required: false,
+          label: 'test3',
+        },
+      ],
+      buttons: [
+        {
+          role: 'cancel',
+          text: 'test',
+        },
+        {
+          role: 'ok',
+          text: 'test',
+          handler: (data) => {
+            console.log(data);
+          },
+        },
+      ],
+    });
   }
 }

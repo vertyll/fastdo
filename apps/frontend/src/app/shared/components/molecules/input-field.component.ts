@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { InputComponent } from '../atoms/input.component';
 import { LabelComponent } from '../atoms/label.component';
-import { InputType } from '../../types/input.type';
+import { InputType } from '../../types/components.type';
 
 @Component({
   selector: 'app-input-field',

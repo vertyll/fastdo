@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
     <button
       [type]="type"
       (click)="onClick.emit($event)"
-      [ngClass]="cssClass"
+      [disabled]="disabled"
       class="px-4 py-2 rounded-lg focus:outline-none bg-orange-400 text-white hover:bg-orange-500"
     >
       <ng-content></ng-content>
@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ButtonComponent {
   @Input() type: 'button' | 'submit' = 'button';
-  @Input() cssClass: string = '';
+  @Input() disabled: boolean | undefined = false;
 
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
 }

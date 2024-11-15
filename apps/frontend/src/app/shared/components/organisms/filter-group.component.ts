@@ -287,7 +287,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.showAllFilters = !this.showAllFilters;
   }
 
-  public getFormControl(name: string): FormControl {
+  protected getFormControl(name: string): FormControl {
     return this.form.get(name) as FormControl;
   }
 

@@ -1,11 +1,11 @@
-import { Observable, combineLatest, map } from "rxjs";
-import { LoadingState } from "../../task/data-access/task.api.service";
-import { ListState, LIST_STATE_VALUE } from "../types/list-state.type";
+import { Observable, combineLatest, map } from 'rxjs';
+import { LoadingState } from '../../task/data-access/task.api.service';
+import { ListState, LIST_STATE_VALUE } from '../types/list-state.type';
 
 export function createListState<S, R extends Array<unknown>>(
   state$: Observable<S>,
   loadingState$: Observable<LoadingState>,
-  selector: (state: S) => R
+  selector: (state: S) => R,
 ): Observable<ListState<R[number]>> {
   return combineLatest([state$, loadingState$]).pipe(
     map(([state, loadingState]) => {
@@ -25,6 +25,6 @@ export function createListState<S, R extends Array<unknown>>(
       }
 
       return { state: LIST_STATE_VALUE.SUCCESS, results: selector(state) };
-    })
+    }),
   );
 }

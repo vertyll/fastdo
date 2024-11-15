@@ -66,9 +66,10 @@ export class CheckSelectFilterComponent implements OnInit, OnDestroy {
   @Input() label!: string;
   @Input() options: Array<{ value: any; label: string }> = [];
 
-  translatedOptions: Array<{ value: any; label: string }> = [];
+  protected translatedOptions: Array<{ value: any; label: string }> = [];
+  protected isDropdownOpen = false;
+
   private langChangeSubscription!: Subscription;
-  isDropdownOpen = false;
 
   constructor(private readonly translateService: TranslateService) {}
 
@@ -87,14 +88,17 @@ export class CheckSelectFilterComponent implements OnInit, OnDestroy {
     }
   }
 
-  private translateOptions(): void {
-    this.translatedOptions = this.options.map((option) => ({
-      value: option.value,
-      label: this.translateService.instant(option.label),
-    }));
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event): void {
+    if (
+      !event.target ||
+      !(event.target as HTMLElement).closest('.form-select')
+    ) {
+      this.isDropdownOpen = false;
+    }
   }
 
-  onCheckboxChange(event: Event): void {
+  protected onCheckboxChange(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     const value = checkbox.value;
     const currentValue = this.control.value
@@ -110,24 +114,21 @@ export class CheckSelectFilterComponent implements OnInit, OnDestroy {
     }
   }
 
-  isChecked(value: any): boolean {
+  protected isChecked(value: any): boolean {
     const currentValue = this.control.value
       ? this.control.value.split(',')
       : [];
     return currentValue.includes(value);
   }
 
-  toggleDropdown(): void {
+  protected toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event): void {
-    if (
-      !event.target ||
-      !(event.target as HTMLElement).closest('.form-select')
-    ) {
-      this.isDropdownOpen = false;
-    }
+  private translateOptions(): void {
+    this.translatedOptions = this.options.map((option) => ({
+      value: option.value,
+      label: this.translateService.instant(option.label),
+    }));
   }
 }

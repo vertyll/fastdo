@@ -48,13 +48,15 @@ import { TranslateService } from '@ngx-translate/core';
   `,
 })
 export class LayoutComponent implements OnInit {
+  protected readonly authService = inject(AuthService);
+  protected readonly translateService = inject(TranslateService);
+  protected readonly router = inject(Router);
+
   private readonly tasksStateService = inject(TasksStateService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly projectsService = inject(ProjectsService);
   private readonly tasksService = inject(TasksService);
-  protected readonly authService = inject(AuthService);
-  protected readonly translateService = inject(TranslateService);
-  protected readonly router = inject(Router);
+
   protected urgentCount = this.tasksStateService.urgentCount;
   protected projectCount = this.projectsStateService.projectCount;
   protected isLoggedIn = this.authService.isLoggedIn;

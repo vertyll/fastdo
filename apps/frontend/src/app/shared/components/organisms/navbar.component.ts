@@ -119,17 +119,16 @@ import { TranslateModule } from '@ngx-translate/core';
                 routerLink="/tasks"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >
-                {{ 'Navbar.tasks' | translate }}
-                </a
               >
+                {{ 'Navbar.tasks' | translate }}
+              </a>
             </li>
             <li>
               <a
                 routerLink="/projects"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >
+              >
                 {{ 'Navbar.projects' | translate }}
                 ({{ projectCount }})</a
               >
@@ -139,7 +138,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 routerLink="/tasks/urgent"
                 routerLinkActive="font-bold"
                 (click)="closeMenu()"
-                >
+              >
                 {{ 'Navbar.urgent' | translate }}
                 ({{ urgentCount }})</a
               >
@@ -156,10 +155,12 @@ import { TranslateModule } from '@ngx-translate/core';
   `,
 })
 export class NavbarComponent {
-  protected readonly authService = inject(AuthService);
-  protected readonly router = inject(Router);
   @Input() urgentCount: number = 0;
   @Input() projectCount: number = 0;
+
+  protected readonly authService = inject(AuthService);
+  protected readonly router = inject(Router);
+
   protected menuOpen: boolean = false;
 
   protected toggleMenu(): void {
