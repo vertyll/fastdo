@@ -243,8 +243,14 @@ export class ModalComponent implements OnInit, OnDestroy {
     const group: { [key: string]: FormControl } = {};
 
     this.config.options.inputs.forEach((input) => {
+      let initialValue = input.value;
+
+      if (input.type === 'checkbox') {
+        initialValue = Boolean(input.value);
+      }
+
       const control = new FormControl(
-        input.value || '',
+        initialValue,
         input.required ? Validators.required : undefined,
       );
 
@@ -252,11 +258,12 @@ export class ModalComponent implements OnInit, OnDestroy {
 
       this.subscription.add(
         control.valueChanges.subscribe((value) => {
-          input.value = value;
+          const finalValue = input.type === 'checkbox' ? Boolean(value) : value;
+          input.value = finalValue;
           if (input.change) {
             input.change({
               ...this.form.value,
-              [input.id]: value,
+              [input.id]: finalValue,
             });
           }
         }),

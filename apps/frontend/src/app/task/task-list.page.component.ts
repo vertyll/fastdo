@@ -28,6 +28,8 @@ import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-
 import { TasksListFiltersConfig } from '../shared/types/filter.type';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TaskNameValidator } from './validators/task-name.validator';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
+import { ModalService } from '../shared/services/modal.service';
 
 @Component({
   selector: 'app-task-list-page',
@@ -39,6 +41,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
     TasksKanbanViewComponent,
     TasksListViewModeComponent,
     TranslateModule,
+    ButtonComponent,
   ],
   template: `
     <div class="flex flex-col gap-4">
@@ -53,6 +56,9 @@ import { TaskNameValidator } from './validators/task-name.validator';
         </h2>
       }
       <app-submit-text (submitText)="addTask($event)" />
+      <app-button (click)="openAddTaskModal()">{{
+        'Task.addTask' | translate
+      }}</app-button>
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>
 
@@ -111,6 +117,8 @@ export class TaskListPageComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
   private readonly taskNameValidator = inject(TaskNameValidator);
   private readonly translateService = inject(TranslateService);
+  private readonly modalService = inject(ModalService);
+
   protected readonly configStateService = inject(AppConfigStateService);
   protected readonly tasksStateService = inject(TasksStateService);
   protected readonly $view = computed(
@@ -119,6 +127,7 @@ export class TaskListPageComponent implements OnInit {
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected showHowToUse: boolean = false;
   protected projectName!: string;
+  private errorMessage: string = '';
 
   ngOnInit(): void {
     if (this.view) {
@@ -168,6 +177,41 @@ export class TaskListPageComponent implements OnInit {
           NotificationType.success,
         );
       },
+    });
+  }
+
+  protected openAddTaskModal(): void {
+    this.modalService.present({
+      title: this.translateService.instant('Task.addTask'),
+      inputs: [
+        {
+          id: 'taskName',
+          type: 'text',
+          required: true,
+          error: this.errorMessage,
+          label: this.translateService.instant('Task.taskName'),
+        },
+        {
+          id: 'isCompleted',
+          type: 'checkbox',
+          required: false,
+          error: this.errorMessage,
+          label: this.translateService.instant('Task.isCompleted'),
+        },
+      ],
+      buttons: [
+        {
+          role: 'cancel',
+          text: this.translateService.instant('Base.cancel'),
+        },
+        {
+          role: 'ok',
+          text: this.translateService.instant('Base.save'),
+          handler: (data) => {
+            console.log(data);
+          },
+        },
+      ],
     });
   }
 

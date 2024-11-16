@@ -27,6 +27,7 @@ export class CheckboxComponent {
 
   protected onChange(event: Event): void {
     const target = event.target as HTMLInputElement;
+    this.control.setValue(target.checked);
     this.change.emit({ value: target.value, checked: target.checked });
   }
 }

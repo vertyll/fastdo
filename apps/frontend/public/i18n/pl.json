@@ -8,7 +8,9 @@
     "register": "Zarejestruj",
     "add": "Dodaj",
     "noItemsFound": "Nie znaleziono elementów",
-    "enterText": "Wpisz tekst"
+    "enterText": "Wpisz tekst",
+    "cancel": "Anuluj",
+    "save": "Zapisz"
   },
   "Filters": {
     "search": "Szukaj",
@@ -91,7 +93,10 @@
     "changeStatusDoc": "Zmień status: kliknij na zadanie",
     "urgentTaskCount": "Liczba pilnych zadań",
     "addError": "Wystąpił błąd podczas dodawania zadania",
-    "addSuccess": "Zadanie zostało dodane"
+    "addSuccess": "Zadanie zostało dodane",
+    "addTask": "Dodaj zadanie",
+    "taskName": "Nazwa zadania",
+    "isCompleted": "Czy zrobione?"
   },
   "CookiesBanner": {
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."
