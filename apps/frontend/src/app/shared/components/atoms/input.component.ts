@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
       [placeholder]="placeholder"
       [ngClass]="{
         'px-4 pb-3 pt-3.5': type !== 'date',
-        'px-4 pb-2 pt-3': type === 'date',
+        'px-4 pb-1.5 pt-3': type === 'date',
       }"
       class="block w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
     />
