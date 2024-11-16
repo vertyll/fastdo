@@ -71,7 +71,8 @@
     "updateSuccess": "Projekt został zaktualizowany",
     "deleteError": "Wystąpił błąd podczas usuwania projektu",
     "deleteSuccess": "Projekt został usunięty",
-    "getAllError": "Wystąpił błąd podczas pobierania projektów"
+    "getAllError": "Wystąpił błąd podczas pobierania projektów",
+    "addPlaceholder": "Dodaj nowy projekt"
   },
   "Task": {
     "forProject": "Dla projektu",

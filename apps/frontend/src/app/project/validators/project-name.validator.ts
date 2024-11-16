@@ -14,7 +14,7 @@ export class ProjectNameValidator {
     if (!projectName || projectName.length < 3) {
       return {
         isValid: false,
-        error: this.translateService.instant('Auth.projectNameMinLength'),
+        error: this.translateService.instant('Project.projectNameMinLength'),
       };
     }
     return { isValid: true };

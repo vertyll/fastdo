@@ -39,6 +39,8 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     <div class="flex flex-col mb-6 gap-4">
       <h2 class="text-2xl font-bold mb-4">{{ 'Project.title' | translate }}</h2>
       <app-submit-text
+        placeholder="{{ 'Project.addPlaceholder' | translate }}"
+        [type]="'text'"
         (submitText)="
           listState.state === listStateValue.SUCCESS &&
             addProject($event, listState.results)
