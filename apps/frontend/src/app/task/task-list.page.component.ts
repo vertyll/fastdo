@@ -24,7 +24,6 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { TasksStateService } from './data-access/task.state.service';
-import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
 import { TasksListFiltersConfig } from '../shared/types/filter.type';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TaskNameValidator } from './validators/task-name.validator';
@@ -36,7 +35,6 @@ import { ModalService } from '../shared/services/modal.service';
   standalone: true,
   imports: [
     TasksListComponent,
-    SubmitTextComponent,
     TasksListFiltersComponent,
     TasksKanbanViewComponent,
     TasksListViewModeComponent,
@@ -55,10 +53,9 @@ import { ModalService } from '../shared/services/modal.service';
           : {{ projectName }}
         </h2>
       }
-      <app-submit-text (submitText)="addTask($event)" />
-      <app-button (click)="openAddTaskModal()">{{
-        'Task.addTask' | translate
-      }}</app-button>
+      <app-button (click)="openAddTaskModal()">
+        {{ 'Task.addTask' | translate }}
+      </app-button>
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>
 
@@ -144,7 +141,9 @@ export class TaskListPageComponent implements OnInit {
     this.getAllTasks(searchParams).subscribe();
   }
 
-  protected addTask(name: string): void {
+  protected addTask(data: any): void {
+    const name = data.taskName;
+    const isCompleted = data.isCompleted;
     const validation = this.taskNameValidator.validateTaskName(name);
     if (!validation.isValid) {
       this.notificationService.showNotification(
@@ -208,7 +207,7 @@ export class TaskListPageComponent implements OnInit {
           role: 'ok',
           text: this.translateService.instant('Base.save'),
           handler: (data) => {
-            console.log(data);
+            this.addTask(data);
           },
         },
       ],
