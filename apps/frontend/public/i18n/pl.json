@@ -32,7 +32,8 @@
     "sortByCreatedAt": "Data utworzenia",
     "sortByUpdatedAt": "Data aktualizacji",
     "orderByAsc": "Rosnąco",
-    "orderByDesc": "Malejąco"
+    "orderByDesc": "Malejąco",
+    "q": "Nazwa"
   },
   "Auth": {
     "login": "Login",

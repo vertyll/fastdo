@@ -34,7 +34,7 @@ export class ModalService {
 
   public updateConfig(options: Partial<ModalOptions>): void {
     const current = this.currentModal;
-    if (current.options?.title) {
+    if (current.options) {
       this.setModal({
         visible: true,
         options: {
@@ -47,7 +47,7 @@ export class ModalService {
 
   public updateLoading(loading: boolean): void {
     const current = this.currentModal;
-    if (current && current.options) {
+    if (current.options) {
       this.setModal({
         ...current,
         options: {

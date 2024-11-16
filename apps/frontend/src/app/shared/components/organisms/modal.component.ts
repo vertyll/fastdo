@@ -1,10 +1,9 @@
 import {
-  ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  OnDestroy,
-  OnInit,
   ViewChild,
+  effect,
 } from '@angular/core';
 import {
   FormControl,
@@ -12,20 +11,19 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ModalService } from '../../services/modal.service';
-import { ModalConfig } from '../../interfaces/modal.interface';
 import { SpinnerComponent } from '../atoms/spinner.component';
 import { ErrorMessageComponent } from '../atoms/error.message.component';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { CheckboxComponent } from '../atoms/checkbox.component';
 import { InputComponent } from '../atoms/input.component';
 import { ButtonComponent } from '../atoms/button.component';
-import { TextareaComponent } from '../atoms/textarea-component';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AdDirective } from 'src/app/core/directives/ad.directive';
+import { TextareaComponent } from '../atoms/textarea-component';
+import { ModalConfig } from '../../interfaces/modal.interface';
 
 @Component({
   selector: 'app-modal',
@@ -41,14 +39,16 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
     ButtonComponent,
     ErrorMessageComponent,
     NgIconComponent,
+    TextareaComponent,
   ],
   viewProviders: [provideIcons({ heroXMarkSolid })],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       tabindex="-1"
       role="dialog"
-      [ngStyle]="{ display: config?.visible ? 'flex' : 'none' }"
+      [ngStyle]="{ display: modalService.modal().visible ? 'flex' : 'none' }"
       data-keyboard="true"
     >
       <div
@@ -56,7 +56,9 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
         role="document"
       >
         <div class="px-6 py-4 border-b flex justify-between items-center">
-          <h4 class="text-xl font-semibold">{{ config?.options?.title }}</h4>
+          <h4 class="text-xl font-semibold">
+            {{ modalService.modal().options?.title }}
+          </h4>
           <button (click)="closeModalIconHandler()" aria-label="Close">
             <ng-icon
               name="heroXMarkSolid"
@@ -66,21 +68,27 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
         </div>
 
         <div class="px-6 py-4">
-          @if (config?.options?.loading) {
+          @if (modalService.modal().options?.loading) {
             <div class="flex justify-center py-4">
               <app-spinner />
             </div>
           }
 
-          @if (config?.options?.message) {
-            <p [innerHTML]="config?.options?.message" class="mb-4"></p>
+          @if (modalService.modal().options?.message) {
+            <p
+              [innerHTML]="modalService.modal().options?.message"
+              class="mb-4"
+            ></p>
           }
 
           <ng-container adHost></ng-container>
 
-          @if (config?.options?.inputs?.length && form) {
+          @if (modalService.modal().options?.inputs?.length && form) {
             <form [formGroup]="form" (ngSubmit)="saveModal()" #formElement>
-              @for (input of config?.options?.inputs; track input.id) {
+              @for (
+                input of modalService.modal().options?.inputs;
+                track input.id
+              ) {
                 @if (input.message) {
                   <p [innerHTML]="input.message" class="mt-3 mb-2"></p>
                 }
@@ -156,11 +164,11 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
                 </div>
               }
 
-              @if (config?.options?.error) {
+              @if (modalService.modal().options?.error) {
                 <div
                   class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
                 >
-                  {{ config?.options?.error }}
+                  {{ modalService.modal().options?.error }}
                 </div>
               }
             </form>
@@ -168,12 +176,15 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
         </div>
 
         <div class="px-6 py-4 border-t flex justify-end space-x-2">
-          @for (button of config?.options?.buttons; track button.role) {
+          @for (
+            button of modalService.modal().options?.buttons;
+            track button.role
+          ) {
             @switch (button.role) {
               @case ('cancel') {
                 <app-button
                   (click)="closeModal(button)"
-                  [disabled]="config?.options?.loading"
+                  [disabled]="modalService.modal().options?.loading"
                 >
                   {{ button.text }}
                 </app-button>
@@ -182,7 +193,7 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
                 <app-button
                   type="submit"
                   (click)="saveModal(button)"
-                  [disabled]="config?.options?.loading"
+                  [disabled]="modalService.modal().options?.loading"
                 >
                   {{ button.text }}
                 </app-button>
@@ -191,7 +202,7 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
                 <app-button
                   type="button"
                   (click)="saveModal(button)"
-                  [disabled]="config?.options?.loading"
+                  [disabled]="modalService.modal().options?.loading"
                 >
                   {{ button.text }}
                 </app-button>
@@ -203,38 +214,29 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
     </div>
   `,
 })
-export class ModalComponent implements OnInit, OnDestroy {
+export class ModalComponent {
   @ViewChild(AdDirective, { static: false }) adHost!: AdDirective;
   @ViewChild('formElement') formElement!: ElementRef;
 
-  public config: ModalConfig | null = null;
-  public form!: FormGroup;
-  private subscription = new Subscription();
+  public form: FormGroup = new FormGroup({});
 
-  constructor(
-    private modalService: ModalService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  private modalEffect = effect(
+    () => {
+      const modalConfig = this.modalService.modal();
+      if (modalConfig) {
+        this.initializeForm(modalConfig);
+        this.initializeDynamicComponents(modalConfig);
+      }
+    },
+    { allowSignalWrites: true },
+  );
 
-  ngOnInit(): void {
-    this.subscription.add(
-      this.modalService.modal$.subscribe((modalConfig) => {
-        this.config = modalConfig;
-        this.initializeForm();
-        this.initializeDynamicComponents();
-        this.cdr.detectChanges();
-      }),
-    );
-  }
+  constructor(public modalService: ModalService) {}
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  private initializeForm(): void {
+  private initializeForm(modalConfig: ModalConfig): void {
     if (
-      !Array.isArray(this.config?.options?.inputs) ||
-      !this.config.options.inputs.length
+      !Array.isArray(modalConfig.options?.inputs) ||
+      !modalConfig.options.inputs.length
     ) {
       this.form = new FormGroup({});
       return;
@@ -242,7 +244,7 @@ export class ModalComponent implements OnInit, OnDestroy {
 
     const group: { [key: string]: FormControl } = {};
 
-    this.config.options.inputs.forEach((input) => {
+    modalConfig.options.inputs.forEach((input) => {
       let initialValue = input.value;
 
       if (input.type === 'checkbox') {
@@ -256,35 +258,32 @@ export class ModalComponent implements OnInit, OnDestroy {
 
       group[input.id] = control;
 
-      this.subscription.add(
-        control.valueChanges.subscribe((value) => {
-          const finalValue = input.type === 'checkbox' ? Boolean(value) : value;
-          input.value = finalValue;
-          if (input.change) {
-            input.change({
-              ...this.form.value,
-              [input.id]: finalValue,
-            });
-          }
-        }),
-      );
+      control.valueChanges.subscribe((value) => {
+        const finalValue = input.type === 'checkbox' ? Boolean(value) : value;
+        if (input.change) {
+          input.change({
+            ...this.form.value,
+            [input.id]: finalValue,
+          });
+        }
+      });
     });
 
     this.form = new FormGroup(group);
   }
 
-  private initializeDynamicComponents(): void {
+  private initializeDynamicComponents(modalConfig: ModalConfig): void {
     if (
       !this.adHost ||
-      !Array.isArray(this.config?.options?.components) ||
-      !this.config.options.components.length
+      !Array.isArray(modalConfig.options?.components) ||
+      !modalConfig.options.components.length
     )
       return;
 
     const viewContainerRef = this.adHost.viewContainerRef;
     viewContainerRef.clear();
 
-    this.config.options.components.forEach((component) => {
+    modalConfig.options.components.forEach((component) => {
       const componentRef = viewContainerRef.createComponent<any>(
         component.component,
       );
@@ -314,7 +313,8 @@ export class ModalComponent implements OnInit, OnDestroy {
       if (button) {
         await this.handleButtonAction(button);
       } else {
-        const saveButton = this.config?.options?.buttons?.find(
+        const modalConfig = this.modalService.modal();
+        const saveButton = modalConfig.options?.buttons?.find(
           (btn) => btn.role === 'ok',
         );
         if (saveButton) {

@@ -1,71 +1,68 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, Injectable, OnDestroy, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription, fromEvent } from 'rxjs';
+import {
+  DestroyRef,
+  Inject,
+  Injectable,
+  PLATFORM_ID,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent } from 'rxjs';
 
-const mobileWindowMaxWidth = 992;
+const MOBILE_WINDOW_MAX_WIDTH = 992;
 
 @Injectable({
   providedIn: 'root',
 })
-export class PlatformService implements OnDestroy {
-  private _platform: string;
-  private _isPlatformBrowser: boolean;
-  private _isMobile: boolean;
-  private resizeObservable$: Observable<Event> = new Observable();
-  private resizeSubscription$: Subscription = new Subscription();
+export class PlatformService {
+  private readonly destroyRef = inject(DestroyRef);
 
-  public platform$ = new BehaviorSubject(this.platform);
-  public isPlatformBrowser$ = new BehaviorSubject(this.isPlatformBrowser);
-  public isMobile$ = new BehaviorSubject(this.isMobile);
+  private readonly platformSignal = signal<string>(this.platformId);
+  private readonly isPlatformBrowserSignal = signal<boolean>(
+    isPlatformBrowser(this.platformId),
+  );
+  private readonly isMobileSignal = signal<boolean>(false);
+
+  public readonly platform = this.platformSignal.asReadonly();
+  public readonly isPlatformBrowser = this.isPlatformBrowserSignal.asReadonly();
+  public readonly isMobile = this.isMobileSignal.asReadonly();
 
   constructor(@Inject(PLATFORM_ID) private readonly platformId: string) {
-    this._platform = this.platformId;
-    this._isPlatformBrowser = isPlatformBrowser(this.platformId);
-    this._isMobile = false;
-
-    if (this.isPlatformBrowser) {
+    if (this.isPlatformBrowserSignal()) {
       this.updateIsMobile();
-      this.resizeObservable$ = fromEvent(window, 'resize');
-      this.resizeSubscription$ = this.resizeObservable$.subscribe((_) => {
-        this.updateIsMobile();
+
+      fromEvent(window, 'resize')
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.updateIsMobile();
+        });
+    }
+
+    effect(() => {
+      const platform = this.platformSignal();
+      const isBrowser = this.isPlatformBrowserSignal();
+      const isMobile = this.isMobileSignal();
+      console.debug('Platform state updated:', {
+        platform,
+        isBrowser,
+        isMobile,
       });
+    });
+  }
+
+  private updateIsMobile(): void {
+    if (this.isPlatformBrowserSignal()) {
+      this.isMobileSignal.set(window.innerWidth < MOBILE_WINDOW_MAX_WIDTH);
     }
   }
 
-  ngOnDestroy() {
-    this.resizeSubscription$.unsubscribe();
+  public updatePlatform(platform: string): void {
+    this.platformSignal.set(platform);
   }
 
-  set platform(val) {
-    this._platform = val;
-    this.platform$.next(val);
-  }
-
-  get platform() {
-    return this._platform;
-  }
-
-  set isPlatformBrowser(val) {
-    this._isPlatformBrowser = val;
-    this.isPlatformBrowser$.next(val);
-  }
-
-  get isPlatformBrowser() {
-    return this._isPlatformBrowser;
-  }
-
-  set isMobile(val) {
-    this._isMobile = val;
-    this.isMobile$.next(val);
-  }
-
-  get isMobile() {
-    return this._isMobile;
-  }
-
-  private updateIsMobile() {
-    if (this.isPlatformBrowser) {
-      this.isMobile = window.innerWidth < mobileWindowMaxWidth;
-    }
+  public updateIsPlatformBrowser(isBrowser: boolean): void {
+    this.isPlatformBrowserSignal.set(isBrowser);
   }
 }

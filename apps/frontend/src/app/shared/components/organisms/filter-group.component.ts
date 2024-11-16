@@ -8,7 +8,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  effect,
   inject,
+  signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -97,7 +99,7 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
         @if (filters.length > 4) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             @for (filter of filters.slice(4); let i = $index; track $index) {
-              <div [class.hidden]="!showAllFilters">
+              <div [class.hidden]="!showAllFilters()">
                 @switch (filter.type) {
                   @case ('text') {
                     <app-input-field
@@ -162,7 +164,7 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
               class="text-blue-600"
             >
               {{
-                showAllFilters
+                showAllFilters()
                   ? ('Filters.showLessFilters' | translate)
                   : ('Filters.showMoreFilters' | translate)
               }}
@@ -170,11 +172,11 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
           </div>
         }
       </form>
-      @if (filledFilters.length) {
+      @if (filledFilters().length) {
         <div class="mt-4">
           <p class="text-sm text-gray-600">
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
-            @for (filter of filledFilters; track $index) {
+            @for (filter of filledFilters(); track $index) {
               <span class="mr-2">
                 {{ translateService.instant('Filters.' + filter.id) }}: ({{
                   filter.value
@@ -215,6 +217,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 {
   @Input()
   type!: string;
+
   @Input()
   set filters(value: FilterMetadata[]) {
     this._filters = value;
@@ -224,8 +227,10 @@ export class FilterGroupComponent<T extends Record<string, any>>
       this.initFilters();
     }
   }
+
   @Output()
   filterChange = new EventEmitter<T>();
+
   @Output()
   filterSearch = new EventEmitter<{
     term: string;
@@ -234,9 +239,10 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   private _filters: FilterMetadata[] = [];
   public form!: FormGroup;
-  public filledFilters: FilterValue[] = [];
-  public mobileFilterToggleHidden$;
-  public showAllFilters = false;
+
+  public readonly filledFilters = signal<FilterValue[]>([]);
+  public readonly showAllFilters = signal<boolean>(false);
+  private readonly mobileFilterToggleHidden = signal<boolean>(false);
 
   private formChangeSubscriptions: Subscription[] = [];
   private langChangeSubscription!: Subscription;
@@ -249,7 +255,12 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private readonly cdr = inject(ChangeDetectorRef);
 
   constructor(public readonly translateService: TranslateService) {
-    this.mobileFilterToggleHidden$ = this.platformService.isMobile$;
+    effect(
+      () => {
+        this.mobileFilterToggleHidden.set(this.platformService.isMobile());
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngOnInit(): void {
@@ -278,13 +289,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   public toggleMobileFiltersVisibility(): void {
-    this.mobileFilterToggleHidden$.next(
-      !this.mobileFilterToggleHidden$.getValue(),
-    );
+    this.mobileFilterToggleHidden.set(!this.mobileFilterToggleHidden());
   }
 
   public toggleFilters(): void {
-    this.showAllFilters = !this.showAllFilters;
+    this.showAllFilters.set(!this.showAllFilters());
   }
 
   protected getFormControl(name: string): FormControl {
@@ -298,7 +307,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   private subscribeToLanguageChanges(): void {
     this.langChangeSubscription = this.translateService.onLangChange.subscribe(
-      () => this.getFilledFilters(),
+      () => this.updateFilledFilters(),
     );
   }
 
@@ -385,7 +394,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
       })
       .then(() => {
         this.emitFormValueChange(formValues);
-        this.getFilledFilters();
+        this.updateFilledFilters();
       });
   }
 
@@ -394,7 +403,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     const filterComponentFormValues =
       this.createFilterComponentFormValues(queryParams);
     this.form.patchValue(filterComponentFormValues);
-    this.getFilledFilters();
+    this.updateFilledFilters();
   }
 
   private createFilterComponentFormValues(
@@ -453,13 +462,13 @@ export class FilterGroupComponent<T extends Record<string, any>>
     );
   }
 
-  private getFilledFilters(): void {
+  private updateFilledFilters(): void {
     const formValue = this.form.value;
     const defaultValues = this.filtersService.createDefaultFormValues(
       this.filters,
     );
 
-    this.filledFilters = Object.entries(formValue)
+    const newFilledFilters = Object.entries(formValue)
       .filter(([key, value]) => {
         const filterMetadata = this.filters.find(
           (f) => f.formControlName === key,
@@ -472,6 +481,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
         return filterMetadata && value !== '' && !isDefaultValue;
       })
       .map(([key, value]) => this.createFilterValue(key, value));
+
+    this.filledFilters.set(newFilledFilters);
   }
 
   private createFilterValue(key: string, value: any): FilterValue {
@@ -516,7 +527,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private resetFormAndNavigate(): void {
-    this.filledFilters = [];
+    this.filledFilters.set([]);
+
     this.form.reset(this.filtersService.createDefaultFormValues(this.filters));
     this.store.dispatch(new ClearFilter({ type: this.type }));
     this.router

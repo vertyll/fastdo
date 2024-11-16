@@ -25,7 +25,7 @@ export type ProjectListFiltersConfig = {
 export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   {
     type: 'text',
-    formControlName: 'name',
+    formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
@@ -85,7 +85,7 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
 export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
     type: 'text',
-    formControlName: 'name',
+    formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
