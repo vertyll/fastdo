@@ -15,7 +15,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
-import { CheckSelectFilterComponent } from '../molecules/check-select-filter.component';
 import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
 import { FilterMetadata, FilterValue } from '../../interfaces/filter.interface';
 import { FiltersService } from '../../services/filter.service';
@@ -27,6 +26,7 @@ import {
 } from '../../store/filter/filter.actions';
 import { InputFieldComponent } from '../molecules/input-field.component';
 import { SelectFieldComponent } from '../molecules/select-field.component';
+import { CheckSelectComponent } from '../molecules/check-select.component';
 
 @Component({
   selector: 'app-filter-group',
@@ -71,7 +71,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                   />
                 }
                 @case ('checkSelect') {
-                  <app-check-select-filter
+                  <app-check-select
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
@@ -132,7 +132,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                     />
                   }
                   @case ('checkSelect') {
-                    <app-check-select-filter
+                    <app-check-select
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
@@ -204,10 +204,10 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
     CommonModule,
     TranslateModule,
     ReactiveFormsModule,
-    CheckSelectFilterComponent,
     EditableMultiSelectComponent,
     InputFieldComponent,
     SelectFieldComponent,
+    CheckSelectComponent,
   ],
 })
 export class FilterGroupComponent<T extends Record<string, any>>

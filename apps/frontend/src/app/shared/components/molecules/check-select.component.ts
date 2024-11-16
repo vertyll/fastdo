@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import { LabelComponent } from '../atoms/label.component';
 
 @Component({
-  selector: 'app-check-select-filter',
+  selector: 'app-check-select',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, LabelComponent],
   template: `
@@ -60,7 +60,7 @@ import { LabelComponent } from '../atoms/label.component';
     `,
   ],
 })
-export class CheckSelectFilterComponent implements OnInit, OnDestroy {
+export class CheckSelectComponent implements OnInit, OnDestroy {
   @Input() control!: FormControl;
   @Input() id!: string;
   @Input() label!: string;

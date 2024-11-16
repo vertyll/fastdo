@@ -14,7 +14,6 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { AdDirective } from '../../directives/ad.directive';
 import { ModalService } from '../../services/modal.service';
 import { ModalConfig } from '../../interfaces/modal.interface';
 import { SpinnerComponent } from '../atoms/spinner.component';
@@ -26,6 +25,7 @@ import { ButtonComponent } from '../atoms/button.component';
 import { TextareaComponent } from '../atoms/textarea-component';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { AdDirective } from 'src/app/core/directives/ad.directive';
 
 @Component({
   selector: 'app-modal',
