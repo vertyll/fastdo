@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, delay, map, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
+import { AddTaskDto } from '../dtos/add-task.dto';
 
 export type TaskUpdatePayload = {
   isDone?: boolean;
@@ -68,8 +69,8 @@ export class TasksApiService {
     return this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload);
   }
 
-  public add(name: string, projectId?: string): Observable<Task> {
-    return this.http.post<Task>(`${this.URL}/tasks`, { name, projectId });
+  public add(data: AddTaskDto): Observable<Task> {
+    return this.http.post<Task>(`${this.URL}/tasks`, data);
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

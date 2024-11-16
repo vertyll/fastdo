@@ -29,6 +29,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TaskNameValidator } from './validators/task-name.validator';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ModalService } from '../shared/services/modal.service';
+import { AddTaskDto } from './dtos/add-task.dto';
 
 @Component({
   selector: 'app-task-list-page',
@@ -141,10 +142,50 @@ export class TaskListPageComponent implements OnInit {
     this.getAllTasks(searchParams).subscribe();
   }
 
-  protected addTask(data: any): void {
-    const name = data.taskName;
-    const isCompleted = data.isCompleted;
-    const validation = this.taskNameValidator.validateTaskName(name);
+  protected openAddTaskModal(): void {
+    this.modalService.present({
+      title: this.translateService.instant('Task.addTask'),
+      inputs: [
+        {
+          id: 'name',
+          type: 'text',
+          required: true,
+          error: this.errorMessage,
+          label: this.translateService.instant('Task.taskName'),
+        },
+        {
+          id: 'isDone',
+          type: 'checkbox',
+          required: false,
+          error: this.errorMessage,
+          label: this.translateService.instant('Task.isCompleted'),
+        },
+        {
+          id: 'isUrgent',
+          type: 'checkbox',
+          required: false,
+          error: this.errorMessage,
+          label: this.translateService.instant('Task.isUrgent'),
+        }
+      ],
+      buttons: [
+        {
+          role: 'cancel',
+          text: this.translateService.instant('Base.cancel'),
+        },
+        {
+          role: 'ok',
+          text: this.translateService.instant('Base.save'),
+          handler: (data: AddTaskDto) => {
+            this.addTask(data);
+          },
+        },
+      ],
+    });
+  }
+
+  protected addTask(data: AddTaskDto): void {
+    const validation = this.taskNameValidator.validateTaskName(data.name);
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,
@@ -153,7 +194,11 @@ export class TaskListPageComponent implements OnInit {
       return;
     }
 
-    this.tasksService.add(name, this.projectId).subscribe({
+    if (this.projectId) {
+      data.projectId = +this.projectId;
+    }
+
+    this.tasksService.add(data).subscribe({
       next: () => {
         this.initializeTaskList();
       },
@@ -176,41 +221,6 @@ export class TaskListPageComponent implements OnInit {
           NotificationType.success,
         );
       },
-    });
-  }
-
-  protected openAddTaskModal(): void {
-    this.modalService.present({
-      title: this.translateService.instant('Task.addTask'),
-      inputs: [
-        {
-          id: 'taskName',
-          type: 'text',
-          required: true,
-          error: this.errorMessage,
-          label: this.translateService.instant('Task.taskName'),
-        },
-        {
-          id: 'isCompleted',
-          type: 'checkbox',
-          required: false,
-          error: this.errorMessage,
-          label: this.translateService.instant('Task.isCompleted'),
-        },
-      ],
-      buttons: [
-        {
-          role: 'cancel',
-          text: this.translateService.instant('Base.cancel'),
-        },
-        {
-          role: 'ok',
-          text: this.translateService.instant('Base.save'),
-          handler: (data) => {
-            this.addTask(data);
-          },
-        },
-      ],
     });
   }
 

@@ -6,6 +6,7 @@ import {
 } from './task.api.service';
 import { Observable, tap } from 'rxjs';
 import { TasksStateService } from './task.state.service';
+import { AddTaskDto } from '../dtos/add-task.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -53,8 +54,8 @@ export class TasksService {
     );
   }
 
-  public add(name: string, projectId?: string): Observable<any> {
-    return this.httpService.add(name, projectId).pipe(
+  public add(data: AddTaskDto): Observable<any> {
+    return this.httpService.add(data).pipe(
       tap((task) => {
         this.state.addTask(task);
       }),
