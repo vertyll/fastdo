@@ -72,7 +72,8 @@
     "deleteError": "Wystąpił błąd podczas usuwania projektu",
     "deleteSuccess": "Projekt został usunięty",
     "getAllError": "Wystąpił błąd podczas pobierania projektów",
-    "addPlaceholder": "Dodaj nowy projekt"
+    "addPlaceholder": "Dodaj nowy projekt",
+    "emptyList": "Brak projektów"
   },
   "Task": {
     "forProject": "Dla projektu",

@@ -60,7 +60,7 @@ import { AddTaskDto } from './dtos/add-task.dto';
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>
 
-    <div class="how-to-use-section">
+    <div class="border border-gray-300 p-2 max-w-lg rounded-lg">
       <button (click)="showHowToUse = !showHowToUse">
         <span class="font-semibold">
           {{ 'Task.howToUse' | translate }}

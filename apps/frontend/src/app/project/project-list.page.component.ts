@@ -113,6 +113,10 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                   </a>
                 </footer>
               </div>
+            } @empty {
+              <p>
+                {{ 'Project.emptyList' | translate }}
+              </p>
             }
           </div>
         }
