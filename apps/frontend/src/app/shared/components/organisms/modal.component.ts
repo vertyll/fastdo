@@ -103,7 +103,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                     @if (input.label) {
                       <label
                         [for]="input.id"
-                        class="text-sm text-gray-700 dark:text-gray-300"
+                        class="text-sm text-gray-700 dark:text-gray-300 mr-1"
                       >
                         {{ input.label }}
                       </label>
@@ -114,7 +114,6 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                           [id]="input.id"
                           [checked]="input.value"
                           [control]="getFormControl(input.id)"
-                          class="mr-3"
                         />
                       }
                       @case ('textarea') {
@@ -122,7 +121,6 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                           [id]="input.id"
                           [control]="getFormControl(input.id)"
                           [rows]="3"
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                       }
                       @case ('date') {
@@ -130,7 +128,6 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                           [id]="input.id"
                           type="date"
                           [control]="getFormControl(input.id)"
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                       }
                       @case ('datetime-local') {
@@ -138,7 +135,6 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                           [id]="input.id"
                           type="datetime-local"
                           [control]="getFormControl(input.id)"
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                       }
                       @case ('number') {
@@ -146,7 +142,6 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                           [id]="input.id"
                           type="number"
                           [control]="getFormControl(input.id)"
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                       }
                       @default {
@@ -154,7 +149,6 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                           [id]="input.id"
                           [type]="'text'"
                           [control]="getFormControl(input.id)"
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                       }
                     }

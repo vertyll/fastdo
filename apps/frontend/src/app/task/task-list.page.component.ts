@@ -148,23 +148,20 @@ export class TaskListPageComponent implements OnInit {
       inputs: [
         {
           id: 'name',
-          type: 'text',
+          type: 'textarea',
           required: true,
-          error: this.errorMessage,
           label: this.translateService.instant('Task.taskName'),
         },
         {
           id: 'isDone',
           type: 'checkbox',
           required: false,
-          error: this.errorMessage,
           label: this.translateService.instant('Task.isCompleted'),
         },
         {
           id: 'isUrgent',
           type: 'checkbox',
           required: false,
-          error: this.errorMessage,
           label: this.translateService.instant('Task.isUrgent'),
         },
       ],
@@ -181,7 +178,6 @@ export class TaskListPageComponent implements OnInit {
           },
         },
       ],
-      error: this.errorMessage,
     });
   }
 
