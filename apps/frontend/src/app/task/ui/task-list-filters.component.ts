@@ -4,7 +4,7 @@ import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter
 import {
   TASKS_LIST_FILTERS,
   TasksListFiltersConfig,
-} from 'src/app/shared/types/filter.types';
+} from 'src/app/shared/types/filter.type';
 
 @Component({
   standalone: true,

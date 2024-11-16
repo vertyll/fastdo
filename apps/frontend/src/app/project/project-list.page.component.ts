@@ -17,7 +17,7 @@ import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autos
 import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
 import { GetAllProjectsSearchParams } from './data-access/project.api.service';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
-import { ProjectListFiltersConfig } from '../shared/types/filter.types';
+import { ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProjectNameValidator } from './validators/project-name.validator';
 
