@@ -168,11 +168,11 @@ export class TaskListPageComponent implements OnInit {
       buttons: [
         {
           role: 'cancel',
-          text: this.translateService.instant('Base.cancel'),
+          text: this.translateService.instant('Basic.cancel'),
         },
         {
           role: 'ok',
-          text: this.translateService.instant('Base.save'),
+          text: this.translateService.instant('Basic.save'),
           handler: (data: AddTaskDto) => {
             this.addTask(data);
           },

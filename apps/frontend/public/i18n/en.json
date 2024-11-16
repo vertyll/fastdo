@@ -1,12 +1,16 @@
 {
-  "Base": {
+  "Basic": {
     "loading": "Loading...",
     "accept": "Accept",
     "appName": "FastDo",
     "logout": "Logout",
     "login": "Login",
     "register": "Register",
-    "add": "Add"
+    "add": "Add",
+    "noItemsFound": "No items found",
+    "enterText": "Enter text",
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "Filters": {
     "search": "Search",
@@ -28,7 +32,8 @@
     "sortByCreatedAt": "Creation date",
     "sortByUpdatedAt": "Update date",
     "orderByAsc": "Ascending",
-    "orderByDesc": "Descending"
+    "orderByDesc": "Descending",
+    "q": "Name"
   },
   "Auth": {
     "login": "Login",
@@ -66,7 +71,9 @@
     "updateSuccess": "Project updated successfully",
     "deleteError": "An error occurred while deleting the project",
     "deleteSuccess": "Project deleted successfully",
-    "getAllError": "An error occurred while fetching projects"
+    "getAllError": "An error occurred while fetching projects",
+    "addPlaceholder": "Add new project",
+    "emptyList": "No projects"
   },
   "Task": {
     "forProject": "For project",
@@ -89,7 +96,11 @@
     "changeStatusDoc": "Change status: click on the task",
     "urgentTaskCount": "Number of urgent tasks",
     "addError": "An error occurred while adding the task",
-    "addSuccess": "Task added successfully"
+    "addSuccess": "Task added successfully",
+    "addTask": "Add task",
+    "taskName": "Task name",
+    "isCompleted": "Is completed?",
+    "isUrgent": "Is urgent?"
   },
   "CookiesBanner": {
     "text": "This site uses cookies to improve your experience. By using our site, you agree to our use of cookies."
@@ -116,5 +127,20 @@
   },
   "Date": {
     "invalidDate": "Invalid date"
+  },
+  "EditableMultiSelect": {
+    "addTagsAdHoc": "Add tag"
+  },
+  "FormValidationMessage": {
+    "required": "This field is required",
+    "minLength": "This field must be at least {minLength} characters long",
+    "email": "This field must be a valid email address",
+    "password": "This field must contain at least one uppercase letter, one number, and one special character",
+    "min": "Value must be greater than or equal to {minValue}",
+    "max": "Value must be less than or equal to {maxValue}",
+    "maxLength": "This field can be at most {maxLength} characters long",
+    "passwordMatch": "Passwords must match",
+    "pattern": "This field must match the specified pattern",
+    "mismatchingPasswords": "Passwords do not match"
   }
 }

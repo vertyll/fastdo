@@ -126,7 +126,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
           </p>
         }
         @case (listStateValue.LOADING) {
-          <p class="text-gray-600">{{ 'Base.loading' | translate }}</p>
+          <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
         }
       }
     </div>

@@ -36,7 +36,7 @@ import { TranslateModule } from '@ngx-translate/core';
           "
           class="border-2 border-black text-black font-bold px-2 py-1 mx-4 cursor-pointer"
         >
-          {{ 'Base.appName' | translate }}
+          {{ 'Basic.appName' | translate }}
         </span>
         <ul class="hidden md:flex gap-6">
           @if (authService.isLoggedIn()) {
@@ -73,18 +73,18 @@ import { TranslateModule } from '@ngx-translate/core';
             </li>
             <li>
               <button (click)="logout()" class="text-red-500">
-                {{ 'Base.logout' | translate }}
+                {{ 'Basic.logout' | translate }}
               </button>
             </li>
           } @else {
             <li>
               <a routerLink="/login" (click)="closeMenu()">
-                {{ 'Base.login' | translate }}
+                {{ 'Basic.login' | translate }}
               </a>
             </li>
             <li>
               <a routerLink="/register" (click)="closeMenu()">
-                {{ 'Base.register' | translate }}
+                {{ 'Basic.register' | translate }}
               </a>
             </li>
           }
@@ -105,12 +105,12 @@ import { TranslateModule } from '@ngx-translate/core';
           @if (!authService.isLoggedIn(); as loggedIn) {
             <li>
               <a routerLink="/login" (click)="closeMenu()">
-                {{ 'Base.login' | translate }}
+                {{ 'Basic.login' | translate }}
               </a>
             </li>
             <li>
               <a routerLink="/register" (click)="closeMenu()">
-                {{ 'Base.register' | translate }}
+                {{ 'Basic.register' | translate }}
               </a>
             </li>
           } @else {
@@ -145,7 +145,7 @@ import { TranslateModule } from '@ngx-translate/core';
             </li>
             <li>
               <button (click)="logout()" class="text-red-500">
-                {{ 'Base.logout' | translate }}
+                {{ 'Basic.logout' | translate }}
               </button>
             </li>
           }

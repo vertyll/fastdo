@@ -27,7 +27,7 @@ import { InputType } from '../../types/components.type';
         (onClick)="emitText()"
         cssClass="bg-orange-400 text-white hover:bg-orange-500"
       >
-        {{ 'Base.add' | translate }}
+        {{ 'Basic.add' | translate }}
       </app-button>
     </div>
   `,

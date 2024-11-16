@@ -29,7 +29,7 @@ import { LabelComponent } from '../atoms/label.component';
         [(ngModel)]="selectValue"
         [maxSelectedItems]="maxSelectedItems"
         [id]="id"
-        notFoundText="{{ 'Base.noItemsFound' | translate }}"
+        notFoundText="{{ 'Basic.noItemsFound' | translate }}"
         (search)="onSelectSearch($event)"
         [minTermLength]="minTermLength"
         [addTag]="allowAddTag ? addTag : false"

@@ -18,7 +18,7 @@ import { ButtonComponent } from '../atoms/button.component';
           </p>
           <div class="flex items-center">
             <app-button (click)="acceptCookies()">
-              {{ 'Base.accept' | translate }}
+              {{ 'Basic.accept' | translate }}
             </app-button>
           </div>
         </div>
