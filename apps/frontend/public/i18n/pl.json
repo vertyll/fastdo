@@ -97,7 +97,8 @@
     "addSuccess": "Zadanie zostało dodane",
     "addTask": "Dodaj zadanie",
     "taskName": "Nazwa zadania",
-    "isCompleted": "Czy zrobione?"
+    "isCompleted": "Czy zrobione?",
+    "isUrgent": "Czy pilne?"
   },
   "CookiesBanner": {
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."

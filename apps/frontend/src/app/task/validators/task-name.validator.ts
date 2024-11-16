@@ -11,7 +11,7 @@ export class TaskNameValidator {
     if (!taskName || taskName.length < 3) {
       return {
         isValid: false,
-        error: this.translateService.instant('Auth.taskNameMinLength'),
+        error: this.translateService.instant('Task.taskNameMinLength'),
       };
     }
     return { isValid: true };

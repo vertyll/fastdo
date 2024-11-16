@@ -166,7 +166,7 @@ export class TaskListPageComponent implements OnInit {
           required: false,
           error: this.errorMessage,
           label: this.translateService.instant('Task.isUrgent'),
-        }
+        },
       ],
       buttons: [
         {
@@ -181,6 +181,7 @@ export class TaskListPageComponent implements OnInit {
           },
         },
       ],
+      error: this.errorMessage,
     });
   }
 
@@ -204,13 +205,15 @@ export class TaskListPageComponent implements OnInit {
       },
       error: (err) => {
         if (err.error && err.error.message) {
+          this.errorMessage = err.error.message;
           this.notificationService.showNotification(
-            err.error.message,
+            this.errorMessage,
             NotificationType.error,
           );
         } else {
+          this.errorMessage = this.translateService.instant('Task.addError');
           this.notificationService.showNotification(
-            this.translateService.instant('Task.addError'),
+            this.errorMessage,
             NotificationType.error,
           );
         }

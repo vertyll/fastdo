@@ -27,7 +27,7 @@ import { ErrorPipe } from '../../pipes/error.pipe';
 })
 export class ErrorMessageComponent {
   @Input() input!: AbstractControl | null;
-  @Input() customMessage!: string | null;
+  @Input() customMessage!: string | undefined;
 
   constructor(public validation: ValidationService) {}
 

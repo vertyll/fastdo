@@ -161,15 +161,16 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                   </div>
 
                   <app-error-message [input]="form.get(input.id)" />
+                  @if (input.error) {
+                    <app-error-message [customMessage]="input.error" />
+                  }
                 </div>
               }
 
               @if (modalService.modal().options?.error) {
-                <div
-                  class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-                >
-                  {{ modalService.modal().options?.error }}
-                </div>
+                <app-error-message
+                  [customMessage]="modalService.modal().options?.error"
+                />
               }
             </form>
           }
