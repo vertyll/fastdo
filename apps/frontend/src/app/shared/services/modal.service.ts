@@ -1,71 +1,80 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
 import { ModalConfig, ModalOptions } from '../interfaces/modal.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModalService {
-  private _modal: ModalConfig = {
+  private modalSignal = signal<ModalConfig>({
     visible: false,
-  };
+  });
 
-  public modal$ = new BehaviorSubject(this.modal);
+  public modal = computed(() => this.modalSignal());
 
-  set modal(val) {
-    this._modal = val;
-    this.modal$.next(val);
+  private get currentModal(): ModalConfig {
+    return this.modalSignal();
   }
 
-  get modal() {
-    return this._modal;
+  private setModal(val: ModalConfig): void {
+    this.modalSignal.set(val);
   }
 
-  public present(options: ModalOptions) {
-    this.modal = {
+  public present(options: ModalOptions): void {
+    this.setModal({
       visible: true,
       options: { ...options },
-    };
+    });
   }
 
-  public close() {
-    this.modal = {
+  public close(): void {
+    this.setModal({
       visible: false,
-    };
+    });
   }
 
-  public updateConfig(options: Partial<ModalOptions>) {
-    if (this.modal.options?.title) {
-      this.modal = {
+  public updateConfig(options: Partial<ModalOptions>): void {
+    const current = this.currentModal;
+    if (current.options?.title) {
+      this.setModal({
         visible: true,
         options: {
-          ...this.modal.options,
+          ...current.options,
           ...options,
         },
-      };
-    }
-  }
-
-  public updateLoading(loading: boolean) {
-    if (this._modal && this._modal.options) {
-      this.modal = {
-        ...this._modal,
-        options: {
-          ...this._modal.options,
-          loading: loading,
-        },
-      };
-    }
-  }
-
-  public updateSelectOptions(selectOptions: any[]) {
-    if (this._modal.options && this._modal.options.inputs) {
-      this._modal.options.inputs.forEach((input) => {
-        if (input.selectOptions) {
-          input.selectOptions = selectOptions;
-        }
       });
-      this.modal$.next(this._modal);
+    }
+  }
+
+  public updateLoading(loading: boolean): void {
+    const current = this.currentModal;
+    if (current && current.options) {
+      this.setModal({
+        ...current,
+        options: {
+          ...current.options,
+          loading,
+        },
+      });
+    }
+  }
+
+  public updateSelectOptions(selectOptions: any[]): void {
+    const current = this.currentModal;
+    if (current.options?.inputs) {
+      const updatedInputs = current.options.inputs.map((input) => {
+        if (input.selectOptions) {
+          return { ...input, selectOptions };
+        }
+        return input;
+      });
+
+      this.setModal({
+        ...current,
+        options: {
+          ...current.options,
+          inputs: updatedInputs,
+        },
+      });
     }
   }
 }
