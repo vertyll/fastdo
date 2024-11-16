@@ -16,7 +16,7 @@ import { ButtonComponent } from '../atoms/button.component';
   template: `
     <div class="flex items-center gap-4">
       <app-input
-        [control]="textControl"
+        [control]="control"
         placeholder="{{ 'Base.enterText' | translate }}"
         type="text"
         id="submitTextInput"
@@ -32,13 +32,13 @@ import { ButtonComponent } from '../atoms/button.component';
 })
 export class SubmitTextComponent {
   @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
-  textControl = new FormControl('');
+  protected control: FormControl = new FormControl('');
 
   protected emitText(): void {
-    const text = this.textControl.value?.trim();
+    const text = this.control.value?.trim();
     if (text) {
       this.submitText.emit(text);
-      this.textControl.reset();
+      this.control.reset();
     }
   }
 }
