@@ -23,11 +23,8 @@ import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AdDirective } from 'src/app/core/directives/ad.directive';
 import { TextareaComponent } from '../atoms/textarea-component';
-import {
-  ButtonRole,
-  ModalConfig,
-  ModalInputType,
-} from '../../interfaces/modal.interface';
+import { ButtonRole, ModalInputType } from '../../enums/modal.enum';
+import { ModalConfig } from '../../interfaces/modal.interface';
 
 @Component({
   selector: 'app-modal',

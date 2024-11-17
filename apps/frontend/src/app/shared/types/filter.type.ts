@@ -2,6 +2,14 @@ import { TASK_STATUS, TaskStatus } from 'src/app/task/enums/task-status.enum';
 import { FilterMetadata } from '../interfaces/filter.interface';
 import { FilterType } from '../enums/filter.enum';
 
+export type FilterModel = {
+  [key: string]: any;
+};
+
+export type FilterMap = {
+  [type: string]: FilterModel;
+};
+
 export type TasksListFiltersConfig = {
   q: string;
   status: TaskStatus;

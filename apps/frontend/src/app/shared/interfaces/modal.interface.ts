@@ -1,3 +1,4 @@
+import { ButtonRole, ModalInputType } from '../enums/modal.enum';
 import { SimpleNameItem } from './general.interface';
 
 export interface ModalInput<T = any> {
@@ -35,21 +36,4 @@ export interface ModalOptions {
 export interface ModalConfig {
   visible: boolean;
   options?: ModalOptions;
-}
-
-export enum ButtonRole {
-  Cancel = 'cancel',
-  Ok = 'ok',
-  Reject = 'reject',
-}
-
-export enum ModalInputType {
-  Text = 'text',
-  Number = 'number',
-  Date = 'date',
-  Checkbox = 'checkbox',
-  Textarea = 'textarea',
-  Select = 'select',
-  EditableMultiSelect = 'editableMultiSelect',
-  DatetimeLocal = 'datetime-local',
 }

@@ -37,10 +37,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ModalService } from '../shared/services/modal.service';
 import { AddTaskDto } from './dtos/add-task.dto';
-import {
-  ButtonRole,
-  ModalInputType,
-} from '../shared/interfaces/modal.interface';
+import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 
 @Component({
   selector: 'app-task-list-page',

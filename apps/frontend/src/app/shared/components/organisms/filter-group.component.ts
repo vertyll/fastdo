@@ -184,7 +184,10 @@ import { FilterType } from '../../enums/filter.enum';
                 }})
               </span>
             }
-            <span (click)="clearFilters()" class="text-orange-600 cursor-pointer">
+            <span
+              (click)="clearFilters()"
+              class="text-orange-500 hover:text-orange-600 cursor-pointer"
+            >
               <b>{{ 'Filters.clearFilters' | translate }}</b>
             </span>
           </p>
