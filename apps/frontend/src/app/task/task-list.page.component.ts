@@ -105,16 +105,18 @@ import {
       (updateTasksListView)="configStateService.updateTasksListView($event)"
     />
 
+    <p>
+      {{ 'Task.urgentTaskCount' | translate }}:
+      <span class="text-orange-500 font-semibold">{{
+        tasksStateService.urgentCount()
+      }}</span>
+    </p>
+
     @if ($view() === 'list') {
       <app-tasks-list class="block mt-4" [tasks]="tasksStateService.tasks()" />
     } @else {
       <app-tasks-kanban-view [tasks]="tasksStateService.tasks()" />
     }
-
-    <p>
-      {{ 'Task.urgentTaskCount' | translate }}:
-      {{ tasksStateService.urgentCount() }}
-    </p>
   `,
   animations: [
     trigger('slideToggle', [
