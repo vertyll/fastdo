@@ -54,7 +54,11 @@ import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
     <div class="flex flex-col gap-4">
       @if (!projectName) {
         <h2 class="text-2xl font-bold mb-4">
-          {{ 'Task.title' | translate }}
+          @if (isUrgent) {
+            {{ 'Task.urgentTasks' | translate }}
+          } @else {
+            {{ 'Task.title' | translate }}
+          }
         </h2>
       } @else {
         <h2 class="text-2xl font-bold mb-4">

@@ -89,6 +89,7 @@
     "updateSuccess": "Zadanie zostało zaktualizowane",
     "taskNameMinLength": "Nazwa zadania musi mieć co najmniej 3 znaki.",
     "title": "Wszystkie zadania",
+    "urgentTasks": "Pilne zadania",
     "taskForProject": "Zadania dla projektu",
     "howToUse": "Jak używać?",
     "changeNameDoc": "Zmień nazwę: kliknij dwa razy aby edytować nazwę zadania",
