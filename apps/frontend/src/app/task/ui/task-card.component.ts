@@ -26,7 +26,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
   ],
   template: `
     <div
-      class="rounded-md shadow-md p-4 block w-full"
+      class="rounded-md border border-gray-300 shadow-sm p-4 block w-full"
       [class.bg-green-300]="task.isDone"
     >
       <button

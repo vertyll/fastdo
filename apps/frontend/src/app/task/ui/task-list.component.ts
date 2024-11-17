@@ -14,7 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   template: `
     <ul>
       @for (task of tasks; track task.id) {
-        <li class="mb-2">
+        <li class="mb-4">
           <app-task-card
             [task]="task"
             (update)="updateTask(task.id, $event)"
