@@ -29,6 +29,7 @@ import {
 import { InputFieldComponent } from '../molecules/input-field.component';
 import { SelectFieldComponent } from '../molecules/select-field.component';
 import { CheckSelectComponent } from '../molecules/check-select.component';
+import { FilterType } from '../../enums/filter.enum';
 
 @Component({
   selector: 'app-filter-group',
@@ -40,31 +41,31 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
           @for (filter of filters.slice(0, 4); track $index) {
             <div>
               @switch (filter.type) {
-                @case ('text') {
+                @case (FilterType.Text) {
                   <app-input-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
-                    [type]="'text'"
+                    [type]="FilterType.Text"
                   />
                 }
-                @case ('number') {
+                @case (FilterType.Number) {
                   <app-input-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
-                    [type]="'number'"
+                    [type]="FilterType.Number"
                   />
                 }
-                @case ('date') {
+                @case (FilterType.Date) {
                   <app-input-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
                     [label]="translateService.instant(filter.labelKey)"
-                    [type]="'date'"
+                    [type]="FilterType.Date"
                   />
                 }
-                @case ('select') {
+                @case (FilterType.Select) {
                   <app-select-field
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
@@ -72,7 +73,7 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
                     [options]="filter.options || []"
                   />
                 }
-                @case ('checkSelect') {
+                @case (FilterType.CheckSelect) {
                   <app-check-select
                     [control]="getFormControl(filter.formControlName)"
                     [id]="filter.formControlName"
@@ -80,7 +81,7 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
                     [options]="filter.options || []"
                   />
                 }
-                @case ('editableMultiSelect') {
+                @case (FilterType.EditableMultiSelect) {
                   <app-editable-multi-select
                     [formControlName]="filter.formControlName"
                     [id]="filter.formControlName"
@@ -101,31 +102,31 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
             @for (filter of filters.slice(4); let i = $index; track $index) {
               <div [class.hidden]="!showAllFilters()">
                 @switch (filter.type) {
-                  @case ('text') {
+                  @case (FilterType.Text) {
                     <app-input-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
-                      [type]="'text'"
+                      [type]="FilterType.Text"
                     />
                   }
-                  @case ('number') {
+                  @case (FilterType.Number) {
                     <app-input-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
-                      [type]="'number'"
+                      [type]="FilterType.Number"
                     />
                   }
-                  @case ('date') {
+                  @case (FilterType.Date) {
                     <app-input-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
-                      [type]="'date'"
+                      [type]="FilterType.Date"
                     />
                   }
-                  @case ('select') {
+                  @case (FilterType.Select) {
                     <app-select-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
@@ -133,7 +134,7 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
                       [options]="filter.options || []"
                     />
                   }
-                  @case ('checkSelect') {
+                  @case (FilterType.CheckSelect) {
                     <app-check-select
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
@@ -141,7 +142,7 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
                       [options]="filter.options || []"
                     />
                   }
-                  @case ('editableMultiSelect') {
+                  @case (FilterType.EditableMultiSelect) {
                     <app-editable-multi-select
                       [formControlName]="filter.formControlName"
                       [id]="filter.formControlName"
@@ -253,6 +254,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private readonly platformService = inject(PlatformService);
   private readonly filtersService = inject(FiltersService);
   private readonly cdr = inject(ChangeDetectorRef);
+
+  protected readonly FilterType = FilterType;
 
   constructor(public readonly translateService: TranslateService) {
     effect(
@@ -427,7 +430,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     queryParamValue: any,
     defaultValue: any,
   ): any {
-    if (filter?.type === 'editableMultiSelect') {
+    if (filter?.type === FilterType.EditableMultiSelect) {
       return this.getMultiSelectValue(queryParamValue);
     }
     return typeof defaultValue === 'number'
@@ -490,7 +493,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
     if (
       Array.isArray(value) &&
-      filterMetadata?.type === 'editableMultiSelect'
+      filterMetadata?.type === FilterType.EditableMultiSelect
     ) {
       return {
         id: key,

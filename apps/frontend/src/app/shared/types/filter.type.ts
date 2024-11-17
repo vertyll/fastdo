@@ -1,5 +1,6 @@
 import { TASK_STATUS, TaskStatus } from 'src/app/task/enums/task-status.enum';
 import { FilterMetadata } from '../interfaces/filter.interface';
+import { FilterType } from '../enums/filter.enum';
 
 export type TasksListFiltersConfig = {
   q: string;
@@ -24,12 +25,12 @@ export type ProjectListFiltersConfig = {
 
 export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   {
-    type: 'text',
+    type: FilterType.Text,
     formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
-    type: 'select',
+    type: FilterType.Select,
     formControlName: 'status',
     labelKey: 'Filters.status',
     defaultValue: TASK_STATUS.ALL,
@@ -40,7 +41,7 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: 'select',
+    type: FilterType.Select,
     formControlName: 'sortBy',
     labelKey: 'Filters.sortBy',
     defaultValue: 'dateCreation',
@@ -51,7 +52,7 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: 'select',
+    type: FilterType.Select,
     formControlName: 'orderBy',
     labelKey: 'Filters.orderBy',
     defaultValue: 'desc',
@@ -61,22 +62,22 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'createdFrom',
     labelKey: 'Filters.createdFrom',
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'createdTo',
     labelKey: 'Filters.createdTo',
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'updatedFrom',
     labelKey: 'Filters.updatedFrom',
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'updatedTo',
     labelKey: 'Filters.updatedTo',
   },
@@ -84,12 +85,12 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
 
 export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
-    type: 'text',
+    type: FilterType.Text,
     formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
-    type: 'select',
+    type: FilterType.Select,
     formControlName: 'sortBy',
     labelKey: 'Filters.sortBy',
     defaultValue: 'dateCreation',
@@ -100,7 +101,7 @@ export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: 'select',
+    type: FilterType.Select,
     formControlName: 'orderBy',
     labelKey: 'Filters.orderBy',
     defaultValue: 'desc',
@@ -110,22 +111,22 @@ export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'createdFrom',
     labelKey: 'Filters.createdFrom',
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'createdTo',
     labelKey: 'Filters.createdTo',
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'updatedFrom',
     labelKey: 'Filters.updatedFrom',
   },
   {
-    type: 'date',
+    type: FilterType.Date,
     formControlName: 'updatedTo',
     labelKey: 'Filters.updatedTo',
   },
