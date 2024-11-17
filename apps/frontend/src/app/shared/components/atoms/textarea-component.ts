@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
       [formControl]="control"
       [placeholder]="placeholder"
       [rows]="rows"
-      class="block w-full p-1 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+      class="block w-full p-1 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-orange-500 focus:outline-none focus:ring-0 focus:border-orange-600 peer"
     ></textarea>
   `,
 })

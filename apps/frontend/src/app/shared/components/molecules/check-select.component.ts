@@ -20,7 +20,7 @@ import { LabelComponent } from '../atoms/label.component';
       <div
         [id]="id"
         (click)="toggleDropdown()"
-        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer cursor-pointer"
+        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-orange-500 focus:outline-none focus:ring-0 focus:border-orange-600 peer cursor-pointer"
       >
         <span>{{ label }}</span>
         @if (isDropdownOpen) {
@@ -36,7 +36,7 @@ import { LabelComponent } from '../atoms/label.component';
                   [value]="option.value"
                   (change)="onCheckboxChange($event)"
                   [checked]="isChecked(option.value)"
-                  class="form-check-input h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 />
                 <label
                   [for]="option.value"

@@ -162,7 +162,7 @@ import { FilterType } from '../../enums/filter.enum';
             <button
               type="button"
               (click)="toggleFilters()"
-              class="text-blue-600"
+              class="text-orange-600"
             >
               {{
                 showAllFilters()
@@ -184,7 +184,7 @@ import { FilterType } from '../../enums/filter.enum';
                 }})
               </span>
             }
-            <span (click)="clearFilters()" class="text-blue-600 cursor-pointer">
+            <span (click)="clearFilters()" class="text-orange-600 cursor-pointer">
               <b>{{ 'Filters.clearFilters' | translate }}</b>
             </span>
           </p>

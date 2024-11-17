@@ -55,7 +55,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             <span>{{ 'Task.forProject' | translate }}: </span>
             <a
               [routerLink]="['/tasks', task.project.id]"
-              class="text-blue-500 hover:underline"
+              class="text-orange-500 hover:underline"
             >
               {{ task.project.name }}
             </a>

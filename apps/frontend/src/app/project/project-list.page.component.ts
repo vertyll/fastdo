@@ -73,7 +73,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                     />
                   } @else {
                     <h3
-                      class="text-xl font-semibold mb-2 text-blue-600 hover:text-blue-800 break-all"
+                      class="text-xl font-semibold mb-2 text-orange-600 hover:text-orange-800 break-all"
                     >
                       {{ project.name }}
                     </h3>
@@ -107,7 +107,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                   </button>
                   <a
                     [routerLink]="['/tasks', project.id]"
-                    class="text-blue-500 hover:underline"
+                    class="text-orange-500 hover:underline"
                   >
                     {{ 'Project.viewTasks' | translate }}
                   </a>

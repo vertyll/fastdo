@@ -50,7 +50,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         <button
           type="button"
           (click)="router.navigate(['/register'])"
-          class="mt-4 text-blue-500 hover:underline"
+          class="mt-4 text-orange-500 hover:underline"
         >
           {{ 'Auth.dontHaveAccount' | translate }}
         </button>
