@@ -162,7 +162,7 @@ import { FilterType } from '../../enums/filter.enum';
             <button
               type="button"
               (click)="toggleFilters()"
-              class="text-orange-600"
+              class="text-orange-500 hover:text-orange-600 cursor-pointer"
             >
               {{
                 showAllFilters()
