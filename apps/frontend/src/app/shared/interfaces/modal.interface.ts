@@ -1,4 +1,3 @@
-import { ModalInputType } from '../types/components.type';
 import { SimpleNameItem } from './general.interface';
 
 export interface ModalInput<T = any> {
@@ -16,7 +15,7 @@ export interface ModalInput<T = any> {
 
 export interface ModalButton<T = any> {
   text: string;
-  role: 'cancel' | 'ok' | 'reject';
+  role: ButtonRole;
   handler?: ((inputs: T) => void) | (() => void) | Promise<void>;
 }
 
@@ -36,4 +35,21 @@ export interface ModalOptions {
 export interface ModalConfig {
   visible: boolean;
   options?: ModalOptions;
+}
+
+export enum ButtonRole {
+  Cancel = 'cancel',
+  Ok = 'ok',
+  Reject = 'reject',
+}
+
+export enum ModalInputType {
+  Text = 'text',
+  Number = 'number',
+  Date = 'date',
+  Checkbox = 'checkbox',
+  Textarea = 'textarea',
+  Select = 'select',
+  EditableMultiSelect = 'editableMultiSelect',
+  DatetimeLocal = 'datetime-local',
 }

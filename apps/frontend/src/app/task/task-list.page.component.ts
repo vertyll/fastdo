@@ -19,7 +19,7 @@ import {
 } from './ui/task-list-view-mode.component';
 import { TasksService } from './data-access/task.service';
 import { ActivatedRoute } from '@angular/router';
-import { distinctUntilChanged, map, switchMap } from 'rxjs';
+import { distinctUntilChanged, firstValueFrom, map, switchMap } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
@@ -30,6 +30,10 @@ import { TaskNameValidator } from './validators/task-name.validator';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ModalService } from '../shared/services/modal.service';
 import { AddTaskDto } from './dtos/add-task.dto';
+import {
+  ButtonRole,
+  ModalInputType,
+} from '../shared/interfaces/modal.interface';
 
 @Component({
   selector: 'app-task-list-page',
@@ -148,30 +152,30 @@ export class TaskListPageComponent implements OnInit {
       inputs: [
         {
           id: 'name',
-          type: 'textarea',
+          type: ModalInputType.Textarea,
           required: true,
           label: this.translateService.instant('Task.taskName'),
         },
         {
           id: 'isDone',
-          type: 'checkbox',
+          type: ModalInputType.Checkbox,
           required: false,
           label: this.translateService.instant('Task.isCompleted'),
         },
         {
           id: 'isUrgent',
-          type: 'checkbox',
+          type: ModalInputType.Checkbox,
           required: false,
           label: this.translateService.instant('Task.isUrgent'),
         },
       ],
       buttons: [
         {
-          role: 'cancel',
+          role: ButtonRole.Cancel,
           text: this.translateService.instant('Basic.cancel'),
         },
         {
-          role: 'ok',
+          role: ButtonRole.Ok,
           text: this.translateService.instant('Basic.save'),
           handler: (data: AddTaskDto) => {
             this.addTask(data);

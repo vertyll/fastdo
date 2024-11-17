@@ -13,14 +13,4 @@ export type InputType =
   | 'search'
   | 'color';
 
-export type ModalInputType =
-  | 'text'
-  | 'number'
-  | 'date'
-  | 'checkbox'
-  | 'textarea'
-  | 'select'
-  | 'editableMultiSelect'
-  | 'datetime-local';
-
 export type SpinnerSize = 'small' | 'medium' | 'large';

@@ -23,7 +23,11 @@ import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AdDirective } from 'src/app/core/directives/ad.directive';
 import { TextareaComponent } from '../atoms/textarea-component';
-import { ModalConfig } from '../../interfaces/modal.interface';
+import {
+  ButtonRole,
+  ModalConfig,
+  ModalInputType,
+} from '../../interfaces/modal.interface';
 
 @Component({
   selector: 'app-modal',
@@ -96,8 +100,9 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                 <div class="mb-4" [ngClass]="form.get(input.id) | inputInvalid">
                   <div
                     [ngClass]="{
-                      'flex items-center': input.type === 'checkbox',
-                      block: input.type !== 'checkbox',
+                      'flex items-center':
+                        input.type === ModalInputType.Checkbox,
+                      block: input.type !== ModalInputType.Checkbox,
                     }"
                   >
                     @if (input.label) {
@@ -109,45 +114,45 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                       </label>
                     }
                     @switch (input.type) {
-                      @case ('checkbox') {
+                      @case (ModalInputType.Checkbox) {
                         <app-checkbox
                           [id]="input.id"
                           [checked]="input.value"
                           [control]="getFormControl(input.id)"
                         />
                       }
-                      @case ('textarea') {
+                      @case (ModalInputType.Textarea) {
                         <app-textarea
                           [id]="input.id"
                           [control]="getFormControl(input.id)"
                           [rows]="3"
                         />
                       }
-                      @case ('date') {
+                      @case (ModalInputType.Date) {
                         <app-input
                           [id]="input.id"
-                          type="date"
+                          [type]="ModalInputType.Date"
                           [control]="getFormControl(input.id)"
                         />
                       }
-                      @case ('datetime-local') {
+                      @case (ModalInputType.DatetimeLocal) {
                         <app-input
                           [id]="input.id"
-                          type="datetime-local"
+                          [type]="ModalInputType.DatetimeLocal"
                           [control]="getFormControl(input.id)"
                         />
                       }
-                      @case ('number') {
+                      @case (ModalInputType.Number) {
                         <app-input
                           [id]="input.id"
-                          type="number"
+                          [type]="ModalInputType.Number"
                           [control]="getFormControl(input.id)"
                         />
                       }
                       @default {
                         <app-input
                           [id]="input.id"
-                          [type]="'text'"
+                          [type]="ModalInputType.Text"
                           [control]="getFormControl(input.id)"
                         />
                       }
@@ -176,7 +181,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
             track button.role
           ) {
             @switch (button.role) {
-              @case ('cancel') {
+              @case (ButtonRole.Cancel) {
                 <app-button
                   (click)="closeModal(button)"
                   [disabled]="modalService.modal().options?.loading"
@@ -184,7 +189,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                   {{ button.text }}
                 </app-button>
               }
-              @case ('ok') {
+              @case (ButtonRole.Ok) {
                 <app-button
                   type="submit"
                   (click)="saveModal(button)"
@@ -193,7 +198,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                   {{ button.text }}
                 </app-button>
               }
-              @case ('reject') {
+              @case (ButtonRole.Reject) {
                 <app-button
                   type="button"
                   (click)="saveModal(button)"
@@ -213,6 +218,8 @@ export class ModalComponent {
   @ViewChild(AdDirective, { static: false }) adHost!: AdDirective;
   @ViewChild('formElement') formElement!: ElementRef;
 
+  protected readonly ButtonRole = ButtonRole;
+  protected readonly ModalInputType = ModalInputType;
   public form: FormGroup = new FormGroup({});
 
   private modalEffect = effect(
@@ -242,7 +249,7 @@ export class ModalComponent {
     modalConfig.options.inputs.forEach((input) => {
       let initialValue = input.value;
 
-      if (input.type === 'checkbox') {
+      if (input.type === ModalInputType.Checkbox) {
         initialValue = Boolean(input.value);
       }
 
@@ -254,7 +261,8 @@ export class ModalComponent {
       group[input.id] = control;
 
       control.valueChanges.subscribe((value) => {
-        const finalValue = input.type === 'checkbox' ? Boolean(value) : value;
+        const finalValue =
+          input.type === ModalInputType.Checkbox ? Boolean(value) : value;
         if (input.change) {
           input.change({
             ...this.form.value,
