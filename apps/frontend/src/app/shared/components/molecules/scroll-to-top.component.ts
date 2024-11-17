@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
     @if (isVisible) {
       <button
         (click)="scrollToTop()"
-        class="fixed bottom-12 right-8 px-4 py-3 bg-orange-500 text-white rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 animate-fade-in"
+        class="fixed bottom-12 right-8 px-4 py-3 bg-orange-500 border-2 border-black text-white rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 animate-fade-in"
         aria-label="Scroll to top"
       >
         <ng-icon name="heroChevronUp" class="w-6 h-6" />
