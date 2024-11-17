@@ -177,54 +177,46 @@ export class TaskListPageComponent implements OnInit {
         {
           role: ButtonRole.Ok,
           text: this.translateService.instant('Basic.save'),
-          handler: (data: AddTaskDto) => {
-            this.addTask(data);
-          },
+          handler: (data: AddTaskDto) => this.addTask(data),
         },
       ],
     });
   }
 
-  protected addTask(data: AddTaskDto): void {
+  protected async addTask(data: AddTaskDto): Promise<boolean> {
     const validation = this.taskNameValidator.validateTaskName(data.name);
     if (!validation.isValid) {
-      this.notificationService.showNotification(
-        validation.error!,
-        NotificationType.error,
-      );
-      return;
+      this.modalService.updateConfig({
+        error: validation.error,
+      });
+      return false;
     }
 
     if (this.projectId) {
       data.projectId = +this.projectId;
     }
 
-    this.tasksService.add(data).subscribe({
-      next: () => {
-        this.initializeTaskList();
-      },
-      error: (err) => {
-        if (err.error && err.error.message) {
-          this.errorMessage = err.error.message;
-          this.notificationService.showNotification(
-            this.errorMessage,
-            NotificationType.error,
-          );
-        } else {
-          this.errorMessage = this.translateService.instant('Task.addError');
-          this.notificationService.showNotification(
-            this.errorMessage,
-            NotificationType.error,
-          );
-        }
-      },
-      complete: () => {
-        this.notificationService.showNotification(
-          this.translateService.instant('Task.addSuccess'),
-          NotificationType.success,
-        );
-      },
-    });
+    try {
+      await firstValueFrom(this.tasksService.add(data));
+      this.initializeTaskList();
+      this.notificationService.showNotification(
+        this.translateService.instant('Task.addSuccess'),
+        NotificationType.success,
+      );
+      return true;
+    } catch (err: any) {
+      const errorMessage =
+        err.error?.message || this.translateService.instant('Task.addError');
+
+      this.modalService.updateConfig({
+        error: errorMessage,
+      });
+      this.notificationService.showNotification(
+        errorMessage,
+        NotificationType.error,
+      );
+      return false;
+    }
   }
 
   private initializeTaskList(): void {

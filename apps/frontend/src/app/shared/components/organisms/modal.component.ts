@@ -318,7 +318,7 @@ export class ModalComponent {
       } else {
         const modalConfig = this.modalService.modal();
         const saveButton = modalConfig.options?.buttons?.find(
-          (btn) => btn.role === 'ok',
+          (btn) => btn.role === ButtonRole.Ok,
         );
         if (saveButton) {
           await this.handleButtonAction(saveButton);
