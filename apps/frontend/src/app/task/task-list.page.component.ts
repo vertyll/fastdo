@@ -6,6 +6,13 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
@@ -65,7 +72,7 @@ import {
     </div>
 
     <div class="border border-gray-300 p-2 max-w-lg rounded-lg">
-      <button (click)="showHowToUse = !showHowToUse">
+      <button (click)="toggleHowToUse()">
         <span class="font-semibold">
           {{ 'Task.howToUse' | translate }}
         </span>
@@ -76,19 +83,21 @@ import {
         }
       </button>
 
-      @if (showHowToUse) {
-        <div>
-          <p>
-            {{ 'Task.changeNameDoc' | translate }}
-          </p>
-          <p>
-            {{ 'Task.changeNameWithoutSaveDoc' | translate }}
-          </p>
-          <p>
-            {{ 'Task.changeStatusDoc' | translate }}
-          </p>
-        </div>
-      }
+      <div [@slideToggle]="showHowToUse ? 'open' : 'closed'">
+        @if (showHowToUse) {
+          <div>
+            <p>
+              {{ 'Task.changeNameDoc' | translate }}
+            </p>
+            <p>
+              {{ 'Task.changeNameWithoutSaveDoc' | translate }}
+            </p>
+            <p>
+              {{ 'Task.changeStatusDoc' | translate }}
+            </p>
+          </div>
+        }
+      </div>
     </div>
 
     <app-tasks-list-view-mode
@@ -107,6 +116,26 @@ import {
       {{ tasksStateService.urgentCount() }}
     </p>
   `,
+  animations: [
+    trigger('slideToggle', [
+      state(
+        'closed',
+        style({
+          height: '0px',
+          overflow: 'hidden',
+          opacity: 0,
+        }),
+      ),
+      state(
+        'open',
+        style({
+          height: '*',
+          opacity: 1,
+        }),
+      ),
+      transition('closed <=> open', [animate('300ms ease-in-out')]),
+    ]),
+  ],
 })
 export class TaskListPageComponent implements OnInit {
   @Input() projectId?: string;
@@ -258,5 +287,9 @@ export class TaskListPageComponent implements OnInit {
     } else {
       return this.tasksService.getAll(searchParams);
     }
+  }
+
+  protected toggleHowToUse(): void {
+    this.showHowToUse = !this.showHowToUse;
   }
 }
