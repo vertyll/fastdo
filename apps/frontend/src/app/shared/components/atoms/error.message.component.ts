@@ -12,9 +12,7 @@ import { ErrorPipe } from '../../pipes/error.pipe';
       <p class="text-red-500">
         @for (error of input.errors | error; track $index) {
           <span>
-            <small>{{
-              validation.getValidatorErrorMessage(error, input)
-            }}</small>
+            {{ validation.getValidatorErrorMessage(error, input) }}
           </span>
         }
       </p>
