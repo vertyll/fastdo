@@ -11,11 +11,12 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { AuthService } from './data-access/auth.service';
 import { passwordValidator } from './validators/password.validator';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
@@ -52,26 +53,22 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
         @if (emailErrors.length > 0) {
-          <div class="text-red-500 mb-2">
-            @for (error of emailErrors; track error) {
-              <div>{{ error }}</div>
-            }
-          </div>
+          @for (error of emailErrors; track error) {
+            <app-error-message [customMessage]="error" />
+          }
         }
         @if (passwordMismatch) {
-          <div class="text-red-500 mb-2">
-            {{ 'Auth.passwordDoNotMatch' | translate }}
-          </div>
+          <app-error-message
+            [customMessage]="'Auth.passwordDoNotMatch' | translate"
+          />
         }
         @if (passwordErrors.length > 0) {
-          <div class="text-red-500 mb-2">
-            @for (error of passwordErrors; track error) {
-              <div>{{ error }}</div>
-            }
-          </div>
+          @for (error of passwordErrors; track error) {
+            <app-error-message [customMessage]="error" />
+          }
         }
         @if (errorMessage) {
-          <div class="text-red-500 mb-2">{{ errorMessage }}</div>
+          <app-error-message [customMessage]="errorMessage" />
         }
         <button
           type="submit"
@@ -168,11 +165,13 @@ export class RegisterComponent implements OnInit {
       errors.push(this.translateService.instant('Auth.passwordUppercase'));
     }
     if (passwordControl?.hasError('specialCharacter')) {
-      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
+      errors.push(
+        this.translateService.instant('Auth.passwordSpecialCharacter'),
+      );
     }
     return errors;
   }
-  
+
   private getEmailErrors(): string[] {
     const emailControl = this.registerForm.get('email');
     const errors: string[] = [];

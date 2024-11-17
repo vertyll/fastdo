@@ -8,11 +8,12 @@ import {
 import { Router } from '@angular/router';
 import { AuthService } from './data-access/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorMessageComponent } from "../shared/components/atoms/error.message.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
@@ -39,7 +40,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
         @if (errorMessage) {
-          <div class="text-red-500 mb-2">{{ errorMessage }}</div>
+          <app-error-message [customMessage]="errorMessage" />
         }
         <button
           type="submit"
