@@ -20,6 +20,7 @@ import { ProjectsListFiltersComponent } from './ui/project-list-filters.componen
 import { ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProjectNameValidator } from './validators/project-name.validator';
+import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 
 @Component({
   selector: 'app-project-list-page',
@@ -34,6 +35,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     AutosizeTextareaComponent,
     HasRoleDirective,
     TranslateModule,
+    ErrorMessageComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
@@ -119,9 +121,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
           </div>
         }
         @case (listStateValue.ERROR) {
-          <p class="text-red-500">
-            {{ listState.error.message }}
-          </p>
+          <app-error-message [customMessage]="listState.error.message" />
         }
         @case (listStateValue.LOADING) {
           <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>

@@ -72,7 +72,10 @@ import { TranslateModule } from '@ngx-translate/core';
               </a>
             </li>
             <li>
-              <button (click)="logout()" class="text-red-500">
+              <button
+                (click)="logout()"
+                class="text-red-500 hover:text-red-600"
+              >
                 {{ 'Basic.logout' | translate }}
               </button>
             </li>
@@ -144,7 +147,10 @@ import { TranslateModule } from '@ngx-translate/core';
               >
             </li>
             <li>
-              <button (click)="logout()" class="text-red-500">
+              <button
+                (click)="logout()"
+                class="text-red-500 hover:text-red-600"
+              >
                 {{ 'Basic.logout' | translate }}
               </button>
             </li>

@@ -55,7 +55,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styles: [
     `
       .icon--hover {
-        @apply hover:text-red-700 hover:rounded-full;
+        @apply hover:text-red-600 hover:rounded-full;
       }
     `,
   ],
