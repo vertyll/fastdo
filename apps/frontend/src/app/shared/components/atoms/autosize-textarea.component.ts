@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       #textarea
       [placeholder]="placeholder"
       [value]="value"
-      class="resize-none overflow-hidden focus:outline-orange-400 w-full"
+      class="resize-none overflow-hidden focus:outline-orange-500 w-full"
       (click)="$event.stopPropagation()"
       (keyup.enter)="emit(textarea)"
       (input)="calcHeight(textarea)"

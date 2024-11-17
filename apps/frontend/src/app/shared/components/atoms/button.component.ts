@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
       [type]="type"
       (click)="onClick.emit($event)"
       [disabled]="disabled"
-      class="px-4 py-2 rounded-lg focus:outline-none bg-orange-400 text-white hover:bg-orange-500"
+      class="px-4 py-2 rounded-lg focus:outline-none bg-orange-500 text-white hover:bg-orange-600"
     >
       <ng-content></ng-content>
     </button>

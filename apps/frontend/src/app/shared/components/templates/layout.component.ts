@@ -10,6 +10,7 @@ import { NavbarComponent } from '../organisms/navbar.component';
 import { FooterComponent } from '../organisms/footer.component';
 import { InfoPanelComponent } from '../organisms/info-panel.component';
 import { TranslateService } from '@ngx-translate/core';
+import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 
 @Component({
   selector: 'app-layout',
@@ -19,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
     CookieBannerComponent,
     FooterComponent,
     InfoPanelComponent,
+    ScrollToTopComponent,
   ],
   styles: [
     `
@@ -28,10 +30,7 @@ import { TranslateService } from '@ngx-translate/core';
     `,
   ],
   template: `
-    <app-navbar
-      [urgentCount]="urgentCount()"
-      [projectCount]="projectCount()"
-    ></app-navbar>
+    <app-navbar [urgentCount]="urgentCount()" [projectCount]="projectCount()" />
     <main class="grid pt-4">
       <ng-content></ng-content>
     </main>
@@ -42,9 +41,10 @@ import { TranslateService } from '@ngx-translate/core';
       [currentTime]="currentTime"
       [browserInfo]="browserInfo"
       [isLoggedIn]="isLoggedIn.bind(this)"
-    ></app-info-panel>
-    <app-cookie-banner></app-cookie-banner>
-    <app-footer></app-footer>
+    />
+    <app-cookie-banner />
+    <app-scroll-to-top />
+    <app-footer />
   `,
 })
 export class LayoutComponent implements OnInit {
