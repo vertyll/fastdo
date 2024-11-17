@@ -72,9 +72,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                       [value]="project.name"
                     />
                   } @else {
-                    <h3
-                      class="text-xl font-semibold mb-2 text-orange-600 hover:text-orange-800 break-all"
-                    >
+                    <h3 class="text-xl font-semibold mb-2 break-all">
                       {{ project.name }}
                     </h3>
                   }
