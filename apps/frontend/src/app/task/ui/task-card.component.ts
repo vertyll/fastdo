@@ -12,6 +12,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskNameValidator } from '../validators/task-name.validator';
+import { LinkComponent } from '../../shared/components/atoms/link.component';
 
 @Component({
   selector: 'app-task-card',
@@ -23,6 +24,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
     NgIconComponent,
     RouterLink,
     TranslateModule,
+    LinkComponent,
   ],
   template: `
     <div
@@ -53,12 +55,12 @@ import { TaskNameValidator } from '../validators/task-name.validator';
         @if (task.project) {
           <section class="text-left text-sm mt-2 break-all">
             <span>{{ 'Task.forProject' | translate }}: </span>
-            <a
+            <app-link
               [routerLink]="['/tasks', task.project.id]"
               class="text-orange-500 hover:underline"
             >
               {{ task.project.name }}
-            </a>
+            </app-link>
           </section>
         }
         <footer class="pt-2 flex justify-between">
