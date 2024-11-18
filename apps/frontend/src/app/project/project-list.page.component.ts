@@ -21,6 +21,8 @@ import { ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProjectNameValidator } from './validators/project-name.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
+import { TitleComponent } from '../shared/components/atoms/title.component';
+import { LinkComponent } from '../shared/components/atoms/link.component';
 
 @Component({
   selector: 'app-project-list-page',
@@ -36,10 +38,12 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
     HasRoleDirective,
     TranslateModule,
     ErrorMessageComponent,
+    TitleComponent,
+    LinkComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
-      <h2 class="text-2xl font-bold mb-4">{{ 'Project.title' | translate }}</h2>
+      <app-title>{{ 'Project.title' | translate }}</app-title>
       <app-submit-text
         placeholder="{{ 'Project.addPlaceholder' | translate }}"
         [type]="'text'"
@@ -105,12 +109,9 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
                   >
                     <ng-icon name="heroPencilSquare" class="text-sm" />
                   </button>
-                  <a
-                    [routerLink]="['/tasks', project.id]"
-                    class="text-orange-500 hover:underline"
-                  >
+                  <app-link [routerLink]="['/tasks', project.id]">
                     {{ 'Project.viewTasks' | translate }}
-                  </a>
+                  </app-link>
                 </footer>
               </div>
             } @empty {

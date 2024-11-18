@@ -38,6 +38,7 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ModalService } from '../shared/services/modal.service';
 import { AddTaskDto } from './dtos/add-task.dto';
 import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
+import { TitleComponent } from '../shared/components/atoms/title.component';
 
 @Component({
   selector: 'app-task-list-page',
@@ -49,22 +50,23 @@ import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
     TasksListViewModeComponent,
     TranslateModule,
     ButtonComponent,
+    TitleComponent,
   ],
   template: `
     <div class="flex flex-col gap-4">
       @if (!projectName) {
-        <h2 class="text-2xl font-bold mb-4">
+        <app-title>
           @if (isUrgent) {
             {{ 'Task.urgentTasks' | translate }}
           } @else {
             {{ 'Task.title' | translate }}
           }
-        </h2>
+        </app-title>
       } @else {
-        <h2 class="text-2xl font-bold mb-4">
+        <app-title>
           {{ 'Task.forProject' | translate }}
           : {{ projectName }}
-        </h2>
+        </app-title>
       }
       <app-button (click)="openAddTaskModal()">
         {{ 'Task.addTask' | translate }}

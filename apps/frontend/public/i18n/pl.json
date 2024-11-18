@@ -57,7 +57,15 @@
     "emailInvalid": "Email musi być prawidłowym adresem email."
   },
   "Dashboard": {
-    "title": "FastDo - todo list app"
+    "title": "Witamy w naszej aplikacji",
+    "description": "Nasza aplikacja oferuje wiele funkcji, które ułatwią Ci życie.",
+    "feature1Title": "Zarządzanie zadaniami",
+    "feature1Description": "Organizuj swoje zadania i śledź postępy.",
+    "feature2Title": "Projekty",
+    "feature2Description": "Twórz i zarządzaj projektami z łatwością.",
+    "signup": "Zarejestruj się",
+    "additionalInfoTitle": "Dlaczego warto wybrać naszą aplikację?",
+    "additionalInfoDescription": "Nasza aplikacja jest intuicyjna, szybka i niezawodna. Dołącz do nas już dziś!"
   },
   "Project": {
     "title": "Projekty",

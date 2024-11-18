@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { LinkType } from '../shared/enums/link.enum';
+import { TitleComponent } from "../shared/components/atoms/title.component";
 
 @Component({
   selector: 'app-register',
@@ -23,12 +24,13 @@ import { LinkType } from '../shared/enums/link.enum';
     TranslateModule,
     ErrorMessageComponent,
     LinkComponent,
-  ],
+    TitleComponent
+],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
-      <h2 class="text-2xl font-bold mb-4">{{ 'Auth.register' | translate }}</h2>
+      <app-title>{{ 'Auth.register' | translate }}</app-title>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <label for="email" class="block mb-2"
           >{{ 'Auth.email' | translate }}:</label
