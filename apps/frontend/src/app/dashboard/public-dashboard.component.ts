@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [TranslateModule, ButtonComponent],
   template: `
-    <div class="min-h-screen flex flex-col items-center justify-start p-4">
+    <div class="min-h-screen flex flex-col items-center justify-start">
       <div
         class="bg-white shadow-lg border rounded-lg p-6 max-w-4xl w-full mt-10"
       >

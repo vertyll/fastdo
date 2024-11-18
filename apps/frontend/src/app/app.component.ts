@@ -11,7 +11,7 @@ import { ModalComponent } from './shared/components/organisms/modal.component';
   template: `
     <app-layout>
       <router-outlet></router-outlet>
-      <app-modal></app-modal>
+      <app-modal />
     </app-layout>
   `,
 })

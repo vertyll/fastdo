@@ -46,7 +46,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-12"
       tabindex="-1"
       role="dialog"
       [ngStyle]="{ display: modalService.modal().visible ? 'flex' : 'none' }"
