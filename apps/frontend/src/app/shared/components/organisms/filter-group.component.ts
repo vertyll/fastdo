@@ -158,11 +158,11 @@ import { FilterType } from '../../enums/filter.enum';
               </div>
             }
           </div>
-          <div class="text-center mt-4">
+          <div class="text-center">
             <button
               type="button"
               (click)="toggleFilters()"
-              class="text-orange-500 hover:text-orange-600 cursor-pointer"
+              class="text-orange-500 hover:text-orange-600 cursor-pointer mb-4"
             >
               {{
                 showAllFilters()
