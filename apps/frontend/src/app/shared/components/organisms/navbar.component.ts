@@ -1,13 +1,16 @@
 import { Component, inject, Input } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { heroBars4 } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
+import { LinkComponent } from '../atoms/link.component';
+import { LinkType } from '../../enums/link.enum';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgIconComponent, TranslateModule],
+  imports: [NgIconComponent, TranslateModule, LinkComponent],
   viewProviders: provideIcons({ heroBars4 }),
   styles: [
     `
@@ -41,35 +44,26 @@ import { TranslateModule } from '@ngx-translate/core';
         <ul class="hidden md:flex gap-6">
           @if (authService.isLoggedIn()) {
             <li>
-              <a
-                routerLink="/tasks"
-                routerLinkActive="font-bold"
-                (click)="closeMenu()"
-              >
+              <app-link [routerLink]="['/tasks']" [linkType]="LinkType.Nav">
                 {{ 'Navbar.tasks' | translate }}
-              </a>
+              </app-link>
             </li>
             <li>
-              <a
-                routerLink="/projects"
-                routerLinkActive="font-bold"
-                (click)="closeMenu()"
-              >
+              <app-link [routerLink]="['/projects']" [linkType]="LinkType.Nav">
                 {{ 'Navbar.projects' | translate }} ({{ projectCount }})
-              </a>
+              </app-link>
             </li>
           }
         </ul>
         <ul class="hidden md:flex gap-6 ml-auto">
           @if (authService.isLoggedIn()) {
             <li>
-              <a
-                routerLink="/tasks/urgent"
-                routerLinkActive="font-bold"
-                (click)="closeMenu()"
+              <app-link
+                [routerLink]="['/tasks/urgent']"
+                [linkType]="LinkType.Nav"
               >
                 {{ 'Navbar.urgent' | translate }} ({{ urgentCount }})
-              </a>
+              </app-link>
             </li>
             <li>
               <button
@@ -81,14 +75,14 @@ import { TranslateModule } from '@ngx-translate/core';
             </li>
           } @else {
             <li>
-              <a routerLink="/login" (click)="closeMenu()">
+              <app-link [routerLink]="['/login']" [linkType]="LinkType.Nav">
                 {{ 'Basic.login' | translate }}
-              </a>
+              </app-link>
             </li>
             <li>
-              <a routerLink="/register" (click)="closeMenu()">
+              <app-link [routerLink]="['/register']" [linkType]="LinkType.Nav">
                 {{ 'Basic.register' | translate }}
-              </a>
+              </app-link>
             </li>
           }
         </ul>
@@ -107,44 +101,50 @@ import { TranslateModule } from '@ngx-translate/core';
         >
           @if (!authService.isLoggedIn(); as loggedIn) {
             <li>
-              <a routerLink="/login" (click)="closeMenu()">
+              <app-link
+                [routerLink]="['/login']"
+                [linkType]="LinkType.Nav"
+                (click)="closeMenu()"
+              >
                 {{ 'Basic.login' | translate }}
-              </a>
+              </app-link>
             </li>
             <li>
-              <a routerLink="/register" (click)="closeMenu()">
+              <app-link
+                [routerLink]="['/register']"
+                [linkType]="LinkType.Nav"
+                (click)="closeMenu()"
+              >
                 {{ 'Basic.register' | translate }}
-              </a>
+              </app-link>
             </li>
           } @else {
             <li>
-              <a
-                routerLink="/tasks"
-                routerLinkActive="font-bold"
+              <app-link
+                [routerLink]="['/tasks']"
+                [linkType]="LinkType.Nav"
                 (click)="closeMenu()"
               >
                 {{ 'Navbar.tasks' | translate }}
-              </a>
+              </app-link>
             </li>
             <li>
-              <a
-                routerLink="/projects"
-                routerLinkActive="font-bold"
+              <app-link
+                [routerLink]="['/projects']"
+                [linkType]="LinkType.Nav"
                 (click)="closeMenu()"
               >
-                {{ 'Navbar.projects' | translate }}
-                ({{ projectCount }})</a
-              >
+                {{ 'Navbar.projects' | translate }} ({{ projectCount }})
+              </app-link>
             </li>
             <li>
-              <a
-                routerLink="/tasks/urgent"
-                routerLinkActive="font-bold"
+              <app-link
+                [routerLink]="['/tasks/urgent']"
+                [linkType]="LinkType.Nav"
                 (click)="closeMenu()"
               >
-                {{ 'Navbar.urgent' | translate }}
-                ({{ urgentCount }})</a
-              >
+                {{ 'Navbar.urgent' | translate }} ({{ urgentCount }})
+              </app-link>
             </li>
             <li>
               <button
@@ -166,6 +166,7 @@ export class NavbarComponent {
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
+  protected readonly LinkType = LinkType;
 
   protected menuOpen: boolean = false;
 
@@ -180,5 +181,9 @@ export class NavbarComponent {
   protected logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+
+    if (this.menuOpen) {
+      this.closeMenu();
+    }
   }
 }

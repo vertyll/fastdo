@@ -8,12 +8,19 @@ import {
 import { Router } from '@angular/router';
 import { AuthService } from './data-access/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ErrorMessageComponent } from "../shared/components/atoms/error.message.component";
+import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
+import { LinkComponent } from '../shared/components/atoms/link.component';
+import { LinkType } from '../shared/enums/link.enum';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    ErrorMessageComponent,
+    LinkComponent,
+  ],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
@@ -48,13 +55,12 @@ import { ErrorMessageComponent } from "../shared/components/atoms/error.message.
         >
           {{ 'Auth.loginButton' | translate }}
         </button>
-        <button
-          type="button"
-          (click)="router.navigate(['/register'])"
-          class="mt-4 text-orange-500 hover:underline"
+        <app-link
+          class="mt-4 block"
+          [routerLink]="['/register']"
+          [linkType]="LinkType.Default"
+          >{{ 'Auth.dontHaveAccount' | translate }}</app-link
         >
-          {{ 'Auth.dontHaveAccount' | translate }}
-        </button>
       </form>
     </div>
   `,
@@ -62,6 +68,7 @@ import { ErrorMessageComponent } from "../shared/components/atoms/error.message.
 })
 export class LoginComponent {
   protected readonly loginForm: FormGroup;
+  protected readonly LinkType = LinkType;
   protected errorMessage: string | null = null;
 
   constructor(
