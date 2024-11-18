@@ -82,7 +82,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             @if (task.dateModification) {
               <div class="flex items-center">
                 <span class="pr-1">
-                  {{ 'Task.modifed' | translate }}
+                  {{ 'Task.modified' | translate }}
                   : {{ task.dateModification | customDate }}</span
                 >
                 <ng-icon name="heroCalendar" class="text-sm" />
