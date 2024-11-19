@@ -25,6 +25,7 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
 import { TextareaComponent } from '../atoms/textarea-component';
 import { ButtonRole, ModalInputType } from '../../enums/modal.enum';
 import { ModalConfig } from '../../interfaces/modal.interface';
+import { LabelComponent } from '../atoms/label.component';
 
 @Component({
   selector: 'app-modal',
@@ -41,6 +42,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
     ErrorMessageComponent,
     NgIconComponent,
     TextareaComponent,
+    LabelComponent,
   ],
   viewProviders: [provideIcons({ heroXMarkSolid })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,12 +105,9 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                     }"
                   >
                     @if (input.label) {
-                      <label
-                        [for]="input.id"
-                        class="text-sm text-gray-700 mr-1"
-                      >
+                      <app-label [forId]="input.id">
                         {{ input.label }}
-                      </label>
+                      </app-label>
                     }
                     @switch (input.type) {
                       @case (ModalInputType.Checkbox) {

@@ -16,7 +16,7 @@ import { LabelComponent } from '../atoms/label.component';
   template: `
     <div class="relative">
       <app-select [control]="control" [id]="id" [options]="options" />
-      <app-label [forId]="id">{{ label }}</app-label>
+      <app-label [forId]="id" [isField]="true">{{ label }}</app-label>
     </div>
   `,
 })

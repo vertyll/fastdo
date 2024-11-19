@@ -11,7 +11,7 @@ import { InputType } from '../../types/components.type';
   template: `
     <div class="relative">
       <app-input [type]="type" [control]="control" [id]="id" />
-      <app-label [forId]="id">{{ label }}</app-label>
+      <app-label [forId]="id" [isField]="true">{{ label }}</app-label>
     </div>
   `,
 })

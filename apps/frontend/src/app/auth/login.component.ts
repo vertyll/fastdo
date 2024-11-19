@@ -11,7 +11,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { LinkType } from '../shared/enums/link.enum';
-import { TitleComponent } from "../shared/components/atoms/title.component";
+import { TitleComponent } from '../shared/components/atoms/title.component';
+import { LabelComponent } from '../shared/components/atoms/label.component';
 
 @Component({
   selector: 'app-login',
@@ -21,26 +22,25 @@ import { TitleComponent } from "../shared/components/atoms/title.component";
     TranslateModule,
     ErrorMessageComponent,
     LinkComponent,
-    TitleComponent
-],
+    TitleComponent,
+    LabelComponent,
+  ],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
       <app-title>{{ 'Auth.login' | translate }}</app-title>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <label for="email" class="block mb-2"
-          >{{ 'Auth.email' | translate }}:</label
-        >
+        <app-label forId="email">{{ 'Auth.email' | translate }}: </app-label>
         <input
           id="email"
           formControlName="email"
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <label for="password" class="block mb-2"
-          >{{ 'Auth.password' | translate }}:</label
-        >
+        <app-label for="password"
+          >{{ 'Auth.password' | translate }}:
+        </app-label>
         <input
           id="password"
           type="password"

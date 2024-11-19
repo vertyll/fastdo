@@ -38,15 +38,15 @@ import { LabelComponent } from '../atoms/label.component';
                   [checked]="isChecked(option.value)"
                   class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
                 />
-                <label [for]="option.value" class="ml-2 text-sm text-gray-900">
+                <app-label [forId]="option.value">
                   {{ option.label }}
-                </label>
+                </app-label>
               </div>
             }
           </div>
         }
       </div>
-      <app-label [forId]="id">{{ label }}</app-label>
+      <app-label [forId]="id" [isField]="true">{{ label }}</app-label>
     </div>
   `,
   styles: [

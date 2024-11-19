@@ -44,7 +44,7 @@ import { LabelComponent } from '../atoms/label.component';
           </ng-option>
         }
       </ng-select>
-      <app-label [forId]="id">{{ placeholder }}</app-label>
+      <app-label [forId]="id" [isField]="true">{{ placeholder }}</app-label>
     </div>
   `,
   styles: `
