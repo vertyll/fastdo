@@ -20,13 +20,13 @@ import { LabelComponent } from '../atoms/label.component';
       <div
         [id]="id"
         (click)="toggleDropdown()"
-        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-orange-500 focus:outline-none focus:ring-0 focus:border-orange-600 peer cursor-pointer"
+        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer cursor-pointer"
       >
         <span>{{ label }}</span>
         @if (isDropdownOpen) {
           <div
             (click)="$event.stopPropagation()"
-            class="absolute bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg mt-1 w-full z-10"
+            class="absolute bg-white  border border-gray-300 rounded-lg mt-1 w-full z-10"
           >
             @for (option of translatedOptions; track $index) {
               <div class="flex items-center p-2">
@@ -36,12 +36,9 @@ import { LabelComponent } from '../atoms/label.component';
                   [value]="option.value"
                   (change)="onCheckboxChange($event)"
                   [checked]="isChecked(option.value)"
-                  class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
                 />
-                <label
-                  [for]="option.value"
-                  class="ml-2 text-sm text-gray-900 dark:text-gray-300"
-                >
+                <label [for]="option.value" class="ml-2 text-sm text-gray-900">
                   {{ option.label }}
                 </label>
               </div>

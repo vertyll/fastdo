@@ -105,7 +105,7 @@ import { ModalConfig } from '../../interfaces/modal.interface';
                     @if (input.label) {
                       <label
                         [for]="input.id"
-                        class="text-sm text-gray-700 dark:text-gray-300 mr-1"
+                        class="text-sm text-gray-700 mr-1"
                       >
                         {{ input.label }}
                       </label>
