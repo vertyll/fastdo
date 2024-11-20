@@ -184,8 +184,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.0(@angular/compiler-cli@19.0.0(@angular/compiler@19.0.0(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.5.4))(@angular/compiler@19.0.0(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@angular/material':
-        specifier: ^18.2.4
-        version: 18.2.14(6wk775k3agwfrtg63qq7fnvc5u)
+        specifier: ^19.0.0
+        version: 19.0.0(6wk775k3agwfrtg63qq7fnvc5u)
       '@angular/platform-browser':
         specifier: ^19.0.0
         version: 19.0.0(@angular/animations@19.0.0(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.0.0(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0))
@@ -463,15 +463,15 @@ packages:
       '@angular/compiler': 19.0.0
       '@angular/compiler-cli': 19.0.0
 
-  '@angular/material@18.2.14':
-    resolution: {integrity: sha512-28pxzJP49Mymt664WnCtPkKeg7kXUsQKTKGf/Kl95rNTEdTJLbnlcc8wV0rT0yQNR7kXgpfBnG7h0ETLv/iu5Q==}
+  '@angular/material@19.0.0':
+    resolution: {integrity: sha512-j7dDFUh8dqiysuWu32biukDTHScajUYHFR9Srhn98kBwnXMob5y1paMoOx5RQO5DU4KCxKaKx8HcHJBJeTKHjw==}
     peerDependencies:
-      '@angular/animations': ^18.0.0 || ^19.0.0
-      '@angular/cdk': 18.2.14
-      '@angular/common': ^18.0.0 || ^19.0.0
-      '@angular/core': ^18.0.0 || ^19.0.0
-      '@angular/forms': ^18.0.0 || ^19.0.0
-      '@angular/platform-browser': ^18.0.0 || ^19.0.0
+      '@angular/animations': ^19.0.0 || ^20.0.0
+      '@angular/cdk': 19.0.0
+      '@angular/common': ^19.0.0 || ^20.0.0
+      '@angular/core': ^19.0.0 || ^20.0.0
+      '@angular/forms': ^19.0.0 || ^20.0.0
+      '@angular/platform-browser': ^19.0.0 || ^20.0.0
       rxjs: ^6.5.3 || ^7.4.0
 
   '@angular/platform-browser-dynamic@19.0.0':
@@ -7482,7 +7482,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@angular/material@18.2.14(6wk775k3agwfrtg63qq7fnvc5u)':
+  '@angular/material@19.0.0(6wk775k3agwfrtg63qq7fnvc5u)':
     dependencies:
       '@angular/animations': 19.0.0(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0))
       '@angular/cdk': 18.2.5(@angular/common@19.0.0(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.0.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
