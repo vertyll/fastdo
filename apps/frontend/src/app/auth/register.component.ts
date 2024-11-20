@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -95,6 +95,12 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
   styles: [],
 })
 export class RegisterComponent implements OnInit {
+  protected readonly router = inject(Router);
+  protected readonly notificationService = inject(NotificationService);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly translateService = inject(TranslateService);
+
   protected readonly registerForm: FormGroup;
   protected readonly LinkType = LinkType;
   protected passwordMismatch: boolean = false;
@@ -102,13 +108,7 @@ export class RegisterComponent implements OnInit {
   protected emailErrors: string[] = [];
   protected errorMessage: string | null = null;
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly authService: AuthService,
-    protected readonly router: Router,
-    protected readonly notificationService: NotificationService,
-    private readonly translateService: TranslateService,
-  ) {
+  constructor() {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, passwordValidator]],

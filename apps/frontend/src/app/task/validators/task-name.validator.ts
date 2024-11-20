@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskNameValidator {
-  constructor(private translateService: TranslateService) {}
+  private readonly translateService = inject(TranslateService);
 
   validateTaskName(taskName: string): { isValid: boolean; error?: string } {
     if (!taskName || taskName.length < 3) {

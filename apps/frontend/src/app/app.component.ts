@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { LayoutComponent } from './shared/components/templates/layout.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RouterOutlet } from '@angular/router';
@@ -16,7 +16,9 @@ import { ModalComponent } from './shared/components/organisms/modal.component';
   `,
 })
 export class AppComponent {
-  constructor(private translateService: TranslateService) {
+  private readonly translateService = inject(TranslateService);
+
+  constructor() {
     this.translateService.addLangs(['pl', 'en']);
     this.translateService.setDefaultLang('pl');
     this.translateService.use('pl');

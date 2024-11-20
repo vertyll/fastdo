@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ValidationService } from '../../services/validation.service';
 import { ErrorPipe } from '../../pipes/error.pipe';
@@ -24,10 +24,10 @@ import { ErrorPipe } from '../../pipes/error.pipe';
   `,
 })
 export class ErrorMessageComponent {
+  protected readonly validation = inject(ValidationService);
+
   @Input() input!: AbstractControl | null;
   @Input() customMessage!: string | undefined;
-
-  constructor(public validation: ValidationService) {}
 
   getErrorKeys(errors: any): string[] {
     return errors ? Object.keys(errors) : [];

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -69,16 +69,16 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
   styles: [],
 })
 export class LoginComponent {
+  protected readonly router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly translateService = inject(TranslateService);
+
   protected readonly loginForm: FormGroup;
   protected readonly LinkType = LinkType;
   protected errorMessage: string | null = null;
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly authService: AuthService,
-    protected readonly router: Router,
-    private readonly translateService: TranslateService,
-  ) {
+  constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],

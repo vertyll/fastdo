@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  ViewChild,
-  effect,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, effect, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -211,6 +205,8 @@ import { LabelComponent } from '../atoms/label.component';
   `,
 })
 export class ModalComponent {
+  protected readonly modalService = inject(ModalService);
+
   @ViewChild(AdDirective, { static: false }) adHost!: AdDirective;
   @ViewChild('formElement') formElement!: ElementRef;
 
@@ -228,8 +224,6 @@ export class ModalComponent {
     },
     { allowSignalWrites: true },
   );
-
-  constructor(public modalService: ModalService) {}
 
   private initializeForm(modalConfig: ModalConfig): void {
     if (

@@ -1,5 +1,5 @@
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -23,14 +23,14 @@ import { Subscription } from 'rxjs';
   `,
 })
 export class SelectFilterComponent implements OnInit, OnDestroy {
+  private readonly translateService = inject(TranslateService);
+
   @Input() control!: FormControl;
   @Input() id!: string;
   @Input() options: Array<{ value: any; label: string }> = [];
 
   protected translatedOptions: Array<{ value: any; label: string }> = [];
   private langChangeSubscription!: Subscription;
-
-  constructor(private readonly translateService: TranslateService) {}
 
   ngOnInit(): void {
     this.translateOptions();

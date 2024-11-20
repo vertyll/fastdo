@@ -218,6 +218,8 @@ import { FilterType } from '../../enums/filter.enum';
 export class FilterGroupComponent<T extends Record<string, any>>
   implements OnInit, AfterViewInit, OnDestroy
 {
+  protected readonly translateService = inject(TranslateService);
+
   @Input()
   type!: string;
 
@@ -259,7 +261,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   protected readonly FilterType = FilterType;
 
-  constructor(public readonly translateService: TranslateService) {
+  constructor() {
     effect(
       () => {
         this.mobileFilterToggleHidden.set(this.platformService.isMobile());

@@ -1,11 +1,5 @@
 
-import {
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  HostListener,
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, HostListener, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -58,6 +52,8 @@ import { LabelComponent } from '../atoms/label.component';
   ],
 })
 export class CheckSelectComponent implements OnInit, OnDestroy {
+  private readonly translateService = inject(TranslateService);
+
   @Input() control!: FormControl;
   @Input() id!: string;
   @Input() label!: string;
@@ -67,8 +63,6 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   protected isDropdownOpen = false;
 
   private langChangeSubscription!: Subscription;
-
-  constructor(private readonly translateService: TranslateService) {}
 
   ngOnInit(): void {
     this.translateOptions();

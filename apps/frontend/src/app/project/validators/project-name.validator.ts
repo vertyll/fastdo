@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectNameValidator {
-  constructor(private translateService: TranslateService) {}
+  private  readonly translateService = inject(TranslateService);
 
   validateProjectName(projectName: string): {
     isValid: boolean;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   MatSnackBar,
   MatSnackBarVerticalPosition,
@@ -8,7 +8,7 @@ import { NotificationType } from '../enums/notification.enum';
   providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private readonly snackBar: MatSnackBar) {}
+  private readonly snackBar = inject(MatSnackBar);
 
   public showNotification(
     message: string,

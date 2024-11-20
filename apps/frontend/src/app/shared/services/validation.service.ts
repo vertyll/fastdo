@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessagesConfig } from '../interfaces/validation.interface';
 
@@ -6,7 +6,7 @@ import { MessagesConfig } from '../interfaces/validation.interface';
   providedIn: 'root',
 })
 export class ValidationService {
-  constructor(private readonly translate: TranslateService) {}
+  private readonly translate = inject(TranslateService);
 
   public getValidatorErrorMessage(
     validatorName: keyof MessagesConfig,

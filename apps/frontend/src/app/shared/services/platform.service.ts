@@ -1,13 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import {
-  DestroyRef,
-  Inject,
-  Injectable,
-  PLATFORM_ID,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { DestroyRef, Injectable, PLATFORM_ID, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 
@@ -17,9 +9,11 @@ const MOBILE_WINDOW_MAX_WIDTH = 992;
   providedIn: 'root',
 })
 export class PlatformService {
+  private readonly platformId = inject(PLATFORM_ID);
+
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly platformSignal = signal<string>(this.platformId);
+  private readonly platformSignal = signal<string>(this.platformId as string);
   private readonly isPlatformBrowserSignal = signal<boolean>(
     isPlatformBrowser(this.platformId),
   );
@@ -29,7 +23,7 @@ export class PlatformService {
   public readonly isPlatformBrowser = this.isPlatformBrowserSignal.asReadonly();
   public readonly isMobile = this.isMobileSignal.asReadonly();
 
-  constructor(@Inject(PLATFORM_ID) private readonly platformId: string) {
+  constructor() {
     if (this.isPlatformBrowserSignal()) {
       this.updateIsMobile();
 
