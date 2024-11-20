@@ -3,10 +3,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-textarea',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  template: `
+    selector: 'app-textarea',
+    imports: [ReactiveFormsModule],
+    template: `
     <textarea
       [id]="id"
       [formControl]="control"
@@ -14,7 +13,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       [rows]="rows"
       class="block w-full p-1 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
     ></textarea>
-  `,
+  `
 })
 export class TextareaComponent {
   @Input() id!: string;

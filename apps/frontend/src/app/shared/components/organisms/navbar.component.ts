@@ -8,12 +8,11 @@ import { LinkComponent } from '../atoms/link.component';
 import { LinkType } from '../../enums/link.enum';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
-  imports: [NgIconComponent, TranslateModule, LinkComponent],
-  viewProviders: provideIcons({ heroBars4 }),
-  styles: [
-    `
+    selector: 'app-navbar',
+    imports: [NgIconComponent, TranslateModule, LinkComponent],
+    viewProviders: provideIcons({ heroBars4 }),
+    styles: [
+        `
       nav {
         @apply px-12 border-t-4 border-b-4 rounded-bl-xl rounded-br-xl border-black;
       }
@@ -27,8 +26,8 @@ import { LinkType } from '../../enums/link.enum';
         @apply translate-x-0;
       }
     `,
-  ],
-  template: `
+    ],
+    template: `
     <nav class="bg-orange-300 py-4">
       <div class="flex justify-between items-center">
         <span
@@ -158,7 +157,7 @@ import { LinkType } from '../../enums/link.enum';
         </ul>
       </div>
     </nav>
-  `,
+  `
 })
 export class NavbarComponent {
   @Input() urgentCount: number = 0;

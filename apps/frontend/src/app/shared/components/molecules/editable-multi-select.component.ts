@@ -17,9 +17,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LabelComponent } from '../atoms/label.component';
 
 @Component({
-  standalone: true,
-  selector: 'app-editable-multi-select',
-  template: `
+    selector: 'app-editable-multi-select',
+    template: `
     <div class="relative">
       <ng-select
         [multiple]="multiple"
@@ -47,7 +46,7 @@ import { LabelComponent } from '../atoms/label.component';
       <app-label [forId]="id" [isField]="true">{{ placeholder }}</app-label>
     </div>
   `,
-  styles: `
+    styles: `
     ::ng-deep ng-dropdown-panel {
       background-color: white;
       border: 1px solid #d1d5db;
@@ -58,21 +57,20 @@ import { LabelComponent } from '../atoms/label.component';
       left: 0;
     }
   `,
-
-  imports: [
-    NgSelectComponent,
-    TranslateModule,
-    FormsModule,
-    NgSelectModule,
-    LabelComponent
-],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: EditableMultiSelectComponent,
-    },
-  ],
+    imports: [
+        NgSelectComponent,
+        TranslateModule,
+        FormsModule,
+        NgSelectModule,
+        LabelComponent
+    ],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi: true,
+            useExisting: EditableMultiSelectComponent,
+        },
+    ]
 })
 export class EditableMultiSelectComponent
   implements ControlValueAccessor, OnChanges, Validators

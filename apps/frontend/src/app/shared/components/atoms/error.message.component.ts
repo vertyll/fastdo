@@ -4,10 +4,9 @@ import { ValidationService } from '../../services/validation.service';
 import { ErrorPipe } from '../../pipes/error.pipe';
 
 @Component({
-  selector: 'app-error-message',
-  standalone: true,
-  imports: [ErrorPipe],
-  template: `
+    selector: 'app-error-message',
+    imports: [ErrorPipe],
+    template: `
     @if (input && input.invalid && (input.touched || input.dirty)) {
       <p class="text-red-500">
         @for (error of input.errors | error; track $index) {
@@ -21,7 +20,7 @@ import { ErrorPipe } from '../../pipes/error.pipe';
     @if (customMessage != null) {
       <p class="text-red-500" [innerHtml]="customMessage"></p>
     }
-  `,
+  `
 })
 export class ErrorMessageComponent {
   protected readonly validation = inject(ValidationService);

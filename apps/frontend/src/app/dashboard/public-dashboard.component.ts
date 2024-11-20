@@ -4,10 +4,9 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-public-dashboard',
-  standalone: true,
-  imports: [TranslateModule, ButtonComponent],
-  template: `
+    selector: 'app-public-dashboard',
+    imports: [TranslateModule, ButtonComponent],
+    template: `
     <div class="min-h-screen flex flex-col items-center justify-start">
       <div
         class="bg-white shadow-lg border rounded-lg p-6 max-w-4xl w-full mt-10"
@@ -51,7 +50,7 @@ import { Router } from '@angular/router';
         </div>
       </div>
     </div>
-  `,
+  `
 })
 export class PublicDashboardComponent {
   private readonly router = inject(Router);

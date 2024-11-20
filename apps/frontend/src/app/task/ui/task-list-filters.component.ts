@@ -7,16 +7,15 @@ import {
 } from 'src/app/shared/types/filter.type';
 
 @Component({
-  standalone: true,
-  selector: 'app-tasks-list-filters',
-  imports: [ReactiveFormsModule, FilterGroupComponent],
-  template: `
+    selector: 'app-tasks-list-filters',
+    imports: [ReactiveFormsModule, FilterGroupComponent],
+    template: `
     <app-filter-group
       [filters]="filters"
       [type]="'tasks'"
       (filterChange)="onFiltersChange($event)"
     />
-  `,
+  `
 })
 export class TasksListFiltersComponent {
   @Output() filtersChange = new EventEmitter<TasksListFiltersConfig>();

@@ -15,18 +15,17 @@ import { TaskNameValidator } from '../validators/task-name.validator';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
 
 @Component({
-  selector: 'app-task-card',
-  standalone: true,
-  imports: [
-    RemoveItemButtonComponent,
-    CustomDatePipe,
-    AutosizeTextareaComponent,
-    NgIconComponent,
-    RouterLink,
-    TranslateModule,
-    LinkComponent,
-  ],
-  template: `
+    selector: 'app-task-card',
+    imports: [
+        RemoveItemButtonComponent,
+        CustomDatePipe,
+        AutosizeTextareaComponent,
+        NgIconComponent,
+        RouterLink,
+        TranslateModule,
+        LinkComponent,
+    ],
+    template: `
     <div
       class="rounded-md border border-gray-300 shadow-sm p-4 block w-full"
       [class.bg-green-300]="task.isDone"
@@ -95,16 +94,16 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
       </button>
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .break-all {
         word-break: break-all;
       }
     `,
-  ],
-  viewProviders: [
-    provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar }),
-  ],
+    ],
+    viewProviders: [
+        provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar }),
+    ]
 })
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;

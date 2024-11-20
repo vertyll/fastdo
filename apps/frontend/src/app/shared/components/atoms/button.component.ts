@@ -3,10 +3,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-button',
-  standalone: true,
-  imports: [TranslateModule],
-  template: `
+    selector: 'app-button',
+    imports: [TranslateModule],
+    template: `
     <button
       [type]="type"
       (click)="onClick.emit($event)"
@@ -15,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
     >
       <ng-content></ng-content>
     </button>
-  `,
+  `
 })
 export class ButtonComponent {
   @Input() type: 'button' | 'submit' = 'button';

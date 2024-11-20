@@ -4,10 +4,9 @@ import { InputType } from '../../types/components.type';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-input',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
-  template: `
+    selector: 'app-input',
+    imports: [ReactiveFormsModule, CommonModule],
+    template: `
     <input
       [type]="type"
       [formControl]="control"
@@ -19,7 +18,7 @@ import { CommonModule } from '@angular/common';
       }"
       class="block w-full px-1 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
     />
-  `,
+  `
 })
 export class InputComponent {
   @Input() control!: FormControl;

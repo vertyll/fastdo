@@ -25,23 +25,22 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 
 @Component({
-  selector: 'app-project-list-page',
-  standalone: true,
-  imports: [
-    SubmitTextComponent,
-    RouterLink,
-    NgIconComponent,
-    CustomDatePipe,
-    ProjectsListFiltersComponent,
-    RemoveItemButtonComponent,
-    AutosizeTextareaComponent,
-    HasRoleDirective,
-    TranslateModule,
-    ErrorMessageComponent,
-    TitleComponent,
-    LinkComponent,
-  ],
-  template: `
+    selector: 'app-project-list-page',
+    imports: [
+        SubmitTextComponent,
+        RouterLink,
+        NgIconComponent,
+        CustomDatePipe,
+        ProjectsListFiltersComponent,
+        RemoveItemButtonComponent,
+        AutosizeTextareaComponent,
+        HasRoleDirective,
+        TranslateModule,
+        ErrorMessageComponent,
+        TitleComponent,
+        LinkComponent,
+    ],
+    template: `
     <div class="flex flex-col mb-6 gap-4">
       <app-title>{{ 'Project.title' | translate }}</app-title>
       <app-submit-text
@@ -130,14 +129,14 @@ import { LinkComponent } from '../shared/components/atoms/link.component';
       }
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .break-all {
         word-break: break-all;
       }
     `,
-  ],
-  viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })],
+    ],
+    viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })]
 })
 export class ProjectListPageComponent {
   private readonly projectsService = inject(ProjectsService);

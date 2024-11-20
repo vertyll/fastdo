@@ -9,11 +9,10 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-remove-item-button',
-  standalone: true,
-  imports: [NgIconComponent, TranslateModule],
-  viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
-  template: `
+    selector: 'app-remove-item-button',
+    imports: [NgIconComponent, TranslateModule],
+    viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
+    template: `
     <div
       (click)="removeMode && $event.stopPropagation()"
       class="flex items-center rounded-md"
@@ -52,13 +51,13 @@ import { TranslateModule } from '@ngx-translate/core';
       }
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .icon--hover {
         @apply hover:text-red-600 hover:rounded-full;
       }
     `,
-  ],
+    ]
 })
 export class RemoveItemButtonComponent {
   @Output() confirm: EventEmitter<void> = new EventEmitter<void>();

@@ -5,15 +5,14 @@ import { LabelComponent } from '../atoms/label.component';
 import { InputType } from '../../types/components.type';
 
 @Component({
-  selector: 'app-input-field',
-  standalone: true,
-  imports: [InputComponent, LabelComponent],
-  template: `
+    selector: 'app-input-field',
+    imports: [InputComponent, LabelComponent],
+    template: `
     <div class="relative">
       <app-input [type]="type" [control]="control" [id]="id" />
       <app-label [forId]="id" [isField]="true">{{ label }}</app-label>
     </div>
-  `,
+  `
 })
 export class InputFieldComponent {
   @Input() control!: FormControl;

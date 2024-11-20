@@ -4,10 +4,9 @@ import { Task } from '../models/Task';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  standalone: true,
-  selector: 'app-tasks-kanban-view',
-  imports: [TasksListComponent, TranslateModule],
-  template: `
+    selector: 'app-tasks-kanban-view',
+    imports: [TasksListComponent, TranslateModule],
+    template: `
     <section class="flex gap-4">
       <div class="w-1/2">
         <p class="font-semibold text-xl">
@@ -22,7 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
         <app-tasks-list class="block mt-4" [tasks]="tasksDone" />
       </div>
     </section>
-  `,
+  `
 })
 export class TasksKanbanViewComponent {
   @Input({ required: true }) set tasks(value: Task[]) {

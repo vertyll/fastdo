@@ -6,15 +6,14 @@ import { ButtonComponent } from '../atoms/button.component';
 import { InputType } from '../../types/components.type';
 
 @Component({
-  selector: 'app-submit-text',
-  standalone: true,
-  imports: [
-    InputComponent,
-    ButtonComponent,
-    ReactiveFormsModule,
-    TranslateModule,
-  ],
-  template: `
+    selector: 'app-submit-text',
+    imports: [
+        InputComponent,
+        ButtonComponent,
+        ReactiveFormsModule,
+        TranslateModule,
+    ],
+    template: `
     <div class="flex items-center gap-4">
       <app-input
         [control]="control"
@@ -30,7 +29,7 @@ import { InputType } from '../../types/components.type';
         {{ 'Basic.add' | translate }}
       </app-button>
     </div>
-  `,
+  `
 })
 export class SubmitTextComponent {
   @Input() placeholder: string = '';

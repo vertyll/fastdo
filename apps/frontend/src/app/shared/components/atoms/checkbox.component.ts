@@ -2,10 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-checkbox',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  template: `
+    selector: 'app-checkbox',
+    imports: [ReactiveFormsModule],
+    template: `
     <input
       type="checkbox"
       [id]="id"
@@ -15,7 +14,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       (change)="onChange($event)"
       class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
     />
-  `,
+  `
 })
 export class CheckboxComponent {
   @Input() control!: FormControl;

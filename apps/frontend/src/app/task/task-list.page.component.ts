@@ -41,18 +41,17 @@ import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 
 @Component({
-  selector: 'app-task-list-page',
-  standalone: true,
-  imports: [
-    TasksListComponent,
-    TasksListFiltersComponent,
-    TasksKanbanViewComponent,
-    TasksListViewModeComponent,
-    TranslateModule,
-    ButtonComponent,
-    TitleComponent,
-  ],
-  template: `
+    selector: 'app-task-list-page',
+    imports: [
+        TasksListComponent,
+        TasksListFiltersComponent,
+        TasksKanbanViewComponent,
+        TasksListViewModeComponent,
+        TranslateModule,
+        ButtonComponent,
+        TitleComponent,
+    ],
+    template: `
     <div class="flex flex-col gap-4">
       @if (!projectName) {
         <app-title>
@@ -121,26 +120,20 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
       <app-tasks-kanban-view [tasks]="tasksStateService.tasks()" />
     }
   `,
-  animations: [
-    trigger('slideToggle', [
-      state(
-        'closed',
-        style({
-          height: '0px',
-          overflow: 'hidden',
-          opacity: 0,
-        }),
-      ),
-      state(
-        'open',
-        style({
-          height: '*',
-          opacity: 1,
-        }),
-      ),
-      transition('closed <=> open', [animate('300ms ease-in-out')]),
-    ]),
-  ],
+    animations: [
+        trigger('slideToggle', [
+            state('closed', style({
+                height: '0px',
+                overflow: 'hidden',
+                opacity: 0,
+            })),
+            state('open', style({
+                height: '*',
+                opacity: 1,
+            })),
+            transition('closed <=> open', [animate('300ms ease-in-out')]),
+        ]),
+    ]
 })
 export class TaskListPageComponent implements OnInit {
   @Input() projectId?: string;

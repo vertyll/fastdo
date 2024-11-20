@@ -7,16 +7,15 @@ import {
 } from 'src/app/shared/types/filter.type';
 
 @Component({
-  standalone: true,
-  selector: 'app-projects-list-filters',
-  imports: [ReactiveFormsModule, FilterGroupComponent],
-  template: `
+    selector: 'app-projects-list-filters',
+    imports: [ReactiveFormsModule, FilterGroupComponent],
+    template: `
     <app-filter-group
       [filters]="filters"
       [type]="'projects'"
       (filterChange)="onFiltersChange($event)"
     />
-  `,
+  `
 })
 export class ProjectsListFiltersComponent {
   @Output() filtersChange = new EventEmitter<ProjectListFiltersConfig>();

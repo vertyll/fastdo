@@ -18,17 +18,16 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    TranslateModule,
-    ErrorMessageComponent,
-    LinkComponent,
-    TitleComponent,
-    LabelComponent,
-  ],
-  template: `
+    selector: 'app-register',
+    imports: [
+        ReactiveFormsModule,
+        TranslateModule,
+        ErrorMessageComponent,
+        LinkComponent,
+        TitleComponent,
+        LabelComponent,
+    ],
+    template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
@@ -92,7 +91,7 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
       </form>
     </div>
   `,
-  styles: [],
+    styles: []
 })
 export class RegisterComponent implements OnInit {
   protected readonly router = inject(Router);

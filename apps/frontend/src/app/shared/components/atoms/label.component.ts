@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-label',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'app-label',
+    imports: [CommonModule],
+    template: `
     <label
       [for]="forId"
       [ngClass]="{
@@ -16,7 +15,7 @@ import { Component, Input } from '@angular/core';
     >
       <ng-content></ng-content>
     </label>
-  `,
+  `
 })
 export class LabelComponent {
   @Input() forId!: string | null;

@@ -3,11 +3,10 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroArrowRight } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
-  selector: 'app-info-panel',
-  standalone: true,
-  imports: [NgIconComponent, TranslateModule],
-  providers: [provideIcons({ heroArrowLeft, heroArrowRight })],
-  template: `
+    selector: 'app-info-panel',
+    imports: [NgIconComponent, TranslateModule],
+    providers: [provideIcons({ heroArrowLeft, heroArrowRight })],
+    template: `
     @if (isLoggedIn()) {
       <div>
         <div
@@ -41,7 +40,7 @@ import { TranslateModule } from '@ngx-translate/core';
         </div>
       </div>
     }
-  `,
+  `
 })
 export class InfoPanelComponent {
   @Input() panelOpen: boolean = false;

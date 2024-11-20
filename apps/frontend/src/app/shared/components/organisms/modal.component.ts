@@ -22,25 +22,24 @@ import { ModalConfig } from '../../interfaces/modal.interface';
 import { LabelComponent } from '../atoms/label.component';
 
 @Component({
-  selector: 'app-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    SpinnerComponent,
-    InputInvalidPipe,
-    CheckboxComponent,
-    InputComponent,
-    TextareaComponent,
-    ButtonComponent,
-    ErrorMessageComponent,
-    NgIconComponent,
-    TextareaComponent,
-    LabelComponent,
-  ],
-  viewProviders: [provideIcons({ heroXMarkSolid })],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
+    selector: 'app-modal',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        SpinnerComponent,
+        InputInvalidPipe,
+        CheckboxComponent,
+        InputComponent,
+        TextareaComponent,
+        ButtonComponent,
+        ErrorMessageComponent,
+        NgIconComponent,
+        TextareaComponent,
+        LabelComponent,
+    ],
+    viewProviders: [provideIcons({ heroXMarkSolid })],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
     <div
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-12"
       tabindex="-1"
@@ -202,7 +201,7 @@ import { LabelComponent } from '../atoms/label.component';
         </div>
       </div>
     </div>
-  `,
+  `
 })
 export class ModalComponent {
   protected readonly modalService = inject(ModalService);

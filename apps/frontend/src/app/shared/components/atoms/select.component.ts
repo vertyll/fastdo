@@ -5,10 +5,9 @@ import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-select',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  template: `
+    selector: 'app-select',
+    imports: [ReactiveFormsModule],
+    template: `
     <select
       [formControl]="control"
       [id]="id"
@@ -20,7 +19,7 @@ import { Subscription } from 'rxjs';
         </option>
       }
     </select>
-  `,
+  `
 })
 export class SelectFilterComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);

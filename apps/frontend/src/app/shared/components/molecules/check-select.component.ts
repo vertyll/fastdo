@@ -6,10 +6,9 @@ import { Subscription } from 'rxjs';
 import { LabelComponent } from '../atoms/label.component';
 
 @Component({
-  selector: 'app-check-select',
-  standalone: true,
-  imports: [ReactiveFormsModule, LabelComponent],
-  template: `
+    selector: 'app-check-select',
+    imports: [ReactiveFormsModule, LabelComponent],
+    template: `
     <div class="relative">
       <div
         [id]="id"
@@ -43,13 +42,13 @@ import { LabelComponent } from '../atoms/label.component';
       <app-label [forId]="id" [isField]="true">{{ label }}</app-label>
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .form-check-input {
         margin-right: 0.5rem;
       }
     `,
-  ],
+    ]
 })
 export class CheckSelectComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);

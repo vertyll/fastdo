@@ -4,10 +4,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LinkType } from '../../enums/link.enum';
 
 @Component({
-  selector: 'app-link',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
-  template: `
+    selector: 'app-link',
+    imports: [RouterLink, RouterLinkActive, CommonModule],
+    template: `
     <a
       [routerLink]="routerLink"
       routerLinkActive="font-bold"
@@ -19,7 +18,7 @@ import { LinkType } from '../../enums/link.enum';
     >
       <ng-content></ng-content>
     </a>
-  `,
+  `
 })
 export class LinkComponent {
   @Input() routerLink!: string | any[];

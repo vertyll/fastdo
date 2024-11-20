@@ -8,10 +8,9 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-tasks-list',
-  standalone: true,
-  imports: [TaskCardComponent, TranslateModule],
-  template: `
+    selector: 'app-tasks-list',
+    imports: [TaskCardComponent, TranslateModule],
+    template: `
     <ul>
       @for (task of tasks; track task.id) {
         <li class="mb-4">
@@ -28,7 +27,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       }
     </ul>
   `,
-  styles: [],
+    styles: []
 })
 export class TasksListComponent {
   @Input({ required: true }) tasks: Task[] = [];
