@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroSquares2x2, heroBars3 } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,5 +35,5 @@ export type TasksListViewMode = 'kanban' | 'list';
 export class TasksListViewModeComponent {
   public readonly $view = input<TasksListViewMode>('list');
 
-  @Output() updateTasksListView = new EventEmitter<TasksListViewMode>();
+  readonly updateTasksListView = output<TasksListViewMode>();
 }

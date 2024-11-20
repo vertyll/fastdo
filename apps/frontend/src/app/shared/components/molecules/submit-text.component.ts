@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { InputComponent } from '../atoms/input.component';
@@ -35,7 +35,7 @@ export class SubmitTextComponent {
   readonly placeholder = input<string>('');
   readonly type = input<InputType>('text');
   readonly control = input<FormControl>(new FormControl());
-  @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
+  readonly submitText = output<string>();
 
   protected emitText(): void {
     const text = this.control().value?.trim();

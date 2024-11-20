@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, inject, Input, output } from '@angular/core';
 import { Task } from '../models/Task';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -107,8 +107,8 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
 })
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;
-  @Output() update = new EventEmitter<TaskUpdatePayload>();
-  @Output() delete = new EventEmitter<void>();
+  readonly update = output<TaskUpdatePayload>();
+  readonly delete = output<void>();
 
   protected readonly notificationService = inject(NotificationService);
   protected readonly taskNameValidator = inject(TaskNameValidator);

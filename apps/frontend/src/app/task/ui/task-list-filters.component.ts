@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
 import {
@@ -18,7 +18,7 @@ import {
   `
 })
 export class TasksListFiltersComponent {
-  @Output() filtersChange = new EventEmitter<TasksListFiltersConfig>();
+  readonly filtersChange = output<TasksListFiltersConfig>();
 
   protected filters = TASKS_LIST_FILTERS;
 

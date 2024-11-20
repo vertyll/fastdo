@@ -1,5 +1,5 @@
 
-import { Component, Output, EventEmitter, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -20,5 +20,5 @@ export class ButtonComponent {
   readonly type = input<'button' | 'submit'>('button');
   readonly disabled = input<boolean | undefined>(false);
 
-  @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
+  readonly onClick = output<Event>();
 }

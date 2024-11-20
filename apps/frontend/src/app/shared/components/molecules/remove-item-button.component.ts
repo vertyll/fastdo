@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   heroTrash,
@@ -60,7 +60,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ]
 })
 export class RemoveItemButtonComponent {
-  @Output() confirm: EventEmitter<void> = new EventEmitter<void>();
+  readonly confirm = output<void>();
 
   protected removeMode: boolean = false;
 }

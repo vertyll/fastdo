@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-autosize-textarea',
@@ -21,7 +21,7 @@ export class AutosizeTextareaComponent {
   readonly value = input<string>('');
   readonly clearAfterEmit = input<boolean>(false);
 
-  @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
+  readonly submitText = output<string>();
 
   protected emit(textarea: HTMLTextAreaElement): void {
     this.submitText.emit(textarea.value.trim());

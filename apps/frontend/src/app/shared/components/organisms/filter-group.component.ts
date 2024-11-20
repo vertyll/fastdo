@@ -2,15 +2,14 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
   effect,
   inject,
   signal,
   input,
+  output
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -231,14 +230,12 @@ export class FilterGroupComponent<T extends Record<string, any>>
     }
   }
 
-  @Output()
-  filterChange = new EventEmitter<T>();
+  readonly filterChange = output<T>();
 
-  @Output()
-  filterSearch = new EventEmitter<{
+  readonly filterSearch = output<{
     term: string;
     filter: string;
-  }>();
+}>();
 
   private _filters: FilterMetadata[] = [];
   public form!: FormGroup;

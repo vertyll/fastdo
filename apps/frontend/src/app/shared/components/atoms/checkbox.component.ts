@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -22,7 +22,10 @@ export class CheckboxComponent {
   readonly checked = input(false);
   readonly value = input<any>();
 
-  @Output() change = new EventEmitter<{ value: any; checked: boolean }>();
+  readonly change = output<{
+    value: any;
+    checked: boolean;
+}>();
 
   protected onChange(event: Event): void {
     const target = event.target as HTMLInputElement;

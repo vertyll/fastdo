@@ -1,10 +1,9 @@
 
 import {
   Component,
-  EventEmitter,
   OnChanges,
-  Output,
-  input
+  input,
+  output
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -83,7 +82,7 @@ export class EditableMultiSelectComponent
   readonly allowAddTag = input<boolean>(true);
   readonly placeholder = input<string>('');
 
-  @Output() onSearch = new EventEmitter();
+  readonly onSearch = output();
 
   protected selectValue: any;
 
