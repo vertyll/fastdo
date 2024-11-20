@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroArrowRight } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,13 +7,13 @@ import { TranslateModule } from '@ngx-translate/core';
     imports: [NgIconComponent, TranslateModule],
     providers: [provideIcons({ heroArrowLeft, heroArrowRight })],
     template: `
-    @if (isLoggedIn()) {
+    @if (isLoggedIn()()) {
       <div>
         <div
           class="fixed bottom-0 right-0 bg-orange-500 hover:bg-orange-600 border border-black text-white p-2 cursor-pointer flex items-center justify-center z-10 w-10 h-10 user-select-none rounded-tl-md"
-          (click)="togglePanel()"
+          (click)="togglePanel()()"
         >
-          @if (!panelOpen) {
+          @if (!panelOpen()) {
             <ng-icon name="heroArrowLeft"></ng-icon>
           } @else {
             <ng-icon name="heroArrowRight"></ng-icon>
@@ -21,21 +21,21 @@ import { TranslateModule } from '@ngx-translate/core';
         </div>
         <div
           class="fixed bottom-0 right-0 bg-gray-800 text-white p-4 transition-transform transform w-[calc(100%-40px)] rounded-tl-md duration-300 ease-in-out"
-          [class.translate-x-0]="panelOpen"
-          [class.translate-x-full]="!panelOpen"
+          [class.translate-x-0]="panelOpen()"
+          [class.translate-x-full]="!panelOpen()"
         >
           <div>
             <b>{{ 'InfoPanel.userRoles' | translate }}</b
             >:
-            <span class="text-green-500"> {{ userRolesString }} </span>
+            <span class="text-green-500"> {{ userRolesString() }} </span>
           </div>
           <div>
             <b> {{ 'InfoPanel.currentTime' | translate }} </b>:
-            <span class="text-green-500"> {{ currentTime }} </span>
+            <span class="text-green-500"> {{ currentTime() }} </span>
           </div>
           <div>
             <b> {{ 'InfoPanel.browserInfo' | translate }} </b>:
-            {{ browserInfo }}
+            {{ browserInfo() }}
           </div>
         </div>
       </div>
@@ -43,10 +43,10 @@ import { TranslateModule } from '@ngx-translate/core';
   `
 })
 export class InfoPanelComponent {
-  @Input() panelOpen: boolean = false;
-  @Input() togglePanel!: () => void;
-  @Input() userRolesString: string = '';
-  @Input() currentTime: string = '';
-  @Input() browserInfo: string = '';
-  @Input() isLoggedIn!: () => boolean;
+  readonly panelOpen = input<boolean>(false);
+  readonly togglePanel = input.required<() => void>();
+  readonly userRolesString = input<string>('');
+  readonly currentTime = input<string>('');
+  readonly browserInfo = input<string>('');
+  readonly isLoggedIn = input.required<() => boolean>();
 }

@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
@@ -49,7 +49,7 @@ import { LinkType } from '../../enums/link.enum';
             </li>
             <li>
               <app-link [routerLink]="['/projects']" [linkType]="LinkType.Nav">
-                {{ 'Navbar.projects' | translate }} ({{ projectCount }})
+                {{ 'Navbar.projects' | translate }} ({{ projectCount() }})
               </app-link>
             </li>
           }
@@ -61,7 +61,7 @@ import { LinkType } from '../../enums/link.enum';
                 [routerLink]="['/tasks/urgent']"
                 [linkType]="LinkType.Nav"
               >
-                {{ 'Navbar.urgent' | translate }} ({{ urgentCount }})
+                {{ 'Navbar.urgent' | translate }} ({{ urgentCount() }})
               </app-link>
             </li>
             <li>
@@ -133,7 +133,7 @@ import { LinkType } from '../../enums/link.enum';
                 [linkType]="LinkType.Nav"
                 (click)="closeMenu()"
               >
-                {{ 'Navbar.projects' | translate }} ({{ projectCount }})
+                {{ 'Navbar.projects' | translate }} ({{ projectCount() }})
               </app-link>
             </li>
             <li>
@@ -142,7 +142,7 @@ import { LinkType } from '../../enums/link.enum';
                 [linkType]="LinkType.Nav"
                 (click)="closeMenu()"
               >
-                {{ 'Navbar.urgent' | translate }} ({{ urgentCount }})
+                {{ 'Navbar.urgent' | translate }} ({{ urgentCount() }})
               </app-link>
             </li>
             <li>
@@ -160,8 +160,8 @@ import { LinkType } from '../../enums/link.enum';
   `
 })
 export class NavbarComponent {
-  @Input() urgentCount: number = 0;
-  @Input() projectCount: number = 0;
+  readonly urgentCount = input<number>(0);
+  readonly projectCount = input<number>(0);
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);

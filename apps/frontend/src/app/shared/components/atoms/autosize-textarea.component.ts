@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 
 @Component({
   selector: 'app-autosize-textarea',
@@ -6,8 +6,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   template: `
     <textarea
       #textarea
-      [placeholder]="placeholder"
-      [value]="value"
+      [placeholder]="placeholder()"
+      [value]="value()"
       class="resize-none overflow-hidden focus:outline-orange-500 w-full"
       (click)="$event.stopPropagation()"
       (keyup.enter)="emit(textarea)"
@@ -17,16 +17,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styles: [],
 })
 export class AutosizeTextareaComponent {
-  @Input() placeholder: string = '';
-  @Input() value: string = '';
-  @Input() clearAfterEmit: boolean = false;
+  readonly placeholder = input<string>('');
+  readonly value = input<string>('');
+  readonly clearAfterEmit = input<boolean>(false);
 
   @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
 
   protected emit(textarea: HTMLTextAreaElement): void {
     this.submitText.emit(textarea.value.trim());
 
-    if (this.clearAfterEmit) {
+    if (this.clearAfterEmit()) {
       textarea.value = '';
     }
   }

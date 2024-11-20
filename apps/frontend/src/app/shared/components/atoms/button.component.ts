@@ -1,5 +1,5 @@
 
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -7,9 +7,9 @@ import { TranslateModule } from '@ngx-translate/core';
     imports: [TranslateModule],
     template: `
     <button
-      [type]="type"
+      [type]="type()"
       (click)="onClick.emit($event)"
-      [disabled]="disabled"
+      [disabled]="disabled()"
       class="px-4 py-2 rounded-lg focus:outline-none bg-orange-500 text-white hover:bg-orange-600"
     >
       <ng-content></ng-content>
@@ -17,8 +17,8 @@ import { TranslateModule } from '@ngx-translate/core';
   `
 })
 export class ButtonComponent {
-  @Input() type: 'button' | 'submit' = 'button';
-  @Input() disabled: boolean | undefined = false;
+  readonly type = input<'button' | 'submit'>('button');
+  readonly disabled = input<boolean | undefined>(false);
 
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
 }

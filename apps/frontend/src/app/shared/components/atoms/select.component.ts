@@ -1,5 +1,5 @@
 
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -9,8 +9,8 @@ import { Subscription } from 'rxjs';
     imports: [ReactiveFormsModule],
     template: `
     <select
-      [formControl]="control"
-      [id]="id"
+      [formControl]="control()"
+      [id]="id()"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
     >
       @for (option of translatedOptions; track $index) {
@@ -24,9 +24,12 @@ import { Subscription } from 'rxjs';
 export class SelectFilterComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
 
-  @Input() control!: FormControl;
-  @Input() id!: string;
-  @Input() options: Array<{ value: any; label: string }> = [];
+  readonly control = input.required<FormControl>();
+  readonly id = input.required<string>();
+  readonly options = input<Array<{
+    value: any;
+    label: string;
+}>>([]);
 
   protected translatedOptions: Array<{ value: any; label: string }> = [];
   private langChangeSubscription!: Subscription;
@@ -47,7 +50,7 @@ export class SelectFilterComponent implements OnInit, OnDestroy {
   }
 
   private translateOptions(): void {
-    this.translatedOptions = this.options.map((option) => ({
+    this.translatedOptions = this.options().map((option) => ({
       value: option.value,
       label: this.translateService.instant(option.label),
     }));

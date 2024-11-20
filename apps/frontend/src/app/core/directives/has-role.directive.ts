@@ -1,10 +1,10 @@
 import {
   Directive,
-  Input,
   TemplateRef,
   ViewContainerRef,
   OnInit,
   inject,
+  input
 } from '@angular/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { Role } from 'src/app/shared/enums/role.enum';
@@ -14,7 +14,7 @@ import { Role } from 'src/app/shared/enums/role.enum';
   standalone: true,
 })
 export class HasRoleDirective implements OnInit {
-  @Input('appHasRole') allowedRoles!: Role[] | Role;
+  readonly allowedRoles = input.required<Role[] | Role>({ alias: "appHasRole" });
   private templateRef = inject(TemplateRef<any>);
   private viewContainer = inject(ViewContainerRef);
   private authService = inject(AuthService);
@@ -25,9 +25,10 @@ export class HasRoleDirective implements OnInit {
     if (!userRoles) {
       this.viewContainer.clear();
     } else {
-      const roles = Array.isArray(this.allowedRoles)
-        ? this.allowedRoles
-        : [this.allowedRoles];
+      const allowedRoles = this.allowedRoles();
+      const roles = Array.isArray(allowedRoles)
+        ? allowedRoles
+        : [allowedRoles];
       const hasRole = roles.some((role) => userRoles.includes(role));
       if (hasRole && !this.isVisible) {
         this.viewContainer.createEmbeddedView(this.templateRef);

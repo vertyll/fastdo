@@ -5,6 +5,7 @@ import {
   computed,
   inject,
   OnInit,
+  input
 } from '@angular/core';
 import {
   trigger,
@@ -55,7 +56,7 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
     <div class="flex flex-col gap-4">
       @if (!projectName) {
         <app-title>
-          @if (isUrgent) {
+          @if (isUrgent()) {
             {{ 'Task.urgentTasks' | translate }}
           } @else {
             {{ 'Task.title' | translate }}
@@ -137,8 +138,8 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 })
 export class TaskListPageComponent implements OnInit {
   @Input() projectId?: string;
-  @Input() view?: TasksListViewMode;
-  @Input({ transform: booleanAttribute }) isUrgent?: boolean;
+  readonly view = input<TasksListViewMode>();
+  readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
 
   private readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);
@@ -159,8 +160,9 @@ export class TaskListPageComponent implements OnInit {
   private errorMessage: string = '';
 
   ngOnInit(): void {
-    if (this.view) {
-      this.configStateService.updateTasksListView(this.view);
+    const view = this.view();
+    if (view) {
+      this.configStateService.updateTasksListView(view);
     }
     this.initializeTaskList();
   }
@@ -168,7 +170,7 @@ export class TaskListPageComponent implements OnInit {
   protected handleFiltersChange(filters: TasksListFiltersConfig): void {
     const searchParams = getAllTasksSearchParams({
       ...filters,
-      isUrgent: this.isUrgent,
+      isUrgent: this.isUrgent(),
     });
     this.getAllTasks(searchParams).subscribe();
   }
@@ -260,7 +262,7 @@ export class TaskListPageComponent implements OnInit {
             q: '',
             status: 'ALL',
             sortBy: 'dateCreation',
-            isUrgent: this.isUrgent,
+            isUrgent: this.isUrgent(),
             orderBy: 'desc',
             createdFrom: '',
             createdTo: '',

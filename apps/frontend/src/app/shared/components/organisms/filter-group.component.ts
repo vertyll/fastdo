@@ -11,6 +11,7 @@ import {
   effect,
   inject,
   signal,
+  input
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -219,8 +220,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 {
   protected readonly translateService = inject(TranslateService);
 
-  @Input()
-  type!: string;
+  readonly type = input.required<string>();
 
   @Input()
   set filters(value: FilterMetadata[]) {
@@ -370,7 +370,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     urlParamsNotInForm: Record<string, any>,
   ): void {
     this.store.dispatch(
-      new SavePartial({ type: this.type, value: formValues }),
+      new SavePartial({ type: this.type(), value: formValues }),
     );
     this.updateUrlAndEmitChanges(formValues, urlParamsNotInForm);
   }
@@ -380,7 +380,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     urlParamsNotInForm: Record<string, any>,
   ): void {
     this.store.dispatch(
-      new ClearPartial({ type: this.type, keys: Object.keys(formValues) }),
+      new ClearPartial({ type: this.type(), keys: Object.keys(formValues) }),
     );
     this.updateUrlAndEmitChanges(
       this.filtersService.createDefaultFormValues(this.filters),
@@ -536,7 +536,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.filledFilters.set([]);
 
     this.form.reset(this.filtersService.createDefaultFormValues(this.filters));
-    this.store.dispatch(new ClearFilter({ type: this.type }));
+    this.store.dispatch(new ClearFilter({ type: this.type() }));
     this.router
       .navigate(['.'], {
         relativeTo: this.route,

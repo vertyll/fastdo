@@ -2,9 +2,9 @@
 import {
   Component,
   EventEmitter,
-  Input,
   OnChanges,
   Output,
+  input
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -21,29 +21,29 @@ import { LabelComponent } from '../atoms/label.component';
     template: `
     <div class="relative">
       <ng-select
-        [multiple]="multiple"
+        [multiple]="multiple()"
         bindLabel="label"
         [searchable]="true"
         (change)="onSelectChange($event)"
         [(ngModel)]="selectValue"
-        [maxSelectedItems]="maxSelectedItems"
-        [id]="id"
+        [maxSelectedItems]="maxSelectedItems()"
+        [id]="id()"
         notFoundText="{{ 'Basic.noItemsFound' | translate }}"
         (search)="onSelectSearch($event)"
-        [minTermLength]="minTermLength"
-        [addTag]="allowAddTag ? addTag : false"
+        [minTermLength]="minTermLength()"
+        [addTag]="allowAddTag() ? addTag : false"
         [addTagText]="
-          allowAddTag ? ('EditableMultiSelect.addTagsAdHoc' | translate) : null
+          allowAddTag() ? ('EditableMultiSelect.addTagsAdHoc' | translate) : null
         "
         class="block px-2 pb-2.5 pt-3 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
       >
-        @for (item of dataArray; track $index) {
+        @for (item of dataArray(); track $index) {
           <ng-option [value]="item.id">
             {{ item.name }}
           </ng-option>
         }
       </ng-select>
-      <app-label [forId]="id" [isField]="true">{{ placeholder }}</app-label>
+      <app-label [forId]="id()" [isField]="true">{{ placeholder() }}</app-label>
     </div>
   `,
     styles: `
@@ -75,13 +75,13 @@ import { LabelComponent } from '../atoms/label.component';
 export class EditableMultiSelectComponent
   implements ControlValueAccessor, OnChanges, Validators
 {
-  @Input() dataArray!: any[];
-  @Input() maxSelectedItems!: number;
-  @Input() multiple: boolean = true;
-  @Input() id!: string;
-  @Input() minTermLength: number = 0;
-  @Input() allowAddTag: boolean = true;
-  @Input() placeholder: string = '';
+  readonly dataArray = input.required<any[]>();
+  readonly maxSelectedItems = input.required<number>();
+  readonly multiple = input<boolean>(true);
+  readonly id = input.required<string>();
+  readonly minTermLength = input<number>(0);
+  readonly allowAddTag = input<boolean>(true);
+  readonly placeholder = input<string>('');
 
   @Output() onSearch = new EventEmitter();
 
@@ -92,7 +92,7 @@ export class EditableMultiSelectComponent
   private onTouched = () => {};
 
   ngOnChanges(): void {
-    this.dataArray?.map((c, i) => {
+    this.dataArray()?.map((c, i) => {
       return { id: i, name: c };
     });
   }

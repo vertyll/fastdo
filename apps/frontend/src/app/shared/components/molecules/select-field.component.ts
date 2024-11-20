@@ -1,5 +1,5 @@
 
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SelectFilterComponent } from '../atoms/select.component';
 import { LabelComponent } from '../atoms/label.component';
@@ -13,14 +13,17 @@ import { LabelComponent } from '../atoms/label.component';
     ],
     template: `
     <div class="relative">
-      <app-select [control]="control" [id]="id" [options]="options" />
-      <app-label [forId]="id" [isField]="true">{{ label }}</app-label>
+      <app-select [control]="control()" [id]="id()" [options]="options()" />
+      <app-label [forId]="id()" [isField]="true">{{ label() }}</app-label>
     </div>
   `
 })
 export class SelectFieldComponent {
-  @Input() control!: FormControl;
-  @Input() id!: string;
-  @Input() label!: string;
-  @Input() options: Array<{ value: any; label: string }> = [];
+  readonly control = input.required<FormControl>();
+  readonly id = input.required<string>();
+  readonly label = input.required<string>();
+  readonly options = input<Array<{
+    value: any;
+    label: string;
+}>>([]);
 }

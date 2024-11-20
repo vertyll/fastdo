@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { InputComponent } from '../atoms/input.component';
@@ -16,9 +16,9 @@ import { InputType } from '../../types/components.type';
     template: `
     <div class="flex items-center gap-4">
       <app-input
-        [control]="control"
-        [placeholder]="placeholder"
-        [type]="type"
+        [control]="control()"
+        [placeholder]="placeholder()"
+        [type]="type()"
         type="text"
         id="submitTextInput"
       ></app-input>
@@ -32,16 +32,16 @@ import { InputType } from '../../types/components.type';
   `
 })
 export class SubmitTextComponent {
-  @Input() placeholder: string = '';
-  @Input() type: InputType = 'text';
-  @Input() control: FormControl = new FormControl();
+  readonly placeholder = input<string>('');
+  readonly type = input<InputType>('text');
+  readonly control = input<FormControl>(new FormControl());
   @Output() submitText: EventEmitter<string> = new EventEmitter<string>();
 
   protected emitText(): void {
-    const text = this.control.value?.trim();
+    const text = this.control().value?.trim();
     if (text) {
       this.submitText.emit(text);
-      this.control.reset();
+      this.control().reset();
     }
   }
 }
