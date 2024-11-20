@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [TranslateModule, CommonModule],
+  imports: [TranslateModule],
   template: `
     <button
       [type]="type"

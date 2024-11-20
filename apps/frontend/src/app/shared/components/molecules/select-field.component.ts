@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SelectFilterComponent } from '../atoms/select.component';
@@ -8,11 +8,10 @@ import { LabelComponent } from '../atoms/label.component';
   selector: 'app-select-field',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     SelectFilterComponent,
-    LabelComponent,
-  ],
+    LabelComponent
+],
   template: `
     <div class="relative">
       <app-select [control]="control" [id]="id" [options]="options" />

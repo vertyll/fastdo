@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   EventEmitter,
@@ -60,13 +60,12 @@ import { LabelComponent } from '../atoms/label.component';
   `,
 
   imports: [
-    CommonModule,
     NgSelectComponent,
     TranslateModule,
     FormsModule,
     NgSelectModule,
-    LabelComponent,
-  ],
+    LabelComponent
+],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

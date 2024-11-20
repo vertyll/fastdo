@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -207,14 +207,13 @@ import { FilterType } from '../../enums/filter.enum';
     `,
   ],
   imports: [
-    CommonModule,
     TranslateModule,
     ReactiveFormsModule,
     EditableMultiSelectComponent,
     InputFieldComponent,
     SelectFieldComponent,
-    CheckSelectComponent,
-  ],
+    CheckSelectComponent
+],
 })
 export class FilterGroupComponent<T extends Record<string, any>>
   implements OnInit, AfterViewInit, OnDestroy

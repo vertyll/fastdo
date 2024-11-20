@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   Input,
@@ -14,7 +14,7 @@ import { LabelComponent } from '../atoms/label.component';
 @Component({
   selector: 'app-check-select',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LabelComponent],
+  imports: [ReactiveFormsModule, LabelComponent],
   template: `
     <div class="relative">
       <div

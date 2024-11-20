@@ -1,12 +1,12 @@
 import { Component, HostListener } from '@angular/core';
 import { heroChevronUp } from '@ng-icons/heroicons/outline';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-scroll-to-top',
   standalone: true,
-  imports: [CommonModule, NgIconComponent],
+  imports: [NgIconComponent],
   providers: [provideIcons({ heroChevronUp })],
   template: `
     @if (isVisible) {
