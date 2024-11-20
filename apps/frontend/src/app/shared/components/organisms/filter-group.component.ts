@@ -1,4 +1,3 @@
-
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -11,7 +10,7 @@ import {
   effect,
   inject,
   signal,
-  input
+  input,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -33,8 +32,8 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
 import { FilterType } from '../../enums/filter.enum';
 
 @Component({
-    selector: 'app-filter-group',
-    template: `
+  selector: 'app-filter-group',
+  template: `
     <div>
       <form [formGroup]="form" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -195,8 +194,8 @@ import { FilterType } from '../../enums/filter.enum';
       }
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       :host {
         width: 100%;
       }
@@ -205,15 +204,15 @@ import { FilterType } from '../../enums/filter.enum';
         display: none;
       }
     `,
-    ],
-    imports: [
-        TranslateModule,
-        ReactiveFormsModule,
-        EditableMultiSelectComponent,
-        InputFieldComponent,
-        SelectFieldComponent,
-        CheckSelectComponent
-    ]
+  ],
+  imports: [
+    TranslateModule,
+    ReactiveFormsModule,
+    EditableMultiSelectComponent,
+    InputFieldComponent,
+    SelectFieldComponent,
+    CheckSelectComponent,
+  ],
 })
 export class FilterGroupComponent<T extends Record<string, any>>
   implements OnInit, AfterViewInit, OnDestroy
@@ -261,12 +260,9 @@ export class FilterGroupComponent<T extends Record<string, any>>
   protected readonly FilterType = FilterType;
 
   constructor() {
-    effect(
-      () => {
-        this.mobileFilterToggleHidden.set(this.platformService.isMobile());
-      },
-      { allowSignalWrites: true },
-    );
+    effect(() => {
+      this.mobileFilterToggleHidden.set(this.platformService.isMobile());
+    });
   }
 
   ngOnInit(): void {

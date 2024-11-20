@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  effect,
+  inject,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -22,24 +29,24 @@ import { ModalConfig } from '../../interfaces/modal.interface';
 import { LabelComponent } from '../atoms/label.component';
 
 @Component({
-    selector: 'app-modal',
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        SpinnerComponent,
-        InputInvalidPipe,
-        CheckboxComponent,
-        InputComponent,
-        TextareaComponent,
-        ButtonComponent,
-        ErrorMessageComponent,
-        NgIconComponent,
-        TextareaComponent,
-        LabelComponent,
-    ],
-    viewProviders: [provideIcons({ heroXMarkSolid })],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
+  selector: 'app-modal',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SpinnerComponent,
+    InputInvalidPipe,
+    CheckboxComponent,
+    InputComponent,
+    TextareaComponent,
+    ButtonComponent,
+    ErrorMessageComponent,
+    NgIconComponent,
+    TextareaComponent,
+    LabelComponent,
+  ],
+  viewProviders: [provideIcons({ heroXMarkSolid })],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
     <div
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-12"
       tabindex="-1"
@@ -201,7 +208,7 @@ import { LabelComponent } from '../atoms/label.component';
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class ModalComponent {
   protected readonly modalService = inject(ModalService);
@@ -213,16 +220,13 @@ export class ModalComponent {
   protected readonly ModalInputType = ModalInputType;
   public form: FormGroup = new FormGroup({});
 
-  private modalEffect = effect(
-    () => {
-      const modalConfig = this.modalService.modal();
-      if (modalConfig) {
-        this.initializeForm(modalConfig);
-        this.initializeDynamicComponents(modalConfig);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private modalEffect = effect(() => {
+    const modalConfig = this.modalService.modal();
+    if (modalConfig) {
+      this.initializeForm(modalConfig);
+      this.initializeDynamicComponents(modalConfig);
+    }
+  });
 
   private initializeForm(modalConfig: ModalConfig): void {
     if (

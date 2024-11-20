@@ -13,22 +13,22 @@ import { TranslateService } from '@ngx-translate/core';
 import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 
 @Component({
-    selector: 'app-layout',
-    imports: [
-        NavbarComponent,
-        CookieBannerComponent,
-        FooterComponent,
-        InfoPanelComponent,
-        ScrollToTopComponent,
-    ],
-    styles: [
-        `
+  selector: 'app-layout',
+  imports: [
+    NavbarComponent,
+    CookieBannerComponent,
+    FooterComponent,
+    InfoPanelComponent,
+    ScrollToTopComponent,
+  ],
+  styles: [
+    `
       main {
         @apply px-12;
       }
     `,
-    ],
-    template: `
+  ],
+  template: `
     <app-navbar [urgentCount]="urgentCount()" [projectCount]="projectCount()" />
     <main class="grid pt-4">
       <ng-content></ng-content>
@@ -44,7 +44,7 @@ import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
     <app-cookie-banner />
     <app-scroll-to-top />
     <app-footer />
-  `
+  `,
 })
 export class LayoutComponent implements OnInit {
   protected readonly authService = inject(AuthService);
@@ -68,15 +68,12 @@ export class LayoutComponent implements OnInit {
   protected browserInfo: string = '';
 
   constructor() {
-    effect(
-      () => {
-        if (this.isLoggedIn()) {
-          this.projectsService.getAll().subscribe();
-          this.tasksService.getAll().subscribe();
-        }
-      },
-      { allowSignalWrites: true },
-    );
+    effect(() => {
+      if (this.isLoggedIn()) {
+        this.projectsService.getAll().subscribe();
+        this.tasksService.getAll().subscribe();
+      }
+    });
   }
 
   ngOnInit(): void {
