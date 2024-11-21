@@ -156,7 +156,6 @@ export class TaskListPageComponent implements OnInit {
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected showHowToUse: boolean = false;
   protected projectName!: string;
-  private errorMessage: string = '';
 
   ngOnInit(): void {
     const view = this.view();
