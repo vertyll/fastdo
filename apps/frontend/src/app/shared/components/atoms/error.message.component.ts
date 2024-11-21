@@ -1,32 +1,30 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { ValidationService } from '../../services/validation.service';
 import { ErrorPipe } from '../../pipes/error.pipe';
+import { ValidationService } from '../../services/validation.service';
 
 @Component({
-    selector: 'app-error-message',
-    imports: [ErrorPipe],
-    template: `
-    @if (input && input.invalid && (input.touched || input.dirty)) {
+  selector: 'app-error-message',
+  imports: [ErrorPipe],
+  template: `
+    @if (input() && input()!.invalid && (input()!.touched || input()!.dirty)) {
       <p class="text-red-500">
-        @for (error of input.errors | error; track $index) {
+        @for (error of input()!.errors | error; track $index) {
           <span>
-            {{ validation.getValidatorErrorMessage(error, input) }}
+            {{ validation.getValidatorErrorMessage(error, input()!) }}
           </span>
         }
       </p>
     }
-
-    @if (customMessage != null) {
-      <p class="text-red-500" [innerHtml]="customMessage"></p>
+    @if (customMessage() != null) {
+      <p class="text-red-500" [innerHtml]="customMessage()"></p>
     }
-  `
+  `,
 })
 export class ErrorMessageComponent {
   protected readonly validation = inject(ValidationService);
-
-  @Input() input!: AbstractControl | null;
-  @Input() customMessage!: string | undefined;
+  readonly input = input<AbstractControl | null>();
+  readonly customMessage = input<string | undefined>();
 
   getErrorKeys(errors: any): string[] {
     return errors ? Object.keys(errors) : [];

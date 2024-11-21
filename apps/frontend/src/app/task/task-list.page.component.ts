@@ -1,6 +1,5 @@
 import {
   Component,
-  Input,
   booleanAttribute,
   computed,
   inject,
@@ -137,7 +136,7 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
     ]
 })
 export class TaskListPageComponent implements OnInit {
-  @Input() projectId?: string;
+  readonly projectId = input<string>();
   readonly view = input<TasksListViewMode>();
   readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
 
@@ -221,8 +220,9 @@ export class TaskListPageComponent implements OnInit {
       return false;
     }
 
-    if (this.projectId) {
-      data.projectId = +this.projectId;
+    const projectId = this.projectId();
+    if (projectId) {
+      data.projectId = +projectId;
     }
 
     try {
@@ -254,7 +254,6 @@ export class TaskListPageComponent implements OnInit {
         map((params) => params['projectId']),
         distinctUntilChanged(),
         switchMap((projectId) => {
-          this.projectId = projectId;
           if (projectId) {
             this.loadProjectName(projectId);
           }
@@ -282,8 +281,9 @@ export class TaskListPageComponent implements OnInit {
   }
 
   private getAllTasks(searchParams: GetAllTasksSearchParams): any {
-    if (this.projectId) {
-      return this.tasksService.getAllByProjectId(this.projectId, searchParams);
+    const projectId = this.projectId();
+    if (projectId) {
+      return this.tasksService.getAllByProjectId(projectId, searchParams);
     } else {
       return this.tasksService.getAll(searchParams);
     }
