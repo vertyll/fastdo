@@ -30,7 +30,10 @@ export class TasksService {
   }
 
   public findOne(id: number): Promise<Task> {
-    return this.taskRepository.findOneOrFail({ where: { id } });
+    return this.taskRepository.findOneOrFail({
+      where: { id },
+      relations: ["project"],
+    });
   }
 
   public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
