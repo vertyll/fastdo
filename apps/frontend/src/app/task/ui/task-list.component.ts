@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Task } from '../models/Task';
 import { TaskCardComponent } from './task-card.component';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
@@ -8,11 +8,11 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-tasks-list',
-    imports: [TaskCardComponent, TranslateModule],
-    template: `
+  selector: 'app-tasks-list',
+  imports: [TaskCardComponent, TranslateModule],
+  template: `
     <ul>
-      @for (task of tasks; track task.id) {
+      @for (task of tasks(); track task.id) {
         <li class="mb-4">
           <app-task-card
             [task]="task"
@@ -27,10 +27,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       }
     </ul>
   `,
-    styles: []
+  styles: [],
 })
 export class TasksListComponent {
-  @Input({ required: true }) tasks: Task[] = [];
+  readonly tasks = input.required<Task[]>();
 
   private readonly tasksService = inject(TasksService);
   private readonly notificationService = inject(NotificationService);
@@ -38,9 +38,7 @@ export class TasksListComponent {
 
   protected delete(taskId: number): void {
     this.tasksService.delete(taskId).subscribe({
-      next: () => {
-        this.tasks = this.tasks.filter((task) => task.id !== taskId);
-      },
+      next: () => {},
       error: (err) => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
@@ -65,15 +63,7 @@ export class TasksListComponent {
 
   protected updateTask(taskId: number, updatedTask: TaskUpdatePayload): void {
     this.tasksService.update(taskId, updatedTask).subscribe({
-      next: (res) => {
-        this.tasks = this.tasks.map((task) => {
-          if (task.id === res.id) {
-            return res;
-          } else {
-            return task;
-          }
-        });
-      },
+      next: () => {},
       error: (res) => {
         if (res.error && res.error.message) {
           this.notificationService.showNotification(
