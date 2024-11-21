@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  ViewChild,
   effect,
   inject,
+  viewChild,
 } from '@angular/core';
 import {
   FormControl,
@@ -213,8 +213,8 @@ import { LabelComponent } from '../atoms/label.component';
 export class ModalComponent {
   protected readonly modalService = inject(ModalService);
 
-  @ViewChild(AdDirective, { static: false }) adHost!: AdDirective;
-  @ViewChild('formElement') formElement!: ElementRef;
+  readonly adHost = viewChild(AdDirective);
+  readonly formElement = viewChild.required<ElementRef>('formElement');
 
   protected readonly ButtonRole = ButtonRole;
   protected readonly ModalInputType = ModalInputType;
@@ -269,14 +269,15 @@ export class ModalComponent {
   }
 
   private initializeDynamicComponents(modalConfig: ModalConfig): void {
+    const adHost = this.adHost();
     if (
-      !this.adHost ||
+      !adHost ||
       !Array.isArray(modalConfig.options?.components) ||
       !modalConfig.options.components.length
     )
       return;
 
-    const viewContainerRef = this.adHost.viewContainerRef;
+    const viewContainerRef = adHost.viewContainerRef;
     viewContainerRef.clear();
 
     modalConfig.options.components.forEach((component) => {
