@@ -2,14 +2,13 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
   effect,
   inject,
   signal,
   input,
-  output
+  output,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -36,7 +35,7 @@ import { FilterType } from '../../enums/filter.enum';
     <div>
       <form [formGroup]="form" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          @for (filter of filters.slice(0, 4); track $index) {
+          @for (filter of filters().slice(0, 4); track $index) {
             <div>
               @switch (filter.type) {
                 @case (FilterType.Text) {
@@ -95,9 +94,9 @@ import { FilterType } from '../../enums/filter.enum';
             </div>
           }
         </div>
-        @if (filters.length > 4) {
+        @if (filters().length > 4) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            @for (filter of filters.slice(4); let i = $index; track $index) {
+            @for (filter of filters().slice(4); let i = $index; track $index) {
               <div [class.hidden]="!showAllFilters()">
                 @switch (filter.type) {
                   @case (FilterType.Text) {
@@ -220,11 +219,15 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   readonly type = input.required<string>();
 
-  @Input()
-  set filters(value: FilterMetadata[]) {
-    this._filters = value;
+  readonly filters = input<FilterMetadata[]>([]);
+
+  ngOnChanges() {
+    this.updateFilters();
+  }
+
+  private updateFilters(): void {
     if (this.form) {
-      this.form = this.filtersService.createForm(this._filters);
+      this.form = this.filtersService.createForm(this.filters());
       this.populateFiltersFromUrl();
       this.initFilters();
     }
@@ -235,9 +238,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
   readonly filterSearch = output<{
     term: string;
     filter: string;
-}>();
+  }>();
 
-  private _filters: FilterMetadata[] = [];
   public form!: FormGroup;
 
   public readonly filledFilters = signal<FilterValue[]>([]);
@@ -300,7 +302,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private initializeForm(): void {
-    this.form = this.filtersService.createForm(this.filters);
+    this.form = this.filtersService.createForm(this.filters());
     this.populateFiltersFromUrl();
   }
 
@@ -330,7 +332,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   private checkIfInInitialState(value: T): boolean {
     const defaultValues = this.filtersService.createDefaultFormValues(
-      this.filters,
+      this.filters(),
     );
     return Object.entries(value).every(([key, val]) =>
       this.equalsDefaultValues(key, val, defaultValues),
@@ -340,7 +342,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private async getUrlParamsNotInForm(): Promise<Record<string, any>> {
     const queryParams = await firstValueFrom(this.route.queryParams);
     const formControlNames = Object.keys(
-      this.filtersService.createDefaultFormValues(this.filters),
+      this.filtersService.createDefaultFormValues(this.filters()),
     );
     return Object.fromEntries(
       Object.entries(queryParams).filter(
@@ -351,7 +353,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   private getFormValues(value: T): Record<string, any> {
     const defaultFormValues = this.filtersService.createDefaultFormValues(
-      this.filters,
+      this.filters(),
     );
     return Object.fromEntries(
       Object.keys(defaultFormValues).map((key) => [key, value[key] || '']),
@@ -376,7 +378,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
       new ClearPartial({ type: this.type(), keys: Object.keys(formValues) }),
     );
     this.updateUrlAndEmitChanges(
-      this.filtersService.createDefaultFormValues(this.filters),
+      this.filtersService.createDefaultFormValues(this.filters()),
       urlParamsNotInForm,
     );
   }
@@ -409,11 +411,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
     queryParams: Record<string, any>,
   ): Record<string, any> {
     const defaultFormValues = this.filtersService.createDefaultFormValues(
-      this.filters,
+      this.filters(),
     );
     return Object.entries(defaultFormValues).reduce(
       (acc, [key, defaultValue]) => {
-        const filter = this.filters.find((f) => f.formControlName === key);
+        const filter = this.filters().find((f) => f.formControlName === key);
         acc[key] = this.getFilterValue(filter, queryParams[key], defaultValue);
         return acc;
       },
@@ -464,12 +466,12 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private updateFilledFilters(): void {
     const formValue = this.form.value;
     const defaultValues = this.filtersService.createDefaultFormValues(
-      this.filters,
+      this.filters(),
     );
 
     const newFilledFilters = Object.entries(formValue)
       .filter(([key, value]) => {
-        const filterMetadata = this.filters.find(
+        const filterMetadata = this.filters().find(
           (f) => f.formControlName === key,
         );
         const isDefaultValue = this.equalsDefaultValues(
@@ -485,7 +487,9 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private createFilterValue(key: string, value: any): FilterValue {
-    const filterMetadata = this.filters.find((f) => f.formControlName === key);
+    const filterMetadata = this.filters().find(
+      (f) => f.formControlName === key,
+    );
 
     if (
       Array.isArray(value) &&
@@ -528,7 +532,9 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private resetFormAndNavigate(): void {
     this.filledFilters.set([]);
 
-    this.form.reset(this.filtersService.createDefaultFormValues(this.filters));
+    this.form.reset(
+      this.filtersService.createDefaultFormValues(this.filters()),
+    );
     this.store.dispatch(new ClearFilter({ type: this.type() }));
     this.router
       .navigate(['.'], {
@@ -544,9 +550,5 @@ export class FilterGroupComponent<T extends Record<string, any>>
     if (this.langChangeSubscription) {
       this.langChangeSubscription.unsubscribe();
     }
-  }
-
-  get filters(): FilterMetadata[] {
-    return this._filters;
   }
 }
