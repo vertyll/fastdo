@@ -1,15 +1,15 @@
-import { Role } from "../../roles/entities/role.entity";
-import { User } from "./user.entity";
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Relation } from "typeorm";
+import { Entity, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Role } from '../../roles/entities/role.entity';
+import { User } from './user.entity';
 
-@Entity("user_role")
+@Entity('user_role')
 export class UserRole {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.userRoles)
+  @ManyToOne(() => User, user => user.userRoles)
   user: Relation<User>;
 
-  @ManyToOne(() => Role, (role) => role.userRoles)
+  @ManyToOne(() => Role, role => role.userRoles)
   role: Relation<Role>;
 }

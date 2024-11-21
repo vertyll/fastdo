@@ -1,12 +1,8 @@
-import {
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException,
-} from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyRequest {
     user?: any;
   }
@@ -17,9 +13,9 @@ export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwt: JwtService) {}
 
   public use(
-    req: FastifyRequest["raw"],
-    res: FastifyReply["raw"],
-    next: () => void
+    req: FastifyRequest['raw'],
+    res: FastifyReply['raw'],
+    next: () => void,
   ) {
     const token = this.extractTokenFromHeader(req);
 
@@ -35,8 +31,8 @@ export class JwtMiddleware implements NestMiddleware {
             timestamp: new Date().toISOString(),
             path: req.url,
             method: req.method,
-            message: "Invalid token",
-          })
+            message: 'Invalid token',
+          }),
         );
         return;
       }
@@ -46,21 +42,21 @@ export class JwtMiddleware implements NestMiddleware {
   }
 
   private extractTokenFromHeader(
-    req: FastifyRequest["raw"]
+    req: FastifyRequest['raw'],
   ): string | undefined {
     const authorization = req.headers.authorization;
     if (!authorization) return undefined;
 
-    const [type, token] = authorization.split(" ");
-    return type === "Bearer" ? token : undefined;
+    const [type, token] = authorization.split(' ');
+    return type === 'Bearer' ? token : undefined;
   }
 
   private verifyToken(token: string): any {
     try {
       return this.jwt.verify(token);
     } catch (e) {
-      console.log("Error verifying token", e.message);
-      throw new UnauthorizedException("Invalid token");
+      console.log('Error verifying token', e.message);
+      throw new UnauthorizedException('Invalid token');
     }
   }
 }

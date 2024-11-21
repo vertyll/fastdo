@@ -1,14 +1,8 @@
-import { Project } from "../../projects/entities/project.entity";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  Relation,
-} from "typeorm";
-import { Priority } from "./priority.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Project } from '../../projects/entities/project.entity';
+import { Priority } from './priority.entity';
 
-@Entity("task")
+@Entity('task')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
@@ -25,15 +19,15 @@ export class Task {
   @Column({ nullable: true })
   projectId: number;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   dateCreation: Date;
 
-  @Column({ type: "timestamp", nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   dateModification: Date;
 
-  @ManyToOne(() => Project, (project) => project.tasks, { nullable: true })
+  @ManyToOne(() => Project, project => project.tasks, { nullable: true })
   project: Relation<Project>;
 
-  @ManyToOne(() => Priority, (priority) => priority.id, { nullable: true })
+  @ManyToOne(() => Priority, priority => priority.id, { nullable: true })
   priority: Relation<Priority>;
 }

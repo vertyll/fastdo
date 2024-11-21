@@ -1,9 +1,9 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { TasksService } from "../tasks/tasks.service";
-import { ProjectManagementService } from "./projects-managment.service";
-import { ProjectsService } from "./projects.service";
+import { Test, TestingModule } from '@nestjs/testing';
+import { TasksService } from '../tasks/tasks.service';
+import { ProjectManagementService } from './projects-managment.service';
+import { ProjectsService } from './projects.service';
 
-describe("ProjectManagementService", () => {
+describe('ProjectManagementService', () => {
   let service: ProjectManagementService;
   let mockProjectsService: jest.Mocked<ProjectsService>;
   let mockTasksService: jest.Mocked<TasksService>;
@@ -28,42 +28,42 @@ describe("ProjectManagementService", () => {
     service = module.get<ProjectManagementService>(ProjectManagementService);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe("removeProjectWithTasks", () => {
-    it("should remove project and its tasks", async () => {
+  describe('removeProjectWithTasks', () => {
+    it('should remove project and its tasks', async () => {
       const projectId = 1;
       await service.removeProjectWithTasks(projectId);
 
       expect(mockTasksService.removeByProjectId).toHaveBeenCalledWith(
-        projectId
+        projectId,
       );
       expect(mockProjectsService.remove).toHaveBeenCalledWith(projectId);
     });
 
-    it("should throw an error if task removal fails", async () => {
+    it('should throw an error if task removal fails', async () => {
       const projectId = 1;
-      const error = new Error("Task removal failed");
+      const error = new Error('Task removal failed');
       mockTasksService.removeByProjectId.mockRejectedValue(error);
 
       await expect(service.removeProjectWithTasks(projectId)).rejects.toThrow(
-        "Task removal failed"
+        'Task removal failed',
       );
       expect(mockProjectsService.remove).not.toHaveBeenCalled();
     });
 
-    it("should throw an error if project removal fails", async () => {
+    it('should throw an error if project removal fails', async () => {
       const projectId = 1;
-      const error = new Error("Project removal failed");
+      const error = new Error('Project removal failed');
       mockProjectsService.remove.mockRejectedValue(error);
 
       await expect(service.removeProjectWithTasks(projectId)).rejects.toThrow(
-        "Project removal failed"
+        'Project removal failed',
       );
       expect(mockTasksService.removeByProjectId).toHaveBeenCalledWith(
-        projectId
+        projectId,
       );
     });
   });

@@ -1,12 +1,12 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { AuthService } from "./auth.service";
-import { UsersService } from "../users/users.service";
-import { JwtService } from "@nestjs/jwt";
-import { RolesService } from "../roles/roles.service";
-import * as bcrypt from "bcrypt";
-import { Role } from "../common/enums/role.enum";
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+import * as bcrypt from 'bcrypt';
+import { Role } from '../common/enums/role.enum';
+import { RolesService } from '../roles/roles.service';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
 
-describe("AuthService", () => {
+describe('AuthService', () => {
   let service: AuthService;
   let usersService: UsersService;
   let rolesService: RolesService;
@@ -44,8 +44,8 @@ describe("AuthService", () => {
     rolesService = module.get<RolesService>(RolesService);
   });
 
-  it("should register a user", async () => {
-    const registerDto = { email: "test@example.com", password: "password" };
+  it('should register a user', async () => {
+    const registerDto = { email: 'test@example.com', password: 'password' };
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const newUser = {
       id: 1,
@@ -57,17 +57,17 @@ describe("AuthService", () => {
       userRoles: [],
     };
 
-    jest.spyOn(usersService, "findByEmail").mockResolvedValue(null);
-    jest.spyOn(usersService, "create").mockResolvedValue(newUser);
-    jest.spyOn(rolesService, "findRoleByName").mockResolvedValue({
+    jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
+    jest.spyOn(usersService, 'create').mockResolvedValue(newUser);
+    jest.spyOn(rolesService, 'findRoleByName').mockResolvedValue({
       id: 1,
       name: Role.User,
       userRoles: [],
     });
-    jest.spyOn(rolesService, "addRoleToUser").mockResolvedValue(undefined);
+    jest.spyOn(rolesService, 'addRoleToUser').mockResolvedValue(undefined);
 
     const result = await service.register(registerDto);
-    expect(result).toHaveProperty("id");
-    expect(result).toHaveProperty("email", registerDto.email);
+    expect(result).toHaveProperty('id');
+    expect(result).toHaveProperty('email', registerDto.email);
   });
 });

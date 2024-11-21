@@ -1,9 +1,9 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { ProjectsService } from "./projects.service";
-import { ProjectRepository } from "./repositories/project.repository";
-import { Project } from "./entities/project.entity";
+import { Test, TestingModule } from '@nestjs/testing';
+import { Project } from './entities/project.entity';
+import { ProjectsService } from './projects.service';
+import { ProjectRepository } from './repositories/project.repository';
 
-describe("ProjectsService", () => {
+describe('ProjectsService', () => {
   let service: ProjectsService;
   let mockProjectRepository: jest.Mocked<ProjectRepository>;
 
@@ -27,23 +27,23 @@ describe("ProjectsService", () => {
     service = module.get<ProjectsService>(ProjectsService);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe("findAll", () => {
-    it("should return an array of projects", async () => {
+  describe('findAll', () => {
+    it('should return an array of projects', async () => {
       const result = [
-        { id: expect.any(Number), name: "Test Project" },
+        { id: expect.any(Number), name: 'Test Project' },
       ] as Project[];
       mockProjectRepository.findAllWithParams.mockResolvedValue(result);
       expect(await service.findAll({})).toEqual(result);
     });
   });
 
-  describe("create", () => {
-    it("should create a new project", async () => {
-      const createDto = { name: "New Project" };
+  describe('create', () => {
+    it('should create a new project', async () => {
+      const createDto = { name: 'New Project' };
       const result = { id: expect.any(Number), ...createDto } as Project;
       mockProjectRepository.create.mockReturnValue(result);
       mockProjectRepository.save.mockResolvedValue(result);
@@ -51,20 +51,20 @@ describe("ProjectsService", () => {
     });
   });
 
-  describe("findOne", () => {
-    it("should return a single project", async () => {
+  describe('findOne', () => {
+    it('should return a single project', async () => {
       const result = {
         id: expect.any(Number),
-        name: "Single Project",
+        name: 'Single Project',
       } as Project;
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
       expect(await service.findOne(1)).toEqual(result);
     });
   });
 
-  describe("update", () => {
-    it("should update a project", async () => {
-      const updateDto = { name: "Updated Project" };
+  describe('update', () => {
+    it('should update a project', async () => {
+      const updateDto = { name: 'Updated Project' };
       const result = { id: expect.any(Number), ...updateDto } as Project;
       mockProjectRepository.update.mockResolvedValue(undefined);
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
@@ -72,8 +72,8 @@ describe("ProjectsService", () => {
     });
   });
 
-  describe("remove", () => {
-    it("should remove a project", async () => {
+  describe('remove', () => {
+    it('should remove a project', async () => {
       mockProjectRepository.delete.mockResolvedValue(undefined);
       await expect(service.remove(1)).resolves.not.toThrow();
     });

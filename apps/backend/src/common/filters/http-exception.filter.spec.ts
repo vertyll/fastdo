@@ -1,8 +1,8 @@
-import { HttpExceptionFilter } from "./http-exception.filter";
-import { HttpException, HttpStatus, Logger } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { HttpExceptionFilter } from './http-exception.filter';
 
-describe("HttpExceptionFilter", () => {
+describe('HttpExceptionFilter', () => {
   let filter: HttpExceptionFilter;
   let mockLogger: jest.Mocked<Logger>;
 
@@ -26,10 +26,10 @@ describe("HttpExceptionFilter", () => {
     filter = module.get<HttpExceptionFilter>(HttpExceptionFilter);
   });
 
-  it("should log the error", () => {
+  it('should log the error', () => {
     const mockException = new HttpException(
-      "Test error",
-      HttpStatus.BAD_REQUEST
+      'Test error',
+      HttpStatus.BAD_REQUEST,
     );
     const mockArgumentsHost = {
       switchToHttp: () => ({
@@ -38,8 +38,8 @@ describe("HttpExceptionFilter", () => {
           send: jest.fn(),
         }),
         getRequest: () => ({
-          url: "/test",
-          method: "GET",
+          url: '/test',
+          method: 'GET',
         }),
       }),
     } as any;

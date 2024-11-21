@@ -1,11 +1,5 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  Logger,
-} from "@nestjs/common";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -33,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     this.logger.error(
       `${request.method} ${request.url}`,
       exception.stack,
-      "HttpExceptionFilter"
+      'HttpExceptionFilter',
     );
 
     response.status(status).send(responseBody);
@@ -41,29 +35,29 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private formatGeneralMessage(exception: HttpException): string {
     const response = exception.getResponse();
-    if (typeof response === "string") {
+    if (typeof response === 'string') {
       return response;
     } else if (
-      typeof response === "object" &&
-      response.hasOwnProperty("message")
+      typeof response === 'object'
+      && response.hasOwnProperty('message')
     ) {
-      if (Array.isArray(response["message"])) {
-        return "Validation failed";
+      if (Array.isArray(response['message'])) {
+        return 'Validation failed';
       } else {
-        return response["message"];
+        return response['message'];
       }
     } else {
-      return exception.message || "An error occurred";
+      return exception.message || 'An error occurred';
     }
   }
 
   private extractFields(exception: HttpException): any {
     const response = exception.getResponse();
-    if (typeof response === "object" && response.hasOwnProperty("message")) {
-      if (Array.isArray(response["message"])) {
-        const fields = response["message"]
+    if (typeof response === 'object' && response.hasOwnProperty('message')) {
+      if (Array.isArray(response['message'])) {
+        const fields = response['message']
           .map((msg: any) => {
-            if (typeof msg === "object" && msg.field) {
+            if (typeof msg === 'object' && msg.field) {
               return { field: msg.field, errors: msg.errors || [] };
             }
             return null;

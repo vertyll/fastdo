@@ -1,10 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { TasksService } from "./tasks.service";
-import { TaskRepository } from "./repositories/task.repository";
-import { Task } from "./entities/task.entity";
-import { Project } from "../projects/entities/project.entity";
+import { Test, TestingModule } from '@nestjs/testing';
+import { Project } from '../projects/entities/project.entity';
+import { Task } from './entities/task.entity';
+import { TaskRepository } from './repositories/task.repository';
+import { TasksService } from './tasks.service';
 
-describe("TasksService", () => {
+describe('TasksService', () => {
   let service: TasksService;
   let mockTaskRepository: jest.Mocked<TaskRepository>;
 
@@ -28,13 +28,13 @@ describe("TasksService", () => {
     service = module.get<TasksService>(TasksService);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe("create", () => {
-    it("should create a new task", async () => {
-      const createDto = { name: "New Task", projectId: 1 };
+  describe('create', () => {
+    it('should create a new task', async () => {
+      const createDto = { name: 'New Task', projectId: 1 };
       const result = {
         id: expect.any(Number),
         ...createDto,
@@ -50,35 +50,35 @@ describe("TasksService", () => {
     });
   });
 
-  describe("findAll", () => {
-    it("should return an array of tasks", async () => {
-      const result = [{ id: expect.any(Number), name: "Test Task" }] as Task[];
+  describe('findAll', () => {
+    it('should return an array of tasks', async () => {
+      const result = [{ id: expect.any(Number), name: 'Test Task' }] as Task[];
       mockTaskRepository.findAllWithParams.mockResolvedValue(result);
       expect(await service.findAll({})).toEqual(result);
     });
   });
 
-  describe("findAllByProjectId", () => {
-    it("should return tasks for a specific project", async () => {
+  describe('findAllByProjectId', () => {
+    it('should return tasks for a specific project', async () => {
       const result = [
-        { id: expect.any(Number), name: "Project Task" },
+        { id: expect.any(Number), name: 'Project Task' },
       ] as Task[];
       mockTaskRepository.findAllWithParams.mockResolvedValue(result);
       expect(await service.findAllByProjectId(1, {})).toEqual(result);
     });
   });
 
-  describe("findOne", () => {
-    it("should return a single task", async () => {
-      const result = { id: expect.any(Number), name: "Single Task" } as Task;
+  describe('findOne', () => {
+    it('should return a single task', async () => {
+      const result = { id: expect.any(Number), name: 'Single Task' } as Task;
       mockTaskRepository.findOneOrFail.mockResolvedValue(result);
       expect(await service.findOne(1)).toEqual(result);
     });
   });
 
-  describe("update", () => {
-    it("should update a task", async () => {
-      const updateDto = { name: "Updated Task" };
+  describe('update', () => {
+    it('should update a task', async () => {
+      const updateDto = { name: 'Updated Task' };
       const result = { id: expect.any(Number), ...updateDto } as Task;
       mockTaskRepository.update.mockResolvedValue(undefined);
       mockTaskRepository.findOneOrFail.mockResolvedValue(result);
@@ -86,15 +86,15 @@ describe("TasksService", () => {
     });
   });
 
-  describe("remove", () => {
-    it("should remove a task", async () => {
+  describe('remove', () => {
+    it('should remove a task', async () => {
       mockTaskRepository.delete.mockResolvedValue(undefined);
       await expect(service.remove(1)).resolves.not.toThrow();
     });
   });
 
-  describe("removeByProjectId", () => {
-    it("should remove tasks by project id", async () => {
+  describe('removeByProjectId', () => {
+    it('should remove tasks by project id', async () => {
       mockTaskRepository.delete.mockResolvedValue(undefined);
       await expect(service.removeByProjectId(1)).resolves.not.toThrow();
     });

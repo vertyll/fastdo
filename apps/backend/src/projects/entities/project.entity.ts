@@ -1,13 +1,7 @@
-import { Task } from "../../tasks/entities/task.entity";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  Relation,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Task } from '../../tasks/entities/task.entity';
 
-@Entity("project")
+@Entity('project')
 export class Project {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,12 +9,12 @@ export class Project {
   @Column()
   name: string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   dateCreation: Date;
 
-  @Column({ type: "timestamp", nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   dateModification: Date;
 
-  @OneToMany(() => Task, (task) => task.project, { onDelete: "CASCADE" })
+  @OneToMany(() => Task, task => task.project, { onDelete: 'CASCADE' })
   tasks: Relation<Task[]>;
 }

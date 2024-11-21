@@ -1,18 +1,18 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { UsersService } from "../users/users.service";
-import * as bcrypt from "bcrypt";
-import { RolesService } from "../roles/roles.service";
-import { Role } from "../common/enums/role.enum";
-import { LoginDto } from "./dtos/login.dto";
-import { RegisterDto } from "./dtos/register.dto";
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { Role } from '../common/enums/role.enum';
+import { RolesService } from '../roles/roles.service';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dtos/login.dto';
+import { RegisterDto } from './dtos/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly rolesService: RolesService
+    private readonly rolesService: RolesService,
   ) {}
 
   public async validateUser(email: string, password: string): Promise<any> {
@@ -29,11 +29,11 @@ export class AuthService {
   public async register(registerDto: RegisterDto) {
     const user = await this.usersService.findByEmail(registerDto.email);
     if (user) {
-      throw new UnauthorizedException("User already exists");
+      throw new UnauthorizedException('User already exists');
     }
     const role = await this.rolesService.findRoleByName(Role.User);
     if (!role) {
-      throw new UnauthorizedException("Role does not exist");
+      throw new UnauthorizedException('Role does not exist');
     }
 
     const { email, password } = registerDto;

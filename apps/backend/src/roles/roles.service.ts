@@ -1,13 +1,13 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { Role } from "./entities/role.entity";
-import { RoleRepository } from "./repositories/role.repository";
-import { UserRoleRepository } from "../users/repositories/user-role.repository";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UserRoleRepository } from '../users/repositories/user-role.repository';
+import { Role } from './entities/role.entity';
+import { RoleRepository } from './repositories/role.repository';
 
 @Injectable()
 export class RolesService {
   constructor(
     private readonly rolesRepository: RoleRepository,
-    private readonly userRoleRepository: UserRoleRepository
+    private readonly userRoleRepository: UserRoleRepository,
   ) {}
 
   public async findRoleByName(name: string): Promise<Role | undefined> {
@@ -29,8 +29,8 @@ export class RolesService {
   public async getUserRoles(userId: number): Promise<string[]> {
     const userRoles = await this.userRoleRepository.find({
       where: { user: { id: userId } },
-      relations: ["role"],
+      relations: ['role'],
     });
-    return userRoles.map((userRole) => userRole.role.name);
+    return userRoles.map(userRole => userRole.role.name);
   }
 }

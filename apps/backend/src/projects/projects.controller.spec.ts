@@ -1,10 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { ProjectManagementService } from "./projects-managment.service";
-import { ProjectsController } from "./projects.controller";
-import { ProjectsService } from "./projects.service";
-import { Project } from "./entities/project.entity";
+import { Test, TestingModule } from '@nestjs/testing';
+import { Project } from './entities/project.entity';
+import { ProjectManagementService } from './projects-managment.service';
+import { ProjectsController } from './projects.controller';
+import { ProjectsService } from './projects.service';
 
-describe("ProjectsController", () => {
+describe('ProjectsController', () => {
   let controller: ProjectsController;
   let mockProjectsService: jest.Mocked<ProjectsService>;
   let mockProjectManagementService: jest.Mocked<ProjectManagementService>;
@@ -36,16 +36,16 @@ describe("ProjectsController", () => {
     controller = module.get<ProjectsController>(ProjectsController);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe("getAll", () => {
-    it("should return an array of projects", async () => {
+  describe('getAll', () => {
+    it('should return an array of projects', async () => {
       const result: Project[] = [
         {
           id: 1,
-          name: "Test Project",
+          name: 'Test Project',
           dateCreation: new Date(),
           dateModification: null,
           tasks: [],
@@ -57,9 +57,9 @@ describe("ProjectsController", () => {
     });
   });
 
-  describe("create", () => {
-    it("should create a new project", async () => {
-      const createDto = { name: "New Project" };
+  describe('create', () => {
+    it('should create a new project', async () => {
+      const createDto = { name: 'New Project' };
       const result: Project = {
         id: 1,
         ...createDto,
@@ -72,23 +72,23 @@ describe("ProjectsController", () => {
     });
   });
 
-  describe("findOne", () => {
-    it("should return a single project", async () => {
+  describe('findOne', () => {
+    it('should return a single project', async () => {
       const result: Project = {
         id: 1,
-        name: "Single Project",
+        name: 'Single Project',
         dateCreation: new Date(),
         dateModification: null,
         tasks: [],
       };
       mockProjectsService.findOne.mockResolvedValue(result);
-      expect(await controller.findOne("1")).toEqual(result);
+      expect(await controller.findOne('1')).toEqual(result);
     });
   });
 
-  describe("update", () => {
-    it("should update a project", async () => {
-      const updateDto = { name: "Updated Project" };
+  describe('update', () => {
+    it('should update a project', async () => {
+      const updateDto = { name: 'Updated Project' };
       const result: Project = {
         id: 1,
         ...updateDto,
@@ -97,15 +97,15 @@ describe("ProjectsController", () => {
         tasks: [],
       };
       mockProjectsService.update.mockResolvedValue(result);
-      expect(await controller.update("1", updateDto)).toEqual(result);
+      expect(await controller.update('1', updateDto)).toEqual(result);
     });
   });
 
-  describe("remove", () => {
-    it("should remove a project with its tasks", async () => {
-      await controller.remove("1");
+  describe('remove', () => {
+    it('should remove a project with its tasks', async () => {
+      await controller.remove('1');
       expect(
-        mockProjectManagementService.removeProjectWithTasks
+        mockProjectManagementService.removeProjectWithTasks,
       ).toHaveBeenCalledWith(1);
     });
   });

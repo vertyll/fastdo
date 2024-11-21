@@ -1,9 +1,9 @@
-import { TimeoutInterceptor } from "./timeout.interceptor";
-import { CallHandler, ExecutionContext } from "@nestjs/common";
-import { Observable, of, throwError } from "rxjs";
-import { RequestTimeoutException } from "@nestjs/common";
+import { CallHandler, ExecutionContext } from '@nestjs/common';
+import { RequestTimeoutException } from '@nestjs/common';
+import { Observable, of, throwError } from 'rxjs';
+import { TimeoutInterceptor } from './timeout.interceptor';
 
-describe("TimeoutInterceptor", () => {
+describe('TimeoutInterceptor', () => {
   let interceptor: TimeoutInterceptor;
   let mockContext: ExecutionContext;
   let mockCallHandler: CallHandler;
@@ -16,51 +16,51 @@ describe("TimeoutInterceptor", () => {
     } as unknown as CallHandler;
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(interceptor).toBeDefined();
   });
 
-  it("should not throw error if response is received in time", (done) => {
-    (mockCallHandler.handle as jest.Mock).mockReturnValue(of("response"));
+  it('should not throw error if response is received in time', done => {
+    (mockCallHandler.handle as jest.Mock).mockReturnValue(of('response'));
 
     interceptor.intercept(mockContext, mockCallHandler).subscribe({
-      next: (value) => {
-        expect(value).toBe("response");
+      next: value => {
+        expect(value).toBe('response');
         done();
       },
       error: () => {
-        done.fail("Should not throw error");
+        done.fail('Should not throw error');
       },
     });
   });
 
-  it("should throw RequestTimeoutException if response exceeds timeout limit", (done) => {
+  it('should throw RequestTimeoutException if response exceeds timeout limit', done => {
     (mockCallHandler.handle as jest.Mock).mockReturnValue(
-      new Observable(() => {})
+      new Observable(() => {}),
     );
 
     interceptor.intercept(mockContext, mockCallHandler).subscribe({
       next: () => {
-        done.fail("Should not emit value");
+        done.fail('Should not emit value');
       },
-      error: (error) => {
+      error: error => {
         expect(error).toBeInstanceOf(RequestTimeoutException);
         done();
       },
     });
   });
 
-  it("should pass other errors", (done) => {
-    const testError = new Error("Test error");
+  it('should pass other errors', done => {
+    const testError = new Error('Test error');
     (mockCallHandler.handle as jest.Mock).mockReturnValue(
-      throwError(() => testError)
+      throwError(() => testError),
     );
 
     interceptor.intercept(mockContext, mockCallHandler).subscribe({
       next: () => {
-        done.fail("Should not emit value");
+        done.fail('Should not emit value');
       },
-      error: (error) => {
+      error: error => {
         expect(error).toBe(testError);
         done();
       },

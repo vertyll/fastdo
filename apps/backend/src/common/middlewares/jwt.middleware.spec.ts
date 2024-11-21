@@ -1,15 +1,15 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { JwtService } from "@nestjs/jwt";
-import { JwtMiddleware } from "./jwt.middleware";
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+import { JwtMiddleware } from './jwt.middleware';
 
-describe("JwtMiddleware", () => {
+describe('JwtMiddleware', () => {
   let middleware: JwtMiddleware;
   let jwtService: JwtService;
 
   const mockRequest = (
     authorization?: string,
-    url: string = "/test",
-    method: string = "GET"
+    url: string = '/test',
+    method: string = 'GET',
   ) => {
     const req: any = {
       headers: {
@@ -49,10 +49,10 @@ describe("JwtMiddleware", () => {
     mockNext.mockClear();
   });
 
-  it("should return 401 when an invalid token is provided", () => {
-    const req = mockRequest("Bearer invalidtoken");
+  it('should return 401 when an invalid token is provided', () => {
+    const req = mockRequest('Bearer invalidtoken');
     (jwtService.verify as jest.Mock).mockImplementation(() => {
-      throw new Error("Invalid token");
+      throw new Error('Invalid token');
     });
 
     const res = mockResponse();
@@ -67,18 +67,18 @@ describe("JwtMiddleware", () => {
       timestamp: expect.any(String),
       path: req.url,
       method: req.method,
-      message: "Invalid token",
+      message: 'Invalid token',
     });
     expect(mockNext).not.toHaveBeenCalled();
   });
 
-  it("should handle missing path and method in request", () => {
-    const req = mockRequest("Bearer invalidtoken", undefined, undefined);
+  it('should handle missing path and method in request', () => {
+    const req = mockRequest('Bearer invalidtoken', undefined, undefined);
     req.url = undefined;
     req.method = undefined;
 
     (jwtService.verify as jest.Mock).mockImplementation(() => {
-      throw new Error("Invalid token");
+      throw new Error('Invalid token');
     });
 
     const res = mockResponse();
@@ -93,7 +93,7 @@ describe("JwtMiddleware", () => {
       timestamp: expect.any(String),
       path: undefined,
       method: undefined,
-      message: "Invalid token",
+      message: 'Invalid token',
     });
     expect(mockNext).not.toHaveBeenCalled();
   });

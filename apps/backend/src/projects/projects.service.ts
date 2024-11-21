@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { CreateProjectDto } from "./dtos/create-project.dto";
-import { GetAllProjectsSearchParams } from "./dtos/get-all-projects-search-params.dto";
-import { UpdateProjectDto } from "./dtos/update-project.dto";
-import { Project } from "./entities/project.entity";
-import { ProjectRepository } from "./repositories/project.repository";
+import { Injectable } from '@nestjs/common';
+import { CreateProjectDto } from './dtos/create-project.dto';
+import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';
+import { UpdateProjectDto } from './dtos/update-project.dto';
+import { Project } from './entities/project.entity';
+import { ProjectRepository } from './repositories/project.repository';
 
 @Injectable()
 export class ProjectsService {
@@ -24,7 +24,7 @@ export class ProjectsService {
 
   public async update(
     id: number,
-    updateProjectDto: UpdateProjectDto
+    updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
     await this.projectRepository.update(id, {
       ...updateProjectDto,

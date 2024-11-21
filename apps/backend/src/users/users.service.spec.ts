@@ -1,8 +1,8 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { UsersService } from "./users.service";
-import { UserRepository } from "./repositories/user.repository";
+import { Test, TestingModule } from '@nestjs/testing';
+import { UserRepository } from './repositories/user.repository';
+import { UsersService } from './users.service';
 
-describe("UsersService", () => {
+describe('UsersService', () => {
   let service: UsersService;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let repository: UserRepository;
@@ -28,13 +28,13 @@ describe("UsersService", () => {
     repository = module.get<UserRepository>(UserRepository);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe("findOne", () => {
-    it("should return a user by id", async () => {
-      const mockUser = { id: 1, email: "test@example.com" };
+  describe('findOne', () => {
+    it('should return a user by id', async () => {
+      const mockUser = { id: 1, email: 'test@example.com' };
       mockRepository.findOne.mockResolvedValue(mockUser);
 
       const result = await service.findOne(1);
@@ -43,22 +43,22 @@ describe("UsersService", () => {
     });
   });
 
-  describe("findByEmail", () => {
-    it("should return a user by email", async () => {
-      const mockUser = { id: 1, email: "test@example.com" };
+  describe('findByEmail', () => {
+    it('should return a user by email', async () => {
+      const mockUser = { id: 1, email: 'test@example.com' };
       mockRepository.findOne.mockResolvedValue(mockUser);
 
-      const result = await service.findByEmail("test@example.com");
+      const result = await service.findByEmail('test@example.com');
       expect(result).toEqual(mockUser);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { email: "test@example.com" },
+        where: { email: 'test@example.com' },
       });
     });
   });
 
-  describe("create", () => {
-    it("should create a new user", async () => {
-      const mockUser = { email: "new@example.com" };
+  describe('create', () => {
+    it('should create a new user', async () => {
+      const mockUser = { email: 'new@example.com' };
       const mockCreatedUser = { id: 2, ...mockUser };
       mockRepository.create.mockReturnValue(mockCreatedUser);
       mockRepository.save.mockResolvedValue(mockCreatedUser);

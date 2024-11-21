@@ -1,18 +1,18 @@
-import { LocalAuthGuard } from "./local-auth.guard";
-import { AuthGuard } from "@nestjs/passport";
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './local-auth.guard';
 
-describe("LocalAuthGuard", () => {
+describe('LocalAuthGuard', () => {
   let guard: LocalAuthGuard;
 
   beforeEach(() => {
     guard = new LocalAuthGuard();
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(guard).toBeDefined();
   });
 
   it("should extend AuthGuard with 'local' strategy", () => {
-    expect(guard).toBeInstanceOf(AuthGuard("local"));
+    expect(guard).toBeInstanceOf(AuthGuard('local'));
   });
 });

@@ -1,8 +1,8 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 
-describe("AuthController", () => {
+describe('AuthController', () => {
   let controller: AuthController;
   let authService: AuthService;
 
@@ -24,27 +24,27 @@ describe("AuthController", () => {
     authService = module.get<AuthService>(AuthService);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it("should call login method", async () => {
-    const loginDto = { email: "test@example.com", password: "password" };
+  it('should call login method', async () => {
+    const loginDto = { email: 'test@example.com', password: 'password' };
     jest
-      .spyOn(authService, "login")
-      .mockResolvedValue({ access_token: "token" });
+      .spyOn(authService, 'login')
+      .mockResolvedValue({ access_token: 'token' });
 
     const result = await controller.login(loginDto);
-    expect(result).toEqual({ access_token: "token" });
+    expect(result).toEqual({ access_token: 'token' });
     expect(authService.login).toHaveBeenCalledWith(loginDto);
   });
 
-  it("should call register method", async () => {
-    const registerDto = { email: "test@example.com", password: "password" };
-    jest.spyOn(authService, "register").mockResolvedValue({
+  it('should call register method', async () => {
+    const registerDto = { email: 'test@example.com', password: 'password' };
+    jest.spyOn(authService, 'register').mockResolvedValue({
       id: 1,
-      email: "test@example.com",
-      password: "password",
+      email: 'test@example.com',
+      password: 'password',
       isActive: true,
       dateCreation: new Date(),
       dateModyfication: new Date(),
@@ -54,8 +54,8 @@ describe("AuthController", () => {
     const result = await controller.register(registerDto);
     expect(result).toEqual({
       id: 1,
-      email: "test@example.com",
-      password: "password",
+      email: 'test@example.com',
+      password: 'password',
       isActive: true,
       dateCreation: expect.any(Date),
       dateModyfication: expect.any(Date),

@@ -1,14 +1,8 @@
-import { Exclude } from "class-transformer";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  Relation,
-} from "typeorm";
-import { UserRole } from "./user-role.entity";
+import { Exclude } from 'class-transformer';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { UserRole } from './user-role.entity';
 
-@Entity("user")
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,12 +17,12 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   dateCreation: Date;
 
-  @Column({ type: "timestamp", nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   dateModyfication: Date;
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  @OneToMany(() => UserRole, userRole => userRole.user)
   userRoles: Relation<UserRole[]>;
 }

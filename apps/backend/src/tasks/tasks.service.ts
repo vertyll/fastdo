@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { Project } from "src/projects/entities/project.entity";
-import { CreateTaskDto } from "./dtos/create-task.dto";
-import { GetAllTasksSearchParams } from "./dtos/get-all-tasks-search-params.dto";
-import { UpdateTaskDto } from "./dtos/update-task.dto";
-import { Task } from "./entities/task.entity";
-import { TaskRepository } from "./repositories/task.repository";
+import { Injectable } from '@nestjs/common';
+import { Project } from 'src/projects/entities/project.entity';
+import { CreateTaskDto } from './dtos/create-task.dto';
+import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
+import { UpdateTaskDto } from './dtos/update-task.dto';
+import { Task } from './entities/task.entity';
+import { TaskRepository } from './repositories/task.repository';
 
 @Injectable()
 export class TasksService {
@@ -24,7 +24,7 @@ export class TasksService {
 
   public async findAllByProjectId(
     projectId: number,
-    params: GetAllTasksSearchParams
+    params: GetAllTasksSearchParams,
   ): Promise<Task[]> {
     return this.taskRepository.findAllWithParams(params, projectId);
   }
@@ -32,7 +32,7 @@ export class TasksService {
   public findOne(id: number): Promise<Task> {
     return this.taskRepository.findOneOrFail({
       where: { id },
-      relations: ["project"],
+      relations: ['project'],
     });
   }
 
