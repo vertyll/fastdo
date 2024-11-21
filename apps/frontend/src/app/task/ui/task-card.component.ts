@@ -1,4 +1,4 @@
-import { Component, inject, Input, output } from '@angular/core';
+import { Component, inject, output, input } from '@angular/core';
 import { Task } from '../models/Task';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -15,20 +15,20 @@ import { TaskNameValidator } from '../validators/task-name.validator';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
 
 @Component({
-    selector: 'app-task-card',
-    imports: [
-        RemoveItemButtonComponent,
-        CustomDatePipe,
-        AutosizeTextareaComponent,
-        NgIconComponent,
-        RouterLink,
-        TranslateModule,
-        LinkComponent,
-    ],
-    template: `
+  selector: 'app-task-card',
+  imports: [
+    RemoveItemButtonComponent,
+    CustomDatePipe,
+    AutosizeTextareaComponent,
+    NgIconComponent,
+    RouterLink,
+    TranslateModule,
+    LinkComponent,
+  ],
+  template: `
     <div
       class="rounded-md border border-gray-300 shadow-sm p-4 block w-full"
-      [class.bg-green-300]="task.isDone"
+      [class.bg-green-300]="task().isDone"
     >
       <button
         class="w-full text-left"
@@ -43,22 +43,22 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
             <app-autosize-textarea
               (keyup.escape)="editMode = false"
               (submitText)="updateTaskName($event)"
-              [value]="task.name"
+              [value]="task().name"
             />
           } @else {
-            <span [class.line-through]="task.isDone" class="block w-full">
-              {{ task.name }}
+            <span [class.line-through]="task().isDone" class="block w-full">
+              {{ task().name }}
             </span>
           }
         </section>
-        @if (task.project) {
+        @if (task().project) {
           <section class="text-left text-sm mt-2 break-all">
             <span>{{ 'Task.forProject' | translate }}: </span>
             <app-link
-              [routerLink]="['/tasks', task.project.id]"
+              [routerLink]="['/tasks', task().project?.id]"
               class="text-orange-500 hover:underline"
             >
-              {{ task.project.name }}
+              {{ task().project?.name }}
             </app-link>
           </section>
         }
@@ -68,7 +68,7 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
             (click)="updateTaskUrgentStatus(); $event.stopPropagation()"
           >
             <ng-icon
-              [name]="task.isUrgent ? 'heroBookmarkSolid' : 'heroBookmark'"
+              [name]="task().isUrgent ? 'heroBookmarkSolid' : 'heroBookmark'"
               class="text-sm"
             />
           </button>
@@ -76,15 +76,15 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
             <div class="flex items-center">
               <span class="pr-1">
                 {{ 'Task.created' | translate }}
-                : {{ task.dateCreation | customDate }}</span
+                : {{ task().dateCreation | customDate }}</span
               >
               <ng-icon name="heroCalendar" class="text-sm" />
             </div>
-            @if (task.dateModification) {
+            @if (task().dateModification) {
               <div class="flex items-center">
                 <span class="pr-1">
                   {{ 'Task.modified' | translate }}
-                  : {{ task.dateModification | customDate }}</span
+                  : {{ task().dateModification || '-' | customDate }}</span
                 >
                 <ng-icon name="heroCalendar" class="text-sm" />
               </div>
@@ -94,19 +94,19 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
       </button>
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       .break-all {
         word-break: break-all;
       }
     `,
-    ],
-    viewProviders: [
-        provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar }),
-    ]
+  ],
+  viewProviders: [
+    provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar }),
+  ],
 })
 export class TaskCardComponent {
-  @Input({ required: true }) task!: Task;
+  readonly task = input.required<Task>();
   readonly update = output<TaskUpdatePayload>();
   readonly delete = output<void>();
 
@@ -116,7 +116,7 @@ export class TaskCardComponent {
   private isSingleClick: boolean = true;
 
   protected updateTaskUrgentStatus(): void {
-    this.update.emit({ isUrgent: !this.task.isUrgent });
+    this.update.emit({ isUrgent: !this.task().isUrgent });
   }
 
   protected updateTaskName(updatedName: string): void {
@@ -139,7 +139,7 @@ export class TaskCardComponent {
 
     setTimeout(() => {
       if (this.isSingleClick) {
-        this.update.emit({ isDone: !this.task.isDone });
+        this.update.emit({ isDone: !this.task().isDone });
       }
     }, 200);
   }
