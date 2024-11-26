@@ -37,7 +37,7 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <app-label for="password"
+        <app-label forId="password"
           >{{ 'Auth.password' | translate }}:
         </app-label>
         <input
@@ -87,8 +87,8 @@ export class LoginComponent {
   protected onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: (res) => {
-          this.router.navigate(['/tasks']);
+        next: () => {
+          this.router.navigate(['/tasks']).then();
         },
         error: (err) => {
           if (err.error && err.error.message) {

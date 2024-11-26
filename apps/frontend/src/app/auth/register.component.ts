@@ -33,14 +33,14 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
     >
       <app-title>{{ 'Auth.register' | translate }}</app-title>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <app-label for="email">{{ 'Auth.email' | translate }}:</app-label>
+        <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
         <input
           id="email"
           formControlName="email"
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <app-label for="password">{{ 'Auth.password' | translate }}:</app-label>
+        <app-label forId="password">{{ 'Auth.password' | translate }}:</app-label>
         <input
           id="password"
           type="password"
@@ -48,7 +48,7 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <app-label for="confirmPassword">
+        <app-label forId="confirmPassword">
           {{ 'Auth.confirmPassword' | translate }}:
         </app-label>
         <input
@@ -131,7 +131,7 @@ export class RegisterComponent implements OnInit {
       const { email, password } = this.registerForm.value;
       this.authService.register({ email, password }).subscribe({
         next: () => {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login']).then();
         },
         error: (err) => {
           if (err.error && err.error.message) {

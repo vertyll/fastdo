@@ -26,11 +26,4 @@ export class LinkComponent {
   readonly clickHandler = input<() => void>();
 
   protected readonly LinkType = LinkType;
-
-  handleClick(): void {
-    const clickHandler = this.clickHandler();
-    if (clickHandler) {
-      clickHandler();
-    }
-  }
 }

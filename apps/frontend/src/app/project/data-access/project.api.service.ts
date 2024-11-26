@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Project } from '../models/Project';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';

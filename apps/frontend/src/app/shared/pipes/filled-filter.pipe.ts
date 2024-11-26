@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class FilledFilterPipe implements PipeTransform {
-  public transform(node: any, ...args: unknown[]): any {
+  public transform(node: any, ..._args: unknown[]): any {
     switch (node.nodeName) {
       case 'ION-INPUT':
         return node.firstChild?.value;

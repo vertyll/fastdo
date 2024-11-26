@@ -7,7 +7,7 @@ import { AbstractControl } from '@angular/forms';
   standalone: true,
 })
 export class InputInvalidPipe implements PipeTransform {
-  public transform(value: AbstractControl | null, ...args: unknown[]): string {
+  public transform(value: AbstractControl | null, ..._args: unknown[]): string {
     return value?.invalid && (value.dirty || value.touched) ? 'has-error' : '';
   }
 }

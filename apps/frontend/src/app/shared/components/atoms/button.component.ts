@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class ButtonComponent {
   readonly type = input<'button' | 'submit'>('button');
   readonly disabled = input<boolean | undefined>(false);
+  readonly cssClass = input<string>('');
 
   readonly onClick = output<Event>();
 }

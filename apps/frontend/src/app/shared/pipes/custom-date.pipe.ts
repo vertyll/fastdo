@@ -15,7 +15,7 @@ export class CustomDatePipe implements PipeTransform {
 
     if (value instanceof Date) {
       date = value;
-    } else if (typeof value === 'number' || typeof value === 'string') {
+    } else if (typeof value === 'number') {
       date = new Date(value);
     } else {
       return '';

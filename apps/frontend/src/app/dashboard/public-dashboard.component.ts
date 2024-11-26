@@ -56,6 +56,6 @@ export class PublicDashboardComponent {
   private readonly router = inject(Router);
 
   protected navigateToSignup() {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/register']).then();
   }
 }

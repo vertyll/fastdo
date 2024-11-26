@@ -179,7 +179,7 @@ export class NavbarComponent {
 
   protected logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
+    this.router.navigate(['/']).then();
 
     if (this.menuOpen) {
       this.closeMenu();

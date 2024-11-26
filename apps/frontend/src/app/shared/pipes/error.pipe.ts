@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class ErrorPipe implements PipeTransform {
-  public transform(value: any, ...args: any[]): any {
+  public transform(value: any, ..._args: any[]): any {
     return value ? Object.keys(value) : value;
   }
 }

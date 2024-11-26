@@ -49,7 +49,7 @@ import { UsersModule } from './users/users.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(JwtMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+        .apply(JwtMiddleware)
+        .forRoutes({path: '*', method: RequestMethod.ALL});
   }
 }

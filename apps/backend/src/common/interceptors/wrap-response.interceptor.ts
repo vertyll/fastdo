@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class WrapResponseInterceptor implements NestInterceptor {
   public intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler,
   ): Observable<any> {
     console.log('Before...');

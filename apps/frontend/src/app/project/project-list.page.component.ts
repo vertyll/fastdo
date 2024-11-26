@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { Project } from './models/Project';
 import { ListState, LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import { RouterLink } from '@angular/router';
@@ -12,7 +12,6 @@ import { ProjectsService } from './data-access/project.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
-import { HasRoleDirective } from 'src/app/core/directives/has-role.directive';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
 import { GetAllProjectsSearchParams } from './data-access/project.api.service';
@@ -23,23 +22,24 @@ import { ProjectNameValidator } from './validators/project-name.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
+import {HasRoleDirective} from "../core/directives/has-role.directive";
 
 @Component({
     selector: 'app-project-list-page',
-    imports: [
-        SubmitTextComponent,
-        RouterLink,
-        NgIconComponent,
-        CustomDatePipe,
-        ProjectsListFiltersComponent,
-        RemoveItemButtonComponent,
-        AutosizeTextareaComponent,
-        HasRoleDirective,
-        TranslateModule,
-        ErrorMessageComponent,
-        TitleComponent,
-        LinkComponent,
-    ],
+  imports: [
+    SubmitTextComponent,
+    RouterLink,
+    NgIconComponent,
+    CustomDatePipe,
+    ProjectsListFiltersComponent,
+    RemoveItemButtonComponent,
+    AutosizeTextareaComponent,
+    TranslateModule,
+    ErrorMessageComponent,
+    TitleComponent,
+    LinkComponent,
+    HasRoleDirective
+  ],
     template: `
     <div class="flex flex-col mb-6 gap-4">
       <app-title>{{ 'Project.title' | translate }}</app-title>
@@ -64,10 +64,11 @@ import { LinkComponent } from '../shared/components/atoms/link.component';
                 class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
               >
                 <header class="flex justify-end">
+                  <ng-template [appHasRole]="[role.Admin]">
                   <app-remove-item-button
-                    *appHasRole="[role.Admin]"
                     (confirm)="deleteProject(project.id)"
                   />
+                  </ng-template>
                 </header>
                 <section class="text-left flex-grow">
                   @if (project.editMode) {
@@ -101,13 +102,14 @@ import { LinkComponent } from '../shared/components/atoms/link.component';
                   }
                 </div>
                 <footer class="pt-2 flex justify-between items-center mt-auto">
+                  <ng-template [appHasRole]="[role.Admin]">
                   <button
-                    *appHasRole="[role.Admin]"
                     class="flex items-center"
                     (click)="toggleEditMode(project)"
                   >
                     <ng-icon name="heroPencilSquare" class="text-sm" />
                   </button>
+                  </ng-template>
                   <app-link [routerLink]="['/tasks', project.id]">
                     {{ 'Project.viewTasks' | translate }}
                   </app-link>
@@ -138,7 +140,7 @@ import { LinkComponent } from '../shared/components/atoms/link.component';
     ],
     viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })]
 })
-export class ProjectListPageComponent {
+export class ProjectListPageComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);

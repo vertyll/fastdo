@@ -37,7 +37,7 @@ export class SelectFilterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.translateOptions();
     this.langChangeSubscription = this.translateService.onLangChange.subscribe(
-      (event: LangChangeEvent) => {
+      (_event: LangChangeEvent) => {
         this.translateOptions();
       },
     );

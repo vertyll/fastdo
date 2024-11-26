@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class SnakeToCamelCaseInterceptor implements NestInterceptor {
   public intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler,
   ): Observable<any> {
     return next.handle().pipe(map(data => this.keysToCamel(data)));

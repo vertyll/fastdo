@@ -13,7 +13,6 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { AppConfigStateService } from '../config/config.state.service';
@@ -153,7 +152,6 @@ export class TaskListPageComponent implements OnInit {
   protected readonly $view = computed(
     () => this.configStateService.$value().tasksListView,
   );
-  protected readonly listStateValue = LIST_STATE_VALUE;
   protected showHowToUse: boolean = false;
   protected projectName!: string;
 

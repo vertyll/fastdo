@@ -8,7 +8,7 @@ import {
   inject,
   signal,
   input,
-  output,
+  output, OnChanges,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -96,7 +96,7 @@ import { FilterType } from '../../enums/filter.enum';
         </div>
         @if (filters().length > 4) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            @for (filter of filters().slice(4); let i = $index; track $index) {
+            @for (filter of filters().slice(4); let i = $index; track i) {
               <div [class.hidden]="!showAllFilters()">
                 @switch (filter.type) {
                   @case (FilterType.Text) {
@@ -213,7 +213,7 @@ import { FilterType } from '../../enums/filter.enum';
   ],
 })
 export class FilterGroupComponent<T extends Record<string, any>>
-  implements OnInit, AfterViewInit, OnDestroy
+  implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
   protected readonly translateService = inject(TranslateService);
 
@@ -287,10 +287,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   public clearFilters(): void {
     this.resetFormAndNavigate();
-  }
-
-  public toggleMobileFiltersVisibility(): void {
-    this.mobileFilterToggleHidden.set(!this.mobileFilterToggleHidden());
   }
 
   public toggleFilters(): void {

@@ -87,7 +87,7 @@ export class EditableMultiSelectComponent
   protected selectValue: any;
 
   private touched = false;
-  private onChange = (value: any) => {};
+  private onChange = (_value: any) => {};
   private onTouched = () => {};
 
   ngOnChanges(): void {

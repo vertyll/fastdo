@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   effect,
   inject,
   viewChild,
@@ -43,6 +42,7 @@ import { LabelComponent } from '../atoms/label.component';
     NgIconComponent,
     TextareaComponent,
     LabelComponent,
+    AdDirective,
   ],
   viewProviders: [provideIcons({ heroXMarkSolid })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -214,7 +214,6 @@ export class ModalComponent {
   protected readonly modalService = inject(ModalService);
 
   readonly adHost = viewChild(AdDirective);
-  readonly formElement = viewChild.required<ElementRef>('formElement');
 
   protected readonly ButtonRole = ButtonRole;
   protected readonly ModalInputType = ModalInputType;

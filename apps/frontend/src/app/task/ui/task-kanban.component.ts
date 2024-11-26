@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import {Component, input, OnChanges, OnInit} from '@angular/core';
 import { TasksListComponent } from './task-list.component';
 import { Task } from '../models/Task';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,7 +23,7 @@ import { TranslateModule } from '@ngx-translate/core';
     </section>
   `,
 })
-export class TasksKanbanViewComponent {
+export class TasksKanbanViewComponent implements OnInit, OnChanges {
   readonly tasks = input<Task[]>([]);
 
   protected todos: Task[] = [];
