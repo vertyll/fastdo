@@ -10,24 +10,25 @@ import {
   input,
   output, OnChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
-import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
-import { FilterMetadata, FilterValue } from '../../interfaces/filter.interface';
-import { FiltersService } from '../../services/filter.service';
-import { PlatformService } from '../../services/platform.service';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {Store} from '@ngxs/store';
+import {Subscription, debounceTime, firstValueFrom} from 'rxjs';
+import {EditableMultiSelectComponent} from '../molecules/editable-multi-select.component';
+import {FilterMetadata, FilterValue} from '../../interfaces/filter.interface';
+import {FiltersService} from '../../services/filter.service';
+import {PlatformService} from '../../services/platform.service';
 import {
   SavePartial,
   ClearPartial,
   ClearFilter,
 } from '../../store/filter/filter.actions';
-import { InputFieldComponent } from '../molecules/input-field.component';
-import { SelectFieldComponent } from '../molecules/select-field.component';
-import { CheckSelectComponent } from '../molecules/check-select.component';
-import { FilterType } from '../../enums/filter.enum';
+import {InputFieldComponent} from '../molecules/input-field.component';
+import {SelectFieldComponent} from '../molecules/select-field.component';
+import {CheckSelectComponent} from '../molecules/check-select.component';
+import {FilterType} from '../../enums/filter.enum';
+import {LocalStorageService} from "../../services/local-storage.service";
 
 @Component({
   selector: 'app-filter-group',
@@ -213,25 +214,12 @@ import { FilterType } from '../../enums/filter.enum';
   ],
 })
 export class FilterGroupComponent<T extends Record<string, any>>
-  implements OnInit, AfterViewInit, OnDestroy, OnChanges
-{
+  implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   protected readonly translateService = inject(TranslateService);
 
   readonly type = input.required<string>();
 
   readonly filters = input<FilterMetadata[]>([]);
-
-  ngOnChanges() {
-    this.updateFilters();
-  }
-
-  private updateFilters(): void {
-    if (this.form) {
-      this.form = this.filtersService.createForm(this.filters());
-      this.populateFiltersFromUrl();
-      this.initFilters();
-    }
-  }
 
   readonly filterChange = output<T>();
 
@@ -255,8 +243,13 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private readonly platformService = inject(PlatformService);
   private readonly filtersService = inject(FiltersService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly localStorageService = inject(LocalStorageService);
 
   protected readonly FilterType = FilterType;
+
+  private get storageKey(): string {
+    return `filters_${this.type()}_state`;
+  }
 
   constructor() {
     effect(() => {
@@ -267,6 +260,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
   ngOnInit(): void {
     this.initializeForm();
     this.subscribeToLanguageChanges();
+    this.loadFiltersFromStorage();
+  }
+
+  ngOnChanges() {
+    this.updateFilters();
   }
 
   ngAfterViewInit(): void {
@@ -297,6 +295,14 @@ export class FilterGroupComponent<T extends Record<string, any>>
     return this.form.get(name) as FormControl;
   }
 
+  private updateFilters(): void {
+    if (this.form) {
+      this.form = this.filtersService.createForm(this.filters());
+      this.populateFiltersFromUrl();
+      this.initFilters();
+    }
+  }
+
   private initializeForm(): void {
     this.form = this.filtersService.createForm(this.filters());
     this.populateFiltersFromUrl();
@@ -319,6 +325,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
         if (!isInInitialState) {
           this.handleNonInitialState(formValues, urlParamsNotInForm);
         } else {
+          this.localStorageService.remove(this.storageKey);
+
           this.handleInitialState(formValues, urlParamsNotInForm);
         }
       });
@@ -360,8 +368,10 @@ export class FilterGroupComponent<T extends Record<string, any>>
     formValues: Record<string, any>,
     urlParamsNotInForm: Record<string, any>,
   ): void {
+    this.localStorageService.set(this.storageKey, formValues);
+
     this.store.dispatch(
-      new SavePartial({ type: this.type(), value: formValues }),
+      new SavePartial({type: this.type(), value: formValues}),
     );
     this.updateUrlAndEmitChanges(formValues, urlParamsNotInForm);
   }
@@ -371,7 +381,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     urlParamsNotInForm: Record<string, any>,
   ): void {
     this.store.dispatch(
-      new ClearPartial({ type: this.type(), keys: Object.keys(formValues) }),
+      new ClearPartial({type: this.type(), keys: Object.keys(formValues)}),
     );
     this.updateUrlAndEmitChanges(
       this.filtersService.createDefaultFormValues(this.filters()),
@@ -386,7 +396,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.router
       .navigate(['.'], {
         relativeTo: this.route,
-        queryParams: { ...urlParamsNotInForm, ...formValues },
+        queryParams: {...urlParamsNotInForm, ...formValues},
         replaceUrl: true,
       })
       .then(() => {
@@ -439,7 +449,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private emitFormValueChange(formValue: Record<string, any>): void {
-    this.filterChange.emit({ ...this.form.value, ...formValue } as T);
+    this.filterChange.emit({...this.form.value, ...formValue} as T);
   }
 
   private equalsDefaultValues(
@@ -498,7 +508,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     }
 
     const options = filterMetadata?.options ?? [];
-    return { id: key, value: this.translateOptionValue(options, value) };
+    return {id: key, value: this.translateOptionValue(options, value)};
   }
 
   private getMultiSelectNames(
@@ -528,10 +538,12 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private resetFormAndNavigate(): void {
     this.filledFilters.set([]);
 
+    this.localStorageService.remove(this.storageKey);
+
     this.form.reset(
       this.filtersService.createDefaultFormValues(this.filters()),
     );
-    this.store.dispatch(new ClearFilter({ type: this.type() }));
+    this.store.dispatch(new ClearFilter({type: this.type()}));
     this.router
       .navigate(['.'], {
         relativeTo: this.route,
@@ -545,6 +557,14 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.formChangeSubscriptions.forEach((sub) => sub.unsubscribe());
     if (this.langChangeSubscription) {
       this.langChangeSubscription.unsubscribe();
+    }
+  }
+
+  private loadFiltersFromStorage(): void {
+    const savedFilters = this.localStorageService.get<Record<string, any>>(this.storageKey, {});
+    if (Object.keys(savedFilters).length > 0) {
+      this.form.patchValue(savedFilters, {emitEvent: false});
+      this.updateFilledFilters();
     }
   }
 }
