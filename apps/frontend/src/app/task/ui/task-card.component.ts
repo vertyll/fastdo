@@ -27,7 +27,7 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
   ],
   template: `
     <div
-      class="rounded-md border border-gray-300 shadow-sm p-4 block w-full"
+      class="rounded-md border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-300 p-4 block w-full"
       [class.bg-green-300]="task().isDone"
     >
       <button

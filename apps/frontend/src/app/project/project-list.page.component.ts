@@ -61,7 +61,7 @@ import {HasRoleDirective} from "../core/directives/has-role.directive";
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               @for (project of listState.results; track project.id) {
                 <div
-                  class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
+                  class="bg-white rounded-lg border border-gray-300 shadow-sm p-4 hover:shadow-md transition-shadow duration-300 flex flex-col h-full"
                 >
                   <header class="flex justify-end">
                     <ng-template [appHasRole]="[role.Admin]">
