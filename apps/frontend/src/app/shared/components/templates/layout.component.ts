@@ -21,18 +21,11 @@ import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
     InfoPanelComponent,
     ScrollToTopComponent,
   ],
-  styles: [
-    `
-      main {
-        @apply px-12;
-      }
-    `,
-  ],
   template: `
     <app-navbar [urgentCount]="urgentCount()" [projectCount]="projectCount()" />
-    <main class="grid pt-4">
+    <div class="grid px-4">
       <ng-content></ng-content>
-    </main>
+    </div>
     <app-info-panel
       [panelOpen]="panelOpen"
       [togglePanel]="togglePanel.bind(this)"

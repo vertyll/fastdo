@@ -122,7 +122,7 @@
     "currentTime": "Current time",
     "browserInfo": "Browser information"
   },
-  "Navbar": {
+  "Sidebar": {
     "tasks": "Tasks",
     "projects": "Projects",
     "urgent": "Urgent"

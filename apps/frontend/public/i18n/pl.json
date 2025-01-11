@@ -122,10 +122,15 @@
     "currentTime": "Aktualny czas",
     "browserInfo": "Informacje o przeglądarce"
   },
-  "Navbar": {
+  "Sidebar": {
     "tasks": "Zadania",
     "projects": "Projekty",
-    "urgent": "Pilne"
+    "urgentTasks": "Pilne zadania",
+    "dashboard": "Strona główna"
+  },
+  "Navbar": {
+    "dashboard": "Strona główna",
+    "todo": "TODO"
   },
   "RemoveItemButton": {
     "areYouSure": " Czy na pewno chcesz usunąć ten element?"

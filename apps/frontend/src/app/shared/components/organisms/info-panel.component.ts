@@ -21,7 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
     @if (isLoggedIn()()) {
       <div>
         <div
-          class="fixed bottom-0 right-0 bg-orange-500 hover:bg-orange-600 border border-black text-white p-2 cursor-pointer flex items-center justify-center z-10 w-10 h-10 user-select-none rounded-tl-md"
+          class="fixed bottom-0 right-0 bg-orange-500 hover:bg-orange-600 border border-black text-white p-2 cursor-pointer flex items-center justify-center z-10 w-10 h-10 user-select-none"
           (click)="togglePanel()()"
         >
           @if (!panelOpen()) {
@@ -31,7 +31,7 @@ import { TranslateModule } from '@ngx-translate/core';
           }
         </div>
         <div
-          class="fixed bottom-0 right-0 bg-gray-800 text-white p-4 transition-transform transform w-[calc(100%-40px)] h-10 rounded-tl-md duration-300 ease-in-out flex items-center gap-6 overflow-x-auto pr-8"
+          class="fixed bottom-0 right-0 bg-gray-800 text-white p-4 transition-transform transform w-[calc(100%)] h-10 duration-300 ease-in-out flex items-center gap-6 overflow-x-auto pr-8"
           [class.translate-x-0]="panelOpen()"
           [class.translate-x-full]="!panelOpen()"
         >
