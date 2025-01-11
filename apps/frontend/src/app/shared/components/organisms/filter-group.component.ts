@@ -171,7 +171,7 @@ import { FilterType } from '../../enums/filter.enum';
         }
       </form>
       @if (filledFilters().length) {
-        <div class="mt-4">
+        <div class="mb-4">
           <p class="text-sm text-gray-600">
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
             @for (filter of filledFilters(); track $index) {

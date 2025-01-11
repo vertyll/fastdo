@@ -36,7 +36,7 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
         (dblclick)="switchToEditMode()"
       >
         <header class="flex justify-end">
-          <app-remove-item-button (confirm)="delete.emit()" />
+          <app-remove-item-button (confirm)="delete.emit()"/>
         </header>
         <section class="text-left break-all">
           @if (editMode) {
@@ -78,17 +78,14 @@ import { LinkComponent } from '../../shared/components/atoms/link.component';
                 {{ 'Task.created' | translate }}
                 : {{ task().dateCreation | customDate }}</span
               >
-              <ng-icon name="heroCalendar" class="text-sm" />
+              <ng-icon name="heroCalendar" class="text-sm"/>
             </div>
-            @if (task().dateModification) {
-              <div class="flex items-center">
+            <div class="flex items-center">
                 <span class="pr-1">
-                  {{ 'Task.modified' | translate }}
-                  : {{ task().dateModification || '-' | customDate }}</span
+                    {{ 'Task.modified' | translate }} : {{ (task().dateModification | customDate) || '-' }}</span
                 >
-                <ng-icon name="heroCalendar" class="text-sm" />
-              </div>
-            }
+              <ng-icon name="heroCalendar" class="text-sm"/>
+            </div>
           </div>
         </footer>
       </button>

@@ -41,96 +41,94 @@ import {HasRoleDirective} from "../core/directives/has-role.directive";
     HasRoleDirective
   ],
     template: `
-    <div class="flex flex-col mb-6 gap-4">
-      <app-title>{{ 'Project.title' | translate }}</app-title>
-      <app-submit-text
-        placeholder="{{ 'Project.addPlaceholder' | translate }}"
-        [type]="'text'"
-        (submitText)="
+      <div class="flex flex-col mb-6 gap-4">
+        <app-title>{{ 'Project.title' | translate }}</app-title>
+        <app-submit-text
+          placeholder="{{ 'Project.addPlaceholder' | translate }}"
+          [type]="'text'"
+          (submitText)="
           listState.state === listStateValue.SUCCESS &&
             addProject($event, listState.results)
         "
-      />
-      <app-projects-list-filters
-        (filtersChange)="handleFiltersChange($event)"
-      />
-    </div>
-    <div>
-      @switch (listState.state) {
-        @case (listStateValue.SUCCESS) {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (project of listState.results; track project.id) {
-              <div
-                class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
-              >
-                <header class="flex justify-end">
-                  <ng-template [appHasRole]="[role.Admin]">
-                  <app-remove-item-button
-                    (confirm)="deleteProject(project.id)"
-                  />
-                  </ng-template>
-                </header>
-                <section class="text-left flex-grow">
-                  @if (project.editMode) {
-                    <app-autosize-textarea
-                      (keyup.escape)="project.editMode = false"
-                      (submitText)="updateProjectName(project.id, $event)"
-                      [value]="project.name"
-                    />
-                  } @else {
-                    <h3 class="text-xl font-semibold mb-2 break-all">
-                      {{ project.name }}
-                    </h3>
-                  }
-                </section>
-                <div class="flex flex-col text-gray-600 text-sm mt-2">
-                  <div class="flex items-center">
-                    <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-                    <span
+        />
+        <app-projects-list-filters
+          (filtersChange)="handleFiltersChange($event)"
+        />
+      </div>
+      <div>
+        @switch (listState.state) {
+          @case (listStateValue.SUCCESS) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (project of listState.results; track project.id) {
+                <div
+                  class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
+                >
+                  <header class="flex justify-end">
+                    <ng-template [appHasRole]="[role.Admin]">
+                      <app-remove-item-button
+                        (confirm)="deleteProject(project.id)"
+                      />
+                    </ng-template>
+                  </header>
+                  <section class="text-left flex-grow">
+                    @if (project.editMode) {
+                      <app-autosize-textarea
+                        (keyup.escape)="project.editMode = false"
+                        (submitText)="updateProjectName(project.id, $event)"
+                        [value]="project.name"
+                      />
+                    } @else {
+                      <h3 class="text-xl font-semibold mb-2 break-all">
+                        {{ project.name }}
+                      </h3>
+                    }
+                  </section>
+                  <div class="flex flex-col text-gray-600 text-sm mt-2">
+                    <div class="flex items-center">
+                      <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
+                      <span
                       >{{ 'Project.created' | translate }}:
-                      {{ project.dateCreation | customDate }}</span
-                    >
-                  </div>
-                  @if (project.dateModification) {
+                        {{ project.dateCreation | customDate }}</span
+                      >
+                    </div>
                     <div class="flex items-center mt-1">
                       <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
                       <span
-                        >{{ 'Project.modified' | translate }}:
-                        {{ project.dateModification | customDate }}</span
+                      >{{ 'Project.modified' | translate }}:
+                        {{ (project.dateModification | customDate) || '-' }}</span
                       >
                     </div>
-                  }
+                  </div>
+                  <footer class="pt-2 flex justify-between items-center mt-auto">
+                    <ng-template [appHasRole]="[role.Admin]">
+                      <button
+                        class="flex items-center"
+                        (click)="toggleEditMode(project)"
+                      >
+                        <ng-icon name="heroPencilSquare" class="text-sm"/>
+                      </button>
+                    </ng-template>
+                    <app-link [routerLink]="['/tasks', project.id]">
+                      {{ 'Project.viewTasks' | translate }}
+                    </app-link>
+                  </footer>
                 </div>
-                <footer class="pt-2 flex justify-between items-center mt-auto">
-                  <ng-template [appHasRole]="[role.Admin]">
-                  <button
-                    class="flex items-center"
-                    (click)="toggleEditMode(project)"
-                  >
-                    <ng-icon name="heroPencilSquare" class="text-sm" />
-                  </button>
-                  </ng-template>
-                  <app-link [routerLink]="['/tasks', project.id]">
-                    {{ 'Project.viewTasks' | translate }}
-                  </app-link>
-                </footer>
-              </div>
-            } @empty {
-              <p>
-                {{ 'Project.emptyList' | translate }}
-              </p>
-            }
-          </div>
+              } @empty {
+                <p>
+                  {{ 'Project.emptyList' | translate }}
+                </p>
+              }
+            </div>
+          }
+          @case (listStateValue.ERROR) {
+            <app-error-message [customMessage]="listState.error.message"/>
+          }
+          @case (listStateValue.LOADING) {
+            <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
+          }
         }
-        @case (listStateValue.ERROR) {
-          <app-error-message [customMessage]="listState.error.message" />
-        }
-        @case (listStateValue.LOADING) {
-          <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
-        }
-      }
-    </div>
-  `,
+      </div>
+    `,
     styles: [
         `
       .break-all {

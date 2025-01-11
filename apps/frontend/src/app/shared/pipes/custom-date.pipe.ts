@@ -1,5 +1,5 @@
-import { inject, Pipe, PipeTransform } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import {inject, Pipe, PipeTransform} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
 
 @Pipe({
   name: 'customDate',
@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class CustomDatePipe implements PipeTransform {
   private readonly translateService = inject(TranslateService);
 
-  public transform(value: number | string | Date): string {
+  public transform(value: number | string | Date | null): string {
     if (!value) return '';
 
     let date: Date;
@@ -18,7 +18,7 @@ export class CustomDatePipe implements PipeTransform {
     } else if (typeof value === 'number') {
       date = new Date(value);
     } else {
-      return '';
+      date = new Date(value);
     }
 
     if (isNaN(date.getTime())) {

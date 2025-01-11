@@ -62,7 +62,7 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
         </app-title>
       } @else {
         <app-title>
-          {{ 'Task.forProject' | translate }}
+          {{ 'Task.taskForProject' | translate }}
           : {{ projectName }}
         </app-title>
       }
@@ -106,7 +106,7 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
       (updateTasksListView)="configStateService.updateTasksListView($event)"
     />
 
-    <p>
+    <p class="mb-4">
       {{ 'Task.urgentTaskCount' | translate }}:
       <span class="text-orange-500 font-semibold">{{
         tasksStateService.urgentCount()
