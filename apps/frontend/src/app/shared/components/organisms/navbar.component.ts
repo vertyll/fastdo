@@ -188,6 +188,10 @@ import {filter} from "rxjs";
     }
 
     .main-content {
+      @apply pt-16;
+    }
+
+    .main-content.authenticated {
       @apply pt-16 md:ml-24;
     }
 
@@ -369,7 +373,7 @@ import {filter} from "rxjs";
       </div>
     }
 
-    <div class="main-content">
+    <div ngClass="main-content" [class.authenticated]="authService.isLoggedIn()">
       <div class="content-wrapper">
         <router-outlet></router-outlet>
       </div>
