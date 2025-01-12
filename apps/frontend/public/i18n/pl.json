@@ -38,7 +38,7 @@
     "q": "Nazwa"
   },
   "Auth": {
-    "login": "Login",
+    "login": "Logowanie",
     "email": "Email",
     "password": "Hasło",
     "loginButton": "Zaloguj",
