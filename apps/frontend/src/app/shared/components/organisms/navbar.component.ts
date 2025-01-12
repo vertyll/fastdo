@@ -8,7 +8,7 @@ import {
   heroExclamationCircle,
   heroSquares2x2,
   heroUserCircle,
-  heroBars4,
+  heroBars4, heroChevronDown, heroChevronUp,
 } from '@ng-icons/heroicons/outline';
 import {TranslateModule} from '@ngx-translate/core';
 import {CommonModule} from '@angular/common';
@@ -29,175 +29,183 @@ import {filter} from "rxjs";
       heroSquares2x2,
       heroUserCircle,
       heroBars4,
+      heroChevronDown,
+      heroChevronUp,
     }),
   ],
   animations: [
-    trigger('slideMenu', [
+    trigger('dropdown', [
       transition(':enter', [
-        style({transform: 'translateX(100%)'}),
-        animate('300ms ease-out', style({transform: 'translateX(0)'})),
+        style({opacity: 0, transform: 'translateY(-10px)'}),
+        animate('200ms ease-out', style({opacity: 1, transform: 'translateY(0)'})),
       ]),
       transition(':leave', [
-        style({transform: 'translateX(0)'}),
-        animate('300ms ease-in', style({transform: 'translateX(100%)'})),
+        style({opacity: 1, transform: 'translateY(0)'}),
+        animate('200ms ease-in', style({opacity: 0, transform: 'translateY(-10px)'})),
       ]),
     ]),
     trigger('overlay', [
       transition(':enter', [
         style({opacity: 0}),
-        animate('300ms ease-out', style({opacity: 1})),
+        animate('200ms ease-out', style({opacity: 1})),
       ]),
       transition(':leave', [
         style({opacity: 1}),
-        animate('300ms ease-in', style({opacity: 0})),
+        animate('200ms ease-in', style({opacity: 0})),
       ]),
     ]),
   ],
-  styles: [
-    `
-      .top-nav {
-        @apply h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6;
-      }
+  styles: [`
+    .top-nav {
+      @apply h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6;
+    }
 
-      .nav-content {
-        @apply h-full mx-auto flex items-center justify-between;
-      }
+    .nav-content {
+      @apply h-full mx-auto flex items-center justify-between;
+    }
 
-      .modules-container {
-        @apply hidden md:flex space-x-8;
-      }
+    .modules-container {
+      @apply hidden md:flex space-x-8;
+    }
 
-      .module-item {
-        @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-gray-50 transition-colors duration-200;
-      }
+    .module-item {
+      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-gray-50 transition-colors duration-200;
+    }
 
-      .module-item.active {
-        @apply bg-orange-50 text-orange-500;
-      }
+    .module-item.active {
+      @apply bg-orange-50 text-orange-500;
+    }
 
-      .auth-section {
-        @apply flex items-center space-x-4;
-      }
+    .auth-section {
+      @apply flex items-center space-x-4;
+    }
 
-      .auth-button {
-        @apply px-3 py-1.5 rounded-md transition-colors duration-200 text-sm font-medium;
-      }
+    .auth-button {
+      @apply px-3 py-1.5 rounded-md transition-colors duration-200 text-sm font-medium;
+    }
 
-      .login-button {
-        @apply text-orange-500 hover:bg-orange-50;
-      }
+    .login-button {
+      @apply text-orange-500 hover:bg-orange-50;
+    }
 
-      .register-button {
-        @apply bg-orange-500 text-white hover:bg-orange-600;
-      }
+    .register-button {
+      @apply bg-orange-500 text-white hover:bg-orange-600;
+    }
 
-      .logout-button {
-        @apply text-gray-600 hover:text-gray-800 hover:bg-gray-50 text-red-500 hover:text-red-600;
-      }
+    .logout-button {
+      @apply text-gray-600 hover:text-gray-800 hover:bg-gray-50 text-red-500 hover:text-red-600;
+    }
 
-      .hamburger-button {
-        @apply md:hidden flex items-center justify-center p-1 rounded-md hover:bg-gray-100 ml-auto;
-      }
+    .menu-button {
+      @apply md:hidden flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700 relative transition-colors duration-200;
+    }
 
-      .mobile-menu {
-        @apply fixed inset-0 bg-black/30 z-50 md:hidden;
-      }
+    .menu-button.active {
+      @apply bg-orange-50 text-orange-500;
+    }
 
-      .mobile-menu-content {
-        @apply fixed top-0 right-0 h-full w-64 bg-white shadow-lg;
-      }
+    .mobile-menu {
+      @apply fixed inset-0 z-50 md:hidden;
+    }
 
-      .mobile-module-item {
-        @apply flex items-center space-x-2 px-4 py-3 hover:bg-gray-50 transition-colors duration-200;
-      }
+    .mobile-menu-overlay {
+      @apply absolute inset-0 bg-black/30;
+    }
 
-      .mobile-module-item.active {
-        @apply bg-orange-50 text-orange-500;
-      }
+    .mobile-menu-content {
+      @apply absolute w-48 bg-white shadow-lg rounded-md py-1 border border-gray-200;
+      position: absolute;
+      top: 3.5rem;
+      left: 4rem;
+    }
 
-      .side-nav {
-        @apply w-24 bg-white fixed left-0 top-16 bottom-0 border-r border-gray-200 flex flex-col items-center py-4 md:py-8;
-      }
 
-      .section-item {
-        @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl mb-3 md:mb-4 relative transition-all duration-200 hover:bg-gray-50;
-      }
+    .mobile-module-item {
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 transition-colors duration-200 text-sm;
+    }
 
-      .section-item.active {
-        @apply bg-orange-50 text-orange-500;
-      }
+    .mobile-module-item.active {
+      @apply bg-orange-50 text-orange-500;
+    }
 
-      .section-icon {
-        @apply mb-1 md:mb-2;
-      }
+    .side-nav {
+      @apply hidden md:block w-24 bg-white fixed left-0 top-16 bottom-0 border-r border-gray-200;
+    }
 
-      .section-title {
-        @apply text-xs font-medium text-center;
-      }
+    .side-nav-content {
+      @apply h-full flex flex-col items-center justify-start py-8 space-y-4;
+    }
 
-      .counter-badge {
-        @apply absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1;
-      }
+    .mobile-sections {
+      @apply md:hidden bg-white border-b border-gray-200 mt-16;
+    }
 
-      .main-content {
-        @apply pt-16;
-      }
+    .mobile-section-item {
+      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors duration-200;
+    }
 
-      .main-content-with-sidebar {
-        @apply ml-24;
-      }
+    .mobile-section-item.active {
+      @apply bg-orange-50 text-orange-500;
+    }
 
-      .content-wrapper {
-        @apply mx-auto py-4 px-8;
-      }
+    .mobile-section-icon {
+      @apply text-base;
+    }
 
-      .public-nav {
-        @apply flex justify-between items-center h-full mx-auto px-4 md:px-8;
-      }
+    .mobile-section-text {
+      @apply text-sm;
+    }
 
-      .app-logo {
-        @apply text-lg md:text-xl font-bold text-gray-800;
-      }
+    .show-more-button {
+      @apply w-full flex items-center justify-center py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors duration-200;
+    }
 
-      @media (max-width: 768px) {
-        .side-nav {
-          @apply w-12;
-        }
+    .section-item {
+      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-gray-50;
+    }
 
-        .section-item {
-          @apply w-10 py-1.5 mb-2;
-        }
+    .section-item.active {
+      @apply bg-orange-50 text-orange-500;
+    }
 
-        .section-title {
-          @apply text-[10px];
-        }
+    .section-icon {
+      @apply mb-2;
+    }
 
-        .main-content {
-          @apply px-2;
-        }
+    .section-title {
+      @apply text-xs font-medium text-center;
+    }
 
-        .main-content-with-sidebar {
-          @apply ml-12;
-        }
-      }
-    `,
-  ],
+    .counter-badge {
+      @apply absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1;
+    }
+
+    .main-content {
+      @apply pt-16 md:ml-24;
+    }
+
+    .content-wrapper {
+      @apply mx-auto py-4 px-4 md:px-8;
+    }
+
+    .public-nav {
+      @apply flex justify-between items-center h-full mx-auto px-4 md:px-8;
+    }
+
+    .app-logo {
+      @apply text-lg md:text-xl font-bold text-gray-800;
+    }
+  `],
   template: `
     @if (!authService.isLoggedIn()) {
       <nav class="top-nav">
         <div class="public-nav">
           <span class="app-logo">{{ 'Basic.appName' | translate }}</span>
           <div class="auth-section">
-            <button
-              class="auth-button login-button"
-              (click)="router.navigate(['/login'])"
-            >
+            <button class="auth-button login-button" (click)="router.navigate(['/login'])">
               {{ 'Basic.login' | translate }}
             </button>
-            <button
-              class="auth-button register-button"
-              (click)="router.navigate(['/register'])"
-            >
+            <button class="auth-button register-button" (click)="router.navigate(['/register'])">
               {{ 'Basic.register' | translate }}
             </button>
           </div>
@@ -220,25 +228,24 @@ import {filter} from "rxjs";
           </div>
 
           <div class="flex items-center">
-            <button
-              (click)="logout()"
-              class="auth-button logout-button hidden md:block"
-            >
+            <button (click)="logout()" class="auth-button logout-button hidden md:block">
               {{ 'Basic.logout' | translate }}
             </button>
-            <button class="hamburger-button" (click)="toggleMenu()">
-              <ng-icon name="heroBars4" size="24"></ng-icon>
+            <button class="menu-button" (click)="toggleMenu()">
+              <span>Menu</span>
+              <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
             </button>
           </div>
         </div>
       </nav>
 
       @if (menuOpen) {
-        <div class="mobile-menu" (click)="closeMenu()" @overlay>
+        <div class="mobile-menu" (click)="closeMenu()">
+          <div class="mobile-menu-overlay" @overlay></div>
           <div
             class="mobile-menu-content"
             (click)="$event.stopPropagation()"
-            @slideMenu
+            @dropdown
           >
             @for (module of modules(); track module.id) {
               <div
@@ -246,15 +253,12 @@ import {filter} from "rxjs";
                 [class.active]="currentModule() === module.id"
                 (click)="selectModuleAndCloseMenu(module)"
               >
-                <ng-icon [name]="module.icon" size="24"></ng-icon>
-                <span class="font-medium">{{ module.title | translate }}</span>
+                <ng-icon [name]="module.icon" size="20"></ng-icon>
+                <span>{{ module.title | translate }}</span>
               </div>
             }
-            <div class="border-t border-gray-200 mt-2">
-              <button
-                (click)="logout()"
-                class="mobile-module-item text-red-500 hover:text-red-600 w-full text-left"
-              >
+            <div class="border-t border-gray-200 mt-1">
+              <button (click)="logout()" class="mobile-module-item text-red-500 hover:text-red-600 w-full text-left">
                 {{ 'Basic.logout' | translate }}
               </button>
             </div>
@@ -263,15 +267,37 @@ import {filter} from "rxjs";
       }
 
       <nav class="side-nav">
-        @for (section of sections(); track section.id) {
+        <div class="side-nav-content">
+          @for (section of sections(); track section.id) {
+            <div
+              class="section-item"
+              [class.active]="currentSection() === section.id"
+              (click)="selectSection(section)"
+            >
+              <div class="relative">
+                <ng-icon [name]="section.icon" size="24" class="section-icon"></ng-icon>
+                @if (section.id === 'urgent' && urgentCount() > 0) {
+                  <span class="counter-badge">{{ urgentCount() }}</span>
+                }
+                @if (section.id === 'projects' && projectCount() > 0) {
+                  <span class="counter-badge">{{ projectCount() }}</span>
+                }
+              </div>
+              <span class="section-title">{{ section.title | translate }}</span>
+            </div>
+          }
+        </div>
+      </nav>
+
+      <div class="mobile-sections">
+        @for (section of visibleSections(); track section.id) {
           <div
-            class="section-item"
+            class="mobile-section-item"
             [class.active]="currentSection() === section.id"
             (click)="selectSection(section)"
           >
             <div class="relative">
-              <ng-icon [name]="section.icon" size="24" class="section-icon">
-              </ng-icon>
+              <ng-icon [name]="section.icon" size="20" class="mobile-section-icon"></ng-icon>
               @if (section.id === 'urgent' && urgentCount() > 0) {
                 <span class="counter-badge">{{ urgentCount() }}</span>
               }
@@ -279,24 +305,31 @@ import {filter} from "rxjs";
                 <span class="counter-badge">{{ projectCount() }}</span>
               }
             </div>
-            <span class="section-title">
-              {{ section.title | translate }}
-            </span>
+            <span class="mobile-section-text">{{ section.title | translate }}</span>
           </div>
         }
-      </nav>
+
+        @if (sections().length > visibleItemsCount()) {
+          <button class="show-more-button" (click)="toggleShowAllSections()">
+            <ng-icon [name]="showAllSections ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+            <span
+              class="ml-1">{{ showAllSections ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate) }}</span>
+          </button>
+        }
+      </div>
     }
 
-    <div class="main-content" [class.main-content-with-sidebar]="authService.isLoggedIn()">
+    <div class="main-content">
       <div class="content-wrapper">
         <router-outlet></router-outlet>
       </div>
     </div>
-  `,
+  `
 })
 export class NavbarComponent implements OnInit {
   readonly urgentCount = input<number>(0);
   readonly projectCount = input<number>(0);
+  readonly visibleItemsCount = input<number>(2);
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
@@ -307,7 +340,10 @@ export class NavbarComponent implements OnInit {
   protected readonly sections = signal<NavSection[]>([]);
   protected readonly currentModule = signal<string>('');
   protected readonly currentSection = signal<string>('');
-  protected menuOpen = false;
+  protected menuOpen: boolean = false;
+  protected showAllSections: boolean = false;
+
+  protected readonly visibleSections = signal<NavSection[]>([]);
 
   constructor() {
     this.router.events.pipe(
@@ -317,7 +353,7 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     setTimeout(() => this.initializeNavigation(), 0);
   }
 
@@ -337,6 +373,7 @@ export class NavbarComponent implements OnInit {
 
     this.currentModule.set(activeModule.id);
     this.sections.set(activeModule.sections);
+    this.updateVisibleSections();
 
     const activeSection = activeModule.sections
       .slice()
@@ -353,10 +390,26 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  protected updateVisibleSections(): void {
+    const allSections = this.sections();
+    if (this.showAllSections || allSections.length <= this.visibleItemsCount()) {
+      this.visibleSections.set(allSections);
+    } else {
+      this.visibleSections.set(allSections.slice(0, this.visibleItemsCount()));
+    }
+  }
+
+  protected toggleShowAllSections(): void {
+    this.showAllSections = !this.showAllSections;
+    this.updateVisibleSections();
+  }
+
   protected selectModule(module: NavModule): void {
     if (module.id !== this.currentModule()) {
       this.currentModule.set(module.id);
       this.sections.set(module.sections);
+      this.showAllSections = false;
+      this.updateVisibleSections();
 
       const defaultSection = module.sections[0];
       this.currentSection.set(defaultSection.id);
