@@ -6,13 +6,6 @@ import {
   OnInit,
   input
 } from '@angular/core';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import {TasksListFiltersComponent} from './ui/task-list-filters.component';
 import {getAllTasksSearchParams} from './data-access/task-filters.adapter';
 import {GetAllTasksSearchParams} from './data-access/task.api.service';
@@ -38,9 +31,11 @@ import {AddTaskDto} from './dtos/add-task.dto';
 import {ButtonRole, ModalInputType} from '../shared/enums/modal.enum';
 import {TitleComponent} from '../shared/components/atoms/title.component';
 import {AppConfigStateService} from "../config/config.state.service";
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-task-list-page',
+  standalone: true,
   imports: [
     TasksListComponent,
     TasksListFiltersComponent,
@@ -49,6 +44,7 @@ import {AppConfigStateService} from "../config/config.state.service";
     TranslateModule,
     ButtonComponent,
     TitleComponent,
+    MatTooltipModule,
   ],
   template: `
     <div class="flex flex-col gap-4">
@@ -72,32 +68,14 @@ import {AppConfigStateService} from "../config/config.state.service";
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)"/>
     </div>
 
-    <div class="border border-gray-300 p-2 max-w-lg rounded-lg">
-      <button (click)="toggleHowToUse()">
-        <span class="font-semibold">
-          {{ 'Task.howToUse' | translate }}
-        </span>
-        @if (showHowToUse) {
-          <span>[-]</span>
-        } @else {
-          <span>[+]</span>
-        }
-      </button>
-
-      <div [@slideToggle]="showHowToUse ? 'open' : 'closed'">
-        @if (showHowToUse) {
-          <div>
-            <p>
-              {{ 'Task.changeNameDoc' | translate }}
-            </p>
-            <p>
-              {{ 'Task.changeNameWithoutSaveDoc' | translate }}
-            </p>
-            <p>
-              {{ 'Task.changeStatusDoc' | translate }}
-            </p>
-          </div>
-        }
+    <div class="border border-gray-300 p-2 w-36 rounded-lg flex items-center">
+      <div
+        class="flex items-center gap-1.5 cursor-help"
+        [matTooltip]="getHelpText()"
+        matTooltipPosition="right"
+      >
+        <span class="font-semibold">{{ 'Task.howToUse' | translate }}</span>
+        <span class="text-sm text-gray-400 hover:text-gray-600">[?]</span>
       </div>
     </div>
 
@@ -108,31 +86,22 @@ import {AppConfigStateService} from "../config/config.state.service";
 
     <p class="mb-4">
       {{ 'Task.urgentTaskCount' | translate }}:
-      <span class="text-orange-500 font-semibold">{{
-          tasksStateService.urgentCount()
-        }}</span>
+      <span class="text-orange-500 font-semibold">
+        {{ tasksStateService.urgentCount() }}
+      </span>
     </p>
 
     @if ($view() === 'list') {
-      <app-tasks-list class="block mt-4" [tasks]="tasksStateService.tasks()"/>
+      <app-tasks-list
+        class="block mt-4"
+        [tasks]="tasksStateService.tasks()"
+      />
     } @else {
-      <app-tasks-kanban-view [tasks]="tasksStateService.tasks()"/>
+      <app-tasks-kanban-view
+        [tasks]="tasksStateService.tasks()"
+      />
     }
-  `,
-  animations: [
-    trigger('slideToggle', [
-      state('closed', style({
-        height: '0px',
-        overflow: 'hidden',
-        opacity: 0,
-      })),
-      state('open', style({
-        height: '*',
-        opacity: 1,
-      })),
-      transition('closed <=> open', [animate('300ms ease-in-out')]),
-    ]),
-  ]
+  `
 })
 export class TaskListPageComponent implements OnInit {
   readonly projectId = input<string>();
@@ -152,7 +121,6 @@ export class TaskListPageComponent implements OnInit {
   protected readonly $view = computed(
     () => this.configStateService.$value().tasksListView,
   );
-  protected showHowToUse: boolean = false;
   protected projectName!: string;
 
   ngOnInit(): void {
@@ -161,6 +129,14 @@ export class TaskListPageComponent implements OnInit {
       this.configStateService.updateTasksListView(view);
     }
     this.initializeTaskList();
+  }
+
+  protected getHelpText(): string {
+    return [
+      this.translateService.instant('Task.changeNameDoc'),
+      this.translateService.instant('Task.changeNameWithoutSaveDoc'),
+      this.translateService.instant('Task.changeStatusDoc')
+    ].join('\n');
   }
 
   protected handleFiltersChange(filters: TasksListFiltersConfig): void {
@@ -284,9 +260,5 @@ export class TaskListPageComponent implements OnInit {
     } else {
       return this.tasksService.getAll(searchParams);
     }
-  }
-
-  protected toggleHowToUse(): void {
-    this.showHowToUse = !this.showHowToUse;
   }
 }
