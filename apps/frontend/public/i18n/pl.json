@@ -10,7 +10,9 @@
     "noItemsFound": "Nie znaleziono elementów",
     "enterText": "Wpisz tekst",
     "cancel": "Anuluj",
-    "save": "Zapisz"
+    "save": "Zapisz",
+    "showMore": "Pokaż więcej",
+    "showLess": "Pokaż mniej"
   },
   "Filters": {
     "search": "Szukaj",

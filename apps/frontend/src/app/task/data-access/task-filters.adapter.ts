@@ -1,5 +1,5 @@
 import { TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
-import { TASK_STATUS } from '../enums/task-status.enum';
+import { TASK_STATUS } from '../../shared/enums/task-status.enum';
 import { GetAllTasksSearchParams } from './task.api.service';
 
 export function getAllTasksSearchParams(

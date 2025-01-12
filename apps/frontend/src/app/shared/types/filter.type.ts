@@ -1,4 +1,4 @@
-import { TASK_STATUS, TaskStatus } from 'src/app/task/enums/task-status.enum';
+import { TASK_STATUS, TaskStatus } from '../enums/task-status.enum';
 import { FilterMetadata } from '../interfaces/filter.interface';
 import { FilterType } from '../enums/filter.enum';
 
