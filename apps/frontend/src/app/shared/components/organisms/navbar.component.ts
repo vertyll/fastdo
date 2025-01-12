@@ -1,4 +1,4 @@
-import {Component, inject, input, OnInit, signal} from '@angular/core';
+import {Component, inject, input, OnDestroy, OnInit, signal} from '@angular/core';
 import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import {NgIconComponent, provideIcons} from '@ng-icons/core';
 import {AuthService} from 'src/app/auth/data-access/auth.service';
@@ -10,10 +10,9 @@ import {
   heroUserCircle,
   heroBars4, heroChevronDown, heroChevronUp,
 } from '@ng-icons/heroicons/outline';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {CommonModule} from '@angular/common';
-import {NavModule, NavSection} from '../../interfaces/navbar.interface';
-import {modules} from 'src/app/config/modules';
+import {configNavModules, NavModule, NavSection} from '../../../config/config.nav.modules';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {filter} from "rxjs";
 
@@ -119,6 +118,14 @@ import {filter} from "rxjs";
       left: 4rem;
     }
 
+    .mobile-menu-content.language-menu {
+      @apply absolute w-24 bg-white shadow-lg rounded-md py-1 border border-gray-200;
+      position: absolute;
+      top: 3rem;
+      right: 0.5rem;
+      left: auto;
+      z-index: 60;
+    }
 
     .mobile-module-item {
       @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 transition-colors duration-200 text-sm;
@@ -195,6 +202,22 @@ import {filter} from "rxjs";
     .app-logo {
       @apply text-lg md:text-xl font-bold text-gray-800;
     }
+
+    .language-button {
+      @apply md:flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-50 text-sm font-medium text-gray-600 transition-colors duration-200 hidden relative;
+    }
+
+    .language-dropdown {
+      @apply absolute right-0 top-full mt-1 w-24 bg-white shadow-lg rounded-md py-1 border border-gray-200;
+    }
+
+    .language-option {
+      @apply px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer w-full text-left;
+    }
+
+    .language-option.active {
+      @apply text-orange-500 bg-orange-50;
+    }
   `],
   template: `
     @if (!authService.isLoggedIn()) {
@@ -227,14 +250,41 @@ import {filter} from "rxjs";
             }
           </div>
 
-          <div class="flex items-center">
-            <button (click)="logout()" class="auth-button logout-button hidden md:block">
-              {{ 'Basic.logout' | translate }}
-            </button>
+          <button (click)="logout()" class="auth-button logout-button hidden md:block">
+            {{ 'Basic.logout' | translate }}
+          </button>
+          <div class="flex md:hidden w-full justify-between">
             <button class="menu-button" (click)="toggleMenu()">
               <span>Menu</span>
               <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
             </button>
+            <div class="relative">
+              <button class="menu-button" (click)="toggleLanguageDropdown($event)">
+                <span>{{ getCurrentLanguage() }}</span>
+                <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+              </button>
+
+              @if (languageDropdownOpen) {
+                <div class="mobile-menu" (click)="closeLanguageDropdown()">
+                  <div class="mobile-menu-overlay" @overlay></div>
+                  <div
+                    class="mobile-menu-content language-menu"
+                    (click)="$event.stopPropagation()"
+                    @dropdown
+                  >
+                    @for (lang of languages; track lang) {
+                      <button
+                        class="mobile-module-item w-full text-left"
+                        [class.active]="getCurrentLanguage() === lang.toUpperCase()"
+                        (click)="selectLanguage(lang)"
+                      >
+                        {{ lang.toUpperCase() }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         </div>
       </nav>
@@ -326,24 +376,27 @@ import {filter} from "rxjs";
     </div>
   `
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   readonly urgentCount = input<number>(0);
   readonly projectCount = input<number>(0);
   readonly visibleItemsCount = input<number>(2);
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
+  protected readonly translateService = inject(TranslateService);
 
-  private readonly defaultModules = modules;
+  private readonly defaultModules: NavModule[] = configNavModules;
 
   protected readonly modules = signal<NavModule[]>(this.defaultModules);
   protected readonly sections = signal<NavSection[]>([]);
+  protected readonly visibleSections = signal<NavSection[]>([]);
   protected readonly currentModule = signal<string>('');
   protected readonly currentSection = signal<string>('');
+
   protected menuOpen: boolean = false;
   protected showAllSections: boolean = false;
-
-  protected readonly visibleSections = signal<NavSection[]>([]);
+  protected languageDropdownOpen: boolean = false;
+  protected readonly languages: string[] = ['pl', 'en'];
 
   constructor() {
     this.router.events.pipe(
@@ -357,37 +410,33 @@ export class NavbarComponent implements OnInit {
     setTimeout(() => this.initializeNavigation(), 0);
   }
 
-  private initializeNavigation(): void {
-    const currentUrl = this.router.url;
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.closeLanguageDropdown);
+  }
 
-    const activeModule = this.defaultModules
-      .slice()
-      .reverse()
-      .find(module => {
-        const moduleRoute = module.route === '/' ? '/' : module.route;
-        const sectionRoutes = module.sections.map(section => section.route);
+  protected getCurrentLanguage(): string {
+    return this.translateService.currentLang.toUpperCase();
+  }
 
-        return currentUrl.startsWith(moduleRoute) ||
-          sectionRoutes.some(route => currentUrl.startsWith(route === '/' ? '/' : route));
-      }) || this.defaultModules[0];
-
-    this.currentModule.set(activeModule.id);
-    this.sections.set(activeModule.sections);
-    this.updateVisibleSections();
-
-    const activeSection = activeModule.sections
-      .slice()
-      .reverse()
-      .find(section => {
-        const sectionRoute = section.route === '/' ? '/' : section.route;
-        return currentUrl.startsWith(sectionRoute);
+  protected toggleLanguageDropdown(event: Event): void {
+    event.stopPropagation();
+    this.languageDropdownOpen = !this.languageDropdownOpen;
+    if (this.languageDropdownOpen) {
+      setTimeout(() => {
+        document.addEventListener('click', this.closeLanguageDropdown);
       });
-
-    if (activeSection) {
-      this.currentSection.set(activeSection.id);
-    } else {
-      this.currentSection.set(activeModule.sections[0].id);
     }
+  }
+
+  protected closeLanguageDropdown = (): void => {
+    this.languageDropdownOpen = false;
+    document.removeEventListener('click', this.closeLanguageDropdown);
+  };
+
+  protected selectLanguage(lang: string): void {
+    this.translateService.use(lang);
+    this.languageDropdownOpen = false;
+    document.removeEventListener('click', this.closeLanguageDropdown);
   }
 
   protected updateVisibleSections(): void {
@@ -441,6 +490,39 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['/']).then();
     if (this.menuOpen) {
       this.closeMenu();
+    }
+  }
+
+  private initializeNavigation(): void {
+    const currentUrl = this.router.url;
+
+    const activeModule = this.defaultModules
+      .slice()
+      .reverse()
+      .find(module => {
+        const moduleRoute = module.route === '/' ? '/' : module.route;
+        const sectionRoutes = module.sections.map(section => section.route);
+
+        return currentUrl.startsWith(moduleRoute) ||
+          sectionRoutes.some(route => currentUrl.startsWith(route === '/' ? '/' : route));
+      }) || this.defaultModules[0];
+
+    this.currentModule.set(activeModule.id);
+    this.sections.set(activeModule.sections);
+    this.updateVisibleSections();
+
+    const activeSection = activeModule.sections
+      .slice()
+      .reverse()
+      .find(section => {
+        const sectionRoute = section.route === '/' ? '/' : section.route;
+        return currentUrl.startsWith(sectionRoute);
+      });
+
+    if (activeSection) {
+      this.currentSection.set(activeSection.id);
+    } else {
+      this.currentSection.set(activeModule.sections[0].id);
     }
   }
 }
