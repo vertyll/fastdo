@@ -18,13 +18,13 @@ export const configNavModules: NavModule[] = [
     id: 'dashboard',
     title: 'Navbar.dashboard',
     icon: 'heroSquares2x2',
-    route: '/',
+    route: '/dashboard',
     sections: [
       {
         id: 'dashboard',
         title: 'Sidebar.dashboard',
         icon: 'heroSquares2x2',
-        route: '/',
+        route: '/dashboard',
       },
     ],
   },

@@ -128,10 +128,10 @@
     "tasks": "Zadania",
     "projects": "Projekty",
     "urgentTasks": "Pilne zadania",
-    "dashboard": "Strona główna"
+    "dashboard": "Panel"
   },
   "Navbar": {
-    "dashboard": "Strona główna",
+    "dashboard": "Panel",
     "todo": "TODO"
   },
   "RemoveItemButton": {

@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-public-dashboard',
+  selector: 'app-dashboard',
   imports: [TranslateModule],
   template: ``,
 })
-export class PublicDashboardComponent {}
+export class DashboardComponent {}

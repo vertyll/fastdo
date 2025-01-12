@@ -227,7 +227,7 @@ import {filter} from "rxjs";
     @if (!authService.isLoggedIn()) {
       <nav class="top-nav">
         <div class="public-nav">
-          <span class="app-logo">{{ 'Basic.appName' | translate }}</span>
+          <span class="app-logo cursor-pointer" (click)="navigateToHomePage()">{{ 'Basic.appName' | translate }}</span>
           <div class="auth-section">
             <button class="auth-button login-button" (click)="router.navigate(['/login'])">
               {{ 'Basic.login' | translate }}
@@ -495,6 +495,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.menuOpen) {
       this.closeMenu();
     }
+  }
+
+  protected navigateToHomePage(): void {
+    this.router.navigate(['/']).then();
   }
 
   private initializeNavigation(): void {

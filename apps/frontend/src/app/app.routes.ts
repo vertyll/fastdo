@@ -2,16 +2,23 @@ import { Routes } from '@angular/router';
 import { ProjectListPageComponent } from './project/project-list.page.component';
 import { TaskListPageComponent } from './task/task-list.page.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { PublicDashboardComponent } from './dashboard/public-dashboard.component';
 import { LoginComponent } from './auth/login.component';
 import { RegisterComponent } from './auth/register.component';
+import {DashboardComponent} from "./dashboard/dashboard.component";
+import {HomeComponent} from "./home/home.component";
 
 export const routes: Routes = [
   {
     path: '',
-    component: PublicDashboardComponent,
-    title: 'Dashboard',
+    component: HomeComponent,
+    title: 'Home',
     pathMatch: 'full',
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    title: 'Dashboard',
+    canActivate: [AuthGuard]
   },
   {
     path: 'login',
