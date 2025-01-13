@@ -1,9 +1,8 @@
-
 import {
   Component,
   OnChanges,
   input,
-  output
+  output, ViewEncapsulation
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -11,13 +10,14 @@ import {
   NG_VALUE_ACCESSOR,
   Validators,
 } from '@angular/forms';
-import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
-import { TranslateModule } from '@ngx-translate/core';
-import { LabelComponent } from '../atoms/label.component';
+import {NgSelectComponent, NgSelectModule} from '@ng-select/ng-select';
+import {TranslateModule} from '@ngx-translate/core';
+import {LabelComponent} from '../atoms/label.component';
 
 @Component({
-    selector: 'app-editable-multi-select',
-    template: `
+  selector: 'app-editable-multi-select',
+  encapsulation: ViewEncapsulation.None,
+  template: `
     <div class="relative">
       <ng-select
         [multiple]="multiple()"
@@ -45,8 +45,8 @@ import { LabelComponent } from '../atoms/label.component';
       <app-label [forId]="id()" [isField]="true">{{ placeholder() }}</app-label>
     </div>
   `,
-    styles: `
-    ::ng-deep ng-dropdown-panel {
+  styles: `
+    .ng-dropdown-panel {
       background-color: white;
       border: 1px solid #d1d5db;
       border-radius: 0.375rem;
@@ -56,24 +56,23 @@ import { LabelComponent } from '../atoms/label.component';
       left: 0;
     }
   `,
-    imports: [
-        NgSelectComponent,
-        TranslateModule,
-        FormsModule,
-        NgSelectModule,
-        LabelComponent
-    ],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            multi: true,
-            useExisting: EditableMultiSelectComponent,
-        },
-    ]
+  imports: [
+    NgSelectComponent,
+    TranslateModule,
+    FormsModule,
+    NgSelectModule,
+    LabelComponent
+  ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: EditableMultiSelectComponent,
+    },
+  ]
 })
 export class EditableMultiSelectComponent
-  implements ControlValueAccessor, OnChanges, Validators
-{
+  implements ControlValueAccessor, OnChanges, Validators {
   readonly dataArray = input.required<any[]>();
   readonly maxSelectedItems = input.required<number>();
   readonly multiple = input<boolean>(true);
@@ -87,12 +86,14 @@ export class EditableMultiSelectComponent
   protected selectValue: any;
 
   private touched = false;
-  private onChange = (_value: any) => {};
-  private onTouched = () => {};
+  private onChange = (_value: any) => {
+  };
+  private onTouched = () => {
+  };
 
   ngOnChanges(): void {
     this.dataArray()?.map((c, i) => {
-      return { id: i, name: c };
+      return {id: i, name: c};
     });
   }
 
@@ -119,7 +120,7 @@ export class EditableMultiSelectComponent
   }
 
   protected addTag = (term: string) => {
-    return { label: term };
+    return {label: term};
   };
 
   private markAsTouched() {

@@ -6,6 +6,7 @@ import { RolesService } from '../roles/roles.service';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import {ValidatedUser} from "../common/interfaces/auth.interface";
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
     private readonly rolesService: RolesService,
   ) {}
 
-  public async validateUser(email: string, password: string): Promise<any> {
+  public async validateUser(email: string, password: string): Promise<ValidatedUser | null> {
     const user = await this.usersService.findByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

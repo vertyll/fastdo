@@ -1,12 +1,12 @@
-import { Component, input, signal } from '@angular/core';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {Component, input, signal} from '@angular/core';
+import {NgIconComponent, provideIcons} from '@ng-icons/core';
 import {
   heroArrowLeft,
   heroArrowRight,
   heroEllipsisHorizontal,
   heroChevronUp
 } from '@ng-icons/heroicons/outline';
-import { TranslateModule } from '@ngx-translate/core';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-info-panel',

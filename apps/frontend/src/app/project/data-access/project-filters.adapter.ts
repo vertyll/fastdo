@@ -1,10 +1,10 @@
-import { ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
-import { GetAllProjectsSearchParams } from './project.api.service';
+import {ProjectListFiltersConfig} from 'src/app/shared/types/filter.type';
+import {GetAllProjectsSearchParams} from './project.api.service';
 
 export function getAllProjectsSearchParams(
   formValue: ProjectListFiltersConfig,
 ): GetAllProjectsSearchParams {
-  let searchParams: GetAllProjectsSearchParams = {
+  return {
     q: formValue.q || '',
     sortBy:
       (formValue.sortBy as 'dateCreation' | 'name' | undefined) ||
@@ -15,6 +15,4 @@ export function getAllProjectsSearchParams(
     updatedFrom: formValue.updatedFrom,
     updatedTo: formValue.updatedTo,
   };
-
-  return searchParams;
 }

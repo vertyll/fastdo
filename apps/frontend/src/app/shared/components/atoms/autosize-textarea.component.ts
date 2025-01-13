@@ -1,8 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import {Component, input, output} from '@angular/core';
 
 @Component({
   selector: 'app-autosize-textarea',
-  standalone: true,
   template: `
     <textarea
       #textarea

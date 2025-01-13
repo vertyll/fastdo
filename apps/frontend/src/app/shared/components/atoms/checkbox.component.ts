@@ -1,10 +1,10 @@
-import { Component, input, output } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import {Component, input, output} from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
-    selector: 'app-checkbox',
-    imports: [ReactiveFormsModule],
-    template: `
+  selector: 'app-checkbox',
+  imports: [ReactiveFormsModule],
+  template: `
     <input
       type="checkbox"
       [id]="id()"
@@ -25,11 +25,11 @@ export class CheckboxComponent {
   readonly change = output<{
     value: any;
     checked: boolean;
-}>();
+  }>();
 
   protected onChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.control().setValue(target.checked);
-    this.change.emit({ value: target.value, checked: target.checked });
+    this.change.emit({value: target.value, checked: target.checked});
   }
 }

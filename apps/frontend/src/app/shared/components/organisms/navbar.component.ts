@@ -18,7 +18,6 @@ import {filter} from "rxjs";
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
   imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet],
   viewProviders: [
     provideIcons({
@@ -128,7 +127,7 @@ import {filter} from "rxjs";
     }
 
     .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 transition-colors duration-200 text-sm;
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 transition-colors duration-200 text-sm cursor-pointer;
     }
 
     .mobile-module-item.active {

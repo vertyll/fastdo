@@ -1,12 +1,12 @@
-import { Component, input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { InputType } from '../../types/components.type';
-import { CommonModule } from '@angular/common';
+import {Component, input} from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {InputType} from '../../types/components.type';
+import {CommonModule} from '@angular/common';
 
 @Component({
-    selector: 'app-input',
-    imports: [ReactiveFormsModule, CommonModule],
-    template: `
+  selector: 'app-input',
+  imports: [ReactiveFormsModule, CommonModule],
+  template: `
     <input
       [type]="type()"
       [formControl]="control()"

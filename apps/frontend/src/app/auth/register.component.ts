@@ -9,13 +9,13 @@ import { Router } from '@angular/router';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { AuthService } from './data-access/auth.service';
-import { passwordValidator } from './validators/password.validator';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { LinkType } from '../shared/enums/link.enum';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
+import {PasswordValidator} from "./validators/password.validator";
 
 @Component({
     selector: 'app-register',
@@ -99,6 +99,7 @@ export class RegisterComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslateService);
+  private readonly passwordValidator = inject(PasswordValidator);
 
   protected readonly registerForm: FormGroup;
   protected readonly LinkType = LinkType;
@@ -110,7 +111,7 @@ export class RegisterComponent implements OnInit {
   constructor() {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, passwordValidator]],
+      password: ['', [Validators.required, this.passwordValidator.validatePassword]],
       confirmPassword: ['', [Validators.required]],
     });
   }

@@ -11,7 +11,6 @@ import { Role } from 'src/app/shared/enums/role.enum';
 
 @Directive({
   selector: '[appHasRole]',
-  standalone: true,
 })
 export class HasRoleDirective implements OnInit {
   readonly allowedRoles = input.required<Role[] | Role>({ alias: "appHasRole" });

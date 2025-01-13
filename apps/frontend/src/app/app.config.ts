@@ -14,7 +14,6 @@ import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatCommonModule } from '@angular/material/core';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideStore } from '@ngxs/store';
@@ -33,7 +32,6 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     importProvidersFrom(
       BrowserAnimationsModule,
-      MatCommonModule,
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,

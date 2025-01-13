@@ -3,7 +3,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'filledFilter',
   pure: false,
-  standalone: true,
 })
 export class FilledFilterPipe implements PipeTransform {
   public transform(node: any, ..._args: unknown[]): any {

@@ -11,21 +11,21 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ModalService } from '../../services/modal.service';
-import { SpinnerComponent } from '../atoms/spinner.component';
-import { ErrorMessageComponent } from '../atoms/error.message.component';
-import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
-import { CheckboxComponent } from '../atoms/checkbox.component';
-import { InputComponent } from '../atoms/input.component';
-import { ButtonComponent } from '../atoms/button.component';
-import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { AdDirective } from 'src/app/core/directives/ad.directive';
-import { TextareaComponent } from '../atoms/textarea-component';
-import { ButtonRole, ModalInputType } from '../../enums/modal.enum';
-import { ModalConfig } from '../../interfaces/modal.interface';
-import { LabelComponent } from '../atoms/label.component';
+import {CommonModule} from '@angular/common';
+import {ModalService} from '../../services/modal.service';
+import {SpinnerComponent} from '../atoms/spinner.component';
+import {ErrorMessageComponent} from '../atoms/error.message.component';
+import {InputInvalidPipe} from '../../pipes/input-invalid.pipe';
+import {CheckboxComponent} from '../atoms/checkbox.component';
+import {InputComponent} from '../atoms/input.component';
+import {ButtonComponent} from '../atoms/button.component';
+import {heroXMarkSolid} from '@ng-icons/heroicons/solid';
+import {NgIconComponent, provideIcons} from '@ng-icons/core';
+import {AdDirective} from 'src/app/core/directives/ad.directive';
+import {TextareaComponent} from '../atoms/textarea-component';
+import {ButtonRole, ModalInputType} from '../../enums/modal.enum';
+import {ModalConfig} from '../../interfaces/modal.interface';
+import {LabelComponent} from '../atoms/label.component';
 
 @Component({
   selector: 'app-modal',
@@ -44,7 +44,7 @@ import { LabelComponent } from '../atoms/label.component';
     LabelComponent,
     AdDirective,
   ],
-  viewProviders: [provideIcons({ heroXMarkSolid })],
+  viewProviders: [provideIcons({heroXMarkSolid})],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
@@ -73,7 +73,7 @@ import { LabelComponent } from '../atoms/label.component';
         <div class="px-6 py-4">
           @if (modalService.modal().options?.loading) {
             <div class="flex justify-center py-4">
-              <app-spinner />
+              <app-spinner/>
             </div>
           }
 
@@ -88,10 +88,8 @@ import { LabelComponent } from '../atoms/label.component';
 
           @if (modalService.modal().options?.inputs?.length && form) {
             <form [formGroup]="form" (ngSubmit)="saveModal()" #formElement>
-              @for (
-                input of modalService.modal().options?.inputs;
-                track input.id
-              ) {
+              @for (input of modalService.modal().options?.inputs;
+                track input.id) {
                 @if (input.message) {
                   <p [innerHTML]="input.message" class="mt-3 mb-2"></p>
                 }
@@ -155,9 +153,9 @@ import { LabelComponent } from '../atoms/label.component';
                     }
                   </div>
 
-                  <app-error-message [input]="form.get(input.id)" />
+                  <app-error-message [input]="form.get(input.id)"/>
                   @if (input.error) {
-                    <app-error-message [customMessage]="input.error" />
+                    <app-error-message [customMessage]="input.error"/>
                   }
                 </div>
               }
@@ -172,10 +170,8 @@ import { LabelComponent } from '../atoms/label.component';
         </div>
 
         <div class="px-6 py-4 border-t flex justify-end space-x-2">
-          @for (
-            button of modalService.modal().options?.buttons;
-            track button.role
-          ) {
+          @for (button of modalService.modal().options?.buttons;
+            track button.role) {
             @switch (button.role) {
               @case (ButtonRole.Cancel) {
                 <app-button
@@ -219,13 +215,15 @@ export class ModalComponent {
   protected readonly ModalInputType = ModalInputType;
   public form: FormGroup = new FormGroup({});
 
-  private modalEffect = effect(() => {
-    const modalConfig = this.modalService.modal();
-    if (modalConfig) {
-      this.initializeForm(modalConfig);
-      this.initializeDynamicComponents(modalConfig);
-    }
-  });
+  constructor() {
+    effect(() => {
+      const modalConfig = this.modalService.modal();
+      if (modalConfig) {
+        this.initializeForm(modalConfig);
+        this.initializeDynamicComponents(modalConfig);
+      }
+    });
+  }
 
   private initializeForm(modalConfig: ModalConfig): void {
     if (

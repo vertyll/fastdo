@@ -1,14 +1,13 @@
-
-import { Component, OnDestroy, OnInit, HostListener, inject, input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { LabelComponent } from '../atoms/label.component';
+import {Component, OnDestroy, OnInit, HostListener, inject, input} from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {LangChangeEvent, TranslateService} from '@ngx-translate/core';
+import {Subscription} from 'rxjs';
+import {LabelComponent} from '../atoms/label.component';
 
 @Component({
-    selector: 'app-check-select',
-    imports: [ReactiveFormsModule, LabelComponent],
-    template: `
+  selector: 'app-check-select',
+  imports: [ReactiveFormsModule, LabelComponent],
+  template: `
     <div class="relative">
       <div
         [id]="id()"
@@ -42,13 +41,13 @@ import { LabelComponent } from '../atoms/label.component';
       <app-label [forId]="id()" [isField]="true">{{ label() }}</app-label>
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       .form-check-input {
         margin-right: 0.5rem;
       }
     `,
-    ]
+  ]
 })
 export class CheckSelectComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
@@ -59,7 +58,7 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   readonly options = input<Array<{
     value: any;
     label: string;
-}>>([]);
+  }>>([]);
 
   protected translatedOptions: Array<{ value: any; label: string }> = [];
   protected isDropdownOpen = false;

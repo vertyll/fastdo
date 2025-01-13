@@ -15,12 +15,6 @@ export type GetAllProjectsSearchParams = {
   updatedTo?: string;
 };
 
-export type LoadingState = {
-  idle: boolean;
-  loading: boolean;
-  error: FetchingError | null;
-};
-
 @Injectable({
   providedIn: 'root',
 })

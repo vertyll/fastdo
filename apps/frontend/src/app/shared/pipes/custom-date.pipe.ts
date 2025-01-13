@@ -3,7 +3,6 @@ import {TranslateService} from '@ngx-translate/core';
 
 @Pipe({
   name: 'customDate',
-  standalone: true,
 })
 export class CustomDatePipe implements PipeTransform {
   private readonly translateService = inject(TranslateService);

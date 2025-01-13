@@ -35,7 +35,6 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-task-list-page',
-  standalone: true,
   imports: [
     TasksListComponent,
     TasksListFiltersComponent,

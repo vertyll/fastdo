@@ -12,12 +12,6 @@ export type TaskUpdatePayload = {
   isUrgent?: boolean;
 };
 
-export type LoadingState = {
-  idle: boolean;
-  loading: boolean;
-  error: FetchingError | null;
-};
-
 export type GetAllTasksSearchParams = {
   q: string;
   sortBy: 'dateCreation';

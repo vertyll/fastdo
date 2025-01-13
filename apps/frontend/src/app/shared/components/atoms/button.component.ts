@@ -1,11 +1,10 @@
-
-import { Component, input, output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import {Component, input, output} from '@angular/core';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-button',
-    imports: [TranslateModule],
-    template: `
+  selector: 'app-button',
+  imports: [TranslateModule],
+  template: `
     <button
       [type]="type()"
       (click)="onClick.emit($event)"

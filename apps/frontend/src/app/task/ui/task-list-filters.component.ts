@@ -22,7 +22,7 @@ export class TasksListFiltersComponent {
 
   protected filters = TASKS_LIST_FILTERS;
 
-  protected onFiltersChange(filters: TasksListFiltersConfig): void {
-    this.filtersChange.emit(filters);
+  protected onFiltersChange(filters: Record<string, any>): void {
+    this.filtersChange.emit(filters as TasksListFiltersConfig);
   }
 }

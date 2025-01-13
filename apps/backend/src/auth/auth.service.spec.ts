@@ -53,7 +53,7 @@ describe('AuthService', () => {
       password: hashedPassword,
       isActive: true,
       dateCreation: new Date(),
-      dateModyfication: null,
+      dateModification: null,
       userRoles: [],
     };
 

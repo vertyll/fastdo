@@ -1,6 +1,6 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import {Injectable, NestMiddleware, UnauthorizedException} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
+import {FastifyReply, FastifyRequest} from 'fastify';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -21,8 +21,7 @@ export class JwtMiddleware implements NestMiddleware {
 
     if (token) {
       try {
-        const payload = this.verifyToken(token);
-        (req as any).user = payload;
+        (req as any).user = this.verifyToken(token);
       } catch (e) {
         res.statusCode = 401;
         res.end(
