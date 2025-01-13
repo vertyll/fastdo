@@ -1,6 +1,6 @@
-import {Injectable, NestMiddleware, UnauthorizedException} from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
-import {FastifyReply, FastifyRequest} from 'fastify';
+import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 declare module 'fastify' {
   interface FastifyRequest {
