@@ -36,7 +36,7 @@ import { TranslateModule } from '@ngx-translate/core';
               <span class="text-green-500 ml-2 break-all">
                 @if (userRolesString().length > maxVisibleChars) {
                   <button
-                    class="mr-1 p-1 hover:bg-gray-700 rounded"
+                    class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
                     (click)="toggleSection('')"
                   >
                     <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
@@ -49,7 +49,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ userRolesString() }}
               </span>
               @if (userRolesString().length > maxVisibleChars) {
-                <button class="ml-2" (click)="toggleSection('roles')">
+                <button class="ml-2 text-white hover:bg-gray-700 rounded" (click)="toggleSection('roles')">
                   <ng-icon name="heroEllipsisHorizontal" class="text-sm"></ng-icon>
                 </button>
               }
@@ -62,7 +62,7 @@ import { TranslateModule } from '@ngx-translate/core';
               <span class="text-green-500 ml-2 break-all">
                 @if (currentTime().length > maxVisibleChars) {
                   <button
-                    class="mr-1 p-1 hover:bg-gray-700 rounded"
+                    class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
                     (click)="toggleSection('')"
                   >
                     <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
@@ -75,7 +75,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ currentTime() }}
               </span>
               @if (currentTime().length > maxVisibleChars) {
-                <button class="ml-2" (click)="toggleSection('time')">
+                <button class="ml-2 text-white hover:bg-gray-700 rounded" (click)="toggleSection('time')">
                   <ng-icon name="heroEllipsisHorizontal" class="text-sm"></ng-icon>
                 </button>
               }
@@ -88,7 +88,7 @@ import { TranslateModule } from '@ngx-translate/core';
               <span class="text-green-500 ml-2 break-all">
                 @if (browserInfo().length > maxVisibleChars) {
                   <button
-                    class="mr-1 p-1 hover:bg-gray-700 rounded"
+                    class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
                     (click)="toggleSection('')"
                   >
                     <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
