@@ -17,6 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { NavModule, NavSection, configNavModules } from '../../../config/config.nav.modules';
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
   selector: 'app-navbar',
@@ -410,7 +411,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
-  protected readonly translateService = inject(TranslateService);
+  private readonly translateService = inject(TranslateService);
+  private readonly localStorageService = inject(LocalStorageService);
 
   private readonly defaultModules: NavModule[] = configNavModules;
 
@@ -462,6 +464,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
+    this.localStorageService.set('selectedLanguage', lang);
     this.languageDropdownOpen = false;
     document.removeEventListener('click', this.closeLanguageDropdown);
   }
