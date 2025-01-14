@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {ILocalStorage} from "../interfaces/local-storage.interface";
+import { Injectable } from '@angular/core';
+import { ILocalStorage } from '../interfaces/local-storage.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LocalStorageService implements ILocalStorage {
   get<T>(key: string, defaultValue: T): T {

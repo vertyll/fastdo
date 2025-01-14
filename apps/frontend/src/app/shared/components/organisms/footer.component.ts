@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-footer',
-    imports: [TranslateModule],
-    styles: [
-        `
+  selector: 'app-footer',
+  imports: [TranslateModule],
+  styles: [
+    `
       .page-container {
         @apply flex flex-col min-h-screen;
       }
@@ -18,15 +18,15 @@ import { TranslateModule } from '@ngx-translate/core';
         @apply bg-gray-800 text-white p-4 text-center mt-auto;
       }
     `,
-    ],
-    template: `
+  ],
+  template: `
     <div class="page-container">
       <div class="content">
         <ng-content></ng-content>
       </div>
       <footer>&copy; {{ currentYear }} {{ 'Footer.text' | translate }}</footer>
     </div>
-  `
+  `,
 })
 export class FooterComponent {
   protected currentYear: number = new Date().getFullYear();

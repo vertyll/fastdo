@@ -1,12 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import {
-  GetAllTasksSearchParams,
-  TaskUpdatePayload,
-  TasksApiService,
-} from './task.api.service';
 import { Observable, tap } from 'rxjs';
-import { TasksStateService } from './task.state.service';
 import { AddTaskDto } from '../dtos/add-task.dto';
+import { GetAllTasksSearchParams, TaskUpdatePayload, TasksApiService } from './task.api.service';
+import { TasksStateService } from './task.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +13,7 @@ export class TasksService {
 
   public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
-      tap((response) => {
+      tap(response => {
         if (response.body) {
           this.state.setTaskList(response.body);
         }
@@ -30,7 +26,7 @@ export class TasksService {
     searchParams: GetAllTasksSearchParams,
   ): Observable<any> {
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
-      tap((response) => {
+      tap(response => {
         if (response.body) {
           this.state.setTaskList(response.body);
         }
@@ -48,7 +44,7 @@ export class TasksService {
 
   public update(taskId: number, payload: TaskUpdatePayload): Observable<any> {
     return this.httpService.update(taskId, payload).pipe(
-      tap((task) => {
+      tap(task => {
         this.state.updateTask(task);
       }),
     );
@@ -56,7 +52,7 @@ export class TasksService {
 
   public add(data: AddTaskDto): Observable<any> {
     return this.httpService.add(data).pipe(
-      tap((task) => {
+      tap(task => {
         this.state.addTask(task);
       }),
     );

@@ -1,13 +1,12 @@
 import { Component, HostListener } from '@angular/core';
-import { heroChevronUp } from '@ng-icons/heroicons/outline';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-
+import { heroChevronUp } from '@ng-icons/heroicons/outline';
 
 @Component({
-    selector: 'app-scroll-to-top',
-    imports: [NgIconComponent],
-    providers: [provideIcons({ heroChevronUp })],
-    template: `
+  selector: 'app-scroll-to-top',
+  imports: [NgIconComponent],
+  providers: [provideIcons({ heroChevronUp })],
+  template: `
     @if (isVisible) {
       <button
         (click)="scrollToTop()"
@@ -18,8 +17,8 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
       </button>
     }
   `,
-    styles: [
-        `
+  styles: [
+    `
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -32,7 +31,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
         animation: fadeIn 0.3s ease-in-out;
       }
     `,
-    ]
+  ],
 })
 export class ScrollToTopComponent {
   protected isVisible: boolean = false;

@@ -1,9 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import {
-  GetAllProjectsSearchParams,
-  ProjectsApiService,
-} from './project.api.service';
+import { GetAllProjectsSearchParams, ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
 
 @Injectable({
@@ -15,7 +12,7 @@ export class ProjectsService {
 
   public getAll(searchParams?: GetAllProjectsSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
-      tap((response) => {
+      tap(response => {
         if (response.body) {
           this.state.setProjectList(response.body);
         }
@@ -33,7 +30,7 @@ export class ProjectsService {
 
   public update(projectId: number, name: string): Observable<any> {
     return this.httpService.update(projectId, name).pipe(
-      tap((project) => {
+      tap(project => {
         this.state.updateProject(project);
       }),
     );
@@ -41,7 +38,7 @@ export class ProjectsService {
 
   public add(name: string): Observable<any> {
     return this.httpService.add(name).pipe(
-      tap((project) => {
+      tap(project => {
         this.state.addProject(project);
       }),
     );

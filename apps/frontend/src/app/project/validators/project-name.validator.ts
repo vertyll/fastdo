@@ -1,5 +1,5 @@
-import {Injectable, inject} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
+import { Injectable, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +17,6 @@ export class ProjectNameValidator {
         error: this.translateService.instant('Project.projectNameMinLength'),
       };
     }
-    return {isValid: true};
+    return { isValid: true };
   }
 }

@@ -6,7 +6,7 @@ import { FilterMetadata } from '../interfaces/filter.interface';
 export class FiltersService {
   public createForm(filters: FilterMetadata[]): FormGroup {
     const group: any = {};
-    filters.forEach((filter) => {
+    filters.forEach(filter => {
       switch (filter.type) {
         case 'editableMultiSelect':
           group[filter.formControlName] = new FormControl(
@@ -24,10 +24,9 @@ export class FiltersService {
 
   public createDefaultFormValues(filters: FilterMetadata[]): any {
     const values: any = {};
-    filters.forEach((filter) => {
-      values[filter.formControlName] =
-        filter.defaultValue ||
-        (filter.type === 'editableMultiSelect' ? [] : '');
+    filters.forEach(filter => {
+      values[filter.formControlName] = filter.defaultValue
+        || (filter.type === 'editableMultiSelect' ? [] : '');
     });
     return values;
   }

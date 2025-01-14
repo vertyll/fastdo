@@ -1,5 +1,5 @@
-import {Component, input, output} from '@angular/core';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import { Component, input, output } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-checkbox',
@@ -14,7 +14,7 @@ import {FormControl, ReactiveFormsModule} from '@angular/forms';
       (change)="onChange($event)"
       class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
     />
-  `
+  `,
 })
 export class CheckboxComponent {
   readonly control = input.required<FormControl>();
@@ -30,6 +30,6 @@ export class CheckboxComponent {
   protected onChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.control().setValue(target.checked);
-    this.change.emit({value: target.value, checked: target.checked});
+    this.change.emit({ value: target.value, checked: target.checked });
   }
 }

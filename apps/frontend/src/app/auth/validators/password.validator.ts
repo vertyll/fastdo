@@ -1,11 +1,10 @@
-import {Injectable} from '@angular/core';
-import {AbstractControl, ValidationErrors} from "@angular/forms";
+import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PasswordValidator {
-
   public validatePassword(
     control: AbstractControl,
   ): ValidationErrors | null {

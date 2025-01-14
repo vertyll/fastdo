@@ -10,8 +10,8 @@ export interface FilterMetadata {
   formControlName: string;
   labelKey: string;
   defaultValue?: any;
-  options?: { value: any; label: string }[];
-  multiselectOptions?: { id: any; name: string }[];
+  options?: { value: any; label: string; }[];
+  multiselectOptions?: { id: any; name: string; }[];
   maxSelectedItems?: number;
   minTermLength?: number;
   allowAddTag?: boolean;

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { getCookie, setCookie } from '../../utils/cookies';
 import { TranslateModule } from '@ngx-translate/core';
+import { getCookie, setCookie } from '../../utils/cookies';
 import { ButtonComponent } from '../atoms/button.component';
 
 @Component({
-    selector: 'app-cookie-banner',
-    imports: [TranslateModule, ButtonComponent],
-    template: `
+  selector: 'app-cookie-banner',
+  imports: [TranslateModule, ButtonComponent],
+  template: `
     @if (showBanner) {
       <div class="fixed bottom-0 left-0 right-0 bg-black p-4 shadow-md z-50">
         <div
@@ -23,7 +23,7 @@ import { ButtonComponent } from '../atoms/button.component';
         </div>
       </div>
     }
-  `
+  `,
 })
 export class CookieBannerComponent implements OnInit {
   protected showBanner: boolean = false;

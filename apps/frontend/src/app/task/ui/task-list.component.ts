@@ -1,11 +1,11 @@
 import { Component, inject, input } from '@angular/core';
-import { Task } from '../models/Task';
-import { TaskCardComponent } from './task-card.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { TasksService } from '../data-access/task.service';
-import { NotificationService } from 'src/app/shared/services/notification.service';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Task } from '../models/Task';
+import { TaskCardComponent } from './task-card.component';
 
 @Component({
   selector: 'app-tasks-list',
@@ -39,7 +39,7 @@ export class TasksListComponent {
   protected delete(taskId: number): void {
     this.tasksService.delete(taskId).subscribe({
       next: () => {},
-      error: (err) => {
+      error: err => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
@@ -64,7 +64,7 @@ export class TasksListComponent {
   protected updateTask(taskId: number, updatedTask: TaskUpdatePayload): void {
     this.tasksService.update(taskId, updatedTask).subscribe({
       next: () => {},
-      error: (res) => {
+      error: res => {
         if (res.error && res.error.message) {
           this.notificationService.showNotification(
             res.error.message,

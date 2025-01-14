@@ -1,19 +1,19 @@
-export type FetchingError = { status: number; message: string };
+export type FetchingError = { status: number; message: string; };
 
-//* idle - initial
+// * idle - initial
 type IdleState = {
   state: LIST_STATE_VALUE['IDLE'];
 };
-//* loading
+// * loading
 type LoadingState = {
   state: LIST_STATE_VALUE['LOADING'];
 };
-//* success
+// * success
 type SuccessState<T> = {
   state: LIST_STATE_VALUE['SUCCESS'];
   results: T[];
 };
-//* error
+// * error
 type ErrorState = {
   state: LIST_STATE_VALUE['ERROR'];
   error: FetchingError;

@@ -3,7 +3,7 @@ import { TASK_STATUS } from '../../shared/enums/task-status.enum';
 import { GetAllTasksSearchParams } from './task.api.service';
 
 export function getAllTasksSearchParams(
-  formValue: TasksListFiltersConfig & { isUrgent?: boolean },
+  formValue: TasksListFiltersConfig & { isUrgent?: boolean; },
 ): GetAllTasksSearchParams {
   let searchParams: GetAllTasksSearchParams = {
     q: formValue.q || '',

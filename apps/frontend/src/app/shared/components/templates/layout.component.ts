@@ -1,16 +1,16 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
+import { Component, OnInit, computed, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ProjectsStateService } from 'src/app/project/data-access/project.state.service';
 import { TasksService } from 'src/app/task/data-access/task.service';
 import { TasksStateService } from 'src/app/task/data-access/task.state.service';
 import { CookieBannerComponent } from '../molecules/cookie-banner.component';
-import { NavbarComponent } from '../organisms/navbar.component';
+import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 import { FooterComponent } from '../organisms/footer.component';
 import { InfoPanelComponent } from '../organisms/info-panel.component';
-import { TranslateService } from '@ngx-translate/core';
-import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
+import { NavbarComponent } from '../organisms/navbar.component';
 
 @Component({
   selector: 'app-layout',

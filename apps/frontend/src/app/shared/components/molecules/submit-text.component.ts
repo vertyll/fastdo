@@ -1,19 +1,19 @@
 import { Component, input, output } from '@angular/core';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { InputComponent } from '../atoms/input.component';
-import { ButtonComponent } from '../atoms/button.component';
 import { InputType } from '../../types/components.type';
+import { ButtonComponent } from '../atoms/button.component';
+import { InputComponent } from '../atoms/input.component';
 
 @Component({
-    selector: 'app-submit-text',
-    imports: [
-        InputComponent,
-        ButtonComponent,
-        ReactiveFormsModule,
-        TranslateModule,
-    ],
-    template: `
+  selector: 'app-submit-text',
+  imports: [
+    InputComponent,
+    ButtonComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+  ],
+  template: `
     <div class="flex items-center gap-4">
       <app-input
         [control]="control()"
@@ -28,7 +28,7 @@ import { InputType } from '../../types/components.type';
         {{ 'Basic.add' | translate }}
       </app-button>
     </div>
-  `
+  `,
 })
 export class SubmitTextComponent {
   readonly placeholder = input<string>('');

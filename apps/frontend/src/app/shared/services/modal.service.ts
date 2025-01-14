@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { ModalConfig, ModalOptions } from '../interfaces/modal.interface';
 
 @Injectable({
@@ -61,7 +61,7 @@ export class ModalService {
   public updateSelectOptions(selectOptions: any[]): void {
     const current = this.currentModal;
     if (current.options?.inputs) {
-      const updatedInputs = current.options.inputs.map((input) => {
+      const updatedInputs = current.options.inputs.map(input => {
         if (input.selectOptions) {
           return { ...input, selectOptions };
         }

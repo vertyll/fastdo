@@ -1,10 +1,10 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Task } from '../models/Task';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
+import { environment } from 'src/environments/environment';
 import { AddTaskDto } from '../dtos/add-task.dto';
+import { Task } from '../models/Task';
 
 export type TaskUpdatePayload = {
   isDone?: boolean;

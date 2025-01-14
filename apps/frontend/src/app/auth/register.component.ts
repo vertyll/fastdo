@@ -1,33 +1,28 @@
 import { Component, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NotificationService } from 'src/app/shared/services/notification.service';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { AuthService } from './data-access/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { LinkComponent } from '../shared/components/atoms/link.component';
-import { LinkType } from '../shared/enums/link.enum';
-import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
-import {PasswordValidator} from "./validators/password.validator";
+import { LinkComponent } from '../shared/components/atoms/link.component';
+import { TitleComponent } from '../shared/components/atoms/title.component';
+import { LinkType } from '../shared/enums/link.enum';
+import { AuthService } from './data-access/auth.service';
+import { PasswordValidator } from './validators/password.validator';
 
 @Component({
-    selector: 'app-register',
-    imports: [
-        ReactiveFormsModule,
-        TranslateModule,
-        ErrorMessageComponent,
-        LinkComponent,
-        TitleComponent,
-        LabelComponent,
-    ],
-    template: `
+  selector: 'app-register',
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    ErrorMessageComponent,
+    LinkComponent,
+    TitleComponent,
+    LabelComponent,
+  ],
+  template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
@@ -91,7 +86,7 @@ import {PasswordValidator} from "./validators/password.validator";
       </form>
     </div>
   `,
-    styles: []
+  styles: [],
 })
 export class RegisterComponent implements OnInit {
   protected readonly router = inject(Router);
@@ -134,7 +129,7 @@ export class RegisterComponent implements OnInit {
         next: () => {
           this.router.navigate(['/login']).then();
         },
-        error: (err) => {
+        error: err => {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {

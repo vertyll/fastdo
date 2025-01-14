@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class TaskNameValidator {
   private readonly translateService = inject(TranslateService);
 
-  public validateTaskName(taskName: string): { isValid: boolean; error?: string } {
+  public validateTaskName(taskName: string): { isValid: boolean; error?: string; } {
     if (!taskName || taskName.length < 3) {
       return {
         isValid: false,

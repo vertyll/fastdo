@@ -1,7 +1,7 @@
-import {Component, input, OnChanges, OnInit} from '@angular/core';
-import { TasksListComponent } from './task-list.component';
-import { Task } from '../models/Task';
+import { Component, OnChanges, OnInit, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { Task } from '../models/Task';
+import { TasksListComponent } from './task-list.component';
 
 @Component({
   selector: 'app-tasks-kanban-view',
@@ -38,7 +38,7 @@ export class TasksKanbanViewComponent implements OnInit, OnChanges {
   }
 
   private filterTasks(): void {
-    this.todos = this.tasks().filter((task) => !task.isDone);
-    this.tasksDone = this.tasks().filter((task) => task.isDone);
+    this.todos = this.tasks().filter(task => !task.isDone);
+    this.tasksDone = this.tasks().filter(task => task.isDone);
   }
 }

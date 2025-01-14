@@ -1,20 +1,22 @@
-import {Component, inject, input, OnDestroy, OnInit, signal} from '@angular/core';
-import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
-import {NgIconComponent, provideIcons} from '@ng-icons/core';
-import {AuthService} from 'src/app/auth/data-access/auth.service';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
+  heroBars4,
+  heroChevronDown,
+  heroChevronUp,
   heroClipboardDocumentList,
-  heroListBullet,
   heroExclamationCircle,
+  heroListBullet,
   heroSquares2x2,
   heroUserCircle,
-  heroBars4, heroChevronDown, heroChevronUp,
 } from '@ng-icons/heroicons/outline';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {CommonModule} from '@angular/common';
-import {configNavModules, NavModule, NavSection} from '../../../config/config.nav.modules';
-import {animate, style, transition, trigger} from '@angular/animations';
-import {filter} from "rxjs";
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
+import { AuthService } from 'src/app/auth/data-access/auth.service';
+import { NavModule, NavSection, configNavModules } from '../../../config/config.nav.modules';
 
 @Component({
   selector: 'app-navbar',
@@ -34,22 +36,22 @@ import {filter} from "rxjs";
   animations: [
     trigger('dropdown', [
       transition(':enter', [
-        style({opacity: 0, transform: 'translateY(-10px)'}),
-        animate('200ms ease-out', style({opacity: 1, transform: 'translateY(0)'})),
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
       ]),
       transition(':leave', [
-        style({opacity: 1, transform: 'translateY(0)'}),
-        animate('200ms ease-in', style({opacity: 0, transform: 'translateY(-10px)'})),
+        style({ opacity: 1, transform: 'translateY(0)' }),
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' })),
       ]),
     ]),
     trigger('overlay', [
       transition(':enter', [
-        style({opacity: 0}),
-        animate('200ms ease-out', style({opacity: 1})),
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 })),
       ]),
       transition(':leave', [
-        style({opacity: 1}),
-        animate('200ms ease-in', style({opacity: 0})),
+        style({ opacity: 1 }),
+        animate('200ms ease-in', style({ opacity: 0 })),
       ]),
     ]),
   ],
@@ -377,7 +379,7 @@ import {filter} from "rxjs";
         <router-outlet></router-outlet>
       </div>
     </div>
-  `
+  `,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   readonly urgentCount = input<number>(0);
@@ -510,8 +512,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const moduleRoute = module.route === '/' ? '/' : module.route;
         const sectionRoutes = module.sections.map(section => section.route);
 
-        return currentUrl.startsWith(moduleRoute) ||
-          sectionRoutes.some(route => currentUrl.startsWith(route === '/' ? '/' : route));
+        return currentUrl.startsWith(moduleRoute)
+          || sectionRoutes.some(route => currentUrl.startsWith(route === '/' ? '/' : route));
       }) || this.defaultModules[0];
 
     this.currentModule.set(activeModule.id);

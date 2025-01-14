@@ -1,5 +1,5 @@
-import {Component, input, output} from '@angular/core';
-import {TranslateModule} from '@ngx-translate/core';
+import { Component, input, output } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-button',
@@ -13,7 +13,7 @@ import {TranslateModule} from '@ngx-translate/core';
     >
       <ng-content></ng-content>
     </button>
-  `
+  `,
 })
 export class ButtonComponent {
   readonly type = input<'button' | 'submit'>('button');

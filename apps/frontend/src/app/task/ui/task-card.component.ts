@@ -1,18 +1,18 @@
-import { Component, inject, output, input } from '@angular/core';
-import { Task } from '../models/Task';
-import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
+import { Component, inject, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
 import { heroBookmark, heroCalendar } from '@ng-icons/heroicons/outline';
 import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
-import { TaskUpdatePayload } from '../data-access/task.api.service';
-import { RouterLink } from '@angular/router';
-import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
-import { NotificationService } from 'src/app/shared/services/notification.service';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskNameValidator } from '../validators/task-name.validator';
+import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
+import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
+import { TaskUpdatePayload } from '../data-access/task.api.service';
+import { Task } from '../models/Task';
+import { TaskNameValidator } from '../validators/task-name.validator';
 
 @Component({
   selector: 'app-task-card',

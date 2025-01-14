@@ -1,18 +1,8 @@
-import {
-  Component,
-  OnChanges,
-  input,
-  output, ViewEncapsulation
-} from '@angular/core';
-import {
-  ControlValueAccessor,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  Validators,
-} from '@angular/forms';
-import {NgSelectComponent, NgSelectModule} from '@ng-select/ng-select';
-import {TranslateModule} from '@ngx-translate/core';
-import {LabelComponent} from '../atoms/label.component';
+import { Component, OnChanges, ViewEncapsulation, input, output } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
+import { TranslateModule } from '@ngx-translate/core';
+import { LabelComponent } from '../atoms/label.component';
 
 @Component({
   selector: 'app-editable-multi-select',
@@ -61,7 +51,7 @@ import {LabelComponent} from '../atoms/label.component';
     TranslateModule,
     FormsModule,
     NgSelectModule,
-    LabelComponent
+    LabelComponent,
   ],
   providers: [
     {
@@ -69,10 +59,9 @@ import {LabelComponent} from '../atoms/label.component';
       multi: true,
       useExisting: EditableMultiSelectComponent,
     },
-  ]
+  ],
 })
-export class EditableMultiSelectComponent
-  implements ControlValueAccessor, OnChanges, Validators {
+export class EditableMultiSelectComponent implements ControlValueAccessor, OnChanges, Validators {
   readonly dataArray = input.required<any[]>();
   readonly maxSelectedItems = input.required<number>();
   readonly multiple = input<boolean>(true);
@@ -93,7 +82,7 @@ export class EditableMultiSelectComponent
 
   ngOnChanges(): void {
     this.dataArray()?.map((c, i) => {
-      return {id: i, name: c};
+      return { id: i, name: c };
     });
   }
 
@@ -120,7 +109,7 @@ export class EditableMultiSelectComponent
   }
 
   protected addTag = (term: string) => {
-    return {label: term};
+    return { label: term };
   };
 
   private markAsTouched() {

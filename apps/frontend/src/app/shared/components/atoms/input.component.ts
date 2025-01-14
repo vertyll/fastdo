@@ -1,7 +1,7 @@
-import {Component, input} from '@angular/core';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {InputType} from '../../types/components.type';
-import {CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { Component, input } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { InputType } from '../../types/components.type';
 
 @Component({
   selector: 'app-input',
@@ -18,7 +18,7 @@ import {CommonModule} from '@angular/common';
       }"
       class="block w-full px-2 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
     />
-  `
+  `,
 })
 export class InputComponent {
   readonly control = input.required<FormControl>();

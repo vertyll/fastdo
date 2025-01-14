@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { Task } from '../models/Task';
 
 @Injectable({ providedIn: 'root' })
@@ -7,7 +7,7 @@ export class TasksStateService {
 
   public tasks = computed(() => this.tasksSignal());
   urgentCount = computed(
-    () => this.tasksSignal().filter((task) => task.isUrgent).length,
+    () => this.tasksSignal().filter(task => task.isUrgent).length,
   );
 
   public setTaskList(tasks: Task[]): void {
@@ -15,18 +15,14 @@ export class TasksStateService {
   }
 
   public addTask(task: Task): void {
-    this.tasksSignal.update((tasks) => [...tasks, task]);
+    this.tasksSignal.update(tasks => [...tasks, task]);
   }
 
   public updateTask(updatedTask: Task): void {
-    this.tasksSignal.update((tasks) =>
-      tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-    );
+    this.tasksSignal.update(tasks => tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)));
   }
 
   public removeTask(taskId: Task['id']): void {
-    this.tasksSignal.update((tasks) =>
-      tasks.filter((task) => task.id !== taskId),
-    );
+    this.tasksSignal.update(tasks => tasks.filter(task => task.id !== taskId));
   }
 }

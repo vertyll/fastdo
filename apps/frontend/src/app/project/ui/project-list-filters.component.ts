@@ -1,10 +1,7 @@
-import {Component, output} from '@angular/core';
-import {ReactiveFormsModule} from '@angular/forms';
-import {FilterGroupComponent} from 'src/app/shared/components/organisms/filter-group.component';
-import {
-  PROJECT_LIST_FILTERS,
-  ProjectListFiltersConfig,
-} from 'src/app/shared/types/filter.type';
+import { Component, output } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
+import { PROJECT_LIST_FILTERS, ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
 
 @Component({
   selector: 'app-projects-list-filters',
@@ -15,7 +12,7 @@ import {
       [type]="'projects'"
       (filterChange)="onFiltersChange($event)"
     />
-  `
+  `,
 })
 export class ProjectsListFiltersComponent {
   readonly filtersChange = output<ProjectListFiltersConfig>();

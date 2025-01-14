@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginDto } from '../dtos/login.dto';
@@ -12,8 +12,8 @@ export class AuthApiService {
   private readonly URL = environment.backendUrl;
   private readonly http = inject(HttpClient);
 
-  public login(dto: LoginDto): Observable<{ access_token: string }> {
-    return this.http.post<{ access_token: string }>(
+  public login(dto: LoginDto): Observable<{ access_token: string; }> {
+    return this.http.post<{ access_token: string; }>(
       `${this.URL}/auth/login`,
       dto,
     );

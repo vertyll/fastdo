@@ -1,31 +1,31 @@
-import {Component, inject, OnInit} from '@angular/core';
-import { Project } from './models/Project';
-import { ListState, LIST_STATE_VALUE } from '../shared/types/list-state.type';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroPencilSquare } from '@ng-icons/heroicons/outline';
-import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
-import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
-import { ProjectsStateService } from './data-access/project.state.service';
-import { ProjectsService } from './data-access/project.service';
-import { NotificationService } from 'src/app/shared/services/notification.service';
+import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
-import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
-import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
-import { GetAllProjectsSearchParams } from './data-access/project.api.service';
-import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
-import { ProjectListFiltersConfig } from '../shared/types/filter.type';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ProjectNameValidator } from './validators/project-name.validator';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { HasRoleDirective } from '../core/directives/has-role.directive';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
-import {HasRoleDirective} from "../core/directives/has-role.directive";
+import { TitleComponent } from '../shared/components/atoms/title.component';
+import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
+import { ProjectListFiltersConfig } from '../shared/types/filter.type';
+import { LIST_STATE_VALUE, ListState } from '../shared/types/list-state.type';
+import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
+import { GetAllProjectsSearchParams } from './data-access/project.api.service';
+import { ProjectsService } from './data-access/project.service';
+import { ProjectsStateService } from './data-access/project.state.service';
+import { Project } from './models/Project';
+import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
+import { ProjectNameValidator } from './validators/project-name.validator';
 
 @Component({
-    selector: 'app-project-list-page',
+  selector: 'app-project-list-page',
   imports: [
     SubmitTextComponent,
     RouterLink,
@@ -38,9 +38,9 @@ import {HasRoleDirective} from "../core/directives/has-role.directive";
     ErrorMessageComponent,
     TitleComponent,
     LinkComponent,
-    HasRoleDirective
+    HasRoleDirective,
   ],
-    template: `
+  template: `
       <div class="flex flex-col mb-6 gap-4">
         <app-title>{{ 'Project.title' | translate }}</app-title>
         <app-submit-text
@@ -129,14 +129,14 @@ import {HasRoleDirective} from "../core/directives/has-role.directive";
         }
       </div>
     `,
-    styles: [
-        `
+  styles: [
+    `
       .break-all {
         word-break: break-all;
       }
     `,
-    ],
-    viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })]
+  ],
+  viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })],
 })
 export class ProjectListPageComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
@@ -158,13 +158,13 @@ export class ProjectListPageComponent implements OnInit {
     }
 
     this.projectsService.add(name).subscribe({
-      next: (project) => {
+      next: project => {
         this.listState = {
           state: LIST_STATE_VALUE.SUCCESS,
           results: [...projects, project],
         };
       },
-      error: (err) => {
+      error: err => {
         this.listState = {
           state: LIST_STATE_VALUE.ERROR,
           error: err,
@@ -206,19 +206,19 @@ export class ProjectListPageComponent implements OnInit {
     }
 
     this.projectsService.update(id, newName).subscribe({
-      next: (updatedProject) => {
+      next: updatedProject => {
         if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
           this.listState = {
             ...this.listState,
-            results: this.listState.results.map((project) =>
+            results: this.listState.results.map(project =>
               project.id === id
                 ? { ...updatedProject, editMode: false }
-                : project,
+                : project
             ),
           };
         }
       },
-      error: (err) => {
+      error: err => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
@@ -247,13 +247,13 @@ export class ProjectListPageComponent implements OnInit {
           this.listState = {
             ...this.listState,
             results: this.listState.results.filter(
-              (project) => project.id !== id,
+              project => project.id !== id,
             ),
           };
           this.projectsStateService.removeProject(id);
         }
       },
-      error: (err) => {
+      error: err => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
@@ -279,7 +279,7 @@ export class ProjectListPageComponent implements OnInit {
     this.listState = { state: LIST_STATE_VALUE.LOADING };
 
     this.projectsService.getAll(searchParams).subscribe({
-      next: (response) => {
+      next: response => {
         const projects = response.body || [];
         this.listState = {
           state: LIST_STATE_VALUE.SUCCESS,
@@ -287,7 +287,7 @@ export class ProjectListPageComponent implements OnInit {
         };
         this.projectsStateService.setProjectList(projects);
       },
-      error: (err) => {
+      error: err => {
         this.listState = {
           state: LIST_STATE_VALUE.ERROR,
           error: err,

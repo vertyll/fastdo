@@ -3,9 +3,9 @@ import { Component, input } from '@angular/core';
 import { SpinnerSize } from '../../types/components.type';
 
 @Component({
-    imports: [CommonModule],
-    selector: 'app-spinner',
-    template: `
+  imports: [CommonModule],
+  selector: 'app-spinner',
+  template: `
     <div
       class="spinner border-4 border-t-4 border-gray-200 rounded-full animate-spin"
       [ngClass]="{
@@ -14,7 +14,7 @@ import { SpinnerSize } from '../../types/components.type';
         'w-16 h-16 border-t-orange-500': size() === 'large',
       }"
     ></div>
-  `
+  `,
 })
 export class SpinnerComponent {
   readonly size = input<SpinnerSize>('medium');

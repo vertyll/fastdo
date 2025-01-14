@@ -1,31 +1,20 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  viewChild,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {CommonModule} from '@angular/common';
-import {ModalService} from '../../services/modal.service';
-import {SpinnerComponent} from '../atoms/spinner.component';
-import {ErrorMessageComponent} from '../atoms/error.message.component';
-import {InputInvalidPipe} from '../../pipes/input-invalid.pipe';
-import {CheckboxComponent} from '../atoms/checkbox.component';
-import {InputComponent} from '../atoms/input.component';
-import {ButtonComponent} from '../atoms/button.component';
-import {heroXMarkSolid} from '@ng-icons/heroicons/solid';
-import {NgIconComponent, provideIcons} from '@ng-icons/core';
-import {AdDirective} from 'src/app/core/directives/ad.directive';
-import {TextareaComponent} from '../atoms/textarea-component';
-import {ButtonRole, ModalInputType} from '../../enums/modal.enum';
-import {ModalConfig} from '../../interfaces/modal.interface';
-import {LabelComponent} from '../atoms/label.component';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject, viewChild } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
+import { AdDirective } from 'src/app/core/directives/ad.directive';
+import { ButtonRole, ModalInputType } from '../../enums/modal.enum';
+import { ModalConfig } from '../../interfaces/modal.interface';
+import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
+import { ModalService } from '../../services/modal.service';
+import { ButtonComponent } from '../atoms/button.component';
+import { CheckboxComponent } from '../atoms/checkbox.component';
+import { ErrorMessageComponent } from '../atoms/error.message.component';
+import { InputComponent } from '../atoms/input.component';
+import { LabelComponent } from '../atoms/label.component';
+import { SpinnerComponent } from '../atoms/spinner.component';
+import { TextareaComponent } from '../atoms/textarea-component';
 
 @Component({
   selector: 'app-modal',
@@ -44,7 +33,7 @@ import {LabelComponent} from '../atoms/label.component';
     LabelComponent,
     AdDirective,
   ],
-  viewProviders: [provideIcons({heroXMarkSolid})],
+  viewProviders: [provideIcons({ heroXMarkSolid })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
@@ -227,16 +216,16 @@ export class ModalComponent {
 
   private initializeForm(modalConfig: ModalConfig): void {
     if (
-      !Array.isArray(modalConfig.options?.inputs) ||
-      !modalConfig.options.inputs.length
+      !Array.isArray(modalConfig.options?.inputs)
+      || !modalConfig.options.inputs.length
     ) {
       this.form = new FormGroup({});
       return;
     }
 
-    const group: { [key: string]: FormControl } = {};
+    const group: { [key: string]: FormControl; } = {};
 
-    modalConfig.options.inputs.forEach((input) => {
+    modalConfig.options.inputs.forEach(input => {
       let initialValue = input.value;
 
       if (input.type === ModalInputType.Checkbox) {
@@ -250,9 +239,8 @@ export class ModalComponent {
 
       group[input.id] = control;
 
-      control.valueChanges.subscribe((value) => {
-        const finalValue =
-          input.type === ModalInputType.Checkbox ? Boolean(value) : value;
+      control.valueChanges.subscribe(value => {
+        const finalValue = input.type === ModalInputType.Checkbox ? Boolean(value) : value;
         if (input.change) {
           input.change({
             ...this.form.value,
@@ -268,16 +256,17 @@ export class ModalComponent {
   private initializeDynamicComponents(modalConfig: ModalConfig): void {
     const adHost = this.adHost();
     if (
-      !adHost ||
-      !Array.isArray(modalConfig.options?.components) ||
-      !modalConfig.options.components.length
-    )
+      !adHost
+      || !Array.isArray(modalConfig.options?.components)
+      || !modalConfig.options.components.length
+    ) {
       return;
+    }
 
     const viewContainerRef = adHost.viewContainerRef;
     viewContainerRef.clear();
 
-    modalConfig.options.components.forEach((component) => {
+    modalConfig.options.components.forEach(component => {
       const componentRef = viewContainerRef.createComponent<any>(
         component.component,
       );
@@ -309,7 +298,7 @@ export class ModalComponent {
       } else {
         const modalConfig = this.modalService.modal();
         const saveButton = modalConfig.options?.buttons?.find(
-          (btn) => btn.role === ButtonRole.Ok,
+          btn => btn.role === ButtonRole.Ok,
         );
         if (saveButton) {
           await this.handleButtonAction(saveButton);

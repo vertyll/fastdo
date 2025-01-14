@@ -1,12 +1,7 @@
-import {Component, input, signal} from '@angular/core';
-import {NgIconComponent, provideIcons} from '@ng-icons/core';
-import {
-  heroArrowLeft,
-  heroArrowRight,
-  heroEllipsisHorizontal,
-  heroChevronUp
-} from '@ng-icons/heroicons/outline';
-import {TranslateModule} from '@ngx-translate/core';
+import { Component, input, signal } from '@angular/core';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroArrowLeft, heroArrowRight, heroChevronUp, heroEllipsisHorizontal } from '@ng-icons/heroicons/outline';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-info-panel',
@@ -15,7 +10,7 @@ import {TranslateModule} from '@ngx-translate/core';
     heroArrowLeft,
     heroArrowRight,
     heroEllipsisHorizontal,
-    heroChevronUp
+    heroChevronUp,
   })],
   template: `
     @if (isLoggedIn()()) {
@@ -124,7 +119,7 @@ import {TranslateModule} from '@ngx-translate/core';
         text-overflow: ellipsis;
       }
     }
-  `]
+  `],
 })
 export class InfoPanelComponent {
   readonly panelOpen = input<boolean>(false);

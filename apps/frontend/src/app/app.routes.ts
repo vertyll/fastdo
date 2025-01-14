@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { ProjectListPageComponent } from './project/project-list.page.component';
-import { TaskListPageComponent } from './task/task-list.page.component';
-import { AuthGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './auth/login.component';
 import { RegisterComponent } from './auth/register.component';
-import {DashboardComponent} from "./dashboard/dashboard.component";
-import {HomeComponent} from "./home/home.component";
+import { AuthGuard } from './core/guards/auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { HomeComponent } from './home/home.component';
+import { ProjectListPageComponent } from './project/project-list.page.component';
+import { TaskListPageComponent } from './task/task-list.page.component';
 
 export const routes: Routes = [
   {
@@ -18,7 +18,7 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     title: 'Dashboard',
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
     path: 'login',

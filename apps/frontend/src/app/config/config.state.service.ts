@@ -1,6 +1,6 @@
-import {Injectable, signal, inject} from '@angular/core';
-import {TasksListViewMode} from '../task/ui/task-list-view-mode.component';
-import {LocalStorageService} from '../shared/services/local-storage.service';
+import { Injectable, inject, signal } from '@angular/core';
+import { LocalStorageService } from '../shared/services/local-storage.service';
+import { TasksListViewMode } from '../task/ui/task-list-view-mode.component';
 
 const TASKS_VIEW_MODE_KEY = 'tasksViewMode';
 
@@ -21,7 +21,7 @@ export class AppConfigStateService {
   public readonly $value = this.state.asReadonly();
 
   public updateTasksListView(value: TasksListViewMode): void {
-    this.state.update((state) => {
+    this.state.update(state => {
       this.localStorageService.set(TASKS_VIEW_MODE_KEY, value);
       return {
         ...state,

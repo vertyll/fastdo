@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap, map } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { AuthApiService } from './auth.api.service';
-import { AuthStateService } from './auth.state.service';
+import { Observable, map, tap } from 'rxjs';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
+import { AuthApiService } from './auth.api.service';
+import { AuthStateService } from './auth.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class AuthService {
 
   public login(dto: LoginDto): Observable<void> {
     return this.authApiService.login(dto).pipe(
-      tap((response) => {
+      tap(response => {
         localStorage.setItem('access_token', response.access_token);
         this.decodeToken(response.access_token);
       }),

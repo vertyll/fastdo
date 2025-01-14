@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit, HostListener, inject, input} from '@angular/core';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {LangChangeEvent, TranslateService} from '@ngx-translate/core';
-import {Subscription} from 'rxjs';
-import {LabelComponent} from '../atoms/label.component';
+import { Component, HostListener, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { LabelComponent } from '../atoms/label.component';
 
 @Component({
   selector: 'app-check-select',
@@ -47,7 +47,7 @@ import {LabelComponent} from '../atoms/label.component';
         margin-right: 0.5rem;
       }
     `,
-  ]
+  ],
 })
 export class CheckSelectComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
@@ -55,12 +55,14 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   readonly control = input.required<FormControl>();
   readonly id = input.required<string>();
   readonly label = input.required<string>();
-  readonly options = input<Array<{
-    value: any;
-    label: string;
-  }>>([]);
+  readonly options = input<
+    Array<{
+      value: any;
+      label: string;
+    }>
+  >([]);
 
-  protected translatedOptions: Array<{ value: any; label: string }> = [];
+  protected translatedOptions: Array<{ value: any; label: string; }> = [];
   protected isDropdownOpen = false;
 
   private langChangeSubscription!: Subscription;
@@ -83,8 +85,8 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event): void {
     if (
-      !event.target ||
-      !(event.target as HTMLElement).closest('.form-select')
+      !event.target
+      || !(event.target as HTMLElement).closest('.form-select')
     ) {
       this.isDropdownOpen = false;
     }
@@ -120,7 +122,7 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   }
 
   private translateOptions(): void {
-    this.translatedOptions = this.options().map((option) => ({
+    this.translatedOptions = this.options().map(option => ({
       value: option.value,
       label: this.translateService.instant(option.label),
     }));

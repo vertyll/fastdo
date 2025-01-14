@@ -1,18 +1,13 @@
 import { Component, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  heroTrash,
-  heroUser,
-  heroCheck,
-  heroXMark,
-} from '@ng-icons/heroicons/outline';
+import { heroCheck, heroTrash, heroUser, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-remove-item-button',
-    imports: [NgIconComponent, TranslateModule],
-    viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
-    template: `
+  selector: 'app-remove-item-button',
+  imports: [NgIconComponent, TranslateModule],
+  viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
+  template: `
     <div
       (click)="removeMode && $event.stopPropagation()"
       class="flex items-center rounded-md"
@@ -51,13 +46,13 @@ import { TranslateModule } from '@ngx-translate/core';
       }
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       .icon--hover {
         @apply hover:text-red-600 hover:rounded-full;
       }
     `,
-    ]
+  ],
 })
 export class RemoveItemButtonComponent {
   readonly confirm = output<void>();

@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { Role } from '../../shared/enums/role.enum';
 
 export interface AuthState {
@@ -19,11 +19,11 @@ export class AuthStateService {
   public readonly roles = computed(() => this.authState().roles);
 
   public setLoggedIn(isLoggedIn: boolean) {
-    this.authState.update((state) => ({ ...state, isLoggedIn }));
+    this.authState.update(state => ({ ...state, isLoggedIn }));
   }
 
   public setRoles(roles: Role[] | null) {
-    this.authState.update((state) => ({ ...state, roles }));
+    this.authState.update(state => ({ ...state, roles }));
   }
 
   public clear() {

@@ -1,7 +1,7 @@
 import { Directive, ViewContainerRef, inject } from '@angular/core';
 
 @Directive({
-    selector: '[adHost]',
+  selector: '[adHost]',
 })
 export class AdDirective {
   public readonly viewContainerRef = inject(ViewContainerRef);

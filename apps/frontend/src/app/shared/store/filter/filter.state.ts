@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, State, StateContext } from '@ngxs/store';
-import { ClearFilter, ClearPartial, SavePartial } from './filter.actions';
 import { FilterMap, FilterModel } from '../../types/filter.type';
+import { ClearFilter, ClearPartial, SavePartial } from './filter.actions';
 
 const initialState: FilterModel[] = [];
 

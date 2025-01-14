@@ -1,30 +1,25 @@
 import { Component, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from './data-access/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { LinkComponent } from '../shared/components/atoms/link.component';
-import { LinkType } from '../shared/enums/link.enum';
-import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
+import { LinkComponent } from '../shared/components/atoms/link.component';
+import { TitleComponent } from '../shared/components/atoms/title.component';
+import { LinkType } from '../shared/enums/link.enum';
+import { AuthService } from './data-access/auth.service';
 
 @Component({
-    selector: 'app-login',
-    imports: [
-        ReactiveFormsModule,
-        TranslateModule,
-        ErrorMessageComponent,
-        LinkComponent,
-        TitleComponent,
-        LabelComponent,
-    ],
-    template: `
+  selector: 'app-login',
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    ErrorMessageComponent,
+    LinkComponent,
+    TitleComponent,
+    LabelComponent,
+  ],
+  template: `
     <div
       class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
     >
@@ -65,7 +60,7 @@ import { LabelComponent } from '../shared/components/atoms/label.component';
       </form>
     </div>
   `,
-    styles: []
+  styles: [],
 })
 export class LoginComponent {
   protected readonly router = inject(Router);
@@ -90,7 +85,7 @@ export class LoginComponent {
         next: () => {
           this.router.navigate(['/tasks']).then();
         },
-        error: (err) => {
+        error: err => {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {

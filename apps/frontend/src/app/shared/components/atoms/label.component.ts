@@ -1,5 +1,5 @@
-import {CommonModule} from '@angular/common';
-import {Component, input} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-label',
@@ -15,7 +15,7 @@ import {Component, input} from '@angular/core';
     >
       <ng-content></ng-content>
     </label>
-  `
+  `,
 })
 export class LabelComponent {
   readonly forId = input<string | null>();

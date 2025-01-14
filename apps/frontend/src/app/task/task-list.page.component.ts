@@ -1,37 +1,27 @@
-import {
-  Component,
-  booleanAttribute,
-  computed,
-  inject,
-  OnInit,
-  input
-} from '@angular/core';
-import {TasksListFiltersComponent} from './ui/task-list-filters.component';
-import {getAllTasksSearchParams} from './data-access/task-filters.adapter';
-import {GetAllTasksSearchParams} from './data-access/task.api.service';
-import {TasksListComponent} from './ui/task-list.component';
-import {TasksKanbanViewComponent} from './ui/task-kanban.component';
-import {
-  TasksListViewMode,
-  TasksListViewModeComponent,
-} from './ui/task-list-view-mode.component';
-import {TasksService} from './data-access/task.service';
-import {ActivatedRoute} from '@angular/router';
-import {distinctUntilChanged, firstValueFrom, map, switchMap} from 'rxjs';
-import {NotificationService} from 'src/app/shared/services/notification.service';
-import {NotificationType} from 'src/app/shared/enums/notification.enum';
-import {ProjectsService} from 'src/app/project/data-access/project.service';
-import {TasksStateService} from './data-access/task.state.service';
-import {TasksListFiltersConfig} from '../shared/types/filter.type';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {TaskNameValidator} from './validators/task-name.validator';
-import {ButtonComponent} from '../shared/components/atoms/button.component';
-import {ModalService} from '../shared/services/modal.service';
-import {AddTaskDto} from './dtos/add-task.dto';
-import {ButtonRole, ModalInputType} from '../shared/enums/modal.enum';
-import {TitleComponent} from '../shared/components/atoms/title.component';
-import {AppConfigStateService} from "../config/config.state.service";
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { Component, OnInit, booleanAttribute, computed, inject, input } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { distinctUntilChanged, firstValueFrom, map, switchMap } from 'rxjs';
+import { ProjectsService } from 'src/app/project/data-access/project.service';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { AppConfigStateService } from '../config/config.state.service';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
+import { TitleComponent } from '../shared/components/atoms/title.component';
+import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
+import { ModalService } from '../shared/services/modal.service';
+import { TasksListFiltersConfig } from '../shared/types/filter.type';
+import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
+import { GetAllTasksSearchParams } from './data-access/task.api.service';
+import { TasksService } from './data-access/task.service';
+import { TasksStateService } from './data-access/task.state.service';
+import { AddTaskDto } from './dtos/add-task.dto';
+import { TasksKanbanViewComponent } from './ui/task-kanban.component';
+import { TasksListFiltersComponent } from './ui/task-list-filters.component';
+import { TasksListViewMode, TasksListViewModeComponent } from './ui/task-list-view-mode.component';
+import { TasksListComponent } from './ui/task-list.component';
+import { TaskNameValidator } from './validators/task-name.validator';
 
 @Component({
   selector: 'app-task-list-page',
@@ -100,12 +90,12 @@ import {MatTooltipModule} from '@angular/material/tooltip';
         [tasks]="tasksStateService.tasks()"
       />
     }
-  `
+  `,
 })
 export class TaskListPageComponent implements OnInit {
   readonly projectId = input<string>();
   readonly view = input<TasksListViewMode>();
-  readonly isUrgent = input<boolean, unknown>(undefined, {transform: booleanAttribute});
+  readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
 
   private readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);
@@ -134,7 +124,7 @@ export class TaskListPageComponent implements OnInit {
     return [
       this.translateService.instant('Task.changeNameDoc'),
       this.translateService.instant('Task.changeNameWithoutSaveDoc'),
-      this.translateService.instant('Task.changeStatusDoc')
+      this.translateService.instant('Task.changeStatusDoc'),
     ].join('\n');
   }
 
@@ -206,8 +196,7 @@ export class TaskListPageComponent implements OnInit {
       );
       return true;
     } catch (err: any) {
-      const errorMessage =
-        err.error?.message || this.translateService.instant('Task.addError');
+      const errorMessage = err.error?.message || this.translateService.instant('Task.addError');
 
       this.modalService.updateConfig({
         error: errorMessage,
@@ -223,9 +212,9 @@ export class TaskListPageComponent implements OnInit {
   private initializeTaskList(): void {
     this.route.params
       .pipe(
-        map((params) => params['projectId']),
+        map(params => params['projectId']),
         distinctUntilChanged(),
-        switchMap((projectId) => {
+        switchMap(projectId => {
           if (projectId) {
             this.loadProjectName(projectId);
           }
@@ -247,7 +236,7 @@ export class TaskListPageComponent implements OnInit {
   }
 
   private loadProjectName(projectId: number): void {
-    this.projectsService.getProjectById(projectId).subscribe((project) => {
+    this.projectsService.getProjectById(projectId).subscribe(project => {
       this.projectName = project.name;
     });
   }
