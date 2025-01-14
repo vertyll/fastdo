@@ -18,9 +18,24 @@ export class AppComponent {
   private readonly localStorageService = inject(LocalStorageService);
 
   constructor() {
-    this.translateService.addLangs(['pl', 'en']);
-    this.translateService.setDefaultLang('pl');
-    const savedLanguage = this.localStorageService.get<string>('selectedLanguage', 'pl');
-    this.translateService.use(savedLanguage);
+    const availableLanguages = ['pl', 'en'];
+    const defaultLanguage = 'pl';
+
+    this.translateService.addLangs(availableLanguages);
+    this.translateService.setDefaultLang(defaultLanguage);
+
+    const savedLanguage = this.localStorageService.get<string>('selectedLanguage', '');
+
+    if (savedLanguage && availableLanguages.includes(savedLanguage)) {
+      this.translateService.use(savedLanguage);
+    } else {
+      const browserLang = this.translateService.getBrowserLang() || '';
+      const matchedLang = availableLanguages.includes(browserLang)
+        ? browserLang
+        : defaultLanguage;
+
+      this.translateService.use(matchedLang);
+      this.localStorageService.set('selectedLanguage', matchedLang);
+    }
   }
 }
