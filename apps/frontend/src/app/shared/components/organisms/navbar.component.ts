@@ -255,9 +255,31 @@ import { NavModule, NavSection, configNavModules } from '../../../config/config.
             }
           </div>
 
-          <button (click)="logout()" class="auth-button logout-button hidden md:block">
-            {{ 'Basic.logout' | translate }}
-          </button>
+          <div class="hidden md:flex items-center space-x-4">
+            <button (click)="logout()" class="auth-button logout-button">
+              {{ 'Basic.logout' | translate }}
+            </button>
+            <div class="relative">
+              <button class="language-button" (click)="toggleLanguageDropdown($event)">
+                <span>{{ getCurrentLanguage() }}</span>
+                <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+              </button>
+
+              @if (languageDropdownOpen) {
+                <div class="language-dropdown" @dropdown>
+                  @for (lang of languages; track lang) {
+                    <button
+                      class="language-option"
+                      [class.active]="getCurrentLanguage() === lang.toUpperCase()"
+                      (click)="selectLanguage(lang)"
+                    >
+                      {{ lang.toUpperCase() }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
           <div class="flex md:hidden w-full justify-between">
             <button class="menu-button" (click)="toggleMenu()">
               <span>Menu</span>
