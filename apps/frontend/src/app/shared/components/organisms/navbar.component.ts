@@ -18,10 +18,11 @@ import { filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { NavModule, NavSection, configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet],
+  imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet, ThemeSwitcherComponent],
   viewProviders: [
     provideIcons({
       heroClipboardDocumentList,
@@ -237,6 +238,27 @@ import { LocalStorageService } from '../../services/local-storage.service';
             <button class="auth-button register-button" (click)="router.navigate(['/register'])">
               {{ 'Basic.register' | translate }}
             </button>
+              <app-theme-switcher />
+              <div class="relative">
+                <button class="language-button" (click)="toggleLanguageDropdown($event)">
+                  <span>{{ getCurrentLanguage() }}</span>
+                  <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+                </button>
+
+                @if (languageDropdownOpen) {
+                  <div class="language-dropdown" @dropdown>
+                    @for (lang of languages; track lang) {
+                      <button
+                        class="language-option"
+                        [class.active]="getCurrentLanguage() === lang.toUpperCase()"
+                        (click)="selectLanguage(lang)"
+                      >
+                        {{ lang.toUpperCase() }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
           </div>
         </div>
       </nav>
@@ -260,6 +282,7 @@ import { LocalStorageService } from '../../services/local-storage.service';
             <button (click)="logout()" class="auth-button logout-button">
               {{ 'Basic.logout' | translate }}
             </button>
+            <app-theme-switcher />
             <div class="relative">
               <button class="language-button" (click)="toggleLanguageDropdown($event)">
                 <span>{{ getCurrentLanguage() }}</span>
@@ -286,7 +309,8 @@ import { LocalStorageService } from '../../services/local-storage.service';
               <span>Menu</span>
               <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
             </button>
-            <div class="relative">
+            <div class="relative flex flex-row">
+              <app-theme-switcher />
               <button class="menu-button" (click)="toggleLanguageDropdown($event)">
                 <span>{{ getCurrentLanguage() }}</span>
                 <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
