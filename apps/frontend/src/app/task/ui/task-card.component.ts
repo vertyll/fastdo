@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroBookmark, heroCalendar } from '@ng-icons/heroicons/outline';
+import { heroBookmark, heroCalendar, heroCheck, heroPencil } from '@ng-icons/heroicons/outline';
 import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TranslateModule } from '@ngx-translate/core';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
@@ -28,24 +28,38 @@ import { TaskNameValidator } from '../validators/task-name.validator';
     LinkComponent,
     CommonModule,
     TruncateTextPipe,
-    TruncateTextPipe,
   ],
   template: `
     <div
       class="rounded-md border border-gray-300 shadow-sm hover:shadow-md p-4 block w-full transition-colors duration-200"
       [ngClass]="{
-            'bg-green-300 dark:bg-green-800': task().isDone,
-            'dark:bg-gray-800': !task().isDone
-        }"
+        'bg-green-300 dark:bg-green-800': task().isDone,
+        'dark:bg-gray-800': !task().isDone
+      }"
     >
       <button
         class="w-full text-left"
         (click)="!editMode && handleSingleClick()"
-        (dblclick)="switchToEditMode()"
       >
-        <header class="flex justify-end">
+        <header class="flex justify-end gap-2">
           <app-remove-item-button (confirm)="delete.emit()"/>
+          @if (!editMode) {
+            <button
+              class="md:hidden p-2 rounded-md transition-all duration-200 text-gray-500 dark:text-white flex items-center justify-center hover:scale-125"
+              (click)="switchToEditMode(); $event.stopPropagation()"
+            >
+              <ng-icon name="heroPencil" size="18"/>
+            </button>
+          } @else {
+            <button
+              class="md:hidden p-2 rounded-md transition-all duration-200 text-gray-500 dark:text-white flex items-center justify-center hover:scale-125"
+              (click)="updateTaskName(task().name); $event.stopPropagation()"
+            >
+              <ng-icon name="heroCheck" size="18"/>
+            </button>
+          }
         </header>
+
         <section class="text-left break-all">
           @if (editMode) {
             <app-autosize-textarea
@@ -56,13 +70,22 @@ import { TaskNameValidator } from '../validators/task-name.validator';
           } @else {
             <span
               [class.line-through]="task().isDone"
-              class="block w-full cursor-pointer"
+              class="hidden md:block w-full cursor-pointer"
+              (click)="toggleExpanded(); $event.stopPropagation()"
+              (dblclick)="switchToEditMode()"
+            >
+              {{ task().name | truncateText:150:isExpanded }}
+            </span>
+            <span
+              [class.line-through]="task().isDone"
+              class="md:hidden block w-full cursor-pointer"
               (click)="toggleExpanded(); $event.stopPropagation()"
             >
               {{ task().name | truncateText:150:isExpanded }}
             </span>
           }
         </section>
+
         @if (task().project) {
           <section class="text-left text-sm mt-2 break-all">
             <span>{{ 'Task.forProject' | translate }}: </span>
@@ -87,6 +110,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             <span>-</span>
           </section>
         }
+
         <footer class="pt-2 flex justify-between">
           <button
             class="flex items-center"
@@ -106,9 +130,9 @@ import { TaskNameValidator } from '../validators/task-name.validator';
               <ng-icon name="heroCalendar" class="text-sm"/>
             </div>
             <div class="flex items-center">
-                <span class="pr-1">
-                    {{ 'Task.modified' | translate }} : {{ (task().dateModification | customDate) || '-' }}</span
-                >
+              <span class="pr-1">
+                {{ 'Task.modified' | translate }} : {{ (task().dateModification | customDate) || '-' }}</span
+              >
               <ng-icon name="heroCalendar" class="text-sm"/>
             </div>
           </div>
@@ -116,15 +140,19 @@ import { TaskNameValidator } from '../validators/task-name.validator';
       </button>
     </div>
   `,
-  styles: [
-    `
-      .break-all {
-        word-break: break-all;
-      }
-    `,
-  ],
+  styles: [`
+    .break-all {
+      word-break: break-all;
+    }
+  `],
   viewProviders: [
-    provideIcons({ heroBookmark, heroBookmarkSolid, heroCalendar }),
+    provideIcons({
+      heroBookmark,
+      heroBookmarkSolid,
+      heroCalendar,
+      heroPencil,
+      heroCheck,
+    }),
   ],
 })
 export class TaskCardComponent {

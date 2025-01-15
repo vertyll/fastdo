@@ -15,9 +15,8 @@ import { TranslateModule } from '@ngx-translate/core';
       [class.text-white]="removeMode"
     >
       <span
-        class="text-sm transition-transform duration-300 h-full py-2 pl-2 rounded-md font-semibold"
+        class="text-sm transition-transform duration-300 h-full py-2 pl-2 rounded-md font-semibold flex items-center"
         [class.invisible]="!removeMode"
-        [class.-translate-x-6]="removeMode"
         [class.bg-red-700]="removeMode"
       >
         {{ 'RemoveItemButton.areYouSure' | translate }}
@@ -26,36 +25,29 @@ import { TranslateModule } from '@ngx-translate/core';
       @if (!removeMode; as value) {
         <button
           (click)="removeMode = true; $event.stopPropagation()"
-          class="flex hover:bg-white hover:rounded-full"
+          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 text-gray-500 dark:text-white hover:scale-125"
         >
-          <ng-icon name="heroTrash" class="icon--hover" />
+          <ng-icon name="heroTrash" size="18"/>
         </button>
       } @else {
         <button
           (click)="removeMode = false; $event.stopPropagation()"
-          class="flex mr-1"
+          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
         >
-          <ng-icon name="heroXMark" class="hover:bg-white icon--hover" />
+          <ng-icon name="heroXMark" size="18"/>
         </button>
         <button
           (click)="confirm.emit(); removeMode = false; $event.stopPropagation()"
-          class="flex pr-2"
+          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
         >
-          <ng-icon name="heroCheck" class="hover:bg-white icon--hover" />
+          <ng-icon name="heroCheck" size="18"/>
         </button>
       }
     </div>
   `,
-  styles: [
-    `
-      .icon--hover {
-        @apply hover:text-red-600 hover:rounded-full;
-      }
-    `,
-  ],
+  standalone: true,
 })
 export class RemoveItemButtonComponent {
   readonly confirm = output<void>();
-
   protected removeMode: boolean = false;
 }

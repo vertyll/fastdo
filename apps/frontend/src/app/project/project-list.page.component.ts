@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroCalendar, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { heroCalendar, heroCheck, heroPencil, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
@@ -14,6 +14,7 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
+import { TruncateTextPipe } from '../shared/pipes/truncate-text.pipe';
 import { ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { LIST_STATE_VALUE, ListState } from '../shared/types/list-state.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
@@ -39,104 +40,113 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     TitleComponent,
     LinkComponent,
     HasRoleDirective,
+    TruncateTextPipe,
   ],
   template: `
-      <div class="flex flex-col mb-6 gap-4">
-        <app-title>{{ 'Project.title' | translate }}</app-title>
-        <app-submit-text
-          placeholder="{{ 'Project.addPlaceholder' | translate }}"
-          [type]="'text'"
-          (submitText)="
+    <div class="flex flex-col mb-6 gap-4">
+      <app-title>{{ 'Project.title' | translate }}</app-title>
+      <app-submit-text
+        placeholder="{{ 'Project.addPlaceholder' | translate }}"
+        [type]="'text'"
+        (submitText)="
           listState.state === listStateValue.SUCCESS &&
             addProject($event, listState.results)
         "
-        />
-        <app-projects-list-filters
-          (filtersChange)="handleFiltersChange($event)"
-        />
-      </div>
-      <div>
-        @switch (listState.state) {
-          @case (listStateValue.SUCCESS) {
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              @for (project of listState.results; track project.id) {
-                <div
-                  class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full"
-                >
-                  <header class="flex justify-end">
-                    <ng-template [appHasRole]="[role.Admin]">
-                      <app-remove-item-button
-                        (confirm)="deleteProject(project.id)"
-                      />
-                    </ng-template>
-                  </header>
-                  <section class="text-left flex-grow">
-                    @if (project.editMode) {
-                      <app-autosize-textarea
-                        (keyup.escape)="project.editMode = false"
-                        (submitText)="updateProjectName(project.id, $event)"
-                        [value]="project.name"
-                      />
-                    } @else {
-                      <h3 class="text-xl font-semibold mb-2 break-all">
-                        {{ project.name }}
-                      </h3>
-                    }
-                  </section>
-                  <div class="flex flex-col text-gray-600 dark:text-white text-sm mt-2 transition-colors duration-200">
-                    <div class="flex items-center">
-                      <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-                      <span
-                      >{{ 'Project.created' | translate }}:
-                        {{ project.dateCreation | customDate }}</span
-                      >
-                    </div>
-                    <div class="flex items-center mt-1">
-                      <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-                      <span
-                      >{{ 'Project.modified' | translate }}:
-                        {{ (project.dateModification | customDate) || '-' }}</span
-                      >
-                    </div>
-                  </div>
-                  <footer class="pt-2 flex justify-between items-center mt-auto">
-                    <ng-template [appHasRole]="[role.Admin]">
+      />
+      <app-projects-list-filters
+        (filtersChange)="handleFiltersChange($event)"
+      />
+    </div>
+    <div>
+      @switch (listState.state) {
+        @case (listStateValue.SUCCESS) {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (project of listState.results; track project.id) {
+              <div
+                class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full"
+              >
+                <header class="flex justify-end">
+                  <ng-template [appHasRole]="[role.Admin]">
+                    <app-remove-item-button
+                      (confirm)="deleteProject(project.id)"
+                    />
+                    @if (!project.editMode) {
                       <button
-                        class="flex items-center"
+                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
                         (click)="toggleEditMode(project)"
                       >
-                        <ng-icon name="heroPencilSquare" class="text-sm"/>
+                        <ng-icon name="heroPencil" size="18"/>
                       </button>
-                    </ng-template>
-                    <app-link [routerLink]="['/tasks', project.id]">
-                      {{ 'Project.viewTasks' | translate }}
-                    </app-link>
-                  </footer>
+                    } @else {
+                      <button
+                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
+                        (click)="updateProjectName(project.id, project.name)"
+                      >
+                        <ng-icon name="heroCheck" size="18"/>
+                      </button>
+                    }
+                  </ng-template>
+                </header>
+                <section class="text-left flex-grow">
+                  @if (project.editMode) {
+                    <app-autosize-textarea
+                      (keyup.escape)="project.editMode = false"
+                      (submitText)="updateProjectName(project.id, $event)"
+                      [value]="project.name"
+                    />
+                  } @else {
+                    <h3
+                      class="text-xl font-semibold mb-2 break-all cursor-pointer"
+                      (click)="toggleExpanded(project)"
+                    >
+                      {{ project.name | truncateText:150:(project.isExpanded || false) }}
+                    </h3>
+                  }
+                </section>
+                <div class="flex flex-col text-gray-600 dark:text-white text-sm mt-2 transition-colors duration-200">
+                  <div class="flex items-center">
+                    <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
+                    <span>{{ 'Project.created' | translate }}: {{ project.dateCreation | customDate }}</span>
+                  </div>
+                  <div class="flex items-center mt-1">
+                    <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
+                    <span>{{ 'Project.modified' | translate }}: {{ (project.dateModification | customDate) || '-' }}</span>
+                  </div>
                 </div>
-              } @empty {
-                <p>
-                  {{ 'Project.emptyList' | translate }}
-                </p>
-              }
-            </div>
-          }
-          @case (listStateValue.ERROR) {
-            <app-error-message [customMessage]="listState.error.message"/>
-          }
-          @case (listStateValue.LOADING) {
-            <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
-          }
+
+                <footer class="pt-2 flex justify-between items-center mt-auto">
+                  <app-link [routerLink]="['/tasks', project.id]">
+                    {{ 'Project.viewTasks' | translate }}
+                  </app-link>
+                </footer>
+              </div>
+            } @empty {
+              <p>{{ 'Project.emptyList' | translate }}</p>
+            }
+          </div>
         }
-      </div>
-    `,
-  styles: [
-    `
-      .break-all {
-        word-break: break-all;
+        @case (listStateValue.ERROR) {
+          <app-error-message [customMessage]="listState.error.message"/>
+        }
+        @case (listStateValue.LOADING) {
+          <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
+        }
       }
-    `,
+    </div>
+  `,
+  styles: [`
+    .break-all {
+      word-break: break-all;
+    }
+  `],
+  viewProviders: [
+    provideIcons({
+      heroCalendar,
+      heroPencilSquare,
+      heroPencil,
+      heroCheck,
+    }),
   ],
-  viewProviders: [provideIcons({ heroCalendar, heroPencilSquare })],
 })
 export class ProjectListPageComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
@@ -150,6 +160,10 @@ export class ProjectListPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllProjects();
+  }
+
+  protected toggleExpanded(project: Project): void {
+    project.isExpanded = !project.isExpanded;
   }
 
   protected addProject(name: string, projects: Project[]): void {

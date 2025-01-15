@@ -7,7 +7,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild, input, output } from '
       #textarea
       [placeholder]="placeholder()"
       [value]="value()"
-      class="resize-y overflow-auto focus:outline-orange-500 w-full dark:bg-gray-700 dark:text-white transition-colors duration-200 min-h-[100px]"
+      class="resize-y overflow-auto focus:outline-orange-500 w-full bg-gray-100 dark:bg-gray-700 dark:text-white transition-colors duration-200 min-h-[100px]"
       (click)="$event.stopPropagation()"
       (keyup.enter)="emit(textarea)"
       (input)="calcHeight(textarea)"
