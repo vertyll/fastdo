@@ -12,7 +12,7 @@ import { LabelComponent } from '../atoms/label.component';
       <div
         [id]="id()"
         (click)="toggleDropdown()"
-        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer cursor-pointer"
+        class="dark:bg-gray-700 dark:text-white transition-colors duration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer cursor-pointer"
       >
         <span>{{ label() }}</span>
         @if (isDropdownOpen) {

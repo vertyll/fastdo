@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -24,11 +25,15 @@ import { TaskNameValidator } from '../validators/task-name.validator';
     RouterLink,
     TranslateModule,
     LinkComponent,
+    CommonModule,
   ],
   template: `
     <div
-      class="rounded-md border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-300 p-4 block w-full"
-      [class.bg-green-300]="task().isDone"
+      class="rounded-md border border-gray-300 shadow-sm hover:shadow-md p-4 block w-full transition-colors duration-200"
+      [ngClass]="{
+            'bg-green-300 dark:bg-green-800': task().isDone,
+            'dark:bg-gray-800': !task().isDone
+        }"
     >
       <button
         class="w-full text-left"
@@ -60,6 +65,11 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             >
               {{ task().project?.name }}
             </app-link>
+          </section>
+        } @else {
+          <section class="text-left text-sm mt-2 break-all">
+            <span>{{ 'Task.forProject' | translate }}: </span>
+            <span>-</span>
           </section>
         }
         <footer class="pt-2 flex justify-between">

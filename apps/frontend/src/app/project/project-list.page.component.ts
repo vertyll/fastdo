@@ -61,7 +61,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               @for (project of listState.results; track project.id) {
                 <div
-                  class="bg-white rounded-lg border border-gray-300 shadow-sm p-4 hover:shadow-md transition-shadow duration-300 flex flex-col h-full"
+                  class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full"
                 >
                   <header class="flex justify-end">
                     <ng-template [appHasRole]="[role.Admin]">
@@ -83,7 +83,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                       </h3>
                     }
                   </section>
-                  <div class="flex flex-col text-gray-600 text-sm mt-2">
+                  <div class="flex flex-col text-gray-600 dark:text-white text-sm mt-2 transition-colors duration-200">
                     <div class="flex items-center">
                       <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
                       <span

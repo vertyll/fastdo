@@ -7,7 +7,7 @@ import { Component, input, output } from '@angular/core';
       #textarea
       [placeholder]="placeholder()"
       [value]="value()"
-      class="resize-none overflow-hidden focus:outline-orange-500 w-full"
+      class="resize-none overflow-hidden focus:outline-orange-500 w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
       (click)="$event.stopPropagation()"
       (keyup.enter)="emit(textarea)"
       (input)="calcHeight(textarea)"

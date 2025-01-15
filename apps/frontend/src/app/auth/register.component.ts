@@ -33,7 +33,7 @@ import { PasswordValidator } from './validators/password.validator';
           id="email"
           formControlName="email"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
+          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
         />
         <app-label forId="password">{{ 'Auth.password' | translate }}:</app-label>
         <input
@@ -41,7 +41,7 @@ import { PasswordValidator } from './validators/password.validator';
           type="password"
           formControlName="password"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
+          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
         />
         <app-label forId="confirmPassword">
           {{ 'Auth.confirmPassword' | translate }}:
@@ -51,7 +51,7 @@ import { PasswordValidator } from './validators/password.validator';
           type="password"
           formControlName="confirmPassword"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
+          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
         />
         @if (emailErrors.length > 0) {
           @for (error of emailErrors; track error) {

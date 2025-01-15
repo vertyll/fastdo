@@ -30,7 +30,7 @@ import { AuthService } from './data-access/auth.service';
           id="email"
           formControlName="email"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
+          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
         />
         <app-label forId="password"
           >{{ 'Auth.password' | translate }}:
@@ -40,7 +40,7 @@ import { AuthService } from './data-access/auth.service';
           type="password"
           formControlName="password"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full"
+          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
         />
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />

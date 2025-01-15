@@ -12,7 +12,7 @@ import { LinkType } from '../../enums/link.enum';
       routerLinkActive="font-bold"
       [ngClass]="{
         'text-black no-underline hover:no-underline': linkType() === LinkType.Nav,
-        'text-blue-500 underline hover:underline':
+        'text-blue-500 underline hover:underline dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200':
           linkType() === LinkType.Default,
       }"
     >

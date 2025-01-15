@@ -24,7 +24,7 @@ import { LabelComponent } from '../atoms/label.component';
         [addTagText]="
           allowAddTag() ? ('EditableMultiSelect.addTagsAdHoc' | translate) : null
         "
-        class="block px-2 pb-2.5 pt-3 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+        class="dark:bg-gray-700 dark:text-white block px-2 pb-2.5 pt-3 w-full text-sm transition-colors duration-200 text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
       >
         @for (item of dataArray(); track $index) {
           <ng-option [value]="item.id">

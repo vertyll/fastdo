@@ -44,7 +44,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
       data-keyboard="true"
     >
       <div
-        class="w-full max-w-lg bg-white rounded-lg shadow-lg"
+        class="w-full max-w-lg bg-white rounded-lg shadow-lg dark:bg-gray-800 dark:text-white transition-colors duration-200"
         role="document"
       >
         <div class="px-6 py-4 border-b flex justify-between items-center">
@@ -54,7 +54,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
           <button (click)="closeModalIconHandler()" aria-label="Close">
             <ng-icon
               name="heroXMarkSolid"
-              class="w-6 h-6 text-gray-500 hover:text-gray-700"
+              class="w-6 h-6 text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-300 transition-colors duration-200"
             ></ng-icon>
           </button>
         </div>

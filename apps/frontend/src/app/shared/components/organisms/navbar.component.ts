@@ -59,7 +59,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
   ],
   styles: [`
     .top-nav {
-      @apply h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6;
+      @apply h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6 transition-colors duration-200;
     }
 
     .nav-content {
@@ -71,11 +71,11 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .module-item {
-      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-gray-50 transition-colors duration-200;
+      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 dark:text-gray-200;
     }
 
     .module-item.active {
-      @apply bg-orange-50 text-orange-500;
+      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
     }
 
     .auth-section {
@@ -87,23 +87,23 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .login-button {
-      @apply text-orange-500 hover:bg-orange-50;
+      @apply text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/50 transition-colors duration-200 dark:hover:bg-gray-700;
     }
 
     .register-button {
-      @apply bg-orange-500 text-white hover:bg-orange-600;
+      @apply bg-orange-500 text-white hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 transition-colors duration-200;
     }
 
     .logout-button {
-      @apply text-gray-600 hover:text-gray-800 hover:bg-gray-50 text-red-500 hover:text-red-600;
+      @apply text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors duration-200;
     }
 
     .menu-button {
-      @apply md:hidden flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700 relative transition-colors duration-200;
+      @apply md:hidden flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 relative transition-colors duration-200;
     }
 
     .menu-button.active {
-      @apply bg-orange-50 text-orange-500;
+      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
     }
 
     .mobile-menu {
@@ -115,14 +115,14 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .mobile-menu-content {
-      @apply absolute w-48 bg-white shadow-lg rounded-md py-1 border border-gray-200;
+      @apply absolute w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
       position: absolute;
       top: 3.5rem;
       left: 4rem;
     }
 
     .mobile-menu-content.language-menu {
-      @apply absolute w-24 bg-white shadow-lg rounded-md py-1 border border-gray-200;
+      @apply absolute w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
       position: absolute;
       top: 3rem;
       right: 0.5rem;
@@ -131,15 +131,15 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 transition-colors duration-200 text-sm cursor-pointer;
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 text-sm cursor-pointer dark:text-gray-200;
     }
 
     .mobile-module-item.active {
-      @apply bg-orange-50 text-orange-500;
+      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
     }
 
     .side-nav {
-      @apply hidden md:block w-24 bg-white fixed left-0 top-16 bottom-0 border-r border-gray-200;
+      @apply hidden md:block w-24 bg-white dark:bg-gray-800 fixed left-0 top-16 bottom-0 border-r border-gray-200 dark:border-gray-700 transition-colors duration-200;
     }
 
     .side-nav-content {
@@ -147,15 +147,15 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .mobile-sections {
-      @apply md:hidden bg-white border-b border-gray-200 mt-16;
+      @apply md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 mt-16 transition-colors duration-200;
     }
 
     .mobile-section-item {
-      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors duration-200;
+      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 dark:text-gray-200;
     }
 
     .mobile-section-item.active {
-      @apply bg-orange-50 text-orange-500;
+      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
     }
 
     .mobile-section-icon {
@@ -167,15 +167,15 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .show-more-button {
-      @apply w-full flex items-center justify-center py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors duration-200;
+      @apply w-full flex items-center justify-center py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200;
     }
 
     .section-item {
-      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-gray-50;
+      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 transition-colors duration-200;
     }
 
     .section-item.active {
-      @apply bg-orange-50 text-orange-500;
+      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
     }
 
     .section-icon {
@@ -187,7 +187,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .counter-badge {
-      @apply absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1;
+      @apply absolute -top-1 -right-1 bg-orange-500 dark:bg-orange-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 transition-colors duration-200;
     }
 
     .main-content {
@@ -207,23 +207,23 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .app-logo {
-      @apply text-lg md:text-xl font-bold text-gray-800;
+      @apply text-lg md:text-xl font-bold text-gray-800 dark:text-white transition-colors duration-200;
     }
 
     .language-button {
-      @apply md:flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-50 text-sm font-medium text-gray-600 transition-colors duration-200 hidden relative;
+      @apply md:flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 hidden relative;
     }
 
     .language-dropdown {
-      @apply absolute right-0 top-full mt-1 w-24 bg-white shadow-lg rounded-md py-1 border border-gray-200;
+      @apply absolute right-0 top-full mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
     }
 
     .language-option {
-      @apply px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer w-full text-left;
+      @apply px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer w-full text-left transition-colors duration-200;
     }
 
     .language-option.active {
-      @apply text-orange-500 bg-orange-50;
+      @apply text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/50 transition-colors duration-200;
     }
   `],
   template: `
