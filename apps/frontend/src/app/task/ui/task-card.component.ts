@@ -11,6 +11,7 @@ import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
+import { TruncateTextPipe } from '../../shared/pipes/truncate-text.pipe';
 import { TaskUpdatePayload } from '../data-access/task.api.service';
 import { Task } from '../models/Task';
 import { TaskNameValidator } from '../validators/task-name.validator';
@@ -26,6 +27,8 @@ import { TaskNameValidator } from '../validators/task-name.validator';
     TranslateModule,
     LinkComponent,
     CommonModule,
+    TruncateTextPipe,
+    TruncateTextPipe,
   ],
   template: `
     <div
@@ -51,8 +54,12 @@ import { TaskNameValidator } from '../validators/task-name.validator';
               [value]="task().name"
             />
           } @else {
-            <span [class.line-through]="task().isDone" class="block w-full">
-              {{ task().name }}
+            <span
+              [class.line-through]="task().isDone"
+              class="block w-full cursor-pointer"
+              (click)="toggleExpanded(); $event.stopPropagation()"
+            >
+              {{ task().name | truncateText:150:isExpanded }}
             </span>
           }
         </section>
@@ -63,8 +70,16 @@ import { TaskNameValidator } from '../validators/task-name.validator';
               [routerLink]="['/tasks', task().project?.id]"
               class="text-orange-500 hover:underline"
             >
-              {{ task().project?.name }}
+              {{ task().project?.name | truncateText:150:isProjectExpanded }}
             </app-link>
+            @if ((task().project?.name ?? '').length > 150) {
+              <button
+                class="ml-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                (click)="toggleProjectExpanded(); $event.stopPropagation()"
+              >
+                {{ isProjectExpanded ? '[show less]' : '[...]' }}
+              </button>
+            }
           </section>
         } @else {
           <section class="text-left text-sm mt-2 break-all">
@@ -120,7 +135,21 @@ export class TaskCardComponent {
   protected readonly notificationService = inject(NotificationService);
   protected readonly taskNameValidator = inject(TaskNameValidator);
   protected editMode: boolean = false;
+  protected isExpanded: boolean = false;
+  protected isProjectExpanded: boolean = false;
   private isSingleClick: boolean = true;
+
+  protected toggleExpanded(): void {
+    if (this.task().name.length > 150) {
+      this.isExpanded = !this.isExpanded;
+    }
+  }
+
+  protected toggleProjectExpanded(): void {
+    if ((this.task().project?.name ?? '').length > 150) {
+      this.isProjectExpanded = !this.isProjectExpanded;
+    }
+  }
 
   protected updateTaskUrgentStatus(): void {
     this.update.emit({ isUrgent: !this.task().isUrgent });
@@ -137,7 +166,6 @@ export class TaskCardComponent {
     }
 
     this.update.emit({ name: updatedName });
-
     this.editMode = false;
   }
 
