@@ -3,17 +3,21 @@ import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroCheck, heroPencil, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { HasRoleDirective } from '../core/directives/has-role.directive';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
+import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { TruncateTextPipe } from '../shared/pipes/truncate-text.pipe';
+import { ModalService } from '../shared/services/modal.service';
 import { ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { LIST_STATE_VALUE, ListState } from '../shared/types/list-state.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
@@ -23,10 +27,6 @@ import { ProjectsStateService } from './data-access/project.state.service';
 import { Project } from './models/Project';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { ProjectNameValidator } from './validators/project-name.validator';
-import {ModalService} from "../shared/services/modal.service";
-import {firstValueFrom} from "rxjs";
-import {ButtonRole, ModalInputType} from "../shared/enums/modal.enum";
-import {ButtonComponent} from "../shared/components/atoms/button.component";
 
 @Component({
   selector: 'app-project-list-page',
@@ -152,7 +152,7 @@ export class ProjectListPageComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
-  private  readonly modalService = inject(ModalService);
+  private readonly modalService = inject(ModalService);
   protected readonly role = Role;
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
@@ -174,7 +174,7 @@ export class ProjectListPageComponent implements OnInit {
           type: ModalInputType.Textarea,
           required: true,
           label: this.translateService.instant('Project.projectName'),
-        }
+        },
       ],
       buttons: [
         {
@@ -184,7 +184,7 @@ export class ProjectListPageComponent implements OnInit {
         {
           role: ButtonRole.Ok,
           text: this.translateService.instant('Basic.save'),
-          handler: (data: { name: string }) => this.handleAddProject(data.name),
+          handler: (data: { name: string; }) => this.handleAddProject(data.name),
         },
       ],
     });
