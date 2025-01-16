@@ -2,7 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../common/enums/role.enum';
+import { LoginResponse } from '../common/types/auth.types';
 import { RolesService } from '../roles/roles.service';
+import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
@@ -15,18 +17,23 @@ export class AuthService {
     private readonly rolesService: RolesService,
   ) {}
 
-  public async validateUser(email: string, password: string): Promise<any> {
+  public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findByEmail(email);
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      return null;
     }
 
-    return null;
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return null;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...result } = user;
+    return result;
   }
 
-  public async register(registerDto: RegisterDto) {
+  public async register(registerDto: RegisterDto): Promise<User> {
     const user = await this.usersService.findByEmail(registerDto.email);
     if (user) {
       throw new UnauthorizedException('User already exists');
@@ -46,7 +53,7 @@ export class AuthService {
     return newUser;
   }
 
-  public async login(loginDto: LoginDto) {
+  public async login(loginDto: LoginDto): Promise<LoginResponse> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
       throw new UnauthorizedException();

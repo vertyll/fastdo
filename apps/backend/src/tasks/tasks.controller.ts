@@ -3,6 +3,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
+import { Task } from './entities/task.entity';
 import { TasksService } from './tasks.service';
 
 @ApiTags('tasks')
@@ -17,14 +18,14 @@ export class TasksController {
     status: 201,
     description: 'The task has been successfully created.',
   })
-  create(@Body() createTaskDto: CreateTaskDto) {
+  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.create(createTaskDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiResponse({ status: 200, description: 'Return all tasks.' })
-  findAll(@Query() query: GetAllTasksSearchParams) {
+  findAll(@Query() query: GetAllTasksSearchParams): Promise<Task[]> {
     return this.tasksService.findAll(query);
   }
 
@@ -37,14 +38,14 @@ export class TasksController {
   findAllByProjectId(
     @Param('projectId') projectId: string,
     @Query() query: GetAllTasksSearchParams,
-  ) {
+  ): Promise<Task[]> {
     return this.tasksService.findAllByProjectId(+projectId, query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
   @ApiResponse({ status: 200, description: 'Return the task.' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Task> {
     return this.tasksService.findOne(+id);
   }
 
@@ -55,7 +56,7 @@ export class TasksController {
     status: 200,
     description: 'The task has been successfully updated.',
   })
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
     return this.tasksService.update(+id, updateTaskDto);
   }
 
@@ -65,7 +66,7 @@ export class TasksController {
     status: 200,
     description: 'The task has been successfully deleted.',
   })
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<void> {
     return this.tasksService.remove(+id);
   }
 }
