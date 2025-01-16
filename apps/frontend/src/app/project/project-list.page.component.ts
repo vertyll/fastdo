@@ -5,7 +5,6 @@ import { heroCalendar, heroCheck, heroPencil, heroPencilSquare } from '@ng-icons
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
-import { SubmitTextComponent } from 'src/app/shared/components/molecules/submit-text.component';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { Role } from 'src/app/shared/enums/role.enum';
 import { NotificationService } from 'src/app/shared/services/notification.service';
@@ -24,11 +23,14 @@ import { ProjectsStateService } from './data-access/project.state.service';
 import { Project } from './models/Project';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { ProjectNameValidator } from './validators/project-name.validator';
+import {ModalService} from "../shared/services/modal.service";
+import {firstValueFrom} from "rxjs";
+import {ButtonRole, ModalInputType} from "../shared/enums/modal.enum";
+import {ButtonComponent} from "../shared/components/atoms/button.component";
 
 @Component({
   selector: 'app-project-list-page',
   imports: [
-    SubmitTextComponent,
     RouterLink,
     NgIconComponent,
     CustomDatePipe,
@@ -41,18 +43,14 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     LinkComponent,
     HasRoleDirective,
     TruncateTextPipe,
+    ButtonComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <app-title>{{ 'Project.title' | translate }}</app-title>
-      <app-submit-text
-        placeholder="{{ 'Project.addPlaceholder' | translate }}"
-        [type]="'text'"
-        (submitText)="
-          listState.state === listStateValue.SUCCESS &&
-            addProject($event, listState.results)
-        "
-      />
+      <app-button (click)="openAddProjectModal()">
+        {{ 'Project.addProject' | translate }}
+      </app-button>
       <app-projects-list-filters
         (filtersChange)="handleFiltersChange($event)"
       />
@@ -72,14 +70,14 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                     />
                     @if (!project.editMode) {
                       <button
-                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
+                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
                         (click)="toggleEditMode(project)"
                       >
                         <ng-icon name="heroPencil" size="18"/>
                       </button>
                     } @else {
                       <button
-                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
+                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
                         (click)="updateProjectName(project.id, project.name)"
                       >
                         <ng-icon name="heroCheck" size="18"/>
@@ -154,6 +152,7 @@ export class ProjectListPageComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
+  private  readonly modalService = inject(ModalService);
   protected readonly role = Role;
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
@@ -166,43 +165,65 @@ export class ProjectListPageComponent implements OnInit {
     project.isExpanded = !project.isExpanded;
   }
 
-  protected addProject(name: string, projects: Project[]): void {
-    if (!this.handleProjectNameValidation(name)) {
-      return;
+  protected openAddProjectModal(): void {
+    this.modalService.present({
+      title: this.translateService.instant('Project.addProject'),
+      inputs: [
+        {
+          id: 'name',
+          type: ModalInputType.Textarea,
+          required: true,
+          label: this.translateService.instant('Project.projectName'),
+        }
+      ],
+      buttons: [
+        {
+          role: ButtonRole.Cancel,
+          text: this.translateService.instant('Basic.cancel'),
+        },
+        {
+          role: ButtonRole.Ok,
+          text: this.translateService.instant('Basic.save'),
+          handler: (data: { name: string }) => this.handleAddProject(data.name),
+        },
+      ],
+    });
+  }
+
+  private async handleAddProject(name: string): Promise<boolean> {
+    const validation = this.projectNameValidator.validateProjectName(name);
+    if (!validation.isValid) {
+      this.modalService.updateConfig({
+        error: validation.error,
+      });
+      return false;
     }
 
-    this.projectsService.add(name).subscribe({
-      next: project => {
+    try {
+      const project = await firstValueFrom(this.projectsService.add(name));
+      if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
         this.listState = {
-          state: LIST_STATE_VALUE.SUCCESS,
-          results: [...projects, project],
+          ...this.listState,
+          results: [...this.listState.results, project],
         };
-      },
-      error: err => {
-        this.listState = {
-          state: LIST_STATE_VALUE.ERROR,
-          error: err,
-        };
+      }
+      this.notificationService.showNotification(
+        this.translateService.instant('Project.createSuccess'),
+        NotificationType.success,
+      );
+      return true;
+    } catch (err: any) {
+      const errorMessage = err.error?.message || this.translateService.instant('Project.createError');
 
-        if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationType.error,
-          );
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Project.createError'),
-            NotificationType.error,
-          );
-        }
-      },
-      complete: () => {
-        this.notificationService.showNotification(
-          this.translateService.instant('Project.createSuccess'),
-          NotificationType.success,
-        );
-      },
-    });
+      this.modalService.updateConfig({
+        error: errorMessage,
+      });
+      this.notificationService.showNotification(
+        errorMessage,
+        NotificationType.error,
+      );
+      return false;
+    }
   }
 
   protected handleFiltersChange(filters: ProjectListFiltersConfig): void {

@@ -45,14 +45,14 @@ import { TaskNameValidator } from '../validators/task-name.validator';
           <app-remove-item-button (confirm)="delete.emit()"/>
           @if (!editMode) {
             <button
-              class="md:hidden p-2 rounded-md transition-all duration-200 text-gray-500 dark:text-white flex items-center justify-center hover:scale-125"
+              class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
               (click)="switchToEditMode(); $event.stopPropagation()"
             >
               <ng-icon name="heroPencil" size="18"/>
             </button>
           } @else {
             <button
-              class="md:hidden p-2 rounded-md transition-all duration-200 text-gray-500 dark:text-white flex items-center justify-center hover:scale-125"
+              class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
               (click)="updateTaskName(task().name); $event.stopPropagation()"
             >
               <ng-icon name="heroCheck" size="18"/>

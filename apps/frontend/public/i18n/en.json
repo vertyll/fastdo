@@ -83,7 +83,9 @@
     "deleteSuccess": "Project deleted successfully",
     "getAllError": "An error occurred while fetching projects",
     "addPlaceholder": "Add new project",
-    "emptyList": "No projects"
+    "emptyList": "No projects",
+    "addProject": "Add project",
+    "projectName": "Project name"
   },
   "Task": {
     "forProject": "For project",

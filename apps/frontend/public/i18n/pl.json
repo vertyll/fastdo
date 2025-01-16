@@ -83,7 +83,9 @@
     "deleteSuccess": "Projekt został usunięty",
     "getAllError": "Wystąpił błąd podczas pobierania projektów",
     "addPlaceholder": "Dodaj nowy projekt",
-    "emptyList": "Brak projektów"
+    "emptyList": "Brak projektów",
+    "addProject": "Dodaj projekt",
+    "projectName": "Nazwa projektu"
   },
   "Task": {
     "forProject": "Dla projektu",

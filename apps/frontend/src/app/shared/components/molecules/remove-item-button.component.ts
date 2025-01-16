@@ -25,7 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
       @if (!removeMode; as value) {
         <button
           (click)="removeMode = true; $event.stopPropagation()"
-          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 text-gray-500 dark:text-white hover:scale-125"
+          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 text-black dark:text-white hover:scale-125"
         >
           <ng-icon name="heroTrash" size="18"/>
         </button>
