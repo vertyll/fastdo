@@ -1,49 +1,36 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroCalendar, heroCheck, heroPencil, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { provideIcons } from '@ng-icons/core';
+import { heroCalendar } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
-import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
-import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { Role } from 'src/app/shared/enums/role.enum';
-import { NotificationService } from 'src/app/shared/services/notification.service';
-import { HasRoleDirective } from '../core/directives/has-role.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
-import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
-import { TruncateTextPipe } from '../shared/pipes/truncate-text.pipe';
+import { NotificationType } from '../shared/enums/notification.enum';
 import { ModalService } from '../shared/services/modal.service';
+import { NotificationService } from '../shared/services/notification.service';
 import { ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { LIST_STATE_VALUE, ListState } from '../shared/types/list-state.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { GetAllProjectsSearchParams } from './data-access/project.api.service';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
+import { AddProjectDto } from './dtos/add-project.dto';
 import { Project } from './models/Project';
+import { ProjectCardComponent } from './ui/project-card.component';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { ProjectNameValidator } from './validators/project-name.validator';
 
 @Component({
   selector: 'app-project-list-page',
   imports: [
-    RouterLink,
-    NgIconComponent,
-    CustomDatePipe,
     ProjectsListFiltersComponent,
-    RemoveItemButtonComponent,
-    AutosizeTextareaComponent,
     TranslateModule,
     ErrorMessageComponent,
     TitleComponent,
-    LinkComponent,
-    HasRoleDirective,
-    TruncateTextPipe,
     ButtonComponent,
+    ProjectCardComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
@@ -60,64 +47,11 @@ import { ProjectNameValidator } from './validators/project-name.validator';
         @case (listStateValue.SUCCESS) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @for (project of listState.results; track project.id) {
-              <div
-                class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full"
-              >
-                <header class="flex justify-end">
-                  <ng-template [appHasRole]="[role.Admin]">
-                    <app-remove-item-button
-                      (confirm)="deleteProject(project.id)"
-                    />
-                    @if (!project.editMode) {
-                      <button
-                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
-                        (click)="toggleEditMode(project)"
-                      >
-                        <ng-icon name="heroPencil" size="18"/>
-                      </button>
-                    } @else {
-                      <button
-                        class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
-                        (click)="updateProjectName(project.id, project.name)"
-                      >
-                        <ng-icon name="heroCheck" size="18"/>
-                      </button>
-                    }
-                  </ng-template>
-                </header>
-                <section class="text-left flex-grow">
-                  @if (project.editMode) {
-                    <app-autosize-textarea
-                      (keyup.escape)="project.editMode = false"
-                      (submitText)="updateProjectName(project.id, $event)"
-                      [value]="project.name"
-                    />
-                  } @else {
-                    <h3
-                      class="text-xl font-semibold mb-2 break-all cursor-pointer"
-                      (click)="toggleExpanded(project)"
-                    >
-                      {{ project.name | truncateText:150:(project.isExpanded || false) }}
-                    </h3>
-                  }
-                </section>
-                <div class="flex flex-col text-gray-600 dark:text-white text-sm mt-2 transition-colors duration-200">
-                  <div class="flex items-center">
-                    <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-                    <span>{{ 'Project.created' | translate }}: {{ project.dateCreation | customDate }}</span>
-                  </div>
-                  <div class="flex items-center mt-1">
-                    <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-                    <span>{{ 'Project.modified' | translate }}: {{ (project.dateModification | customDate) || '-' }}</span>
-                  </div>
-                </div>
-
-                <footer class="pt-2 flex justify-between items-center mt-auto">
-                  <app-link [routerLink]="['/tasks', project.id]">
-                    {{ 'Project.viewTasks' | translate }}
-                  </app-link>
-                </footer>
-              </div>
+              <app-project-card
+                [project]="project"
+                (deleteProject)="deleteProject($event)"
+                (updateProject)="updateProjectName($event.id, $event.name)"
+              />
             } @empty {
               <p>{{ 'Project.emptyList' | translate }}</p>
             }
@@ -132,17 +66,9 @@ import { ProjectNameValidator } from './validators/project-name.validator';
       }
     </div>
   `,
-  styles: [`
-    .break-all {
-      word-break: break-all;
-    }
-  `],
   viewProviders: [
     provideIcons({
       heroCalendar,
-      heroPencilSquare,
-      heroPencil,
-      heroCheck,
     }),
   ],
 })
@@ -153,16 +79,11 @@ export class ProjectListPageComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
   private readonly modalService = inject(ModalService);
-  protected readonly role = Role;
   protected readonly listStateValue = LIST_STATE_VALUE;
   protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
 
   ngOnInit(): void {
     this.getAllProjects();
-  }
-
-  protected toggleExpanded(project: Project): void {
-    project.isExpanded = !project.isExpanded;
   }
 
   protected openAddProjectModal(): void {
@@ -184,14 +105,14 @@ export class ProjectListPageComponent implements OnInit {
         {
           role: ButtonRole.Ok,
           text: this.translateService.instant('Basic.save'),
-          handler: (data: { name: string; }) => this.handleAddProject(data.name),
+          handler: (data: AddProjectDto) => this.handleAddProject(data),
         },
       ],
     });
   }
 
-  private async handleAddProject(name: string): Promise<boolean> {
-    const validation = this.projectNameValidator.validateProjectName(name);
+  private async handleAddProject(data: AddProjectDto): Promise<boolean> {
+    const validation = this.projectNameValidator.validateProjectName(data.name);
     if (!validation.isValid) {
       this.modalService.updateConfig({
         error: validation.error,
@@ -200,7 +121,7 @@ export class ProjectListPageComponent implements OnInit {
     }
 
     try {
-      const project = await firstValueFrom(this.projectsService.add(name));
+      const project = await firstValueFrom(this.projectsService.add(data.name));
       if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
         this.listState = {
           ...this.listState,
@@ -229,10 +150,6 @@ export class ProjectListPageComponent implements OnInit {
   protected handleFiltersChange(filters: ProjectListFiltersConfig): void {
     const searchParams = getAllProjectsSearchParams(filters);
     this.getAllProjects(searchParams);
-  }
-
-  protected toggleEditMode(project: Project): void {
-    project.editMode = !project.editMode;
   }
 
   protected updateProjectName(id: number, newName: string): void {
