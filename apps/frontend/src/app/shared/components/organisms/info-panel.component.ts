@@ -26,14 +26,14 @@ import { TranslateModule } from '@ngx-translate/core';
           }
         </div>
         <div
-          class="fixed bottom-0 right-0 bg-gray-800 text-white p-4 transition-transform transform w-[calc(100%)] h-10 duration-300 ease-in-out flex items-center gap-6 overflow-x-auto pr-8"
+          class="fixed bottom-0 right-0 bg-gray-300 dark:bg-gray-600 border border-black text-black dark:text-white p-4 transition-transform transform w-[calc(100%)] h-10 duration-300 ease-in-out flex items-center gap-6 overflow-x-auto pr-8"
           [class.translate-x-0]="panelOpen()"
           [class.translate-x-full]="!panelOpen()"
         >
           <div class="flex items-center min-w-fit">
             <b>{{ 'InfoPanel.userRoles' | translate }}</b>:
             @if (expandedSection() === 'roles') {
-              <span class="text-green-500 ml-2 break-all">
+              <span class="dark:text-green-500 text-orange-500 ml-2 break-all">
                 @if (userRolesString().length > maxVisibleChars) {
                   <button
                     class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
@@ -45,7 +45,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ userRolesString() }}
               </span>
             } @else {
-              <span class="text-green-500 ml-2 truncate max-w-[100px]">
+              <span class="dark:text-green-500 text-orange-500 ml-2 truncate max-w-[100px]">
                 {{ userRolesString() }}
               </span>
               @if (userRolesString().length > maxVisibleChars) {
@@ -59,7 +59,7 @@ import { TranslateModule } from '@ngx-translate/core';
           <div class="flex items-center min-w-fit">
             <b>{{ 'InfoPanel.currentTime' | translate }}</b>:
             @if (expandedSection() === 'time') {
-              <span class="text-green-500 ml-2 break-all">
+              <span class="dark:text-green-500 text-orange-500 ml-2 break-all">
                 @if (currentTime().length > maxVisibleChars) {
                   <button
                     class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
@@ -71,7 +71,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ currentTime() }}
               </span>
             } @else {
-              <span class="text-green-500 ml-2 truncate max-w-[100px]">
+              <span class="dark:text-green-500 text-orange-500 ml-2 truncate max-w-[100px]">
                 {{ currentTime() }}
               </span>
               @if (currentTime().length > maxVisibleChars) {
@@ -85,7 +85,7 @@ import { TranslateModule } from '@ngx-translate/core';
           <div class="flex items-center min-w-fit">
             <b>{{ 'InfoPanel.browserInfo' | translate }}</b>:
             @if (expandedSection() === 'browser') {
-              <span class="text-green-500 ml-2 break-all">
+              <span class="dark:text-green-500 text-orange-500 ml-2 break-all">
                 @if (browserInfo().length > maxVisibleChars) {
                   <button
                     class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
@@ -97,7 +97,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ browserInfo() }}
               </span>
             } @else {
-              <span class="text-green-500 ml-2 truncate max-w-[100px]">
+              <span class="dark:text-green-500 ml-2 truncate max-w-[100px] text-orange-500">
                 {{ browserInfo() }}
               </span>
               @if (browserInfo().length > maxVisibleChars) {

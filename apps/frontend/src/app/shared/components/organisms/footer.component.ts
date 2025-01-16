@@ -6,26 +6,13 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [TranslateModule],
   styles: [
     `
-      .page-container {
-        @apply flex flex-col min-h-screen;
-      }
-
-      .content {
-        @apply flex-1;
-      }
-
       footer {
-        @apply bg-gray-800 text-white p-4 text-center mt-auto;
+        @apply bg-gray-800 text-white p-4 text-center;
       }
     `,
   ],
   template: `
-    <div class="page-container">
-      <div class="content">
-        <ng-content></ng-content>
-      </div>
-      <footer>&copy; {{ currentYear }} {{ 'Footer.text' | translate }}</footer>
-    </div>
+    <footer>&copy; {{ currentYear }} {{ 'Footer.text' | translate }}</footer>
   `,
 })
 export class FooterComponent {

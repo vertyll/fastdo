@@ -22,21 +22,25 @@ import { NavbarComponent } from '../organisms/navbar.component';
     ScrollToTopComponent,
   ],
   template: `
-    <app-navbar [urgentCount]="urgentCount()" [projectCount]="projectCount()" />
-    <div class="grid px-4">
-      <ng-content></ng-content>
+    <div class="flex flex-col min-h-screen">
+      <app-navbar [urgentCount]="urgentCount()" [projectCount]="projectCount()" />
+      <main class="flex-grow">
+        <div class="grid px-4">
+          <ng-content></ng-content>
+        </div>
+      </main>
+      <app-info-panel
+        [panelOpen]="panelOpen"
+        [togglePanel]="togglePanel.bind(this)"
+        [userRolesString]="userRolesString()"
+        [currentTime]="currentTime"
+        [browserInfo]="browserInfo"
+        [isLoggedIn]="isLoggedIn.bind(this)"
+      />
+      <app-cookie-banner />
+      <app-scroll-to-top />
+      <app-footer />
     </div>
-    <app-info-panel
-      [panelOpen]="panelOpen"
-      [togglePanel]="togglePanel.bind(this)"
-      [userRolesString]="userRolesString()"
-      [currentTime]="currentTime"
-      [browserInfo]="browserInfo"
-      [isLoggedIn]="isLoggedIn.bind(this)"
-    />
-    <app-cookie-banner />
-    <app-scroll-to-top />
-    <app-footer />
   `,
 })
 export class LayoutComponent implements OnInit {
