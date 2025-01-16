@@ -2,21 +2,25 @@ import { Component, OnInit, booleanAttribute, computed, inject, input } from '@a
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, firstValueFrom, map, switchMap } from 'rxjs';
+import { EMPTY, Observable, distinctUntilChanged, firstValueFrom, map, switchMap } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { AppConfigStateService } from '../config/config.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
+import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { TasksListFiltersConfig } from '../shared/types/filter.type';
+import { LIST_STATE_VALUE, ListState } from '../shared/types/list-state.type';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { GetAllTasksSearchParams } from './data-access/task.api.service';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { AddTaskDto } from './dtos/add-task.dto';
+import { Task } from './models/Task';
 import { TasksKanbanViewComponent } from './ui/task-kanban.component';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
 import { TasksListViewMode, TasksListViewModeComponent } from './ui/task-list-view-mode.component';
@@ -34,6 +38,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
     ButtonComponent,
     TitleComponent,
     MatTooltipModule,
+    ErrorMessageComponent,
   ],
   template: `
     <div class="flex flex-col gap-4">
@@ -80,15 +85,25 @@ import { TaskNameValidator } from './validators/task-name.validator';
       </span>
     </p>
 
-    @if ($view() === 'list') {
-      <app-tasks-list
-        class="block mt-4"
-        [tasks]="tasksStateService.tasks()"
-      />
-    } @else {
-      <app-tasks-kanban-view
-        [tasks]="tasksStateService.tasks()"
-      />
+    @switch (listState.state) {
+      @case (listStateValue.SUCCESS) {
+        @if ($view() === 'list') {
+          <app-tasks-list
+            class="block mt-4"
+            [tasks]="listState.results"
+          />
+        } @else {
+          <app-tasks-kanban-view
+            [tasks]="listState.results"
+          />
+        }
+      }
+      @case (listStateValue.ERROR) {
+        <app-error-message [customMessage]="listState.error.message"/>
+      }
+      @case (listStateValue.LOADING) {
+        <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
+      }
     }
   `,
 })
@@ -96,6 +111,9 @@ export class TaskListPageComponent implements OnInit {
   readonly projectId = input<string>();
   readonly view = input<TasksListViewMode>();
   readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
+
+  protected readonly listStateValue = LIST_STATE_VALUE;
+  protected listState: ListState<Task> = { state: LIST_STATE_VALUE.IDLE };
 
   private readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);
@@ -241,12 +259,42 @@ export class TaskListPageComponent implements OnInit {
     });
   }
 
-  private getAllTasks(searchParams: GetAllTasksSearchParams): any {
+  private getAllTasks(searchParams: GetAllTasksSearchParams): Observable<void> {
+    this.listState = { state: LIST_STATE_VALUE.LOADING };
+
     const projectId = this.projectId();
-    if (projectId) {
-      return this.tasksService.getAllByProjectId(projectId, searchParams);
-    } else {
-      return this.tasksService.getAll(searchParams);
-    }
+    const request$ = projectId
+      ? this.tasksService.getAllByProjectId(projectId, searchParams)
+      : this.tasksService.getAll(searchParams);
+
+    return request$.pipe(
+      map(response => {
+        const tasks = response.body || [];
+        this.listState = {
+          state: LIST_STATE_VALUE.SUCCESS,
+          results: tasks,
+        };
+        this.tasksStateService.setTaskList(tasks);
+      }),
+      catchError(err => {
+        this.listState = {
+          state: LIST_STATE_VALUE.ERROR,
+          error: err,
+        };
+
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationType.error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.getAllError'),
+            NotificationType.error,
+          );
+        }
+        return EMPTY;
+      }),
+    );
   }
 }

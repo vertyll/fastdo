@@ -22,9 +22,9 @@ export class ProjectsApiService {
   private readonly URL = environment.backendUrl;
   private readonly http = inject(HttpClient);
 
-  private readonly $idle = signal(true);
-  private readonly $loading = signal(false);
-  private readonly $error = signal<FetchingError | null>(null);
+  readonly $idle = signal(true);
+  readonly $loading = signal(false);
+  readonly $error = signal<FetchingError | null>(null);
 
   public getAll(searchParams?: GetAllProjectsSearchParams) {
     return this.withLoadingState(
@@ -36,23 +36,28 @@ export class ProjectsApiService {
   }
 
   public delete(projectId: number): Observable<any> {
-    return this.http.delete(`${this.URL}/projects/${projectId}`);
+    return this.withLoadingState(
+      this.http.delete(`${this.URL}/projects/${projectId}`),
+    );
   }
 
   public update(projectId: number, name: string): Observable<Project> {
-    return this.http.patch<Project>(`${this.URL}/projects/${projectId}`, {
-      name,
-    });
+    return this.withLoadingState(
+      this.http.patch<Project>(`${this.URL}/projects/${projectId}`, { name }),
+    );
   }
 
   public add(name: string): Observable<Project> {
-    return this.http.post<Project>(`${this.URL}/projects`, { name });
+    return this.withLoadingState(
+      this.http.post<Project>(`${this.URL}/projects`, { name }),
+    );
   }
 
   public getById(projectId: number): Observable<Project> {
-    return this.http.get<Project>(`${this.URL}/projects/${projectId}`);
+    return this.withLoadingState(
+      this.http.get<Project>(`${this.URL}/projects/${projectId}`),
+    );
   }
-
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {
     this.$idle.set(false);
     this.$error.set(null);

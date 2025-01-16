@@ -30,9 +30,9 @@ export type GetAllTasksSearchParams = {
 export class TasksApiService {
   private readonly URL = environment.backendUrl;
   private readonly http = inject(HttpClient);
-  private readonly $idle = signal(true);
-  private readonly $loading = signal(false);
-  private readonly $error = signal<FetchingError | null>(null);
+  readonly $idle = signal(true);
+  readonly $loading = signal(false);
+  readonly $error = signal<FetchingError | null>(null);
 
   public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.withLoadingState(
@@ -56,15 +56,21 @@ export class TasksApiService {
   }
 
   public delete(taskId: number): Observable<any> {
-    return this.http.delete(`${this.URL}/tasks/${taskId}`);
+    return this.withLoadingState(
+      this.http.delete(`${this.URL}/tasks/${taskId}`),
+    );
   }
 
   public update(taskId: number, payload: TaskUpdatePayload): Observable<Task> {
-    return this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload);
+    return this.withLoadingState(
+      this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload),
+    );
   }
 
   public add(data: AddTaskDto): Observable<Task> {
-    return this.http.post<Task>(`${this.URL}/tasks`, data);
+    return this.withLoadingState(
+      this.http.post<Task>(`${this.URL}/tasks`, data),
+    );
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {
