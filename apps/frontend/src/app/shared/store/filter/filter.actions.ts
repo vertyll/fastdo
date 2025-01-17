@@ -1,16 +1,16 @@
-export class SavePartial {
-  public static readonly type = '[Filter] Save Partial';
-  constructor(
-    public payload: { type: string; value: { [key: string]: any; }; },
-  ) {}
-}
+import { FilterModel } from '../../types/filter.type';
 
-export class ClearFilter {
-  public static readonly type = '[Filter] Clear Filter';
-  constructor(public payload: { type: string; }) {}
+export class SavePartial {
+  static readonly type = '[Filters] Save Partial';
+  constructor(public payload: { type: string; value: FilterModel; }) {}
 }
 
 export class ClearPartial {
-  public static readonly type = '[Filter] Clear Partial';
+  static readonly type = '[Filters] Clear Partial';
   constructor(public payload: { type: string; keys: string[]; }) {}
+}
+
+export class ClearFilter {
+  static readonly type = '[Filters] Clear Filter';
+  constructor(public payload: { type: string; }) {}
 }

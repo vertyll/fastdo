@@ -9,6 +9,8 @@ import { routes } from './app.routes';
 import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { ngxsConfig } from './ngxs.config';
+import { FiltersState } from './shared/store/filter/filter.state';
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (
   http: HttpClient,
@@ -21,7 +23,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([apiKeyInterceptor, AuthInterceptor, ErrorInterceptor]),
     ),
     provideRouter(routes, withComponentInputBinding()),
-    provideStore(),
+    provideStore([FiltersState], ngxsConfig),
     importProvidersFrom(
       BrowserAnimationsModule,
       TranslateModule.forRoot({

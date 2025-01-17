@@ -1,55 +1,83 @@
 import { Injectable } from '@angular/core';
-import { Action, State, StateContext } from '@ngxs/store';
-import { FilterMap, FilterModel } from '../../types/filter.type';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { FilterStateModel } from '../../types/filter.type';
 import { ClearFilter, ClearPartial, SavePartial } from './filter.actions';
 
-const initialState: FilterModel[] = [];
+const FILTERS_STORAGE_KEY = 'filters_state';
 
-@State<FilterModel[]>({
+function getStoredState(): FilterStateModel {
+  try {
+    const stored = localStorage.getItem(FILTERS_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+@State<FilterStateModel>({
   name: 'filters',
-  defaults: initialState,
+  defaults: getStoredState(),
 })
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class FiltersState {
-  @Action(SavePartial)
-  public savePartial(ctx: StateContext<FilterModel>, { payload }: SavePartial) {
-    const currentState = ctx.getState();
-    let filter: FilterMap = {};
+  @Selector()
+  static getState(state: FilterStateModel): FilterStateModel {
+    return state;
+  }
 
-    if (payload.type) {
-      const currentFilters = currentState[payload.type] || {};
-      filter[payload.type] = { ...currentFilters, ...payload.value };
-      ctx.patchState(filter);
-    }
+  private syncToStorage(state: FilterStateModel): void {
+    localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(state));
+  }
+
+  @Action(SavePartial)
+  public savePartial(
+    { getState, setState }: StateContext<FilterStateModel>,
+    { payload }: SavePartial,
+  ): void {
+    const state: FilterStateModel = getState();
+    const newState = {
+      ...state,
+      [payload.type]: {
+        ...(state[payload.type] || {}),
+        ...payload.value,
+      },
+    };
+
+    setState(newState);
+    this.syncToStorage(newState);
   }
 
   @Action(ClearPartial)
-  public clearPartial(ctx: StateContext<FilterMap>, { payload }: ClearPartial) {
-    const currentState = ctx.getState();
-    let filter: FilterMap = {};
+  public clearPartial(
+    { getState, setState }: StateContext<FilterStateModel>,
+    { payload }: ClearPartial,
+  ): void {
+    const state = getState();
+    if (!payload.type) return;
 
-    if (payload.type) {
-      let currentFilters = { ...(currentState[payload.type] || {}) };
+    const currentFilters = { ...(state[payload.type] || {}) };
+    payload.keys.forEach(key => delete currentFilters[key]);
 
-      payload.keys.forEach((key: string) => {
-        delete currentFilters[key];
-      });
+    const newState = {
+      ...state,
+      [payload.type]: currentFilters,
+    };
 
-      filter[payload.type] = { ...currentFilters };
-
-      ctx.patchState(filter);
-    }
+    setState(newState);
+    this.syncToStorage(newState);
   }
 
   @Action(ClearFilter)
-  public clearFilter(ctx: StateContext<FilterMap>, { payload }: ClearFilter) {
-    let filter: FilterMap = {};
+  public clearFilter(
+    { getState, setState }: StateContext<FilterStateModel>,
+    { payload }: ClearFilter,
+  ): void {
+    if (!payload.type) return;
 
-    if (payload.type) {
-      filter[payload.type] = {};
-      ctx.patchState(filter);
-    }
+    const state = getState();
+    const { [payload.type]: removed, ...rest } = state;
+
+    setState(rest);
+    this.syncToStorage(rest);
   }
 }

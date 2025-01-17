@@ -6,9 +6,11 @@ export type FilterModel = {
   [key: string]: any;
 };
 
-export type FilterMap = {
+export interface FilterMap {
   [type: string]: FilterModel;
-};
+}
+
+export interface FilterStateModel extends FilterMap {}
 
 export type TasksListFiltersConfig = {
   q: string;

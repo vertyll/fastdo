@@ -19,9 +19,9 @@ import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
 import { FilterType } from '../../enums/filter.enum';
 import { FilterMetadata, FilterValue } from '../../interfaces/filter.interface';
 import { FiltersService } from '../../services/filter.service';
-import { LocalStorageService } from '../../services/local-storage.service';
 import { PlatformService } from '../../services/platform.service';
 import { ClearFilter, ClearPartial, SavePartial } from '../../store/filter/filter.actions';
+import { FiltersSelectors } from '../../store/filter/filter.selectors';
 import { CheckSelectComponent } from '../molecules/check-select.component';
 import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
 import { InputFieldComponent } from '../molecules/input-field.component';
@@ -170,7 +170,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
       </form>
       @if (filledFilters().length) {
         <div class="mb-4">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-gray-600 dark:text-white">
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
             @for (filter of filledFilters(); track $index) {
               <span class="mr-2">
@@ -213,41 +213,28 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
 export class FilterGroupComponent<T extends Record<string, any>>
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
-  protected readonly translateService = inject(TranslateService);
-
   readonly type = input.required<string>();
-
   readonly filters = input<FilterMetadata[]>([]);
-
   readonly filterChange = output<T>();
-
-  readonly filterSearch = output<{
-    term: string;
-    filter: string;
-  }>();
+  readonly filterSearch = output<{ term: string; filter: string; }>();
 
   public form!: FormGroup;
+  private formChangeSubscriptions: Subscription[] = [];
+  private langChangeSubscription!: Subscription;
 
   public readonly filledFilters = signal<FilterValue[]>([]);
   public readonly showAllFilters = signal<boolean>(false);
   private readonly mobileFilterToggleHidden = signal<boolean>(false);
 
-  private formChangeSubscriptions: Subscription[] = [];
-  private langChangeSubscription!: Subscription;
-
+  protected readonly translateService = inject(TranslateService);
   private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly platformService = inject(PlatformService);
   private readonly filtersService = inject(FiltersService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly localStorageService = inject(LocalStorageService);
 
   protected readonly FilterType = FilterType;
-
-  private get storageKey(): string {
-    return `filters_${this.type()}_state`;
-  }
 
   constructor() {
     effect(() => {
@@ -258,7 +245,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   ngOnInit(): void {
     this.initializeForm();
     this.subscribeToLanguageChanges();
-    this.loadFiltersFromStorage();
+    this.loadFiltersFromState();
   }
 
   ngOnChanges() {
@@ -306,6 +293,17 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.populateFiltersFromUrl();
   }
 
+  private loadFiltersFromState(): void {
+    const savedFilters = this.store.selectSnapshot(
+      FiltersSelectors.getFiltersByType(this.type()),
+    );
+
+    if (savedFilters && Object.keys(savedFilters).length > 0) {
+      this.form.patchValue(savedFilters, { emitEvent: false });
+      this.updateFilledFilters();
+    }
+  }
+
   private subscribeToLanguageChanges(): void {
     this.langChangeSubscription = this.translateService.onLangChange.subscribe(
       () => this.updateFilledFilters(),
@@ -323,8 +321,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
         if (!isInInitialState) {
           this.handleNonInitialState(formValues, urlParamsNotInForm);
         } else {
-          this.localStorageService.remove(this.storageKey);
-
           this.handleInitialState(formValues, urlParamsNotInForm);
         }
       });
@@ -364,8 +360,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
     formValues: Record<string, any>,
     urlParamsNotInForm: Record<string, any>,
   ): void {
-    this.localStorageService.set(this.storageKey, formValues);
-
     this.store.dispatch(
       new SavePartial({ type: this.type(), value: formValues }),
     );
@@ -538,8 +532,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private resetFormAndNavigate(): void {
     this.filledFilters.set([]);
 
-    this.localStorageService.remove(this.storageKey);
-
     this.form.reset(
       this.filtersService.createDefaultFormValues(this.filters()),
     );
@@ -557,14 +549,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.formChangeSubscriptions.forEach(sub => sub.unsubscribe());
     if (this.langChangeSubscription) {
       this.langChangeSubscription.unsubscribe();
-    }
-  }
-
-  private loadFiltersFromStorage(): void {
-    const savedFilters = this.localStorageService.get<Record<string, any>>(this.storageKey, {});
-    if (Object.keys(savedFilters).length > 0) {
-      this.form.patchValue(savedFilters, { emitEvent: false });
-      this.updateFilledFilters();
     }
   }
 }
