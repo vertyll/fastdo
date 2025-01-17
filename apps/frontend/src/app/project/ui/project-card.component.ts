@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroCheck, heroPencil } from '@ng-icons/heroicons/outline';
@@ -30,9 +30,9 @@ import { Project } from '../models/Project';
       <header class="flex justify-end">
         <ng-template [appHasRole]="[role.Admin]">
           <app-remove-item-button
-            (confirm)="onDeleteProject(project.id)"
+            (confirm)="deleteProject.emit(project().id)"
           />
-          @if (!project.editMode) {
+          @if (!isEditMode()) {
             <button
               class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
               (click)="toggleEditMode()"
@@ -42,7 +42,7 @@ import { Project } from '../models/Project';
           } @else {
             <button
               class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
-              (click)="onUpdateProject(project.id, project.name)"
+              (click)="onUpdateProject(project().id, project().name)"
             >
               <ng-icon name="heroCheck" size="18"/>
             </button>
@@ -50,34 +50,34 @@ import { Project } from '../models/Project';
         </ng-template>
       </header>
       <section class="text-left flex-grow">
-        @if (project.editMode) {
+        @if (isEditMode()) {
           <app-autosize-textarea
-            (keyup.escape)="project.editMode = false"
-            (submitText)="onUpdateProject(project.id, $event)"
-            [value]="project.name"
+            (keyup.escape)="setEditMode(false)"
+            (submitText)="onUpdateProject(project().id, $event)"
+            [value]="project().name"
           />
         } @else {
           <h3
             class="text-xl font-semibold mb-2 break-all cursor-pointer"
             (click)="toggleExpanded()"
           >
-            {{ project.name | truncateText:150:(project.isExpanded || false) }}
+            {{ project().name | truncateText:150:isExpanded() }}
           </h3>
         }
       </section>
       <div class="flex flex-col text-gray-600 dark:text-white text-sm mt-2 transition-colors duration-200">
         <div class="flex items-center">
           <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-          <span>{{ 'Project.created' | translate }}: {{ project.dateCreation | customDate }}</span>
+          <span>{{ 'Project.created' | translate }}: {{ project().dateCreation | customDate }}</span>
         </div>
         <div class="flex items-center mt-1">
           <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
-          <span>{{ 'Project.modified' | translate }}: {{ (project.dateModification | customDate) || '-' }}</span>
+          <span>{{ 'Project.modified' | translate }}: {{ (project().dateModification | customDate) || '-' }}</span>
         </div>
       </div>
 
       <footer class="pt-2 flex justify-between items-center mt-auto">
-        <app-link [routerLink]="['/tasks', project.id]">
+        <app-link [routerLink]="['/tasks', project().id]">
           {{ 'Project.viewTasks' | translate }}
         </app-link>
       </footer>
@@ -97,28 +97,31 @@ import { Project } from '../models/Project';
   ],
 })
 export class ProjectCardComponent {
-  @Input()
-  project!: Project;
-  @Output()
-  deleteProject = new EventEmitter<number>();
-  @Output()
-  updateProject = new EventEmitter<{ id: number; name: string; }>();
+  readonly project = input.required<Project>();
+  readonly deleteProject = output<number>();
+  readonly updateProject = output<{ id: number; name: string; }>();
 
+  private readonly editModeSignal = signal(false);
+  private readonly expandedSignal = signal(false);
+
+  protected readonly isEditMode = computed(() => this.editModeSignal());
+  protected readonly isExpanded = computed(() => this.expandedSignal());
   protected readonly role = Role;
 
   protected toggleExpanded(): void {
-    this.project.isExpanded = !this.project.isExpanded;
+    this.expandedSignal.update(value => !value);
   }
 
   protected toggleEditMode(): void {
-    this.project.editMode = !this.project.editMode;
+    this.editModeSignal.update(value => !value);
   }
 
-  protected onDeleteProject(id: number): void {
-    this.deleteProject.emit(id);
+  protected setEditMode(value: boolean): void {
+    this.editModeSignal.set(value);
   }
 
   protected onUpdateProject(id: number, name: string): void {
     this.updateProject.emit({ id, name });
+    this.setEditMode(false);
   }
 }
