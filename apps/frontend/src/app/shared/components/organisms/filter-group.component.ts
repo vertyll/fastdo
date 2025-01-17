@@ -437,9 +437,14 @@ export class FilterGroupComponent<T extends Record<string, any>>
       : queryParamValue || defaultValue;
   }
 
-  private getMultiSelectValue(value: any): any[] {
-    if (Array.isArray(value)) return value;
-    if (typeof value === 'string') return value.split(',');
+  private getMultiSelectValue(value: any): number[] {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value.map(id => Number(id));
+    }
+    if (typeof value === 'string') {
+      return value.split(',').map(id => Number(id));
+    }
     return [];
   }
 

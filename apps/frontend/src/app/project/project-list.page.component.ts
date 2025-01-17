@@ -11,13 +11,12 @@ import { NotificationType } from '../shared/enums/notification.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { ProjectListFiltersConfig } from '../shared/types/filter.type';
-import { LIST_STATE_VALUE, ListState } from '../shared/types/list-state.type';
+import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { GetAllProjectsSearchParams } from './data-access/project.api.service';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { AddProjectDto } from './dtos/add-project.dto';
-import { Project } from './models/Project';
 import { ProjectCardComponent } from './ui/project-card.component';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { ProjectNameValidator } from './validators/project-name.validator';
@@ -43,10 +42,10 @@ import { ProjectNameValidator } from './validators/project-name.validator';
       />
     </div>
     <div>
-      @switch (listState.state) {
+      @switch (projectsStateService.state()) {
         @case (listStateValue.SUCCESS) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (project of listState.results; track project.id) {
+            @for (project of projectsStateService.projects(); track project.id) {
               <app-project-card
                 [project]="project"
                 (deleteProject)="deleteProject($event)"
@@ -58,7 +57,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
           </div>
         }
         @case (listStateValue.ERROR) {
-          <app-error-message [customMessage]="listState.error.message"/>
+          <app-error-message [customMessage]="projectsStateService.error()?.message"/>
         }
         @case (listStateValue.LOADING) {
           <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
@@ -74,13 +73,12 @@ import { ProjectNameValidator } from './validators/project-name.validator';
 })
 export class ProjectListPageComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
-  private readonly projectsStateService = inject(ProjectsStateService);
+  protected readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
   private readonly modalService = inject(ModalService);
   protected readonly listStateValue = LIST_STATE_VALUE;
-  protected listState: ListState<Project> = { state: LIST_STATE_VALUE.IDLE };
 
   ngOnInit(): void {
     this.getAllProjects();
@@ -121,13 +119,7 @@ export class ProjectListPageComponent implements OnInit {
     }
 
     try {
-      const project = await firstValueFrom(this.projectsService.add(data.name));
-      if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
-        this.listState = {
-          ...this.listState,
-          results: [...this.listState.results, project],
-        };
-      }
+      await firstValueFrom(this.projectsService.add(data.name));
       this.notificationService.showNotification(
         this.translateService.instant('Project.createSuccess'),
         NotificationType.success,
@@ -158,18 +150,6 @@ export class ProjectListPageComponent implements OnInit {
     }
 
     this.projectsService.update(id, newName).subscribe({
-      next: updatedProject => {
-        if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
-          this.listState = {
-            ...this.listState,
-            results: this.listState.results.map(project =>
-              project.id === id
-                ? { ...updatedProject, editMode: false }
-                : project
-            ),
-          };
-        }
-      },
       error: err => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
@@ -194,17 +174,6 @@ export class ProjectListPageComponent implements OnInit {
 
   protected deleteProject(id: number): void {
     this.projectsService.delete(id).subscribe({
-      next: () => {
-        if (this.listState.state === LIST_STATE_VALUE.SUCCESS) {
-          this.listState = {
-            ...this.listState,
-            results: this.listState.results.filter(
-              project => project.id !== id,
-            ),
-          };
-          this.projectsStateService.removeProject(id);
-        }
-      },
       error: err => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
@@ -228,23 +197,8 @@ export class ProjectListPageComponent implements OnInit {
   }
 
   private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
-    this.listState = { state: LIST_STATE_VALUE.LOADING };
-
     this.projectsService.getAll(searchParams).subscribe({
-      next: response => {
-        const projects = response.body || [];
-        this.listState = {
-          state: LIST_STATE_VALUE.SUCCESS,
-          results: projects,
-        };
-        this.projectsStateService.setProjectList(projects);
-      },
       error: err => {
-        this.listState = {
-          state: LIST_STATE_VALUE.ERROR,
-          error: err,
-        };
-
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
