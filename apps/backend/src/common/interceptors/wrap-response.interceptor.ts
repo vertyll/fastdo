@@ -1,4 +1,12 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  BadRequestException,
+  CallHandler,
+  ExecutionContext,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -9,6 +17,7 @@ interface ResponseWrapper<T> {
   path: string;
   method: string;
   message: string;
+  errors?: any;
 }
 
 @Injectable()
@@ -30,7 +39,27 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ResponseWr
         message: response.statusMessage || 'Success',
       })),
       catchError(error => {
-        throw error;
+        const errorResponse: ResponseWrapper<null> = {
+          data: null,
+          statusCode: error instanceof HttpException ? error.getStatus() : 500,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+          method: request.method,
+          message: error.message || 'Internal server error',
+        };
+
+        if (error instanceof BadRequestException) {
+          const validationErrors = error.getResponse();
+          if (typeof validationErrors === 'object' && validationErrors.hasOwnProperty('message')) {
+            errorResponse.errors = validationErrors;
+          }
+        }
+
+        if (!(error instanceof HttpException)) {
+          throw new InternalServerErrorException(errorResponse);
+        }
+
+        throw new HttpException(errorResponse, error.getStatus());
       }),
     );
   }

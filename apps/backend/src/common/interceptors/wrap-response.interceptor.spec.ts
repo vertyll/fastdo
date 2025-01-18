@@ -1,5 +1,5 @@
-import { CallHandler, ExecutionContext } from '@nestjs/common';
-import { of } from 'rxjs';
+import { BadRequestException, CallHandler, ExecutionContext } from '@nestjs/common';
+import { of, throwError } from 'rxjs';
 import { WrapResponseInterceptor } from './wrap-response.interceptor';
 
 describe('WrapResponseInterceptor', () => {
@@ -92,6 +92,69 @@ describe('WrapResponseInterceptor', () => {
       },
       error: () => {
         done.fail('Should not throw error');
+      },
+    });
+  });
+
+  it('should handle validation errors', done => {
+    const validationError = new BadRequestException({
+      message: 'Validation failed',
+      errors: [
+        {
+          field: 'email',
+          errors: ['email must be an email'],
+        },
+      ],
+    });
+
+    (mockCallHandler.handle as jest.Mock).mockReturnValue(throwError(() => validationError));
+
+    interceptor.intercept(mockContext, mockCallHandler).subscribe({
+      next: () => {
+        done.fail('Should throw error');
+      },
+      error: error => {
+        expect(error.response).toEqual({
+          data: null,
+          statusCode: 400,
+          timestamp: expect.any(String),
+          path: '/test-url',
+          method: 'GET',
+          message: 'Validation failed',
+          errors: {
+            message: 'Validation failed',
+            errors: [
+              {
+                field: 'email',
+                errors: ['email must be an email'],
+              },
+            ],
+          },
+        });
+        done();
+      },
+    });
+  });
+
+  it('should handle non-validation errors', done => {
+    const error = new Error('Test error');
+    (mockCallHandler.handle as jest.Mock).mockReturnValue(throwError(() => error));
+
+    interceptor.intercept(mockContext, mockCallHandler).subscribe({
+      next: () => {
+        done.fail('Should throw error');
+      },
+      error: error => {
+        expect(error.response).toEqual({
+          data: null,
+          statusCode: 500,
+          timestamp: expect.any(String),
+          path: '/test-url',
+          method: 'GET',
+          message: 'Test error',
+        });
+        expect(error.response.errors).toBeUndefined();
+        done();
       },
     });
   });
