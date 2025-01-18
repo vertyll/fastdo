@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, map, tap } from 'rxjs';
+import { ApiResponse } from '../../shared/interfaces/api-response.interface';
+import { RegisterResponse } from '../../shared/interfaces/auth.interface';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { AuthApiService } from './auth.api.service';
@@ -26,7 +28,7 @@ export class AuthService {
     );
   }
 
-  public register(dto: RegisterDto): Observable<any> {
+  public register(dto: RegisterDto): Observable<ApiResponse<RegisterResponse>> {
     return this.authApiService.register(dto);
   }
 

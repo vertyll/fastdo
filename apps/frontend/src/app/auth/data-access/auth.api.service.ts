@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../../shared/interfaces/api-response.interface';
+import { LoginResponse, RegisterResponse } from '../../shared/interfaces/auth.interface';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 
@@ -12,14 +14,17 @@ export class AuthApiService {
   private readonly URL = environment.backendUrl;
   private readonly http = inject(HttpClient);
 
-  public login(dto: LoginDto): Observable<any> {
-    return this.http.post<{ access_token: string; }>(
+  public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
+    return this.http.post<ApiResponse<LoginResponse>>(
       `${this.URL}/auth/login`,
       dto,
     );
   }
 
-  public register(dto: RegisterDto): Observable<any> {
-    return this.http.post(`${this.URL}/auth/register`, dto);
+  public register(dto: RegisterDto): Observable<ApiResponse<RegisterResponse>> {
+    return this.http.post<ApiResponse<RegisterResponse>>(
+      `${this.URL}/auth/register`,
+      dto,
+    );
   }
 }

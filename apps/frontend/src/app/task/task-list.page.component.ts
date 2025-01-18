@@ -253,7 +253,7 @@ export class TaskListPageComponent implements OnInit {
 
   private loadProjectName(projectId: number): void {
     this.projectsService.getProjectById(projectId).subscribe(project => {
-      this.projectName = project.name;
+      this.projectName = project.data.name;
     });
   }
 
@@ -265,7 +265,7 @@ export class TaskListPageComponent implements OnInit {
 
     return request$.pipe(
       map(response => {
-        const tasks = response.body.data || [];
+        const tasks = response.data || [];
         this.tasksStateService.setTaskList(tasks);
       }),
       catchError(err => {

@@ -3,6 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../../shared/interfaces/api-response.interface';
 import { AddTaskDto } from '../dtos/add-task.dto';
 import { Task } from '../models/Task';
 
@@ -34,10 +35,9 @@ export class TasksApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
+  public getAll(searchParams?: GetAllTasksSearchParams): Observable<ApiResponse<Task[]>> {
     return this.withLoadingState(
-      this.http.get<Task[]>(`${this.URL}/tasks`, {
-        observe: 'response',
+      this.http.get<ApiResponse<Task[]>>(`${this.URL}/tasks`, {
         params: searchParams,
       }),
     );
@@ -46,30 +46,29 @@ export class TasksApiService {
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
-  ): Observable<any> {
+  ): Observable<ApiResponse<Task[]>> {
     return this.withLoadingState(
-      this.http.get<Task[]>(`${this.URL}/tasks/project/${projectId}`, {
-        observe: 'response',
+      this.http.get<ApiResponse<Task[]>>(`${this.URL}/tasks/project/${projectId}`, {
         params: searchParams,
       }),
     );
   }
 
-  public delete(taskId: number): Observable<any> {
+  public delete(taskId: number): Observable<ApiResponse<void>> {
     return this.withLoadingState(
-      this.http.delete(`${this.URL}/tasks/${taskId}`),
+      this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/${taskId}`),
     );
   }
 
-  public update(taskId: number, payload: TaskUpdatePayload): Observable<Task> {
+  public update(taskId: number, payload: TaskUpdatePayload): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
-      this.http.patch<Task>(`${this.URL}/tasks/${taskId}`, payload),
+      this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, payload),
     );
   }
 
-  public add(data: AddTaskDto): Observable<Task> {
+  public add(data: AddTaskDto): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
-      this.http.post<Task>(`${this.URL}/tasks`, data),
+      this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, data),
     );
   }
 
@@ -82,7 +81,6 @@ export class TasksApiService {
       catchError((e: HttpErrorResponse) => {
         this.$error.set({ message: e.message, status: e.status });
         this.$loading.set(false);
-
         return EMPTY;
       }),
       tap(() => {

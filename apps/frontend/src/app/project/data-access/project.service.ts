@@ -1,5 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
+import { ApiResponse } from '../../shared/interfaces/api-response.interface';
+import { Project } from '../models/Project';
 import { GetAllProjectsSearchParams, ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
 
@@ -10,17 +12,17 @@ export class ProjectsService {
   private readonly httpService = inject(ProjectsApiService);
   private readonly state = inject(ProjectsStateService);
 
-  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<any> {
+  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<Project[]>> {
     return this.httpService.getAll(searchParams).pipe(
       tap(response => {
-        if (response.body.data) {
-          this.state.setProjectList(response.body.data);
+        if (response.data) {
+          this.state.setProjectList(response.data);
         }
       }),
     );
   }
 
-  public delete(projectId: number): Observable<any> {
+  public delete(projectId: number): Observable<ApiResponse<void>> {
     return this.httpService.delete(projectId).pipe(
       tap(() => {
         this.state.removeProject(projectId);
@@ -28,23 +30,23 @@ export class ProjectsService {
     );
   }
 
-  public update(projectId: number, name: string): Observable<any> {
+  public update(projectId: number, name: string): Observable<ApiResponse<Project>> {
     return this.httpService.update(projectId, name).pipe(
-      tap(project => {
-        this.state.updateProject(project);
+      tap(response => {
+        this.state.updateProject(response.data);
       }),
     );
   }
 
-  public add(name: string): Observable<any> {
+  public add(name: string): Observable<ApiResponse<Project>> {
     return this.httpService.add(name).pipe(
-      tap(project => {
-        this.state.addProject(project);
+      tap(response => {
+        this.state.addProject(response.data);
       }),
     );
   }
 
-  public getProjectById(projectId: number): Observable<any> {
+  public getProjectById(projectId: number): Observable<ApiResponse<Project>> {
     return this.httpService.getById(projectId);
   }
 }

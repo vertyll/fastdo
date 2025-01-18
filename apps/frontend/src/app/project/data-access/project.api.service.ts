@@ -3,6 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../../shared/interfaces/api-response.interface';
 import { Project } from '../models/Project';
 
 export type GetAllProjectsSearchParams = {
@@ -26,38 +27,38 @@ export class ProjectsApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getAll(searchParams?: GetAllProjectsSearchParams) {
+  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<Project[]>> {
     return this.withLoadingState(
-      this.http.get<any>(`${this.URL}/projects`, {
-        observe: 'response',
+      this.http.get<ApiResponse<Project[]>>(`${this.URL}/projects`, {
         params: searchParams,
       }),
     );
   }
 
-  public delete(projectId: number): Observable<any> {
+  public delete(projectId: number): Observable<ApiResponse<void>> {
     return this.withLoadingState(
-      this.http.delete(`${this.URL}/projects/${projectId}`),
+      this.http.delete<ApiResponse<void>>(`${this.URL}/projects/${projectId}`),
     );
   }
 
-  public update(projectId: number, name: string): Observable<Project> {
+  public update(projectId: number, name: string): Observable<ApiResponse<Project>> {
     return this.withLoadingState(
-      this.http.patch<Project>(`${this.URL}/projects/${projectId}`, { name }),
+      this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, { name }),
     );
   }
 
-  public add(name: string): Observable<Project> {
+  public add(name: string): Observable<ApiResponse<Project>> {
     return this.withLoadingState(
-      this.http.post<Project>(`${this.URL}/projects`, { name }),
+      this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, { name }),
     );
   }
 
-  public getById(projectId: number): Observable<Project> {
+  public getById(projectId: number): Observable<ApiResponse<Project>> {
     return this.withLoadingState(
-      this.http.get<Project>(`${this.URL}/projects/${projectId}`),
+      this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`),
     );
   }
+
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {
     this.$idle.set(false);
     this.$error.set(null);
@@ -67,7 +68,6 @@ export class ProjectsApiService {
       catchError((e: HttpErrorResponse) => {
         this.$error.set({ message: e.message, status: e.status });
         this.$loading.set(false);
-
         return EMPTY;
       }),
       tap(() => {
