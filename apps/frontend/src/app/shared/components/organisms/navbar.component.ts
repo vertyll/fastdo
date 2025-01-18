@@ -212,7 +212,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .language-button {
-      @apply md:flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 hidden relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 relative;
     }
 
     .language-dropdown {
@@ -241,7 +241,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
             </button>
               <app-theme-switcher />
               <div class="relative">
-                <button class="" (click)="toggleLanguageDropdown($event)">
+                <button class="language-button" (click)="toggleLanguageDropdown($event)">
                   <span>{{ getCurrentLanguage() }}</span>
                   <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
                 </button>
