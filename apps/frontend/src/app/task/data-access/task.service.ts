@@ -14,8 +14,8 @@ export class TasksService {
   public getAll(searchParams?: GetAllTasksSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
       tap(response => {
-        if (response.body) {
-          this.state.setTaskList(response.body);
+        if (response.body.data) {
+          this.state.setTaskList(response.body.data);
         }
       }),
     );
@@ -27,8 +27,8 @@ export class TasksService {
   ): Observable<any> {
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap(response => {
-        if (response.body) {
-          this.state.setTaskList(response.body);
+        if (response.body.data) {
+          this.state.setTaskList(response.body.data);
         }
       }),
     );

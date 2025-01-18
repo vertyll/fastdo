@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
@@ -14,9 +15,11 @@ export class TasksController {
   @Post()
   @ApiOperation({ summary: 'Create a new task' })
   @ApiBody({ type: CreateTaskDto })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 201,
     description: 'The task has been successfully created.',
+    type: Task,
+    isArray: false,
   })
   create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.create(createTaskDto);
@@ -24,16 +27,18 @@ export class TasksController {
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
-  @ApiResponse({ status: 200, description: 'Return all tasks.' })
+  @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isArray: true })
   findAll(@Query() query: GetAllTasksSearchParams): Promise<Task[]> {
     return this.tasksService.findAll(query);
   }
 
   @Get('project/:projectId')
   @ApiOperation({ summary: 'Get all tasks for a specific project' })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 200,
     description: 'Return all tasks for the specified project.',
+    type: Task,
+    isArray: true,
   })
   findAllByProjectId(
     @Param('projectId') projectId: string,
@@ -44,7 +49,7 @@ export class TasksController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
-  @ApiResponse({ status: 200, description: 'Return the task.' })
+  @ApiWrappedResponse({ status: 200, description: 'Return the task.', type: Task, isArray: false })
   findOne(@Param('id') id: string): Promise<Task> {
     return this.tasksService.findOne(+id);
   }
@@ -52,9 +57,11 @@ export class TasksController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a task' })
   @ApiBody({ type: UpdateTaskDto })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 200,
     description: 'The task has been successfully updated.',
+    type: Task,
+    isArray: false,
   })
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
     return this.tasksService.update(+id, updateTaskDto);
@@ -62,7 +69,7 @@ export class TasksController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a task' })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 200,
     description: 'The task has been successfully deleted.',
   })

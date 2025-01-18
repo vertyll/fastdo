@@ -13,8 +13,8 @@ export class ProjectsService {
   public getAll(searchParams?: GetAllProjectsSearchParams): Observable<any> {
     return this.httpService.getAll(searchParams).pipe(
       tap(response => {
-        if (response.body) {
-          this.state.setProjectList(response.body);
+        if (response.body.data) {
+          this.state.setProjectList(response.body.data);
         }
       }),
     );

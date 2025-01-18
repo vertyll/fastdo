@@ -5,8 +5,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
+import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
+import { Event } from './events/entities/event.entity';
+import { Project } from './projects/entities/project.entity';
+import { Role } from './roles/entities/role.entity';
+import { Priority } from './tasks/entities/priority.entity';
+import { Task } from './tasks/entities/task.entity';
+import { UserRole } from './users/entities/user-role.entity';
+import { User } from './users/entities/user.entity';
+
 // import { SnakeToCamelCaseInterceptor } from "./common/interceptors/snake-to-camel-case.interceptor";
-// import { WrapResponseInterceptor } from "./common/interceptors/wrap-response.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -37,7 +45,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(
-    // new WrapResponseInterceptor(),
+    new WrapResponseInterceptor(),
     new TimeoutInterceptor(),
     // new SnakeToCamelCaseInterceptor()
   );
@@ -47,7 +55,17 @@ async function bootstrap() {
     .setDescription('todo list api')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, options);
+  const document = SwaggerModule.createDocument(app, options, {
+    extraModels: [
+      Task,
+      Project,
+      Priority,
+      Event,
+      User,
+      Role,
+      UserRole,
+    ],
+  });
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);

@@ -265,7 +265,7 @@ export class TaskListPageComponent implements OnInit {
 
     return request$.pipe(
       map(response => {
-        const tasks = response.body || [];
+        const tasks = response.body.data || [];
         this.tasksStateService.setTaskList(tasks);
       }),
       catchError(err => {

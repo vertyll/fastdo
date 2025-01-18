@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
 import { CreateProjectDto } from './dtos/create-project.dto';
@@ -19,7 +20,7 @@ export class ProjectsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all projects' })
-  @ApiResponse({ status: 200, description: 'Return all projects.' })
+  @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isArray: true })
   getAll(@Query() query: GetAllProjectsSearchParams): Promise<Project[]> {
     return this.projectsService.findAll(query);
   }
@@ -27,9 +28,11 @@ export class ProjectsController {
   @Post()
   @ApiOperation({ summary: 'Create a new project' })
   @ApiBody({ type: CreateProjectDto })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 201,
     description: 'The project has been successfully created.',
+    type: Project,
+    isArray: false,
   })
   create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
     return this.projectsService.create(createProjectDto);
@@ -37,7 +40,7 @@ export class ProjectsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a project by id' })
-  @ApiResponse({ status: 200, description: 'Return the project.' })
+  @ApiWrappedResponse({ status: 200, description: 'Return the project.', type: Project, isArray: false })
   findOne(@Param('id') id: string): Promise<Project> {
     return this.projectsService.findOne(+id);
   }
@@ -46,9 +49,11 @@ export class ProjectsController {
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a project' })
   @ApiBody({ type: UpdateProjectDto })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 200,
     description: 'The project has been successfully updated.',
+    type: Project,
+    isArray: false,
   })
   update(
     @Param('id') id: string,
@@ -60,7 +65,7 @@ export class ProjectsController {
   @Delete(':id')
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Remove a project' })
-  @ApiResponse({
+  @ApiWrappedResponse({
     status: 204,
     description: 'The project has been successfully removed.',
   })

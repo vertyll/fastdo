@@ -28,7 +28,7 @@ export class ProjectsApiService {
 
   public getAll(searchParams?: GetAllProjectsSearchParams) {
     return this.withLoadingState(
-      this.http.get<Project[]>(`${this.URL}/projects`, {
+      this.http.get<any>(`${this.URL}/projects`, {
         observe: 'response',
         params: searchParams,
       }),
