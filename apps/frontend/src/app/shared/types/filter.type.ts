@@ -1,16 +1,38 @@
 import { FilterType } from '../enums/filter.enum';
 import { TASK_STATUS, TaskStatus } from '../enums/task-status.enum';
-import { FilterMetadata } from '../interfaces/filter.interface';
 
-export type FilterModel = {
-  [key: string]: any;
-};
-
+/*
+ * Interface
+ */
 export interface FilterMap {
   [type: string]: FilterModel;
 }
 
+export interface FilterValue {
+  id: string;
+  value: string;
+}
+
+export interface FilterMetadata {
+  type: FilterType;
+  formControlName: string;
+  labelKey: string;
+  defaultValue?: any;
+  options?: { value: any; label: string; }[];
+  multiselectOptions?: { id: any; name: string; }[];
+  maxSelectedItems?: number;
+  minTermLength?: number;
+  allowAddTag?: boolean;
+}
+
 export interface FilterStateModel extends FilterMap {}
+
+/*
+ * Type
+ */
+export type FilterModel = {
+  [key: string]: any;
+};
 
 export type TasksListFiltersConfig = {
   q: string;
@@ -31,6 +53,11 @@ export type ProjectListFiltersConfig = {
   createdTo: string;
   updatedFrom: string;
   updatedTo: string;
+};
+
+export type PaginationParams = {
+  page: number;
+  pageSize: number;
 };
 
 export const TASKS_LIST_FILTERS: FilterMetadata[] = [
@@ -93,6 +120,9 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   },
 ];
 
+/*
+ * Const
+ */
 export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
     type: FilterType.Text,

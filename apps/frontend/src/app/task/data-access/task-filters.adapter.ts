@@ -1,27 +1,29 @@
-import { TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
+import { PaginationParams, TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
 import { TASK_STATUS } from '../../shared/enums/task-status.enum';
-import { GetAllTasksSearchParams } from './task.api.service';
+import { GetAllTasksSearchParams } from '../../shared/types/task.type';
 
 export function getAllTasksSearchParams(
-  formValue: TasksListFiltersConfig & { isUrgent?: boolean; },
+  params: Partial<TasksListFiltersConfig & { isUrgent?: boolean; } & PaginationParams>,
 ): GetAllTasksSearchParams {
   let searchParams: GetAllTasksSearchParams = {
-    q: formValue.q || '',
-    sortBy: (formValue.sortBy as 'dateCreation' | undefined) || 'dateCreation',
-    orderBy: formValue.orderBy || 'desc',
-    createdFrom: formValue.createdFrom,
-    createdTo: formValue.createdTo,
-    updatedFrom: formValue.updatedFrom,
-    updatedTo: formValue.updatedTo,
+    q: params.q || '',
+    sortBy: (params.sortBy as 'dateCreation' | undefined) || 'dateCreation',
+    orderBy: params.orderBy || 'desc',
+    createdFrom: params.createdFrom || '',
+    createdTo: params.createdTo || '',
+    updatedFrom: params.updatedFrom || '',
+    updatedTo: params.updatedTo || '',
+    page: params.page || 0,
+    pageSize: params.pageSize || 10,
   };
 
-  if (formValue.status === TASK_STATUS.TODO) {
+  if (params.status === TASK_STATUS.TODO) {
     searchParams.is_done = 'false';
-  } else if (formValue.status === TASK_STATUS.DONE) {
+  } else if (params.status === TASK_STATUS.DONE) {
     searchParams.is_done = 'true';
   }
 
-  if (formValue.isUrgent) {
+  if (params.isUrgent) {
     searchParams.is_urgent = 'true';
   }
 

@@ -1,18 +1,31 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
-
-interface ApiWrappedResponseOptions {
-  status: number;
-  description?: string;
-  type?: any;
-  isArray?: boolean;
-}
+import { ApiWrappedResponseOptions } from '../types/response.type';
 
 export function ApiWrappedResponse(options: ApiWrappedResponseOptions) {
   let dataSchema: any;
 
   if (options.type) {
-    if (options.type === String) {
+    if (options.isPaginated) {
+      dataSchema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: { $ref: getSchemaPath(options.type) },
+          },
+          pagination: {
+            type: 'object',
+            properties: {
+              total: { type: 'number' },
+              page: { type: 'number' },
+              pageSize: { type: 'number' },
+              totalPages: { type: 'number' },
+            },
+          },
+        },
+      };
+    } else if (options.type === String) {
       dataSchema = { type: 'string' };
     } else if (options.type === Number) {
       dataSchema = { type: 'number' };

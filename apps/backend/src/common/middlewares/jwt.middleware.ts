@@ -16,7 +16,7 @@ export class JwtMiddleware implements NestMiddleware {
     req: FastifyRequest['raw'],
     res: FastifyReply['raw'],
     next: () => void,
-  ) {
+  ): void {
     const token = this.extractTokenFromHeader(req);
 
     if (token) {

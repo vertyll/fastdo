@@ -1,5 +1,8 @@
 export type FetchingError = { status: number; message: string; };
 
+/*
+ * Type
+ */
 // * idle - initial
 type IdleState = {
   state: LIST_STATE_VALUE['IDLE'];
@@ -21,13 +24,6 @@ type ErrorState = {
 
 type LIST_STATE_VALUE = typeof LIST_STATE_VALUE;
 
-export const LIST_STATE_VALUE = {
-  IDLE: 'IDLE',
-  LOADING: 'LOADING',
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
-} as const;
-
 export type ListStateValue = keyof typeof LIST_STATE_VALUE;
 
 export type ListState<T> =
@@ -35,3 +31,13 @@ export type ListState<T> =
   | LoadingState
   | SuccessState<T>
   | ErrorState;
+
+/*
+ * Const
+ */
+export const LIST_STATE_VALUE = {
+  IDLE: 'IDLE',
+  LOADING: 'LOADING',
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR',
+} as const;

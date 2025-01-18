@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class GetAllProjectsSearchParams {
   @ApiProperty({ required: false, description: 'Search query' })
@@ -59,8 +59,19 @@ export class GetAllProjectsSearchParams {
   @IsString()
   updatedTo?: string;
 
+  @ApiProperty()
   @IsOptional()
   @IsString()
   @IsIn(['active', 'inactive'])
   status?: 'active' | 'inactive';
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  page?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  pageSize?: number;
 }

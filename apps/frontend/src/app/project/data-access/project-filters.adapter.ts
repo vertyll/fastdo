@@ -1,17 +1,18 @@
-import { ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
-import { GetAllProjectsSearchParams } from './project.api.service';
+import { PaginationParams, ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
+import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
 
 export function getAllProjectsSearchParams(
-  formValue: ProjectListFiltersConfig,
+  params: Partial<ProjectListFiltersConfig & PaginationParams>,
 ): GetAllProjectsSearchParams {
   return {
-    q: formValue.q || '',
-    sortBy: (formValue.sortBy as 'dateCreation' | 'name' | undefined)
-      || 'dateCreation',
-    orderBy: formValue.orderBy || 'desc',
-    createdFrom: formValue.createdFrom,
-    createdTo: formValue.createdTo,
-    updatedFrom: formValue.updatedFrom,
-    updatedTo: formValue.updatedTo,
+    q: params.q || '',
+    sortBy: params.sortBy || 'dateCreation',
+    orderBy: params.orderBy || 'desc',
+    createdFrom: params.createdFrom || '',
+    createdTo: params.createdTo || '',
+    updatedFrom: params.updatedFrom || '',
+    updatedTo: params.updatedTo || '',
+    page: params.page || 0,
+    pageSize: params.pageSize || 10,
   };
 }

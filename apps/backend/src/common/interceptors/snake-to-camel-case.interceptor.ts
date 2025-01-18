@@ -25,7 +25,7 @@ export class SnakeToCamelCaseInterceptor implements NestInterceptor {
 
   private keysToCamel(obj: any): any {
     if (this.isObject(obj)) {
-      const n = {};
+      const n: { [key: string]: any; } = {};
       Object.keys(obj).forEach(k => {
         n[this.toCamel(k)] = this.keysToCamel(obj[k]);
       });

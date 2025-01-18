@@ -18,7 +18,7 @@ export class Project {
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date;
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Task })
   @OneToMany(() => Task, task => task.project, { onDelete: 'CASCADE' })

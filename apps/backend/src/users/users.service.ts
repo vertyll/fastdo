@@ -6,11 +6,11 @@ import { UserRepository } from './repositories/user.repository';
 export class UsersService {
   constructor(private readonly usersRepository: UserRepository) {}
 
-  public async findOne(id: number): Promise<User | undefined> {
+  public async findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  public async findByEmail(email: string): Promise<User | undefined> {
+  public async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
   }
 

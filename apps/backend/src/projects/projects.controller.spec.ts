@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { Project } from './entities/project.entity';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsController } from './projects.controller';
@@ -41,16 +42,24 @@ describe('ProjectsController', () => {
   });
 
   describe('getAll', () => {
-    it('should return an array of projects', async () => {
-      const result: Project[] = [
-        {
-          id: 1,
-          name: 'Test Project',
-          dateCreation: new Date(),
-          dateModification: null,
-          tasks: [],
+    it('should return a paginated response of projects', async () => {
+      const result: ApiPaginatedResponse<Project> = {
+        items: [
+          {
+            id: 1,
+            name: 'Test Project',
+            dateCreation: new Date(),
+            dateModification: null,
+            tasks: [],
+          },
+        ],
+        pagination: {
+          total: 1,
+          page: 1,
+          pageSize: 10,
+          totalPages: 1,
         },
-      ];
+      };
       mockProjectsService.findAll.mockResolvedValue(result);
 
       expect(await controller.getAll({})).toEqual(result);

@@ -1,0 +1,65 @@
+@use '@angular/material' as mat;
+
+.success-snackbar,
+.error-snackbar,
+.info-snackbar {
+  text-align: center !important;
+  top: 0 !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 90% !important;
+  max-width: 600px !important;
+
+  .mdc-snackbar__surface,
+  .mat-mdc-snack-bar-label {
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+    color: white !important;
+    border-radius: 10px !important;
+    font-size: 15px !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  .mdc-button__label {
+    color: yellow !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    font-size: 17px !important;
+  }
+}
+
+.success-snackbar .mdc-snackbar__surface,
+.success-snackbar .mat-mdc-snack-bar-label {
+  background-color: #198754 !important;
+}
+
+.error-snackbar .mdc-snackbar__surface,
+.error-snackbar .mat-mdc-snack-bar-label {
+  background-color: #dc3545 !important;
+}
+
+.info-snackbar .mdc-snackbar__surface,
+.info-snackbar .mat-mdc-snack-bar-label {
+  background-color: gray !important;
+}
+
+@media (max-width: 600px) {
+  .success-snackbar,
+  .error-snackbar,
+  .info-snackbar {
+    width: 95% !important;
+
+    .mdc-snackbar__surface,
+    .mat-mdc-snack-bar-label {
+      font-size: 14px !important;
+    }
+
+    .mdc-button__label {
+      font-size: 15px !important;
+    }
+  }
+}

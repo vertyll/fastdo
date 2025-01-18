@@ -2,7 +2,7 @@ import { Component, inject, input } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationType } from 'src/app/shared/enums/notification.enum';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { TaskUpdatePayload } from '../data-access/task.api.service';
+import { TaskUpdatePayload } from '../../shared/types/task.type';
 import { TasksService } from '../data-access/task.service';
 import { Task } from '../models/Task';
 import { TaskCardComponent } from './task-card.component';

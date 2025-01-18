@@ -1,12 +1,20 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LIST_STATE_VALUE } from 'src/app/shared/types/list-state.type';
+import { PaginationMeta } from '../../shared/types/api-response.type';
 import { Task } from '../models/Task';
 import { TasksApiService } from './task.api.service';
 
 @Injectable({ providedIn: 'root' })
 export class TasksStateService {
-  private tasksSignal = signal<Task[]>([]);
   private readonly apiService = inject(TasksApiService);
+
+  private tasksSignal = signal<Task[]>([]);
+  private readonly paginationSignal = signal<PaginationMeta>({
+    total: 0,
+    page: 0,
+    pageSize: 10,
+    totalPages: 0,
+  });
 
   public tasks = computed(() => this.tasksSignal());
   public state = computed(() =>
@@ -22,6 +30,7 @@ export class TasksStateService {
   public urgentCount = computed(
     () => this.tasksSignal().filter(task => task.isUrgent).length,
   );
+  public readonly pagination = this.paginationSignal.asReadonly();
 
   public setTaskList(tasks: Task[]): void {
     this.tasksSignal.set(tasks);
@@ -37,5 +46,9 @@ export class TasksStateService {
 
   public removeTask(taskId: Task['id']): void {
     this.tasksSignal.update(tasks => tasks.filter(task => task.id !== taskId));
+  }
+
+  public setPagination(pagination: PaginationMeta): void {
+    this.paginationSignal.set(pagination);
   }
 }

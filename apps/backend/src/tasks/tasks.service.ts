@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Project } from 'src/projects/entities/project.entity';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
@@ -18,15 +19,43 @@ export class TasksService {
     return this.taskRepository.save(task);
   }
 
-  public async findAll(params: GetAllTasksSearchParams): Promise<Task[]> {
-    return this.taskRepository.findAllWithParams(params);
+  public async findAll(params: GetAllTasksSearchParams): Promise<ApiPaginatedResponse<Task>> {
+    const page = Number(params.page) || 0;
+    const pageSize = Number(params.pageSize) || 10;
+    const skip = page * pageSize;
+
+    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize);
+
+    return {
+      items,
+      pagination: {
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
   }
 
   public async findAllByProjectId(
     projectId: number,
     params: GetAllTasksSearchParams,
-  ): Promise<Task[]> {
-    return this.taskRepository.findAllWithParams(params, projectId);
+  ): Promise<ApiPaginatedResponse<Task>> {
+    const page = Number(params.page) || 0;
+    const pageSize = Number(params.pageSize) || 10;
+    const skip = page * pageSize;
+
+    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, projectId);
+
+    return {
+      items,
+      pagination: {
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
   }
 
   public findOne(id: number): Promise<Task> {

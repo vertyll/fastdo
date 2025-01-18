@@ -10,19 +10,21 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { AppConfigStateService } from '../config/config.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
+import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 import { ModalService } from '../shared/services/modal.service';
-import { TasksListFiltersConfig } from '../shared/types/filter.type';
+import { PaginationMeta } from '../shared/types/api-response.type';
+import { PaginationParams, TasksListFiltersConfig } from '../shared/types/filter.type';
 import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
+import { GetAllTasksSearchParams, TasksListViewMode } from '../shared/types/task.type';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
-import { GetAllTasksSearchParams } from './data-access/task.api.service';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { AddTaskDto } from './dtos/add-task.dto';
 import { TasksKanbanViewComponent } from './ui/task-kanban.component';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
-import { TasksListViewMode, TasksListViewModeComponent } from './ui/task-list-view-mode.component';
+import { TasksListViewModeComponent } from './ui/task-list-view-mode.component';
 import { TasksListComponent } from './ui/task-list.component';
 import { TaskNameValidator } from './validators/task-name.validator';
 
@@ -38,6 +40,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
     TitleComponent,
     MatTooltipModule,
     ErrorMessageComponent,
+    PaginatorComponent,
   ],
   template: `
     <div class="flex flex-col gap-4">
@@ -96,12 +99,18 @@ import { TaskNameValidator } from './validators/task-name.validator';
             [tasks]="tasksStateService.tasks()"
           />
         }
+        <app-paginator
+          [total]="tasksStateService.pagination().total"
+          [pageSize]="tasksStateService.pagination().pageSize"
+          [currentPage]="tasksStateService.pagination().page"
+          (pageChange)="handlePageChange($event)"
+        />
       }
       @case (listStateValue.ERROR) {
         <app-error-message [customMessage]="tasksStateService.error()?.message"/>
       }
       @case (listStateValue.LOADING) {
-        <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
+        <p class="text-gray-600 dark:text-white">{{ 'Basic.loading' | translate }}</p>
       }
     }
   `,
@@ -134,6 +143,23 @@ export class TaskListPageComponent implements OnInit {
       this.configStateService.updateTasksListView(view);
     }
     this.initializeTaskList();
+  }
+
+  protected handlePageChange(event: PaginationParams): void {
+    const { page, pageSize } = event;
+    const currentPagination: PaginationMeta = this.tasksStateService.pagination();
+
+    this.tasksStateService.setPagination({
+      ...currentPagination,
+      page,
+    });
+
+    const searchParams: GetAllTasksSearchParams = getAllTasksSearchParams({
+      page,
+      pageSize,
+    });
+
+    this.getAllTasks(searchParams).subscribe();
   }
 
   protected getHelpText(): string {
@@ -266,7 +292,7 @@ export class TaskListPageComponent implements OnInit {
     return request$.pipe(
       map(response => {
         const tasks = response.data || [];
-        this.tasksStateService.setTaskList(tasks);
+        this.tasksStateService.setTaskList(tasks.items);
       }),
       catchError(err => {
         if (err.error && err.error.message) {

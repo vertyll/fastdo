@@ -3,18 +3,9 @@ import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
-import { ApiResponse } from '../../shared/interfaces/api-response.interface';
+import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
+import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
 import { Project } from '../models/Project';
-
-export type GetAllProjectsSearchParams = {
-  q: string;
-  sortBy: 'dateCreation' | 'name';
-  orderBy: 'desc' | 'asc';
-  createdFrom?: string;
-  createdTo?: string;
-  updatedFrom?: string;
-  updatedTo?: string;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -22,14 +13,13 @@ export type GetAllProjectsSearchParams = {
 export class ProjectsApiService {
   private readonly URL = environment.backendUrl;
   private readonly http = inject(HttpClient);
-
   readonly $idle = signal(true);
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<Project[]>> {
+  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Project>>> {
     return this.withLoadingState(
-      this.http.get<ApiResponse<Project[]>>(`${this.URL}/projects`, {
+      this.http.get<ApiResponse<ApiPaginatedResponse<Project>>>(`${this.URL}/projects`, {
         params: searchParams,
       }),
     );

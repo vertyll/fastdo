@@ -1,10 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Role } from '../../shared/enums/role.enum';
-
-export interface AuthState {
-  isLoggedIn: boolean;
-  roles: Role[] | null;
-}
+import { AuthState } from '../../shared/types/auth.type';
 
 @Injectable({
   providedIn: 'root',

@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ApiResponse } from '../../shared/interfaces/api-response.interface';
-import { LoginResponse, RegisterResponse } from '../../shared/interfaces/auth.interface';
+import { ApiResponse } from '../../shared/types/api-response.type';
+import { LoginResponse, RegisterResponse } from '../../shared/types/auth.type';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 

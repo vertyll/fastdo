@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { MessagesConfig } from '../interfaces/validation.interface';
+import { MessagesConfig } from '../types/validation.type';
 
 @Injectable({
   providedIn: 'root',

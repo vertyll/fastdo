@@ -31,13 +31,13 @@ export class Task {
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date;
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Project })
   @ManyToOne(() => Project, project => project.tasks, { nullable: true })
-  project: Relation<Project>;
+  project: Relation<Project> | null;
 
   @ApiProperty({ type: () => Priority })
   @ManyToOne(() => Priority, priority => priority.id, { nullable: true })
-  priority: Relation<Priority>;
+  priority: Relation<Priority> | null;
 }

@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
+import { LoginResponse } from './common/types/auth.types';
 import { Event } from './events/entities/event.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
@@ -36,7 +37,7 @@ async function bootstrap() {
         return new BadRequestException(
           errors.map(error => ({
             field: error.property,
-            errors: Object.values(error.constraints),
+            errors: Object.values(error.constraints ?? {}),
           })),
         );
       },
@@ -64,6 +65,7 @@ async function bootstrap() {
       User,
       Role,
       UserRole,
+      LoginResponse,
     ],
   });
   SwaggerModule.setup('api', app, document);

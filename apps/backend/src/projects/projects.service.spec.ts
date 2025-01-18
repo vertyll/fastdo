@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { Project } from './entities/project.entity';
 import { ProjectsService } from './projects.service';
 import { ProjectRepository } from './repositories/project.repository';
@@ -32,11 +34,24 @@ describe('ProjectsService', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of projects', async () => {
-      const result = [
-        { id: expect.any(Number), name: 'Test Project' },
-      ] as Project[];
-      mockProjectRepository.findAllWithParams.mockResolvedValue(result);
+    it('should return a paginated response of projects', async () => {
+      const projects: Project[] = [
+        { id: 1, name: 'Test Project' } as Project,
+      ];
+      const total = 1;
+
+      mockProjectRepository.findAllWithParams.mockResolvedValue([projects, total]);
+
+      const result: ApiPaginatedResponse<Project> = {
+        items: projects,
+        pagination: {
+          total,
+          page: 0,
+          pageSize: 10,
+          totalPages: 1,
+        },
+      };
+
       expect(await service.findAll({})).toEqual(result);
     });
   });
@@ -66,7 +81,8 @@ describe('ProjectsService', () => {
     it('should update a project', async () => {
       const updateDto = { name: 'Updated Project' };
       const result = { id: expect.any(Number), ...updateDto } as Project;
-      mockProjectRepository.update.mockResolvedValue(undefined);
+      const updateResult: UpdateResult = { generatedMaps: [], raw: [], affected: 1 };
+      mockProjectRepository.update.mockResolvedValue(updateResult);
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
       expect(await service.update(1, updateDto)).toEqual(result);
     });
@@ -74,7 +90,8 @@ describe('ProjectsService', () => {
 
   describe('remove', () => {
     it('should remove a project', async () => {
-      mockProjectRepository.delete.mockResolvedValue(undefined);
+      const deleteResult: DeleteResult = { raw: [], affected: 1 };
+      mockProjectRepository.delete.mockResolvedValue(deleteResult);
       await expect(service.remove(1)).resolves.not.toThrow();
     });
   });

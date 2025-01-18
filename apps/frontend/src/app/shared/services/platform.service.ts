@@ -2,8 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { DestroyRef, Injectable, PLATFORM_ID, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
-
-const MOBILE_WINDOW_MAX_WIDTH = 992;
+import { MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT } from '../../app.contansts';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +47,7 @@ export class PlatformService {
 
   private updateIsMobile(): void {
     if (this.isPlatformBrowserSignal()) {
-      this.isMobileSignal.set(window.innerWidth < MOBILE_WINDOW_MAX_WIDTH);
+      this.isMobileSignal.set(window.innerWidth < MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT);
     }
   }
 

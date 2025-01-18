@@ -22,7 +22,6 @@ export class AuthController {
     status: 200,
     description: 'The user has been successfully logged in.',
     type: LoginResponse,
-    isArray: false,
   })
   async login(@Body() loginDto: LoginDto): Promise<LoginResponse> {
     return this.authService.login(loginDto);
@@ -35,7 +34,6 @@ export class AuthController {
     status: 201,
     description: 'The user has been successfully registered.',
     type: User,
-    isArray: false,
   })
   async register(@Body() registerDto: RegisterDto): Promise<User> {
     return this.authService.register(registerDto);

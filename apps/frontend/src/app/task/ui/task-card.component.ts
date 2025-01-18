@@ -12,7 +12,7 @@ import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
 import { TruncateTextPipe } from '../../shared/pipes/truncate-text.pipe';
-import { TaskUpdatePayload } from '../data-access/task.api.service';
+import { TaskUpdatePayload } from '../../shared/types/task.type';
 import { Task } from '../models/Task';
 import { TaskNameValidator } from '../validators/task-name.validator';
 

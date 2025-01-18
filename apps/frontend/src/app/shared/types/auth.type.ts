@@ -1,3 +1,8 @@
+import { Role } from '../enums/role.enum';
+
+/*
+ * Interface
+ */
 export interface RegisterResponse {
   email: string;
   password: string;
@@ -9,4 +14,9 @@ export interface RegisterResponse {
 
 export interface LoginResponse {
   access_token: string;
+}
+
+export interface AuthState {
+  isLoggedIn: boolean;
+  roles: Role[] | null;
 }

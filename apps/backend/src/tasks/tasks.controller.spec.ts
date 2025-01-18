@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { Task } from './entities/task.entity';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
@@ -58,23 +59,31 @@ describe('TasksController', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of tasks', async () => {
-      const result: Task[] = [
-        {
-          id: 1,
-          name: 'Test Task',
-          isDone: false,
-          isUrgent: false,
-          projectId: 1,
-          priority: {
+    it('should return a paginated response of tasks', async () => {
+      const result: ApiPaginatedResponse<Task> = {
+        items: [
+          {
             id: 1,
-            name: 'Low',
+            name: 'Test Task',
+            isDone: false,
+            isUrgent: false,
+            projectId: 1,
+            priority: {
+              id: 1,
+              name: 'Low',
+            },
+            dateCreation: new Date(),
+            dateModification: null,
+            project: null,
           },
-          dateCreation: new Date(),
-          dateModification: null,
-          project: null,
+        ],
+        pagination: {
+          total: 1,
+          page: 1,
+          pageSize: 10,
+          totalPages: 1,
         },
-      ];
+      };
       mockTasksService.findAll.mockResolvedValue(result);
       expect(await controller.findAll({})).toEqual(result);
     });
@@ -82,28 +91,36 @@ describe('TasksController', () => {
 
   describe('findAllByProjectId', () => {
     it('should return tasks for a specific project', async () => {
-      const result: Task[] = [
-        {
-          id: 1,
-          name: 'Project Task',
-          isDone: false,
-          isUrgent: false,
-          projectId: 1,
-          priority: {
+      const result: ApiPaginatedResponse<Task> = {
+        items: [
+          {
             id: 1,
-            name: 'Low',
-          },
-          dateCreation: new Date(),
-          dateModification: null,
-          project: {
-            id: 1,
-            name: 'Test Project',
+            name: 'Project Task',
+            isDone: false,
+            isUrgent: false,
+            projectId: 1,
+            priority: {
+              id: 1,
+              name: 'Low',
+            },
             dateCreation: new Date(),
             dateModification: null,
-            tasks: [],
+            project: {
+              id: 1,
+              name: 'Test Project',
+              dateCreation: new Date(),
+              dateModification: null,
+              tasks: [],
+            },
           },
+        ],
+        pagination: {
+          total: 1,
+          page: 1,
+          pageSize: 10,
+          totalPages: 1,
         },
-      ];
+      };
       mockTasksService.findAllByProjectId.mockResolvedValue(result);
       expect(await controller.findAllByProjectId('1', {})).toEqual(result);
     });

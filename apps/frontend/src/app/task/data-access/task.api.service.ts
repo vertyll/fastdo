@@ -3,27 +3,10 @@ import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
-import { ApiResponse } from '../../shared/interfaces/api-response.interface';
+import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
+import { GetAllTasksSearchParams, TaskUpdatePayload } from '../../shared/types/task.type';
 import { AddTaskDto } from '../dtos/add-task.dto';
 import { Task } from '../models/Task';
-
-export type TaskUpdatePayload = {
-  isDone?: boolean;
-  name?: string;
-  isUrgent?: boolean;
-};
-
-export type GetAllTasksSearchParams = {
-  q: string;
-  sortBy: 'dateCreation';
-  orderBy: 'desc' | 'asc';
-  is_done?: 'true' | 'false' | '';
-  is_urgent?: 'true' | '';
-  createdFrom?: string;
-  createdTo?: string;
-  updatedFrom?: string;
-  updatedTo?: string;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -35,9 +18,9 @@ export class TasksApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getAll(searchParams?: GetAllTasksSearchParams): Observable<ApiResponse<Task[]>> {
+  public getAll(searchParams?: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
     return this.withLoadingState(
-      this.http.get<ApiResponse<Task[]>>(`${this.URL}/tasks`, {
+      this.http.get<ApiResponse<ApiPaginatedResponse<Task>>>(`${this.URL}/tasks`, {
         params: searchParams,
       }),
     );
@@ -46,9 +29,9 @@ export class TasksApiService {
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
-  ): Observable<ApiResponse<Task[]>> {
+  ): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
     return this.withLoadingState(
-      this.http.get<ApiResponse<Task[]>>(`${this.URL}/tasks/project/${projectId}`, {
+      this.http.get<ApiResponse<ApiPaginatedResponse<Task>>>(`${this.URL}/tasks/project/${projectId}`, {
         params: searchParams,
       }),
     );

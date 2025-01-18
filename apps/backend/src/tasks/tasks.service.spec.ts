@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { Project } from '../projects/entities/project.entity';
 import { Task } from './entities/task.entity';
 import { TaskRepository } from './repositories/task.repository';
@@ -51,19 +53,37 @@ describe('TasksService', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of tasks', async () => {
-      const result = [{ id: expect.any(Number), name: 'Test Task' }] as Task[];
-      mockTaskRepository.findAllWithParams.mockResolvedValue(result);
+    it('should return a paginated response of tasks', async () => {
+      const result: ApiPaginatedResponse<Task> = {
+        items: [
+          { id: expect.any(Number), name: 'Test Task' } as Task,
+        ],
+        pagination: {
+          total: 1,
+          page: 0,
+          pageSize: 10,
+          totalPages: 1,
+        },
+      };
+      mockTaskRepository.findAllWithParams.mockResolvedValue([result.items, result.pagination.total]);
       expect(await service.findAll({})).toEqual(result);
     });
   });
 
   describe('findAllByProjectId', () => {
     it('should return tasks for a specific project', async () => {
-      const result = [
-        { id: expect.any(Number), name: 'Project Task' },
-      ] as Task[];
-      mockTaskRepository.findAllWithParams.mockResolvedValue(result);
+      const result: ApiPaginatedResponse<Task> = {
+        items: [
+          { id: expect.any(Number), name: 'Project Task' } as Task,
+        ],
+        pagination: {
+          total: 1,
+          page: 0,
+          pageSize: 10,
+          totalPages: 1,
+        },
+      };
+      mockTaskRepository.findAllWithParams.mockResolvedValue([result.items, result.pagination.total]);
       expect(await service.findAllByProjectId(1, {})).toEqual(result);
     });
   });
@@ -80,7 +100,8 @@ describe('TasksService', () => {
     it('should update a task', async () => {
       const updateDto = { name: 'Updated Task' };
       const result = { id: expect.any(Number), ...updateDto } as Task;
-      mockTaskRepository.update.mockResolvedValue(undefined);
+      const updateResult: UpdateResult = { generatedMaps: [], raw: [], affected: 1 };
+      mockTaskRepository.update.mockResolvedValue(updateResult);
       mockTaskRepository.findOneOrFail.mockResolvedValue(result);
       expect(await service.update(1, updateDto)).toEqual(result);
     });
@@ -88,14 +109,16 @@ describe('TasksService', () => {
 
   describe('remove', () => {
     it('should remove a task', async () => {
-      mockTaskRepository.delete.mockResolvedValue(undefined);
+      const deleteResult: DeleteResult = { raw: [], affected: 1 };
+      mockTaskRepository.delete.mockResolvedValue(deleteResult);
       await expect(service.remove(1)).resolves.not.toThrow();
     });
   });
 
   describe('removeByProjectId', () => {
     it('should remove tasks by project id', async () => {
-      mockTaskRepository.delete.mockResolvedValue(undefined);
+      const deleteResult: DeleteResult = { raw: [], affected: 1 };
+      mockTaskRepository.delete.mockResolvedValue(deleteResult);
       await expect(service.removeByProjectId(1)).resolves.not.toThrow();
     });
   });

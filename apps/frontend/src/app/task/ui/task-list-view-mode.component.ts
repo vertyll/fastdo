@@ -2,8 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroSquares2x2 } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
-
-export type TasksListViewMode = 'kanban' | 'list';
+import { TasksListViewMode } from '../../shared/types/task.type';
 
 @Component({
   imports: [NgIconComponent, TranslateModule],

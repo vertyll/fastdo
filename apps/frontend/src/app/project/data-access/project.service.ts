@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { ApiResponse } from '../../shared/interfaces/api-response.interface';
+import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
+import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
 import { Project } from '../models/Project';
-import { GetAllProjectsSearchParams, ProjectsApiService } from './project.api.service';
+import { ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
 
 @Injectable({
@@ -12,11 +13,12 @@ export class ProjectsService {
   private readonly httpService = inject(ProjectsApiService);
   private readonly state = inject(ProjectsStateService);
 
-  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<Project[]>> {
+  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Project>>> {
     return this.httpService.getAll(searchParams).pipe(
       tap(response => {
         if (response.data) {
-          this.state.setProjectList(response.data);
+          this.state.setProjectList(response.data.items);
+          this.state.setPagination(response.data.pagination);
         }
       }),
     );

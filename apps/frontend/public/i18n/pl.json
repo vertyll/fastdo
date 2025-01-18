@@ -160,5 +160,15 @@
     "passwordMatch": "Hasła muszą się zgadzać",
     "pattern": "To pole musi spełniać określony wzorzec",
     "mismatchingPasswords": "Hasła nie są zgodne"
+  },
+  "paginator": {
+    "firstPage": "Pierwsza strona",
+    "itemsPerPage": "Elementów na stronę",
+    "lastPage": "Ostatnia strona",
+    "nextPage": "Następna strona",
+    "previousPage": "Poprzednia strona",
+    "page1Of1": "Strona 1 z 1",
+    "pageXOfY": "Strona {{page}} z {{amountPages}}",
+    "paginatorAriaLabel": "Wybierz stronę"
   }
 }

@@ -11,7 +11,9 @@ export class ProjectRepository extends Repository<Project> {
 
   public async findAllWithParams(
     params: GetAllProjectsSearchParams,
-  ): Promise<Project[]> {
+    skip: number,
+    take: number,
+  ): Promise<[Project[], number]> {
     const query = this.dataSource.createQueryBuilder(Project, 'project');
 
     if (params.q) {
@@ -51,6 +53,8 @@ export class ProjectRepository extends Repository<Project> {
       query.orderBy('project.dateCreation', 'DESC');
     }
 
-    return query.getMany();
+    query.skip(skip).take(take);
+
+    return query.getManyAndCount();
   }
 }

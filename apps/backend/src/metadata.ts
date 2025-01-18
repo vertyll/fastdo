@@ -27,7 +27,7 @@ export default async () => {
           password: { required: true, type: () => String },
           isActive: { required: true, type: () => Boolean },
           dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
           userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
         },
       }], [import('./users/entities/user-role.entity'), {
@@ -64,7 +64,7 @@ export default async () => {
           id: { required: true, type: () => Number },
           name: { required: true, type: () => String },
           dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
           tasks: { required: true, type: () => [t['./tasks/entities/task.entity'].Task] },
         },
       }], [import('./tasks/entities/task.entity'), {
@@ -75,9 +75,9 @@ export default async () => {
           isUrgent: { required: true, type: () => Boolean },
           projectId: { required: true, type: () => Number },
           dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date },
-          project: { required: true, type: () => t['./projects/entities/project.entity'].Project },
-          priority: { required: true, type: () => t['./tasks/entities/priority.entity'].Priority },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          project: { required: true, type: () => t['./projects/entities/project.entity'].Project, nullable: true },
+          priority: { required: true, type: () => t['./tasks/entities/priority.entity'].Priority, nullable: true },
         },
       }], [import('./tasks/dtos/get-all-tasks-search-params.dto'), {
         'GetAllTasksSearchParams': {
@@ -90,6 +90,8 @@ export default async () => {
           createdTo: { required: false, type: () => String },
           updatedFrom: { required: false, type: () => String },
           updatedTo: { required: false, type: () => String },
+          page: { required: false, type: () => Number },
+          pageSize: { required: false, type: () => Number },
         },
       }], [import('./tasks/dtos/create-task.dto'), {
         'CreateTaskDto': {
@@ -124,6 +126,8 @@ export default async () => {
           updatedFrom: { required: false, type: () => String },
           updatedTo: { required: false, type: () => String },
           status: { required: false, type: () => Object },
+          page: { required: false, type: () => Number },
+          pageSize: { required: false, type: () => Number },
         },
       }], [import('./projects/dtos/update-project.dto'), {
         'UpdateProjectDto': { name: { required: false, type: () => String } },
@@ -158,15 +162,15 @@ export default async () => {
       ], [import('./tasks/tasks.controller'), {
         'TasksController': {
           'create': { type: t['./tasks/entities/task.entity'].Task },
-          'findAll': { type: [t['./tasks/entities/task.entity'].Task] },
-          'findAllByProjectId': { type: [t['./tasks/entities/task.entity'].Task] },
+          'findAll': {},
+          'findAllByProjectId': {},
           'findOne': { type: t['./tasks/entities/task.entity'].Task },
           'update': { type: t['./tasks/entities/task.entity'].Task },
           'remove': {},
         },
       }], [import('./projects/projects.controller'), {
         'ProjectsController': {
-          'getAll': { type: [t['./projects/entities/project.entity'].Project] },
+          'getAll': {},
           'create': { type: t['./projects/entities/project.entity'].Project },
           'findOne': { type: t['./projects/entities/project.entity'].Project },
           'update': { type: t['./projects/entities/project.entity'].Project },

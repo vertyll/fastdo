@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { FILTERS_STORAGE_KEY } from '../../../app.contansts';
 import { FilterStateModel } from '../../types/filter.type';
 import { ClearFilter, ClearPartial, SavePartial } from './filter.actions';
-
-const FILTERS_STORAGE_KEY = 'filters_state';
 
 function getStoredState(): FilterStateModel {
   try {

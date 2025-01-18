@@ -10,7 +10,7 @@ export class RolesService {
     private readonly userRoleRepository: UserRoleRepository,
   ) {}
 
-  public async findRoleByName(name: string): Promise<Role | undefined> {
+  public async findRoleByName(name: string): Promise<Role | null> {
     return this.rolesRepository.findOne({ where: { name } });
   }
 

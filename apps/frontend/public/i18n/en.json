@@ -160,5 +160,15 @@
     "passwordMatch": "Passwords must match",
     "pattern": "This field must match the specified pattern",
     "mismatchingPasswords": "Passwords do not match"
+  },
+  "paginator": {
+    "firstPage": "First Page",
+    "itemsPerPage": "Items per page",
+    "lastPage": "Last Page",
+    "nextPage": "Next Page",
+    "previousPage": "Previous Page",
+    "page1Of1": "Page 1 of 1",
+    "pageXOfY": "Page {{page}} of {{amountPages}}",
+    "paginatorAriaLabel": "Select page"
   }
 }

@@ -1,17 +1,4 @@
-export interface NavModule {
-  id: string;
-  title: string;
-  icon: string;
-  route: string;
-  sections: NavSection[];
-}
-
-export interface NavSection {
-  id: string;
-  title: string;
-  icon: string;
-  route: string;
-}
+import { NavModule } from '../shared/types/config.type';
 
 export const configNavModules: NavModule[] = [
   {

@@ -1,3 +1,6 @@
+/*
+ * Interface
+ */
 export interface ILocalStorage {
   get<T>(key: string, defaultValue: T): T;
 

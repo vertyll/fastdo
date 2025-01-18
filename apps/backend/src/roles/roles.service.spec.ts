@@ -56,13 +56,13 @@ describe('RolesService', () => {
       expect(result).toEqual(mockRole);
     });
 
-    it('should return undefined if role not found', async () => {
-      roleRepository.findOne.mockResolvedValue(undefined);
+    it('should return null if role not found', async () => {
+      roleRepository.findOne.mockResolvedValue(null);
 
       const result = await service.findRoleByName('nonexistent');
 
       expect(roleRepository.findOne).toHaveBeenCalledWith({ where: { name: 'nonexistent' } });
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
   });
 
@@ -95,7 +95,7 @@ describe('RolesService', () => {
     });
 
     it('should throw NotFoundException if role does not exist', async () => {
-      roleRepository.findOne.mockResolvedValue(undefined);
+      roleRepository.findOne.mockResolvedValue(null);
 
       await expect(service.addRoleToUser(1, 'nonexistent'))
         .rejects

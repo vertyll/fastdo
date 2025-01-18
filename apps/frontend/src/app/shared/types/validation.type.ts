@@ -1,3 +1,6 @@
+/*
+ * Interface
+ */
 export interface MessagesConfig {
   required: string;
   email: string;

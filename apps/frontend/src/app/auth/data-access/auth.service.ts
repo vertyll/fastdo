@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, map, tap } from 'rxjs';
-import { ApiResponse } from '../../shared/interfaces/api-response.interface';
-import { RegisterResponse } from '../../shared/interfaces/auth.interface';
+import { ApiResponse } from '../../shared/types/api-response.type';
+import { RegisterResponse } from '../../shared/types/auth.type';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { AuthApiService } from './auth.api.service';

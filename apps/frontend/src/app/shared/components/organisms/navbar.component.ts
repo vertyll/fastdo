@@ -16,8 +16,9 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { NavModule, NavSection, configNavModules } from '../../../config/config.nav.modules';
+import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { NavModule, NavSection } from '../../types/config.type';
 import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 
 @Component({

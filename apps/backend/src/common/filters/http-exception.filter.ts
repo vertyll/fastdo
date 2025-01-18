@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { ApiErrorResponse } from '../types/response.type';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -34,17 +35,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private formatGeneralMessage(exception: HttpException): string {
-    const response = exception.getResponse();
-    if (typeof response === 'string') {
-      return response;
-    } else if (
+    const response = exception.getResponse() as ApiErrorResponse;
+    if (
       typeof response === 'object'
-      && response.hasOwnProperty('message')
+      && response.message
     ) {
-      if (Array.isArray(response['message'])) {
+      if (Array.isArray(response.message)) {
         return 'Validation failed';
       } else {
-        return response['message'];
+        return response.message;
       }
     } else {
       return exception.message || 'An error occurred';
@@ -52,10 +51,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private extractFields(exception: HttpException): any {
-    const response = exception.getResponse();
-    if (typeof response === 'object' && response.hasOwnProperty('message')) {
-      if (Array.isArray(response['message'])) {
-        const fields = response['message']
+    const response = exception.getResponse() as ApiErrorResponse;
+    if (typeof response === 'object' && response.message) {
+      if (Array.isArray(response.message)) {
+        const fields = response.message
           .map((msg: any) => {
             if (typeof msg === 'object' && msg.field) {
               return { field: msg.field, errors: msg.errors || [] };

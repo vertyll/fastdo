@@ -1,3 +1,6 @@
+/*
+ * Type
+ */
 export type InputType =
   | 'text'
   | 'number'

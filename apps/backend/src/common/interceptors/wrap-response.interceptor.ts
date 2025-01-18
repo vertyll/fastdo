@@ -9,23 +9,14 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-
-interface ResponseWrapper<T> {
-  data: T;
-  statusCode: number;
-  timestamp: string;
-  path: string;
-  method: string;
-  message: string;
-  errors?: any;
-}
+import { ApiResponseWrapper } from '../types/response.type';
 
 @Injectable()
-export class WrapResponseInterceptor<T> implements NestInterceptor<T, ResponseWrapper<T>> {
+export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiResponseWrapper<T>> {
   public intercept(
     context: ExecutionContext,
     next: CallHandler<T>,
-  ): Observable<ResponseWrapper<T>> {
+  ): Observable<ApiResponseWrapper<T>> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
@@ -39,7 +30,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ResponseWr
         message: response.statusMessage || 'Success',
       })),
       catchError(error => {
-        const errorResponse: ResponseWrapper<null> = {
+        const errorResponse: ApiResponseWrapper<null> = {
           data: null,
           statusCode: error instanceof HttpException ? error.getStatus() : 500,
           timestamp: new Date().toISOString(),

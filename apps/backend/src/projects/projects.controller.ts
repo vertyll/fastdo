@@ -3,6 +3,7 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
@@ -20,8 +21,8 @@ export class ProjectsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all projects' })
-  @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isArray: true })
-  getAll(@Query() query: GetAllProjectsSearchParams): Promise<Project[]> {
+  @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isPaginated: true })
+  getAll(@Query() query: GetAllProjectsSearchParams): Promise<ApiPaginatedResponse<Project>> {
     return this.projectsService.findAll(query);
   }
 
@@ -32,7 +33,6 @@ export class ProjectsController {
     status: 201,
     description: 'The project has been successfully created.',
     type: Project,
-    isArray: false,
   })
   create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
     return this.projectsService.create(createProjectDto);
@@ -40,7 +40,7 @@ export class ProjectsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a project by id' })
-  @ApiWrappedResponse({ status: 200, description: 'Return the project.', type: Project, isArray: false })
+  @ApiWrappedResponse({ status: 200, description: 'Return the project.', type: Project })
   findOne(@Param('id') id: string): Promise<Project> {
     return this.projectsService.findOne(+id);
   }
@@ -53,7 +53,6 @@ export class ProjectsController {
     status: 200,
     description: 'The project has been successfully updated.',
     type: Project,
-    isArray: false,
   })
   update(
     @Param('id') id: string,

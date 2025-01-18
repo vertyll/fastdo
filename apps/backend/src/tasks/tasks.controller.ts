@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
+import { ApiPaginatedResponse } from '../common/types/response.type';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
@@ -19,7 +20,6 @@ export class TasksController {
     status: 201,
     description: 'The task has been successfully created.',
     type: Task,
-    isArray: false,
   })
   create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.create(createTaskDto);
@@ -27,8 +27,8 @@ export class TasksController {
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
-  @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isArray: true })
-  findAll(@Query() query: GetAllTasksSearchParams): Promise<Task[]> {
+  @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isPaginated: true })
+  findAll(@Query() query: GetAllTasksSearchParams): Promise<ApiPaginatedResponse<Task>> {
     return this.tasksService.findAll(query);
   }
 
@@ -38,18 +38,18 @@ export class TasksController {
     status: 200,
     description: 'Return all tasks for the specified project.',
     type: Task,
-    isArray: true,
+    isPaginated: true,
   })
   findAllByProjectId(
     @Param('projectId') projectId: string,
     @Query() query: GetAllTasksSearchParams,
-  ): Promise<Task[]> {
+  ): Promise<ApiPaginatedResponse<Task>> {
     return this.tasksService.findAllByProjectId(+projectId, query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
-  @ApiWrappedResponse({ status: 200, description: 'Return the task.', type: Task, isArray: false })
+  @ApiWrappedResponse({ status: 200, description: 'Return the task.', type: Task })
   findOne(@Param('id') id: string): Promise<Task> {
     return this.tasksService.findOne(+id);
   }
@@ -61,7 +61,6 @@ export class TasksController {
     status: 200,
     description: 'The task has been successfully updated.',
     type: Task,
-    isArray: false,
   })
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
     return this.tasksService.update(+id, updateTaskDto);

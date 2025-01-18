@@ -11,7 +11,7 @@ export class AppController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get hello' })
-  @ApiWrappedResponse({ status: 200, description: 'Return hello.', type: String, isArray: false })
+  @ApiWrappedResponse({ status: 200, description: 'Return hello.', type: String })
   getHello(): string {
     return this.appService.getHello();
   }

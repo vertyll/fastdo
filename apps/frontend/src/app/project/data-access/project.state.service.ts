@@ -1,12 +1,20 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LIST_STATE_VALUE } from 'src/app/shared/types/list-state.type';
+import { PaginationMeta } from '../../shared/types/api-response.type';
 import { Project } from '../models/Project';
 import { ProjectsApiService } from './project.api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsStateService {
-  private readonly projectsSignal = signal<Project[]>([]);
   private readonly apiService = inject(ProjectsApiService);
+
+  private readonly projectsSignal = signal<Project[]>([]);
+  private readonly paginationSignal = signal<PaginationMeta>({
+    total: 0,
+    page: 0,
+    pageSize: 10,
+    totalPages: 0,
+  });
 
   public projects = computed(() => this.projectsSignal());
   public projectCount = computed(() => this.projectsSignal().length);
@@ -20,6 +28,7 @@ export class ProjectsStateService {
       : LIST_STATE_VALUE.SUCCESS
   );
   public error = computed(() => this.apiService.$error());
+  public readonly pagination = this.paginationSignal.asReadonly();
 
   public setProjectList(projects: Project[]): void {
     this.projectsSignal.set(projects);
@@ -37,5 +46,9 @@ export class ProjectsStateService {
 
   public removeProject(projectId: Project['id']): void {
     this.projectsSignal.update(projects => projects.filter(project => project.id !== projectId));
+  }
+
+  public setPagination(pagination: PaginationMeta): void {
+    this.paginationSignal.set(pagination);
   }
 }

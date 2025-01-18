@@ -5,15 +5,17 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
+import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 import { NotificationType } from '../shared/enums/notification.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
-import { ProjectListFiltersConfig } from '../shared/types/filter.type';
+import { PaginationMeta } from '../shared/types/api-response.type';
+import { PaginationParams, ProjectListFiltersConfig } from '../shared/types/filter.type';
 import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
+import { GetAllProjectsSearchParams } from '../shared/types/project.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
-import { GetAllProjectsSearchParams } from './data-access/project.api.service';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { AddProjectDto } from './dtos/add-project.dto';
@@ -30,6 +32,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     TitleComponent,
     ButtonComponent,
     ProjectCardComponent,
+    PaginatorComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
@@ -44,23 +47,31 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     <div>
       @switch (projectsStateService.state()) {
         @case (listStateValue.SUCCESS) {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (project of projectsStateService.projects(); track project.id) {
-              <app-project-card
-                [project]="project"
-                (deleteProject)="deleteProject($event)"
-                (updateProject)="updateProjectName($event.id, $event.name)"
-              />
-            } @empty {
-              <p>{{ 'Project.emptyList' | translate }}</p>
-            }
+          <div class="flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (project of projectsStateService.projects(); track project.id) {
+                <app-project-card
+                  [project]="project"
+                  (deleteProject)="deleteProject($event)"
+                  (updateProject)="updateProjectName($event.id, $event.name)"
+                />
+              } @empty {
+                <p>{{ 'Project.emptyList' | translate }}</p>
+              }
+            </div>
+            <app-paginator
+              [total]="projectsStateService.pagination().total"
+              [pageSize]="projectsStateService.pagination().pageSize"
+              [currentPage]="projectsStateService.pagination().page"
+              (pageChange)="handlePageChange($event)"
+            />
           </div>
         }
         @case (listStateValue.ERROR) {
           <app-error-message [customMessage]="projectsStateService.error()?.message"/>
         }
         @case (listStateValue.LOADING) {
-          <p class="text-gray-600">{{ 'Basic.loading' | translate }}</p>
+          <p class="text-gray-600 dark:text-white">{{ 'Basic.loading' | translate }}</p>
         }
       }
     </div>
@@ -107,6 +118,23 @@ export class ProjectListPageComponent implements OnInit {
         },
       ],
     });
+  }
+
+  protected handlePageChange(event: PaginationParams): void {
+    const { page, pageSize } = event;
+    const currentPagination: PaginationMeta = this.projectsStateService.pagination();
+
+    this.projectsStateService.setPagination({
+      ...currentPagination,
+      page,
+    });
+
+    const searchParams: GetAllProjectsSearchParams = getAllProjectsSearchParams({
+      page,
+      pageSize,
+    });
+
+    this.getAllProjects(searchParams);
   }
 
   private async handleAddProject(data: AddProjectDto): Promise<boolean> {

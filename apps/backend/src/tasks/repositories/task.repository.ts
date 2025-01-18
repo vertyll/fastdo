@@ -11,8 +11,10 @@ export class TaskRepository extends Repository<Task> {
 
   public async findAllWithParams(
     params: GetAllTasksSearchParams,
+    skip: number,
+    take: number,
     projectId?: number,
-  ): Promise<Task[]> {
+  ): Promise<[Task[], number]> {
     const query = this.dataSource
       .createQueryBuilder(Task, 'task')
       .leftJoinAndSelect('task.project', 'project')
@@ -78,6 +80,8 @@ export class TaskRepository extends Repository<Task> {
       });
     }
 
-    return query.getMany();
+    query.skip(skip).take(take);
+
+    return query.getManyAndCount();
   }
 }
