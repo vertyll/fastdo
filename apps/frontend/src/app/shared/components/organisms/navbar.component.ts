@@ -100,7 +100,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .menu-button {
-      @apply md:hidden flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 relative transition-colors duration-200;
+      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 relative transition-colors duration-200;
     }
 
     .menu-button.active {
@@ -241,7 +241,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
             </button>
               <app-theme-switcher />
               <div class="relative">
-                <button class="language-button" (click)="toggleLanguageDropdown($event)">
+                <button class="" (click)="toggleLanguageDropdown($event)">
                   <span>{{ getCurrentLanguage() }}</span>
                   <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
                 </button>
@@ -399,7 +399,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
             [class.active]="currentSection() === section.id"
             (click)="selectSection(section)"
           >
-            <div class="relative">
+            <div class="relative flex items-center">
               <ng-icon [name]="section.icon" size="20" class="mobile-section-icon"></ng-icon>
               @if (section.id === 'urgent' && urgentCount() > 0) {
                 <span class="counter-badge">{{ urgentCount() }}</span>
