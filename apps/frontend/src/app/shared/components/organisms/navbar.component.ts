@@ -57,6 +57,26 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
         animate('200ms ease-in', style({ opacity: 0 })),
       ]),
     ]),
+    trigger('hamburgerCross', [
+      transition(':enter', [
+        style({ transform: 'rotate(0deg)' }),
+        animate('200ms ease-out', style({ transform: 'rotate(45deg)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'rotate(45deg)' }),
+        animate('200ms ease-in', style({ transform: 'rotate(0deg)' })),
+      ]),
+    ]),
+    trigger('mobileNavMenu', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-100%)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, transform: 'translateY(0)' }),
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-100%)' })),
+      ]),
+    ]),
   ],
   styles: [`
     .top-nav {
@@ -80,7 +100,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     }
 
     .auth-section {
-      @apply flex items-center space-x-4;
+      @apply md:flex items-center space-x-4 hidden;
     }
 
     .auth-button {
@@ -226,43 +246,105 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
     .language-option.active {
       @apply text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/50 transition-colors duration-200;
     }
+
+    .hamburger-icon {
+      @apply md:hidden w-6 h-6 flex flex-col justify-center items-center cursor-pointer relative z-50;
+    }
+
+    .hamburger-line {
+      @apply w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300;
+    }
+
+    .hamburger-line:not(:last-child) {
+      @apply mb-1.5;
+    }
+
+    .hamburger-active .hamburger-line:nth-child(1) {
+      @apply transform rotate-45 translate-y-2;
+    }
+
+    .hamburger-active .hamburger-line:nth-child(2) {
+      @apply opacity-0;
+    }
+
+    .hamburger-active .hamburger-line:nth-child(3) {
+      @apply transform -rotate-45 -translate-y-2;
+    }
+
+    .mobile-nav-menu {
+      @apply md:hidden fixed inset-0 bg-white dark:bg-gray-800 pt-20 transition-all duration-300 z-40 flex flex-col items-center gap-2;
+    }
+
+    .mobile-nav-item {
+      @apply text-center text-xl font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 py-2;
+    }
   `],
   template: `
     @if (!authService.isLoggedIn()) {
       <nav class="top-nav">
         <div class="public-nav">
-          <span class="app-logo cursor-pointer" (click)="navigateToHomePage()">{{ 'Basic.appName' | translate }}</span>
-          <div class="auth-section">
-            <button class="auth-button login-button" (click)="router.navigate(['/login'])">
-              {{ 'Basic.login' | translate }}
-            </button>
-            <button class="auth-button register-button" (click)="router.navigate(['/register'])">
-              {{ 'Basic.register' | translate }}
-            </button>
-              <app-theme-switcher />
-              <div class="relative">
-                <button class="language-button" (click)="toggleLanguageDropdown($event)">
-                  <span>{{ getCurrentLanguage() }}</span>
-                  <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
-                </button>
+          <span class="app-logo cursor-pointer" (click)="navigateToHomePage()">
+            {{ 'Basic.appName' | translate }}
+          </span>
+          <div class="flex items-center space-x-4">
+            <app-theme-switcher />
+            <div class="relative">
+              <button class="language-button" (click)="toggleLanguageDropdown($event)">
+                <span>{{ getCurrentLanguage() }}</span>
+                <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+              </button>
 
-                @if (languageDropdownOpen) {
-                  <div class="language-dropdown" @dropdown>
-                    @for (lang of languages; track lang) {
-                      <button
-                        class="language-option"
-                        [class.active]="getCurrentLanguage() === lang.toUpperCase()"
-                        (click)="selectLanguage(lang)"
-                      >
-                        {{ lang.toUpperCase() }}
-                      </button>
-                    }
-                  </div>
-                }
-              </div>
+              @if (languageDropdownOpen) {
+                <div class="language-dropdown" @dropdown>
+                  @for (lang of languages; track lang) {
+                    <button
+                      class="language-option"
+                      [class.active]="getCurrentLanguage() === lang.toUpperCase()"
+                      (click)="selectLanguage(lang)"
+                    >
+                      {{ lang.toUpperCase() }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+            <div class="auth-section">
+              <button class="auth-button login-button" (click)="router.navigate(['/login'])">
+                {{ 'Basic.login' | translate }}
+              </button>
+              <button class="auth-button register-button" (click)="router.navigate(['/register'])">
+                {{ 'Basic.register' | translate }}
+              </button>
+            </div>
+            <div
+              class="hamburger-icon"
+              [class.hamburger-active]="mobileMenuOpen"
+              (click)="toggleMobileMenu()"
+            >
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+            </div>
           </div>
         </div>
       </nav>
+
+      @if (mobileMenuOpen) {
+        <div class="mobile-nav-menu" @mobileNavMenu>
+          <button
+            class="mobile-nav-item w-full"
+            (click)="router.navigate(['/login'])"
+          >
+            {{ 'Basic.login' | translate }}
+          </button>
+          <button
+            class="mobile-nav-item w-full"
+            (click)="router.navigate(['/register'])"
+          >
+            {{ 'Basic.register' | translate }}
+          </button>
+        </div>
+      }
     } @else {
       <nav class="top-nav">
         <div class="nav-content">
@@ -448,6 +530,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly currentSection = signal<string>('');
 
   protected menuOpen: boolean = false;
+  protected mobileMenuOpen: boolean = false;
   protected showAllSections: boolean = false;
   protected languageDropdownOpen: boolean = false;
   protected readonly languages: string[] = ['pl', 'en'];
@@ -466,6 +549,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener('click', this.closeLanguageDropdown);
+    document.removeEventListener('click', this.handleOutsideClick);
+  }
+
+  protected toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (this.languageDropdownOpen) {
+      this.closeLanguageDropdown();
+    }
   }
 
   protected getCurrentLanguage(): string {
@@ -584,4 +675,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.currentSection.set(activeModule.sections[0].id);
     }
   }
+
+  private handleOutsideClick = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.hamburger-icon') && !target.closest('.mobile-nav-menu')) {
+      this.mobileMenuOpen = false;
+    }
+  };
 }
