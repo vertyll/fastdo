@@ -333,13 +333,13 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
         <div class="mobile-nav-menu" @mobileNavMenu>
           <button
             class="mobile-nav-item w-full"
-            (click)="router.navigate(['/login'])"
+            (click)="navigateToLoginPage()"
           >
             {{ 'Basic.login' | translate }}
           </button>
           <button
             class="mobile-nav-item w-full"
-            (click)="router.navigate(['/register'])"
+            (click)="navigateToRegisterPage()"
           >
             {{ 'Basic.register' | translate }}
           </button>
@@ -580,7 +580,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
-    this.localStorageService.set('selectedLanguage', lang);
+    this.localStorageService.set('selected_language', lang);
     this.languageDropdownOpen = false;
     document.removeEventListener('click', this.closeLanguageDropdown);
   }
@@ -641,6 +641,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected navigateToHomePage(): void {
     this.router.navigate(['/']).then();
+  }
+
+  protected navigateToLoginPage(): void {
+    this.router.navigate(['/login']).then(
+      () => this.mobileMenuOpen = false,
+    );
+  }
+
+  protected navigateToRegisterPage(): void {
+    this.router.navigate(['/register']).then(
+      () => this.mobileMenuOpen = false,
+    );
   }
 
   private initializeNavigation(): void {

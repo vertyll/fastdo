@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import appConfig from './config/app.config';
+import { MailModule } from './mail/mail.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RolesModule } from './roles/roles.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -42,6 +43,7 @@ import { UsersModule } from './users/users.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '90d' },
     }),
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

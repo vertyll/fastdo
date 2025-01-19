@@ -21,8 +21,8 @@ export class AuthService {
   public login(dto: LoginDto): Observable<void> {
     return this.authApiService.login(dto).pipe(
       tap(response => {
-        localStorage.setItem('access_token', response.data.access_token);
-        this.decodeToken(response.data.access_token);
+        localStorage.setItem('access_token', response.data.accessToken);
+        this.decodeToken(response.data.accessToken);
       }),
       map(() => void 0),
     );

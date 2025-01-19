@@ -3,10 +3,11 @@ import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { LoginResponseDto } from './auth/dtos/login-response.dto';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
-import { LoginResponse } from './common/types/auth.types';
 import { Event } from './events/entities/event.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
@@ -14,8 +15,6 @@ import { Priority } from './tasks/entities/priority.entity';
 import { Task } from './tasks/entities/task.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
-
-// import { SnakeToCamelCaseInterceptor } from "./common/interceptors/snake-to-camel-case.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -46,9 +45,9 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(
+    new SnakeToCamelCaseInterceptor(),
     new WrapResponseInterceptor(),
     new TimeoutInterceptor(),
-    // new SnakeToCamelCaseInterceptor()
   );
 
   const options = new DocumentBuilder()
@@ -65,7 +64,7 @@ async function bootstrap() {
       User,
       Role,
       UserRole,
-      LoginResponse,
+      LoginResponseDto,
     ],
   });
   SwaggerModule.setup('api', app, document);

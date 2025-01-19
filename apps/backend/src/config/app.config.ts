@@ -7,4 +7,11 @@ export default () => ({
   jwt: {
     secret: process.env.JWT_SECRET,
   },
+  mail: {
+    from: process.env.MAIL_FROM || 'noreply@example.com',
+    appUrl: process.env.APP_URL || 'http://localhost:4200',
+  },
+  frontend: {
+    url: process.env.FRONTEND_URL || 'http://localhost:4200',
+  },
 });

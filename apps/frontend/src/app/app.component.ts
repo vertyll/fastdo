@@ -24,7 +24,7 @@ export class AppComponent {
     this.translateService.addLangs(availableLanguages);
     this.translateService.setDefaultLang(defaultLanguage);
 
-    const savedLanguage = this.localStorageService.get<string>('selectedLanguage', '');
+    const savedLanguage = this.localStorageService.get<string>('selected_language', '');
 
     if (savedLanguage && availableLanguages.includes(savedLanguage)) {
       this.translateService.use(savedLanguage);
@@ -35,7 +35,7 @@ export class AppComponent {
         : defaultLanguage;
 
       this.translateService.use(matchedLang);
-      this.localStorageService.set('selectedLanguage', matchedLang);
+      this.localStorageService.set('selected_language', matchedLang);
     }
   }
 }

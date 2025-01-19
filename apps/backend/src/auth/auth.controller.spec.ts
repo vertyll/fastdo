@@ -1,5 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { FastifyReply } from 'fastify';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -20,6 +22,9 @@ describe('AuthController', () => {
     dateCreation: new Date(),
     dateModification: null,
     userRoles: [],
+    isEmailConfirmed: false,
+    confirmationToken: 'mock-confirmation-token',
+    confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
   };
 
   const mockLoginDto: LoginDto = {
@@ -41,6 +46,20 @@ describe('AuthController', () => {
           useValue: {
             login: jest.fn(),
             register: jest.fn(),
+            confirmEmail: jest.fn(),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockImplementation((key: string) => {
+              switch (key) {
+                case 'FRONTEND_URL':
+                  return 'http://localhost:3000';
+                default:
+                  return null;
+              }
+            }),
           },
         },
       ],
@@ -48,10 +67,6 @@ describe('AuthController', () => {
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get(AuthService);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -72,7 +87,7 @@ describe('AuthController', () => {
 
     it('should successfully login user and return access token', async () => {
       const mockToken = 'jwt.token.here';
-      const expectedResponse = { access_token: mockToken };
+      const expectedResponse = { accessToken: mockToken };
       authService.login.mockResolvedValue(expectedResponse);
 
       const result = await controller.login(mockLoginDto);
@@ -118,16 +133,44 @@ describe('AuthController', () => {
         .toThrow(UnauthorizedException);
       expect(authService.register).toHaveBeenCalledWith(mockRegisterDto);
     });
+  });
 
-    it('should handle registration when role does not exist', async () => {
-      authService.register.mockRejectedValue(
-        new UnauthorizedException('Role does not exist'),
+  describe('confirmEmail', () => {
+    const mockToken = 'valid-token';
+    const mockResponse = {
+      redirect: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis(),
+      header: jest.fn().mockReturnThis(),
+      headers: jest.fn().mockReturnThis(),
+      getHeaders: jest.fn().mockReturnThis(),
+      raw: {},
+      request: {},
+      context: {},
+      server: {},
+    } as unknown as FastifyReply;
+
+    it('should confirm email and redirect to frontend', async () => {
+      authService.confirmEmail.mockResolvedValue(undefined);
+
+      await controller.confirmEmail(mockToken, mockResponse);
+
+      expect(authService.confirmEmail).toHaveBeenCalledWith(mockToken);
+      expect(mockResponse.redirect).toHaveBeenCalledWith(
+        'http://localhost:3000/login?confirmed=true',
+        302,
+      );
+    });
+
+    it('should handle confirmation failure', async () => {
+      authService.confirmEmail.mockRejectedValue(
+        new UnauthorizedException('Invalid token'),
       );
 
-      await expect(controller.register(mockRegisterDto))
-        .rejects
-        .toThrow(UnauthorizedException);
-      expect(authService.register).toHaveBeenCalledWith(mockRegisterDto);
+      await expect(
+        controller.confirmEmail(mockToken, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 

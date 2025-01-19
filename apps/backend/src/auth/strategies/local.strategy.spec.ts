@@ -24,6 +24,9 @@ describe('LocalStrategy', () => {
       dateCreation: new Date(),
       dateModification: null,
       userRoles: [],
+      isEmailConfirmed: true,
+      confirmationToken: 'token',
+      confirmationTokenExpiry: new Date(),
     };
 
     jest.spyOn(authService, 'validateUser').mockResolvedValue(mockUser);

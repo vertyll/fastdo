@@ -50,7 +50,7 @@
     "registerButton": "Register",
     "alreadyHaveAccount": "Already have an account? Login",
     "unknownRegisterError": "An error occurred during registration",
-    "registerSuccess": "Registration successful",
+    "registerSuccess": "Registration successful, please confirm your email",
     "passwordRequired": "Password is required.",
     "passwordMinLength": "Password must be at least 8 characters long.",
     "passwordUppercase": "Password must contain at least one uppercase letter.",

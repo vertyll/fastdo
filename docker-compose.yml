@@ -7,6 +7,7 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fastdo
+
   test-db:
     image: postgres
     restart: always
@@ -15,3 +16,10 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fastdo
+
+  mail-dev:
+    image: maildev/maildev
+    restart: always
+    ports:
+      - "1025:1025"
+      - "1080:1080"

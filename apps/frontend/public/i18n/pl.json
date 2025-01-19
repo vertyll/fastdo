@@ -50,7 +50,7 @@
     "registerButton": "Zarejestruj",
     "alreadyHaveAccount": "Masz już konto? Zaloguj się",
     "unknownRegisterError": "Wystąpił błąd podczas rejestracji",
-    "registerSuccess": "Rejestracja zakończona sukcesem",
+    "registerSuccess": "Rejestracja zakończona sukcesem, potwierdź swój email",
     "passwordRequired": "Hasło jest wymagane.",
     "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków.",
     "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",

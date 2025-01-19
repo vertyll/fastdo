@@ -13,7 +13,7 @@ export interface RegisterResponse {
 }
 
 export interface LoginResponse {
-  access_token: string;
+  accessToken: string;
 }
 
 export interface AuthState {

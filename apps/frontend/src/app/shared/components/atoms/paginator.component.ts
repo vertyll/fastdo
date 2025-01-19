@@ -26,7 +26,7 @@ import { PaginationParams } from '../../types/filter.type';
     }),
   ],
   template: `
-    <div class="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-center px-4 py-3 bg-white dark:bg-gray-600 border border-gray-300 md:px-6 rounded-md dark:border-white">      <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-center px-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 md:px-6 rounded-md dark:border-white">      <div class="flex flex-wrap items-center gap-2">
         <label class="text-sm text-gray-700 dark:text-gray-300">{{ 'paginator.itemsPerPage' | translate }}:</label>
         <div class="relative">
           <select

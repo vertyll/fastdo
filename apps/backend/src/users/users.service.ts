@@ -14,8 +14,17 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
+  public async findByConfirmationToken(token: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { confirmationToken: token } });
+  }
+
   public async create(user: Partial<User>): Promise<User> {
     const newUser = this.usersRepository.create(user);
     return this.usersRepository.save(newUser);
+  }
+
+  public async update(id: number, updateData: Partial<User>): Promise<User | null> {
+    await this.usersRepository.update(id, updateData);
+    return this.findOne(id);
   }
 }

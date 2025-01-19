@@ -26,10 +26,13 @@ describe('JwtStrategy', () => {
       id: 1,
       email: 'test@test.com',
       isActive: true,
+      isEmailConfirmed: true,
       password: 'hashedPassword',
       dateCreation: new Date(),
       dateModification: null,
       userRoles: [],
+      confirmationToken: 'token',
+      confirmationTokenExpiry: new Date(),
     };
 
     jest.spyOn(usersService, 'findOne').mockResolvedValue(mockUser);
@@ -54,10 +57,13 @@ describe('JwtStrategy', () => {
       id: 1,
       email: 'test@test.com',
       isActive: false,
+      isEmailConfirmed: true,
       password: 'hashedPassword',
       dateCreation: new Date(),
       dateModification: null,
       userRoles: [],
+      confirmationToken: 'token',
+      confirmationTokenExpiry: new Date(),
     };
 
     jest.spyOn(usersService, 'findOne').mockResolvedValue(mockUser);

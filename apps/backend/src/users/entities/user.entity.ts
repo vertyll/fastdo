@@ -33,4 +33,16 @@ export class User {
   @ApiProperty({ type: () => UserRole })
   @OneToMany(() => UserRole, userRole => userRole.user)
   userRoles: Relation<UserRole[]>;
+
+  @ApiProperty()
+  @Column({ default: false })
+  isEmailConfirmed: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  @Exclude()
+  confirmationToken: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  @Exclude()
+  confirmationTokenExpiry: Date | null;
 }

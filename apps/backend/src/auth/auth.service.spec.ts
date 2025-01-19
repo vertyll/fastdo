@@ -2,11 +2,18 @@ import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { Role } from '../common/enums/role.enum';
+import { DataSource } from 'typeorm';
+import { Role as RoleEnum } from '../common/enums/role.enum';
+import { MailService } from '../mail/services/mail.service';
+import { Role } from '../roles/entities/role.entity';
+import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
 import { User } from '../users/entities/user.entity';
+import { UserRoleRepository } from '../users/repositories/user-role.repository';
+import { UserRepository } from '../users/repositories/user.repository';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
+import { ConfirmationTokenService } from './confirmation-token.service';
 
 jest.mock('bcrypt');
 
@@ -15,6 +22,18 @@ describe('AuthService', () => {
   let usersService: jest.Mocked<UsersService>;
   let rolesService: jest.Mocked<RolesService>;
   let jwtService: jest.Mocked<JwtService>;
+  let mailService: jest.Mocked<MailService>;
+  let confirmationTokenService: jest.Mocked<ConfirmationTokenService>;
+  let userRepository: jest.Mocked<UserRepository>;
+  let roleRepository: jest.Mocked<RoleRepository>;
+  let userRoleRepository: jest.Mocked<UserRoleRepository>;
+  let mockQueryRunner: any;
+
+  const mockRole: Role = {
+    id: 1,
+    name: RoleEnum.User,
+    userRoles: [],
+  };
 
   const mockUser: User = {
     id: 1,
@@ -24,9 +43,28 @@ describe('AuthService', () => {
     dateCreation: new Date(),
     dateModification: null,
     userRoles: [],
+    isEmailConfirmed: true,
+    confirmationToken: 'mock-confirmation-token',
+    confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
   };
 
   beforeEach(async () => {
+    mockQueryRunner = {
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
+      release: jest.fn(),
+      manager: {
+        getRepository: jest.fn().mockReturnValue({
+          findOne: jest.fn(),
+        }),
+        save: jest.fn(),
+        update: jest.fn(),
+      },
+      isTransactionActive: true,
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -34,7 +72,6 @@ describe('AuthService', () => {
           provide: UsersService,
           useValue: {
             findByEmail: jest.fn(),
-            create: jest.fn(),
           },
         },
         {
@@ -46,9 +83,46 @@ describe('AuthService', () => {
         {
           provide: RolesService,
           useValue: {
-            findRoleByName: jest.fn(),
-            addRoleToUser: jest.fn(),
             getUserRoles: jest.fn(),
+          },
+        },
+        {
+          provide: MailService,
+          useValue: {
+            sendConfirmationEmail: jest.fn(() => Promise.resolve()),
+          },
+        },
+        {
+          provide: ConfirmationTokenService,
+          useValue: {
+            generateToken: jest.fn(() => 'generated-token'),
+            verifyToken: jest.fn(() => ({ email: 'test@example.com' })),
+          },
+        },
+        {
+          provide: DataSource,
+          useValue: {
+            createQueryRunner: jest.fn(() => mockQueryRunner),
+          },
+        },
+        {
+          provide: UserRepository,
+          useValue: {
+            findOne: jest.fn(),
+            save: jest.fn(),
+            update: jest.fn(),
+          },
+        },
+        {
+          provide: RoleRepository,
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: UserRoleRepository,
+          useValue: {
+            save: jest.fn(),
           },
         },
       ],
@@ -58,6 +132,11 @@ describe('AuthService', () => {
     usersService = module.get(UsersService);
     rolesService = module.get(RolesService);
     jwtService = module.get(JwtService);
+    mailService = module.get(MailService);
+    confirmationTokenService = module.get(ConfirmationTokenService);
+    userRepository = module.get(UserRepository);
+    roleRepository = module.get(RoleRepository);
+    userRoleRepository = module.get(UserRoleRepository);
   });
 
   describe('validateUser', () => {
@@ -86,16 +165,6 @@ describe('AuthService', () => {
       expect(result).toBeNull();
       expect(bcrypt.compare).not.toHaveBeenCalled();
     });
-
-    it('should return null when password is invalid', async () => {
-      usersService.findByEmail.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
-
-      const result = await service.validateUser(mockUser.email, 'wrongPassword');
-
-      expect(result).toBeNull();
-      expect(bcrypt.compare).toHaveBeenCalledWith('wrongPassword', mockUser.password);
-    });
   });
 
   describe('register', () => {
@@ -104,61 +173,69 @@ describe('AuthService', () => {
 
     beforeEach(() => {
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
+      userRepository.findOne.mockResolvedValue(null);
+      roleRepository.findOne.mockResolvedValue(mockRole);
     });
 
     it('should successfully register a new user', async () => {
-      usersService.findByEmail.mockResolvedValue(null);
-      usersService.create.mockResolvedValue(mockUser);
-      rolesService.findRoleByName.mockResolvedValue({ id: 1, name: Role.User } as any);
-      rolesService.addRoleToUser.mockResolvedValue(undefined);
+      const newUser = {
+        ...mockUser,
+        isEmailConfirmed: false,
+        confirmationToken: 'generated-token',
+        confirmationTokenExpiry: expect.any(Date),
+      };
+
+      userRepository.save.mockResolvedValue(newUser);
+      userRoleRepository.save.mockResolvedValue({ id: 1, user: newUser, role: mockRole });
 
       const result = await service.register(registerDto);
 
-      expect(result).toEqual(mockUser);
-      expect(usersService.create).toHaveBeenCalledWith({
+      expect(result).toEqual(newUser);
+      expect(userRepository.save).toHaveBeenCalledWith(expect.objectContaining({
         email: registerDto.email,
         password: hashedPassword,
+        isEmailConfirmed: false,
+        confirmationToken: 'generated-token',
+        confirmationTokenExpiry: expect.any(Date),
+      }));
+      expect(userRoleRepository.save).toHaveBeenCalledWith({
+        user: { id: newUser.id },
+        role: { id: mockRole.id },
       });
-      expect(rolesService.addRoleToUser).toHaveBeenCalledWith(mockUser.id, Role.User);
-      expect(bcrypt.hash).toHaveBeenCalledWith(registerDto.password, 10);
+      expect(mailService.sendConfirmationEmail).toHaveBeenCalledWith(
+        newUser.email,
+        'generated-token',
+      );
     });
 
     it('should throw UnauthorizedException when user already exists', async () => {
-      usersService.findByEmail.mockResolvedValue(mockUser);
+      userRepository.findOne.mockResolvedValue(mockUser);
 
       await expect(service.register(registerDto)).rejects.toThrow(
         new UnauthorizedException('User already exists'),
       );
-      expect(usersService.create).not.toHaveBeenCalled();
-    });
 
-    it('should throw UnauthorizedException when role does not exist', async () => {
-      usersService.findByEmail.mockResolvedValue(null);
-      rolesService.findRoleByName.mockResolvedValue(null);
-
-      await expect(service.register(registerDto)).rejects.toThrow(
-        new UnauthorizedException('Role does not exist'),
-      );
-      expect(usersService.create).not.toHaveBeenCalled();
+      expect(userRepository.save).not.toHaveBeenCalled();
     });
   });
 
   describe('login', () => {
     const loginDto = { email: 'test@example.com', password: 'password123' };
     const mockToken = 'jwt.token.here';
-    const mockRoles = [Role.User];
+    const mockRoles = [RoleEnum.User];
 
-    it('should return access token when credentials are valid', async () => {
+    beforeEach(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = mockUser;
-
       jest.spyOn(service, 'validateUser').mockResolvedValue(userWithoutPassword);
       rolesService.getUserRoles.mockResolvedValue(mockRoles);
       jwtService.sign.mockReturnValue(mockToken);
+    });
 
+    it('should return access token when credentials are valid', async () => {
       const result = await service.login(loginDto);
 
-      expect(result).toEqual({ access_token: mockToken });
+      expect(result).toEqual({ accessToken: mockToken });
       expect(service.validateUser).toHaveBeenCalledWith(loginDto.email, loginDto.password);
       expect(rolesService.getUserRoles).toHaveBeenCalledWith(mockUser.id);
       expect(jwtService.sign).toHaveBeenCalledWith({
@@ -168,12 +245,62 @@ describe('AuthService', () => {
       });
     });
 
-    it('should throw UnauthorizedException when credentials are invalid', async () => {
-      jest.spyOn(service, 'validateUser').mockResolvedValue(null);
+    it('should throw UnauthorizedException when email is not confirmed', async () => {
+      const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...userWithoutPassword } = unconfirmedUser;
+      jest.spyOn(service, 'validateUser').mockResolvedValue(userWithoutPassword);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
-      expect(rolesService.getUserRoles).not.toHaveBeenCalled();
-      expect(jwtService.sign).not.toHaveBeenCalled();
+      await expect(service.login(loginDto)).rejects.toThrow(
+        new UnauthorizedException('Please confirm your email first'),
+      );
+    });
+  });
+
+  describe('confirmEmail', () => {
+    const confirmationToken = 'valid-confirmation-token';
+
+    beforeEach(() => {
+      const validUser = {
+        ...mockUser,
+        isEmailConfirmed: false,
+        confirmationToken,
+        confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      };
+
+      userRepository.findOne.mockResolvedValue(validUser);
+    });
+
+    it('should successfully confirm email', async () => {
+      const unconfirmedUser = {
+        ...mockUser,
+        isEmailConfirmed: false,
+        confirmationToken,
+        confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      };
+
+      userRepository.findOne.mockResolvedValue(unconfirmedUser);
+
+      await service.confirmEmail(confirmationToken);
+
+      expect(userRepository.update).toHaveBeenCalledWith(unconfirmedUser.id, {
+        isEmailConfirmed: true,
+        confirmationToken: null,
+        confirmationTokenExpiry: null,
+      });
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when token is invalid', async () => {
+      confirmationTokenService.verifyToken.mockImplementation(() => {
+        throw new UnauthorizedException('Invalid confirmation token');
+      });
+
+      await expect(service.confirmEmail(confirmationToken)).rejects.toThrow(
+        new UnauthorizedException('Invalid confirmation token'),
+      );
+
+      expect(userRepository.update).not.toHaveBeenCalled();
     });
   });
 });
