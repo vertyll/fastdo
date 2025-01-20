@@ -8,7 +8,6 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
-import { Event } from './events/entities/event.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { Priority } from './tasks/entities/priority.entity';
@@ -60,7 +59,6 @@ async function bootstrap() {
       Task,
       Project,
       Priority,
-      Event,
       User,
       Role,
       UserRole,
