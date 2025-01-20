@@ -23,7 +23,7 @@ export class Task {
 
   @ApiProperty()
   @Column({ nullable: true })
-  projectId: number;
+  projectId: number | null;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

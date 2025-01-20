@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import appConfig from './config/app.config';
+import { FileModule } from './file/file.module';
 import { MailModule } from './mail/mail.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RolesModule } from './roles/roles.module';
@@ -36,6 +37,7 @@ import { UsersModule } from './users/users.module';
     TasksModule,
     ProjectsModule,
     CommonModule,
+    FileModule,
     AuthModule,
     UsersModule,
     RolesModule,
@@ -49,7 +51,7 @@ import { UsersModule } from './users/users.module';
   providers: [AppService],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(JwtMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
