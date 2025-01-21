@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
     private readonly userRoleRepository: UserRoleRepository,
+    private readonly configService: ConfigService,
   ) {}
 
   public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
@@ -64,7 +66,8 @@ export class AuthService {
       }
 
       const { email, password } = registerDto;
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       const confirmationToken = this.confirmationTokenService.generateToken(email);
       const confirmationTokenExpiry = new Date();

@@ -21,6 +21,6 @@ export class ApiKeyGuard implements CanActivate {
     }
     const request = context.switchToHttp().getRequest<FastifyRequest>();
     const authHeader = request.headers['x-api-key'];
-    return authHeader === this.configService.get('API_KEY');
+    return authHeader === this.configService.get('app.api.keys.apiKey');
   }
 }

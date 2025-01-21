@@ -1,4 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
@@ -123,6 +124,19 @@ describe('AuthService', () => {
           provide: UserRoleRepository,
           useValue: {
             save: jest.fn(),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockImplementation((key: string) => {
+              switch (key) {
+                case 'app.security.bcryptSaltRounds':
+                  return 10;
+                default:
+                  return null;
+              }
+            }),
           },
         },
       ],

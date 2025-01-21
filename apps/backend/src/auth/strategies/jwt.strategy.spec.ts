@@ -1,19 +1,26 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 import { JwtStrategy } from './jwt.strategy';
 
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
   let usersService: Partial<UsersService>;
+  let configService: Partial<ConfigService>;
 
   beforeEach(() => {
-    process.env.JWT_SECRET = 'test-secret';
-
     usersService = {
       findOne: jest.fn(),
     };
 
-    jwtStrategy = new JwtStrategy(usersService as UsersService);
+    configService = {
+      get: jest.fn().mockReturnValue('test-secret'),
+    };
+
+    jwtStrategy = new JwtStrategy(
+      usersService as UsersService,
+      configService as ConfigService,
+    );
   });
 
   afterEach(() => {

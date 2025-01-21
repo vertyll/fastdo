@@ -9,6 +9,8 @@ describe('ConfirmationTokenService', () => {
   let jwtService: jest.Mocked<JwtService>;
   let configService: jest.Mocked<ConfigService>;
 
+  const mockSecret = 'mock-jwt-secret';
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -23,7 +25,7 @@ describe('ConfirmationTokenService', () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(),
+            get: jest.fn().mockReturnValue(mockSecret),
           },
         },
       ],
@@ -42,7 +44,6 @@ describe('ConfirmationTokenService', () => {
     it('should generate a token', () => {
       const email = 'test@example.com';
       const mockToken = 'mockToken';
-      configService.get.mockReturnValue('secret');
       jwtService.sign.mockReturnValue(mockToken);
 
       const result = service.generateToken(email);
@@ -50,9 +51,9 @@ describe('ConfirmationTokenService', () => {
       expect(result).toBe(mockToken);
       expect(jwtService.sign).toHaveBeenCalledWith(
         { email },
-        { expiresIn: '24h', secret: 'secret' },
+        { expiresIn: '24h', secret: mockSecret },
       );
-      expect(configService.get).toHaveBeenCalledWith('jwt.secret');
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.secret');
     });
   });
 
@@ -60,26 +61,24 @@ describe('ConfirmationTokenService', () => {
     it('should verify a token and return email', () => {
       const token = 'validToken';
       const mockPayload = { email: 'test@example.com' };
-      configService.get.mockReturnValue('secret');
       jwtService.verify.mockReturnValue(mockPayload);
 
       const result = service.verifyToken(token);
 
       expect(result).toEqual(mockPayload);
-      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: 'secret' });
-      expect(configService.get).toHaveBeenCalledWith('jwt.secret');
+      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockSecret });
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.secret');
     });
 
     it('should throw UnauthorizedException for invalid token', () => {
       const token = 'invalidToken';
-      configService.get.mockReturnValue('secret');
       jwtService.verify.mockImplementation(() => {
         throw new Error('Invalid token');
       });
 
       expect(() => service.verifyToken(token)).toThrow(UnauthorizedException);
-      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: 'secret' });
-      expect(configService.get).toHaveBeenCalledWith('jwt.secret');
+      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockSecret });
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.secret');
     });
   });
 });

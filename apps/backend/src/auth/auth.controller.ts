@@ -57,7 +57,7 @@ export class AuthController {
   ): Promise<void> {
     await this.authService.confirmEmail(token);
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+    const frontendUrl = this.configService.get<string>('app.frontend.url');
     return res.redirect(`${frontendUrl}/login?confirmed=true`, 302);
   }
 }

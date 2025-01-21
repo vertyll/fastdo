@@ -5,18 +5,49 @@ import { StorageType } from '../file/enums/storage-type.enum';
 export default registerAs('app', () => ({
   environment: process.env.NODE_ENV || 'development',
   database: {
-    host: process.env.DATABASE_HOST,
+    host: process.env.DATABASE_HOST || 'localhost',
     port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
+    username: process.env.DATABASE_USER || 'postgres',
+    password: process.env.DATABASE_PASSWORD || 'postgres',
+    name: process.env.DATABASE_NAME || 'postgres',
   },
-  jwt: {
-    secret: process.env.JWT_SECRET,
+  api: {
+    keys: {
+      apiKey: process.env.API_KEY || 'development-api-key',
+    },
+  },
+  security: {
+    jwt: {
+      secret: process.env.JWT_SECRET || 'development-secret',
+      expiresIn: process.env.JWT_EXPIRES_IN || '90d',
+      confirmationToken: {
+        expiresIn: process.env.JWT_CONFIRMATION_TOKEN_EXPIRES_IN || '24h',
+      },
+    },
+    bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),
+    rateLimiting: {
+      windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
+      max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
+    },
   },
   mail: {
+    host: process.env.MAIL_HOST || 'smtp.example.com',
+    port: parseInt(process.env.MAIL_PORT || '587', 10),
+    user: process.env.MAIL_USER,
+    password: process.env.MAIL_PASS,
     from: process.env.MAIL_FROM || 'noreply@example.com',
     appUrl: process.env.APP_URL || 'http://localhost:3000',
+    dev: {
+      host: 'localhost',
+      port: 1025,
+    },
   },
   frontend: {
     url: process.env.FRONTEND_URL || 'http://localhost:4200',
+    paths: {
+      confirmEmail: '/auth/confirm-email',
+      resetPassword: '/auth/reset-password',
+    },
   },
   file: {
     storage: {

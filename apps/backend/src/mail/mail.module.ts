@@ -1,5 +1,5 @@
 import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailConfigService } from './config/mail.config';
 import { MailSenderService } from './services/mail-sender.service';
 import { MailTemplateService } from './services/mail-template.service';
@@ -14,9 +14,15 @@ import { NodemailerTransport } from './services/transports/nodemailer-transport.
     MailTemplateService,
     {
       provide: 'IMailTransport',
-      useClass: process.env.NODE_ENV === 'development'
-        ? DevTransport
-        : NodemailerTransport,
+      useFactory: (configService: ConfigService, mailConfigService: MailConfigService) => {
+        const environment = configService.get<string>('app.environment');
+        const mailLogger = new Logger('MailService');
+
+        return environment === 'development'
+          ? new DevTransport(configService, mailConfigService, mailLogger)
+          : new NodemailerTransport(mailConfigService);
+      },
+      inject: [ConfigService, MailConfigService],
     },
     {
       provide: 'IMailTemplate',

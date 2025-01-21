@@ -15,38 +15,34 @@ export class MailConfigService {
   constructor(private configService: ConfigService) {}
 
   getConfig(): IMailConfig {
-    const host = this.configService.get<string>('MAIL_HOST');
-    const port = this.configService.get<number>('MAIL_PORT');
-    const from = this.configService.get<string>('MAIL_FROM');
-    const appUrl = this.configService.get<string>('APP_URL');
+    const mailConfig = this.configService.get('app.mail');
 
-    if (!host || !port || !from || !appUrl) {
+    if (!mailConfig.host || !mailConfig.port || !mailConfig.from || !mailConfig.appUrl) {
       throw new Error('Missing required mail configuration');
     }
 
     return {
-      host,
-      port,
-      user: this.configService.get('MAIL_USER'),
-      password: this.configService.get('MAIL_PASS'),
-      from,
-      appUrl,
+      host: mailConfig.host,
+      port: mailConfig.port,
+      user: mailConfig.user,
+      password: mailConfig.password,
+      from: mailConfig.from,
+      appUrl: mailConfig.appUrl,
     };
   }
 
   getDevConfig(): IMailConfig {
-    const from = this.configService.get<string>('MAIL_FROM');
-    const appUrl = this.configService.get<string>('APP_URL');
+    const mailConfig = this.configService.get('app.mail');
 
-    if (!from || !appUrl) {
+    if (!mailConfig.from || !mailConfig.appUrl) {
       throw new Error('Missing required mail configuration');
     }
 
     return {
-      host: 'localhost',
-      port: 1025,
-      from,
-      appUrl,
+      host: mailConfig.dev.host,
+      port: mailConfig.dev.port,
+      from: mailConfig.from,
+      appUrl: mailConfig.appUrl,
     };
   }
 }

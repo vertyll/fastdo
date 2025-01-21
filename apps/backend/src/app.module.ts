@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -18,21 +18,34 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [appConfig],
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: process.env.DATABASE_HOST,
-        port: +(process.env.DATABASE_PORT ?? 5432),
-        username: process.env.DATABASE_USER,
-        password: process.env.DATABASE_PASSWORD,
-        database: process.env.DATABASE_NAME,
+        host: configService.get<string>('app.database.host'),
+        port: configService.get<number>('app.database.port'),
+        username: configService.get<string>('app.database.username'),
+        password: configService.get<string>('app.database.password'),
+        database: configService.get<string>('app.database.name'),
         autoLoadEntities: true,
         synchronize: true,
         namingStrategy: new SnakeNamingStrategy(),
       }),
     }),
-    ConfigModule.forRoot({
-      load: [appConfig],
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('app.security.jwt.secret'),
+        signOptions: {
+          expiresIn: configService.get<string>('app.security.jwt.expiresIn'),
+        },
+      }),
     }),
     TasksModule,
     ProjectsModule,
@@ -41,10 +54,6 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     RolesModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '90d' },
-    }),
     MailModule,
   ],
   controllers: [AppController],
