@@ -73,7 +73,7 @@ async function bootstrap() {
       LoginResponseDto,
     ],
   });
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup(openApiConfig.path, app, document);
 
   await app.listen(3000);
 }
