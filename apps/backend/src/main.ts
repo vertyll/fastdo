@@ -1,5 +1,6 @@
 import fastifyMultipart from '@fastify/multipart';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -23,13 +24,9 @@ async function bootstrap() {
   );
 
   app.enableCors();
+  const configService = app.get(ConfigService);
 
   await app.register(fastifyMultipart, {
-    limits: {
-      fileSize: 5 * 1024 * 1024,
-      files: 1,
-      fieldSize: 1024 * 1024,
-    },
     attachFieldsToBody: true,
   });
 
@@ -59,10 +56,11 @@ async function bootstrap() {
     new TimeoutInterceptor(),
   );
 
+  const openApiConfig = configService.get('app.openApi');
   const options = new DocumentBuilder()
-    .setTitle('fastdo')
-    .setDescription('todo list api')
-    .setVersion('1.0')
+    .setTitle(openApiConfig.title)
+    .setDescription(openApiConfig.description)
+    .setVersion(openApiConfig.version)
     .build();
   const document = SwaggerModule.createDocument(app, options, {
     extraModels: [

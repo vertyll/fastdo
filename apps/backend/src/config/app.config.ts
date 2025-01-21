@@ -30,6 +30,19 @@ export default registerAs('app', () => ({
       max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
     },
   },
+  openApi: {
+    title: process.env.OPENAPI_TITLE || 'fastdo',
+    description: process.env.OPENAPI_DESCRIPTION || 'todo list api',
+    version: process.env.OPENAPI_VERSION || '1.0',
+    path: process.env.OPENAPI_PATH || 'api',
+  },
+  frontend: {
+    url: process.env.FRONTEND_URL || 'http://localhost:4200',
+    paths: {
+      confirmEmail: '/auth/confirm-email',
+      resetPassword: '/auth/reset-password',
+    },
+  },
   mail: {
     host: process.env.MAIL_HOST || 'smtp.example.com',
     port: parseInt(process.env.MAIL_PORT || '587', 10),
@@ -40,13 +53,6 @@ export default registerAs('app', () => ({
     dev: {
       host: 'localhost',
       port: 1025,
-    },
-  },
-  frontend: {
-    url: process.env.FRONTEND_URL || 'http://localhost:4200',
-    paths: {
-      confirmEmail: '/auth/confirm-email',
-      resetPassword: '/auth/reset-password',
     },
   },
   file: {
