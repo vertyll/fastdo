@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { FILE_CONSTANTS, StorageType } from 'src/config/types/app.config.type';
+import { FILE_CONSTANTS, StorageType } from 'src/core/config/types/app.config.type';
 import { IFileConfig } from '../interfaces/file-config.interface';
 
 @Injectable()

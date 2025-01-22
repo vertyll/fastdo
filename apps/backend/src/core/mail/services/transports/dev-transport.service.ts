@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import { Environment } from 'src/config/types/app.config.type';
+import { Environment } from 'src/core/config/types/app.config.type';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
 import { IMailTransport } from '../../interfaces/mail-transport.interface';

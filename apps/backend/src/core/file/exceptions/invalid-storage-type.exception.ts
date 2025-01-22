@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { StorageType } from 'src/config/types/app.config.type';
+import { StorageType } from 'src/core/config/types/app.config.type';
 
 export class InvalidStorageTypeException extends BadRequestException {
   constructor(type: StorageType | string) {

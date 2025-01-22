@@ -1,4 +1,4 @@
-import { StorageType } from 'src/config/types/app.config.type';
+import { StorageType } from 'src/core/config/types/app.config.type';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('file')

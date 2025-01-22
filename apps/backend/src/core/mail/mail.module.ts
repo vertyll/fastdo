@@ -1,6 +1,6 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Environment } from 'src/config/types/app.config.type';
+import { Environment } from 'src/core/config/types/app.config.type';
 import { MailConfigService } from './config/mail.config';
 import { MailSenderService } from './services/mail-sender.service';
 import { MailTemplateService } from './services/mail-template.service';
