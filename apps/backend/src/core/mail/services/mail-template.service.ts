@@ -6,7 +6,7 @@ import { IMailTemplate } from '../interfaces/mail-template.interface';
 
 @Injectable()
 export class MailTemplateService implements IMailTemplate {
-  private templatesDir = path.join(process.cwd(), 'src/mail/templates');
+  private templatesDir = path.join(process.cwd(), 'src/core/mail/templates');
 
   async getTemplate(templateName: string, data: any): Promise<string> {
     const templatePath = path.join(this.templatesDir, `${templateName}.hbs`);
