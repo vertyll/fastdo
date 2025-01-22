@@ -14,7 +14,7 @@ export class ConfirmationTokenService {
       { email },
       {
         expiresIn: '24h',
-        secret: this.configService.get('app.security.jwt.secret'),
+        secret: this.configService.get<string>('app.security.jwt.secret'),
       },
     );
   }
@@ -22,7 +22,7 @@ export class ConfirmationTokenService {
   verifyToken(token: string): { email: string; } {
     try {
       return this.jwtService.verify(token, {
-        secret: this.configService.get('app.security.jwt.secret'),
+        secret: this.configService.get<string>('app.security.jwt.secret'),
       });
     } catch (error) {
       throw new UnauthorizedException('Invalid confirmation token');

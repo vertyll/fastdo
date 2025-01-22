@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { StorageType } from 'src/config/types/app.config.type';
 import { FileConfigService } from '../config/file-config';
-import { StorageType } from '../enums/storage-type.enum';
 import { InvalidStorageTypeException } from '../exceptions/invalid-storage-type.exception';
 import { FileStorage } from '../interfaces/file-storage.interface';
 import { LocalStorageService } from './providers/local-storage.service';

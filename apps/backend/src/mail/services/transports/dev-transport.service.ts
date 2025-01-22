@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import { Environment } from 'src/config/types/app.config.type';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
 import { IMailTransport } from '../../interfaces/mail-transport.interface';
@@ -44,7 +45,7 @@ export class DevTransport implements IMailTransport {
     if (!this.isMailDevAvailable) {
       this.logger.warn(`Would send email in production: ${JSON.stringify(options)}`);
       const environment = this.configService.get<string>('app.environment');
-      if (environment === 'development') {
+      if (environment === Environment.DEVELOPMENT) {
         return;
       }
       throw new MailSendFailedException('Mail service is not available');

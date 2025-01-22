@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MailConfig } from 'src/config/types/app.config.type';
 
 export interface IMailConfig {
   host: string;
@@ -15,7 +16,7 @@ export class MailConfigService {
   constructor(private configService: ConfigService) {}
 
   getConfig(): IMailConfig {
-    const mailConfig = this.configService.get('app.mail');
+    const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
     if (!mailConfig.host || !mailConfig.port || !mailConfig.from || !mailConfig.appUrl) {
       throw new Error('Missing required mail configuration');
@@ -32,7 +33,7 @@ export class MailConfigService {
   }
 
   getDevConfig(): IMailConfig {
-    const mailConfig = this.configService.get('app.mail');
+    const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
     if (!mailConfig.from || !mailConfig.appUrl) {
       throw new Error('Missing required mail configuration');

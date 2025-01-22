@@ -1,15 +1,17 @@
 import { registerAs } from '@nestjs/config';
 import { FILE_CONSTANTS } from '../file/constants/file.constants';
-import { StorageType } from '../file/enums/storage-type.enum';
+import { AppConfig, DatabaseType, Environment, StorageType } from './types/app.config.type';
 
-export default registerAs('app', () => ({
-  environment: process.env.NODE_ENV || 'development',
+export default registerAs('app', (): AppConfig => ({
+  environment: (process.env.NODE_ENV as Environment) || Environment.DEVELOPMENT,
+  port: parseInt(process.env.PORT || '3000', 10),
   database: {
+    type: (process.env.DATABASE_TYPE as DatabaseType) || DatabaseType.POSTGRES,
     host: process.env.DATABASE_HOST || 'localhost',
     port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
     username: process.env.DATABASE_USER || 'postgres',
     password: process.env.DATABASE_PASSWORD || 'postgres',
-    name: process.env.DATABASE_NAME || 'postgres',
+    database: process.env.DATABASE_NAME || 'postgres',
   },
   api: {
     keys: {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
+import { StorageType } from 'src/config/types/app.config.type';
 import { findRootPath } from '../../common/utils/root-path.utils';
 import { FILE_CONSTANTS } from '../constants/file.constants';
-import { StorageType } from '../enums/storage-type.enum';
 import { IFileConfig } from '../interfaces/file-config.interface';
 
 @Injectable()

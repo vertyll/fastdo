@@ -1,5 +1,5 @@
+import { StorageType } from 'src/config/types/app.config.type';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { StorageType } from '../enums/storage-type.enum';
 
 @Entity('file')
 export class File {

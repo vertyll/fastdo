@@ -1,4 +1,4 @@
-import { StorageType } from '../enums/storage-type.enum';
+import { StorageType } from 'src/config/types/app.config.type';
 
 export interface IFileConfig {
   storage: {
