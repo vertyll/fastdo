@@ -2,13 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { NotificationService } from 'src/app/shared/services/notification.service';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LinkType } from '../shared/enums/link.enum';
+import { ToastPosition } from '../shared/enums/toast.enum';
+import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
 
@@ -90,11 +90,11 @@ import { PasswordValidator } from './validators/password.validator';
 })
 export class RegisterComponent implements OnInit {
   protected readonly router = inject(Router);
-  protected readonly notificationService = inject(NotificationService);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslateService);
   private readonly passwordValidator = inject(PasswordValidator);
+  private readonly toastService = inject(ToastService);
 
   protected readonly registerForm: FormGroup;
   protected readonly LinkType = LinkType;
@@ -127,7 +127,13 @@ export class RegisterComponent implements OnInit {
       const { email, password } = this.registerForm.value;
       this.authService.register({ email, password }).subscribe({
         next: () => {
-          this.router.navigate(['/login']).then();
+          this.router.navigate(['/login']).then(() => {
+            this.toastService.presentToast(
+              this.translateService.instant('Auth.registerSuccess'),
+              true,
+              ToastPosition.relative,
+            );
+          });
         },
         error: err => {
           if (err.error && err.error.message) {
@@ -137,12 +143,6 @@ export class RegisterComponent implements OnInit {
               'Auth.unknownRegisterError',
             );
           }
-        },
-        complete: () => {
-          this.notificationService.showNotification(
-            this.translateService.instant('Auth.registerSuccess'),
-            NotificationType.success,
-          );
         },
       });
     }

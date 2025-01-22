@@ -20,10 +20,11 @@ import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { NavModule, NavSection } from '../../types/config.type';
 import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
+import { ToastComponent } from '../atoms/toast.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet, ThemeSwitcherComponent],
+  imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet, ThemeSwitcherComponent, ToastComponent],
   viewProviders: [
     provideIcons({
       heroClipboardDocumentList,
@@ -506,6 +507,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 
     <div ngClass="main-content" [class.authenticated]="authService.isLoggedIn()">
       <div class="content-wrapper">
+        <app-toast />
         <router-outlet></router-outlet>
       </div>
     </div>
