@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApiPaginatedResponse } from '../common/types/response.type';
+import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
 import { Project } from './entities/project.entity';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsController } from './projects.controller';

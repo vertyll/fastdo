@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { ApiPaginatedResponse } from '../common/types/response.type';
+import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
 import { Project } from './entities/project.entity';
 import { ProjectsService } from './projects.service';
 import { ProjectRepository } from './repositories/project.repository';

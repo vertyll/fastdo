@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiPaginatedResponse } from '../common/types/response.type';
+import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';

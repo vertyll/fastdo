@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ApiResponseWrapper } from '../types/response.type';
+import { ApiResponseWrapper } from '../interfaces/api-responses.interface';
 
 @Injectable()
 export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiResponseWrapper<T>> {

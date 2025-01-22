@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
-import { ApiWrappedResponseOptions } from '../types/response.type';
+import { ApiWrappedResponseOptions } from '../interfaces/api-responses.interface';
 
 export function ApiWrappedResponse(options: ApiWrappedResponseOptions) {
   let dataSchema: any;
