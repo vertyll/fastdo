@@ -1,8 +1,8 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Controller, Delete, Get, Param, Post, Query, UseInterceptors } from '@nestjs/common';
-import { Public } from '../common/decorators/public.decorator';
-import { UploadedFile } from '../common/decorators/uploaded-file.decorator';
-import { FastifyFileInterceptor } from '../common/interceptors/fastify-file.interceptor';
+import { Public } from '../../common/decorators/public.decorator';
+import { UploadedFile } from '../../common/decorators/uploaded-file.decorator';
+import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor';
 import { File } from './entities/file.entity';
 import { FileService } from './file.service';
 import { FileMetadata } from './interfaces/file-metadata.interface';

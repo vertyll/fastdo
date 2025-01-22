@@ -63,7 +63,7 @@ export default async () => {
           },
           password: { required: true, type: () => String, minLength: 8, pattern: '/[A-Z]/' },
         },
-      }], [import('./file/entities/file.entity'), {
+      }], [import('./core/file/entities/file.entity'), {
         'File': {
           id: { required: true, type: () => String },
           filename: { required: true, type: () => String },

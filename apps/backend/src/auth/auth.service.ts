@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
 import { Role as RoleEnum } from '../common/enums/role.enum';
-import { MailService } from '../mail/services/mail.service';
+import { MailService } from '../core/mail/services/mail.service';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
 import { User } from '../users/entities/user.entity';
