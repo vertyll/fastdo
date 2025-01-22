@@ -10,7 +10,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
-import { OpenApiConfig } from './config/types/app.config.type';
+import { FILE_CONSTANTS, OpenApiConfig } from './config/types/app.config.type';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { Priority } from './tasks/entities/priority.entity';
@@ -27,8 +27,12 @@ async function bootstrap(): Promise<void> {
   app.enableCors();
   const configService: ConfigService = app.get(ConfigService);
 
+  const maxFileSize = configService.get('app.file.validation.maxSize');
   await app.register(fastifyMultipart, {
     attachFieldsToBody: true,
+    limits: {
+      fileSize: maxFileSize,
+    },
   });
 
   app.useGlobalPipes(

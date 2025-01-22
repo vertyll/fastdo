@@ -1,6 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { FILE_CONSTANTS } from '../file/constants/file.constants';
-import { AppConfig, DatabaseType, Environment, StorageType } from './types/app.config.type';
+import { AppConfig, DatabaseType, Environment, FILE_CONSTANTS, StorageType } from './types/app.config.type';
 
 export default registerAs('app', (): AppConfig => ({
   environment: (process.env.NODE_ENV as Environment) || Environment.DEVELOPMENT,

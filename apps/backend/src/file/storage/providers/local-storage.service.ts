@@ -64,7 +64,7 @@ export class LocalStorageService implements FileStorage {
   async deleteFile(path: string): Promise<void> {
     try {
       const config = this.fileConfigService.getConfig();
-      const fullPath = join(process.cwd(), config.storage.local.uploadDir, path);
+      const fullPath = join(config.storage.local.uploadDir, path);
       await unlink(fullPath);
     } catch (error) {
       if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {

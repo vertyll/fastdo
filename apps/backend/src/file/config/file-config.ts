@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { StorageType } from 'src/config/types/app.config.type';
-import { findRootPath } from '../../common/utils/root-path.utils';
-import { FILE_CONSTANTS } from '../constants/file.constants';
+import { FILE_CONSTANTS, StorageType } from 'src/config/types/app.config.type';
 import { IFileConfig } from '../interfaces/file-config.interface';
 
 @Injectable()
 export class FileConfigService {
-  private readonly rootPath: string;
-
   constructor(private configService: ConfigService) {
-    this.rootPath = findRootPath();
   }
 
   getConfig(): IFileConfig {
@@ -33,10 +28,9 @@ export class FileConfigService {
   }
 
   private getLocalConfig() {
-    const uploadDir = this.configService.get<string>('app.file.storage.local.uploadDir');
-    const basePath = join(this.rootPath, uploadDir || FILE_CONSTANTS.UPLOAD_PATH);
+    const uploadDir = this.configService.getOrThrow<string>('app.file.storage.local.uploadDir');
     return {
-      uploadDir: basePath,
+      uploadDir: join(process.cwd(), uploadDir),
     };
   }
 
