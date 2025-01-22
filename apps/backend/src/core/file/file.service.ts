@@ -1,10 +1,10 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
+import { FileMetadataDto } from './dtos/file-metadata.dto';
 import { File } from './entities/file.entity';
 import { FileDeleteException } from './exceptions/file-delete.exception';
 import { FileNotFoundException } from './exceptions/file-not-found.exception';
 import { FileUploadException } from './exceptions/file-upload.exception';
-import { FileMetadata } from './interfaces/file-metadata.interface';
 import { FileUploadOptions } from './interfaces/file-upload-options.interface';
 import { FileRepository } from './repositories/file.repository';
 import { StorageStrategy } from './storage/storage-strategy';
@@ -21,7 +21,7 @@ export class FileService {
   async uploadFile(
     file: MultipartFile,
     options?: FileUploadOptions,
-  ): Promise<FileMetadata> {
+  ): Promise<FileMetadataDto> {
     try {
       await this.fileValidator.validate(file, options);
 

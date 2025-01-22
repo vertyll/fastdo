@@ -4,10 +4,10 @@ import { ensureDir, unlink, writeFile } from 'fs-extra';
 import { join } from 'path';
 import { StorageType } from 'src/core/config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
+import { FileMetadataDto } from '../../dtos/file-metadata.dto';
 import { FileDeleteException } from '../../exceptions/file-delete.exception';
 import { FileNotFoundException } from '../../exceptions/file-not-found.exception';
 import { FileUploadException } from '../../exceptions/file-upload.exception';
-import { FileMetadata } from '../../interfaces/file-metadata.interface';
 import { FileStorage } from '../../interfaces/file-storage.interface';
 import { FileUploadOptions } from '../../interfaces/file-upload-options.interface';
 import { FilePathBuilder } from '../file-path.builder';
@@ -22,7 +22,7 @@ export class LocalStorageService implements FileStorage {
   async uploadFile(
     file: MultipartFile,
     options?: FileUploadOptions,
-  ): Promise<FileMetadata> {
+  ): Promise<FileMetadataDto> {
     try {
       const config = this.fileConfigService.getConfig();
       const uploadDir = config.storage.local.uploadDir;

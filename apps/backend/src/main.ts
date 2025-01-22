@@ -11,6 +11,8 @@ import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-came
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
 import { OpenApiConfig } from './core/config/types/app.config.type';
+import { FileMetadataDto } from './core/file/dtos/file-metadata.dto';
+import { File } from './core/file/entities/file.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { Priority } from './tasks/entities/priority.entity';
@@ -75,6 +77,8 @@ async function bootstrap(): Promise<void> {
       User,
       Role,
       UserRole,
+      File,
+      FileMetadataDto,
       LoginResponseDto,
     ],
   });

@@ -1,9 +1,9 @@
 import { MultipartFile } from '@fastify/multipart';
-import { FileMetadata } from './file-metadata.interface';
+import { FileMetadataDto } from '../dtos/file-metadata.dto';
 import { FileUploadOptions } from './file-upload-options.interface';
 
 export interface FileStorage {
-  uploadFile(file: MultipartFile, options?: FileUploadOptions): Promise<FileMetadata>;
+  uploadFile(file: MultipartFile, options?: FileUploadOptions): Promise<FileMetadataDto>;
   deleteFile(path: string): Promise<void>;
   getFileUrl(path: string): Promise<string>;
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FileMetadataDto } from '../dtos/file-metadata.dto';
 import { File } from '../entities/file.entity';
-import { FileMetadata } from '../interfaces/file-metadata.interface';
 
 @Injectable()
 export class FileRepository {
@@ -10,7 +10,7 @@ export class FileRepository {
     @InjectRepository(File) private readonly repository: Repository<File>,
   ) {}
 
-  async save(metadata: FileMetadata): Promise<File> {
+  async save(metadata: FileMetadataDto): Promise<File> {
     const file = this.repository.create(metadata);
     return this.repository.save(file);
   }
