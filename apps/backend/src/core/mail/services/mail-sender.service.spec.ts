@@ -67,7 +67,6 @@ describe('MailSenderService', () => {
         from: 'no-reply@example.com',
         host: 'smtp.example.com',
         port: 587,
-        appUrl: 'http://example.com',
       };
       const html = '<p>Hello, John!</p>';
 
@@ -98,7 +97,6 @@ describe('MailSenderService', () => {
         from: 'no-reply@example.com',
         host: 'smtp.example.com',
         port: 587,
-        appUrl: 'http://example.com',
       };
       const html = '<p>Hello, John!</p>';
       const error = new Error('Failed to send email');

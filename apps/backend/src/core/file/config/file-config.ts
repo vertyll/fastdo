@@ -28,9 +28,9 @@ export class FileConfigService {
   }
 
   private getLocalConfig() {
-    const uploadDir = this.configService.getOrThrow<string>('app.file.storage.local.uploadDir');
+    const uploadDirPath = this.configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');
     return {
-      uploadDir: join(process.cwd(), uploadDir),
+      uploadDirPath: join(process.cwd(), uploadDirPath),
     };
   }
 

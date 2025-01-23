@@ -4,7 +4,7 @@ export interface IFileConfig {
   storage: {
     type: StorageType;
     local: {
-      uploadDir: string;
+      uploadDirPath: string;
     };
   };
   validation: {

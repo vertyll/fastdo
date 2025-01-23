@@ -4,6 +4,7 @@ import { AppConfig, DatabaseType, Environment, FILE_CONSTANTS, StorageType } fro
 export default registerAs('app', (): AppConfig => ({
   environment: (process.env.NODE_ENV as Environment) || Environment.DEVELOPMENT,
   port: parseInt(process.env.PORT || '3000', 10),
+  appUrl: process.env.APP_URL || 'http://localhost:3000',
   database: {
     type: (process.env.DATABASE_TYPE as DatabaseType) || DatabaseType.POSTGRES,
     host: process.env.DATABASE_HOST || 'localhost',
@@ -51,7 +52,6 @@ export default registerAs('app', (): AppConfig => ({
     password: process.env.MAIL_PASS,
     templatesPath: process.env.MAIL_TEMPLATES_PATH || 'src/core/mail/templates',
     from: process.env.MAIL_FROM || 'noreply@example.com',
-    appUrl: process.env.APP_URL || 'http://localhost:3000',
     dev: {
       host: 'localhost',
       port: 1025,
@@ -61,7 +61,7 @@ export default registerAs('app', (): AppConfig => ({
     storage: {
       type: (process.env.STORAGE_TYPE as StorageType) || StorageType.LOCAL,
       local: {
-        uploadDir: process.env.UPLOAD_DIR || FILE_CONSTANTS.UPLOAD_PATH,
+        uploadDirPath: process.env.UPLOAD_DIR_PATH || FILE_CONSTANTS.UPLOAD_DIR_PATH,
       },
     },
     validation: {

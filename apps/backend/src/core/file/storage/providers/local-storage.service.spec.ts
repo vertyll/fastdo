@@ -45,7 +45,7 @@ describe('LocalStorageService', () => {
       storage: {
         type: StorageType.LOCAL,
         local: {
-          uploadDir: '/uploads',
+          uploadDirPath: '/uploads',
         },
       },
       validation: {

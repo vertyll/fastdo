@@ -47,7 +47,7 @@ describe('FileConfigService', () => {
         storage: {
           type: StorageType.LOCAL,
           local: {
-            uploadDir: expect.stringContaining('/uploads'),
+            uploadDirPath: expect.stringContaining('/uploads'),
           },
         },
         validation: {
@@ -75,7 +75,7 @@ describe('FileConfigService', () => {
       configService.getOrThrow.mockReturnValue('uploads');
       const localConfig = service['getLocalConfig']();
       expect(localConfig).toEqual({
-        uploadDir: expect.stringContaining('/uploads'),
+        uploadDirPath: expect.stringContaining('/uploads'),
       });
     });
   });

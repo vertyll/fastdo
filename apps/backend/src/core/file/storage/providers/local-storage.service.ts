@@ -25,10 +25,10 @@ export class LocalStorageService implements FileStorage {
   ): Promise<FileMetadataDto> {
     try {
       const config = this.fileConfigService.getConfig();
-      const uploadDir = config.storage.local.uploadDir;
+      const uploadDirPath = config.storage.local.uploadDirPath;
       const path = this.filePathBuilder.buildPath(file.filename, options?.path);
-      const fullPath = join(uploadDir, path);
-      const directory = join(uploadDir, path.split('/').slice(0, -1).join('/'));
+      const fullPath = join(uploadDirPath, path);
+      const directory = join(uploadDirPath, path.split('/').slice(0, -1).join('/'));
 
       await ensureDir(directory);
 
@@ -64,7 +64,7 @@ export class LocalStorageService implements FileStorage {
   async deleteFile(path: string): Promise<void> {
     try {
       const config = this.fileConfigService.getConfig();
-      const fullPath = join(config.storage.local.uploadDir, path);
+      const fullPath = join(config.storage.local.uploadDirPath, path);
       await unlink(fullPath);
     } catch (error) {
       if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
@@ -79,6 +79,6 @@ export class LocalStorageService implements FileStorage {
 
   async getFileUrl(path: string): Promise<string> {
     const config = this.fileConfigService.getConfig();
-    return `${config.storage.local.uploadDir}/${path}`;
+    return `${config.storage.local.uploadDirPath}/${path}`;
   }
 }

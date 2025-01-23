@@ -1,12 +1,12 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MailConfigService } from '../config/mail.config';
 import { MailSenderService } from './mail-sender.service';
 import { MailService } from './mail.service';
 
 describe('MailService', () => {
   let service: MailService;
   let mailSender: jest.Mocked<MailSenderService>;
-  let mailConfig: jest.Mocked<MailConfigService>;
+  let configService: jest.Mocked<ConfigService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,9 +19,9 @@ describe('MailService', () => {
           },
         },
         {
-          provide: MailConfigService,
+          provide: ConfigService,
           useValue: {
-            getConfig: jest.fn(),
+            get: jest.fn(),
           },
         },
       ],
@@ -29,35 +29,26 @@ describe('MailService', () => {
 
     service = module.get<MailService>(MailService);
     mailSender = module.get(MailSenderService);
-    mailConfig = module.get(MailConfigService);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    configService = module.get(ConfigService);
   });
 
   describe('sendConfirmationEmail', () => {
     it('should send a confirmation email', async () => {
       const to = 'test@example.com';
       const token = 'testToken';
-      const config = {
-        appUrl: 'http://example.com',
-        host: 'smtp.example.com',
-        port: 587,
-        from: 'no-reply@example.com',
-      };
+      const appUrl = 'http://localhost:3000';
 
-      mailConfig.getConfig.mockReturnValue(config);
+      configService.get.mockReturnValue(appUrl);
 
       await service.sendConfirmationEmail(to, token);
 
-      expect(mailConfig.getConfig).toHaveBeenCalled();
+      expect(configService.get).toHaveBeenCalledWith('app.appUrl');
       expect(mailSender.sendMail).toHaveBeenCalledWith({
         to,
         subject: 'Confirm your email',
         templateName: 'confirmation',
         templateData: {
-          confirmationUrl: `${config.appUrl}/auth/confirm-email?token=${token}`,
+          confirmationUrl: `${appUrl}/auth/confirm-email?token=${token}`,
         },
       });
     });

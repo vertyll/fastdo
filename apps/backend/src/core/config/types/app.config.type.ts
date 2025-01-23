@@ -19,7 +19,7 @@ export const FILE_CONSTANTS = {
     'image/png',
     'application/pdf',
   ],
-  UPLOAD_PATH: './uploads',
+  UPLOAD_DIR_PATH: './uploads',
 };
 
 export interface DatabaseConfig {
@@ -70,7 +70,6 @@ export interface MailConfig {
   user?: string;
   password?: string;
   from: string;
-  appUrl: string;
   templatesPath: string;
   dev: {
     host: string;
@@ -82,7 +81,7 @@ interface FileConfig {
   storage: {
     type: StorageType;
     local: {
-      uploadDir: string;
+      uploadDirPath: string;
     };
   };
   validation: {
@@ -100,6 +99,7 @@ interface ApiConfig {
 export interface AppConfig {
   environment: Environment;
   port: number;
+  appUrl: string;
   database: DatabaseConfig;
   api: ApiConfig;
   security: SecurityConfig;

@@ -8,7 +8,6 @@ export interface IMailConfig {
   user?: string;
   password?: string;
   from: string;
-  appUrl: string;
 }
 
 @Injectable()
@@ -18,7 +17,7 @@ export class MailConfigService {
   getConfig(): IMailConfig {
     const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
-    if (!mailConfig.host || !mailConfig.port || !mailConfig.from || !mailConfig.appUrl) {
+    if (!mailConfig.host || !mailConfig.port || !mailConfig.from) {
       throw new Error('Missing required mail configuration');
     }
 
@@ -28,14 +27,13 @@ export class MailConfigService {
       user: mailConfig.user,
       password: mailConfig.password,
       from: mailConfig.from,
-      appUrl: mailConfig.appUrl,
     };
   }
 
   getDevConfig(): IMailConfig {
     const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
-    if (!mailConfig.from || !mailConfig.appUrl) {
+    if (!mailConfig.from) {
       throw new Error('Missing required mail configuration');
     }
 
@@ -43,7 +41,6 @@ export class MailConfigService {
       host: mailConfig.dev.host,
       port: mailConfig.dev.port,
       from: mailConfig.from,
-      appUrl: mailConfig.appUrl,
     };
   }
 }
