@@ -99,6 +99,7 @@ interface ApiConfig {
 export interface AppConfig {
   environment: Environment;
   port: number;
+  appName: string;
   appUrl: string;
   database: DatabaseConfig;
   api: ApiConfig;

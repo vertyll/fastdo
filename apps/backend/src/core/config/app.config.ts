@@ -4,6 +4,7 @@ import { AppConfig, DatabaseType, Environment, FILE_CONSTANTS, StorageType } fro
 export default registerAs('app', (): AppConfig => ({
   environment: (process.env.NODE_ENV as Environment) || Environment.DEVELOPMENT,
   port: parseInt(process.env.PORT || '3000', 10),
+  appName: process.env.APP_NAME || 'nestjs-app',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
   database: {
     type: (process.env.DATABASE_TYPE as DatabaseType) || DatabaseType.POSTGRES,
@@ -33,8 +34,8 @@ export default registerAs('app', (): AppConfig => ({
     },
   },
   openApi: {
-    title: process.env.OPENAPI_TITLE || 'fastdo',
-    description: process.env.OPENAPI_DESCRIPTION || 'todo list api',
+    title: process.env.OPENAPI_TITLE || 'nestjs-app',
+    description: process.env.OPENAPI_DESCRIPTION || 'nestjs-app API documentation',
     version: process.env.OPENAPI_VERSION || '1.0',
     path: process.env.OPENAPI_PATH || 'api',
   },
