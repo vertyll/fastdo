@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroXMark } from '@ng-icons/heroicons/outline';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-toast',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, NgIcon],
   template: `
     @if(toast().visible) {
       <div
@@ -16,15 +19,19 @@ import { ToastService } from '../../services/toast.service';
       >
         <div class="text-white flex-grow" [innerHTML]="toast().message"></div>
         <button
-          class="rounded px-3.5 py-2 ml-4 bg-opacity-20 bg-black text-white hover:bg-opacity-30 transition-colors shrink-0"
+          class="rounded p-1.5 ml-4 bg-opacity-20 bg-black text-white hover:bg-opacity-30 transition-colors shrink-0 flex items-center justify-center"
           (click)="hideToast()"
         >
-          ✕
+          <ng-icon name="heroXMark" class="w-4 h-4" />
         </button>
       </div>
     }
   `,
-  styles: [],
+  viewProviders: [
+    provideIcons({
+      heroXMark,
+    }),
+  ],
 })
 export class ToastComponent {
   private readonly toastService = inject(ToastService);
