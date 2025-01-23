@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileConfigService } from './config/file-config';
 import { File } from './entities/file.entity';
 import { FileFacade } from './facade/file.facade';
-import { FileController } from './file.controler';
+import { FileController } from './file.controller';
 import { FileService } from './file.service';
 import { FileRepository } from './repositories/file.repository';
 import { FilePathBuilder } from './storage/file-path.builder';

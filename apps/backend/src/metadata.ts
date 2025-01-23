@@ -9,6 +9,8 @@ export default async () => {
     ['./projects/entities/project.entity']: await import('./projects/entities/project.entity'),
     ['./tasks/entities/priority.entity']: await import('./tasks/entities/priority.entity'),
     ['./auth/dtos/login-response.dto']: await import('./auth/dtos/login-response.dto'),
+    ['./core/file/dtos/file-metadata.dto']: await import('./core/file/dtos/file-metadata.dto'),
+    ['./core/file/entities/file.entity']: await import('./core/file/entities/file.entity'),
   };
   return {
     '@nestjs/swagger': {
@@ -193,7 +195,13 @@ export default async () => {
             'confirmEmail': {},
           },
         },
-      ], [import('./tasks/tasks.controller'), {
+      ], [import('./core/file/file.controller'), {
+        'FileController': {
+          'uploadFile': { type: t['./core/file/dtos/file-metadata.dto'].FileMetadataDto },
+          'deleteFile': {},
+          'getFile': { type: t['./core/file/entities/file.entity'].File },
+        },
+      }], [import('./tasks/tasks.controller'), {
         'TasksController': {
           'create': { type: t['./tasks/entities/task.entity'].Task },
           'findAll': {},

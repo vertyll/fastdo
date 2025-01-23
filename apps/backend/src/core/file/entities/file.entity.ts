@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StorageType } from 'src/core/config/types/app.config.type';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { StorageType } from '../../config/types/app.config.type';
 
 @Entity('file')
 export class File {

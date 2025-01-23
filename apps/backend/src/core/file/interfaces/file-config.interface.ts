@@ -1,4 +1,4 @@
-import { StorageType } from 'src/core/config/types/app.config.type';
+import { StorageType } from '../../config/types/app.config.type';
 
 export interface IFileConfig {
   storage: {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsObject, IsOptional } from 'class-validator';
-import { StorageType } from 'src/core/config/types/app.config.type';
+import { StorageType } from '../../config/types/app.config.type';
 
 export class FileMetadataDto {
   @ApiProperty({ required: false })

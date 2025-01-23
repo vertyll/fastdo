@@ -2,7 +2,7 @@ import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
 import { ensureDir, unlink, writeFile } from 'fs-extra';
 import { join } from 'path';
-import { StorageType } from 'src/core/config/types/app.config.type';
+import { StorageType } from '../../../config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
 import { FileMetadataDto } from '../../dtos/file-metadata.dto';
 import { FileDeleteException } from '../../exceptions/file-delete.exception';
