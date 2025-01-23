@@ -71,6 +71,7 @@ export interface MailConfig {
   password?: string;
   from: string;
   appUrl: string;
+  templatesPath: string;
   dev: {
     host: string;
     port: number;
@@ -97,7 +98,7 @@ interface ApiConfig {
 }
 
 export interface AppConfig {
-  environment: string;
+  environment: Environment;
   port: number;
   database: DatabaseConfig;
   api: ApiConfig;

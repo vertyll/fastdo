@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as Handlebars from 'handlebars';
 import * as path from 'path';
@@ -6,12 +7,16 @@ import { IMailTemplate } from '../interfaces/mail-template.interface';
 
 @Injectable()
 export class MailTemplateService implements IMailTemplate {
-  private templatesDir = path.join(process.cwd(), 'src/core/mail/templates');
+  constructor(private readonly configService: ConfigService) {
+  }
+
+  private templatePath: string = this.configService.getOrThrow<string>('app.mail.templatesPath');
+  private templatesDir: string = path.join(process.cwd(), this.templatePath);
 
   async getTemplate(templateName: string, data: any): Promise<string> {
-    const templatePath = path.join(this.templatesDir, `${templateName}.hbs`);
-    const templateContent = await fs.readFile(templatePath, 'utf-8');
-    const template = Handlebars.compile(templateContent);
+    const templatePath: string = path.join(this.templatesDir, `${templateName}.hbs`);
+    const templateContent: string = await fs.readFile(templatePath, 'utf-8');
+    const template: HandlebarsTemplateDelegate = Handlebars.compile(templateContent);
     return template(data);
   }
 }

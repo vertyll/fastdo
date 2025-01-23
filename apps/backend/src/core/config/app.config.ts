@@ -49,6 +49,7 @@ export default registerAs('app', (): AppConfig => ({
     port: parseInt(process.env.MAIL_PORT || '587', 10),
     user: process.env.MAIL_USER,
     password: process.env.MAIL_PASS,
+    templatesPath: process.env.MAIL_TEMPLATES_PATH || 'src/core/mail/templates',
     from: process.env.MAIL_FROM || 'noreply@example.com',
     appUrl: process.env.APP_URL || 'http://localhost:3000',
     dev: {
