@@ -7,8 +7,8 @@ import { Role as RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
+import { UserRole } from '../users/entities/user-role.entity';
 import { User } from '../users/entities/user.entity';
-import { UserRoleRepository } from '../users/repositories/user-role.repository';
 import { UserRepository } from '../users/repositories/user.repository';
 import { UsersService } from '../users/users.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
@@ -27,7 +27,6 @@ export class AuthService {
     private readonly dataSource: DataSource,
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
-    private readonly userRoleRepository: UserRoleRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -54,13 +53,11 @@ export class AuthService {
 
     try {
       const existingUser = await this.userRepository.findOne({ where: { email: registerDto.email } });
-
       if (existingUser) {
         throw new UnauthorizedException('User already exists');
       }
 
       const role = await this.roleRepository.findOne({ where: { name: RoleEnum.User } });
-
       if (!role) {
         throw new UnauthorizedException('Role does not exist');
       }
@@ -73,7 +70,7 @@ export class AuthService {
       const confirmationTokenExpiry = new Date();
       confirmationTokenExpiry.setHours(confirmationTokenExpiry.getHours() + 24);
 
-      const newUser = await this.userRepository.save({
+      const newUser = await queryRunner.manager.getRepository(User).save({
         email,
         password: hashedPassword,
         isEmailConfirmed: false,
@@ -81,15 +78,12 @@ export class AuthService {
         confirmationTokenExpiry,
       });
 
-      await this.userRoleRepository.save({
+      await queryRunner.manager.getRepository(UserRole).save({
         user: { id: newUser.id },
         role: { id: role.id },
       });
 
-      await this.mailService.sendConfirmationEmail(
-        newUser.email,
-        confirmationToken,
-      );
+      await this.mailService.sendConfirmationEmail(newUser.email, confirmationToken);
 
       await queryRunner.commitTransaction();
       return newUser;

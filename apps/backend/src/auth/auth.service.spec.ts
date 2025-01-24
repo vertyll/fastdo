@@ -9,6 +9,7 @@ import { MailService } from '../core/mail/services/mail.service';
 import { Role } from '../roles/entities/role.entity';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
+import { UserRole } from '../users/entities/user-role.entity';
 import { User } from '../users/entities/user.entity';
 import { UserRoleRepository } from '../users/repositories/user-role.repository';
 import { UserRepository } from '../users/repositories/user.repository';
@@ -27,7 +28,6 @@ describe('AuthService', () => {
   let confirmationTokenService: jest.Mocked<ConfirmationTokenService>;
   let userRepository: jest.Mocked<UserRepository>;
   let roleRepository: jest.Mocked<RoleRepository>;
-  let userRoleRepository: jest.Mocked<UserRoleRepository>;
   let mockQueryRunner: any;
 
   const mockRole: Role = {
@@ -59,6 +59,7 @@ describe('AuthService', () => {
       manager: {
         getRepository: jest.fn().mockReturnValue({
           findOne: jest.fn(),
+          save: jest.fn().mockImplementation(entity => entity),
         }),
         save: jest.fn(),
         update: jest.fn(),
@@ -150,7 +151,6 @@ describe('AuthService', () => {
     confirmationTokenService = module.get(ConfirmationTokenService);
     userRepository = module.get(UserRepository);
     roleRepository = module.get(RoleRepository);
-    userRoleRepository = module.get(UserRoleRepository);
   });
 
   describe('validateUser', () => {
@@ -199,20 +199,28 @@ describe('AuthService', () => {
         confirmationTokenExpiry: expect.any(Date),
       };
 
-      userRepository.save.mockResolvedValue(newUser);
-      userRoleRepository.save.mockResolvedValue({ id: 1, user: newUser, role: mockRole });
-
-      const result = await service.register(registerDto);
-
-      expect(result).toEqual(newUser);
-      expect(userRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+      const savedUser = {
+        id: 1,
         email: registerDto.email,
         password: hashedPassword,
         isEmailConfirmed: false,
         confirmationToken: 'generated-token',
         confirmationTokenExpiry: expect.any(Date),
-      }));
-      expect(userRoleRepository.save).toHaveBeenCalledWith({
+      };
+
+      mockQueryRunner.manager.getRepository(User).save.mockResolvedValue(savedUser);
+
+      const result = await service.register(registerDto);
+
+      expect(result).toEqual(savedUser);
+      expect(mockQueryRunner.manager.getRepository(User).save).toHaveBeenCalledWith({
+        email: registerDto.email,
+        password: hashedPassword,
+        isEmailConfirmed: false,
+        confirmationToken: 'generated-token',
+        confirmationTokenExpiry: expect.any(Date),
+      });
+      expect(mockQueryRunner.manager.getRepository(UserRole).save).toHaveBeenCalledWith({
         user: { id: newUser.id },
         role: { id: mockRole.id },
       });
@@ -220,6 +228,7 @@ describe('AuthService', () => {
         newUser.email,
         'generated-token',
       );
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when user already exists', async () => {
@@ -229,7 +238,19 @@ describe('AuthService', () => {
         new UnauthorizedException('User already exists'),
       );
 
-      expect(userRepository.save).not.toHaveBeenCalled();
+      expect(mockQueryRunner.manager.getRepository(User).save).not.toHaveBeenCalled();
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when role does not exist', async () => {
+      roleRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.register(registerDto)).rejects.toThrow(
+        new UnauthorizedException('Role does not exist'),
+      );
+
+      expect(mockQueryRunner.manager.getRepository(User).save).not.toHaveBeenCalled();
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });
 
@@ -315,6 +336,43 @@ describe('AuthService', () => {
       );
 
       expect(userRepository.update).not.toHaveBeenCalled();
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when token has expired', async () => {
+      const expiredUser = {
+        ...mockUser,
+        isEmailConfirmed: false,
+        confirmationToken,
+        confirmationTokenExpiry: new Date(Date.now() - 24 * 60 * 60 * 1000), // Expired token
+      };
+
+      userRepository.findOne.mockResolvedValue(expiredUser);
+
+      await expect(service.confirmEmail(confirmationToken)).rejects.toThrow(
+        new UnauthorizedException('Confirmation token expired'),
+      );
+
+      expect(userRepository.update).not.toHaveBeenCalled();
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when user is already confirmed', async () => {
+      const confirmedUser = {
+        ...mockUser,
+        isEmailConfirmed: true,
+        confirmationToken,
+        confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      };
+
+      userRepository.findOne.mockResolvedValue(confirmedUser);
+
+      await expect(service.confirmEmail(confirmationToken)).rejects.toThrow(
+        new UnauthorizedException('Invalid confirmation token'),
+      );
+
+      expect(userRepository.update).not.toHaveBeenCalled();
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });
 });
