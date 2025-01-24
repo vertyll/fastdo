@@ -96,11 +96,17 @@ interface ApiConfig {
   };
 }
 
+interface LanguageConfig {
+  fallbackLanguage: string;
+  languageDirPath: string;
+  typesOutputPath: string;
+}
 export interface AppConfig {
   environment: Environment;
   port: number;
   appName: string;
   appUrl: string;
+  language: LanguageConfig;
   database: DatabaseConfig;
   api: ApiConfig;
   security: SecurityConfig;

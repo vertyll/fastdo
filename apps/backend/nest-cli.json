@@ -6,6 +6,9 @@
     "builder": "swc",
     "typeCheck": true,
     "deleteOutDir": true,
-    "plugins": ["@nestjs/swagger"]
+    "plugins": ["@nestjs/swagger"],
+    "assets": [
+      { "include": "i18n/**/*", "watchAssets": true }
+    ]
   }
 }

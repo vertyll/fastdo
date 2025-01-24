@@ -7,6 +7,7 @@ import { CommonModule } from './common/common.module';
 import appConfig from './core/config/app.config';
 import { DatabaseModule } from './core/database/database.module';
 import { FileModule } from './core/file/file.module';
+import { LanguageModule } from './core/language/language.module';
 import { MailModule } from './core/mail/mail.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RolesModule } from './roles/roles.module';
@@ -20,6 +21,7 @@ import { UsersModule } from './users/users.module';
       isGlobal: true,
     }),
     DatabaseModule,
+    LanguageModule,
     TasksModule,
     ProjectsModule,
     CommonModule,

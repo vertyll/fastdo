@@ -6,6 +6,11 @@ export default registerAs('app', (): AppConfig => ({
   port: parseInt(process.env.PORT || '3000', 10),
   appName: process.env.APP_NAME || 'nestjs-app',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
+  language: {
+    fallbackLanguage: process.env.FALLBACK_LANGUAGE || 'en',
+    languageDirPath: process.env.LANGUAGE_DIR_PATH || 'src/i18n/',
+    typesOutputPath: process.env.LANGUAGE_TYPES_OUTPUT_PATH || 'src/generated/i18n/i18n.generated.ts',
+  },
   database: {
     type: (process.env.DATABASE_TYPE as DatabaseType) || DatabaseType.POSTGRES,
     host: process.env.DATABASE_HOST || 'localhost',
