@@ -1,5 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { UsersService } from '../../users/users.service';
 import { JwtStrategy } from './jwt.strategy';
 
@@ -7,6 +9,7 @@ describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
   let usersService: jest.Mocked<UsersService>;
   let configService: jest.Mocked<ConfigService>;
+  let i18nService: jest.Mocked<I18nService<I18nTranslations>>;
 
   const mockUser = {
     id: 1,
@@ -37,8 +40,13 @@ describe('JwtStrategy', () => {
       }),
     } as unknown as jest.Mocked<ConfigService>;
 
+    i18nService = {
+      t: jest.fn().mockReturnValue('translated message'),
+    } as unknown as jest.Mocked<I18nService<I18nTranslations>>;
+
     jwtStrategy = new JwtStrategy(
       usersService,
+      i18nService,
       configService,
     );
   });
