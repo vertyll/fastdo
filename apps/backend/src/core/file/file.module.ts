@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LanguageModule } from '../language/language.module';
 import { FileConfigService } from './config/file-config';
 import { File } from './entities/file.entity';
 import { FileFacade } from './facade/file.facade';
@@ -25,6 +26,7 @@ import { FileValidator } from './validators/file-validator';
     LocalStorageService,
     FilePathBuilder,
     FileRepository,
+    LanguageModule,
     FileFacade,
   ],
   exports: [FileService],

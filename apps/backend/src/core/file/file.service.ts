@@ -1,5 +1,7 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { FileMetadataDto } from './dtos/file-metadata.dto';
 import { File } from './entities/file.entity';
 import { FileDeleteException } from './exceptions/file-delete.exception';
@@ -16,6 +18,7 @@ export class FileService {
     private readonly storageStrategy: StorageStrategy,
     private readonly fileValidator: FileValidator,
     private readonly fileRepository: FileRepository,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async uploadFile(
@@ -45,29 +48,41 @@ export class FileService {
       if (error instanceof FileNotFoundException || error instanceof FileUploadException) {
         throw error;
       }
-      throw new FileUploadException('Failed to process file upload', error);
+      throw new FileUploadException(
+        this.i18n,
+        this.i18n.t('messages.File.errors.failedToProcessFileUpload'),
+      );
     }
   }
 
   async deleteFile(fileId: string): Promise<void> {
     const file = await this.fileRepository.findById(fileId);
     if (!file) {
-      throw new FileNotFoundException(fileId);
+      throw new FileNotFoundException(
+        this.i18n,
+        fileId,
+      );
     }
 
     try {
       const storage = this.storageStrategy.getStorage(file.storageType);
       await storage.deleteFile(file.path);
       await this.fileRepository.delete(fileId);
-    } catch (error) {
-      throw new FileDeleteException('Failed to delete file', error);
+    } catch {
+      throw new FileDeleteException(
+        this.i18n,
+        this.i18n.t('messages.File.errors.fileNotDeleted'),
+      );
     }
   }
 
   async getFile(fileId: string): Promise<File> {
     const file = await this.fileRepository.findById(fileId);
     if (!file) {
-      throw new FileNotFoundException(fileId);
+      throw new FileNotFoundException(
+        this.i18n,
+        fileId,
+      );
     }
     return file;
   }

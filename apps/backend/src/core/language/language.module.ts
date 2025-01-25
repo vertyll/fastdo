@@ -10,6 +10,7 @@ import { join } from 'path';
         fallbackLanguage: configService.getOrThrow('app.language.fallbackLanguage'),
         fallbacks: {
           en: 'en',
+          pl: 'pl',
         },
         loaderOptions: {
           path: join(process.cwd(), configService.getOrThrow('app.language.languageDirPath')),
@@ -18,9 +19,9 @@ import { join } from 'path';
         typesOutputPath: join(process.cwd(), configService.getOrThrow('app.language.typesOutputPath')),
       }),
       resolvers: [
-        { use: QueryResolver, options: ['lang'] },
-        AcceptLanguageResolver,
         new HeaderResolver(['x-lang']),
+        AcceptLanguageResolver,
+        { use: QueryResolver, options: ['lang'] },
       ],
       inject: [ConfigService],
     }),

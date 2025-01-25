@@ -1,4 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
 import { MailConfigService } from '../config/mail.config';
 import { MailSendFailedException } from '../exceptions/mail-send-failed.exception';
 import { IMailTemplate } from '../interfaces/mail-template.interface';
@@ -14,6 +16,7 @@ export class MailSenderService {
     @Inject('IMailTemplate') private readonly templateService: IMailTemplate,
     private readonly mailConfig: MailConfigService,
     @Inject('MailLogger') private readonly logger: Logger,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async sendMail(options: {
@@ -41,7 +44,7 @@ export class MailSenderService {
 
         return;
       } catch (error) {
-        currentError = error instanceof Error ? error : new Error('Unknown error occurred');
+        currentError = error instanceof Error ? error : new Error(this.i18n.t('messages.Errors.unknownError'));
         this.logger.warn(
           `Failed to send email (attempt ${attempt}/${this.maxRetries}): ${currentError.message}`,
         );
@@ -55,7 +58,10 @@ export class MailSenderService {
     this.logger.warn(
       `Failed to send email after ${this.maxRetries} attempts`,
     );
-    throw new MailSendFailedException(currentError?.message || 'Failed to send email');
+    throw new MailSendFailedException(
+      this.i18n,
+      currentError?.message || this.i18n.t('messages.Mail.errors.failedToSendEmail'),
+    );
   }
 
   private delay(ms: number): Promise<void> {

@@ -1,7 +1,9 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
 import { ensureDir, unlink, writeFile } from 'fs-extra';
+import { I18nService } from 'nestjs-i18n';
 import { join } from 'path';
+import { I18nTranslations } from '../../../../generated/i18n/i18n.generated';
 import { StorageType } from '../../../config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
 import { FileMetadataDto } from '../../dtos/file-metadata.dto';
@@ -14,6 +16,8 @@ import { FilePathBuilder } from '../file-path.builder';
 
 @Injectable()
 export class LocalStorageService implements FileStorage {
+  private readonly i18n: I18nService<I18nTranslations>;
+
   constructor(
     private readonly fileConfigService: FileConfigService,
     private readonly filePathBuilder: FilePathBuilder,
@@ -38,7 +42,10 @@ export class LocalStorageService implements FileStorage {
       const fileName = path.split('/').pop();
       if (!fileName) {
         return Promise.reject(
-          new FileUploadException('Failed to extract file name from path'),
+          new FileUploadException(
+            this.i18n,
+            this.i18n.t('messages.File.errors.failedExtractFileNameFromPath'),
+          ),
         );
       }
 
@@ -55,7 +62,8 @@ export class LocalStorageService implements FileStorage {
     } catch (error) {
       console.error('Upload error:', error);
       throw new FileUploadException(
-        'Failed to upload file to local storage',
+        this.i18n,
+        this.i18n.t('messages.File.errors.filedUploadFileToLocalStorage'),
         error instanceof Error ? error : undefined,
       );
     }
@@ -68,10 +76,14 @@ export class LocalStorageService implements FileStorage {
       await unlink(fullPath);
     } catch (error) {
       if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-        throw new FileNotFoundException(path);
+        throw new FileNotFoundException(
+          this.i18n,
+          path,
+        );
       }
       throw new FileDeleteException(
-        'Failed to delete file',
+        this.i18n,
+        this.i18n.t('messages.File.errors.fileNotDeleted'),
         error instanceof Error ? error : undefined,
       );
     }

@@ -1,0 +1,57 @@
+{
+  "Validation": {
+    "errorOccurred": "Wystąpił błąd",
+    "failed": "Walidacja nie powiodła się",
+    "isEmail": "Nieprawidłowy format adresu email",
+    "isString": "Wartość musi być tekstem",
+    "uppercaseLetter": "Wartość musi zawierać co najmniej jedną wielką literę",
+    "specialCharacter": "Wartość musi zawierać co najmniej jeden znak specjalny",
+    "minLength": "Wartość musi zawierać co najmniej {length} znaków",
+    "isInteger": "Wartość musi być liczbą całkowitą"
+  },
+  "Errors": {
+    "unknownError": "Wystąpił nieznany błąd"
+  },
+  "Auth": {
+    "errors": {
+      "invalidToken": "Nieprawny token",
+      "tokenExpired": "Token wygasł",
+      "verifyingTokenFailed": "Weryfikacja tokenu nie powiodła się",
+      "invalidCredentials": "Nieprawidłowe dane logowania",
+      "userAlreadyExists": "Użytkownik o podanym adresie email już istnieje",
+      "roleNotFound": "Rola nie istnieje",
+      "emailNotConfirmed": "Adres email nie został potwierdzony"
+    }
+  },
+  "File": {
+    "errors": {
+      "fileValidation": "Walidacja pliku nie powiodła się",
+      "fileNotFound": "Plik nie istnieje {fileId}",
+      "fileNotProvided": "Plik nie został przekazany",
+      "fileNotDeleted": "Plik nie został usunięty",
+      "fileNotUploaded": "Plik nie został przesłany",
+      "fileNotUpdated": "Plik nie został zaktualizowany",
+      "invalidStorageType": "Nieprawidłowy typ przechowywania plików {storageType}",
+      "failedExtractFileNameFromPath": "Nie udało się wyodrębnić nazwy pliku z ścieżki",
+      "filedUploadFileToLocalStorage": "Nie udało się przesłać pliku do lokalnego magazynu",
+      "exceededMaxFileSize": "Przekroczono maksymalny rozmiar pliku o {maxSize} bajtów",
+      "fileTypeNotAllowed": "Typ pliku {mimeType} nie jest dozwolony, dozwolone typy plików to {allowedTypes}",
+      "failedToProcessFileUpload": "Nie udało się przetworzyć przesyłania pliku"
+    }
+  },
+  "Mail": {
+    "confirmationEmail": {
+      "subject": "Potwierdzenie adresu email"
+    },
+    "errors": {
+      "missingMailConfiguration": "Brak konfiguracji maila {message}",
+      "failedToSendEmail": "Nie udało się wysłać maila",
+      "mailDevNotAvailable": "Serwer mailowy jest niedostępny"
+    }
+  },
+  "Roles": {
+    "errors": {
+      "roleNotFound": "Rola {roleName} nie istnieje"
+    }
+  }
+}

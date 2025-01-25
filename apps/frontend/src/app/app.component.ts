@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { environment } from '../environments/environment';
 import { ModalComponent } from './shared/components/organisms/modal.component';
 import { LayoutComponent } from './shared/components/templates/layout.component';
 import { LocalStorageService } from './shared/services/local-storage.service';
@@ -18,13 +19,13 @@ export class AppComponent {
   private readonly localStorageService = inject(LocalStorageService);
 
   constructor() {
-    const availableLanguages = ['pl', 'en'];
-    const defaultLanguage = 'pl';
+    const availableLanguages: string[] = environment.availableLanguages;
+    const defaultLanguage: string = environment.defaultLanguage;
 
     this.translateService.addLangs(availableLanguages);
     this.translateService.setDefaultLang(defaultLanguage);
 
-    const savedLanguage = this.localStorageService.get<string>('selected_language', '');
+    const savedLanguage: string = this.localStorageService.get<string>('selected_language', '');
 
     if (savedLanguage && availableLanguages.includes(savedLanguage)) {
       this.translateService.use(savedLanguage);

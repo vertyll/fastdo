@@ -9,6 +9,7 @@ import { routes } from './app.routes';
 import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { languageInterceptor } from './core/interceptors/language.interceptor';
 import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
 
@@ -20,7 +21,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(
-      withInterceptors([apiKeyInterceptor, AuthInterceptor, ErrorInterceptor]),
+      withInterceptors([apiKeyInterceptor, AuthInterceptor, ErrorInterceptor, languageInterceptor]),
     ),
     provideRouter(routes, withComponentInputBinding()),
     provideStore([FiltersState], ngxsConfig),

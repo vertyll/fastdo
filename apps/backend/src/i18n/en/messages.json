@@ -1,0 +1,57 @@
+{
+  "Validation": {
+    "errorOccurred": "An error occurred",
+    "failed": "Validation failed",
+    "isEmail": "Invalid email format",
+    "isString": "Value must be a string",
+    "uppercaseLetter": "Value must contain at least one uppercase letter",
+    "specialCharacter": "Value must contain at least one special character",
+    "minLength": "Value must contain at least {length} characters",
+    "isInteger": "Value must be an integer"
+  },
+  "Errors": {
+    "unknownError": "An unknown error occurred"
+  },
+  "Auth": {
+    "errors": {
+      "invalidToken": "Invalid token",
+      "tokenExpired": "Token expired",
+      "verifyingTokenFailed": "Token verification failed",
+      "invalidCredentials": "Invalid login credentials",
+      "userAlreadyExists": "A user with the provided email already exists",
+      "roleNotFound": "Role not found",
+      "emailNotConfirmed": "Email address not confirmed"
+    }
+  },
+  "File": {
+    "errors": {
+      "fileValidation": "File validation failed",
+      "fileNotFound": "File not found {fileId}",
+      "fileNotProvided": "File not provided",
+      "fileNotDeleted": "File not deleted",
+      "fileNotUploaded": "File not uploaded",
+      "fileNotUpdated": "File not updated",
+      "invalidStorageType": "Invalid file storage type {storageType}",
+      "failedExtractFileNameFromPath": "Failed to extract file name from path",
+      "filedUploadFileToLocalStorage": "Failed to upload file to local storage",
+      "exceededMaxFileSize": "Exceeded maximum file size by {maxSize} bytes",
+      "fileTypeNotAllowed": "File type {mimeType} is not allowed, allowed file types are {allowedTypes}",
+      "failedToProcessFileUpload": "Failed to process file upload"
+    }
+  },
+  "Mail": {
+    "confirmationEmail": {
+      "subject": "Email address confirmation"
+    },
+    "errors": {
+      "missingMailConfiguration": "Missing mail configuration {message}",
+      "failedToSendEmail": "Failed to send email",
+      "mailDevNotAvailable": "Mail server is unavailable"
+    }
+  },
+  "Roles": {
+    "errors": {
+      "roleNotFound": "Role {roleName} not found"
+    }
+  }
+}

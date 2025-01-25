@@ -2,9 +2,11 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { I18nService } from 'nestjs-i18n';
 import { DataSource } from 'typeorm';
 import { Role as RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
+import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
 import { UserRole } from '../users/entities/user-role.entity';
@@ -28,6 +30,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
     private readonly configService: ConfigService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
@@ -54,12 +57,16 @@ export class AuthService {
     try {
       const existingUser = await this.userRepository.findOne({ where: { email: registerDto.email } });
       if (existingUser) {
-        throw new UnauthorizedException('User already exists');
+        throw new UnauthorizedException(
+          this.i18n.t('messages.Auth.errors.userAlreadyExists'),
+        );
       }
 
       const role = await this.roleRepository.findOne({ where: { name: RoleEnum.User } });
       if (!role) {
-        throw new UnauthorizedException('Role does not exist');
+        throw new UnauthorizedException(
+          this.i18n.t('messages.Auth.errors.roleNotFound'),
+        );
       }
 
       const { email, password } = registerDto;
@@ -111,11 +118,15 @@ export class AuthService {
         || user.confirmationToken !== token
         || !user.confirmationTokenExpiry
       ) {
-        throw new UnauthorizedException('Invalid confirmation token');
+        throw new UnauthorizedException(
+          this.i18n.t('messages.Auth.errors.invalidToken'),
+        );
       }
 
       if (user.confirmationTokenExpiry < new Date()) {
-        throw new UnauthorizedException('Confirmation token expired');
+        throw new UnauthorizedException(
+          this.i18n.t('messages.Auth.errors.tokenExpired'),
+        );
       }
 
       await this.userRepository.update(user.id, {
@@ -136,11 +147,15 @@ export class AuthService {
   public async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        this.i18n.t('messages.Auth.errors.invalidCredentials'),
+      );
     }
 
     if (!user.isEmailConfirmed) {
-      throw new UnauthorizedException('Please confirm your email first');
+      throw new UnauthorizedException(
+        this.i18n.t('messages.Auth.errors.emailNotConfirmed'),
+      );
     }
 
     const roles = await this.rolesService.getUserRoles(user.id);

@@ -1,7 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import * as nodemailer from 'nodemailer';
 import { Environment } from 'src/core/config/types/app.config.type';
+import { I18nTranslations } from '../../../../generated/i18n/i18n.generated';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
 import { IMailTransport } from '../../interfaces/mail-transport.interface';
@@ -15,6 +17,7 @@ export class DevTransport implements IMailTransport {
     private readonly configService: ConfigService,
     private readonly mailConfig: MailConfigService,
     @Inject('MailLogger') private readonly logger: Logger,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {
     this.initializeTransporter().catch(error => {
       this.logger.error(
@@ -48,13 +51,19 @@ export class DevTransport implements IMailTransport {
       if (environment === Environment.DEVELOPMENT) {
         return;
       }
-      throw new MailSendFailedException('Mail service is not available');
+      throw new MailSendFailedException(
+        this.i18n,
+        this.i18n.t('messages.Mail.errors.mailDevNotAvailable'),
+      );
     }
 
     try {
       await this.transporter.sendMail(options);
     } catch (error) {
-      throw new MailSendFailedException(error instanceof Error ? error.message : 'Unknown error');
+      throw new MailSendFailedException(
+        this.i18n,
+        error instanceof Error ? error.message : this.i18n.t('messages.Errors.unknownError'),
+      );
     }
   }
 }

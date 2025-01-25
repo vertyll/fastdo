@@ -1,10 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, MinLength } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 export class CreateTaskDto {
   @ApiProperty()
   @IsString()
-  @MinLength(3, { message: 'Name is too short, minimum 3 characters' })
+  @MinLength(3, {
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', {
+      args: { length: 3 },
+    }),
+  })
   name: string;
 
   @ApiProperty({ required: false })

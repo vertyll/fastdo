@@ -1,19 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, Matches, MinLength } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 export class RegisterDto {
   @ApiProperty({ description: 'E-mail address' })
-  @IsEmail({}, { message: 'Invalid email format' })
+  @IsEmail({}, { message: i18nValidationMessage<I18nTranslations>('messages.Validation.isEmail') })
   email: string;
 
   @ApiProperty({ description: 'User password' })
-  @IsString({ message: 'Password must be a string' })
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @IsString({ message: i18nValidationMessage<I18nTranslations>('messages.Validation.isString') })
+  @MinLength(8, {
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', {
+      args: { length: 8 },
+    }),
+  })
   @Matches(/[A-Z]/, {
-    message: 'Password must contain at least one uppercase letter',
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.uppercaseLetter'),
   })
   @Matches(/[!@#$%^&*(),.?":{}|<>]/, {
-    message: 'Password must contain at least one special character',
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.specialCharacter'),
   })
   password: string;
 }
