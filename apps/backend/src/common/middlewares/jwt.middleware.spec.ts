@@ -1,33 +1,27 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { JwtMiddleware } from './jwt.middleware';
 
 describe('JwtMiddleware', () => {
   let middleware: JwtMiddleware;
-  let jwtService: JwtService;
+  let jwtService: jest.Mocked<JwtService>;
+  let i18nService: jest.Mocked<I18nService>;
 
   const mockRequest = (
     authorization?: string,
     url: string = '/test',
     method: string = 'GET',
-  ) => {
-    const req: any = {
-      headers: {
-        authorization,
-      },
-      url,
-      method,
-    };
-    return req;
-  };
+  ) => ({
+    headers: { authorization },
+    url,
+    method,
+  } as any);
 
-  const mockResponse = () => {
-    const res: any = {
-      statusCode: 200,
-      end: jest.fn(),
-    };
-    return res;
-  };
+  const mockResponse = () => ({
+    statusCode: 200,
+    end: jest.fn(),
+  } as any);
 
   const mockNext = jest.fn();
 
@@ -41,34 +35,41 @@ describe('JwtMiddleware', () => {
             verify: jest.fn(),
           },
         },
+        {
+          provide: I18nService,
+          useValue: {
+            t: jest.fn().mockReturnValue('Translated error message'),
+          },
+        },
       ],
     }).compile();
 
     middleware = module.get<JwtMiddleware>(JwtMiddleware);
-    jwtService = module.get<JwtService>(JwtService);
+    jwtService = module.get(JwtService);
+    i18nService = module.get(I18nService);
     mockNext.mockClear();
   });
 
-  it('should return 401 when an invalid token is provided', () => {
+  it('should return 401 with translated message when invalid token is provided', () => {
     const req = mockRequest('Bearer invalidtoken');
-    (jwtService.verify as jest.Mock).mockImplementation(() => {
+    jwtService.verify.mockImplementation(() => {
       throw new Error('Invalid token');
     });
+    i18nService.t.mockReturnValue('Translated invalid token message');
 
     const res = mockResponse();
     middleware.use(req, res, mockNext);
 
     expect(res.statusCode).toBe(401);
-
     const responseBody = JSON.parse(res.end.mock.calls[0][0]);
-
     expect(responseBody).toEqual({
       statusCode: 401,
       timestamp: expect.any(String),
       path: req.url,
       method: req.method,
-      message: 'Invalid token',
+      message: 'Translated invalid token message',
     });
+    expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     expect(mockNext).not.toHaveBeenCalled();
   });
 
@@ -76,25 +77,45 @@ describe('JwtMiddleware', () => {
     const req = mockRequest('Bearer invalidtoken', undefined, undefined);
     req.url = undefined;
     req.method = undefined;
-
-    (jwtService.verify as jest.Mock).mockImplementation(() => {
+    jwtService.verify.mockImplementation(() => {
       throw new Error('Invalid token');
     });
+    i18nService.t.mockReturnValue('Translated invalid token message');
 
     const res = mockResponse();
     middleware.use(req, res, mockNext);
 
     expect(res.statusCode).toBe(401);
-
     const responseBody = JSON.parse(res.end.mock.calls[0][0]);
-
     expect(responseBody).toEqual({
       statusCode: 401,
       timestamp: expect.any(String),
       path: undefined,
       method: undefined,
-      message: 'Invalid token',
+      message: 'Translated invalid token message',
     });
+    expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     expect(mockNext).not.toHaveBeenCalled();
+  });
+
+  it('should log translated error when verifying token fails', () => {
+    const req = mockRequest('Bearer invalidtoken');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    jwtService.verify.mockImplementation(() => {
+      throw new Error('Verification failed');
+    });
+    i18nService.t
+      .mockReturnValueOnce('Token verification failed')
+      .mockReturnValueOnce('Invalid token message');
+
+    const res = mockResponse();
+    middleware.use(req, res, mockNext);
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Token verification failed',
+      expect.any(Error),
+    );
+    expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.verifyingTokenFailed');
+    consoleSpy.mockRestore();
   });
 });

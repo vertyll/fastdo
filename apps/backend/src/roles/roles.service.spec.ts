@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { UserRole } from '../users/entities/user-role.entity';
 import { UserRoleRepository } from '../users/repositories/user-role.repository';
 import { Role } from './entities/role.entity';
@@ -10,6 +11,7 @@ describe('RolesService', () => {
   let service: RolesService;
   let roleRepository: jest.Mocked<RoleRepository>;
   let userRoleRepository: jest.Mocked<UserRoleRepository>;
+  let i18nService: jest.Mocked<I18nService>;
 
   beforeEach(async () => {
     const mockRoleRepository = {
@@ -20,6 +22,10 @@ describe('RolesService', () => {
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
+    };
+
+    const mockI18nService = {
+      translate: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -33,12 +39,17 @@ describe('RolesService', () => {
           provide: UserRoleRepository,
           useValue: mockUserRoleRepository,
         },
+        {
+          provide: I18nService,
+          useValue: mockI18nService,
+        },
       ],
     }).compile();
 
     service = module.get<RolesService>(RolesService);
     roleRepository = module.get(RoleRepository);
     userRoleRepository = module.get(UserRoleRepository);
+    i18nService = module.get(I18nService);
   });
 
   describe('findRoleByName', () => {
@@ -94,13 +105,18 @@ describe('RolesService', () => {
       expect(userRoleRepository.save).toHaveBeenCalledWith(mockUserRole);
     });
 
-    it('should throw NotFoundException if role does not exist', async () => {
+    it('should throw NotFoundException with translated message if role does not exist', async () => {
+      const roleName = 'nonexistent';
       roleRepository.findOne.mockResolvedValue(null);
+      i18nService.translate.mockReturnValue('Translated error message');
 
-      await expect(service.addRoleToUser(1, 'nonexistent'))
+      await expect(service.addRoleToUser(1, roleName))
         .rejects
-        .toThrow(new NotFoundException('Role nonexistent does not exist'));
+        .toThrow(new NotFoundException('Translated error message'));
 
+      expect(i18nService.translate).toHaveBeenCalledWith('messages.Roles.errors.roleNotFound', {
+        args: { roleName },
+      });
       expect(userRoleRepository.create).not.toHaveBeenCalled();
       expect(userRoleRepository.save).not.toHaveBeenCalled();
     });
