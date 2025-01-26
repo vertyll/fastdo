@@ -7,9 +7,8 @@ export class ParseIntPipe implements PipeTransform<string | number, number> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public transform(value: string | number, _metadata: ArgumentMetadata): number {
     const i18n = I18nContext.current<I18nTranslations>();
-    if (!i18n) {
-      throw new BadRequestException('Translation context is not available');
-    }
+    if (!i18n) throw new Error('I18nContext not available');
+
     if (typeof value === 'number') {
       if (!Number.isInteger(value)) {
         throw new BadRequestException(

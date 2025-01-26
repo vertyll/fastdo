@@ -1,4 +1,8 @@
 {
+  "Common": {
+    "Success": "Success",
+    "InternalServerError": "Internal server error"
+  },
   "Validation": {
     "errorOccurred": "An error occurred",
     "failed": "Validation failed",

@@ -10,9 +10,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private getI18n(host: ArgumentsHost): I18nContext<I18nTranslations> {
     const i18n = I18nContext.current<I18nTranslations>(host);
-    if (!i18n) {
-      throw new Error('I18n context not available');
-    }
+    if (!i18n) throw new Error('I18nContext not available');
+
     return i18n;
   }
 

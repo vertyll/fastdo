@@ -7,8 +7,9 @@ import { IMailTemplate } from '../interfaces/mail-template.interface';
 
 @Injectable()
 export class MailTemplateService implements IMailTemplate {
-  constructor(private readonly configService: ConfigService) {
-  }
+  constructor(
+    private readonly configService: ConfigService,
+  ) {}
 
   private templatePath: string = this.configService.getOrThrow<string>('app.mail.templatesPath');
   private templatesDir: string = path.join(process.cwd(), this.templatePath);

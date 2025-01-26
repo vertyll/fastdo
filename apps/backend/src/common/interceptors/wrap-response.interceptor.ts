@@ -7,18 +7,27 @@ import {
   InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common';
+import { I18nContext } from 'nestjs-i18n';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { ApiResponseWrapper } from '../interfaces/api-responses.interface';
 
 @Injectable()
 export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiResponseWrapper<T>> {
+  private getI18n(host: ExecutionContext): I18nContext<I18nTranslations> {
+    const i18n = I18nContext.current<I18nTranslations>(host);
+    if (!i18n) throw new Error('I18nContext not available');
+    return i18n;
+  }
+
   public intercept(
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<ApiResponseWrapper<T>> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
+    const i18n = this.getI18n(context);
 
     return next.handle().pipe(
       map(data => ({
@@ -27,7 +36,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
         timestamp: new Date().toISOString(),
         path: request.url,
         method: request.method,
-        message: response.statusMessage || 'Success',
+        message: response.statusMessage || i18n.t('messages.Common.Success'),
       })),
       catchError(error => {
         const errorResponse: ApiResponseWrapper<null> = {
@@ -36,7 +45,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
           timestamp: new Date().toISOString(),
           path: request.url,
           method: request.method,
-          message: error.message || 'Internal server error',
+          message: error.message || i18n.t('messages.Common.InternalServerError'),
         };
 
         if (error instanceof BadRequestException) {

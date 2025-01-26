@@ -13,9 +13,8 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
   public async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const i18n = I18nContext.current<I18nTranslations>(context);
-    if (!i18n) {
-      throw new Error('I18n context not available');
-    }
+    if (!i18n) throw new Error('I18nContext not available');
+
     const request = context.switchToHttp().getRequest<FastifyRequest>();
 
     const file = await this.extractFile(request, this.fieldName, i18n);

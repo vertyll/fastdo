@@ -6,8 +6,9 @@ import { IFileConfig } from '../interfaces/file-config.interface';
 
 @Injectable()
 export class FileConfigService {
-  constructor(private configService: ConfigService) {
-  }
+  constructor(
+    private configService: ConfigService,
+  ) {}
 
   getConfig(): IFileConfig {
     return {

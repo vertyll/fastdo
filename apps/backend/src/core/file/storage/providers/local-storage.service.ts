@@ -16,11 +16,10 @@ import { FilePathBuilder } from '../file-path.builder';
 
 @Injectable()
 export class LocalStorageService implements FileStorage {
-  private readonly i18n: I18nService<I18nTranslations>;
-
   constructor(
     private readonly fileConfigService: FileConfigService,
     private readonly filePathBuilder: FilePathBuilder,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async uploadFile(
