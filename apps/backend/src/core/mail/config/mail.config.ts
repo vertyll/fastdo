@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
-import { MailConfig } from 'src/core/config/types/app.config.type';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
+import { MailConfig } from '../../config/types/app.config.type';
 
 export interface IMailConfig {
   host: string;

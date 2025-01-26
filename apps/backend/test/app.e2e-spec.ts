@@ -1,11 +1,10 @@
-import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication;
+  let app: NestFastifyApplication;
   let configService: ConfigService;
 
   beforeAll(async () => {
@@ -13,19 +12,27 @@ describe('AppController (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter(),
+    );
     configService = app.get(ConfigService);
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
-  it('/ (GET)', () => {
+  it('/ (GET)', async () => {
     const apiKey = configService.get<string>('app.api.keys.apiKey');
 
-    return request(app.getHttpServer())
-      .get('/')
-      .set('Authorization', apiKey as string)
-      .expect(200)
-      .expect('Hello World!');
+    const response = await app.inject({
+      method: 'GET',
+      url: '/',
+      headers: {
+        Authorization: apiKey,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.payload).toBe('Hello World!');
   });
 
   afterAll(async () => {

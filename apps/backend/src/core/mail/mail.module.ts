@@ -1,8 +1,8 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
-import { Environment } from 'src/core/config/types/app.config.type';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { Environment } from '../config/types/app.config.type';
 import { LanguageModule } from '../language/language.module';
 import { MailConfigService } from './config/mail.config';
 import { MailSenderService } from './services/mail-sender.service';

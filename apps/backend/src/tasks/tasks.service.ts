@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Project } from 'src/projects/entities/project.entity';
 import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
+import { Project } from '../projects/entities/project.entity';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
