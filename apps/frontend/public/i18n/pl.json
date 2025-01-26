@@ -56,7 +56,8 @@
     "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",
     "passwordSpecialCharacter": "Hasło musi zawierać co najmniej jeden znak specjalny.",
     "emailRequired": "Email jest wymagany.",
-    "emailInvalid": "Email musi być prawidłowym adresem email."
+    "emailInvalid": "Email musi być prawidłowym adresem email.",
+    "emailConfirmed": "Email został potwierdzony"
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",

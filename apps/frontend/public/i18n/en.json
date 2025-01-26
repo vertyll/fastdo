@@ -56,7 +56,8 @@
     "passwordUppercase": "Password must contain at least one uppercase letter.",
     "passwordSpecialCharacter": "Password must contain at least one special character.",
     "emailRequired": "Email is required.",
-    "emailInvalid": "Email must be a valid email address."
+    "emailInvalid": "Email must be a valid email address.",
+    "emailConfirmed": "Email confirmed"
   },
   "Dashboard": {
     "title": "Welcome to our application",

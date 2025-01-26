@@ -1,13 +1,15 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { LabelComponent } from '../shared/components/atoms/label.component';
-import { LinkComponent } from '../shared/components/atoms/link.component';
-import { TitleComponent } from '../shared/components/atoms/title.component';
-import { LinkType } from '../shared/enums/link.enum';
-import { AuthService } from './data-access/auth.service';
+import {Component, inject, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {ErrorMessageComponent} from '../shared/components/atoms/error.message.component';
+import {LabelComponent} from '../shared/components/atoms/label.component';
+import {LinkComponent} from '../shared/components/atoms/link.component';
+import {TitleComponent} from '../shared/components/atoms/title.component';
+import {LinkType} from '../shared/enums/link.enum';
+import {AuthService} from './data-access/auth.service';
+import {ToastService} from "../shared/services/toast.service";
+import {ToastPosition} from "../shared/enums/toast.enum";
 
 @Component({
   selector: 'app-login',
@@ -62,11 +64,13 @@ import { AuthService } from './data-access/auth.service';
   `,
   styles: [],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   protected readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslateService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
 
   protected readonly loginForm: FormGroup;
   protected readonly LinkType = LinkType;
@@ -76,6 +80,17 @@ export class LoginComponent {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['confirmed'] === 'true') {
+        this.translateService.get('Auth.emailConfirmed').subscribe((message: string): void => {
+          console.log(message);
+          this.toastService.presentToast(message, true, ToastPosition.relative);
+        });
+      }
     });
   }
 
