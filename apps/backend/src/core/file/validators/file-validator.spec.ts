@@ -1,5 +1,6 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { FileConfigService } from '../config/file-config';
 import { FileValidationException } from '../exceptions/file-validation.exception';
 import { FileUploadOptions } from '../interfaces/file-upload-options.interface';
@@ -7,6 +8,7 @@ import { FileValidator } from './file-validator';
 
 describe('FileValidator', () => {
   let validator: FileValidator;
+  let i18nService: jest.Mocked<I18nService>;
 
   const mockConfig = {
     validation: {
@@ -35,10 +37,18 @@ describe('FileValidator', () => {
             getConfig: jest.fn().mockReturnValue(mockConfig),
           },
         },
+        {
+          provide: I18nService,
+          useValue: {
+            t: jest.fn().mockReturnValue('translated message'),
+            translate: jest.fn().mockReturnValue('translated message'),
+          },
+        },
       ],
     }).compile();
 
     validator = module.get<FileValidator>(FileValidator);
+    i18nService = module.get(I18nService);
   });
 
   describe('validate', () => {
@@ -55,6 +65,11 @@ describe('FileValidator', () => {
       await expect(validator.validate(largeFile))
         .rejects
         .toThrow(FileValidationException);
+
+      expect(i18nService.t).toHaveBeenCalledWith(
+        'messages.File.errors.exceededMaxFileSize',
+        { args: { maxSize: mockConfig.validation.maxSize } },
+      );
     });
 
     it('should throw for invalid mime type', async () => {
@@ -66,6 +81,11 @@ describe('FileValidator', () => {
       await expect(validator.validate(invalidFile))
         .rejects
         .toThrow(FileValidationException);
+
+      expect(i18nService.t).toHaveBeenCalledWith(
+        'messages.File.errors.fileTypeNotAllowed',
+        { args: { mimeType: 'text/plain', allowedTypes: mockConfig.validation.allowedMimeTypes } },
+      );
     });
 
     it('should use custom options when provided', async () => {

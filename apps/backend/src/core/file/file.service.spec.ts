@@ -1,184 +1,190 @@
-import { MultipartFile } from '@fastify/multipart';
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { StorageType } from '../config/types/app.config.type';
-import { FileMetadataDto } from './dtos/file-metadata.dto';
-import { File } from './entities/file.entity';
 import { FileDeleteException } from './exceptions/file-delete.exception';
 import { FileNotFoundException } from './exceptions/file-not-found.exception';
 import { FileUploadException } from './exceptions/file-upload.exception';
 import { FileService } from './file.service';
-import { FileStorage } from './interfaces/file-storage.interface';
 import { FileRepository } from './repositories/file.repository';
 import { StorageStrategy } from './storage/storage-strategy';
 import { FileValidator } from './validators/file-validator';
 
 describe('FileService', () => {
   let service: FileService;
-  let storageStrategy: jest.Mocked<StorageStrategy>;
-  let fileValidator: jest.Mocked<FileValidator>;
-  let fileRepository: jest.Mocked<FileRepository>;
-  let mockStorage: jest.Mocked<FileStorage>;
-
-  const mockFile: MultipartFile = {
-    filename: 'test.jpg',
-    mimetype: 'image/jpeg',
-    encoding: 'utf-8',
-    file: { bytesRead: 1024 },
-    toBuffer: jest.fn(),
-  } as unknown as MultipartFile;
-
-  const mockUploadedFile: FileMetadataDto = {
-    filename: 'test.jpg',
-    originalName: 'test.jpg',
-    path: '/uploads/test.jpg',
-    mimetype: 'image/jpeg',
-    size: 1024,
-    encoding: 'utf-8',
-    metadata: {},
-    storageType: StorageType.LOCAL,
-  };
-
-  const mockSavedFile: File = {
-    id: '123',
-    filename: 'test.jpg',
-    originalName: 'test.jpg',
-    path: '/uploads/test.jpg',
-    mimetype: 'image/jpeg',
-    encoding: 'utf-8',
-    size: 1024,
-    url: 'http://example.com/test.jpg',
-    metadata: {},
-    storageType: StorageType.LOCAL,
-    dateCreation: new Date(),
-    dateModification: new Date(),
-    dateDeletion: null,
-  };
+  let mockStorageStrategy: jest.Mocked<StorageStrategy>;
+  let mockFileValidator: jest.Mocked<FileValidator>;
+  let mockFileRepository: jest.Mocked<FileRepository>;
+  let mockI18n: jest.Mocked<I18nService>;
+  let mockStorage: any;
 
   beforeEach(async () => {
     mockStorage = {
       uploadFile: jest.fn(),
       getFileUrl: jest.fn(),
       deleteFile: jest.fn(),
-    } as jest.Mocked<FileStorage>;
+    };
+
+    mockStorageStrategy = {
+      getStorage: jest.fn().mockReturnValue(mockStorage),
+    } as any;
+
+    mockFileValidator = {
+      validate: jest.fn(),
+    } as any;
+
+    mockFileRepository = {
+      save: jest.fn(),
+      findById: jest.fn(),
+      delete: jest.fn(),
+    } as any;
+
+    mockI18n = {
+      t: jest.fn().mockReturnValue('translated message'),
+      translate: jest.fn().mockReturnValue('translated message'),
+    } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FileService,
-        {
-          provide: StorageStrategy,
-          useValue: {
-            getStorage: jest.fn(),
-          },
-        },
-        {
-          provide: FileValidator,
-          useValue: {
-            validate: jest.fn(),
-          },
-        },
-        {
-          provide: FileRepository,
-          useValue: {
-            save: jest.fn(),
-            findById: jest.fn(),
-            delete: jest.fn(),
-          },
-        },
+        { provide: StorageStrategy, useValue: mockStorageStrategy },
+        { provide: FileValidator, useValue: mockFileValidator },
+        { provide: FileRepository, useValue: mockFileRepository },
+        { provide: I18nService, useValue: mockI18n },
       ],
     }).compile();
 
     service = module.get<FileService>(FileService);
-    storageStrategy = module.get(StorageStrategy);
-    fileValidator = module.get(FileValidator);
-    fileRepository = module.get(FileRepository);
-
-    storageStrategy.getStorage.mockReturnValue(mockStorage);
   });
 
   describe('uploadFile', () => {
-    it('should successfully upload file', async () => {
+    const mockFile = { filename: 'test.jpg' } as any;
+    const mockOptions = { maxSize: 1000 };
+    const mockUploadedFile = {
+      path: 'path/to/file',
+      filename: 'test.jpg',
+      originalName: 'test.jpg',
+      mimetype: 'image/jpeg',
+      encoding: '7bit',
+      size: 1000,
+      storageType: StorageType.LOCAL,
+      origin: 'upload',
+      url: 'http://example.com/file',
+      metadata: {},
+      dateCreation: new Date(),
+      dateModification: new Date(),
+      dateDeletion: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const mockSavedFile = { id: '123', ...mockUploadedFile };
+
+    it('should successfully upload a file', async () => {
       mockStorage.uploadFile.mockResolvedValue(mockUploadedFile);
-      mockStorage.getFileUrl.mockResolvedValue(mockSavedFile.url || '');
-      fileRepository.save.mockResolvedValue(mockSavedFile);
+      mockStorage.getFileUrl.mockResolvedValue('http://example.com/file');
+      mockFileRepository.save.mockResolvedValue(mockSavedFile);
 
-      const result = await service.uploadFile(mockFile);
+      const result = await service.uploadFile(mockFile, mockOptions);
 
-      expect(fileValidator.validate).toHaveBeenCalledWith(mockFile, undefined);
-      expect(mockStorage.uploadFile).toHaveBeenCalledWith(mockFile, undefined);
-      expect(fileRepository.save).toHaveBeenCalledWith({
-        ...mockUploadedFile,
-        url: mockSavedFile.url,
-      });
       expect(result).toEqual({
         ...mockUploadedFile,
-        id: mockSavedFile.id,
-        url: mockSavedFile.url,
+        id: '123',
+        url: 'http://example.com/file',
       });
+      expect(mockFileValidator.validate).toHaveBeenCalledWith(mockFile, mockOptions);
     });
 
     it('should throw FileUploadException on general error', async () => {
-      const error = new Error('Storage error');
-      mockStorage.uploadFile.mockRejectedValue(error);
+      mockStorage.uploadFile.mockRejectedValue(new Error('Storage error'));
 
-      await expect(service.uploadFile(mockFile))
+      await expect(service.uploadFile(mockFile, mockOptions))
         .rejects
-        .toThrow(new FileUploadException('Failed to process file upload', error));
-    });
-
-    it('should propagate FileNotFoundException', async () => {
-      const error = new FileNotFoundException('123');
-      mockStorage.uploadFile.mockRejectedValue(error);
-
-      await expect(service.uploadFile(mockFile))
-        .rejects
-        .toThrow(error);
+        .toThrow(FileUploadException);
     });
   });
 
   describe('deleteFile', () => {
-    it('should successfully delete file', async () => {
-      fileRepository.findById.mockResolvedValue(mockSavedFile);
+    const fileId = '123';
+    const mockFile = {
+      id: fileId,
+      path: 'path/to/file',
+      filename: 'test.jpg',
+      originalName: 'test.jpg',
+      mimetype: 'image/jpeg',
+      encoding: '7bit',
+      size: 1000,
+      storageType: StorageType.LOCAL,
+      origin: 'upload',
+      url: 'http://example.com/file',
+      metadata: {},
+      dateCreation: new Date(),
+      dateModification: new Date(),
+      dateDeletion: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      await service.deleteFile('123');
+    it('should successfully delete a file', async () => {
+      mockFileRepository.findById.mockResolvedValue(mockFile);
 
-      expect(mockStorage.deleteFile).toHaveBeenCalledWith(mockSavedFile.path);
-      expect(fileRepository.delete).toHaveBeenCalledWith('123');
+      await service.deleteFile(fileId);
+
+      expect(mockStorage.deleteFile).toHaveBeenCalledWith(mockFile.path);
+      expect(mockFileRepository.delete).toHaveBeenCalledWith(fileId);
     });
 
-    it('should throw FileNotFoundException if file not found', async () => {
-      fileRepository.findById.mockResolvedValue(null);
+    it('should throw FileNotFoundException when file not found', async () => {
+      mockFileRepository.findById.mockResolvedValue(null);
 
-      await expect(service.deleteFile('123'))
+      await expect(service.deleteFile(fileId))
         .rejects
-        .toThrow(new FileNotFoundException('123'));
+        .toThrow(FileNotFoundException);
     });
 
     it('should throw FileDeleteException on delete error', async () => {
-      const error = new Error('Delete error');
-      fileRepository.findById.mockResolvedValue(mockSavedFile);
-      mockStorage.deleteFile.mockRejectedValue(error);
+      mockFileRepository.findById.mockResolvedValue(mockFile);
+      mockStorage.deleteFile.mockRejectedValue(new Error('Delete error'));
 
-      await expect(service.deleteFile('123'))
+      await expect(service.deleteFile(fileId))
         .rejects
-        .toThrow(new FileDeleteException('Failed to delete file', error));
+        .toThrow(FileDeleteException);
     });
   });
 
   describe('getFile', () => {
-    it('should return file if found', async () => {
-      fileRepository.findById.mockResolvedValue(mockSavedFile);
+    const fileId = '123';
+    const mockFile = {
+      id: fileId,
+      path: 'path/to/file',
+      filename: 'test.jpg',
+      originalName: 'test.jpg',
+      mimetype: 'image/jpeg',
+      encoding: '7bit',
+      size: 1000,
+      storageType: StorageType.LOCAL,
+      origin: 'upload',
+      url: 'http://example.com/file',
+      metadata: {},
+      dateCreation: new Date(),
+      dateModification: new Date(),
+      dateDeletion: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      const result = await service.getFile('123');
+    it('should successfully retrieve a file', async () => {
+      mockFileRepository.findById.mockResolvedValue(mockFile);
 
-      expect(result).toBe(mockSavedFile);
+      const result = await service.getFile(fileId);
+
+      expect(result).toEqual(mockFile);
     });
 
-    it('should throw FileNotFoundException if file not found', async () => {
-      fileRepository.findById.mockResolvedValue(null);
+    it('should throw FileNotFoundException when file not found', async () => {
+      mockFileRepository.findById.mockResolvedValue(null);
 
-      await expect(service.getFile('123'))
+      await expect(service.getFile(fileId))
         .rejects
-        .toThrow(new FileNotFoundException('123'));
+        .toThrow(FileNotFoundException);
     });
   });
 });

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { StorageType } from '../../config/types/app.config.type';
 import { FileConfigService } from '../config/file-config';
 import { InvalidStorageTypeException } from '../exceptions/invalid-storage-type.exception';
@@ -31,6 +32,13 @@ describe('StorageStrategy', () => {
           provide: FileConfigService,
           useValue: {
             getConfig: jest.fn().mockReturnValue(mockConfig),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            t: jest.fn().mockReturnValue('translated message'),
+            translate: jest.fn().mockReturnValue('translated message'),
           },
         },
       ],

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { MailSenderService } from './mail-sender.service';
 import { MailService } from './mail.service';
 
@@ -7,6 +8,7 @@ describe('MailService', () => {
   let service: MailService;
   let mailSender: jest.Mocked<MailSenderService>;
   let configService: jest.Mocked<ConfigService>;
+  let i18nService: jest.Mocked<I18nService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,12 +26,20 @@ describe('MailService', () => {
             get: jest.fn(),
           },
         },
+        {
+          provide: I18nService,
+          useValue: {
+            t: jest.fn().mockReturnValue('Confirm your email'),
+            translate: jest.fn().mockReturnValue('Confirm your email'),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<MailService>(MailService);
     mailSender = module.get(MailSenderService);
     configService = module.get(ConfigService);
+    i18nService = module.get(I18nService);
   });
 
   describe('sendConfirmationEmail', () => {
@@ -43,6 +53,7 @@ describe('MailService', () => {
       await service.sendConfirmationEmail(to, token);
 
       expect(configService.get).toHaveBeenCalledWith('app.appUrl');
+      expect(i18nService.t).toHaveBeenCalledWith('messages.Mail.confirmationEmail.subject');
       expect(mailSender.sendMail).toHaveBeenCalledWith({
         to,
         subject: 'Confirm your email',

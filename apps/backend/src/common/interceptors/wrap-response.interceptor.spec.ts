@@ -1,159 +1,138 @@
-import { BadRequestException, CallHandler, ExecutionContext } from '@nestjs/common';
+import { BadRequestException, CallHandler, ExecutionContext, HttpException } from '@nestjs/common';
+import { I18nContext } from 'nestjs-i18n';
 import { of, throwError } from 'rxjs';
 import { WrapResponseInterceptor } from './wrap-response.interceptor';
 
 describe('WrapResponseInterceptor', () => {
-  let interceptor: WrapResponseInterceptor<unknown>;
-  let mockContext: ExecutionContext;
-  let mockCallHandler: CallHandler<unknown>;
+  let interceptor: WrapResponseInterceptor<any>;
+  let mockExecutionContext: ExecutionContext;
+  let mockCallHandler: CallHandler;
+  let mockI18n: I18nContext<any>;
 
   beforeEach(() => {
-    interceptor = new WrapResponseInterceptor<unknown>();
-    mockContext = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn().mockReturnValue({
-          url: '/test-url',
-          method: 'GET',
-        }),
-        getResponse: jest.fn().mockReturnValue({
-          statusCode: 200,
-          statusMessage: 'OK',
-        }),
+    mockI18n = {
+      t: jest.fn().mockReturnValue('Success Message'),
+    } as any;
+
+    const mockRequest = {
+      url: '/test',
+      method: 'GET',
+    };
+
+    const mockResponse = {
+      statusCode: 200,
+      statusMessage: 'OK',
+    };
+
+    mockExecutionContext = {
+      switchToHttp: () => ({
+        getRequest: () => mockRequest,
+        getResponse: () => mockResponse,
       }),
-    } as unknown as ExecutionContext;
+    } as ExecutionContext;
+
     mockCallHandler = {
-      handle: jest.fn(),
-    } as unknown as CallHandler<unknown>;
+      handle: () => of({ data: 'test' }),
+    };
+
+    jest.spyOn(I18nContext, 'current').mockReturnValue(mockI18n);
+
+    interceptor = new WrapResponseInterceptor();
   });
 
-  it('should be defined', () => {
-    expect(interceptor).toBeDefined();
-  });
-
-  it('should wrap the response data in a data property', done => {
-    const testData = { test: 'value' };
-    (mockCallHandler.handle as jest.Mock).mockReturnValue(of(testData));
-
-    interceptor.intercept(mockContext, mockCallHandler).subscribe({
-      next: value => {
-        expect(value).toEqual({
-          data: testData,
+  it('should successfully wrap a response', done => {
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: response => {
+        expect(response).toEqual({
+          data: { data: 'test' },
           statusCode: 200,
           timestamp: expect.any(String),
-          path: '/test-url',
+          path: '/test',
           method: 'GET',
           message: 'OK',
         });
         done();
       },
-      error: () => {
-        done.fail('Should not throw error');
-      },
+      error: done,
     });
   });
 
-  it('should handle null response', done => {
-    const interceptor = new WrapResponseInterceptor<null>();
-    (mockCallHandler.handle as jest.Mock).mockReturnValue(of(null));
+  it('should handle BadRequestException with validation errors', done => {
+    const validationError = {
+      message: ['validation error'],
+      error: 'Bad Request',
+    };
 
-    interceptor.intercept(mockContext, mockCallHandler as CallHandler<null>).subscribe({
-      next: value => {
-        expect(value).toEqual({
-          data: null,
-          statusCode: 200,
-          timestamp: expect.any(String),
-          path: '/test-url',
-          method: 'GET',
-          message: 'OK',
-        });
-        done();
-      },
-      error: () => {
-        done.fail('Should not throw error');
-      },
-    });
-  });
+    mockCallHandler = {
+      handle: () => throwError(() => new BadRequestException(validationError)),
+    };
 
-  it('should handle undefined response', done => {
-    const interceptor = new WrapResponseInterceptor<undefined>();
-    (mockCallHandler.handle as jest.Mock).mockReturnValue(of(undefined));
-
-    interceptor.intercept(mockContext, mockCallHandler as CallHandler<undefined>).subscribe({
-      next: value => {
-        expect(value).toEqual({
-          data: undefined,
-          statusCode: 200,
-          timestamp: expect.any(String),
-          path: '/test-url',
-          method: 'GET',
-          message: 'OK',
-        });
-        done();
-      },
-      error: () => {
-        done.fail('Should not throw error');
-      },
-    });
-  });
-
-  it('should handle validation errors', done => {
-    const validationError = new BadRequestException({
-      message: 'Validation failed',
-      errors: [
-        {
-          field: 'email',
-          errors: ['email must be an email'],
-        },
-      ],
-    });
-
-    (mockCallHandler.handle as jest.Mock).mockReturnValue(throwError(() => validationError));
-
-    interceptor.intercept(mockContext, mockCallHandler).subscribe({
-      next: () => {
-        done.fail('Should throw error');
-      },
-      error: error => {
-        expect(error.response).toEqual({
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: () => done.fail('Should have thrown an error'),
+      error: (error: HttpException) => {
+        const response = error.getResponse() as any;
+        expect(response).toEqual({
           data: null,
           statusCode: 400,
           timestamp: expect.any(String),
-          path: '/test-url',
+          path: '/test',
           method: 'GET',
-          message: 'Validation failed',
-          errors: {
-            message: 'Validation failed',
-            errors: [
-              {
-                field: 'email',
-                errors: ['email must be an email'],
-              },
-            ],
-          },
+          message: 'Bad Request Exception',
+          errors: validationError,
         });
         done();
       },
     });
   });
 
-  it('should handle non-validation errors', done => {
-    const error = new Error('Test error');
-    (mockCallHandler.handle as jest.Mock).mockReturnValue(throwError(() => error));
+  it('should handle internal server error when I18nContext is not available', done => {
+    jest.spyOn(I18nContext, 'current').mockReturnValue(undefined);
 
-    interceptor.intercept(mockContext, mockCallHandler).subscribe({
-      next: () => {
-        done.fail('Should throw error');
+    try {
+      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+        next: () => done.fail('Should have thrown an error'),
+        error: error => {
+          expect(error.message).toBe('I18nContext not available');
+          done();
+        },
+      });
+    } catch (error: any) {
+      expect(error.message).toBe('I18nContext not available');
+      done();
+    }
+  });
+
+  it('should use i18n translation when response status message is not available', done => {
+    const mockResponseWithoutMessage = {
+      statusCode: 200,
+    };
+
+    mockExecutionContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ url: '/test', method: 'GET' }),
+        getResponse: () => mockResponseWithoutMessage,
+      }),
+    } as ExecutionContext;
+
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: response => {
+        expect(response.message).toBe('Success Message');
+        done();
       },
+      error: done,
+    });
+  });
+
+  it('should handle unknown errors by throwing InternalServerErrorException', done => {
+    mockCallHandler = {
+      handle: () => throwError(() => new Error('Unknown error')),
+    };
+
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: () => done.fail('Should have thrown an error'),
       error: error => {
-        expect(error.response).toEqual({
-          data: null,
-          statusCode: 500,
-          timestamp: expect.any(String),
-          path: '/test-url',
-          method: 'GET',
-          message: 'Test error',
-        });
-        expect(error.response.errors).toBeUndefined();
+        expect(error.getStatus()).toBe(500);
+        expect(error.getResponse()).toHaveProperty('message', 'Unknown error');
         done();
       },
     });

@@ -62,10 +62,10 @@ describe('ParseIntPipe', () => {
       .toHaveBeenCalledWith('messages.Validation.isInteger');
   });
 
-  it('should throw BadRequestException when translation context is not available', () => {
+  it('should throw Error when translation context is not available', () => {
     (I18nContext.current as jest.Mock).mockReturnValue(null);
 
     expect(() => pipe.transform('123', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Translation context is not available'));
+      .toThrow(new Error('I18nContext not available'));
   });
 });

@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { I18nService } from 'nestjs-i18n';
 import { MailConfigService } from '../config/mail.config';
 import { MailSendFailedException } from '../exceptions/mail-send-failed.exception';
 import { IMailTemplate } from '../interfaces/mail-template.interface';
@@ -39,6 +40,13 @@ describe('MailSenderService', () => {
           provide: 'MailLogger',
           useValue: {
             warn: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            t: jest.fn((key: string) => key),
+            translate: jest.fn((key: string) => key),
           },
         },
       ],

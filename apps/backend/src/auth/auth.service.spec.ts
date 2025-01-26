@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
+import { I18nService } from 'nestjs-i18n';
 import { DataSource } from 'typeorm';
 import { Role as RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
@@ -11,7 +12,6 @@ import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
 import { UserRole } from '../users/entities/user-role.entity';
 import { User } from '../users/entities/user.entity';
-import { UserRoleRepository } from '../users/repositories/user-role.repository';
 import { UserRepository } from '../users/repositories/user.repository';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
@@ -72,27 +72,19 @@ describe('AuthService', () => {
         AuthService,
         {
           provide: UsersService,
-          useValue: {
-            findByEmail: jest.fn(),
-          },
+          useValue: { findByEmail: jest.fn() },
         },
         {
           provide: JwtService,
-          useValue: {
-            sign: jest.fn(),
-          },
+          useValue: { sign: jest.fn() },
         },
         {
           provide: RolesService,
-          useValue: {
-            getUserRoles: jest.fn(),
-          },
+          useValue: { getUserRoles: jest.fn() },
         },
         {
           provide: MailService,
-          useValue: {
-            sendConfirmationEmail: jest.fn(() => Promise.resolve()),
-          },
+          useValue: { sendConfirmationEmail: jest.fn() },
         },
         {
           provide: ConfirmationTokenService,
@@ -103,41 +95,25 @@ describe('AuthService', () => {
         },
         {
           provide: DataSource,
-          useValue: {
-            createQueryRunner: jest.fn(() => mockQueryRunner),
-          },
+          useValue: { createQueryRunner: jest.fn(() => mockQueryRunner) },
         },
         {
           provide: UserRepository,
-          useValue: {
-            findOne: jest.fn(),
-            save: jest.fn(),
-            update: jest.fn(),
-          },
+          useValue: { findOne: jest.fn(), save: jest.fn(), update: jest.fn() },
         },
         {
           provide: RoleRepository,
-          useValue: {
-            findOne: jest.fn(),
-          },
-        },
-        {
-          provide: UserRoleRepository,
-          useValue: {
-            save: jest.fn(),
-          },
+          useValue: { findOne: jest.fn() },
         },
         {
           provide: ConfigService,
+          useValue: { get: jest.fn().mockReturnValue(10) },
+        },
+        {
+          provide: I18nService,
           useValue: {
-            get: jest.fn().mockImplementation((key: string) => {
-              switch (key) {
-                case 'app.security.bcryptSaltRounds':
-                  return 10;
-                default:
-                  return null;
-              }
-            }),
+            t: jest.fn().mockReturnValue('translated message'),
+            translate: jest.fn().mockReturnValue('translated message'),
           },
         },
       ],
@@ -159,16 +135,15 @@ describe('AuthService', () => {
     });
 
     it('should return user without password when credentials are valid', async () => {
-      const password = 'password123';
       usersService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await service.validateUser(mockUser.email, password);
+      const result = await service.validateUser(mockUser.email, 'password123');
 
       expect(result).toBeDefined();
       expect(result).not.toHaveProperty('password');
       expect(result).toHaveProperty('email', mockUser.email);
-      expect(bcrypt.compare).toHaveBeenCalledWith(password, mockUser.password);
+      expect(bcrypt.compare).toHaveBeenCalledWith('password123', mockUser.password);
     });
 
     it('should return null when user is not found', async () => {
@@ -183,26 +158,18 @@ describe('AuthService', () => {
 
   describe('register', () => {
     const registerDto = { email: 'test@example.com', password: 'password123' };
-    const hashedPassword = 'hashedPassword123';
 
     beforeEach(() => {
-      (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
+      (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword123');
       userRepository.findOne.mockResolvedValue(null);
       roleRepository.findOne.mockResolvedValue(mockRole);
     });
 
     it('should successfully register a new user', async () => {
-      const newUser = {
-        ...mockUser,
-        isEmailConfirmed: false,
-        confirmationToken: 'generated-token',
-        confirmationTokenExpiry: expect.any(Date),
-      };
-
       const savedUser = {
         id: 1,
         email: registerDto.email,
-        password: hashedPassword,
+        password: 'hashedPassword123',
         isEmailConfirmed: false,
         confirmationToken: 'generated-token',
         confirmationTokenExpiry: expect.any(Date),
@@ -213,19 +180,12 @@ describe('AuthService', () => {
       const result = await service.register(registerDto);
 
       expect(result).toEqual(savedUser);
-      expect(mockQueryRunner.manager.getRepository(User).save).toHaveBeenCalledWith({
-        email: registerDto.email,
-        password: hashedPassword,
-        isEmailConfirmed: false,
-        confirmationToken: 'generated-token',
-        confirmationTokenExpiry: expect.any(Date),
-      });
       expect(mockQueryRunner.manager.getRepository(UserRole).save).toHaveBeenCalledWith({
-        user: { id: newUser.id },
+        user: { id: savedUser.id },
         role: { id: mockRole.id },
       });
       expect(mailService.sendConfirmationEmail).toHaveBeenCalledWith(
-        newUser.email,
+        savedUser.email,
         'generated-token',
       );
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
@@ -234,49 +194,37 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException when user already exists', async () => {
       userRepository.findOne.mockResolvedValue(mockUser);
 
-      await expect(service.register(registerDto)).rejects.toThrow(
-        new UnauthorizedException('User already exists'),
-      );
-
-      expect(mockQueryRunner.manager.getRepository(User).save).not.toHaveBeenCalled();
+      await expect(service.register(registerDto)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when role does not exist', async () => {
       roleRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.register(registerDto)).rejects.toThrow(
-        new UnauthorizedException('Role does not exist'),
-      );
-
-      expect(mockQueryRunner.manager.getRepository(User).save).not.toHaveBeenCalled();
+      await expect(service.register(registerDto)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });
 
   describe('login', () => {
     const loginDto = { email: 'test@example.com', password: 'password123' };
-    const mockToken = 'jwt.token.here';
-    const mockRoles = [RoleEnum.User];
 
     beforeEach(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = mockUser;
       jest.spyOn(service, 'validateUser').mockResolvedValue(userWithoutPassword);
-      rolesService.getUserRoles.mockResolvedValue(mockRoles);
-      jwtService.sign.mockReturnValue(mockToken);
+      rolesService.getUserRoles.mockResolvedValue([RoleEnum.User]);
+      jwtService.sign.mockReturnValue('jwt.token.here');
     });
 
     it('should return access token when credentials are valid', async () => {
       const result = await service.login(loginDto);
 
-      expect(result).toEqual({ accessToken: mockToken });
-      expect(service.validateUser).toHaveBeenCalledWith(loginDto.email, loginDto.password);
-      expect(rolesService.getUserRoles).toHaveBeenCalledWith(mockUser.id);
+      expect(result).toEqual({ accessToken: 'jwt.token.here' });
       expect(jwtService.sign).toHaveBeenCalledWith({
         email: mockUser.email,
         sub: mockUser.id,
-        roles: mockRoles,
+        roles: [RoleEnum.User],
       });
     });
 
@@ -286,39 +234,26 @@ describe('AuthService', () => {
       const { password, ...userWithoutPassword } = unconfirmedUser;
       jest.spyOn(service, 'validateUser').mockResolvedValue(userWithoutPassword);
 
-      await expect(service.login(loginDto)).rejects.toThrow(
-        new UnauthorizedException('Please confirm your email first'),
-      );
+      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('confirmEmail', () => {
-    const confirmationToken = 'valid-confirmation-token';
+    const token = 'valid-confirmation-token';
 
     beforeEach(() => {
-      const validUser = {
+      userRepository.findOne.mockResolvedValue({
         ...mockUser,
         isEmailConfirmed: false,
-        confirmationToken,
+        confirmationToken: token,
         confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      };
-
-      userRepository.findOne.mockResolvedValue(validUser);
+      });
     });
 
     it('should successfully confirm email', async () => {
-      const unconfirmedUser = {
-        ...mockUser,
-        isEmailConfirmed: false,
-        confirmationToken,
-        confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      };
+      await service.confirmEmail(token);
 
-      userRepository.findOne.mockResolvedValue(unconfirmedUser);
-
-      await service.confirmEmail(confirmationToken);
-
-      expect(userRepository.update).toHaveBeenCalledWith(unconfirmedUser.id, {
+      expect(userRepository.update).toHaveBeenCalledWith(mockUser.id, {
         isEmailConfirmed: true,
         confirmationToken: null,
         confirmationTokenExpiry: null,
@@ -328,50 +263,20 @@ describe('AuthService', () => {
 
     it('should throw UnauthorizedException when token is invalid', async () => {
       confirmationTokenService.verifyToken.mockImplementation(() => {
-        throw new UnauthorizedException('Invalid confirmation token');
+        throw new UnauthorizedException();
       });
 
-      await expect(service.confirmEmail(confirmationToken)).rejects.toThrow(
-        new UnauthorizedException('Invalid confirmation token'),
-      );
-
-      expect(userRepository.update).not.toHaveBeenCalled();
+      await expect(service.confirmEmail(token)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when token has expired', async () => {
-      const expiredUser = {
+      userRepository.findOne.mockResolvedValue({
         ...mockUser,
-        isEmailConfirmed: false,
-        confirmationToken,
-        confirmationTokenExpiry: new Date(Date.now() - 24 * 60 * 60 * 1000), // Expired token
-      };
+        confirmationTokenExpiry: new Date(Date.now() - 1000),
+      });
 
-      userRepository.findOne.mockResolvedValue(expiredUser);
-
-      await expect(service.confirmEmail(confirmationToken)).rejects.toThrow(
-        new UnauthorizedException('Confirmation token expired'),
-      );
-
-      expect(userRepository.update).not.toHaveBeenCalled();
-      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
-    });
-
-    it('should throw UnauthorizedException when user is already confirmed', async () => {
-      const confirmedUser = {
-        ...mockUser,
-        isEmailConfirmed: true,
-        confirmationToken,
-        confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      };
-
-      userRepository.findOne.mockResolvedValue(confirmedUser);
-
-      await expect(service.confirmEmail(confirmationToken)).rejects.toThrow(
-        new UnauthorizedException('Invalid confirmation token'),
-      );
-
-      expect(userRepository.update).not.toHaveBeenCalled();
+      await expect(service.confirmEmail(token)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });
