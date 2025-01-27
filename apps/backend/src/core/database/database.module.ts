@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { DatabaseConfig, DatabaseType, Environment } from '../config/types/app.config.type';
@@ -7,7 +7,6 @@ import { DatabaseConfig, DatabaseType, Environment } from '../config/types/app.c
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService): DatabaseConfig => ({
         type: configService.getOrThrow<DatabaseType>('app.database.type'),
