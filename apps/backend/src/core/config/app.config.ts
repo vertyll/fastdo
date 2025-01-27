@@ -18,6 +18,11 @@ export default registerAs('app', (): AppConfig => ({
     username: process.env.DATABASE_USER || 'postgres',
     password: process.env.DATABASE_PASSWORD || 'postgres',
     database: process.env.DATABASE_NAME || 'postgres',
+    migrations: [(process.env.DATABASE_MIGRATIONS_DIR || './migrations') + '/*.{ts,js}'],
+    migrationsTableName: process.env.DATABASE_MIGRATIONS_TABLE_NAME || 'migrations',
+    ssl: process.env.DATABASE_SSL === 'true',
+    retryAttempts: parseInt(process.env.DATABASE_RETRY_ATTEMPTS || '10'),
+    retryDelay: parseInt(process.env.DATABASE_RETRY_DELAY || '3000'),
   },
   api: {
     keys: {

@@ -1,3 +1,5 @@
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+
 export enum Environment {
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
@@ -22,17 +24,11 @@ export const FILE_CONSTANTS = {
   UPLOAD_DIR_PATH: './uploads',
 };
 
-export interface DatabaseConfig {
-  type: DatabaseType;
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  database: string;
+export type DatabaseConfig = PostgresConnectionOptions & {
   autoLoadEntities?: boolean;
-  synchronize?: boolean;
-  namingStrategy?: any;
-}
+  retryAttempts?: number;
+  retryDelay?: number;
+};
 
 interface SecurityConfig {
   jwt: {

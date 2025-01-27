@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { DatabaseConfig, DatabaseType } from '../config/types/app.config.type';
+import { DatabaseConfig, DatabaseType, Environment } from '../config/types/app.config.type';
 
 @Module({
   imports: [
@@ -16,9 +16,16 @@ import { DatabaseConfig, DatabaseType } from '../config/types/app.config.type';
         username: configService.getOrThrow<string>('app.database.username'),
         password: configService.getOrThrow<string>('app.database.password'),
         database: configService.getOrThrow<string>('app.database.database'),
+        migrations: configService.get<string[]>('app.database.migrations'),
+        migrationsTableName: configService.get<string>('app.database.migrationsTableName'),
+        ssl: configService.get('app.database.ssl'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: configService.get('app.environment') === Environment.DEVELOPMENT,
         namingStrategy: new SnakeNamingStrategy(),
+        logging: configService.get('app.environment') === Environment.DEVELOPMENT,
+        logger: configService.get('app.environment') === Environment.DEVELOPMENT ? 'advanced-console' : undefined,
+        retryAttempts: configService.get<number>('app.database.retryAttempts'),
+        retryDelay: configService.get<number>('app.database.retryDelay'),
       }),
     }),
   ],
