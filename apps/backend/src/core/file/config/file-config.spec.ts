@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { join } from 'path';
 import { FILE_CONSTANTS, StorageType } from '../../config/types/app.config.type';
 import { FileConfigService } from './file-config';
 
@@ -47,7 +48,7 @@ describe('FileConfigService', () => {
         storage: {
           type: StorageType.LOCAL,
           local: {
-            uploadDirPath: expect.stringContaining('/uploads'),
+            uploadDirPath: join(process.cwd(), 'uploads'),
           },
         },
         validation: {
@@ -75,7 +76,7 @@ describe('FileConfigService', () => {
       configService.getOrThrow.mockReturnValue('uploads');
       const localConfig = service['getLocalConfig']();
       expect(localConfig).toEqual({
-        uploadDirPath: expect.stringContaining('/uploads'),
+        uploadDirPath: join(process.cwd(), 'uploads'),
       });
     });
   });
