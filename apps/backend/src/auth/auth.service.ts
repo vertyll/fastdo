@@ -17,9 +17,10 @@ import { ConfirmationTokenService } from './confirmation-token.service';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import {IAuthService} from "./interfaces/auth-service.interface";
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,

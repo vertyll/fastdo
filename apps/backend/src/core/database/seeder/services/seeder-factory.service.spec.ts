@@ -65,8 +65,8 @@ describe('SeederFactoryService', () => {
       const context = 'TestContext';
       const result = service.createSeederService(context);
 
-      expect(result['_logger']).toBe(logger);
-      expect(result['_errorHandler']).toBe(errorHandler);
+      expect(result['logger']).toBe(logger);
+      expect(result['errorHandler']).toBe(errorHandler);
     });
 
     it('should create working BaseSeederService instance', async () => {

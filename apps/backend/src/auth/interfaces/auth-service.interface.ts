@@ -1,0 +1,11 @@
+import {RegisterDto} from "../dtos/register.dto";
+import {User} from "../../users/entities/user.entity";
+import {LoginResponseDto} from "../dtos/login-response.dto";
+import {LoginDto} from "../dtos/login.dto";
+
+export interface IAuthService {
+    validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null>;
+    register(registerDto: RegisterDto): Promise<User>;
+    confirmEmail(token: string): Promise<void>;
+    login(loginDto: LoginDto): Promise<LoginResponseDto>;
+}
