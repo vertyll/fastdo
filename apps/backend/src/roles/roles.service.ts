@@ -8,13 +8,13 @@ import { RoleRepository } from './repositories/role.repository';
 @Injectable()
 export class RolesService {
   constructor(
-    private readonly rolesRepository: RoleRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly userRoleRepository: UserRoleRepository,
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   public async findRoleByName(name: string): Promise<Role | null> {
-    return this.rolesRepository.findOne({ where: { name } });
+    return this.roleRepository.findOne({ where: { name } });
   }
 
   public async addRoleToUser(userId: number, roleName: string): Promise<void> {
