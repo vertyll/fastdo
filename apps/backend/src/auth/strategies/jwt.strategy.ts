@@ -16,9 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) implements IJwtStrat
     configService: ConfigService,
   ) {
     const jwtSecret = configService.get<string>('app.security.jwt.secret');
-    if (!jwtSecret) {
-      throw new Error('JWT_SECRET is not defined');
-    }
+    if (!jwtSecret) throw new Error('JWT_SECRET is not defined');
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
