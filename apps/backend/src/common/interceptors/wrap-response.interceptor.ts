@@ -6,12 +6,18 @@ import {
   Injectable,
   InternalServerErrorException,
   NestInterceptor,
+  ValidationError,
 } from '@nestjs/common';
-import { I18nContext } from 'nestjs-i18n';
+import { I18nContext, I18nValidationException } from 'nestjs-i18n';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { I18nPath, I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { ApiResponseWrapper } from '../interfaces/api-responses.interface';
+
+interface ValidationErrorType extends ValidationError {
+  property: string;
+  constraints?: Record<string, string>;
+}
 
 @Injectable()
 export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiResponseWrapper<T>> {
@@ -36,7 +42,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
         timestamp: new Date().toISOString(),
         path: request.url,
         method: request.method,
-        message: response.statusMessage || i18n.t('messages.Common.Success'),
+        message: response.statusMessage || i18n.t<I18nPath>('messages.Common.Success'),
       })),
       catchError(error => {
         const errorResponse: ApiResponseWrapper<null> = {
@@ -45,10 +51,22 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
           timestamp: new Date().toISOString(),
           path: request.url,
           method: request.method,
-          message: error.message || i18n.t('messages.Common.InternalServerError'),
+          message: error.message || i18n.t<I18nPath>('messages.Common.InternalServerError'),
         };
 
-        if (error instanceof BadRequestException) {
+        if (error instanceof I18nValidationException && Array.isArray(error.errors)) {
+          errorResponse.errors = {
+            message: error.errors.map((err: ValidationErrorType) => ({
+              field: err.property,
+              errors: Object.values(err.constraints || {}).map(constraint => {
+                const [key] = constraint.split('|');
+                return i18n.t<I18nPath>(key as I18nPath);
+              }),
+            })),
+            error: 'Bad Request',
+            statusCode: 400,
+          };
+        } else if (error instanceof BadRequestException) {
           const validationErrors = error.getResponse();
           if (typeof validationErrors === 'object' && validationErrors.hasOwnProperty('message')) {
             errorResponse.errors = validationErrors;

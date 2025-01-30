@@ -1,13 +1,12 @@
 import fastifyMultipart from '@fastify/multipart';
-import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationError } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
-import { I18nValidationPipe } from 'nestjs-i18n';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { AppModule } from './app.module';
 import { LoginResponseDto } from './auth/dtos/login-response.dto';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
@@ -39,14 +38,36 @@ async function bootstrap(): Promise<void> {
   });
 
   app.useGlobalPipes(
-    new ValidationPipe({
+    // new ValidationPipe({
+    //   whitelist: true,
+    //   forbidNonWhitelisted: true,
+    //   transform: true,
+    //   transformOptions: {
+    //     enableImplicitConversion: true,
+    //   },
+    //   exceptionFactory: (errors: ValidationError[]): BadRequestException => {
+    //     return new BadRequestException(
+    //       errors.map((error: ValidationError): { field: string; errors: string[]; } => ({
+    //         field: error.property,
+    //         errors: Object.values(error.constraints ?? {}),
+    //       })),
+    //     );
+    //   },
+    // }),
+    new I18nValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
       transformOptions: {
         enableImplicitConversion: true,
       },
-      exceptionFactory: (errors: ValidationError[]): BadRequestException => {
+    }),
+  );
+
+  app.useGlobalFilters(
+    // new HttpExceptionFilter(),
+    new I18nValidationExceptionFilter({
+      errorFormatter: (errors: ValidationError[]): BadRequestException => {
         return new BadRequestException(
           errors.map((error: ValidationError): { field: string; errors: string[]; } => ({
             field: error.property,
@@ -55,10 +76,7 @@ async function bootstrap(): Promise<void> {
         );
       },
     }),
-    new I18nValidationPipe(),
   );
-
-  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(
     new SnakeToCamelCaseInterceptor(),
     new WrapResponseInterceptor(),
