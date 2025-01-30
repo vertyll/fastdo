@@ -16,6 +16,8 @@ import { UserRepository } from '../users/repositories/user.repository';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
+import { LoginDto } from './dtos/login.dto';
+import { RegisterDto } from './dtos/register.dto';
 
 jest.mock('bcrypt');
 
@@ -28,7 +30,19 @@ describe('AuthService', () => {
   let confirmationTokenService: jest.Mocked<ConfirmationTokenService>;
   let userRepository: jest.Mocked<UserRepository>;
   let roleRepository: jest.Mocked<RoleRepository>;
-  let mockQueryRunner: any;
+  let mockQueryRunner: {
+    connect: jest.Mock;
+    startTransaction: jest.Mock;
+    commitTransaction: jest.Mock;
+    rollbackTransaction: jest.Mock;
+    release: jest.Mock;
+    manager: {
+      getRepository: jest.Mock;
+      save: jest.Mock;
+      update: jest.Mock;
+    };
+    isTransactionActive: boolean;
+  };
 
   const mockRole: Role = {
     id: 1,
@@ -47,6 +61,10 @@ describe('AuthService', () => {
     isEmailConfirmed: true,
     confirmationToken: 'mock-confirmation-token',
     confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    termsAccepted: true,
+    privacyPolicyAccepted: true,
+    dateTermsAcceptance: new Date(),
+    datePrivacyPolicyAcceptance: new Date(),
   };
 
   beforeEach(async () => {
@@ -59,7 +77,7 @@ describe('AuthService', () => {
       manager: {
         getRepository: jest.fn().mockReturnValue({
           findOne: jest.fn(),
-          save: jest.fn().mockImplementation(entity => entity),
+          save: jest.fn().mockImplementation((entity: Partial<User>) => entity),
         }),
         save: jest.fn(),
         update: jest.fn(),
@@ -157,7 +175,12 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    const registerDto = { email: 'test@example.com', password: 'password123' };
+    const registerDto: RegisterDto = {
+      email: 'test@example.com',
+      password: 'password123',
+      termsAccepted: true,
+      privacyPolicyAccepted: true,
+    };
 
     beforeEach(() => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword123');
@@ -173,6 +196,10 @@ describe('AuthService', () => {
         isEmailConfirmed: false,
         confirmationToken: 'generated-token',
         confirmationTokenExpiry: expect.any(Date),
+        termsAccepted: true,
+        privacyPolicyAccepted: true,
+        dateTermsAcceptance: expect.any(Date),
+        datePrivacyPolicyAcceptance: expect.any(Date),
       };
 
       mockQueryRunner.manager.getRepository(User).save.mockResolvedValue(savedUser);
@@ -180,6 +207,16 @@ describe('AuthService', () => {
       const result = await service.register(registerDto);
 
       expect(result).toEqual(savedUser);
+      expect(mockQueryRunner.manager.getRepository(User).save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: registerDto.email,
+          password: 'hashedPassword123',
+          termsAccepted: true,
+          privacyPolicyAccepted: true,
+          dateTermsAcceptance: expect.any(Date),
+          datePrivacyPolicyAcceptance: expect.any(Date),
+        }),
+      );
       expect(mockQueryRunner.manager.getRepository(UserRole).save).toHaveBeenCalledWith({
         user: { id: savedUser.id },
         role: { id: mockRole.id },
@@ -189,6 +226,22 @@ describe('AuthService', () => {
         'generated-token',
       );
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+    });
+
+    it('should store terms acceptance dates when terms are accepted', async () => {
+      mockQueryRunner.manager.getRepository(User).save.mockImplementation((userData: Partial<User>) => ({
+        ...userData,
+        id: 1,
+      }));
+
+      await service.register(registerDto);
+
+      expect(mockQueryRunner.manager.getRepository(User).save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          dateTermsAcceptance: expect.any(Date),
+          datePrivacyPolicyAcceptance: expect.any(Date),
+        }),
+      );
     });
 
     it('should throw UnauthorizedException when user already exists', async () => {
@@ -207,7 +260,10 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    const loginDto = { email: 'test@example.com', password: 'password123' };
+    const loginDto: LoginDto = {
+      email: 'test@example.com',
+      password: 'password123',
+    };
 
     beforeEach(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

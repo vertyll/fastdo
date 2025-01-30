@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches, MinLength } from 'class-validator';
+import { Equals, IsBoolean, IsEmail, IsString, Matches, MinLength } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
@@ -22,4 +22,14 @@ export class RegisterDto {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.specialCharacter'),
   })
   password: string;
+
+  @ApiProperty({ description: 'Terms acceptance' })
+  @IsBoolean()
+  @Equals(true, { message: i18nValidationMessage<I18nTranslations>('messages.Validation.termsRequired') })
+  termsAccepted: boolean;
+
+  @ApiProperty({ description: 'Privacy policy acceptance' })
+  @IsBoolean()
+  @Equals(true, { message: i18nValidationMessage<I18nTranslations>('messages.Validation.privacyPolicyRequired') })
+  privacyPolicyAccepted: boolean;
 }

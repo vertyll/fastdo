@@ -2,6 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { User } from '../../users/entities/user.entity';
 import { UsersService } from '../../users/users.service';
 import { JwtStrategy } from './jwt.strategy';
 
@@ -11,7 +12,7 @@ describe('JwtStrategy', () => {
   let configService: jest.Mocked<ConfigService>;
   let i18nService: jest.Mocked<I18nService<I18nTranslations>>;
 
-  const mockUser = {
+  const mockUser: User = {
     id: 1,
     email: 'test@test.com',
     isActive: true,
@@ -22,6 +23,10 @@ describe('JwtStrategy', () => {
     userRoles: [],
     confirmationToken: 'token',
     confirmationTokenExpiry: new Date(),
+    termsAccepted: true,
+    privacyPolicyAccepted: true,
+    dateTermsAcceptance: new Date(),
+    datePrivacyPolicyAcceptance: new Date(),
   };
 
   beforeEach(() => {
@@ -70,10 +75,12 @@ describe('JwtStrategy', () => {
 
   it('should throw an UnauthorizedException if user is inactive', async () => {
     const payload = { sub: 1, roles: ['admin'] };
-    usersService.findOne.mockResolvedValue({
+    const inactiveUser: User = {
       ...mockUser,
       isActive: false,
-    });
+    };
+
+    usersService.findOne.mockResolvedValue(inactiveUser);
 
     await expect(jwtStrategy.validate(payload)).rejects.toThrow(UnauthorizedException);
   });

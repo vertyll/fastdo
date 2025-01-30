@@ -2,70 +2,72 @@
 
 /* eslint-disable */
 /* prettier-ignore */
-import { Path } from "nestjs-i18n";
+import { Path } from 'nestjs-i18n';
 /* prettier-ignore */
 export type I18nTranslations = {
-    "messages": {
-        "Common": {
-            "Success": string;
-            "InternalServerError": string;
-        };
-        "Validation": {
-            "errorOccurred": string;
-            "failed": string;
-            "isEmail": string;
-            "isString": string;
-            "uppercaseLetter": string;
-            "specialCharacter": string;
-            "minLength": string;
-            "isInteger": string;
-        };
-        "Errors": {
-            "unknownError": string;
-        };
-        "Auth": {
-            "errors": {
-                "invalidToken": string;
-                "tokenExpired": string;
-                "verifyingTokenFailed": string;
-                "invalidCredentials": string;
-                "userAlreadyExists": string;
-                "roleNotFound": string;
-                "emailNotConfirmed": string;
-            };
-        };
-        "File": {
-            "errors": {
-                "fileValidation": string;
-                "fileNotFound": string;
-                "fileNotProvided": string;
-                "fileNotDeleted": string;
-                "fileNotUploaded": string;
-                "fileNotUpdated": string;
-                "invalidStorageType": string;
-                "failedExtractFileNameFromPath": string;
-                "filedUploadFileToLocalStorage": string;
-                "exceededMaxFileSize": string;
-                "fileTypeNotAllowed": string;
-                "failedToProcessFileUpload": string;
-            };
-        };
-        "Mail": {
-            "confirmationEmail": {
-                "subject": string;
-            };
-            "errors": {
-                "missingMailConfiguration": string;
-                "failedToSendEmail": string;
-                "mailDevNotAvailable": string;
-            };
-        };
-        "Roles": {
-            "errors": {
-                "roleNotFound": string;
-            };
-        };
+  'messages': {
+    'Common': {
+      'Success': string;
+      'InternalServerError': string;
     };
+    'Validation': {
+      'errorOccurred': string;
+      'failed': string;
+      'isEmail': string;
+      'isString': string;
+      'uppercaseLetter': string;
+      'specialCharacter': string;
+      'minLength': string;
+      'isInteger': string;
+      'termsRequired': string;
+      'privacyPolicyRequired': string;
+    };
+    'Errors': {
+      'unknownError': string;
+    };
+    'Auth': {
+      'errors': {
+        'invalidToken': string;
+        'tokenExpired': string;
+        'verifyingTokenFailed': string;
+        'invalidCredentials': string;
+        'userAlreadyExists': string;
+        'roleNotFound': string;
+        'emailNotConfirmed': string;
+      };
+    };
+    'File': {
+      'errors': {
+        'fileValidation': string;
+        'fileNotFound': string;
+        'fileNotProvided': string;
+        'fileNotDeleted': string;
+        'fileNotUploaded': string;
+        'fileNotUpdated': string;
+        'invalidStorageType': string;
+        'failedExtractFileNameFromPath': string;
+        'filedUploadFileToLocalStorage': string;
+        'exceededMaxFileSize': string;
+        'fileTypeNotAllowed': string;
+        'failedToProcessFileUpload': string;
+      };
+    };
+    'Mail': {
+      'confirmationEmail': {
+        'subject': string;
+      };
+      'errors': {
+        'missingMailConfiguration': string;
+        'failedToSendEmail': string;
+        'mailDevNotAvailable': string;
+      };
+    };
+    'Roles': {
+      'errors': {
+        'roleNotFound': string;
+      };
+    };
+  };
 };
 /* prettier-ignore */
 export type I18nPath = Path<I18nTranslations>;

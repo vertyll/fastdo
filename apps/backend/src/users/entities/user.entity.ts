@@ -45,4 +45,18 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
   confirmationTokenExpiry: Date | null;
+
+  @ApiProperty()
+  @Column({ default: false })
+  termsAccepted: boolean;
+
+  @ApiProperty()
+  @Column({ default: false })
+  privacyPolicyAccepted: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  dateTermsAcceptance: Date | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  datePrivacyPolicyAcceptance: Date | null;
 }

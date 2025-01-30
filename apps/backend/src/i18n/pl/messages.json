@@ -11,7 +11,9 @@
     "uppercaseLetter": "Wartość musi zawierać co najmniej jedną wielką literę",
     "specialCharacter": "Wartość musi zawierać co najmniej jeden znak specjalny",
     "minLength": "Wartość musi zawierać co najmniej {length} znaków",
-    "isInteger": "Wartość musi być liczbą całkowitą"
+    "isInteger": "Wartość musi być liczbą całkowitą",
+    "termsRequired": "Warunki i postanowienia muszą zostać zaakceptowane",
+    "privacyPolicyRequired": "Polityka prywatności musi zostać zaakceptowana"
   },
   "Errors": {
     "unknownError": "Wystąpił nieznany błąd"

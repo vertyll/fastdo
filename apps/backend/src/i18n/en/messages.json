@@ -11,7 +11,9 @@
     "uppercaseLetter": "Value must contain at least one uppercase letter",
     "specialCharacter": "Value must contain at least one special character",
     "minLength": "Value must contain at least {length} characters",
-    "isInteger": "Value must be an integer"
+    "isInteger": "Value must be an integer",
+    "termsRequired": "Terms and conditions must be accepted",
+    "privacyPolicyRequired": "Privacy policy must be accepted"
   },
   "Errors": {
     "unknownError": "An unknown error occurred"

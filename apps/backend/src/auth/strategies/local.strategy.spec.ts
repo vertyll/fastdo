@@ -1,6 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { User } from '../../users/entities/user.entity';
 import { AuthService } from '../auth.service';
 import { LocalStrategy } from './local.strategy';
 
@@ -9,7 +10,7 @@ describe('LocalStrategy', () => {
   let authService: jest.Mocked<AuthService>;
   let i18nService: jest.Mocked<I18nService<I18nTranslations>>;
 
-  const mockUser = {
+  const mockUser: Omit<User, 'password'> = {
     id: 1,
     email: 'test@test.com',
     isActive: true,
@@ -19,6 +20,10 @@ describe('LocalStrategy', () => {
     isEmailConfirmed: true,
     confirmationToken: 'token',
     confirmationTokenExpiry: new Date(),
+    termsAccepted: true,
+    privacyPolicyAccepted: true,
+    dateTermsAcceptance: new Date(),
+    datePrivacyPolicyAcceptance: new Date(),
   };
 
   beforeEach(() => {

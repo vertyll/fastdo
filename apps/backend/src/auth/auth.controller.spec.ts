@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyReply } from 'fastify';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
+import { User } from '../users/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
@@ -14,7 +15,7 @@ describe('AuthController', () => {
   let controller: AuthController;
   let authService: jest.Mocked<AuthService>;
 
-  const mockUser = {
+  const mockUser: User = {
     id: 1,
     email: 'test@example.com',
     password: 'hashedPassword',
@@ -25,6 +26,10 @@ describe('AuthController', () => {
     isEmailConfirmed: false,
     confirmationToken: 'mock-confirmation-token',
     confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    termsAccepted: true,
+    privacyPolicyAccepted: true,
+    dateTermsAcceptance: new Date(),
+    datePrivacyPolicyAcceptance: new Date(),
   };
 
   const mockLoginDto: LoginDto = {
@@ -35,6 +40,8 @@ describe('AuthController', () => {
   const mockRegisterDto: RegisterDto = {
     email: 'test@example.com',
     password: 'password123',
+    termsAccepted: true,
+    privacyPolicyAccepted: true,
   };
 
   beforeEach(async () => {
@@ -176,7 +183,7 @@ describe('AuthController', () => {
 
   describe('Input validation', () => {
     it('should validate login DTO', async () => {
-      const invalidLoginDto = { email: 'invalid-email', password: '' };
+      const invalidLoginDto: Partial<LoginDto> = { email: 'invalid-email', password: '' };
       authService.login.mockRejectedValue(new UnauthorizedException());
 
       await expect(controller.login(invalidLoginDto as LoginDto))
@@ -185,7 +192,12 @@ describe('AuthController', () => {
     });
 
     it('should validate register DTO', async () => {
-      const invalidRegisterDto = { email: 'invalid-email', password: '' };
+      const invalidRegisterDto: Partial<RegisterDto> = {
+        email: 'invalid-email',
+        password: '',
+        termsAccepted: false,
+        privacyPolicyAccepted: false,
+      };
       authService.register.mockRejectedValue(new UnauthorizedException());
 
       await expect(controller.register(invalidRegisterDto as RegisterDto))

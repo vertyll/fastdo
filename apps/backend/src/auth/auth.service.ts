@@ -17,7 +17,7 @@ import { ConfirmationTokenService } from './confirmation-token.service';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
-import {IAuthService} from "./interfaces/auth-service.interface";
+import { IAuthService } from './interfaces/auth-service.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -70,7 +70,7 @@ export class AuthService implements IAuthService {
         );
       }
 
-      const { email, password } = registerDto;
+      const { email, password, termsAccepted, privacyPolicyAccepted } = registerDto;
       const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -78,12 +78,18 @@ export class AuthService implements IAuthService {
       const confirmationTokenExpiry = new Date();
       confirmationTokenExpiry.setHours(confirmationTokenExpiry.getHours() + 24);
 
+      const currentDate = new Date();
+
       const newUser = await queryRunner.manager.getRepository(User).save({
         email,
         password: hashedPassword,
         isEmailConfirmed: false,
         confirmationToken,
         confirmationTokenExpiry,
+        termsAccepted,
+        privacyPolicyAccepted,
+        dateTermsAcceptance: termsAccepted ? currentDate : null,
+        datePrivacyPolicyAcceptance: privacyPolicyAccepted ? currentDate : null,
       });
 
       await queryRunner.manager.getRepository(UserRole).save({
