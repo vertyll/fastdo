@@ -1,6 +1,9 @@
 {
   "Common": {
-    "Success": "Sukces",
+    "success": "Sukces"
+  },
+  "Errors": {
+    "unknownError": "Wystąpił nieznany błąd",
     "InternalServerError": "Wewnętrzny błąd serwera"
   },
   "Validation": {
@@ -14,9 +17,6 @@
     "isInteger": "Wartość musi być liczbą całkowitą",
     "termsRequired": "Warunki i postanowienia muszą zostać zaakceptowane",
     "privacyPolicyRequired": "Polityka prywatności musi zostać zaakceptowana"
-  },
-  "Errors": {
-    "unknownError": "Wystąpił nieznany błąd"
   },
   "Auth": {
     "errors": {
@@ -58,6 +58,12 @@
   "Roles": {
     "errors": {
       "roleNotFound": "Rola {roleName} nie istnieje"
+    }
+  },
+  "TermsAndPolicies": {
+    "errors": {
+      "termsNotFound": "Warunki nie zostały znalezione",
+      "PrivacyPolicyNotFound": "Polityka prywatności nie została znaleziona"
     }
   }
 }

@@ -1,6 +1,9 @@
 {
   "Common": {
-    "Success": "Success",
+    "success": "Success"
+  },
+  "Errors": {
+    "unknownError": "An unknown error occurred",
     "InternalServerError": "Internal server error"
   },
   "Validation": {
@@ -14,9 +17,6 @@
     "isInteger": "Value must be an integer",
     "termsRequired": "Terms and conditions must be accepted",
     "privacyPolicyRequired": "Privacy policy must be accepted"
-  },
-  "Errors": {
-    "unknownError": "An unknown error occurred"
   },
   "Auth": {
     "errors": {
@@ -58,6 +58,12 @@
   "Roles": {
     "errors": {
       "roleNotFound": "Role {roleName} not found"
+    }
+  },
+  "TermsAndPolicies": {
+    "errors": {
+      "termsNotFound": "Terms not found",
+      "PrivacyPolicyNotFound": "Privacy policy not found"
     }
   }
 }

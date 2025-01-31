@@ -17,6 +17,12 @@ import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { Priority } from './tasks/entities/priority.entity';
 import { Task } from './tasks/entities/task.entity';
+import { PrivacyPolicySectionTranslation } from './terms-and-policies/entities/privacy-policy-section-translation.entity';
+import { PrivacyPolicySection } from './terms-and-policies/entities/privacy-policy-section.entity';
+import { PrivacyPolicy } from './terms-and-policies/entities/privacy-policy.entity';
+import { TermsSectionTranslation } from './terms-and-policies/entities/terms-section-translation.entity';
+import { TermsSection } from './terms-and-policies/entities/terms-section.entity';
+import { Terms } from './terms-and-policies/entities/terms.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
 
@@ -100,6 +106,12 @@ async function bootstrap(): Promise<void> {
       File,
       FileMetadataDto,
       LoginResponseDto,
+      Terms,
+      TermsSection,
+      TermsSectionTranslation,
+      PrivacyPolicy,
+      PrivacyPolicySection,
+      PrivacyPolicySectionTranslation,
     ],
   });
   SwaggerModule.setup(openApiConfig.path, app, document);

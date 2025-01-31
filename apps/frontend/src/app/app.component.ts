@@ -1,3 +1,6 @@
+import { registerLocaleData } from '@angular/common';
+import localeEn from '@angular/common/locales/en';
+import localePl from '@angular/common/locales/pl';
 import { Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../environments/environment';
@@ -19,6 +22,9 @@ export class AppComponent {
   private readonly localStorageService = inject(LocalStorageService);
 
   constructor() {
+    registerLocaleData(localePl, 'pl');
+    registerLocaleData(localeEn, 'en');
+
     const availableLanguages: string[] = environment.availableLanguages;
     const defaultLanguage: string = environment.defaultLanguage;
 

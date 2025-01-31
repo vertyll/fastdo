@@ -10,6 +10,7 @@ import { MailModule } from './core/mail/mail.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RolesModule } from './roles/roles.module';
 import { TasksModule } from './tasks/tasks.module';
+import { TermsAndPoliciesModule } from './terms-and-policies/terms-and-policies.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     RolesModule,
     MailModule,
+    TermsAndPoliciesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,6 +3,7 @@ import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-label',
+  standalone: true,
   imports: [CommonModule],
   template: `
     <label
@@ -14,10 +15,14 @@ import { Component, input } from '@angular/core';
       }"
     >
       <ng-content></ng-content>
+      @if (required()) {
+        <span class="text-red-500 ml-1">*</span>
+      }
     </label>
   `,
 })
 export class LabelComponent {
   readonly forId = input<string | null>();
   readonly isField = input<boolean>(false);
+  readonly required = input<boolean>(false);
 }

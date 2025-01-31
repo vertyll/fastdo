@@ -57,7 +57,13 @@
     "passwordSpecialCharacter": "Password must contain at least one special character.",
     "emailRequired": "Email is required.",
     "emailInvalid": "Email must be a valid email address.",
-    "emailConfirmed": "Email confirmed"
+    "emailConfirmed": "Email confirmed",
+    "acceptTerms": "Accept terms",
+    "acceptPrivacyPolicy": "Accept privacy policy",
+    "termsLink": "Terms",
+    "privacyPolicyLink": "Privacy policy",
+    "termsRequired": "Terms are required.",
+    "privacyPolicyRequired": "Privacy policy is required."
   },
   "Dashboard": {
     "title": "Welcome to our application",
@@ -162,7 +168,7 @@
     "pattern": "This field must match the specified pattern",
     "mismatchingPasswords": "Passwords do not match"
   },
-  "paginator": {
+  "Paginator": {
     "firstPage": "First Page",
     "itemsPerPage": "Items per page",
     "lastPage": "Last Page",
@@ -171,5 +177,12 @@
     "page1Of1": "Page 1 of 1",
     "pageXOfY": "Page {{page}} of {{amountPages}}",
     "paginatorAriaLabel": "Select page"
+  },
+  "TermsAndPolicies": {
+    "terms": "Terms",
+    "privacyPolicy": "Privacy policy",
+    "version": "Version",
+    "effectiveDate": "Effective Date",
+    "lastModified": "Last Modified"
   }
 }

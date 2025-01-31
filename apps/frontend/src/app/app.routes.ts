@@ -6,6 +6,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
 import { ProjectListPageComponent } from './project/project-list.page.component';
 import { TaskListPageComponent } from './task/task-list.page.component';
+import { PrivacyPolicyPageComponent } from './terms-and-policies/privacy-policy.page.component';
+import { TermsPageComponent } from './terms-and-policies/terms.page.component';
 
 export const routes: Routes = [
   {
@@ -57,6 +59,16 @@ export const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'terms',
+    title: 'Regulamin',
+    component: TermsPageComponent,
+  },
+  {
+    path: 'privacy-policy',
+    title: 'Polityka prywatności',
+    component: PrivacyPolicyPageComponent,
   },
   {
     path: '**',

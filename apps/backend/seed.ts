@@ -3,12 +3,14 @@ config();
 
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { LegalDocumentsSeeder } from './src/core/database/seeder/implementations/legal-documents.seeder';
 import { RoleSeeder } from './src/core/database/seeder/implementations/role.seeder';
 import { SeederModule } from './src/core/database/seeder/module/seeder.module';
 import { SeederRunnerService } from './src/core/database/seeder/services/seeder-runner.service';
 
 const AVAILABLE_SEEDERS = [
   RoleSeeder,
+  LegalDocumentsSeeder,
 ];
 
 async function bootstrap(): Promise<void> {

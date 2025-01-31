@@ -57,7 +57,13 @@
     "passwordSpecialCharacter": "Hasło musi zawierać co najmniej jeden znak specjalny.",
     "emailRequired": "Email jest wymagany.",
     "emailInvalid": "Email musi być prawidłowym adresem email.",
-    "emailConfirmed": "Email został potwierdzony"
+    "emailConfirmed": "Email został potwierdzony",
+    "acceptTerms": "Akceptuję regulamin",
+    "acceptPrivacyPolicy": "Akceptuję politykę prywatności",
+    "termsLink": "Regulamin",
+    "privacyPolicyLink": "Polityka prywatności",
+    "termsRequired": "Regulamin jest wymagany.",
+    "privacyPolicyRequired": "Polityka prywatności jest wymagana."
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",
@@ -120,7 +126,9 @@
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."
   },
   "Footer": {
-    "text": "Todo List App - Mikołaj Gawron"
+    "text": "Todo List App - Mikołaj Gawron",
+    "privacyPolicy": "Polityka prywatności",
+    "terms": "Regulamin"
   },
   "InfoPanel": {
     "userRoles": "Role użytkownika",
@@ -162,7 +170,7 @@
     "pattern": "To pole musi spełniać określony wzorzec",
     "mismatchingPasswords": "Hasła nie są zgodne"
   },
-  "paginator": {
+  "Paginator": {
     "firstPage": "Pierwsza strona",
     "itemsPerPage": "Elementów na stronę",
     "lastPage": "Ostatnia strona",
@@ -171,5 +179,12 @@
     "page1Of1": "Strona 1 z 1",
     "pageXOfY": "Strona {{page}} z {{amountPages}}",
     "paginatorAriaLabel": "Wybierz stronę"
+  },
+  "TermsAndPolicies": {
+    "terms": "Regulamin",
+    "privacyPolicy": "Polityka prywatności",
+    "version": "Wersja",
+    "effectiveDate": "Data wejścia w życie",
+    "lastModified": "Ostatnia modyfikacja"
   }
 }

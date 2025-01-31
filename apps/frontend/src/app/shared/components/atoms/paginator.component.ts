@@ -27,7 +27,7 @@ import { PaginationParams } from '../../types/filter.type';
   ],
   template: `
     <div class="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-center px-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 md:px-6 rounded-md dark:border-white">      <div class="flex flex-wrap items-center gap-2">
-        <label class="text-sm text-gray-700 dark:text-gray-300">{{ 'paginator.itemsPerPage' | translate }}:</label>
+        <label class="text-sm text-gray-700 dark:text-gray-300">{{ 'Paginator.itemsPerPage' | translate }}:</label>
         <div class="relative">
           <select
             [ngModel]="pageSize()"
@@ -59,7 +59,7 @@ import { PaginationParams } from '../../types/filter.type';
           [disabled]="currentPage() === 0"
           class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
         >
-          <span class="sr-only">{{ 'paginator.firstPage' | translate }}</span>
+          <span class="sr-only">{{ 'Paginator.firstPage' | translate }}</span>
           <ng-icon
             name="heroChevronDoubleLeftSolid"
             size="16"
@@ -72,7 +72,7 @@ import { PaginationParams } from '../../types/filter.type';
           [disabled]="currentPage() === 0"
           class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
         >
-          <span class="sr-only">{{ 'paginator.previousPage' | translate }}</span>
+          <span class="sr-only">{{ 'Paginator.previousPage' | translate }}</span>
           <ng-icon
             name="heroChevronLeftSolid"
             size="16"
@@ -85,7 +85,7 @@ import { PaginationParams } from '../../types/filter.type';
           [disabled]="isLastPage()"
           class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
         >
-          <span class="sr-only">{{ 'paginator.nextPage' | translate }}</span>
+          <span class="sr-only">{{ 'Paginator.nextPage' | translate }}</span>
           <ng-icon
             name="heroChevronRightSolid"
             size="16"
@@ -98,7 +98,7 @@ import { PaginationParams } from '../../types/filter.type';
           [disabled]="isLastPage()"
           class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
         >
-          <span class="sr-only">{{ 'paginator.lastPage' | translate }}</span>
+          <span class="sr-only">{{ 'Paginator.lastPage' | translate }}</span>
           <ng-icon
             name="heroChevronDoubleRightSolid"
             size="16"
@@ -133,10 +133,10 @@ export class PaginatorComponent {
 
   getRangeLabel(page: number, pageSize: number, length: number): string {
     if (length === 0) {
-      return this.translateService.instant('paginator.page1Of1');
+      return this.translateService.instant('Paginator.page1Of1');
     }
     const amountPages = Math.ceil(length / pageSize);
-    return this.translateService.instant('paginator.pageXOfY', {
+    return this.translateService.instant('Paginator.pageXOfY', {
       page: page + 1,
       amountPages,
     });

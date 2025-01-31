@@ -42,7 +42,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
         timestamp: new Date().toISOString(),
         path: request.url,
         method: request.method,
-        message: response.statusMessage || i18n.t<I18nPath>('messages.Common.Success'),
+        message: response.statusMessage || i18n.t<I18nPath>('messages.Common.success'),
       })),
       catchError(error => {
         const errorResponse: ApiResponseWrapper<null> = {
@@ -51,7 +51,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
           timestamp: new Date().toISOString(),
           path: request.url,
           method: request.method,
-          message: error.message || i18n.t<I18nPath>('messages.Common.InternalServerError'),
+          message: error.message || i18n.t<I18nPath>('messages.Errors.InternalServerError'),
         };
 
         if (error instanceof I18nValidationException && Array.isArray(error.errors)) {
