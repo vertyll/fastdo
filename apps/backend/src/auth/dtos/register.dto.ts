@@ -11,9 +11,7 @@ export class RegisterDto {
   @ApiProperty({ description: 'User password' })
   @IsString({ message: i18nValidationMessage<I18nTranslations>('messages.Validation.isString') })
   @MinLength(8, {
-    message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', {
-      args: { length: 8 },
-    }),
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', { length: 8 }),
   })
   @Matches(/[A-Z]/, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.uppercaseLetter'),
