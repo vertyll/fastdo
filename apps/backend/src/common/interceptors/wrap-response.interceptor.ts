@@ -62,10 +62,13 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
                 const [key, paramsStr] = constraint.split('|');
                 const params = paramsStr ? JSON.parse(paramsStr) : {};
                 const translationParams = params.args || params;
-                return i18n.t(key as I18nPath, { args: translationParams });
+                return i18n.t(key as I18nPath, {
+                  args: translationParams,
+                  defaultValue: String(i18n.t<I18nPath>('messages.Validation.errorOccurred')),
+                });
               }),
             })),
-            error: 'Bad Request',
+            error: i18n.t<I18nPath>('messages.Validation.failed'),
             statusCode: 400,
           };
         } else if (error instanceof BadRequestException) {
