@@ -59,8 +59,10 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
             message: error.errors.map((err: ValidationErrorType) => ({
               field: err.property,
               errors: Object.values(err.constraints || {}).map(constraint => {
-                const [key] = constraint.split('|');
-                return i18n.t<I18nPath>(key as I18nPath);
+                const [key, paramsStr] = constraint.split('|');
+                const params = paramsStr ? JSON.parse(paramsStr) : {};
+                const translationParams = params.args || params;
+                return i18n.t(key as I18nPath, { args: translationParams });
               }),
             })),
             error: 'Bad Request',
