@@ -23,4 +23,16 @@ export class MailService {
       },
     });
   }
+
+  async sendPasswordResetEmail(to: string, token: string): Promise<void> {
+    const frontendUrl = this.configService.get<string>('app.frontend.url');
+    await this.mailSender.sendMail({
+      to,
+      subject: this.i18n.t('messages.Mail.resetPasswordEmail.subject'),
+      templateName: 'reset-password',
+      templateData: {
+        resetUrl: `${frontendUrl}/reset-password?token=${token}`,
+      },
+    });
+  }
 }

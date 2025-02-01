@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
+import { ForgotPasswordComponent } from './auth/forgot-password.component';
 import { LoginComponent } from './auth/login.component';
 import { RegisterComponent } from './auth/register.component';
+import { ResetPasswordComponent } from './auth/reset-password.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
@@ -59,6 +61,16 @@ export const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'forgot-password',
+    title: 'Zapomniałem hasła',
+    component: ForgotPasswordComponent,
+  },
+  {
+    path: 'reset-password',
+    title: 'Resetowanie hasła',
+    component: ResetPasswordComponent,
   },
   {
     path: 'terms',

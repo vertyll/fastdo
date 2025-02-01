@@ -3,8 +3,10 @@ import { jwtDecode } from 'jwt-decode';
 import { Observable, map, tap } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api-response.type';
 import { RegisterResponse } from '../../shared/types/auth.type';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
 
@@ -42,6 +44,14 @@ export class AuthService {
     if (token) {
       this.decodeToken(token);
     }
+  }
+
+  forgotPassword(dto: ForgotPasswordDto): Observable<ApiResponse<void>> {
+    return this.authApiService.forgotPassword(dto);
+  }
+
+  resetPassword(dto: ResetPasswordDto): Observable<ApiResponse<void>> {
+    return this.authApiService.resetPassword(dto);
   }
 
   private decodeToken(token: string): void {

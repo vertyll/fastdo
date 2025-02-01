@@ -63,7 +63,17 @@
     "termsLink": "Regulamin",
     "privacyPolicyLink": "Polityka prywatności",
     "termsRequired": "Regulamin jest wymagany.",
-    "privacyPolicyRequired": "Polityka prywatności jest wymagana."
+    "privacyPolicyRequired": "Polityka prywatności jest wymagana.",
+    "resetLinkSent": "Link do resetowania hasła został wysłany na Twój email",
+    "forgotPassword": "Zapomniałeś hasła?",
+    "sendResetLink": "Wyślij link do resetowania hasła",
+    "backToLogin": "Powrót do logowania",
+    "resetPassword": "Resetuj hasło",
+    "newPassword": "Nowe hasło",
+    "confirmNewPassword": "Potwierdź nowe hasło",
+    "resetPasswordButton": "Zresetuj hasło",
+    "passwordResetSuccess": "Hasło zostało zresetowane",
+    "unknownError": "Wystąpił nieznany błąd"
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",

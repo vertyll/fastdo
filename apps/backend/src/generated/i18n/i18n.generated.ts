@@ -56,6 +56,9 @@ export type I18nTranslations = {
       'confirmationEmail': {
         'subject': string;
       };
+      'resetPasswordEmail': {
+        'subject': string;
+      };
       'errors': {
         'missingMailConfiguration': string;
         'failedToSendEmail': string;

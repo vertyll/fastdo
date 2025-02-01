@@ -49,6 +49,9 @@
     "confirmationEmail": {
       "subject": "Potwierdzenie adresu email"
     },
+    "resetPasswordEmail": {
+      "subject": "Resetowanie hasła"
+    },
     "errors": {
       "missingMailConfiguration": "Brak konfiguracji maila {message}",
       "failedToSendEmail": "Nie udało się wysłać maila",

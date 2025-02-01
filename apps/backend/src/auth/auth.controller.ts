@@ -7,9 +7,11 @@ import { Public } from '../common/decorators/public.decorator';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
+import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -59,5 +61,27 @@ export class AuthController {
 
     const frontendUrl = this.configService.get<string>('app.frontend.url');
     return res.redirect(`${frontendUrl}/login?confirmed=true`, 302);
+  }
+
+  @Public()
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Password reset email sent successfully.',
+  })
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto): Promise<void> {
+    await this.authService.forgotPassword(forgotPasswordDto);
+  }
+
+  @Public()
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset password with token' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Password has been reset successfully.',
+  })
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
+    await this.authService.resetPassword(resetPasswordDto);
   }
 }

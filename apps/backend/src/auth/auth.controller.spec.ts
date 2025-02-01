@@ -44,6 +44,15 @@ describe('AuthController', () => {
     privacyPolicyAccepted: true,
   };
 
+  const mockForgotPasswordDto = {
+    email: 'test@example.com',
+  };
+
+  const mockResetPasswordDto = {
+    token: 'valid-reset-token',
+    password: 'newPassword123',
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -54,6 +63,8 @@ describe('AuthController', () => {
             login: jest.fn(),
             register: jest.fn(),
             confirmEmail: jest.fn(),
+            forgotPassword: jest.fn(),
+            resetPassword: jest.fn(),
           },
         },
         {
@@ -181,6 +192,67 @@ describe('AuthController', () => {
     });
   });
 
+  describe('forgotPassword', () => {
+    it('should have Public decorator', () => {
+      const isPublic = Reflect.getMetadata('isPublic', AuthController.prototype.forgotPassword);
+      expect(isPublic).toBe(true);
+    });
+
+    it('should successfully process forgot password request', async () => {
+      authService.forgotPassword.mockResolvedValue(undefined);
+
+      await controller.forgotPassword(mockForgotPasswordDto);
+
+      expect(authService.forgotPassword).toHaveBeenCalledWith(mockForgotPasswordDto);
+      expect(authService.forgotPassword).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle forgot password request for non-existent email', async () => {
+      authService.forgotPassword.mockResolvedValue(undefined);
+
+      await controller.forgotPassword({ email: 'nonexistent@example.com' });
+
+      expect(authService.forgotPassword).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should have Public decorator', () => {
+      const isPublic = Reflect.getMetadata('isPublic', AuthController.prototype.resetPassword);
+      expect(isPublic).toBe(true);
+    });
+
+    it('should successfully reset password', async () => {
+      authService.resetPassword.mockResolvedValue(undefined);
+
+      await controller.resetPassword(mockResetPasswordDto);
+
+      expect(authService.resetPassword).toHaveBeenCalledWith(mockResetPasswordDto);
+      expect(authService.resetPassword).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle reset password with invalid token', async () => {
+      authService.resetPassword.mockRejectedValue(
+        new UnauthorizedException('Invalid token'),
+      );
+
+      await expect(controller.resetPassword(mockResetPasswordDto))
+        .rejects
+        .toThrow(UnauthorizedException);
+      expect(authService.resetPassword).toHaveBeenCalledWith(mockResetPasswordDto);
+    });
+
+    it('should handle reset password with expired token', async () => {
+      authService.resetPassword.mockRejectedValue(
+        new UnauthorizedException('Token expired'),
+      );
+
+      await expect(controller.resetPassword(mockResetPasswordDto))
+        .rejects
+        .toThrow(UnauthorizedException);
+    });
+  });
+
   describe('Input validation', () => {
     it('should validate login DTO', async () => {
       const invalidLoginDto: Partial<LoginDto> = { email: 'invalid-email', password: '' };
@@ -201,6 +273,27 @@ describe('AuthController', () => {
       authService.register.mockRejectedValue(new UnauthorizedException());
 
       await expect(controller.register(invalidRegisterDto as RegisterDto))
+        .rejects
+        .toThrow(UnauthorizedException);
+    });
+
+    it('should validate forgot password DTO', async () => {
+      const invalidForgotPasswordDto = { email: 'invalid-email' };
+      authService.forgotPassword.mockRejectedValue(new UnauthorizedException());
+
+      await expect(controller.forgotPassword(invalidForgotPasswordDto))
+        .rejects
+        .toThrow(UnauthorizedException);
+    });
+
+    it('should validate reset password DTO', async () => {
+      const invalidResetPasswordDto = {
+        token: '',
+        password: 'short',
+      };
+      authService.resetPassword.mockRejectedValue(new UnauthorizedException());
+
+      await expect(controller.resetPassword(invalidResetPasswordDto))
         .rejects
         .toThrow(UnauthorizedException);
     });

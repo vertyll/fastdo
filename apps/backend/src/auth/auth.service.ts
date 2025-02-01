@@ -14,9 +14,11 @@ import { User } from '../users/entities/user.entity';
 import { UserRepository } from '../users/repositories/user.repository';
 import { UsersService } from '../users/users.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
+import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { IAuthService } from './interfaces/auth-service.interface';
 
 @Injectable()
@@ -172,5 +174,65 @@ export class AuthService implements IAuthService {
     return {
       accessToken: token,
     };
+  }
+
+  public async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { email: forgotPasswordDto.email },
+    });
+
+    if (!user) {
+      return;
+    }
+
+    const resetToken = this.confirmationTokenService.generateToken(user.email);
+    const resetTokenExpiry = new Date();
+    resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 24);
+
+    await this.userRepository.update(user.id, {
+      confirmationToken: resetToken,
+      confirmationTokenExpiry: resetTokenExpiry,
+    });
+
+    await this.mailService.sendPasswordResetEmail(user.email, resetToken);
+  }
+
+  public async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const { email } = this.confirmationTokenService.verifyToken(resetPasswordDto.token);
+      const user = await this.userRepository.findOne({ where: { email } });
+
+      if (
+        !user
+        || user.confirmationToken !== resetPasswordDto.token
+        || !user.confirmationTokenExpiry
+        || user.confirmationTokenExpiry < new Date()
+      ) {
+        throw new UnauthorizedException(
+          this.i18n.t('messages.Auth.errors.invalidToken'),
+        );
+      }
+
+      const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
+      const hashedPassword = await bcrypt.hash(resetPasswordDto.password, saltRounds);
+
+      await this.userRepository.update(user.id, {
+        password: hashedPassword,
+        confirmationToken: null,
+        confirmationTokenExpiry: null,
+        dateModification: new Date(),
+      });
+
+      await queryRunner.commitTransaction();
+    } finally {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+      await queryRunner.release();
+    }
   }
 }

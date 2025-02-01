@@ -1,21 +1,11 @@
 /* eslint-disable */
 export default async () => {
   const t = {
-    ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
-    ['./users/entities/user.entity']: await import('./users/entities/user.entity'),
-    ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
-    ['./terms-and-policies/entities/terms-section.entity']: await import(
-      './terms-and-policies/entities/terms-section.entity'
+    ['./terms-and-policies/entities/privacy-policy-section.entity']: await import(
+      './terms-and-policies/entities/privacy-policy-section.entity'
     ),
     ['./terms-and-policies/enums/legal-section-type.enum']: await import(
       './terms-and-policies/enums/legal-section-type.enum'
-    ),
-    ['./terms-and-policies/entities/terms.entity']: await import('./terms-and-policies/entities/terms.entity'),
-    ['./terms-and-policies/entities/terms-section-translation.entity']: await import(
-      './terms-and-policies/entities/terms-section-translation.entity'
-    ),
-    ['./terms-and-policies/entities/privacy-policy-section.entity']: await import(
-      './terms-and-policies/entities/privacy-policy-section.entity'
     ),
     ['./terms-and-policies/entities/privacy-policy.entity']: await import(
       './terms-and-policies/entities/privacy-policy.entity'
@@ -23,6 +13,16 @@ export default async () => {
     ['./terms-and-policies/entities/privacy-policy-section-translation.entity']: await import(
       './terms-and-policies/entities/privacy-policy-section-translation.entity'
     ),
+    ['./terms-and-policies/entities/terms-section.entity']: await import(
+      './terms-and-policies/entities/terms-section.entity'
+    ),
+    ['./terms-and-policies/entities/terms.entity']: await import('./terms-and-policies/entities/terms.entity'),
+    ['./terms-and-policies/entities/terms-section-translation.entity']: await import(
+      './terms-and-policies/entities/terms-section-translation.entity'
+    ),
+    ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
+    ['./users/entities/user.entity']: await import('./users/entities/user.entity'),
+    ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
     ['./core/config/types/app.config.type']: await import('./core/config/types/app.config.type'),
     ['./tasks/entities/task.entity']: await import('./tasks/entities/task.entity'),
     ['./projects/entities/project.entity']: await import('./projects/entities/project.entity'),
@@ -33,74 +33,7 @@ export default async () => {
   };
   return {
     '@nestjs/swagger': {
-      'models': [[import('./users/entities/user.entity'), {
-        'User': {
-          id: { required: true, type: () => Number },
-          email: { required: true, type: () => String },
-          password: { required: true, type: () => String },
-          isActive: { required: true, type: () => Boolean },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
-          isEmailConfirmed: { required: true, type: () => Boolean },
-          confirmationToken: { required: true, type: () => String, nullable: true },
-          confirmationTokenExpiry: { required: true, type: () => Date, nullable: true },
-          termsAccepted: { required: true, type: () => Boolean },
-          privacyPolicyAccepted: { required: true, type: () => Boolean },
-          dateTermsAcceptance: { required: true, type: () => Date, nullable: true },
-          datePrivacyPolicyAcceptance: { required: true, type: () => Date, nullable: true },
-        },
-      }], [import('./users/entities/user-role.entity'), {
-        'UserRole': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          user: { required: true, type: () => t['./users/entities/user.entity'].User },
-          role: { required: true, type: () => t['./roles/entities/role.entity'].Role },
-        },
-      }], [import('./roles/entities/role.entity'), {
-        'Role': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          name: { required: true, type: () => String },
-          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
-        },
-      }], [import('./terms-and-policies/entities/terms-section-translation.entity'), {
-        'TermsSectionTranslation': {
-          id: { required: true, type: () => Number },
-          languageCode: { required: true, type: () => String },
-          title: { required: true, type: () => String },
-          content: { required: true, type: () => String },
-          items: { required: true, type: () => [String] },
-          section: { required: true, type: () => t['./terms-and-policies/entities/terms-section.entity'].TermsSection },
-        },
-      }], [import('./terms-and-policies/entities/terms-section.entity'), {
-        'TermsSection': {
-          id: { required: true, type: () => Number },
-          order: { required: true, type: () => Number },
-          type: { required: true, enum: t['./terms-and-policies/enums/legal-section-type.enum'].LegalSectionType },
-          terms: { required: true, type: () => t['./terms-and-policies/entities/terms.entity'].Terms },
-          translations: {
-            required: true,
-            type: () => [t['./terms-and-policies/entities/terms-section-translation.entity'].TermsSectionTranslation],
-          },
-        },
-      }], [import('./terms-and-policies/entities/terms.entity'), {
-        'Terms': {
-          id: { required: true, type: () => Number },
-          version: { required: true, type: () => String },
-          dateEffective: { required: true, type: () => Date },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          sections: {
-            required: true,
-            type: () => [t['./terms-and-policies/entities/terms-section.entity'].TermsSection],
-          },
-        },
-      }], [import('./terms-and-policies/entities/privacy-policy-section-translation.entity'), {
+      'models': [[import('./terms-and-policies/entities/privacy-policy-section-translation.entity'), {
         'PrivacyPolicySectionTranslation': {
           id: { required: true, type: () => Number },
           languageCode: { required: true, type: () => String },
@@ -141,6 +74,73 @@ export default async () => {
             type: () => [t['./terms-and-policies/entities/privacy-policy-section.entity'].PrivacyPolicySection],
           },
         },
+      }], [import('./terms-and-policies/entities/terms-section-translation.entity'), {
+        'TermsSectionTranslation': {
+          id: { required: true, type: () => Number },
+          languageCode: { required: true, type: () => String },
+          title: { required: true, type: () => String },
+          content: { required: true, type: () => String },
+          items: { required: true, type: () => [String] },
+          section: { required: true, type: () => t['./terms-and-policies/entities/terms-section.entity'].TermsSection },
+        },
+      }], [import('./terms-and-policies/entities/terms-section.entity'), {
+        'TermsSection': {
+          id: { required: true, type: () => Number },
+          order: { required: true, type: () => Number },
+          type: { required: true, enum: t['./terms-and-policies/enums/legal-section-type.enum'].LegalSectionType },
+          terms: { required: true, type: () => t['./terms-and-policies/entities/terms.entity'].Terms },
+          translations: {
+            required: true,
+            type: () => [t['./terms-and-policies/entities/terms-section-translation.entity'].TermsSectionTranslation],
+          },
+        },
+      }], [import('./terms-and-policies/entities/terms.entity'), {
+        'Terms': {
+          id: { required: true, type: () => Number },
+          version: { required: true, type: () => String },
+          dateEffective: { required: true, type: () => Date },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          sections: {
+            required: true,
+            type: () => [t['./terms-and-policies/entities/terms-section.entity'].TermsSection],
+          },
+        },
+      }], [import('./users/entities/user.entity'), {
+        'User': {
+          id: { required: true, type: () => Number },
+          email: { required: true, type: () => String },
+          password: { required: true, type: () => String },
+          isActive: { required: true, type: () => Boolean },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
+          isEmailConfirmed: { required: true, type: () => Boolean },
+          confirmationToken: { required: true, type: () => String, nullable: true },
+          confirmationTokenExpiry: { required: true, type: () => Date, nullable: true },
+          termsAccepted: { required: true, type: () => Boolean },
+          privacyPolicyAccepted: { required: true, type: () => Boolean },
+          dateTermsAcceptance: { required: true, type: () => Date, nullable: true },
+          datePrivacyPolicyAcceptance: { required: true, type: () => Date, nullable: true },
+        },
+      }], [import('./users/entities/user-role.entity'), {
+        'UserRole': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          user: { required: true, type: () => t['./users/entities/user.entity'].User },
+          role: { required: true, type: () => t['./roles/entities/role.entity'].Role },
+        },
+      }], [import('./roles/entities/role.entity'), {
+        'Role': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          name: { required: true, type: () => String },
+          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
+        },
       }], [import('./auth/dtos/login-response.dto'), {
         'LoginResponseDto': { accessToken: { required: true, type: () => String } },
       }], [import('./auth/dtos/login.dto'), {
@@ -159,6 +159,16 @@ export default async () => {
           termsAccepted: { required: true, type: () => Boolean },
           privacyPolicyAccepted: { required: true, type: () => Boolean },
         },
+      }], [import('./auth/dtos/reset-password.dto'), {
+        'ResetPasswordDto': {
+          token: {
+            required: true,
+            type: () => String,
+          },
+          password: { required: true, type: () => String, minLength: 8, pattern: '/[A-Z]/' },
+        },
+      }], [import('./auth/dtos/forgot-password.dto'), {
+        'ForgotPasswordDto': { email: { required: true, type: () => String, format: 'email' } },
       }], [import('./core/file/entities/file.entity'), {
         'File': {
           id: { required: true, type: () => String },
@@ -287,6 +297,8 @@ export default async () => {
             'login': { type: t['./auth/dtos/login-response.dto'].LoginResponseDto },
             'register': { type: t['./users/entities/user.entity'].User },
             'confirmEmail': {},
+            'forgotPassword': {},
+            'resetPassword': {},
           },
         },
       ], [import('./core/file/file.controller'), {

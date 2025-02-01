@@ -49,6 +49,9 @@
     "confirmationEmail": {
       "subject": "Email address confirmation"
     },
+    "resetPasswordEmail": {
+      "subject": "Password reset"
+    },
     "errors": {
       "missingMailConfiguration": "Missing mail configuration {message}",
       "failedToSendEmail": "Failed to send email",

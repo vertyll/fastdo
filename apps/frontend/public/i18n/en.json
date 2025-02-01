@@ -63,7 +63,17 @@
     "termsLink": "Terms",
     "privacyPolicyLink": "Privacy policy",
     "termsRequired": "Terms are required.",
-    "privacyPolicyRequired": "Privacy policy is required."
+    "privacyPolicyRequired": "Privacy policy is required.",
+    "resetLinkSent": "Password reset link sent",
+    "forgotPassword": "Forgot password?",
+    "sendResetLink": "Send reset link",
+    "backToLogin": "Back to login",
+    "resetPassword": "Reset password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "resetPasswordButton": "Reset password",
+    "passwordResetSuccess": "Password reset successful",
+    "unknownError": "An unknown error occurred"
   },
   "Dashboard": {
     "title": "Welcome to our application",

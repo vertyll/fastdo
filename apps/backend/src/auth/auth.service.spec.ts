@@ -102,7 +102,10 @@ describe('AuthService', () => {
         },
         {
           provide: MailService,
-          useValue: { sendConfirmationEmail: jest.fn() },
+          useValue: {
+            sendConfirmationEmail: jest.fn(),
+            sendPasswordResetEmail: jest.fn(),
+          },
         },
         {
           provide: ConfirmationTokenService,
@@ -333,6 +336,108 @@ describe('AuthService', () => {
       });
 
       await expect(service.confirmEmail(token)).rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+  });
+
+  describe('forgotPassword', () => {
+    const email = 'test@example.com';
+    const generatedToken = 'generated-reset-token';
+
+    beforeEach(() => {
+      confirmationTokenService.generateToken.mockReturnValue(generatedToken);
+      userRepository.findOne.mockResolvedValue(mockUser);
+    });
+
+    it('should generate and send reset token when user exists', async () => {
+      await service.forgotPassword({ email });
+
+      expect(userRepository.update).toHaveBeenCalledWith(
+        mockUser.id,
+        expect.objectContaining({
+          confirmationToken: generatedToken,
+          confirmationTokenExpiry: expect.any(Date),
+        }),
+      );
+      expect(mailService.sendPasswordResetEmail).toHaveBeenCalledWith(
+        email,
+        generatedToken,
+      );
+    });
+
+    it('should not reveal user existence when email is not found', async () => {
+      userRepository.findOne.mockResolvedValue(null);
+
+      await service.forgotPassword({ email });
+
+      expect(userRepository.update).not.toHaveBeenCalled();
+      expect(mailService.sendPasswordResetEmail).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('resetPassword', () => {
+    const resetPasswordDto = {
+      token: 'valid-reset-token',
+      password: 'newPassword123',
+    };
+
+    beforeEach(() => {
+      (bcrypt.hash as jest.Mock).mockResolvedValue('newHashedPassword');
+      confirmationTokenService.verifyToken.mockReturnValue({ email: mockUser.email });
+      userRepository.findOne.mockResolvedValue({
+        ...mockUser,
+        confirmationToken: resetPasswordDto.token,
+        confirmationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+    });
+
+    it('should successfully reset password', async () => {
+      await service.resetPassword(resetPasswordDto);
+
+      expect(bcrypt.hash).toHaveBeenCalledWith(
+        resetPasswordDto.password,
+        10,
+      );
+      expect(userRepository.update).toHaveBeenCalledWith(
+        mockUser.id,
+        expect.objectContaining({
+          password: 'newHashedPassword',
+          confirmationToken: null,
+          confirmationTokenExpiry: null,
+          dateModification: expect.any(Date),
+        }),
+      );
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when token is invalid', async () => {
+      userRepository.findOne.mockResolvedValue({
+        ...mockUser,
+        confirmationToken: 'different-token',
+      });
+
+      await expect(service.resetPassword(resetPasswordDto))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when token has expired', async () => {
+      userRepository.findOne.mockResolvedValue({
+        ...mockUser,
+        confirmationToken: resetPasswordDto.token,
+        confirmationTokenExpiry: new Date(Date.now() - 1000), // expired
+      });
+
+      await expect(service.resetPassword(resetPasswordDto))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when user not found', async () => {
+      userRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.resetPassword(resetPasswordDto))
+        .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });

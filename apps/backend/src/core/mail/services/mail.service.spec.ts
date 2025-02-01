@@ -29,7 +29,13 @@ describe('MailService', () => {
         {
           provide: I18nService,
           useValue: {
-            t: jest.fn().mockReturnValue('Confirm your email'),
+            t: jest.fn().mockImplementation((key: string) => {
+              const translations: Record<string, string> = {
+                'messages.Mail.confirmationEmail.subject': 'Confirm your email',
+                'messages.Mail.resetPasswordEmail.subject': 'Reset your password',
+              };
+              return translations[key] || key;
+            }),
             translate: jest.fn().mockReturnValue('Confirm your email'),
           },
         },
@@ -60,6 +66,29 @@ describe('MailService', () => {
         templateName: 'confirmation',
         templateData: {
           confirmationUrl: `${appUrl}/auth/confirm-email?token=${token}`,
+        },
+      });
+    });
+  });
+
+  describe('sendPasswordResetEmail', () => {
+    it('should send a password reset email', async () => {
+      const to = 'test@example.com';
+      const token = 'resetToken';
+      const frontendUrl = 'http://localhost:4200';
+
+      configService.get.mockReturnValue(frontendUrl);
+
+      await service.sendPasswordResetEmail(to, token);
+
+      expect(configService.get).toHaveBeenCalledWith('app.frontend.url');
+      expect(i18nService.t).toHaveBeenCalledWith('messages.Mail.resetPasswordEmail.subject');
+      expect(mailSender.sendMail).toHaveBeenCalledWith({
+        to,
+        subject: 'Reset your password',
+        templateName: 'reset-password',
+        templateData: {
+          resetUrl: `${frontendUrl}/reset-password?token=${token}`,
         },
       });
     });

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
@@ -12,7 +12,8 @@ import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-forgot-password',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,
@@ -20,103 +21,109 @@ import { AuthService } from './data-access/auth.service';
     LinkComponent,
     TitleComponent,
     LabelComponent,
+    RouterLink,
   ],
   template: `
-    <div
-      class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
-    >
-      <app-title>{{ 'Auth.login' | translate }}</app-title>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <app-label forId="email">{{ 'Auth.email' | translate }}: </app-label>
+    <div class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10">
+      <app-title>{{ 'Auth.forgotPassword' | translate }}</app-title>
+      <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()">
+        <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
         <input
           id="email"
           formControlName="email"
           required
           class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
         />
-        <app-label forId="password"
-          >{{ 'Auth.password' | translate }}:
-        </app-label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
-        />
+
+        @if (emailErrors.length > 0) {
+          @for (error of emailErrors; track error) {
+            <app-error-message [customMessage]="error" />
+          }
+        }
+
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
         }
+
         <button
           type="submit"
           class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
         >
-          {{ 'Auth.loginButton' | translate }}
+          {{ 'Auth.sendResetLink' | translate }}
         </button>
+
         <app-link
           class="mt-4 block"
-          [routerLink]="['/register']"
-          [linkType]="LinkType.Default"
-          >{{ 'Auth.dontHaveAccount' | translate }}</app-link
-        >
-        <app-link
-          class="mt-1 block"
-          [routerLink]="['/forgot-password']"
+          [routerLink]="['/login']"
           [linkType]="LinkType.Default"
         >
-          {{ 'Auth.forgotPassword' | translate }}
+          {{ 'Auth.backToLogin' | translate }}
         </app-link>
       </form>
     </div>
   `,
-  styles: [],
 })
-export class LoginComponent implements OnInit {
+export class ForgotPasswordComponent implements OnInit {
   protected readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslateService);
-  private readonly route = inject(ActivatedRoute);
   private readonly toastService = inject(ToastService);
 
-  protected readonly loginForm: FormGroup;
+  protected readonly forgotPasswordForm: FormGroup;
   protected readonly LinkType = LinkType;
+  protected emailErrors: string[] = [];
   protected errorMessage: string | null = null;
 
   constructor() {
-    this.loginForm = this.fb.group({
+    this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
     });
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      if (params['confirmed'] === 'true') {
-        this.translateService.get('Auth.emailConfirmed').subscribe((message: string): void => {
-          console.log(message);
-          this.toastService.presentToast(message, true, ToastPosition.relative);
-        });
-      }
+    this.forgotPasswordForm.valueChanges.subscribe(() => {
+      this.errorMessage = null;
+      this.emailErrors = this.getEmailErrors();
     });
   }
 
   protected onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
+    if (this.forgotPasswordForm.valid) {
+      this.authService.forgotPassword(this.forgotPasswordForm.value).subscribe({
         next: () => {
-          this.router.navigate(['/tasks']).then();
+          this.router.navigate(['/login']).then(() => {
+            this.toastService.presentToast(
+              this.translateService.instant('Auth.resetLinkSent'),
+              true,
+              ToastPosition.relative,
+            );
+          });
         },
         error: err => {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
             this.errorMessage = this.translateService.instant(
-              'Auth.unknownLoginError',
+              'Auth.unknownError',
             );
           }
         },
       });
+    } else {
+      this.forgotPasswordForm.markAllAsTouched();
     }
+  }
+
+  private getEmailErrors(): string[] {
+    const emailControl = this.forgotPasswordForm.get('email');
+    const errors: string[] = [];
+    if (emailControl?.hasError('required')) {
+      errors.push(this.translateService.instant('Auth.emailRequired'));
+    }
+    if (emailControl?.hasError('email')) {
+      errors.push(this.translateService.instant('Auth.emailInvalid'));
+    }
+    return errors;
   }
 }
