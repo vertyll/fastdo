@@ -153,7 +153,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 text-sm cursor-pointer dark:text-gray-200;
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 text-sm cursor-pointer;
     }
 
     .mobile-module-item.active {
@@ -236,7 +236,15 @@ import { ToastComponent } from '../atoms/toast.component';
       @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 relative;
     }
 
+    .profile-button {
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 relative;
+    }
+
     .language-dropdown {
+      @apply absolute right-0 top-full mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
+    }
+
+    .profile-dropdown {
       @apply absolute right-0 top-full mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
     }
 
@@ -363,9 +371,23 @@ import { ToastComponent } from '../atoms/toast.component';
           </div>
 
           <div class="hidden md:flex items-center space-x-4">
-            <button (click)="logout()" class="auth-button logout-button">
-              {{ 'Basic.logout' | translate }}
-            </button>
+            <div class="relative">
+              <button class="profile-button" (click)="toggleProfileDropdown($event)">
+                <span>{{ 'Navbar.profile' | translate }}</span>
+                <ng-icon [name]="profileDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+              </button>
+
+              @if (profileDropdownOpen) {
+                <div class="profile-dropdown" @dropdown>
+                  <button class="auth-button" (click)="router.navigate(['/user-profile'])">
+                    {{ 'Navbar.profile' | translate }}
+                  </button>
+                  <button class="auth-button logout-button" (click)="logout()">
+                    {{ 'Basic.logout' | translate }}
+                  </button>
+                </div>
+              }
+            </div>
             <app-theme-switcher />
             <div class="relative">
               <button class="language-button" (click)="toggleLanguageDropdown($event)">
@@ -444,6 +466,9 @@ import { ToastComponent } from '../atoms/toast.component';
               </div>
             }
             <div class="border-t border-gray-200 mt-1">
+              <button (click)="navigateToProfileAndCloseMenu()" class="mobile-module-item text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 w-full text-left">
+                {{ 'Navbar.profile' | translate }}
+              </button>
               <button (click)="logout()" class="mobile-module-item text-red-500 hover:text-red-600 w-full text-left">
                 {{ 'Basic.logout' | translate }}
               </button>
@@ -536,6 +561,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected showAllSections: boolean = false;
   protected languageDropdownOpen: boolean = false;
   protected readonly languages: string[] = ['pl', 'en'];
+  protected profileDropdownOpen: boolean = false;
 
   constructor() {
     this.router.events.pipe(
@@ -580,6 +606,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
     document.removeEventListener('click', this.closeLanguageDropdown);
   };
 
+  protected toggleProfileDropdown(event: Event): void {
+    event.stopPropagation();
+    this.profileDropdownOpen = !this.profileDropdownOpen;
+    if (this.profileDropdownOpen) {
+      setTimeout(() => {
+        document.addEventListener('click', this.closeProfileDropdown);
+      });
+    }
+  }
+
+  protected closeProfileDropdown = (): void => {
+    this.profileDropdownOpen = false;
+    document.removeEventListener('click', this.closeProfileDropdown);
+  }
+
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
     this.localStorageService.set('selected_language', lang);
@@ -622,6 +663,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected selectModuleAndCloseMenu(module: NavModule): void {
     this.selectModule(module);
+    this.closeMenu();
+  }
+
+  protected navigateToProfileAndCloseMenu(): void {
+    this.router.navigate(['/user-profile']).then();
     this.closeMenu();
   }
 

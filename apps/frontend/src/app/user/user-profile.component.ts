@@ -308,13 +308,13 @@ export class UserProfileComponent implements OnInit {
     const control = this.profileForm.get(controlName);
     const errors: string[] = [];
     if (control?.hasError('minlength')) {
-      errors.push('Password must be at least 8 characters long.');
+      errors.push(this.translateService.instant('Auth.passwordMinLength'));
     }
     if (control?.hasError('uppercase')) {
-      errors.push('Password must contain at least one uppercase letter.');
+      errors.push(this.translateService.instant('Auth.passwordUppercase'));
     }
     if (control?.hasError('specialCharacter')) {
-      errors.push('Password must contain at least one special character.');
+      this.translateService.instant('Auth.passwordSpecialCharacter');
     }
     return errors;
   }
@@ -324,7 +324,7 @@ export class UserProfileComponent implements OnInit {
     const confirmNewPassword = this.profileForm.get('confirmNewPassword')?.value;
     const errors: string[] = [];
     if (newPassword !== confirmNewPassword) {
-      errors.push('Passwords do not match.');
+      errors.push(this.translateService.instant('Auth.passwordDoNotMatch'));
     }
     return errors;
   }

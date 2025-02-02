@@ -154,7 +154,8 @@
   },
   "Navbar": {
     "dashboard": "Panel",
-    "todo": "TODO"
+    "todo": "TODO",
+    "profile": "Profil"
   },
   "RemoveItemButton": {
     "areYouSure": " Czy na pewno chcesz usunąć ten element?"

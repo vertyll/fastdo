@@ -152,7 +152,8 @@
   },
   "Navbar": {
     "dashboard": "Dashboard",
-    "todo": "TODO"
+    "todo": "TODO",
+    "profile": "Profile"
   },
   "RemoveItemButton": {
     "areYouSure": "Are you sure you want to delete this item?"
