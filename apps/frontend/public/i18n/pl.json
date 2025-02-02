@@ -207,6 +207,7 @@
     "password": "Hasło",
     "newPassword": "Nowe hasło",
     "confirmNewPassword": "Potwierdź nowe hasło",
-    "updateSuccess": "Profil został zaktualizowany"
+    "updateSuccess": "Profil został zaktualizowany",
+    "updateError": "Wystąpił błąd podczas aktualizacji profilu"
   }
 }

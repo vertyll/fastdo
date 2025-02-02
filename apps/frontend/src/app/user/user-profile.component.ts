@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgIconComponent } from '@ng-icons/core';
-import { TranslateModule } from '@ngx-translate/core';
+import {NgIconComponent, provideIcons} from '@ng-icons/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import { PasswordValidator } from '../auth/validators/password.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
@@ -10,6 +10,7 @@ import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
+import {heroCamera, heroUserCircle} from "@ng-icons/heroicons/outline";
 
 @Component({
   selector: 'app-user-profile',
@@ -22,6 +23,7 @@ import { UserStateService } from './data-access/user.state.service';
     DatePipe,
     NgIconComponent,
   ],
+  providers: [provideIcons({ heroUserCircle, heroCamera })],
   template: `
     @switch (stateService.state()) {
       @case (LOADING_STATE_VALUE.LOADING) {
@@ -48,9 +50,9 @@ import { UserStateService } from './data-access/user.state.service';
 
                 <div class="flex items-center mb-6">
                   <div class="relative">
-                    @if (user()?.avatar?.url) {
+                    @if (user().avatar?.url) {
                       <img
-                        [src]="user()?.avatar?.url"
+                        [src]="user().avatar?.url"
                         class="w-24 h-24 rounded-full object-cover"
                         alt="profile"
                       />
@@ -62,11 +64,11 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
                   <div class="ml-6">
                     <div class="text-xl font-medium text-gray-900 dark:text-white">
-                      {{ user()?.email }}
+                      {{ user().email }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                       {{ 'Profile.memberSince' | translate }}
-                      {{ user()?.dateCreation | date:'mediumDate' }}
+                      {{ user().dateCreation | date:'mediumDate' }}
                     </div>
                   </div>
                 </div>
@@ -99,8 +101,8 @@ import { UserStateService } from './data-access/user.state.service';
                   <div class="relative">
                     @if (previewUrl) {
                       <img [src]="previewUrl" class="w-24 h-24 rounded-full object-cover" alt="preview" />
-                    } @else if (user()?.avatar?.url) {
-                      <img [src]="user()?.avatar?.url" class="w-24 h-24 rounded-full object-cover" alt="current" />
+                    } @else if (user().avatar?.url) {
+                      <img [src]="user().avatar?.url" class="w-24 h-24 rounded-full object-cover" alt="current" />
                     } @else {
                       <div class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                         <ng-icon name="heroUserCircle" size="64" />
@@ -108,7 +110,7 @@ import { UserStateService } from './data-access/user.state.service';
                     }
                     <button
                       type="button"
-                      class="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
+                      class="absolute flex justify-center items-center bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
                       (click)="fileInput.click()"
                     >
                       <ng-icon name="heroCamera" size="20" />
@@ -129,6 +131,7 @@ import { UserStateService } from './data-access/user.state.service';
                       {{ 'Profile.email' | translate }}
                     </label>
                     <input
+                      id="email"
                       type="email"
                       formControlName="email"
                       class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
@@ -140,6 +143,7 @@ import { UserStateService } from './data-access/user.state.service';
                       {{ 'Profile.password' | translate }}
                     </label>
                     <input
+                      id="password"
                       type="password"
                       formControlName="password"
                       class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
@@ -156,6 +160,7 @@ import { UserStateService } from './data-access/user.state.service';
                       {{ 'Profile.newPassword' | translate }}
                     </label>
                     <input
+                      id="newPassword"
                       type="password"
                       formControlName="newPassword"
                       class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
@@ -172,6 +177,7 @@ import { UserStateService } from './data-access/user.state.service';
                       {{ 'Profile.confirmNewPassword' | translate }}
                     </label>
                     <input
+                      id="confirmNewPassword"
                       type="password"
                       formControlName="confirmNewPassword"
                       class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
@@ -201,6 +207,7 @@ export class UserProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly toastService = inject(ToastService);
   private readonly passwordValidator = inject(PasswordValidator);
+  private readonly translateService = inject(TranslateService);
 
   protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
   protected readonly user = computed(() => this.stateService.user());
@@ -241,7 +248,7 @@ export class UserProfileComponent implements OnInit {
     this.isEditing = !this.isEditing;
     if (this.isEditing) {
       this.profileForm.patchValue({
-        email: this.user()?.email,
+        email: this.user().email,
       });
     }
   }
@@ -285,10 +292,10 @@ export class UserProfileComponent implements OnInit {
             this.previewUrl = null;
             this.selectedFile = null;
             this.profileForm.reset();
-            this.toastService.presentToast('Profile.updateSuccess', true);
+            this.toastService.presentToast(this.translateService.instant('Profile.updateSuccess'), true);
           },
           error: error => {
-            this.toastService.presentToast(error.error.message || 'Profile.updateError', false);
+            this.toastService.presentToast(error.error.message || this.translateService.instant('Profile.updateError'));
           },
         });
       } else {

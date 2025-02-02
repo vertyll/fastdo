@@ -205,6 +205,7 @@
     "password": "Password",
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
-    "updateSuccess": "Profile updated successfully"
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "An error occurred while updating the profile"
   }
 }
