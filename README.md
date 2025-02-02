@@ -7,18 +7,18 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 
 ## Stos technologiczny
 
-### Front-end:
-- Angular
-- RxJS
-- NGXS
-- Tailwind CSS
-
 ### Back-end:
 - NestJS
 - Fastify
 - TypeORM
 - PostgreSQL
 - Jest
+
+### Front-end:
+- Angular
+- RxJS
+- NGXS
+- Tailwind CSS
 
 ### Uwierzytelnianie:
 - uwierzytelnianie za pomocą JWT - aplikacja korzysta z tokenów JWT do uwierzytelniania użytkowników i posiada mechanizm odświeżania tokenów
