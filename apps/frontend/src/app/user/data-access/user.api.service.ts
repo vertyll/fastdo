@@ -16,11 +16,11 @@ export class UserApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  getCurrentUser(): Observable<ApiResponse<User>> {
+  public getCurrentUser(): Observable<ApiResponse<User>> {
     return this.withLoadingState(this.http.get<ApiResponse<User>>(`${this.URL}/users/me`));
   }
 
-  updateProfile(formData: FormData): Observable<ApiResponse<User>> {
+  public updateProfile(formData: FormData): Observable<ApiResponse<User>> {
     return this.withLoadingState(this.http.put<ApiResponse<User>>(`${this.URL}/users/me`, formData));
   }
 

@@ -12,7 +12,7 @@ export class UserService {
   private readonly httpService = inject(UserApiService);
   private readonly state = inject(UserStateService);
 
-  getCurrentUser(): Observable<ApiResponse<User>> {
+  public getCurrentUser(): Observable<ApiResponse<User>> {
     return this.httpService.getCurrentUser().pipe(
       tap(response => {
         this.state.setUser(response.data);
@@ -20,7 +20,7 @@ export class UserService {
     );
   }
 
-  updateProfile(formData: FormData): Observable<ApiResponse<User>> {
+  public updateProfile(formData: FormData): Observable<ApiResponse<User>> {
     return this.httpService.updateProfile(formData).pipe(
       tap(response => {
         this.state.setUser(response.data);
