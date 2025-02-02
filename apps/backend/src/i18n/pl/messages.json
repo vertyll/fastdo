@@ -26,7 +26,8 @@
       "invalidCredentials": "Nieprawidłowe dane logowania",
       "userAlreadyExists": "Użytkownik o podanym adresie email już istnieje",
       "roleNotFound": "Rola nie istnieje",
-      "emailNotConfirmed": "Adres email nie został potwierdzony"
+      "emailNotConfirmed": "Adres email nie został potwierdzony",
+      "invalidRefreshToken": "Nieprawidłowy token odświeżania"
     }
   },
   "User": {

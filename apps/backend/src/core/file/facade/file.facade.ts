@@ -2,8 +2,8 @@ import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
 import { FileMetadataDto } from '../dtos/file-metadata.dto';
 import { File } from '../entities/file.entity';
-import { FileService } from '../services/file.service';
 import { FileUploadOptions } from '../interfaces/file-upload-options.interface';
+import { FileService } from '../services/file.service';
 
 @Injectable()
 export class FileFacade {

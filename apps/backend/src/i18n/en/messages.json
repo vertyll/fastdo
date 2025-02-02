@@ -26,7 +26,8 @@
       "invalidCredentials": "Invalid login credentials",
       "userAlreadyExists": "A user with the provided email already exists",
       "roleNotFound": "Role not found",
-      "emailNotConfirmed": "Email address not confirmed"
+      "emailNotConfirmed": "Email address not confirmed",
+      "invalidRefreshToken": "Invalid refresh token"
     }
   },
   "User": {

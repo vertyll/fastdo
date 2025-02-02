@@ -16,7 +16,7 @@ import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { PaginationMeta } from '../shared/types/api-response.type';
 import { PaginationParams, TasksListFiltersConfig } from '../shared/types/filter.type';
-import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { GetAllTasksSearchParams, TasksListViewMode } from '../shared/types/task.type';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { TasksService } from './data-access/task.service';
@@ -120,7 +120,7 @@ export class TaskListPageComponent implements OnInit {
   readonly view = input<TasksListViewMode>();
   readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
 
-  protected readonly listStateValue = LIST_STATE_VALUE;
+  protected readonly listStateValue = LOADING_STATE_VALUE;
 
   private readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);

@@ -62,7 +62,7 @@ describe('ConfirmationTokenService', () => {
         { email },
         { expiresIn: '24h', secret: mockSecret },
       );
-      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.secret');
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.accessTokenSecret');
     });
   });
 
@@ -76,7 +76,7 @@ describe('ConfirmationTokenService', () => {
 
       expect(result).toEqual(mockPayload);
       expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockSecret });
-      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.secret');
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.accessTokenSecret');
     });
 
     it('should throw UnauthorizedException with translated message for invalid token', () => {
@@ -91,7 +91,7 @@ describe('ConfirmationTokenService', () => {
       );
 
       expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockSecret });
-      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.secret');
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.accessTokenSecret');
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
   });

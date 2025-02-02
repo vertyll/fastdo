@@ -1,5 +1,5 @@
-import {fastifyMultipart} from "@fastify/multipart";
-import {BadRequestException, ConsoleLogger, ValidationError} from '@nestjs/common';
+import { fastifyMultipart } from '@fastify/multipart';
+import { BadRequestException, ConsoleLogger, ValidationError } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -23,9 +23,9 @@ import { PrivacyPolicy } from './terms-and-policies/entities/privacy-policy.enti
 import { TermsSectionTranslation } from './terms-and-policies/entities/terms-section-translation.entity';
 import { TermsSection } from './terms-and-policies/entities/terms-section.entity';
 import { Terms } from './terms-and-policies/entities/terms.entity';
+import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
-import {UserEmailHistory} from "./users/entities/user-email-history.entity";
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -36,7 +36,7 @@ async function bootstrap(): Promise<void> {
         json: true,
         colors: true,
       }),
-    }
+    },
   );
   const configService: ConfigService = app.get(ConfigService);
 

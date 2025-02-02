@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { LIST_STATE_VALUE } from 'src/app/shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
 import { PaginationMeta } from '../../shared/types/api-response.type';
 import { Project } from '../models/Project';
 import { ProjectsApiService } from './project.api.service';
@@ -20,12 +20,12 @@ export class ProjectsStateService {
   public projectCount = computed(() => this.projectsSignal().length);
   public state = computed(() =>
     this.apiService.$idle()
-      ? LIST_STATE_VALUE.IDLE
+      ? LOADING_STATE_VALUE.IDLE
       : this.apiService.$loading()
-      ? LIST_STATE_VALUE.LOADING
+      ? LOADING_STATE_VALUE.LOADING
       : this.apiService.$error()
-      ? LIST_STATE_VALUE.ERROR
-      : LIST_STATE_VALUE.SUCCESS
+      ? LOADING_STATE_VALUE.ERROR
+      : LOADING_STATE_VALUE.SUCCESS
   );
   public error = computed(() => this.apiService.$error());
   public readonly pagination = this.paginationSignal.asReadonly();

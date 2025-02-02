@@ -94,7 +94,13 @@ export class LoginComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['confirmed'] === 'true') {
         this.translateService.get('Auth.emailConfirmed').subscribe((message: string): void => {
-          console.log(message);
+          this.toastService.presentToast(message, true, ToastPosition.relative);
+        });
+      }
+
+      if (params['emailChanged'] === 'true') {
+        this.translateService.get('Auth.emailChanged').subscribe((message: string): void => {
+          this.authService.clearTokens();
           this.toastService.presentToast(message, true, ToastPosition.relative);
         });
       }

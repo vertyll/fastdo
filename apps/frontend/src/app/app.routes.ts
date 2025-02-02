@@ -10,6 +10,7 @@ import { ProjectListPageComponent } from './project/project-list.page.component'
 import { TaskListPageComponent } from './task/task-list.page.component';
 import { PrivacyPolicyPageComponent } from './terms-and-policies/privacy-policy.page.component';
 import { TermsPageComponent } from './terms-and-policies/terms.page.component';
+import { UserProfileComponent } from './user/user-profile.component';
 
 export const routes: Routes = [
   {
@@ -81,6 +82,12 @@ export const routes: Routes = [
     path: 'privacy-policy',
     title: 'Polityka prywatności',
     component: PrivacyPolicyPageComponent,
+  },
+  {
+    path: 'user-profile',
+    title: 'Profil użytkownika',
+    component: UserProfileComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: '**',

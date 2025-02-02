@@ -1,4 +1,4 @@
-import {forwardRef, MiddlewareConsumer, Module, NestModule, RequestMethod} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -9,6 +9,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 
@@ -20,13 +21,13 @@ import { LocalStrategy } from './strategies/local.strategy';
     MailModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('app.security.jwt.secret'),
-        signOptions: { expiresIn: configService.get<string>('app.security.jwt.expiresIn') },
+        secret: configService.get<string>('app.security.jwt.accessTokenSecret'),
+        signOptions: { expiresIn: configService.get<string>('app.security.jwt.accessTokenExpiresIn') },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy, LocalStrategy, ConfirmationTokenService],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, LocalStrategy, ConfirmationTokenService],
   controllers: [AuthController],
   exports: [AuthService, ConfirmationTokenService],
 })

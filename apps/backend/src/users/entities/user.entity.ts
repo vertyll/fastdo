@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { File } from '../../core/file/entities/file.entity';
 import { UserRole } from './user-role.entity';
-import {File} from "../../core/file/entities/file.entity";
 
 @Entity('user')
 export class User {
@@ -18,6 +18,10 @@ export class User {
   @Column()
   @Exclude()
   password: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  @Exclude()
+  refreshToken: string | null;
 
   @ApiProperty()
   @Column({ default: true })

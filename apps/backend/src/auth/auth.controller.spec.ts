@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RegisterDto } from './dtos/register.dto';
 
 jest.mock('../common/guards/local-auth.guard');
@@ -34,6 +35,7 @@ describe('AuthController', () => {
     emailChangeToken: null,
     emailChangeTokenExpiry: null,
     pendingEmail: null,
+    refreshToken: null,
   };
 
   const mockLoginDto: LoginDto = {
@@ -57,6 +59,10 @@ describe('AuthController', () => {
     password: 'newPassword123',
   };
 
+  const mockRefreshTokenDto: RefreshTokenDto = {
+    refreshToken: 'valid-refresh-token',
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -69,6 +75,8 @@ describe('AuthController', () => {
             confirmEmail: jest.fn(),
             forgotPassword: jest.fn(),
             resetPassword: jest.fn(),
+            refreshToken: jest.fn(),
+            logout: jest.fn(),
           },
         },
         {
@@ -109,7 +117,8 @@ describe('AuthController', () => {
 
     it('should successfully login user and return access token', async () => {
       const mockToken = 'jwt.token.here';
-      const expectedResponse = { accessToken: mockToken };
+      const mockRefresh = 'refresh.token.here';
+      const expectedResponse = { accessToken: mockToken, refreshToken: mockRefresh };
       authService.login.mockResolvedValue(expectedResponse);
 
       const result = await controller.login(mockLoginDto);
@@ -154,6 +163,48 @@ describe('AuthController', () => {
         .rejects
         .toThrow(UnauthorizedException);
       expect(authService.register).toHaveBeenCalledWith(mockRegisterDto);
+    });
+  });
+
+  describe('refreshToken', () => {
+    it('should successfully refresh access token', async () => {
+      const mockAccessToken = { accessToken: 'new.jwt.token' };
+      authService.refreshToken.mockResolvedValue(mockAccessToken);
+
+      const result = await controller.refreshToken(mockRefreshTokenDto);
+
+      expect(result).toEqual(mockAccessToken);
+      expect(authService.refreshToken).toHaveBeenCalledWith(mockRefreshTokenDto.refreshToken);
+      expect(authService.refreshToken).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle refresh token failure', async () => {
+      authService.refreshToken.mockRejectedValue(new UnauthorizedException());
+
+      await expect(controller.refreshToken(mockRefreshTokenDto))
+        .rejects
+        .toThrow(UnauthorizedException);
+      expect(authService.refreshToken).toHaveBeenCalledWith(mockRefreshTokenDto.refreshToken);
+    });
+  });
+
+  describe('logout', () => {
+    it('should successfully logout user', async () => {
+      const mockUserId = 1;
+      await controller.logout(mockUserId);
+
+      expect(authService.logout).toHaveBeenCalledWith(mockUserId);
+      expect(authService.logout).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle logout failure', async () => {
+      const mockUserId = 1;
+      authService.logout.mockRejectedValue(new UnauthorizedException());
+
+      await expect(controller.logout(mockUserId))
+        .rejects
+        .toThrow(UnauthorizedException);
+      expect(authService.logout).toHaveBeenCalledWith(mockUserId);
     });
   });
 

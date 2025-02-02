@@ -4,11 +4,11 @@ import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
 import { UsersService } from '../../users/users.service';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtRefreshPayload } from '../interfaces/jwt-refresh-payload.interface';
+import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 
-describe('JwtStrategy', () => {
-  let jwtStrategy: JwtStrategy;
+describe('JwtRefreshStrategy', () => {
+  let jwtRefreshStrategy: JwtRefreshStrategy;
   let usersService: jest.Mocked<UsersService>;
   let configService: jest.Mocked<ConfigService>;
   let i18nService: jest.Mocked<I18nService<I18nTranslations>>;
@@ -35,10 +35,8 @@ describe('JwtStrategy', () => {
     refreshToken: 'refreshToken',
   };
 
-  const mockPayload: JwtPayload = {
+  const mockPayload: JwtRefreshPayload = {
     sub: 1,
-    email: 'test@test.com',
-    roles: ['user'],
   };
 
   beforeEach(() => {
@@ -49,8 +47,8 @@ describe('JwtStrategy', () => {
     configService = {
       get: jest.fn().mockImplementation((key: string) => {
         switch (key) {
-          case 'app.security.jwt.accessTokenSecret':
-            return 'test-secret';
+          case 'app.security.jwt.refreshTokenSecret':
+            return 'test-refresh-secret';
           default:
             return null;
         }
@@ -61,7 +59,7 @@ describe('JwtStrategy', () => {
       t: jest.fn().mockReturnValue('translated message'),
     } as unknown as jest.Mocked<I18nService<I18nTranslations>>;
 
-    jwtStrategy = new JwtStrategy(
+    jwtRefreshStrategy = new JwtRefreshStrategy(
       usersService,
       i18nService,
       configService,
@@ -69,11 +67,15 @@ describe('JwtStrategy', () => {
   });
 
   describe('constructor', () => {
-    it('should throw error if JWT_ACCESS_SECRET is not defined', () => {
+    it('should throw error if JWT_REFRESH_SECRET is not defined', () => {
       configService.get.mockReturnValue(null);
 
-      expect(() => new JwtStrategy(usersService, i18nService, configService))
-        .toThrow('JWT_ACCESS_SECRET is not defined');
+      expect(() => new JwtRefreshStrategy(usersService, i18nService, configService))
+        .toThrow('JWT_REFRESH_SECRET is not defined');
+    });
+
+    it('should create strategy with correct options', () => {
+      expect(jwtRefreshStrategy).toBeDefined();
     });
   });
 
@@ -81,16 +83,16 @@ describe('JwtStrategy', () => {
     it('should validate and return a user if valid payload is provided', async () => {
       usersService.findOne.mockResolvedValue(mockUser);
 
-      const result = await jwtStrategy.validate(mockPayload);
+      const result = await jwtRefreshStrategy.validate(mockPayload);
 
       expect(usersService.findOne).toHaveBeenCalledWith(mockPayload.sub);
-      expect(result).toEqual({ ...mockUser, roles: mockPayload.roles });
+      expect(result).toEqual(mockUser);
     });
 
     it('should throw an UnauthorizedException if user is not found', async () => {
       usersService.findOne.mockResolvedValue(null);
 
-      await expect(jwtStrategy.validate(mockPayload))
+      await expect(jwtRefreshStrategy.validate(mockPayload))
         .rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
@@ -99,16 +101,16 @@ describe('JwtStrategy', () => {
       const inactiveUser = { ...mockUser, isActive: false };
       usersService.findOne.mockResolvedValue(inactiveUser);
 
-      await expect(jwtStrategy.validate(mockPayload))
+      await expect(jwtRefreshStrategy.validate(mockPayload))
         .rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
 
-    it('should throw an UnauthorizedException if email is not confirmed', async () => {
-      const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
-      usersService.findOne.mockResolvedValue(unconfirmedUser);
+    it('should throw an UnauthorizedException if refresh token is not present', async () => {
+      const userWithoutRefreshToken = { ...mockUser, refreshToken: null };
+      usersService.findOne.mockResolvedValue(userWithoutRefreshToken);
 
-      await expect(jwtStrategy.validate(mockPayload))
+      await expect(jwtRefreshStrategy.validate(mockPayload))
         .rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });

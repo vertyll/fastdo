@@ -28,6 +28,7 @@ describe('LocalStrategy', () => {
     emailChangeToken: null,
     emailChangeTokenExpiry: null,
     pendingEmail: null,
+    refreshToken: 'refreshToken',
   };
 
   beforeEach(() => {

@@ -31,8 +31,10 @@ export default registerAs('app', (): AppConfig => ({
   },
   security: {
     jwt: {
-      secret: process.env.JWT_SECRET || 'development-secret',
-      expiresIn: process.env.JWT_EXPIRES_IN || '90d',
+      accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET || 'development-secret',
+      refreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET || 'development-refresh-secret',
+      accessTokenExpiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || '15m',
+      refreshTokenExpiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || '7d',
       confirmationToken: {
         expiresIn: process.env.JWT_CONFIRMATION_TOKEN_EXPIRES_IN || '24h',
       },

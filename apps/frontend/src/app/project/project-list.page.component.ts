@@ -13,7 +13,7 @@ import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { PaginationMeta } from '../shared/types/api-response.type';
 import { PaginationParams, ProjectListFiltersConfig } from '../shared/types/filter.type';
-import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { GetAllProjectsSearchParams } from '../shared/types/project.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
@@ -89,7 +89,7 @@ export class ProjectListPageComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
   private readonly modalService = inject(ModalService);
-  protected readonly listStateValue = LIST_STATE_VALUE;
+  protected readonly listStateValue = LOADING_STATE_VALUE;
 
   ngOnInit(): void {
     this.getAllProjects();

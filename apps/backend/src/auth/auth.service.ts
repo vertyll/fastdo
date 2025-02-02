@@ -20,6 +20,8 @@ import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { IAuthService } from './interfaces/auth-service.interface';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtRefreshPayload } from './interfaces/jwt-refresh-payload.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -34,18 +36,15 @@ export class AuthService implements IAuthService {
     private readonly roleRepository: RoleRepository,
     private readonly configService: ConfigService,
     private readonly i18n: I18nService<I18nTranslations>,
-  ) {}
+  ) {
+  }
 
   public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findByEmail(email);
-    if (!user) {
-      return null;
-    }
+    if (!user) return null;
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return null;
-    }
+    if (!isPasswordValid) return null;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = user;
@@ -59,18 +58,10 @@ export class AuthService implements IAuthService {
 
     try {
       const existingUser = await this.userRepository.findOne({ where: { email: registerDto.email } });
-      if (existingUser) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.userAlreadyExists'),
-        );
-      }
+      if (existingUser) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.userAlreadyExists'));
 
       const role = await this.roleRepository.findOne({ where: { name: RoleEnum.User } });
-      if (!role) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.roleNotFound'),
-        );
-      }
+      if (!role) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.roleNotFound'));
 
       const { email, password, termsAccepted, privacyPolicyAccepted } = registerDto;
       const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
@@ -159,28 +150,29 @@ export class AuthService implements IAuthService {
     await queryRunner.startTransaction();
 
     try {
-      const {email} = this.confirmationTokenService.verifyToken(token);
+      const { email } = this.confirmationTokenService.verifyToken(token);
 
-      const user = await this.userRepository.findOne({where: {email}});
+      const user = await this.userRepository.findOne({ where: { email } });
 
       if (
-          !user
-          || user.emailChangeToken !== token
-          || !user.emailChangeTokenExpiry
+        !user
+        || user.emailChangeToken !== token
+        || !user.emailChangeTokenExpiry
       ) {
         throw new UnauthorizedException(
-            this.i18n.t('messages.Auth.errors.invalidToken'),
+          this.i18n.t('messages.Auth.errors.invalidToken'),
         );
       }
 
       if (user.emailChangeTokenExpiry < new Date()) {
         throw new UnauthorizedException(
-            this.i18n.t('messages.Auth.errors.tokenExpired'),
+          this.i18n.t('messages.Auth.errors.tokenExpired'),
         );
       }
 
       await this.userRepository.update(user.id, {
         email: user.pendingEmail ?? user.email,
+        refreshToken: null,
         emailChangeToken: null,
         emailChangeTokenExpiry: null,
         pendingEmail: null,
@@ -198,25 +190,60 @@ export class AuthService implements IAuthService {
 
   public async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user) {
-      throw new UnauthorizedException(
-        this.i18n.t('messages.Auth.errors.invalidCredentials'),
-      );
-    }
+    if (!user) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidCredentials'));
 
-    if (!user.isEmailConfirmed) {
-      throw new UnauthorizedException(
-        this.i18n.t('messages.Auth.errors.emailNotConfirmed'),
-      );
-    }
+    if (!user.isEmailConfirmed) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.emailNotConfirmed'));
 
     const roles = await this.rolesService.getUserRoles(user.id);
-    const payload = { email: user.email, sub: user.id, roles };
-    const token = this.jwtService.sign(payload);
+
+    const accessToken = this.generateAccessToken({
+      sub: user.id,
+      email: user.email,
+      roles,
+    });
+
+    const refreshToken = this.generateRefreshToken({
+      sub: user.id,
+    });
+
+    const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
+    await this.userRepository.update(user.id, { refreshToken: refreshTokenHash });
 
     return {
-      accessToken: token,
+      accessToken,
+      refreshToken,
     };
+  }
+
+  public async refreshToken(refreshToken: string): Promise<Pick<LoginResponseDto, 'accessToken'>> {
+    const decoded = this.jwtService.verify<JwtRefreshPayload>(refreshToken, {
+      secret: this.configService.get<string>('app.security.jwt.refreshTokenSecret'),
+    });
+
+    const user = await this.userRepository.findOne({
+      where: { id: decoded.sub },
+    });
+
+    if (!user || !user.refreshToken) {
+      throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidRefreshToken'));
+    }
+
+    const isValidRefreshToken = await bcrypt.compare(refreshToken, user.refreshToken);
+    if (!isValidRefreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidRefreshToken'));
+
+    const roles = await this.rolesService.getUserRoles(user.id);
+
+    return {
+      accessToken: this.generateAccessToken({
+        sub: user.id,
+        email: user.email,
+        roles,
+      }),
+    };
+  }
+
+  public async logout(userId: number): Promise<void> {
+    await this.userRepository.update(userId, { refreshToken: null });
   }
 
   public async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
@@ -224,9 +251,7 @@ export class AuthService implements IAuthService {
       where: { email: forgotPasswordDto.email },
     });
 
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     const resetToken = this.confirmationTokenService.generateToken(user.email);
     const resetTokenExpiry = new Date();
@@ -254,11 +279,7 @@ export class AuthService implements IAuthService {
         || user.confirmationToken !== resetPasswordDto.token
         || !user.confirmationTokenExpiry
         || user.confirmationTokenExpiry < new Date()
-      ) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.invalidToken'),
-        );
-      }
+      ) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 
       const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
       const hashedPassword = await bcrypt.hash(resetPasswordDto.password, saltRounds);
@@ -277,5 +298,19 @@ export class AuthService implements IAuthService {
       }
       await queryRunner.release();
     }
+  }
+
+  private generateAccessToken(payload: JwtPayload): string {
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('app.security.jwt.accessTokenSecret'),
+      expiresIn: this.configService.get<string>('app.security.jwt.accessTokenExpiresIn') || '15m',
+    });
+  }
+
+  private generateRefreshToken(payload: JwtRefreshPayload): string {
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('app.security.jwt.refreshTokenSecret'),
+      expiresIn: this.configService.get<string>('app.security.jwt.refreshTokenExpiresIn') || '7d',
+    });
   }
 }

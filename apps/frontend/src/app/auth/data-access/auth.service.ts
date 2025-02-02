@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, map, tap, throwError } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api-response.type';
 import { RegisterResponse } from '../../shared/types/auth.type';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
@@ -23,7 +23,7 @@ export class AuthService {
   public login(dto: LoginDto): Observable<void> {
     return this.authApiService.login(dto).pipe(
       tap(response => {
-        localStorage.setItem('access_token', response.data.accessToken);
+        this.saveTokens(response.data.accessToken, response.data.refreshToken);
         this.decodeToken(response.data.accessToken);
       }),
       map(() => void 0),
@@ -35,23 +35,89 @@ export class AuthService {
   }
 
   public logout(): void {
-    localStorage.removeItem('access_token');
-    this.authStateService.clear();
+    this.authApiService.logout().subscribe(() => {
+      this.clearTokens();
+      this.authStateService.clear();
+    });
   }
 
   public initializeAuth(): void {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      this.decodeToken(token);
+    const accessToken: string | null = localStorage.getItem('access_token');
+    if (accessToken) {
+      try {
+        if (this.isTokenExpired(accessToken)) {
+          this.refreshToken().subscribe({
+            error: () => {
+              this.clearTokens();
+              this.authStateService.clear();
+            },
+          });
+        } else {
+          this.decodeToken(accessToken);
+        }
+      } catch {
+        this.clearTokens();
+        this.authStateService.clear();
+      }
     }
   }
 
-  forgotPassword(dto: ForgotPasswordDto): Observable<ApiResponse<void>> {
+  public refreshToken(): Observable<string> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token found'));
+    }
+
+    return this.authApiService.refreshToken(refreshToken).pipe(
+      map(response => {
+        const newAccessToken = response.data.accessToken;
+        localStorage.setItem('access_token', newAccessToken);
+        this.decodeToken(newAccessToken);
+        return newAccessToken;
+      }),
+    );
+  }
+
+  public forgotPassword(dto: ForgotPasswordDto): Observable<ApiResponse<void>> {
     return this.authApiService.forgotPassword(dto);
   }
 
-  resetPassword(dto: ResetPasswordDto): Observable<ApiResponse<void>> {
+  public resetPassword(dto: ResetPasswordDto): Observable<ApiResponse<void>> {
     return this.authApiService.resetPassword(dto);
+  }
+
+  public isTokenValid(): boolean {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) return false;
+
+    try {
+      return !this.isTokenExpired(accessToken);
+    } catch {
+      return false;
+    }
+  }
+
+  public clearTokens(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const decodedToken: any = jwtDecode(token);
+      if (!decodedToken.exp) return true;
+
+      const bufferTime = 10 * 1000;
+      const expirationTime = decodedToken.exp * 1000;
+      return Date.now() >= (expirationTime - bufferTime);
+    } catch {
+      return true;
+    }
+  }
+
+  private saveTokens(accessToken: string, refreshToken: string): void {
+    localStorage.setItem('access_token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
   }
 
   private decodeToken(token: string): void {

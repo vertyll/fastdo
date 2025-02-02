@@ -4,12 +4,15 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
 import { Public } from '../common/decorators/public.decorator';
+import { User as UserDecorator } from '../common/decorators/user.decorator';
+import { JwtRefreshAuthGuard } from '../common/guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 
@@ -44,6 +47,30 @@ export class AuthController {
   })
   async register(@Body() registerDto: RegisterDto): Promise<User> {
     return this.authService.register(registerDto);
+  }
+
+  @Post('refresh-token')
+  @UseGuards(JwtRefreshAuthGuard)
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Access token has been refreshed successfully.',
+    type: LoginResponseDto,
+  })
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto): Promise<Pick<LoginResponseDto, 'accessToken'>> {
+    return this.authService.refreshToken(refreshTokenDto.refreshToken);
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: 'Logout' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'User has been successfully logged out.',
+  })
+  async logout(
+    @UserDecorator('id') userId: number,
+  ): Promise<void> {
+    return this.authService.logout(userId);
   }
 
   @Public()
@@ -86,19 +113,19 @@ export class AuthController {
   }
 
   @Public()
-    @Get('confirm-email-change')
-    @ApiOperation({ summary: 'Confirm email change' })
-    @ApiWrappedResponse({
-        status: 200,
-        description: 'Email has been changed successfully.',
-    })
-    async confirmEmailChange(
-        @Query('token') token: string,
-        @Res() res: FastifyReply,
-    ): Promise<void> {
-        await this.authService.confirmEmailChange(token);
+  @Get('confirm-email-change')
+  @ApiOperation({ summary: 'Confirm email change' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Email has been changed successfully.',
+  })
+  async confirmEmailChange(
+    @Query('token') token: string,
+    @Res() res: FastifyReply,
+  ): Promise<void> {
+    await this.authService.confirmEmailChange(token);
 
-        const frontendUrl = this.configService.get<string>('app.frontend.url');
-        return res.redirect(`${frontendUrl}/login?emailChanged=true`, 302);
-    }
+    const frontendUrl = this.configService.get<string>('app.frontend.url');
+    return res.redirect(`${frontendUrl}/login?emailChanged=true`, 302);
+  }
 }

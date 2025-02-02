@@ -69,6 +69,7 @@ describe('AuthService', () => {
     emailChangeToken: null,
     emailChangeTokenExpiry: null,
     pendingEmail: null,
+    refreshToken: 'mock-refresh-token',
   };
 
   beforeEach(async () => {
@@ -98,7 +99,7 @@ describe('AuthService', () => {
         },
         {
           provide: JwtService,
-          useValue: { sign: jest.fn() },
+          useValue: { sign: jest.fn(), verify: jest.fn() },
         },
         {
           provide: RolesService,
@@ -280,15 +281,15 @@ describe('AuthService', () => {
       jwtService.sign.mockReturnValue('jwt.token.here');
     });
 
-    it('should return access token when credentials are valid', async () => {
+    it('should return access token and refresh token when credentials are valid', async () => {
       const result = await service.login(loginDto);
 
-      expect(result).toEqual({ accessToken: 'jwt.token.here' });
+      expect(result).toEqual({ accessToken: 'jwt.token.here', refreshToken: 'jwt.token.here' });
       expect(jwtService.sign).toHaveBeenCalledWith({
         email: mockUser.email,
         sub: mockUser.id,
         roles: [RoleEnum.User],
-      });
+      }, expect.any(Object));
     });
 
     it('should throw UnauthorizedException when email is not confirmed', async () => {

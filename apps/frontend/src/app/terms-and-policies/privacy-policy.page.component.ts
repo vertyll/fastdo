@@ -4,7 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
-import { LIST_STATE_VALUE } from '../shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { TermsAndPolicyService } from './data-access/terms-and-policy.service';
 import { TermsAndPolicyStateService } from './data-access/terms-and-policy.state.service';
 import { LegalSection } from './enum/legal-section.enum';
@@ -21,15 +21,15 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
   ],
   template: `
     @switch (stateService.state()) {
-      @case (LIST_STATE_VALUE.LOADING) {
+      @case (LOADING_STATE_VALUE.LOADING) {
         <div class="flex justify-center items-center h-48">
           <app-spinner />
         </div>
       }
-      @case (LIST_STATE_VALUE.ERROR) {
+      @case (LOADING_STATE_VALUE.ERROR) {
         <app-error-message [customMessage]="stateService.error()?.message" />
       }
-      @case (LIST_STATE_VALUE.SUCCESS) {
+      @case (LOADING_STATE_VALUE.SUCCESS) {
         <div class="max-w-4xl mx-auto p-6">
           <div class="mb-8">
             <h1 class="text-3xl font-bold">
@@ -84,7 +84,7 @@ export class PrivacyPolicyPageComponent implements OnInit, OnDestroy {
   protected readonly stateService = inject(TermsAndPolicyStateService);
   protected readonly translate = inject(TranslateService);
 
-  protected readonly LIST_STATE_VALUE = LIST_STATE_VALUE;
+  protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
   protected readonly LegalSection = LegalSection;
 
   protected readonly policy = computed(() => this.stateService.privacyPolicy());

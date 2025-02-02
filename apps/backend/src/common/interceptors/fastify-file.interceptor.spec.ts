@@ -41,8 +41,8 @@ describe('FastifyFileInterceptor', () => {
     jest.spyOn(I18nContext, 'current').mockReturnValue(undefined);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-        .rejects
-        .toThrow('I18nContext not available');
+      .rejects
+      .toThrow('I18nContext not available');
   });
 
   it('should throw BadRequestException when file processing fails', async () => {
@@ -55,8 +55,8 @@ describe('FastifyFileInterceptor', () => {
     mockGetRequest.mockReturnValue(mockRequest);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-        .rejects
-        .toThrow(BadRequestException);
+      .rejects
+      .toThrow(BadRequestException);
 
     expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
   });
@@ -73,7 +73,7 @@ describe('FastifyFileInterceptor', () => {
     };
 
     const mockRequest = {
-      parts: jest.fn().mockReturnValue((async function* () {
+      parts: jest.fn().mockReturnValue((async function*() {
         yield mockFile;
       })()),
     } as unknown as FastifyRequest;
@@ -88,7 +88,7 @@ describe('FastifyFileInterceptor', () => {
 
   it('should handle form data processing errors gracefully', async () => {
     const mockRequest = {
-      parts: jest.fn().mockReturnValue((async function* () {
+      parts: jest.fn().mockReturnValue((async function*() {
         throw new Error('Form data error');
       })()),
     } as unknown as FastifyRequest;
@@ -96,8 +96,8 @@ describe('FastifyFileInterceptor', () => {
     mockGetRequest.mockReturnValue(mockRequest);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-        .rejects
-        .toThrow(BadRequestException);
+      .rejects
+      .toThrow(BadRequestException);
 
     expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.formDataError');
   });

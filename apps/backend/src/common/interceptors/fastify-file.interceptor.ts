@@ -1,10 +1,10 @@
-import {MultipartFile} from '@fastify/multipart';
-import {BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor} from '@nestjs/common';
-import {FastifyRequest} from 'fastify';
-import {I18nContext} from 'nestjs-i18n';
-import {Observable} from 'rxjs';
-import {Readable} from 'stream';
-import {I18nTranslations} from '../../generated/i18n/i18n.generated';
+import { MultipartFile } from '@fastify/multipart';
+import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { FastifyRequest } from 'fastify';
+import { I18nContext } from 'nestjs-i18n';
+import { Observable } from 'rxjs';
+import { Readable } from 'stream';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 interface CustomFileStream extends Readable {
   truncated: boolean;
@@ -33,8 +33,8 @@ export class FastifyFileInterceptor implements NestInterceptor {
   }
 
   private async processFormData(
-      parts: AsyncIterableIterator<any>,
-      i18n: I18nContext<I18nTranslations>
+    parts: AsyncIterableIterator<any>,
+    i18n: I18nContext<I18nTranslations>,
   ): Promise<Record<string, any>> {
     const formData: Record<string, any> = {};
 
@@ -77,7 +77,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
       encoding: part.encoding,
       mimetype: part.mimetype,
       fields: {},
-      type: 'file'
+      type: 'file',
     };
   }
 }

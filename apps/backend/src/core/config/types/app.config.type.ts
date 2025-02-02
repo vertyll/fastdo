@@ -32,8 +32,10 @@ export type DatabaseConfig = PostgresConnectionOptions & {
 
 interface SecurityConfig {
   jwt: {
-    secret: string;
-    expiresIn: string;
+    accessTokenSecret: string;
+    refreshTokenSecret: string;
+    accessTokenExpiresIn: string;
+    refreshTokenExpiresIn: string;
     confirmationToken: {
       expiresIn: string;
     };

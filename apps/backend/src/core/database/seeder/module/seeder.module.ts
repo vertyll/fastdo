@@ -13,6 +13,7 @@ import { Terms } from '../../../../terms-and-policies/entities/terms.entity';
 import { UserRole } from '../../../../users/entities/user-role.entity';
 import { User } from '../../../../users/entities/user.entity';
 import appConfig from '../../../config/app.config';
+import { File } from '../../../file/entities/file.entity';
 import { DatabaseModule } from '../../database.module';
 import { LegalDocumentsSeeder } from '../implementations/legal-documents.seeder';
 import { RoleSeeder } from '../implementations/role.seeder';
@@ -20,7 +21,6 @@ import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
 import { SeederRunnerService } from '../services/seeder-runner.service';
-import {File} from "../../../file/entities/file.entity";
 
 @Module({
   imports: [

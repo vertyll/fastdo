@@ -73,7 +73,8 @@
     "confirmNewPassword": "Potwierdź nowe hasło",
     "resetPasswordButton": "Zresetuj hasło",
     "passwordResetSuccess": "Hasło zostało zresetowane",
-    "unknownError": "Wystąpił nieznany błąd"
+    "unknownError": "Wystąpił nieznany błąd",
+    "emailChanged": "Email został zmieniony"
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",
@@ -196,5 +197,16 @@
     "version": "Wersja",
     "effectiveDate": "Data wejścia w życie",
     "lastModified": "Ostatnia modyfikacja"
+  },
+  "Profile": {
+    "myProfile": "Mój profil",
+    "edit": "Edytuj",
+    "memberSince": "Członek od",
+    "editProfile": "Edytuj profil",
+    "email": "Email",
+    "password": "Hasło",
+    "newPassword": "Nowe hasło",
+    "confirmNewPassword": "Potwierdź nowe hasło",
+    "updateSuccess": "Profil został zaktualizowany"
   }
 }

@@ -1,29 +1,29 @@
-import {Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
-import { User } from './entities/user.entity';
-import { UserRepository } from './repositories/user.repository';
-import {UpdateProfileDto} from "./dtos/update-profile.dto";
-import {MailService} from "../core/mail/services/mail.service";
-import {FileService} from "../core/file/services/file.service";
-import {I18nService} from "nestjs-i18n";
-import {ConfigService} from "@nestjs/config";
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import {I18nTranslations} from "../generated/i18n/i18n.generated";
-import {DataSource, DeepPartial} from "typeorm";
-import {UserEmailHistoryRepository} from "./repositories/user-email-history.repository";
-import {UserEmailHistory} from "./entities/user-email-history.entity";
-import {ConfirmationTokenService} from "../auth/confirmation-token.service";
+import { I18nService } from 'nestjs-i18n';
+import { DataSource, DeepPartial } from 'typeorm';
+import { ConfirmationTokenService } from '../auth/confirmation-token.service';
+import { FileService } from '../core/file/services/file.service';
+import { MailService } from '../core/mail/services/mail.service';
+import { I18nTranslations } from '../generated/i18n/i18n.generated';
+import { UpdateProfileDto } from './dtos/update-profile.dto';
+import { UserEmailHistory } from './entities/user-email-history.entity';
+import { User } from './entities/user.entity';
+import { UserEmailHistoryRepository } from './repositories/user-email-history.repository';
+import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-      private readonly usersRepository: UserRepository,
-      private readonly mailService: MailService,
-      private readonly fileService: FileService,
-      private readonly i18n: I18nService<I18nTranslations>,
-      private readonly configService: ConfigService,
-      private readonly userEmailHistoryRepository: UserEmailHistoryRepository,
-      private readonly dataSource: DataSource,
-      private readonly confirmationTokenService: ConfirmationTokenService,
+    private readonly usersRepository: UserRepository,
+    private readonly mailService: MailService,
+    private readonly fileService: FileService,
+    private readonly i18n: I18nService<I18nTranslations>,
+    private readonly configService: ConfigService,
+    private readonly userEmailHistoryRepository: UserEmailHistoryRepository,
+    private readonly dataSource: DataSource,
+    private readonly confirmationTokenService: ConfirmationTokenService,
   ) {}
 
   public async findOne(id: number): Promise<User | null> {
@@ -54,8 +54,8 @@ export class UsersService {
   }
 
   async updateProfile(
-      userId: number,
-      updateProfileDto: UpdateProfileDto,
+    userId: number,
+    updateProfileDto: UpdateProfileDto,
   ): Promise<User | null> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -64,7 +64,7 @@ export class UsersService {
       const user = await this.findOne(userId);
       if (!user) {
         throw new NotFoundException(
-            this.i18n.t('messages.User.errors.userNotFound'),
+          this.i18n.t('messages.User.errors.userNotFound'),
         );
       }
 
@@ -76,7 +76,7 @@ export class UsersService {
         const isPasswordValid = await bcrypt.compare(updateProfileDto.password, user.password);
         if (!isPasswordValid) {
           throw new UnauthorizedException(
-              this.i18n.t('messages.User.errors.invalidPassword'),
+            this.i18n.t('messages.User.errors.invalidPassword'),
           );
         }
       }
@@ -90,7 +90,7 @@ export class UsersService {
         const existingUser = await this.findByEmail(updateProfileDto.email);
         if (existingUser) {
           throw new UnauthorizedException(
-              this.i18n.t('messages.User.errors.emailAlreadyExists'),
+            this.i18n.t('messages.User.errors.emailAlreadyExists'),
           );
         }
 
@@ -110,12 +110,12 @@ export class UsersService {
 
         try {
           await this.mailService.sendEmailChangeConfirmation(
-              updateProfileDto.email,
-              emailChangeToken,
+            updateProfileDto.email,
+            emailChangeToken,
           );
         } catch {
           throw new UnauthorizedException(
-              this.i18n.t('messages.User.errors.emailSendFailed'),
+            this.i18n.t('messages.User.errors.emailSendFailed'),
           );
         }
       }
@@ -131,7 +131,7 @@ export class UsersService {
           updateData.avatar = { id: fileId };
         } catch {
           throw new UnauthorizedException(
-              this.i18n.t('messages.User.errors.avatarUploadFailed'),
+            this.i18n.t('messages.User.errors.avatarUploadFailed'),
           );
         }
       }

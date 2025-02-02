@@ -73,7 +73,8 @@
     "confirmNewPassword": "Confirm new password",
     "resetPasswordButton": "Reset password",
     "passwordResetSuccess": "Password reset successful",
-    "unknownError": "An unknown error occurred"
+    "unknownError": "An unknown error occurred",
+    "emailChanged": "Email changed"
   },
   "Dashboard": {
     "title": "Welcome to our application",
@@ -194,5 +195,16 @@
     "version": "Version",
     "effectiveDate": "Effective Date",
     "lastModified": "Last Modified"
+  },
+  "Profile": {
+    "myProfile": "My profile",
+    "edit": "Edit",
+    "memberSince": "Member since",
+    "editProfile": "Edit profile",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updateSuccess": "Profile updated successfully"
   }
 }

@@ -105,16 +105,16 @@ describe('MailService', () => {
 
       await service.sendEmailChangeConfirmation(to, token);
 
-        expect(configService.get).toHaveBeenCalledWith('app.appUrl');
-        expect(i18nService.t).toHaveBeenCalledWith('messages.Mail.emailChangeEmail.subject');
-        expect(mailSender.sendMail).toHaveBeenCalledWith({
-          to,
-          subject: 'Confirm your email',
-          templateName: 'email-change',
-          templateData: {
-            confirmationUrl: `${appUrl}/auth/confirm-email-change?token=${token}`,
-          },
-        });
+      expect(configService.get).toHaveBeenCalledWith('app.appUrl');
+      expect(i18nService.t).toHaveBeenCalledWith('messages.Mail.emailChangeEmail.subject');
+      expect(mailSender.sendMail).toHaveBeenCalledWith({
+        to,
+        subject: 'Confirm your email',
+        templateName: 'email-change',
+        templateData: {
+          confirmationUrl: `${appUrl}/auth/confirm-email-change?token=${token}`,
+        },
+      });
     });
   });
 });
