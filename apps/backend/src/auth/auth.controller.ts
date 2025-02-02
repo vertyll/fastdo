@@ -49,6 +49,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
+  @Public()
   @Post('refresh-token')
   @UseGuards(JwtRefreshAuthGuard)
   @ApiOperation({ summary: 'Refresh access token' })

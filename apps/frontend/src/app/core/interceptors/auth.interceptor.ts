@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { TokenRefreshService } from '../../shared/services/token-refresh.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -10,6 +11,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     req.url.includes('/auth/login')
     || req.url.includes('/auth/refresh-token')
     || req.url.includes('/auth/register')
+    || req.url.includes('/auth/forgot-password')
+    || req.url.includes('/auth/reset-password')
   ) {
     return next(req);
   }
@@ -25,7 +28,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      if (error.status === 401 && !req.url.includes('/auth/refresh-token')) {
         return tokenRefreshService.refreshToken(req, next);
       }
       return throwError(() => error);

@@ -16,6 +16,7 @@ import { AuthStateService } from './auth.state.service';
 export class AuthService {
   private readonly authApiService = inject(AuthApiService);
   private readonly authStateService = inject(AuthStateService);
+  private refreshTokenTimeout?: ReturnType<typeof setTimeout>;
 
   public readonly isLoggedIn = this.authStateService.isLoggedIn;
   public readonly userRoles = this.authStateService.roles;
@@ -25,6 +26,7 @@ export class AuthService {
       tap(response => {
         this.saveTokens(response.data.accessToken, response.data.refreshToken);
         this.decodeToken(response.data.accessToken);
+        this.setupRefreshTokenTimer(response.data.accessToken);
       }),
       map(() => void 0),
     );
@@ -35,6 +37,7 @@ export class AuthService {
   }
 
   public logout(): void {
+    this.stopRefreshTokenTimer();
     this.authApiService.logout().subscribe(() => {
       this.clearTokens();
       this.authStateService.clear();
@@ -54,6 +57,7 @@ export class AuthService {
           });
         } else {
           this.decodeToken(accessToken);
+          this.setupRefreshTokenTimer(accessToken);
         }
       } catch {
         this.clearTokens();
@@ -63,6 +67,7 @@ export class AuthService {
   }
 
   public refreshToken(): Observable<string> {
+    this.stopRefreshTokenTimer();
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token found'));
@@ -73,6 +78,7 @@ export class AuthService {
         const newAccessToken = response.data.accessToken;
         localStorage.setItem('access_token', newAccessToken);
         this.decodeToken(newAccessToken);
+        this.setupRefreshTokenTimer(newAccessToken);
         return newAccessToken;
       }),
     );
@@ -125,5 +131,23 @@ export class AuthService {
     const roles = decodedToken.roles || null;
     this.authStateService.setLoggedIn(true);
     this.authStateService.setRoles(roles);
+  }
+
+  private setupRefreshTokenTimer(token: string): void {
+    const decodedToken: any = jwtDecode(token);
+    const expires = new Date(decodedToken.exp * 1000);
+    const timeout = expires.getTime() - Date.now() - (60 * 1000);
+
+    this.refreshTokenTimeout = setTimeout(() => {
+      if (!this.isTokenExpired(token)) {
+        this.refreshToken().subscribe();
+      }
+    }, Math.max(0, timeout));
+  }
+
+  private stopRefreshTokenTimer(): void {
+    if (this.refreshTokenTimeout) {
+      clearTimeout(this.refreshTokenTimeout);
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import * as bcrypt from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
@@ -23,14 +24,22 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
       jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
       ignoreExpiration: false,
       secretOrKey: refreshTokenSecret,
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: JwtRefreshPayload): Promise<User> {
+  async validate(request: any, payload: JwtRefreshPayload): Promise<User> {
+    const refreshToken = request.body?.refreshToken;
+    if (!refreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
+
     const user = await this.usersService.findOne(payload.sub);
     if (!user || !user.isActive || !user.refreshToken) {
       throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
     }
+
+    const isValidRefreshToken = await bcrypt.compare(refreshToken, user.refreshToken);
+    if (!isValidRefreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
+
     return user;
   }
 }
