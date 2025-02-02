@@ -29,6 +29,15 @@
       "emailNotConfirmed": "Email address not confirmed"
     }
   },
+  "User": {
+    "errors": {
+      "userNotFound": "User not found",
+      "emailAlreadyExists": "Email address already exists",
+      "invalidPassword": "Invalid password",
+      "avatarUploadFailed": "Failed to upload avatar",
+      "emailSendFailed": "Failed to send email"
+    }
+  },
   "File": {
     "errors": {
       "fileValidation": "File validation failed",
@@ -42,12 +51,21 @@
       "filedUploadFileToLocalStorage": "Failed to upload file to local storage",
       "exceededMaxFileSize": "Exceeded maximum file size by {maxSize} bytes",
       "fileTypeNotAllowed": "File type {mimeType} is not allowed, allowed file types are {allowedTypes}",
-      "failedToProcessFileUpload": "Failed to process file upload"
+      "failedToProcessFileUpload": "Failed to process file upload",
+      "formDataError": "Form data error",
+      "fileProcessingError": "File processing error",
+      "invalidFile": "Invalid file",
+      "invalidMimeType": "Invalid file type. Allowed types: {allowed}",
+      "fileTooLarge": "File is too large. Maximum size is {maxSize}",
+      "fileProcessingError": "Error processing file"
     }
   },
   "Mail": {
     "confirmationEmail": {
       "subject": "Email address confirmation"
+    },
+    "emailChangeEmail": {
+      "subject": "Email address change"
     },
     "resetPasswordEmail": {
       "subject": "Password reset"

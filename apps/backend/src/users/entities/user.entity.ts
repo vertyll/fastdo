@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation} from 'typeorm';
 import { UserRole } from './user-role.entity';
+import {File} from "../../core/file/entities/file.entity";
 
 @Entity('user')
 export class User {
@@ -59,4 +60,20 @@ export class User {
 
   @Column({ type: 'timestamp', nullable: true })
   datePrivacyPolicyAcceptance: Date | null;
+
+  @ApiProperty({ type: () => File })
+  @ManyToOne(() => File, { nullable: true, onDelete: 'SET NULL' })
+  avatar: Relation<File> | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  @Exclude()
+  emailChangeToken: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  @Exclude()
+  pendingEmail: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  @Exclude()
+  emailChangeTokenExpiry: Date | null;
 }

@@ -33,6 +33,7 @@ describe('MailService', () => {
               const translations: Record<string, string> = {
                 'messages.Mail.confirmationEmail.subject': 'Confirm your email',
                 'messages.Mail.resetPasswordEmail.subject': 'Reset your password',
+                'messages.Mail.emailChangeEmail.subject': 'Confirm your email',
               };
               return translations[key] || key;
             }),
@@ -91,6 +92,29 @@ describe('MailService', () => {
           resetUrl: `${frontendUrl}/reset-password?token=${token}`,
         },
       });
+    });
+  });
+
+  describe('sendEmailChangeConfirmation', () => {
+    it('should send an email change confirmation email', async () => {
+      const to = 'test@example.com';
+      const token = 'testToken';
+      const appUrl = 'http://localhost:3000';
+
+      configService.get.mockReturnValue(appUrl);
+
+      await service.sendEmailChangeConfirmation(to, token);
+
+        expect(configService.get).toHaveBeenCalledWith('app.appUrl');
+        expect(i18nService.t).toHaveBeenCalledWith('messages.Mail.emailChangeEmail.subject');
+        expect(mailSender.sendMail).toHaveBeenCalledWith({
+          to,
+          subject: 'Confirm your email',
+          templateName: 'email-change',
+          templateData: {
+            confirmationUrl: `${appUrl}/auth/confirm-email-change?token=${token}`,
+          },
+        });
     });
   });
 });

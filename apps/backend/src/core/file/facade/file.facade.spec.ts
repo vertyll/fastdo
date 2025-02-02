@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StorageType } from '../../config/types/app.config.type';
 import { FileMetadataDto } from '../dtos/file-metadata.dto';
 import { File } from '../entities/file.entity';
-import { FileService } from '../file.service';
+import { FileService } from '../services/file.service';
 import { FileFacade } from './file.facade';
 
 describe('FileFacade', () => {

@@ -1,5 +1,5 @@
-import fastifyMultipart from '@fastify/multipart';
-import { BadRequestException, ValidationError } from '@nestjs/common';
+import {fastifyMultipart} from "@fastify/multipart";
+import {BadRequestException, ConsoleLogger, ValidationError} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -25,11 +25,18 @@ import { TermsSection } from './terms-and-policies/entities/terms-section.entity
 import { Terms } from './terms-and-policies/entities/terms.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
+import {UserEmailHistory} from "./users/entities/user-email-history.entity";
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
+    {
+      logger: new ConsoleLogger({
+        json: true,
+        colors: true,
+      }),
+    }
   );
   const configService: ConfigService = app.get(ConfigService);
 
@@ -37,7 +44,6 @@ async function bootstrap(): Promise<void> {
 
   const maxFileSize: number = configService.getOrThrow<number>('app.file.validation.maxSize');
   await app.register(fastifyMultipart, {
-    attachFieldsToBody: true,
     limits: {
       fileSize: maxFileSize,
     },
@@ -112,6 +118,7 @@ async function bootstrap(): Promise<void> {
       PrivacyPolicy,
       PrivacyPolicySection,
       PrivacyPolicySectionTranslation,
+      UserEmailHistory,
     ],
   });
   SwaggerModule.setup(openApiConfig.path, app, document);

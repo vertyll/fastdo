@@ -1,4 +1,3 @@
-import { MultipartFile } from '@fastify/multipart';
 import { BadRequestException, CallHandler, ExecutionContext } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { I18nContext } from 'nestjs-i18n';
@@ -22,15 +21,7 @@ describe('FastifyFileInterceptor', () => {
     mockExecutionContext = {
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: mockGetRequest,
-        getResponse: jest.fn(),
-        getNext: jest.fn(),
       }),
-      getClass: jest.fn(),
-      getHandler: jest.fn(),
-      getArgs: jest.fn(),
-      getArgByIndex: jest.fn(),
-      switchToRpc: jest.fn(),
-      switchToWs: jest.fn(),
     } as unknown as ExecutionContext;
 
     mockCallHandler = {
@@ -50,81 +41,64 @@ describe('FastifyFileInterceptor', () => {
     jest.spyOn(I18nContext, 'current').mockReturnValue(undefined);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-      .rejects
-      .toThrow('I18nContext not available');
+        .rejects
+        .toThrow('I18nContext not available');
   });
 
-  it('should throw BadRequestException when no file is found', async () => {
+  it('should throw BadRequestException when file processing fails', async () => {
     const mockRequest = {
-      body: {},
-    } as FastifyRequest;
+      parts: jest.fn().mockImplementation(() => {
+        throw new Error('File processing error');
+      }),
+    } as unknown as FastifyRequest;
 
     mockGetRequest.mockReturnValue(mockRequest);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-      .rejects
-      .toThrow(BadRequestException);
+        .rejects
+        .toThrow(BadRequestException);
+
+    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
   });
 
-  it('should extract file from request body', async () => {
-    const mockFile = { fieldname: 'testFile' } as MultipartFile;
-    const mockRequest = {
-      body: {
-        testFile: mockFile,
-      },
-    } as FastifyRequest;
-
-    mockGetRequest.mockReturnValue(mockRequest);
-
-    await interceptor.intercept(mockExecutionContext, mockCallHandler);
-
-    expect((mockRequest as any).incomingFile).toBe(mockFile);
-    expect(mockCallHandler.handle).toHaveBeenCalled();
-  });
-
-  it('should extract file using request.file()', async () => {
-    const mockFile = { fieldname: 'testFile' } as MultipartFile;
-    const mockRequest = {
-      file: jest.fn().mockResolvedValue(mockFile),
-    } as any;
-
-    mockGetRequest.mockReturnValue(mockRequest);
-
-    await interceptor.intercept(mockExecutionContext, mockCallHandler);
-
-    expect((mockRequest as any).incomingFile).toBe(mockFile);
-    expect(mockCallHandler.handle).toHaveBeenCalled();
-  });
-
-  it('should extract file from parts', async () => {
+  it('should process form data and call next handler', async () => {
     const mockFile = {
       type: 'file',
       fieldname: 'testFile',
-    } as MultipartFile;
+      file: {
+        [Symbol.asyncIterator]: jest.fn().mockReturnValue({
+          next: jest.fn().mockResolvedValue({ done: true }),
+        }),
+      },
+    };
 
     const mockRequest = {
-      parts: jest.fn().mockReturnValue([mockFile]),
-    } as any;
+      parts: jest.fn().mockReturnValue((async function* () {
+        yield mockFile;
+      })()),
+    } as unknown as FastifyRequest;
 
     mockGetRequest.mockReturnValue(mockRequest);
 
     await interceptor.intercept(mockExecutionContext, mockCallHandler);
 
-    expect((mockRequest as any).incomingFile).toBe(mockFile);
+    expect(mockRequest.body).toHaveProperty('testFile');
     expect(mockCallHandler.handle).toHaveBeenCalled();
   });
 
-  it('should handle file extraction errors gracefully', async () => {
+  it('should handle form data processing errors gracefully', async () => {
     const mockRequest = {
-      file: jest.fn().mockRejectedValue(new Error('File extraction failed')),
-    } as any;
+      parts: jest.fn().mockReturnValue((async function* () {
+        throw new Error('Form data error');
+      })()),
+    } as unknown as FastifyRequest;
 
     mockGetRequest.mockReturnValue(mockRequest);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-      .rejects
-      .toThrow(BadRequestException);
+        .rejects
+        .toThrow(BadRequestException);
 
-    expect(mockI18n.t).toHaveBeenCalled();
+    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.formDataError');
   });
 });

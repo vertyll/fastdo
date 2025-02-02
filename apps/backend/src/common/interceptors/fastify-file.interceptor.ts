@@ -1,63 +1,83 @@
-import { MultipartFile } from '@fastify/multipart';
-import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { FastifyRequest } from 'fastify';
-import { I18nContext } from 'nestjs-i18n';
-import { Observable } from 'rxjs';
-import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import {MultipartFile} from '@fastify/multipart';
+import {BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor} from '@nestjs/common';
+import {FastifyRequest} from 'fastify';
+import {I18nContext} from 'nestjs-i18n';
+import {Observable} from 'rxjs';
+import {Readable} from 'stream';
+import {I18nTranslations} from '../../generated/i18n/i18n.generated';
+
+interface CustomFileStream extends Readable {
+  truncated: boolean;
+  bytesRead: number;
+  index: number;
+}
 
 @Injectable()
 export class FastifyFileInterceptor implements NestInterceptor {
-  constructor(
-    private fieldName: string,
-  ) {}
+  constructor(private readonly fieldName: string) {}
 
-  public async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const i18n = I18nContext.current<I18nTranslations>(context);
     if (!i18n) throw new Error('I18nContext not available');
 
     const request = context.switchToHttp().getRequest<FastifyRequest>();
 
-    const file = await this.extractFile(request, this.fieldName, i18n);
-
-    if (!file) {
-      throw new BadRequestException(
-        i18n.t('messages.File.errors.fileNotUploaded'),
-      );
+    try {
+      const parts = request.parts();
+      request.body = await this.processFormData(parts, i18n);
+      return next.handle();
+    } catch (error) {
+      console.error('File interceptor error:', error);
+      throw new BadRequestException(i18n.t('messages.File.errors.fileProcessingError'));
     }
-
-    (request as any).incomingFile = file;
-    return next.handle();
   }
 
-  private async extractFile(
-    request: FastifyRequest,
-    fieldName: string,
-    i18n: I18nContext<I18nTranslations>,
-  ): Promise<MultipartFile | null> {
-    if (request.body && (request.body as any)[fieldName]) {
-      return (request.body as any)[fieldName];
-    }
+  private async processFormData(
+      parts: AsyncIterableIterator<any>,
+      i18n: I18nContext<I18nTranslations>
+  ): Promise<Record<string, any>> {
+    const formData: Record<string, any> = {};
 
     try {
-      if ('file' in request) {
-        const file = await (request as any).file();
-        if (file?.fieldname === fieldName) {
-          return file;
+      for await (const part of parts) {
+        if (part.type === 'file' && part.fieldname === this.fieldName) {
+          const buffer = await this.streamToBuffer(part.file);
+          formData[this.fieldName] = this.createMultipartFile(part, buffer);
+        } else if (part.type === 'field') {
+          formData[part.fieldname] = part.value;
         }
       }
-
-      if ('parts' in request) {
-        const parts = (request as any).parts();
-        for await (const part of parts) {
-          if (part.type === 'file' && part.fieldname === fieldName) {
-            return part;
-          }
-        }
-      }
-    } catch (error) {
-      console.error(i18n.t('messages.File.errors.fileNotProvided'), error);
+    } catch {
+      throw new BadRequestException(i18n.t('messages.File.errors.formDataError'));
     }
 
-    return null;
+    return formData;
+  }
+
+  private async streamToBuffer(stream: any): Promise<Buffer> {
+    const chunks = [];
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+  }
+
+  private createMultipartFile(part: any, buffer: Buffer): MultipartFile {
+    const fileStream = Object.assign(Readable.from(buffer), {
+      truncated: false,
+      bytesRead: buffer.length,
+      index: 0,
+    }) as CustomFileStream;
+
+    return {
+      toBuffer: () => Promise.resolve(buffer),
+      file: fileStream,
+      fieldname: part.fieldname,
+      filename: part.filename,
+      encoding: part.encoding,
+      mimetype: part.mimetype,
+      fields: {},
+      type: 'file'
+    };
   }
 }

@@ -35,4 +35,16 @@ export class MailService {
       },
     });
   }
+
+  async sendEmailChangeConfirmation(to: string, token: string): Promise<void> {
+    const appUrl = this.configService.get<string>('app.appUrl');
+    await this.mailSender.sendMail({
+      to,
+      subject: this.i18n.t('messages.Mail.emailChangeEmail.subject'),
+      templateName: 'email-change',
+      templateData: {
+        confirmationUrl: `${appUrl}/auth/confirm-email-change?token=${token}`,
+      },
+    });
+  }
 }

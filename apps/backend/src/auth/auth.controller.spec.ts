@@ -30,6 +30,10 @@ describe('AuthController', () => {
     privacyPolicyAccepted: true,
     dateTermsAcceptance: new Date(),
     datePrivacyPolicyAcceptance: new Date(),
+    avatar: null,
+    emailChangeToken: null,
+    emailChangeTokenExpiry: null,
+    pendingEmail: null,
   };
 
   const mockLoginDto: LoginDto = {

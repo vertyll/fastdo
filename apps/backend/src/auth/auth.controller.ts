@@ -84,4 +84,21 @@ export class AuthController {
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
     await this.authService.resetPassword(resetPasswordDto);
   }
+
+  @Public()
+    @Get('confirm-email-change')
+    @ApiOperation({ summary: 'Confirm email change' })
+    @ApiWrappedResponse({
+        status: 200,
+        description: 'Email has been changed successfully.',
+    })
+    async confirmEmailChange(
+        @Query('token') token: string,
+        @Res() res: FastifyReply,
+    ): Promise<void> {
+        await this.authService.confirmEmailChange(token);
+
+        const frontendUrl = this.configService.get<string>('app.frontend.url');
+        return res.redirect(`${frontendUrl}/login?emailChanged=true`, 302);
+    }
 }

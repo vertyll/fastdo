@@ -65,6 +65,10 @@ describe('AuthService', () => {
     privacyPolicyAccepted: true,
     dateTermsAcceptance: new Date(),
     datePrivacyPolicyAcceptance: new Date(),
+    avatar: null,
+    emailChangeToken: null,
+    emailChangeTokenExpiry: null,
+    pendingEmail: null,
   };
 
   beforeEach(async () => {

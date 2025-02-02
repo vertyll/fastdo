@@ -1,16 +1,16 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { FileMetadataDto } from './dtos/file-metadata.dto';
-import { File } from './entities/file.entity';
-import { FileDeleteException } from './exceptions/file-delete.exception';
-import { FileNotFoundException } from './exceptions/file-not-found.exception';
-import { FileUploadException } from './exceptions/file-upload.exception';
-import { FileUploadOptions } from './interfaces/file-upload-options.interface';
-import { FileRepository } from './repositories/file.repository';
-import { StorageStrategy } from './storage/storage-strategy';
-import { FileValidator } from './validators/file-validator';
+import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
+import { FileMetadataDto } from '../dtos/file-metadata.dto';
+import { File } from '../entities/file.entity';
+import { FileDeleteException } from '../exceptions/file-delete.exception';
+import { FileNotFoundException } from '../exceptions/file-not-found.exception';
+import { FileUploadException } from '../exceptions/file-upload.exception';
+import { FileUploadOptions } from '../interfaces/file-upload-options.interface';
+import { FileRepository } from '../repositories/file.repository';
+import { StorageStrategy } from '../storage/storage-strategy';
+import { FileValidator } from '../validators/file-validator';
 
 @Injectable()
 export class FileService {

@@ -20,6 +20,7 @@ import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
 import { SeederRunnerService } from '../services/seeder-runner.service';
+import {File} from "../../../file/entities/file.entity";
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
       UserRole,
       User,
       Terms,
+      File,
       TermsSection,
       TermsSectionTranslation,
       PrivacyPolicy,

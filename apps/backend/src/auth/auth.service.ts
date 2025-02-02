@@ -153,6 +153,49 @@ export class AuthService implements IAuthService {
     }
   }
 
+  public async confirmEmailChange(token: string): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const {email} = this.confirmationTokenService.verifyToken(token);
+
+      const user = await this.userRepository.findOne({where: {email}});
+
+      if (
+          !user
+          || user.emailChangeToken !== token
+          || !user.emailChangeTokenExpiry
+      ) {
+        throw new UnauthorizedException(
+            this.i18n.t('messages.Auth.errors.invalidToken'),
+        );
+      }
+
+      if (user.emailChangeTokenExpiry < new Date()) {
+        throw new UnauthorizedException(
+            this.i18n.t('messages.Auth.errors.tokenExpired'),
+        );
+      }
+
+      await this.userRepository.update(user.id, {
+        email: user.pendingEmail ?? user.email,
+        emailChangeToken: null,
+        emailChangeTokenExpiry: null,
+        pendingEmail: null,
+        dateModification: new Date(),
+      });
+
+      await queryRunner.commitTransaction();
+    } finally {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+      await queryRunner.release();
+    }
+  }
+
   public async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {

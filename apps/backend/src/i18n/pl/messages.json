@@ -29,6 +29,15 @@
       "emailNotConfirmed": "Adres email nie został potwierdzony"
     }
   },
+  "User": {
+    "errors": {
+      "userNotFound": "Użytkownik nie został znaleziony",
+      "emailAlreadyExists": "Adres email już istnieje",
+      "invalidPassword": "Nieprawidłowe hasło",
+      "avatarUploadFailed": "Nie udało się przesłać awatara",
+      "emailSendFailed": "Nie udało się wysłać maila"
+    }
+  },
   "File": {
     "errors": {
       "fileValidation": "Walidacja pliku nie powiodła się",
@@ -42,12 +51,21 @@
       "filedUploadFileToLocalStorage": "Nie udało się przesłać pliku do lokalnego magazynu",
       "exceededMaxFileSize": "Przekroczono maksymalny rozmiar pliku o {maxSize} bajtów",
       "fileTypeNotAllowed": "Typ pliku {mimeType} nie jest dozwolony, dozwolone typy plików to {allowedTypes}",
-      "failedToProcessFileUpload": "Nie udało się przetworzyć przesyłania pliku"
+      "failedToProcessFileUpload": "Nie udało się przetworzyć przesyłania pliku",
+      "formDataError": "Błąd formularza danych",
+      "fileProcessingError": "Błąd przetwarzania pliku",
+      "invalidFile": "Nieprawidłowy plik",
+      "invalidMimeType": "Niedozwolony typ pliku. Dozwolone typy: {allowed}",
+      "fileTooLarge": "Plik jest za duży. Maksymalny rozmiar to {maxSize}",
+      "fileProcessingError": "Błąd podczas przetwarzania pliku"
     }
   },
   "Mail": {
     "confirmationEmail": {
       "subject": "Potwierdzenie adresu email"
+    },
+    "emailChangeEmail": {
+      "subject": "Zmiana adresu email"
     },
     "resetPasswordEmail": {
       "subject": "Resetowanie hasła"
