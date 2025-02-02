@@ -380,10 +380,14 @@ import { ToastComponent } from '../atoms/toast.component';
               @if (profileDropdownOpen) {
                 <div class="profile-dropdown" @dropdown>
                   <button class="auth-button" (click)="router.navigate(['/user-profile'])">
-                    {{ 'Navbar.profile' | translate }}
+                    <span class="hover:text-orange-500 dark:hover:text-orange-400">
+                      {{ 'Navbar.profile' | translate }}
+                    </span>
                   </button>
-                  <button class="auth-button logout-button" (click)="logout()">
+                  <button class="auth-button" (click)="logout()">
+                    <span class="hover:text-red-500 dark:hover:text-red-400">
                     {{ 'Basic.logout' | translate }}
+                    </span>
                   </button>
                 </div>
               }
