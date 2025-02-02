@@ -623,7 +623,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected closeProfileDropdown = (): void => {
     this.profileDropdownOpen = false;
     document.removeEventListener('click', this.closeProfileDropdown);
-  }
+  };
 
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
