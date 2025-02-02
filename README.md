@@ -10,6 +10,7 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 ### Front-end:
 - Angular
 - RxJS
+- NGXS
 - Tailwind CSS
 
 ### Back-end:
@@ -20,7 +21,7 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 - Jest
 
 ### Uwierzytelnianie:
-- uwierzytelnianie za pomocą JWT
+- uwierzytelnianie za pomocą JWT - aplikacja korzysta z tokenów JWT do uwierzytelniania użytkowników i posiada mechanizm odświeżania tokenów
 
 ### Inne:
 - Turborepo w celu automatyzacji skryptów i zarządzania strukturą monorepo
