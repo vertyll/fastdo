@@ -1,5 +1,5 @@
 export enum AuthGuardEnum {
-    JwtAuthGuard = 'jwt',
-    LocalAuthGuard = 'local',
-    JwtRefreshAuthGuard = 'jwt-refresh',
+  JwtAuthGuard = 'jwt',
+  LocalAuthGuard = 'local',
+  JwtRefreshAuthGuard = 'jwt-refresh',
 }

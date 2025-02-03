@@ -16,7 +16,7 @@ export class TermsSection {
 
   @ApiProperty({
     enum: LegalSectionTypeEnum,
-    enumName: 'LegalSectionType',
+    enumName: 'LegalSectionTypeEnum',
   })
   @Column({
     type: 'enum',

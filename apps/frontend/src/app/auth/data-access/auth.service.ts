@@ -44,6 +44,12 @@ export class AuthService {
     });
   }
 
+  public forceLogout(): void {
+    this.stopRefreshTokenTimer();
+    this.clearTokens();
+    this.authStateService.clear();
+  }
+
   public initializeAuth(): void {
     const accessToken: string | null = localStorage.getItem('access_token');
     if (accessToken) {

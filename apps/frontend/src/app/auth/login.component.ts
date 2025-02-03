@@ -10,6 +10,7 @@ import { LinkTypeEnum } from '../shared/enums/link.enum';
 import { ToastPositionEnum } from '../shared/enums/toast.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
+import { EmailChangeService } from './data-access/email-change.service';
 
 @Component({
   selector: 'app-login',
@@ -78,6 +79,7 @@ export class LoginComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly route = inject(ActivatedRoute);
   private readonly toastService = inject(ToastService);
+  private readonly emailChangeService = inject(EmailChangeService);
 
   protected readonly loginForm: FormGroup;
   protected readonly LinkType = LinkTypeEnum;
@@ -98,12 +100,14 @@ export class LoginComponent implements OnInit {
         });
       }
 
-      if (params['emailChanged'] === 'true') {
-        this.translateService.get('Auth.emailChanged').subscribe((message: string): void => {
-          this.authService.clearTokens();
-          this.toastService.presentToast(message, true, ToastPositionEnum.Relative);
-        });
-      }
+      this.route.queryParams.subscribe(params => {
+        if (params['emailChanged'] === 'true') {
+          this.emailChangeService.handleEmailChange(true);
+          this.translateService
+            .get('Auth.emailChanged')
+            .subscribe(message => this.toastService.presentToast(message, true));
+        }
+      });
     });
   }
 

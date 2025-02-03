@@ -1,9 +1,10 @@
 import { registerLocaleData } from '@angular/common';
 import localeEn from '@angular/common/locales/en';
 import localePl from '@angular/common/locales/pl';
-import { Component, inject } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../environments/environment';
+import { AutoLogoutService } from './auth/data-access/auto-logout.service';
 import { ModalComponent } from './shared/components/organisms/modal.component';
 import { LayoutComponent } from './shared/components/templates/layout.component';
 import { LocalStorageService } from './shared/services/local-storage.service';
@@ -17,9 +18,10 @@ import { LocalStorageService } from './shared/services/local-storage.service';
     </app-layout>
   `,
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   private readonly translateService = inject(TranslateService);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly autoLogoutService = inject(AutoLogoutService);
 
   constructor() {
     registerLocaleData(localePl, 'pl');
@@ -44,5 +46,9 @@ export class AppComponent {
       this.translateService.use(matchedLang);
       this.localStorageService.set('selected_language', matchedLang);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.autoLogoutService.stopWatching();
   }
 }
