@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {
-  afterNextRender,
   Component,
+  Injector,
+  afterNextRender,
   effect,
   inject,
-  Injector,
   input,
   output,
   runInInjectionContext,
-  signal
+  signal,
 } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroicons/outline';
 import { ImageCroppedEvent, ImageCropperComponent as NgxImageCropperComponent, LoadedImage } from 'ngx-image-cropper';
-import {environment} from "../../../../environments/environment";
+import { environment } from '../../../../environments/environment';
 
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';
@@ -46,8 +46,8 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
         @if (mode() === 'edit') {
           <button
-            class="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
-            (click)="$event.stopPropagation(); fileInput.click()"
+            class="absolute flex bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
+            (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
           >
             <ng-icon
               name="heroCamera"
@@ -81,7 +81,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               </button>
             </div>
             <img
-              [src]="previewUrl()"
+              [src]="getFullImageUrl(previewUrl())"
               class="max-h-[600px] w-auto mx-auto"
               alt="Full Preview"
             />
@@ -113,6 +113,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               format="png"
               (imageCropped)="imageCropped($event)"
               (imageLoaded)="imageLoaded($event)"
+              (cropperReady)="cropperReady()"
               (loadImageFailed)="loadImageFailed()"
               class="max-h-[400px]"
             ></image-cropper>
@@ -141,16 +142,13 @@ export class ImageComponent {
   private readonly injector = inject(Injector);
   private readonly baseUrl = environment.backendUrl;
 
-  // Inputs
   mode = input<ImageMode>('view');
   format = input<ImageFormat>('circle');
   size = input<ImageSize>('md');
   initialUrl = input<string | null>(null);
 
-  // Output - nowa składnia z signal
-  imageSaved = output<{ file: File; preview: string | null }>();
+  imageSaved = output<{ file: File; preview: string | null; }>();
 
-  // State
   protected imageChangedEvent: Event | null = null;
   protected previewUrl = signal<string | null>(null);
   protected showCropper = signal(false);
@@ -159,47 +157,48 @@ export class ImageComponent {
 
   constructor() {
     afterNextRender(() => {
-      if (this.initialUrl()) {
-        const url = this.initialUrl();
-        this.previewUrl.set(url?.startsWith('/') ? `${this.baseUrl}${url}` : url);
-      }
-
       runInInjectionContext(this.injector, () => {
         effect(() => {
           const url = this.initialUrl();
           if (url) {
-            this.previewUrl.set(url.startsWith('/') ? `${this.baseUrl}${url}` : url);
+            this.previewUrl.set(this.getFullImageUrl(url));
           }
         });
       });
     });
   }
 
+  protected getFullImageUrl(url: string | null): string | null {
+    if (!url) return null;
+    if (url.startsWith('data:')) return url;
+    return url.startsWith('http') ? url : `${this.baseUrl}/${url}`;
+  }
+
   protected getContainerClasses(): string {
     const sizeClasses = {
       sm: 'w-16 h-16',
       md: 'w-24 h-24',
-      lg: 'w-32 h-32'
+      lg: 'w-32 h-32',
     };
 
     return `
-      ${sizeClasses[this.size()]}
-      ${this.format() === 'circle' ? 'rounded-full' : 'rounded-lg'}
-      overflow-hidden
-      bg-gray-200
-      dark:bg-gray-700
-      flex
-      items-center
-      justify-center
-      relative
-    `;
+        ${sizeClasses[this.size()]}
+        ${this.format() === 'circle' ? 'rounded-full' : 'rounded-lg'}
+        overflow-hidden
+        bg-gray-200
+        dark:bg-gray-700
+        flex
+        items-center
+        justify-center
+        relative
+      `;
   }
 
   protected getIconSize(): string {
     const sizes = {
       sm: '32',
       md: '64',
-      lg: '96'
+      lg: '96',
     };
     return sizes[this.size()];
   }
@@ -218,10 +217,15 @@ export class ImageComponent {
     event.stopPropagation();
     event.preventDefault();
 
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
     if (file) {
       this.imageChangedEvent = event;
-      this.showCropper.set(true);
+
+      setTimeout(() => {
+        this.showCropper.set(true);
+      }, 0);
     }
   }
 
@@ -235,6 +239,10 @@ export class ImageComponent {
 
   protected loadImageFailed(): void {
     console.error('Load failed');
+  }
+
+  protected cropperReady(): void {
+    console.log('Cropper ready');
   }
 
   protected closeCropper(): void {
@@ -251,7 +259,6 @@ export class ImageComponent {
           const fileName = originalFile.name.replace(/\.[^/.]+$/, '') + '-cropped.png';
           const file = new File([blob], fileName, { type: 'image/png' });
           this.previewUrl.set(this.croppedImageBlob);
-          // Emitowanie wartości używając nowej składni
           this.imageSaved.emit({ file, preview: this.croppedImageBlob });
           this.closeCropper();
         });

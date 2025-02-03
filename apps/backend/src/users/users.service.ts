@@ -4,13 +4,13 @@ import * as bcrypt from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
 import { ConfirmationTokenService } from '../auth/confirmation-token.service';
+import { FileFacade } from '../core/file/facade/file.facade';
 import { MailService } from '../core/mail/services/mail.service';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { UserEmailHistory } from './entities/user-email-history.entity';
 import { User } from './entities/user.entity';
 import { UserRepository } from './repositories/user.repository';
-import {FileFacade} from "../core/file/facade/file.facade";
 
 @Injectable()
 export class UsersService {

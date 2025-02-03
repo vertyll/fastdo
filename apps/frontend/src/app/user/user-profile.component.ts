@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroCamera, heroUserCircle } from '@ng-icons/heroicons/outline';
+import { provideIcons } from '@ng-icons/core';
+import { heroUserCircle } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PasswordValidator } from '../auth/validators/password.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
+import { ImageComponent } from '../shared/components/organisms/image.component';
 import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
@@ -21,9 +22,9 @@ import { UserStateService } from './data-access/user.state.service';
     SpinnerComponent,
     ErrorMessageComponent,
     DatePipe,
-    NgIconComponent,
+    ImageComponent,
   ],
-  providers: [provideIcons({ heroUserCircle, heroCamera })],
+  providers: [provideIcons({ heroUserCircle })],
   template: `
     @switch (stateService.state()) {
       @case (LOADING_STATE_VALUE.LOADING) {
@@ -49,19 +50,12 @@ import { UserStateService } from './data-access/user.state.service';
                 </div>
 
                 <div class="flex items-center mb-6">
-                  <div class="relative">
-                    @if (user().avatar?.url) {
-                      <img
-                        [src]="user().avatar?.url"
-                        class="w-24 h-24 rounded-full object-cover"
-                        alt="profile"
-                      />
-                    } @else {
-                      <div class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                        <ng-icon name="heroUserCircle" size="64" />
-                      </div>
-                    }
-                  </div>
+                  <app-image
+                    [initialUrl]="user().avatar?.url || null"
+                    mode="view"
+                    size="md"
+                    format="circle"
+                  />
                   <div class="ml-6">
                     <div class="text-xl font-medium text-gray-900 dark:text-white">
                       {{ user().email }}
@@ -98,30 +92,12 @@ import { UserStateService } from './data-access/user.state.service';
                 </div>
 
                 <div class="mb-6 flex items-center">
-                  <div class="relative">
-                    @if (previewUrl) {
-                      <img [src]="previewUrl" class="w-24 h-24 rounded-full object-cover" alt="preview" />
-                    } @else if (user().avatar?.url) {
-                      <img [src]="user().avatar?.url" class="w-24 h-24 rounded-full object-cover" alt="current" />
-                    } @else {
-                      <div class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                        <ng-icon name="heroUserCircle" size="64" />
-                      </div>
-                    }
-                    <button
-                      type="button"
-                      class="absolute flex justify-center items-center bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
-                      (click)="fileInput.click()"
-                    >
-                      <ng-icon name="heroCamera" size="20" />
-                    </button>
-                  </div>
-                  <input
-                    #fileInput
-                    type="file"
-                    class="hidden"
-                    (change)="onFileSelected($event)"
-                    accept="image/jpeg,image/png"
+                  <app-image
+                    [initialUrl]="user().avatar?.url || null"
+                    mode="edit"
+                    size="md"
+                    format="circle"
+                    (imageSaved)="onImageSaved($event)"
                   />
                 </div>
 
@@ -212,7 +188,6 @@ export class UserProfileComponent implements OnInit {
   protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
   protected readonly user = computed(() => this.stateService.user());
   protected isEditing = false;
-  protected previewUrl: string | null = null;
   protected selectedFile: File | null = null;
   protected profileForm: FormGroup;
 
@@ -226,7 +201,6 @@ export class UserProfileComponent implements OnInit {
       password: ['', [this.passwordValidator.validatePassword]],
       newPassword: [null, [this.passwordValidator.validatePassword]],
       confirmNewPassword: [null],
-      avatar: [null],
     });
 
     this.profileForm.valueChanges.subscribe(() => {
@@ -245,24 +219,16 @@ export class UserProfileComponent implements OnInit {
   }
 
   protected toggleEdit(): void {
-    this.isEditing = !this.isEditing;
-    if (this.isEditing) {
+    if (!this.isEditing) {
       this.profileForm.patchValue({
         email: this.user().email,
       });
     }
+    this.isEditing = !this.isEditing;
   }
 
-  protected onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = e => {
-        this.previewUrl = e.target?.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+  protected onImageSaved(event: { file: File; preview: string | null; }): void {
+    this.selectedFile = event.file;
   }
 
   protected async onSubmit(): Promise<void> {
@@ -289,7 +255,6 @@ export class UserProfileComponent implements OnInit {
         this.userService.updateProfile(formData).subscribe({
           next: () => {
             this.isEditing = false;
-            this.previewUrl = null;
             this.selectedFile = null;
             this.profileForm.reset();
             this.toastService.presentToast(this.translateService.instant('Profile.updateSuccess'), true);
@@ -314,7 +279,7 @@ export class UserProfileComponent implements OnInit {
       errors.push(this.translateService.instant('Auth.passwordUppercase'));
     }
     if (control?.hasError('specialCharacter')) {
-      this.translateService.instant('Auth.passwordSpecialCharacter');
+      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
     }
     return errors;
   }

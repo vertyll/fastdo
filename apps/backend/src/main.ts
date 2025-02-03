@@ -1,10 +1,12 @@
 import { fastifyMultipart } from '@fastify/multipart';
+import { fastifyStatic } from '@fastify/static';
 import { BadRequestException, ConsoleLogger, ValidationError } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import { LoginResponseDto } from './auth/dtos/login-response.dto';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
@@ -26,8 +28,6 @@ import { Terms } from './terms-and-policies/entities/terms.entity';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
-import {fastifyStatic} from "@fastify/static";
-import {join} from "path";
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -48,7 +48,7 @@ async function bootstrap(): Promise<void> {
   await app.register(fastifyStatic, {
     root: join(process.cwd(), fileUploadsPath),
     prefix: '/uploads/',
-    decorateReply: false
+    decorateReply: false,
   });
 
   const maxFileSize: number = configService.getOrThrow<number>('app.file.validation.maxSize');

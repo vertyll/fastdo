@@ -48,7 +48,7 @@ describe('FileConfigService', () => {
         storage: {
           type: StorageType.LOCAL,
           local: {
-            uploadDirPath: join(process.cwd(), 'uploads'),
+            uploadDirPath: join('uploads'),
           },
         },
         validation: {
@@ -76,7 +76,7 @@ describe('FileConfigService', () => {
       configService.getOrThrow.mockReturnValue('uploads');
       const localConfig = service['getLocalConfig']();
       expect(localConfig).toEqual({
-        uploadDirPath: join(process.cwd(), 'uploads'),
+        uploadDirPath: join('uploads'),
       });
     });
   });
