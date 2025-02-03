@@ -28,9 +28,7 @@ export class ConfirmationTokenService {
         secret: this.configService.get<string>('app.security.jwt.confirmationToken.secret'),
       });
     } catch {
-      throw new UnauthorizedException(
-        this.i18n.t('messages.Auth.errors.invalidToken'),
-      );
+      throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
     }
   }
 }

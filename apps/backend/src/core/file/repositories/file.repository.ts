@@ -10,16 +10,16 @@ export class FileRepository {
     @InjectRepository(File) private readonly repository: Repository<File>,
   ) {}
 
-  async save(metadata: FileMetadataDto): Promise<File> {
+  public async save(metadata: FileMetadataDto): Promise<File> {
     const file = this.repository.create(metadata);
     return this.repository.save(file);
   }
 
-  async findById(id: string): Promise<File | null> {
+  public async findById(id: string): Promise<File | null> {
     return this.repository.findOne({ where: { id } });
   }
 
-  async delete(id: string): Promise<void> {
+  public async delete(id: string): Promise<void> {
     await this.repository.softDelete(id);
   }
 }

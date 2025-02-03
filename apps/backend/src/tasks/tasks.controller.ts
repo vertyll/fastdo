@@ -21,14 +21,14 @@ export class TasksController {
     description: 'The task has been successfully created.',
     type: Task,
   })
-  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+  public create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.create(createTaskDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isPaginated: true })
-  findAll(@Query() query: GetAllTasksSearchParams): Promise<ApiPaginatedResponse<Task>> {
+  public findAll(@Query() query: GetAllTasksSearchParams): Promise<ApiPaginatedResponse<Task>> {
     return this.tasksService.findAll(query);
   }
 
@@ -40,7 +40,7 @@ export class TasksController {
     type: Task,
     isPaginated: true,
   })
-  findAllByProjectId(
+  public findAllByProjectId(
     @Param('projectId') projectId: string,
     @Query() query: GetAllTasksSearchParams,
   ): Promise<ApiPaginatedResponse<Task>> {
@@ -50,7 +50,7 @@ export class TasksController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
   @ApiWrappedResponse({ status: 200, description: 'Return the task.', type: Task })
-  findOne(@Param('id') id: string): Promise<Task> {
+  public findOne(@Param('id') id: string): Promise<Task> {
     return this.tasksService.findOne(+id);
   }
 
@@ -62,7 +62,7 @@ export class TasksController {
     description: 'The task has been successfully updated.',
     type: Task,
   })
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
+  public update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
     return this.tasksService.update(+id, updateTaskDto);
   }
 
@@ -72,7 +72,7 @@ export class TasksController {
     status: 200,
     description: 'The task has been successfully deleted.',
   })
-  remove(@Param('id') id: string): Promise<void> {
+  public remove(@Param('id') id: string): Promise<void> {
     return this.tasksService.remove(+id);
   }
 }

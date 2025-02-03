@@ -24,9 +24,7 @@ export function IsFile(options: FileValidationOptions = {}) {
           const file = value as MultipartFile;
           const mimeTypes = options.mimeTypes || [];
 
-          if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) {
-            return false;
-          }
+          if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) return false;
 
           return !(options.maxSize && file.file.bytesRead > options.maxSize);
         },

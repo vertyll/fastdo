@@ -18,11 +18,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) implements ILocalS
 
   async validate(email: string, password: string): Promise<Omit<User, 'password'>> {
     const user = await this.authService.validateUser(email, password);
-    if (!user) {
-      throw new UnauthorizedException(
-        this.i18n.t('messages.Auth.errors.invalidCredentials'),
-      );
-    }
+    if (!user) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidCredentials'));
+
     return user;
   }
 }

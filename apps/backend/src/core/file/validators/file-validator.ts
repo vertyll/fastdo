@@ -13,7 +13,7 @@ export class FileValidator {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async validate(file: MultipartFile, options?: FileUploadOptions): Promise<void> {
+  public async validate(file: MultipartFile, options?: FileUploadOptions): Promise<void> {
     const config = this.fileConfigService.getConfig();
 
     const maxSize = options?.maxSize || config.validation.maxSize;

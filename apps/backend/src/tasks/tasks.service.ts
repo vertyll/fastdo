@@ -13,9 +13,8 @@ export class TasksService {
 
   public async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const task = this.taskRepository.create(createTaskDto);
-    if (createTaskDto.projectId) {
-      task.project = { id: createTaskDto.projectId } as Project;
-    }
+    if (createTaskDto.projectId) task.project = { id: createTaskDto.projectId } as Project;
+
     return this.taskRepository.save(task);
   }
 

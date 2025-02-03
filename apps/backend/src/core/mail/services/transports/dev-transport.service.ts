@@ -26,6 +26,25 @@ export class DevTransport implements IMailTransport {
     });
   }
 
+  public async sendMail(options: { from: string; to: string; subject: string; html: string; }): Promise<void> {
+    if (!this.isMailDevAvailable) {
+      this.logger.warn(`Would send email in production: ${JSON.stringify(options)}`);
+      const environment = this.configService.get<string>('app.environment');
+      if (environment === Environment.DEVELOPMENT) return;
+
+      throw new MailSendFailedException(this.i18n, this.i18n.t('messages.Mail.errors.mailDevNotAvailable'));
+    }
+
+    try {
+      await this.transporter.sendMail(options);
+    } catch (error) {
+      throw new MailSendFailedException(
+        this.i18n,
+        error instanceof Error ? error.message : this.i18n.t('messages.Errors.unknownError'),
+      );
+    }
+  }
+
   private async initializeTransporter() {
     const config = this.mailConfig.getDevConfig();
     this.transporter = nodemailer.createTransport({
@@ -41,29 +60,6 @@ export class DevTransport implements IMailTransport {
     } catch {
       this.isMailDevAvailable = false;
       this.logger.warn('MailDev is not available. Emails will not be sent in development mode.');
-    }
-  }
-
-  async sendMail(options: { from: string; to: string; subject: string; html: string; }): Promise<void> {
-    if (!this.isMailDevAvailable) {
-      this.logger.warn(`Would send email in production: ${JSON.stringify(options)}`);
-      const environment = this.configService.get<string>('app.environment');
-      if (environment === Environment.DEVELOPMENT) {
-        return;
-      }
-      throw new MailSendFailedException(
-        this.i18n,
-        this.i18n.t('messages.Mail.errors.mailDevNotAvailable'),
-      );
-    }
-
-    try {
-      await this.transporter.sendMail(options);
-    } catch (error) {
-      throw new MailSendFailedException(
-        this.i18n,
-        error instanceof Error ? error.message : this.i18n.t('messages.Errors.unknownError'),
-      );
     }
   }
 }

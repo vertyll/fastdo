@@ -53,7 +53,7 @@ export class UsersService {
     return this.usersRepository.save(newUser);
   }
 
-  async updateProfile(
+  public async updateProfile(
     userId: number,
     updateProfileDto: UpdateProfileDto,
   ): Promise<User | null> {
@@ -62,11 +62,7 @@ export class UsersService {
     await queryRunner.startTransaction();
     try {
       const user = await this.findOne(userId);
-      if (!user) {
-        throw new NotFoundException(
-          this.i18n.t('messages.User.errors.userNotFound'),
-        );
-      }
+      if (!user) throw new NotFoundException(this.i18n.t('messages.User.errors.userNotFound'));
 
       const updateData: DeepPartial<User> = {
         dateModification: new Date(),
@@ -74,11 +70,7 @@ export class UsersService {
 
       if (updateProfileDto.password) {
         const isPasswordValid = await bcrypt.compare(updateProfileDto.password, user.password);
-        if (!isPasswordValid) {
-          throw new UnauthorizedException(
-            this.i18n.t('messages.User.errors.invalidPassword'),
-          );
-        }
+        if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t('messages.User.errors.invalidPassword'));
       }
 
       if (updateProfileDto.newPassword) {
@@ -88,11 +80,7 @@ export class UsersService {
 
       if (updateProfileDto.email && updateProfileDto.email !== user.email) {
         const existingUser = await this.findByEmail(updateProfileDto.email);
-        if (existingUser) {
-          throw new UnauthorizedException(
-            this.i18n.t('messages.User.errors.emailAlreadyExists'),
-          );
-        }
+        if (existingUser) throw new UnauthorizedException(this.i18n.t('messages.User.errors.emailAlreadyExists'));
 
         const emailChangeToken = this.confirmationTokenService.generateToken(user.email);
         const emailChangeTokenExpiry = new Date();
@@ -114,25 +102,19 @@ export class UsersService {
             emailChangeToken,
           );
         } catch {
-          throw new UnauthorizedException(
-            this.i18n.t('messages.User.errors.emailSendFailed'),
-          );
+          throw new UnauthorizedException(this.i18n.t('messages.User.errors.emailSendFailed'));
         }
       }
 
       if (updateProfileDto.avatar) {
         try {
-          if (user.avatar) {
-            await this.fileService.deleteFile(user.avatar.id);
-          }
+          if (user.avatar) await this.fileService.deleteFile(user.avatar.id);
 
           const { id: fileId } = await this.fileService.uploadFile(updateProfileDto.avatar);
 
           updateData.avatar = { id: fileId };
         } catch {
-          throw new UnauthorizedException(
-            this.i18n.t('messages.User.errors.avatarUploadFailed'),
-          );
+          throw new UnauthorizedException(this.i18n.t('messages.User.errors.avatarUploadFailed'));
         }
       }
 
@@ -141,9 +123,7 @@ export class UsersService {
 
       return this.findOne(userId);
     } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
+      if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();
     }
   }

@@ -10,7 +10,7 @@ export class SeederFactoryService {
     private readonly errorHandler: SeederErrorHandler,
   ) {}
 
-  createSeederService(context: string): BaseSeederService {
+  public createSeederService(context: string): BaseSeederService {
     this.logger.setContext(context);
     return new BaseSeederService(this.logger, this.errorHandler);
   }

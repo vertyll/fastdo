@@ -20,16 +20,11 @@ export class StorageStrategy {
     ]);
   }
 
-  getStorage(type?: StorageType): FileStorage {
+  public getStorage(type?: StorageType): FileStorage {
     const storageType = type || this.fileConfigService.getConfig().storage.type;
     const storage = this.storageProviders.get(storageType);
 
-    if (!storage) {
-      throw new InvalidStorageTypeException(
-        this.i18n,
-        storageType,
-      );
-    }
+    if (!storage) throw new InvalidStorageTypeException(this.i18n, storageType);
 
     return storage;
   }

@@ -12,7 +12,7 @@ export class MailService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async sendConfirmationEmail(to: string, token: string): Promise<void> {
+  public async sendConfirmationEmail(to: string, token: string): Promise<void> {
     const appUrl = this.configService.get<string>('app.appUrl');
     await this.mailSender.sendMail({
       to,
@@ -24,7 +24,7 @@ export class MailService {
     });
   }
 
-  async sendPasswordResetEmail(to: string, token: string): Promise<void> {
+  public async sendPasswordResetEmail(to: string, token: string): Promise<void> {
     const frontendUrl = this.configService.get<string>('app.frontend.url');
     await this.mailSender.sendMail({
       to,
@@ -36,7 +36,7 @@ export class MailService {
     });
   }
 
-  async sendEmailChangeConfirmation(to: string, token: string): Promise<void> {
+  public async sendEmailChangeConfirmation(to: string, token: string): Promise<void> {
     const appUrl = this.configService.get<string>('app.appUrl');
     await this.mailSender.sendMail({
       to,

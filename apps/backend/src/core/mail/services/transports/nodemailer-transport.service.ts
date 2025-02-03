@@ -21,7 +21,7 @@ export class NodemailerTransport implements IMailTransport {
     });
   }
 
-  async sendMail(options: { from: string; to: string; subject: string; html: string; }): Promise<void> {
+  public async sendMail(options: { from: string; to: string; subject: string; html: string; }): Promise<void> {
     await this.transporter.sendMail(options);
   }
 }

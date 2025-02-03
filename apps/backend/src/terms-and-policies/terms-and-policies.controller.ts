@@ -21,7 +21,7 @@ export class TermsAndPoliciesController {
     description: 'Latest terms document',
     type: Terms,
   })
-  getTerms(): Promise<Terms> {
+  public getTerms(): Promise<Terms> {
     return this.service.getLatestTerms();
   }
 
@@ -33,7 +33,7 @@ export class TermsAndPoliciesController {
     description: 'Latest privacy policy document',
     type: PrivacyPolicy,
   })
-  getPrivacyPolicy(): Promise<PrivacyPolicy> {
+  public getPrivacyPolicy(): Promise<PrivacyPolicy> {
     return this.service.getLatestPrivacyPolicy();
   }
 }

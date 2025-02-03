@@ -22,7 +22,7 @@ export class ProjectsController {
   @Get()
   @ApiOperation({ summary: 'Get all projects' })
   @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isPaginated: true })
-  getAll(@Query() query: GetAllProjectsSearchParams): Promise<ApiPaginatedResponse<Project>> {
+  public getAll(@Query() query: GetAllProjectsSearchParams): Promise<ApiPaginatedResponse<Project>> {
     return this.projectsService.findAll(query);
   }
 
@@ -34,14 +34,14 @@ export class ProjectsController {
     description: 'The project has been successfully created.',
     type: Project,
   })
-  create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
+  public create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
     return this.projectsService.create(createProjectDto);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a project by id' })
   @ApiWrappedResponse({ status: 200, description: 'Return the project.', type: Project })
-  findOne(@Param('id') id: string): Promise<Project> {
+  public findOne(@Param('id') id: string): Promise<Project> {
     return this.projectsService.findOne(+id);
   }
 
@@ -54,7 +54,7 @@ export class ProjectsController {
     description: 'The project has been successfully updated.',
     type: Project,
   })
-  update(
+  public update(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
@@ -68,7 +68,7 @@ export class ProjectsController {
     status: 204,
     description: 'The project has been successfully removed.',
   })
-  async remove(@Param('id') id: string): Promise<void> {
+  public async remove(@Param('id') id: string): Promise<void> {
     await this.projectManagementService.removeProjectWithTasks(+id);
   }
 }

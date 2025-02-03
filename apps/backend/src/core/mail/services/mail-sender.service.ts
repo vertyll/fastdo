@@ -19,7 +19,7 @@ export class MailSenderService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async sendMail(options: {
+  public async sendMail(options: {
     to: string;
     subject: string;
     templateName: string;
@@ -49,9 +49,7 @@ export class MailSenderService {
           `Failed to send email (attempt ${attempt}/${this.maxRetries}): ${currentError.message}`,
         );
 
-        if (attempt < this.maxRetries) {
-          await this.delay(this.retryDelay * attempt);
-        }
+        if (attempt < this.maxRetries) await this.delay(this.retryDelay * attempt);
       }
     }
 

@@ -78,9 +78,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
           }
         }
 
-        if (!(error instanceof HttpException)) {
-          throw new InternalServerErrorException(errorResponse);
-        }
+        if (!(error instanceof HttpException)) throw new InternalServerErrorException(errorResponse);
 
         throw new HttpException(errorResponse, error.getStatus());
       }),

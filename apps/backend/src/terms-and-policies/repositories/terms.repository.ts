@@ -9,7 +9,7 @@ export class TermsRepository extends Repository<Terms> {
     super(Terms, dataSource.createEntityManager());
   }
 
-  async getLatestTerms(): Promise<Terms | null> {
+  public async getLatestTerms(): Promise<Terms | null> {
     const lang = I18nContext.current()?.lang || 'en';
     return this.createQueryBuilder('terms')
       .leftJoinAndSelect('terms.sections', 'section')

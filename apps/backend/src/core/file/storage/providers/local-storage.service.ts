@@ -22,7 +22,7 @@ export class LocalStorageService implements FileStorage {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async uploadFile(
+  public async uploadFile(
     file: MultipartFile,
     options?: FileUploadOptions,
   ): Promise<FileMetadataDto> {
@@ -68,7 +68,7 @@ export class LocalStorageService implements FileStorage {
     }
   }
 
-  async deleteFile(path: string): Promise<void> {
+  public async deleteFile(path: string): Promise<void> {
     try {
       const config = this.fileConfigService.getConfig();
       const fullPath = join(config.storage.local.uploadDirPath, path);
@@ -88,7 +88,7 @@ export class LocalStorageService implements FileStorage {
     }
   }
 
-  async getFileUrl(path: string): Promise<string> {
+  public async getFileUrl(path: string): Promise<string> {
     const config = this.fileConfigService.getConfig();
     return `${config.storage.local.uploadDirPath}/${path}`;
   }

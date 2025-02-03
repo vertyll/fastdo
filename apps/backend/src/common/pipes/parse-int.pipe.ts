@@ -20,10 +20,9 @@ export class ParseIntPipe implements PipeTransform<string | number, number> {
 
     const val = Number(value);
     if (isNaN(val) || !Number.isInteger(val)) {
-      throw new BadRequestException(
-        i18n.translate('messages.Validation.isInteger'),
-      );
+      throw new BadRequestException(i18n.translate('messages.Validation.isInteger'));
     }
+
     return val;
   }
 }

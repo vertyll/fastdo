@@ -16,7 +16,7 @@ export class SeederRunnerService {
     this.logger = new Logger(SeederRunnerService.name);
   }
 
-  async runSeeders(seeders: Type<ISeeder>[]): Promise<void> {
+  public async runSeeders(seeders: Type<ISeeder>[]): Promise<void> {
     this.logger.log('Starting seeding process...');
 
     for (const seederClass of seeders) {

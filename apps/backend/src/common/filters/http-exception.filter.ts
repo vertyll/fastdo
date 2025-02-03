@@ -31,9 +31,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     };
 
     const fields = this.extractFields(exception);
-    if (fields) {
-      responseBody.fields = fields;
-    }
+    if (fields) responseBody.fields = fields;
 
     this.logger.error(
       `${request.method} ${request.url}`,

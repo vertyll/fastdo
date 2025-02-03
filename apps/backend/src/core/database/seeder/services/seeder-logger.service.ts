@@ -5,19 +5,19 @@ import { ISeederLogger } from '../interfaces/logger.interface';
 export class SeederLogger implements ISeederLogger {
   private logger: Logger;
 
-  setContext(context: string): void {
+  public setContext(context: string): void {
     this.logger = new Logger(context);
   }
 
-  log(message: string): void {
+  public log(message: string): void {
     this.logger.log(message);
   }
 
-  error(message: string): void {
+  public error(message: string): void {
     this.logger.error(message);
   }
 
-  warn(message: string): void {
+  public warn(message: string): void {
     this.logger.warn(message);
   }
 }

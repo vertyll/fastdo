@@ -20,14 +20,14 @@ export class RolesService {
   public async addRoleToUser(userId: number, roleName: string): Promise<void> {
     const role = await this.findRoleByName(roleName);
     if (!role) {
-      throw new NotFoundException(
-        this.i18n.translate('messages.Roles.errors.roleNotFound', { args: { roleName } }),
-      );
+      throw new NotFoundException(this.i18n.translate('messages.Roles.errors.roleNotFound', { args: { roleName } }));
     }
+
     const userRole = this.userRoleRepository.create({
       user: { id: userId },
       role: { id: role.id },
     });
+
     await this.userRoleRepository.save(userRole);
   }
 

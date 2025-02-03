@@ -12,7 +12,7 @@ export class AppController {
   @Get()
   @ApiOperation({ summary: 'Get hello' })
   @ApiWrappedResponse({ status: 200, description: 'Return hello.', type: String })
-  getHello(): string {
+  public getHello(): string {
     return this.appService.getHello();
   }
 }

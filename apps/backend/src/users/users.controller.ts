@@ -17,7 +17,7 @@ export class UsersController {
   @UseInterceptors(new FastifyFileInterceptor('avatar'))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update user profile' })
-  async updateProfile(
+  public async updateProfile(
     @UserDecorator('id') userId: number,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<User | null> {
@@ -26,7 +26,7 @@ export class UsersController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
-  async getCurrentUser(
+  public async getCurrentUser(
     @UserDecorator('id') userId: number,
   ): Promise<User | null> {
     return this.usersService.findOne(userId);

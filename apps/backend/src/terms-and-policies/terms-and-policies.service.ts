@@ -13,23 +13,17 @@ export class TermsAndPoliciesService {
     private readonly i18n: I18nService,
   ) {}
 
-  async getLatestTerms(): Promise<Terms> {
+  public async getLatestTerms(): Promise<Terms> {
     const terms = await this.termsRepository.getLatestTerms();
-    if (!terms) {
-      throw new NotFoundException(
-        await this.i18n.t('messages.TermsAndPolicies.errors.termsNotFound'),
-      );
-    }
+    if (!terms) throw new NotFoundException(this.i18n.t('messages.TermsAndPolicies.errors.termsNotFound'));
+
     return terms;
   }
 
-  async getLatestPrivacyPolicy(): Promise<PrivacyPolicy> {
+  public async getLatestPrivacyPolicy(): Promise<PrivacyPolicy> {
     const policy = await this.privacyPolicyRepository.getLatestPrivacyPolicy();
-    if (!policy) {
-      throw new NotFoundException(
-        await this.i18n.t('messages.TermsAndPolicies.errors.privacyPolicyNotFound'),
-      );
-    }
+    if (!policy) throw new NotFoundException(this.i18n.t('messages.TermsAndPolicies.errors.privacyPolicyNotFound'));
+
     return policy;
   }
 }

@@ -21,7 +21,7 @@ export class FileService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async uploadFile(
+  public async uploadFile(
     file: MultipartFile,
     options?: FileUploadOptions,
   ): Promise<FileMetadataDto> {
@@ -45,9 +45,8 @@ export class FileService {
         url,
       };
     } catch (error) {
-      if (error instanceof FileNotFoundException || error instanceof FileUploadException) {
-        throw error;
-      }
+      if (error instanceof FileNotFoundException || error instanceof FileUploadException) throw error;
+
       throw new FileUploadException(
         this.i18n,
         this.i18n.t('messages.File.errors.failedToProcessFileUpload'),
@@ -55,14 +54,9 @@ export class FileService {
     }
   }
 
-  async deleteFile(fileId: string): Promise<void> {
+  public async deleteFile(fileId: string): Promise<void> {
     const file = await this.fileRepository.findById(fileId);
-    if (!file) {
-      throw new FileNotFoundException(
-        this.i18n,
-        fileId,
-      );
-    }
+    if (!file) throw new FileNotFoundException(this.i18n, fileId);
 
     try {
       const storage = this.storageStrategy.getStorage(file.storageType);
@@ -76,14 +70,10 @@ export class FileService {
     }
   }
 
-  async getFile(fileId: string): Promise<File> {
+  public async getFile(fileId: string): Promise<File> {
     const file = await this.fileRepository.findById(fileId);
-    if (!file) {
-      throw new FileNotFoundException(
-        this.i18n,
-        fileId,
-      );
-    }
+    if (!file) throw new FileNotFoundException(this.i18n, fileId);
+
     return file;
   }
 }

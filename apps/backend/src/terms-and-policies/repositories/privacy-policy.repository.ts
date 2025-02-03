@@ -9,7 +9,7 @@ export class PrivacyPolicyRepository extends Repository<PrivacyPolicy> {
     super(PrivacyPolicy, dataSource.createEntityManager());
   }
 
-  async getLatestPrivacyPolicy(): Promise<PrivacyPolicy | null> {
+  public async getLatestPrivacyPolicy(): Promise<PrivacyPolicy | null> {
     const lang = I18nContext.current()?.lang || 'en';
     return this.createQueryBuilder('privacy_policy')
       .leftJoinAndSelect('privacy_policy.sections', 'section')

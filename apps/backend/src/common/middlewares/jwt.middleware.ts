@@ -63,9 +63,7 @@ export class JwtMiddleware implements NestMiddleware {
         this.i18n.t('messages.Auth.errors.verifyingTokenFailed'),
         e,
       );
-      throw new UnauthorizedException(
-        this.i18n.t('messages.Auth.errors.invalidToken'),
-      );
+      throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
     }
   }
 }

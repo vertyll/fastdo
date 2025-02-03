@@ -33,7 +33,7 @@ export class AuthController {
     description: 'The user has been successfully logged in.',
     type: LoginResponseDto,
   })
-  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
+  public async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(loginDto);
   }
 
@@ -45,7 +45,7 @@ export class AuthController {
     description: 'The user has been successfully registered.',
     type: User,
   })
-  async register(@Body() registerDto: RegisterDto): Promise<User> {
+  public async register(@Body() registerDto: RegisterDto): Promise<User> {
     return this.authService.register(registerDto);
   }
 
@@ -58,7 +58,7 @@ export class AuthController {
     description: 'Access token has been refreshed successfully.',
     type: LoginResponseDto,
   })
-  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto): Promise<Pick<LoginResponseDto, 'accessToken'>> {
+  public async refreshToken(@Body() refreshTokenDto: RefreshTokenDto): Promise<Pick<LoginResponseDto, 'accessToken'>> {
     return this.authService.refreshToken(refreshTokenDto.refreshToken);
   }
 
@@ -68,7 +68,7 @@ export class AuthController {
     status: 200,
     description: 'User has been successfully logged out.',
   })
-  async logout(
+  public async logout(
     @UserDecorator('id') userId: number,
   ): Promise<void> {
     return this.authService.logout(userId);
@@ -81,7 +81,7 @@ export class AuthController {
     status: 200,
     description: 'Email has been confirmed successfully.',
   })
-  async confirmEmail(
+  public async confirmEmail(
     @Query('token') token: string,
     @Res() res: FastifyReply,
   ): Promise<void> {
@@ -98,7 +98,7 @@ export class AuthController {
     status: 200,
     description: 'Password reset email sent successfully.',
   })
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto): Promise<void> {
+  public async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto): Promise<void> {
     await this.authService.forgotPassword(forgotPasswordDto);
   }
 
@@ -109,7 +109,7 @@ export class AuthController {
     status: 200,
     description: 'Password has been reset successfully.',
   })
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
+  public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
     await this.authService.resetPassword(resetPasswordDto);
   }
 
@@ -120,7 +120,7 @@ export class AuthController {
     status: 200,
     description: 'Email has been changed successfully.',
   })
-  async confirmEmailChange(
+  public async confirmEmailChange(
     @Query('token') token: string,
     @Res() res: FastifyReply,
   ): Promise<void> {

@@ -6,7 +6,7 @@ import { SeederLogger } from './seeder-logger.service';
 export class SeederErrorHandler implements ISeederErrorHandler {
   constructor(private readonly logger: SeederLogger) {}
 
-  async handle(error: Error): Promise<void> {
+  public async handle(error: Error): Promise<void> {
     this.logger.error(`Seeding failed: ${error.message}`);
     throw error;
   }

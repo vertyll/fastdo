@@ -9,15 +9,15 @@ import { FileService } from '../services/file.service';
 export class FileFacade {
   constructor(private readonly fileService: FileService) {}
 
-  async upload(file: MultipartFile, options?: FileUploadOptions): Promise<FileMetadataDto> {
+  public async upload(file: MultipartFile, options?: FileUploadOptions): Promise<FileMetadataDto> {
     return this.fileService.uploadFile(file, options);
   }
 
-  async delete(fileId: string): Promise<void> {
+  public async delete(fileId: string): Promise<void> {
     return this.fileService.deleteFile(fileId);
   }
 
-  async get(fileId: string): Promise<File> {
+  public async get(fileId: string): Promise<File> {
     return this.fileService.getFile(fileId);
   }
 }

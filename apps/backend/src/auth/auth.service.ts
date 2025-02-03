@@ -95,9 +95,7 @@ export class AuthService implements IAuthService {
       await queryRunner.commitTransaction();
       return newUser;
     } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
+      if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();
     }
   }
@@ -118,15 +116,11 @@ export class AuthService implements IAuthService {
         || user.confirmationToken !== token
         || !user.confirmationTokenExpiry
       ) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.invalidToken'),
-        );
+        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
       }
 
       if (user.confirmationTokenExpiry < new Date()) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.tokenExpired'),
-        );
+        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.tokenExpired'));
       }
 
       await this.userRepository.update(user.id, {
@@ -137,9 +131,7 @@ export class AuthService implements IAuthService {
 
       await queryRunner.commitTransaction();
     } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
+      if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();
     }
   }
@@ -159,15 +151,11 @@ export class AuthService implements IAuthService {
         || user.emailChangeToken !== token
         || !user.emailChangeTokenExpiry
       ) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.invalidToken'),
-        );
+        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
       }
 
       if (user.emailChangeTokenExpiry < new Date()) {
-        throw new UnauthorizedException(
-          this.i18n.t('messages.Auth.errors.tokenExpired'),
-        );
+        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.tokenExpired'));
       }
 
       await this.userRepository.update(user.id, {
@@ -181,9 +169,7 @@ export class AuthService implements IAuthService {
 
       await queryRunner.commitTransaction();
     } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
+      if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();
     }
   }
@@ -293,9 +279,7 @@ export class AuthService implements IAuthService {
 
       await queryRunner.commitTransaction();
     } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
+      if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();
     }
   }

@@ -14,7 +14,7 @@ export class MailTemplateService implements IMailTemplate {
   private templatePath: string = this.configService.getOrThrow<string>('app.mail.templatesPath');
   private templatesDir: string = path.join(process.cwd(), this.templatePath);
 
-  async getTemplate(templateName: string, data: any): Promise<string> {
+  public async getTemplate(templateName: string, data: any): Promise<string> {
     const templatePath: string = path.join(this.templatesDir, `${templateName}.hbs`);
     const templateContent: string = await fs.readFile(templatePath, 'utf-8');
     const template: HandlebarsTemplateDelegate = Handlebars.compile(templateContent);

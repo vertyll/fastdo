@@ -100,6 +100,7 @@ interface LanguageConfig {
   languageDirPath: string;
   typesOutputPath: string;
 }
+
 export interface AppConfig {
   environment: Environment;
   port: number;

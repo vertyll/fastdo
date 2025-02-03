@@ -3,14 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
 import { MailConfig } from '../../config/types/app.config.type';
-
-export interface IMailConfig {
-  host: string;
-  port: number;
-  user?: string;
-  password?: string;
-  from: string;
-}
+import { IMailConfig } from '../interfaces/mail-config.interface';
 
 @Injectable()
 export class MailConfigService {
@@ -19,7 +12,7 @@ export class MailConfigService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  getConfig(): IMailConfig {
+  public getConfig(): IMailConfig {
     const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
     if (!mailConfig.host || !mailConfig.port || !mailConfig.from) {
@@ -37,14 +30,10 @@ export class MailConfigService {
     };
   }
 
-  getDevConfig(): IMailConfig {
+  public getDevConfig(): IMailConfig {
     const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
-    if (!mailConfig.from) {
-      throw new Error(
-        this.i18n.t('messages.Mail.errors.missingMailConfiguration'),
-      );
-    }
+    if (!mailConfig.from) throw new Error(this.i18n.t('messages.Mail.errors.missingMailConfiguration'));
 
     return {
       host: mailConfig.dev.host,

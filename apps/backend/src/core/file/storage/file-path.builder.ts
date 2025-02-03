@@ -4,14 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class FilePathBuilder {
-  buildPath(filename: string, customPath?: string): string {
+  public buildPath(filename: string, customPath?: string): string {
     const timestamp = Date.now();
     const uniqueId = uuidv4();
     const sanitizedFilename = this.sanitizeFilename(filename);
 
-    if (customPath) {
-      return join(customPath, `${uniqueId}-${sanitizedFilename}`);
-    }
+    if (customPath) return join(customPath, `${uniqueId}-${sanitizedFilename}`);
 
     const date = new Date(timestamp);
     const year = date.getFullYear();
