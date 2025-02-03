@@ -52,7 +52,7 @@ import { UserStateService } from './data-access/user.state.service';
                 <div class="flex items-center mb-6">
                   <app-image
                     [initialUrl]="user().avatar?.url || null"
-                    mode="view"
+                    mode="preview"
                     size="md"
                     format="circle"
                   />
