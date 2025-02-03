@@ -210,5 +210,9 @@
     "confirmNewPassword": "Potwierdź nowe hasło",
     "updateSuccess": "Profil został zaktualizowany",
     "updateError": "Wystąpił błąd podczas aktualizacji profilu"
+  },
+  "Image": {
+    "cutPhoto": "Przytnij zdjęcie",
+    "fullPreview": "Podgląd zdjęcia"
   }
 }

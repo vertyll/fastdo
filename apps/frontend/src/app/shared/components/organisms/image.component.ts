@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroicons/outline';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ImageCroppedEvent, ImageCropperComponent as NgxImageCropperComponent, LoadedImage } from 'ngx-image-cropper';
 import { environment } from '../../../../environments/environment';
 
@@ -22,7 +23,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 @Component({
   selector: 'app-image',
   standalone: true,
-  imports: [CommonModule, NgxImageCropperComponent, NgIconComponent],
+  imports: [CommonModule, NgxImageCropperComponent, NgIconComponent, TranslatePipe],
   providers: [provideIcons({ heroCamera, heroUserCircle, heroEye, heroXMark })],
   template: `
     <div class="relative">
@@ -71,7 +72,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
           <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Podgląd zdjęcia
+                {{ 'Image.fullPreview' | translate }}
               </h3>
               <button
                 (click)="closePreviewModal()"
@@ -95,7 +96,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
           <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Przytnij zdjęcie
+                {{ 'Image.cutPhoto' | translate }}
               </h3>
               <button
                 (click)="closeCropper()"
@@ -123,13 +124,13 @@ export type ImageSize = 'sm' | 'md' | 'lg';
                 (click)="closeCropper()"
                 class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
               >
-                Anuluj
+                {{ 'Basic.cancel' | translate }}
               </button>
               <button
                 (click)="save()"
                 class="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors"
               >
-                Zapisz
+                {{ 'Basic.save' | translate }}
               </button>
             </div>
           </div>

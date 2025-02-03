@@ -208,5 +208,9 @@
     "confirmNewPassword": "Confirm new password",
     "updateSuccess": "Profile updated successfully",
     "updateError": "An error occurred while updating the profile"
+  },
+  "Image": {
+    "cutPhoto": "Cut photo",
+    "fullPreview": "Full preview"
   }
 }
