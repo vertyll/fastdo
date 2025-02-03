@@ -38,6 +38,7 @@ interface SecurityConfig {
     refreshTokenExpiresIn: string;
     confirmationToken: {
       expiresIn: string;
+      secret: string;
     };
   };
   bcryptSaltRounds: number;

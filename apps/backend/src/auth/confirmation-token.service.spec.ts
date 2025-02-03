@@ -11,7 +11,10 @@ describe('ConfirmationTokenService', () => {
   let configService: jest.Mocked<ConfigService>;
   let i18nService: jest.Mocked<I18nService>;
 
-  const mockSecret = 'mock-jwt-secret';
+  const mockConfig = {
+    secret: 'mock-jwt-secret',
+    expiresIn: '24h',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +30,11 @@ describe('ConfirmationTokenService', () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue(mockSecret),
+            get: jest.fn().mockImplementation((key: string) => {
+              if (key === 'app.security.jwt.confirmationToken.secret') return mockConfig.secret;
+              if (key === 'app.security.jwt.confirmationToken.expiresIn') return mockConfig.expiresIn;
+              return null;
+            }),
           },
         },
         {
@@ -45,10 +52,6 @@ describe('ConfirmationTokenService', () => {
     i18nService = module.get(I18nService);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('generateToken', () => {
     it('should generate a token', () => {
       const email = 'test@example.com';
@@ -60,9 +63,10 @@ describe('ConfirmationTokenService', () => {
       expect(result).toBe(mockToken);
       expect(jwtService.sign).toHaveBeenCalledWith(
         { email },
-        { expiresIn: '24h', secret: mockSecret },
+        { expiresIn: mockConfig.expiresIn, secret: mockConfig.secret },
       );
-      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.accessTokenSecret');
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.confirmationToken.secret');
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.confirmationToken.expiresIn');
     });
   });
 
@@ -75,8 +79,8 @@ describe('ConfirmationTokenService', () => {
       const result = service.verifyToken(token);
 
       expect(result).toEqual(mockPayload);
-      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockSecret });
-      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.accessTokenSecret');
+      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockConfig.secret });
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.confirmationToken.secret');
     });
 
     it('should throw UnauthorizedException with translated message for invalid token', () => {
@@ -90,8 +94,8 @@ describe('ConfirmationTokenService', () => {
         new UnauthorizedException('Translated error message'),
       );
 
-      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockSecret });
-      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.accessTokenSecret');
+      expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockConfig.secret });
+      expect(configService.get).toHaveBeenCalledWith('app.security.jwt.confirmationToken.secret');
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
   });

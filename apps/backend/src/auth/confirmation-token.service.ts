@@ -16,8 +16,8 @@ export class ConfirmationTokenService {
     return this.jwtService.sign(
       { email },
       {
-        expiresIn: '24h',
-        secret: this.configService.get<string>('app.security.jwt.accessTokenSecret'),
+        expiresIn: this.configService.get<string>('app.security.jwt.confirmationToken.expiresIn'),
+        secret: this.configService.get<string>('app.security.jwt.confirmationToken.secret'),
       },
     );
   }
@@ -25,7 +25,7 @@ export class ConfirmationTokenService {
   verifyToken(token: string): { email: string; } {
     try {
       return this.jwtService.verify(token, {
-        secret: this.configService.get<string>('app.security.jwt.accessTokenSecret'),
+        secret: this.configService.get<string>('app.security.jwt.confirmationToken.secret'),
       });
     } catch {
       throw new UnauthorizedException(
