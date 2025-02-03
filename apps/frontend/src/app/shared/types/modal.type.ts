@@ -1,4 +1,4 @@
-import { ButtonRole, ModalInputType } from '../enums/modal.enum';
+import { ButtonRoleEnum, ModalInputTypeEnum } from '../enums/modal.enum';
 import { SimpleNameItem } from './common.type';
 
 /*
@@ -6,7 +6,7 @@ import { SimpleNameItem } from './common.type';
  */
 export interface ModalInput<T = any> {
   id: string;
-  type: ModalInputType;
+  type: ModalInputTypeEnum;
   required: boolean;
   message?: string;
   error?: string;
@@ -19,7 +19,7 @@ export interface ModalInput<T = any> {
 
 export interface ModalButton<T = any> {
   text: string;
-  role: ButtonRole;
+  role: ButtonRoleEnum;
   handler?: ((inputs: T) => void) | (() => void) | Promise<void>;
 }
 

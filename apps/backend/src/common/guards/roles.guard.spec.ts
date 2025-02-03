@@ -1,6 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../enums/role.enum';
+import { RoleEnum } from '../enums/role.enum';
 import { RolesGuard } from './roles.guard';
 
 describe('RolesGuard', () => {
@@ -34,14 +34,14 @@ describe('RolesGuard', () => {
   });
 
   it('should allow access if user has required roles', () => {
-    const requiredRoles: Role[] = [Role.Admin];
+    const requiredRoles: RoleEnum[] = [RoleEnum.Admin];
     reflector.getAllAndOverride.mockReturnValue(requiredRoles);
     const context = {
       getHandler: jest.fn(),
       getClass: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue({
-          user: { roles: [Role.Admin] },
+          user: { roles: [RoleEnum.Admin] },
         }),
       }),
     } as unknown as ExecutionContext;
@@ -50,14 +50,14 @@ describe('RolesGuard', () => {
   });
 
   it('should deny access if user does not have required roles', () => {
-    const requiredRoles: Role[] = [Role.Admin];
+    const requiredRoles: RoleEnum[] = [RoleEnum.Admin];
     reflector.getAllAndOverride.mockReturnValue(requiredRoles);
     const context = {
       getHandler: jest.fn(),
       getClass: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue({
-          user: { roles: [Role.User] },
+          user: { roles: [RoleEnum.User] },
         }),
       }),
     } as unknown as ExecutionContext;

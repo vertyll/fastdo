@@ -1,32 +1,33 @@
-import { Component, OnInit, booleanAttribute, computed, inject, input } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { EMPTY, Observable, distinctUntilChanged, firstValueFrom, map, switchMap } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { ProjectsService } from 'src/app/project/data-access/project.service';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
-import { NotificationService } from 'src/app/shared/services/notification.service';
-import { AppConfigStateService } from '../config/config.state.service';
-import { ButtonComponent } from '../shared/components/atoms/button.component';
-import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
-import { TitleComponent } from '../shared/components/atoms/title.component';
-import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
-import { ModalService } from '../shared/services/modal.service';
-import { PaginationMeta } from '../shared/types/api-response.type';
-import { PaginationParams, TasksListFiltersConfig } from '../shared/types/filter.type';
-import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
-import { GetAllTasksSearchParams, TasksListViewMode } from '../shared/types/task.type';
-import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
-import { TasksService } from './data-access/task.service';
-import { TasksStateService } from './data-access/task.state.service';
-import { AddTaskDto } from './dtos/add-task.dto';
-import { TasksKanbanViewComponent } from './ui/task-kanban.component';
-import { TasksListFiltersComponent } from './ui/task-list-filters.component';
-import { TasksListViewModeComponent } from './ui/task-list-view-mode.component';
-import { TasksListComponent } from './ui/task-list.component';
-import { TaskNameValidator } from './validators/task-name.validator';
+import {booleanAttribute, Component, computed, inject, input, OnInit} from '@angular/core';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {ActivatedRoute} from '@angular/router';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {distinctUntilChanged, EMPTY, firstValueFrom, map, Observable, switchMap} from 'rxjs';
+import {catchError} from 'rxjs/operators';
+import {ProjectsService} from 'src/app/project/data-access/project.service';
+import {NotificationTypeEnum} from 'src/app/shared/enums/notification.enum';
+import {NotificationService} from 'src/app/shared/services/notification.service';
+import {AppConfigStateService} from '../config/config.state.service';
+import {ButtonComponent} from '../shared/components/atoms/button.component';
+import {ErrorMessageComponent} from '../shared/components/atoms/error.message.component';
+import {PaginatorComponent} from '../shared/components/atoms/paginator.component';
+import {TitleComponent} from '../shared/components/atoms/title.component';
+import {ButtonRoleEnum, ModalInputTypeEnum} from '../shared/enums/modal.enum';
+import {ModalService} from '../shared/services/modal.service';
+import {PaginationMeta} from '../shared/types/api-response.type';
+import {PaginationParams, TasksListFiltersConfig} from '../shared/types/filter.type';
+import {LOADING_STATE_VALUE} from '../shared/types/list-state.type';
+import {GetAllTasksSearchParams, TasksListViewMode} from '../shared/types/task.type';
+import {getAllTasksSearchParams} from './data-access/task-filters.adapter';
+import {TasksService} from './data-access/task.service';
+import {TasksStateService} from './data-access/task.state.service';
+import {AddTaskDto} from './dtos/add-task.dto';
+import {TasksKanbanViewComponent} from './ui/task-kanban.component';
+import {TasksListFiltersComponent} from './ui/task-list-filters.component';
+import {TasksListViewModeComponent} from './ui/task-list-view-mode.component';
+import {TasksListComponent} from './ui/task-list.component';
+import {TaskNameValidator} from './validators/task-name.validator';
+import {TaskStatusEnum} from "../shared/enums/task-status.enum";
 
 @Component({
   selector: 'app-task-list-page',
@@ -184,30 +185,30 @@ export class TaskListPageComponent implements OnInit {
       inputs: [
         {
           id: 'name',
-          type: ModalInputType.Textarea,
+          type: ModalInputTypeEnum.Textarea,
           required: true,
           label: this.translateService.instant('Task.taskName'),
         },
         {
           id: 'isDone',
-          type: ModalInputType.Checkbox,
+          type: ModalInputTypeEnum.Checkbox,
           required: false,
           label: this.translateService.instant('Task.isCompleted'),
         },
         {
           id: 'isUrgent',
-          type: ModalInputType.Checkbox,
+          type: ModalInputTypeEnum.Checkbox,
           required: false,
           label: this.translateService.instant('Task.isUrgent'),
         },
       ],
       buttons: [
         {
-          role: ButtonRole.Cancel,
+          role: ButtonRoleEnum.Cancel,
           text: this.translateService.instant('Basic.cancel'),
         },
         {
-          role: ButtonRole.Ok,
+          role: ButtonRoleEnum.Ok,
           text: this.translateService.instant('Basic.save'),
           handler: (data: AddTaskDto) => this.addTask(data),
         },
@@ -234,7 +235,7 @@ export class TaskListPageComponent implements OnInit {
       this.initializeTaskList();
       this.notificationService.showNotification(
         this.translateService.instant('Task.addSuccess'),
-        NotificationType.success,
+        NotificationTypeEnum.Success,
       );
       return true;
     } catch (err: any) {
@@ -245,7 +246,7 @@ export class TaskListPageComponent implements OnInit {
       });
       this.notificationService.showNotification(
         errorMessage,
-        NotificationType.error,
+        NotificationTypeEnum.Error,
       );
       return false;
     }
@@ -262,7 +263,7 @@ export class TaskListPageComponent implements OnInit {
           }
           const searchParams = getAllTasksSearchParams({
             q: '',
-            status: 'ALL',
+            status: TaskStatusEnum.All,
             sortBy: 'dateCreation',
             isUrgent: this.isUrgent(),
             orderBy: 'desc',
@@ -298,12 +299,12 @@ export class TaskListPageComponent implements OnInit {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.getAllError'),
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         }
         return EMPTY;

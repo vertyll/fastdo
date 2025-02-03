@@ -7,7 +7,7 @@ import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { TermsAndPolicyService } from './data-access/terms-and-policy.service';
 import { TermsAndPolicyStateService } from './data-access/terms-and-policy.state.service';
-import { LegalSection } from './enum/legal-section.enum';
+import { LegalSectionEnum } from './enum/legal-section.enum';
 import { Section, SectionTranslation } from './types/terms-and-policies.types';
 
 @Component({
@@ -85,7 +85,7 @@ export class PrivacyPolicyPageComponent implements OnInit, OnDestroy {
   protected readonly translate = inject(TranslateService);
 
   protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
-  protected readonly LegalSection = LegalSection;
+  protected readonly LegalSection = LegalSectionEnum;
 
   protected readonly policy = computed(() => this.stateService.privacyPolicy());
 

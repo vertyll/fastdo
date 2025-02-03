@@ -1,7 +1,5 @@
-export const TASK_STATUS = {
-  ALL: 'ALL',
-  TODO: 'TODO',
-  DONE: 'DONE',
-} as const;
-
-export type TaskStatus = keyof typeof TASK_STATUS;
+export enum TaskStatusEnum {
+  All = 'All',
+  Todo = 'Todo',
+  Done = 'Done',
+}

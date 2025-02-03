@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { ToastPosition } from '../enums/toast.enum';
+import { ToastPositionEnum } from '../enums/toast.enum';
 import { ToastObject } from '../types/components.type';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class ToastService {
     visible: false,
     success: false,
     className: '',
-    position: ToastPosition.fixed,
+    position: ToastPositionEnum.Fixed,
   };
 
   private readonly router = inject(Router);
@@ -30,7 +30,7 @@ export class ToastService {
   presentToast(
     message: string,
     success: boolean = false,
-    position: ToastPosition = ToastPosition.fixed,
+    position: ToastPositionEnum = ToastPositionEnum.Fixed,
   ) {
     this.toastSignal.set({
       message,
@@ -40,7 +40,7 @@ export class ToastService {
       position,
     });
 
-    if (position === ToastPosition.fixed) {
+    if (position === ToastPositionEnum.Fixed) {
       window.scroll({
         top: 0,
         left: 0,

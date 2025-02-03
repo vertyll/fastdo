@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { Role } from '../../shared/enums/role.enum';
+import { RoleEnum } from '../../shared/enums/role.enum';
 import { AuthState } from '../../shared/types/auth.type';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class AuthStateService {
     this.authState.update(state => ({ ...state, isLoggedIn }));
   }
 
-  public setRoles(roles: Role[] | null) {
+  public setRoles(roles: RoleEnum[] | null) {
     this.authState.update(state => ({ ...state, roles }));
   }
 

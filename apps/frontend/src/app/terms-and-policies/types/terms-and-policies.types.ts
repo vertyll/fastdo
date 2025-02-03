@@ -1,4 +1,4 @@
-import { LegalSection } from '../enum/legal-section.enum';
+import { LegalSectionEnum } from '../enum/legal-section.enum';
 
 export type SectionTranslation = {
   id: number;
@@ -11,6 +11,6 @@ export type SectionTranslation = {
 export type Section = {
   id: number;
   order: number;
-  type: LegalSection;
+  type: LegalSectionEnum;
   translations: SectionTranslation[];
 };

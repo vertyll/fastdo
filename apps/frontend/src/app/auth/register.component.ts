@@ -6,8 +6,8 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
 import { LabelComponent } from '../shared/components/atoms/label.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { LinkType } from '../shared/enums/link.enum';
-import { ToastPosition } from '../shared/enums/toast.enum';
+import { LinkTypeEnum } from '../shared/enums/link.enum';
+import { ToastPositionEnum } from '../shared/enums/toast.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
@@ -157,7 +157,7 @@ export class RegisterComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   protected readonly registerForm: FormGroup;
-  protected readonly LinkType = LinkType;
+  protected readonly LinkType = LinkTypeEnum;
   protected passwordMismatch: boolean = false;
   protected passwordErrors: string[] = [];
   protected emailErrors: string[] = [];
@@ -195,7 +195,7 @@ export class RegisterComponent implements OnInit {
             this.toastService.presentToast(
               this.translateService.instant('Auth.registerSuccess'),
               true,
-              ToastPosition.relative,
+              ToastPositionEnum.Relative,
             );
           });
         },

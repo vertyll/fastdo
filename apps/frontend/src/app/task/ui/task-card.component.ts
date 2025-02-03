@@ -7,7 +7,7 @@ import { heroBookmarkSolid } from '@ng-icons/heroicons/solid';
 import { TranslateModule } from '@ngx-translate/core';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { NotificationTypeEnum } from 'src/app/shared/enums/notification.enum';
 import { CustomDatePipe } from 'src/app/shared/pipes/custom-date.pipe';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
@@ -188,7 +188,7 @@ export class TaskCardComponent {
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,
-        NotificationType.error,
+        NotificationTypeEnum.Error,
       );
       return;
     }

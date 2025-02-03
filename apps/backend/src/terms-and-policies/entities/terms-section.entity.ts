@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
-import { LegalSectionType } from '../enums/legal-section-type.enum';
+import { LegalSectionTypeEnum } from '../enums/legal-section-type.enum';
 import { TermsSectionTranslation } from './terms-section-translation.entity';
 import { Terms } from './terms.entity';
 
@@ -15,14 +15,14 @@ export class TermsSection {
   order: number;
 
   @ApiProperty({
-    enum: LegalSectionType,
+    enum: LegalSectionTypeEnum,
     enumName: 'LegalSectionType',
   })
   @Column({
     type: 'enum',
-    enum: LegalSectionType,
+    enum: LegalSectionTypeEnum,
   })
-  type: LegalSectionType;
+  type: LegalSectionTypeEnum;
 
   @ApiProperty()
   @ManyToOne(() => Terms, terms => terms.sections)

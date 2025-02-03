@@ -1,4 +1,4 @@
-import { Role } from '../enums/role.enum';
+import { RoleEnum } from '../enums/role.enum';
 
 /*
  * Interface
@@ -23,5 +23,5 @@ export interface RefreshTokenResponse {
 
 export interface AuthState {
   isLoggedIn: boolean;
-  roles: Role[] | null;
+  roles: RoleEnum[] | null;
 }

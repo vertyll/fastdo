@@ -1,4 +1,4 @@
-export enum ToastPosition {
-  fixed = 'fixed',
-  relative = 'relative',
+export enum ToastPositionEnum {
+  Fixed = 'Fixed',
+  Relative = 'Relative',
 }

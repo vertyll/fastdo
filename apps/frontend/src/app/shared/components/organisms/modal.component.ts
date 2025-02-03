@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { AdDirective } from 'src/app/core/directives/ad.directive';
-import { ButtonRole, ModalInputType } from '../../enums/modal.enum';
+import { ButtonRoleEnum, ModalInputTypeEnum } from '../../enums/modal.enum';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { ModalService } from '../../services/modal.service';
 import { ModalConfig } from '../../types/modal.type';
@@ -200,8 +200,8 @@ export class ModalComponent {
 
   readonly adHost = viewChild(AdDirective);
 
-  protected readonly ButtonRole = ButtonRole;
-  protected readonly ModalInputType = ModalInputType;
+  protected readonly ButtonRole = ButtonRoleEnum;
+  protected readonly ModalInputType = ModalInputTypeEnum;
   public form: FormGroup = new FormGroup({});
 
   constructor() {
@@ -228,7 +228,7 @@ export class ModalComponent {
     modalConfig.options.inputs.forEach(input => {
       let initialValue = input.value;
 
-      if (input.type === ModalInputType.Checkbox) {
+      if (input.type === ModalInputTypeEnum.Checkbox) {
         initialValue = Boolean(input.value);
       }
 
@@ -240,7 +240,7 @@ export class ModalComponent {
       group[input.id] = control;
 
       control.valueChanges.subscribe(value => {
-        const finalValue = input.type === ModalInputType.Checkbox ? Boolean(value) : value;
+        const finalValue = input.type === ModalInputTypeEnum.Checkbox ? Boolean(value) : value;
         if (input.change) {
           input.change({
             ...this.form.value,
@@ -298,7 +298,7 @@ export class ModalComponent {
       } else {
         const modalConfig = this.modalService.modal();
         const saveButton = modalConfig.options?.buttons?.find(
-          btn => btn.role === ButtonRole.Ok,
+          btn => btn.role === ButtonRoleEnum.Ok,
         );
         if (saveButton) {
           await this.handleButtonAction(saveButton);

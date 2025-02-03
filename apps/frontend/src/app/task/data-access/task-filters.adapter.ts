@@ -1,5 +1,5 @@
 import { PaginationParams, TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
-import { TASK_STATUS } from '../../shared/enums/task-status.enum';
+import { TaskStatusEnum } from '../../shared/enums/task-status.enum';
 import { GetAllTasksSearchParams } from '../../shared/types/task.type';
 
 export function getAllTasksSearchParams(
@@ -17,9 +17,9 @@ export function getAllTasksSearchParams(
     pageSize: params.pageSize || 10,
   };
 
-  if (params.status === TASK_STATUS.TODO) {
+  if (params.status === TaskStatusEnum.Todo) {
     searchParams.is_done = 'false';
-  } else if (params.status === TASK_STATUS.DONE) {
+  } else if (params.status === TaskStatusEnum.Done) {
     searchParams.is_done = 'true';
   }
 

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
-import { LegalSectionType } from '../enums/legal-section-type.enum';
+import { LegalSectionTypeEnum } from '../enums/legal-section-type.enum';
 import { PrivacyPolicySectionTranslation } from './privacy-policy-section-translation.entity';
 import { PrivacyPolicy } from './privacy-policy.entity';
 
@@ -14,12 +14,12 @@ export class PrivacyPolicySection {
   @Column()
   order: number;
 
-  @ApiProperty({ enum: LegalSectionType, enumName: 'LegalSectionType' })
+  @ApiProperty({ enum: LegalSectionTypeEnum, enumName: 'LegalSectionType' })
   @Column({
     type: 'enum',
-    enum: LegalSectionType,
+    enum: LegalSectionTypeEnum,
   })
-  type: LegalSectionType;
+  type: LegalSectionTypeEnum;
 
   @ApiProperty({ type: () => PrivacyPolicy })
   @ManyToOne(() => PrivacyPolicy, policy => policy.sections)

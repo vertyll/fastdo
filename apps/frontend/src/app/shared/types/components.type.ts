@@ -1,4 +1,4 @@
-import { ToastPosition } from '../enums/toast.enum';
+import { ToastPositionEnum } from '../enums/toast.enum';
 
 /*
  * Type
@@ -30,5 +30,5 @@ export interface ToastObject {
   visible: boolean;
   success: boolean;
   className: string;
-  position: ToastPosition;
+  position: ToastPositionEnum;
 }

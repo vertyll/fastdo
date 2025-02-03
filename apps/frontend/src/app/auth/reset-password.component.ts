@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { ToastPosition } from '../shared/enums/toast.enum';
+import { ToastPositionEnum } from '../shared/enums/toast.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
@@ -116,7 +116,7 @@ export class ResetPasswordComponent implements OnInit {
             this.toastService.presentToast(
               this.translateService.instant('Auth.passwordResetSuccess'),
               true,
-              ToastPosition.relative,
+              ToastPositionEnum.Relative,
             );
           });
         },

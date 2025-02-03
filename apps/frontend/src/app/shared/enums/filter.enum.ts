@@ -1,4 +1,4 @@
-export enum FilterType {
+export enum FilterTypeEnum {
   Text = 'text',
   Number = 'number',
   Date = 'date',

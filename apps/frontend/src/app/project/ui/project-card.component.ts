@@ -5,7 +5,7 @@ import { heroCalendar, heroCheck, heroPencil } from '@ng-icons/heroicons/outline
 import { TranslateModule } from '@ngx-translate/core';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
-import { Role } from 'src/app/shared/enums/role.enum';
+import { RoleEnum } from 'src/app/shared/enums/role.enum';
 import { HasRoleDirective } from '../../core/directives/has-role.directive';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
 import { CustomDatePipe } from '../../shared/pipes/custom-date.pipe';
@@ -106,7 +106,7 @@ export class ProjectCardComponent {
 
   protected readonly isEditMode = computed(() => this.editModeSignal());
   protected readonly isExpanded = computed(() => this.expandedSignal());
-  protected readonly role = Role;
+  protected readonly role = RoleEnum;
 
   protected toggleExpanded(): void {
     this.expandedSignal.update(value => !value);

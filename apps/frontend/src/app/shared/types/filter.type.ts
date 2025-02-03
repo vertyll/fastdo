@@ -1,5 +1,5 @@
-import { FilterType } from '../enums/filter.enum';
-import { TASK_STATUS, TaskStatus } from '../enums/task-status.enum';
+import { FilterTypeEnum } from '../enums/filter.enum';
+import { TaskStatusEnum } from '../enums/task-status.enum';
 
 /*
  * Interface
@@ -14,7 +14,7 @@ export interface FilterValue {
 }
 
 export interface FilterMetadata {
-  type: FilterType;
+  type: FilterTypeEnum;
   formControlName: string;
   labelKey: string;
   defaultValue?: any;
@@ -36,7 +36,7 @@ export type FilterModel = {
 
 export type TasksListFiltersConfig = {
   q: string;
-  status: TaskStatus;
+  status: TaskStatusEnum;
   sortBy: 'dateCreation' | 'dateModification' | 'name';
   orderBy: 'asc' | 'desc';
   createdFrom: string;
@@ -62,23 +62,23 @@ export type PaginationParams = {
 
 export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   {
-    type: FilterType.Text,
+    type: FilterTypeEnum.Text,
     formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
-    type: FilterType.Select,
+    type: FilterTypeEnum.Select,
     formControlName: 'status',
     labelKey: 'Filters.status',
-    defaultValue: TASK_STATUS.ALL,
+    defaultValue: TaskStatusEnum.All,
     options: [
-      { value: TASK_STATUS.ALL, label: 'Filters.statusAll' },
-      { value: TASK_STATUS.TODO, label: 'Filters.statusTodo' },
-      { value: TASK_STATUS.DONE, label: 'Filters.statusDone' },
+      { value: TaskStatusEnum.All, label: 'Filters.statusAll' },
+      { value: TaskStatusEnum.Todo, label: 'Filters.statusTodo' },
+      { value: TaskStatusEnum.Done, label: 'Filters.statusDone' },
     ],
   },
   {
-    type: FilterType.Select,
+    type: FilterTypeEnum.Select,
     formControlName: 'sortBy',
     labelKey: 'Filters.sortBy',
     defaultValue: 'dateCreation',
@@ -89,7 +89,7 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: FilterType.Select,
+    type: FilterTypeEnum.Select,
     formControlName: 'orderBy',
     labelKey: 'Filters.orderBy',
     defaultValue: 'desc',
@@ -99,22 +99,22 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'createdFrom',
     labelKey: 'Filters.createdFrom',
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'createdTo',
     labelKey: 'Filters.createdTo',
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'updatedFrom',
     labelKey: 'Filters.updatedFrom',
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'updatedTo',
     labelKey: 'Filters.updatedTo',
   },
@@ -125,12 +125,12 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
  */
 export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
-    type: FilterType.Text,
+    type: FilterTypeEnum.Text,
     formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
-    type: FilterType.Select,
+    type: FilterTypeEnum.Select,
     formControlName: 'sortBy',
     labelKey: 'Filters.sortBy',
     defaultValue: 'dateCreation',
@@ -141,7 +141,7 @@ export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: FilterType.Select,
+    type: FilterTypeEnum.Select,
     formControlName: 'orderBy',
     labelKey: 'Filters.orderBy',
     defaultValue: 'desc',
@@ -151,22 +151,22 @@ export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
     ],
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'createdFrom',
     labelKey: 'Filters.createdFrom',
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'createdTo',
     labelKey: 'Filters.createdTo',
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'updatedFrom',
     labelKey: 'Filters.updatedFrom',
   },
   {
-    type: FilterType.Date,
+    type: FilterTypeEnum.Date,
     formControlName: 'updatedTo',
     labelKey: 'Filters.updatedTo',
   },

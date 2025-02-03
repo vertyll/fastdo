@@ -5,7 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource } from 'typeorm';
-import { Role as RoleEnum } from '../common/enums/role.enum';
+import { RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
 import { Role } from '../roles/entities/role.entity';
 import { RoleRepository } from '../roles/repositories/role.repository';

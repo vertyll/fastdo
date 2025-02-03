@@ -7,8 +7,8 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { ButtonRole, ModalInputType } from '../shared/enums/modal.enum';
-import { NotificationType } from '../shared/enums/notification.enum';
+import { ButtonRoleEnum, ModalInputTypeEnum } from '../shared/enums/modal.enum';
+import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { PaginationMeta } from '../shared/types/api-response.type';
@@ -101,18 +101,18 @@ export class ProjectListPageComponent implements OnInit {
       inputs: [
         {
           id: 'name',
-          type: ModalInputType.Textarea,
+          type: ModalInputTypeEnum.Textarea,
           required: true,
           label: this.translateService.instant('Project.projectName'),
         },
       ],
       buttons: [
         {
-          role: ButtonRole.Cancel,
+          role: ButtonRoleEnum.Cancel,
           text: this.translateService.instant('Basic.cancel'),
         },
         {
-          role: ButtonRole.Ok,
+          role: ButtonRoleEnum.Ok,
           text: this.translateService.instant('Basic.save'),
           handler: (data: AddProjectDto) => this.handleAddProject(data),
         },
@@ -150,7 +150,7 @@ export class ProjectListPageComponent implements OnInit {
       await firstValueFrom(this.projectsService.add(data.name));
       this.notificationService.showNotification(
         this.translateService.instant('Project.createSuccess'),
-        NotificationType.success,
+        NotificationTypeEnum.Success,
       );
       return true;
     } catch (err: any) {
@@ -161,7 +161,7 @@ export class ProjectListPageComponent implements OnInit {
       });
       this.notificationService.showNotification(
         errorMessage,
-        NotificationType.error,
+        NotificationTypeEnum.Error,
       );
       return false;
     }
@@ -182,19 +182,19 @@ export class ProjectListPageComponent implements OnInit {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Project.updateError'),
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
           this.translateService.instant('Project.updateSuccess'),
-          NotificationType.success,
+          NotificationTypeEnum.Success,
         );
       },
     });
@@ -206,19 +206,19 @@ export class ProjectListPageComponent implements OnInit {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Project.deleteError'),
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
           this.translateService.instant('Project.deleteSuccess'),
-          NotificationType.success,
+          NotificationTypeEnum.Success,
         );
       },
     });
@@ -230,12 +230,12 @@ export class ProjectListPageComponent implements OnInit {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Project.getAllError'),
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         }
       },
@@ -247,7 +247,7 @@ export class ProjectListPageComponent implements OnInit {
     if (!validation.isValid) {
       this.notificationService.showNotification(
         validation.error!,
-        NotificationType.error,
+        NotificationTypeEnum.Error,
       );
       return false;
     }

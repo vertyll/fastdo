@@ -1,6 +1,6 @@
 import { Component, inject, input } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NotificationType } from 'src/app/shared/enums/notification.enum';
+import { NotificationTypeEnum } from 'src/app/shared/enums/notification.enum';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { TaskUpdatePayload } from '../../shared/types/task.type';
 import { TasksService } from '../data-access/task.service';
@@ -43,19 +43,19 @@ export class TasksListComponent {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(
             err.error.message,
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.deleteError'),
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
           this.translateService.instant('Task.deleteSuccess'),
-          NotificationType.success,
+          NotificationTypeEnum.Success,
         );
       },
     });
@@ -68,19 +68,19 @@ export class TasksListComponent {
         if (res.error && res.error.message) {
           this.notificationService.showNotification(
             res.error.message,
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.updateError'),
-            NotificationType.error,
+            NotificationTypeEnum.Error,
           );
         }
       },
       complete: () => {
         this.notificationService.showNotification(
           this.translateService.instant('Task.updateSuccess'),
-          NotificationType.success,
+          NotificationTypeEnum.Success,
         );
       },
     });

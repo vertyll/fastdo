@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { NotificationType } from '../enums/notification.enum';
+import { NotificationTypeEnum } from '../enums/notification.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ export class NotificationService {
 
   public showNotification(
     message: string,
-    type: NotificationType = NotificationType.info,
+    type: NotificationTypeEnum = NotificationTypeEnum.Info,
     action: string = '',
     duration: number = 3500,
     verticalPosition: MatSnackBarVerticalPosition = 'top',
@@ -18,11 +18,11 @@ export class NotificationService {
     this.snackBar.open(message, action, {
       duration: duration,
       verticalPosition: verticalPosition,
-      panelClass: type === NotificationType.info
+      panelClass: type === NotificationTypeEnum.Info
         ? ['info-snackbar']
-        : type === NotificationType.success
+        : type === NotificationTypeEnum.Success
         ? ['success-snackbar']
-        : type === NotificationType.error
+        : type === NotificationTypeEnum.Error
         ? ['error-snackbar']
         : ['info'],
     });

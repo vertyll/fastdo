@@ -6,8 +6,8 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
 import { LabelComponent } from '../shared/components/atoms/label.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { LinkType } from '../shared/enums/link.enum';
-import { ToastPosition } from '../shared/enums/toast.enum';
+import { LinkTypeEnum } from '../shared/enums/link.enum';
+import { ToastPositionEnum } from '../shared/enums/toast.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 
@@ -80,7 +80,7 @@ export class LoginComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   protected readonly loginForm: FormGroup;
-  protected readonly LinkType = LinkType;
+  protected readonly LinkType = LinkTypeEnum;
   protected errorMessage: string | null = null;
 
   constructor() {
@@ -94,14 +94,14 @@ export class LoginComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['confirmed'] === 'true') {
         this.translateService.get('Auth.emailConfirmed').subscribe((message: string): void => {
-          this.toastService.presentToast(message, true, ToastPosition.relative);
+          this.toastService.presentToast(message, true, ToastPositionEnum.Relative);
         });
       }
 
       if (params['emailChanged'] === 'true') {
         this.translateService.get('Auth.emailChanged').subscribe((message: string): void => {
           this.authService.clearTokens();
-          this.toastService.presentToast(message, true, ToastPosition.relative);
+          this.toastService.presentToast(message, true, ToastPositionEnum.Relative);
         });
       }
     });

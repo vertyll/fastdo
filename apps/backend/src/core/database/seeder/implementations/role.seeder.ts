@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Seeder } from '../../../../common/decorators/seeder.decorator';
-import { Role as RoleEnum } from '../../../../common/enums/role.enum';
+import { RoleEnum } from '../../../../common/enums/role.enum';
 import { Role } from '../../../../roles/entities/role.entity';
 import { Environment } from '../../../config/types/app.config.type';
 import { ISeeder } from '../interfaces/seeder.interface';

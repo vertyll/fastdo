@@ -1,12 +1,12 @@
 import { Directive, OnInit, TemplateRef, ViewContainerRef, inject, input } from '@angular/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { Role } from 'src/app/shared/enums/role.enum';
+import { RoleEnum } from 'src/app/shared/enums/role.enum';
 
 @Directive({
   selector: '[appHasRole]',
 })
 export class HasRoleDirective implements OnInit {
-  readonly allowedRoles = input.required<Role[] | Role>({ alias: 'appHasRole' });
+  readonly allowedRoles = input.required<RoleEnum[] | RoleEnum>({ alias: 'appHasRole' });
   private templateRef = inject(TemplateRef<any>);
   private viewContainer = inject(ViewContainerRef);
   private authService = inject(AuthService);

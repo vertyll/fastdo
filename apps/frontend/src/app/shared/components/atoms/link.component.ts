@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LinkType } from '../../enums/link.enum';
+import { LinkTypeEnum } from '../../enums/link.enum';
 
 @Component({
   selector: 'app-link',
@@ -22,8 +22,8 @@ import { LinkType } from '../../enums/link.enum';
 })
 export class LinkComponent {
   readonly routerLink = input.required<string | any[]>();
-  readonly linkType = input<LinkType>(LinkType.Default);
+  readonly linkType = input<LinkTypeEnum>(LinkTypeEnum.Default);
   readonly clickHandler = input<() => void>();
 
-  protected readonly LinkType = LinkType;
+  protected readonly LinkType = LinkTypeEnum;
 }

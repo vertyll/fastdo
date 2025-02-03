@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Seeder } from '../../../../common/decorators/seeder.decorator';
 import { PrivacyPolicy } from '../../../../terms-and-policies/entities/privacy-policy.entity';
 import { Terms } from '../../../../terms-and-policies/entities/terms.entity';
-import { LegalSectionType } from '../../../../terms-and-policies/enums/legal-section-type.enum';
+import { LegalSectionTypeEnum } from '../../../../terms-and-policies/enums/legal-section-type.enum';
 import { Environment } from '../../../config/types/app.config.type';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { BaseSeederService } from '../services/base-seeder.service';
@@ -33,7 +33,7 @@ export class LegalDocumentsSeeder implements ISeeder {
         sections: [
           {
             order: 1,
-            type: LegalSectionType.HEADER,
+            type: LegalSectionTypeEnum.HEADER,
             translations: [
               {
                 languageCode: 'en',
@@ -49,7 +49,7 @@ export class LegalDocumentsSeeder implements ISeeder {
           },
           {
             order: 2,
-            type: LegalSectionType.LIST,
+            type: LegalSectionTypeEnum.LIST,
             translations: [
               {
                 languageCode: 'en',
@@ -71,7 +71,7 @@ export class LegalDocumentsSeeder implements ISeeder {
           },
           {
             order: 3,
-            type: LegalSectionType.PARAGRAPH,
+            type: LegalSectionTypeEnum.PARAGRAPH,
             translations: [
               {
                 languageCode: 'en',
@@ -96,7 +96,7 @@ export class LegalDocumentsSeeder implements ISeeder {
         sections: [
           {
             order: 1,
-            type: LegalSectionType.HEADER,
+            type: LegalSectionTypeEnum.HEADER,
             translations: [
               {
                 languageCode: 'en',
@@ -114,7 +114,7 @@ export class LegalDocumentsSeeder implements ISeeder {
           },
           {
             order: 2,
-            type: LegalSectionType.LIST,
+            type: LegalSectionTypeEnum.LIST,
             translations: [
               {
                 languageCode: 'en',
@@ -136,7 +136,7 @@ export class LegalDocumentsSeeder implements ISeeder {
           },
           {
             order: 3,
-            type: LegalSectionType.PARAGRAPH,
+            type: LegalSectionTypeEnum.PARAGRAPH,
             translations: [
               {
                 languageCode: 'en',

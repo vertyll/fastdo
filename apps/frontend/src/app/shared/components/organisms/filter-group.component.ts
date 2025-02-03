@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
-import { FilterType } from '../../enums/filter.enum';
+import { FilterTypeEnum } from '../../enums/filter.enum';
 import { FiltersService } from '../../services/filter.service';
 import { PlatformService } from '../../services/platform.service';
 import { ClearFilter, ClearPartial, SavePartial } from '../../store/filter/filter.actions';
@@ -234,7 +234,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private readonly filtersService = inject(FiltersService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  protected readonly FilterType = FilterType;
+  protected readonly FilterType = FilterTypeEnum;
 
   constructor() {
     effect(() => {
@@ -423,7 +423,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     queryParamValue: any,
     defaultValue: any,
   ): any {
-    if (filter?.type === FilterType.EditableMultiSelect) {
+    if (filter?.type === FilterTypeEnum.EditableMultiSelect) {
       return this.getMultiSelectValue(queryParamValue);
     }
     return typeof defaultValue === 'number'
@@ -493,7 +493,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
     if (
       Array.isArray(value)
-      && filterMetadata?.type === FilterType.EditableMultiSelect
+      && filterMetadata?.type === FilterTypeEnum.EditableMultiSelect
     ) {
       return {
         id: key,

@@ -1,10 +1,10 @@
-export enum ButtonRole {
+export enum ButtonRoleEnum {
   Cancel = 'cancel',
   Ok = 'ok',
   Reject = 'reject',
 }
 
-export enum ModalInputType {
+export enum ModalInputTypeEnum {
   Text = 'text',
   Number = 'number',
   Date = 'date',
