@@ -26,6 +26,8 @@ import { Terms } from './terms-and-policies/entities/terms.entity';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
+import {fastifyStatic} from "@fastify/static";
+import {join} from "path";
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -41,6 +43,13 @@ async function bootstrap(): Promise<void> {
   const configService: ConfigService = app.get(ConfigService);
 
   app.enableCors();
+
+  const fileUploadsPath: string = configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');
+  await app.register(fastifyStatic, {
+    root: join(process.cwd(), fileUploadsPath),
+    prefix: '/uploads/',
+    decorateReply: false
+  });
 
   const maxFileSize: number = configService.getOrThrow<number>('app.file.validation.maxSize');
   await app.register(fastifyMultipart, {

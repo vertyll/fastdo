@@ -4,24 +4,22 @@ import * as bcrypt from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
 import { ConfirmationTokenService } from '../auth/confirmation-token.service';
-import { FileService } from '../core/file/services/file.service';
 import { MailService } from '../core/mail/services/mail.service';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { UserEmailHistory } from './entities/user-email-history.entity';
 import { User } from './entities/user.entity';
-import { UserEmailHistoryRepository } from './repositories/user-email-history.repository';
 import { UserRepository } from './repositories/user.repository';
+import {FileFacade} from "../core/file/facade/file.facade";
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly mailService: MailService,
-    private readonly fileService: FileService,
+    private readonly fileFacade: FileFacade,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly configService: ConfigService,
-    private readonly userEmailHistoryRepository: UserEmailHistoryRepository,
     private readonly dataSource: DataSource,
     private readonly confirmationTokenService: ConfirmationTokenService,
   ) {}
@@ -35,17 +33,6 @@ export class UsersService {
 
   public async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
-  }
-
-  public async findByConfirmationToken(token: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { confirmationToken: token } });
-  }
-
-  public async getEmailHistory(userId: number): Promise<UserEmailHistory[]> {
-    return this.userEmailHistoryRepository.find({
-      where: { user: { id: userId } },
-      order: { dateChange: 'DESC' },
-    });
   }
 
   public async create(user: Partial<User>): Promise<User> {
@@ -108,9 +95,9 @@ export class UsersService {
 
       if (updateProfileDto.avatar) {
         try {
-          if (user.avatar) await this.fileService.deleteFile(user.avatar.id);
+          if (user.avatar) await this.fileFacade.delete(user.avatar.id);
 
-          const { id: fileId } = await this.fileService.uploadFile(updateProfileDto.avatar);
+          const { id: fileId } = await this.fileFacade.upload(updateProfileDto.avatar);
 
           updateData.avatar = { id: fileId };
         } catch {

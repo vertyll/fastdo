@@ -24,6 +24,6 @@ import { FileValidator } from './validators/file-validator';
     FileRepository,
     FileFacade,
   ],
-  exports: [FileService],
+  exports: [FileFacade],
 })
 export class FileModule {}
