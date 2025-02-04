@@ -98,6 +98,7 @@ import { UserStateService } from './data-access/user.state.service';
                     size="md"
                     format="circle"
                     (imageSaved)="onImageSaved($event)"
+                    (croppingChange)="onCroppingChange($event)"
                   />
                 </div>
 
@@ -194,6 +195,7 @@ export class UserProfileComponent implements OnInit {
   protected passwordErrors: string[] = [];
   protected newPasswordErrors: string[] = [];
   protected confirmNewPasswordErrors: string[] = [];
+  protected isCropping: boolean = false;
 
   constructor() {
     this.profileForm = this.fb.group({
@@ -231,7 +233,14 @@ export class UserProfileComponent implements OnInit {
     this.selectedFile = event.file;
   }
 
-  protected async onSubmit(): Promise<void> {
+  protected onCroppingChange(isCropping: boolean): void {
+    this.isCropping = isCropping;
+  }
+
+  protected onSubmit(): void {
+    if (this.isCropping || !this.profileForm.valid) {
+      return;
+    }
     if (this.profileForm.valid) {
       const formData = new FormData();
       let hasChanges = false;

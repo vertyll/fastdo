@@ -44,9 +44,14 @@ async function bootstrap(): Promise<void> {
   );
   const configService: ConfigService = app.get(ConfigService);
 
-  await app.register(helmet);
+  await app.register(helmet, {
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  });
 
-  app.enableCors();
+  app.enableCors({
+    origin: configService.get('app.frontend.url'),
+    credentials: true,
+  });
 
   const fileUploadsPath: string = configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');
   await app.register(fastifyStatic, {

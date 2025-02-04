@@ -1,15 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Injector,
-  afterNextRender,
-  effect,
-  inject,
-  input,
-  output,
-  runInInjectionContext,
-  signal,
-} from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, effect, input, output, signal } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -139,8 +129,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
     </div>
   `,
 })
-export class ImageComponent {
-  private readonly injector = inject(Injector);
+export class ImageComponent implements OnDestroy {
   private readonly baseUrl = environment.backendUrl;
 
   mode = input<ImageMode>('view');
@@ -149,24 +138,35 @@ export class ImageComponent {
   initialUrl = input<string | null>(null);
 
   imageSaved = output<{ file: File; preview: string | null; }>();
+  croppingChange = output<boolean>();
 
   protected imageChangedEvent: Event | null = null;
   protected previewUrl = signal<string | null>(null);
   protected showCropper = signal(false);
   protected showPreviewModal = signal(false);
+  private destroy = signal(false);
   private croppedImageBlob: string | null = null;
 
+  @ViewChild('fileInput')
+  fileInput!: ElementRef<HTMLInputElement>;
+
   constructor() {
-    afterNextRender(() => {
-      runInInjectionContext(this.injector, () => {
-        effect(() => {
-          const url = this.initialUrl();
-          if (url) {
-            this.previewUrl.set(this.getFullImageUrl(url));
-          }
-        });
-      });
+    effect(() => {
+      const url = this.initialUrl();
+      if (url) {
+        this.previewUrl.set(this.getFullImageUrl(url));
+      }
     });
+
+    effect(() => {
+      if (!this.destroy()) {
+        this.croppingChange.emit(this.showCropper());
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy.set(true);
   }
 
   protected getFullImageUrl(url: string | null): string | null {
@@ -231,11 +231,13 @@ export class ImageComponent {
   }
 
   protected imageCropped(event: ImageCroppedEvent): void {
-    this.croppedImageBlob = event.base64 || null;
+    if (event.objectUrl) {
+      this.croppedImageBlob = event.objectUrl;
+    }
   }
 
-  protected imageLoaded(image: LoadedImage): void {
-    console.log('Image loaded', image);
+  protected imageLoaded(_image: LoadedImage): void {
+    console.log('Image loaded');
   }
 
   protected loadImageFailed(): void {
@@ -247,22 +249,26 @@ export class ImageComponent {
   }
 
   protected closeCropper(): void {
-    this.showCropper.set(false);
     this.imageChangedEvent = null;
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+    this.showCropper.set(false);
   }
 
   protected save(): void {
-    if (this.croppedImageBlob && this.imageChangedEvent) {
-      const originalFile = (this.imageChangedEvent.target as any).files[0] as File;
-      fetch(this.croppedImageBlob)
-        .then(res => res.blob())
-        .then(blob => {
-          const fileName = originalFile.name.replace(/\.[^/.]+$/, '') + '-cropped.png';
-          const file = new File([blob], fileName, { type: 'image/png' });
-          this.previewUrl.set(this.croppedImageBlob);
-          this.imageSaved.emit({ file, preview: this.croppedImageBlob });
-          this.closeCropper();
-        });
-    }
+    if (!this.croppedImageBlob || !this.imageChangedEvent) return;
+
+    const originalFile = (this.imageChangedEvent.target as HTMLInputElement).files?.[0];
+    if (!originalFile) return;
+
+    fetch(this.croppedImageBlob)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], `${originalFile.name}-cropped.png`, { type: 'image/png' });
+        this.previewUrl.set(this.croppedImageBlob);
+        this.imageSaved.emit({ file, preview: this.croppedImageBlob });
+        this.closeCropper();
+      });
   }
 }
