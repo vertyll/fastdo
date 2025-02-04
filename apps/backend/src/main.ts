@@ -1,6 +1,6 @@
 import { fastifyMultipart } from '@fastify/multipart';
 import { fastifyStatic } from '@fastify/static';
-import { BadRequestException, ConsoleLogger, ValidationError } from '@nestjs/common';
+import {BadRequestException, ClassSerializerInterceptor, ConsoleLogger, ValidationError} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -28,6 +28,7 @@ import { Terms } from './terms-and-policies/entities/terms.entity';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
+import { Reflector} from "@nestjs/core";
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -102,6 +103,7 @@ async function bootstrap(): Promise<void> {
     new SnakeToCamelCaseInterceptor(),
     new WrapResponseInterceptor(),
     new TimeoutInterceptor(),
+    new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
   const openApiConfig: OpenApiConfig = configService.getOrThrow<OpenApiConfig>('app.openApi');
