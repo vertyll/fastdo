@@ -29,6 +29,7 @@ import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
 import { Reflector} from "@nestjs/core";
+import helmet from '@fastify/helmet'
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -42,6 +43,8 @@ async function bootstrap(): Promise<void> {
     },
   );
   const configService: ConfigService = app.get(ConfigService);
+
+  await app.register(helmet)
 
   app.enableCors();
 
