@@ -1,8 +1,10 @@
-import { fastifyMultipart } from '@fastify/multipart';
-import { fastifyStatic } from '@fastify/static';
-import {BadRequestException, ClassSerializerInterceptor, ConsoleLogger, ValidationError} from '@nestjs/common';
+import helmet from '@fastify/helmet';
+import fastifyMultipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
+import { BadRequestException, ClassSerializerInterceptor, ConsoleLogger, ValidationError } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
@@ -28,8 +30,6 @@ import { Terms } from './terms-and-policies/entities/terms.entity';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
-import { Reflector} from "@nestjs/core";
-import helmet from '@fastify/helmet'
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -44,7 +44,7 @@ async function bootstrap(): Promise<void> {
   );
   const configService: ConfigService = app.get(ConfigService);
 
-  await app.register(helmet)
+  await app.register(helmet);
 
   app.enableCors();
 
