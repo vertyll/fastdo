@@ -33,6 +33,7 @@ describe('JwtStrategy', () => {
     emailChangeTokenExpiry: null,
     pendingEmail: null,
     refreshToken: 'refreshToken',
+    projectUsers: [],
   };
 
   const mockPayload: JwtPayload = {

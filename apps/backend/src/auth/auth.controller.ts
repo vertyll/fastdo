@@ -1,12 +1,15 @@
-import { Body, Controller, Get, Post, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { ClsService } from 'nestjs-cls';
+import { I18nService } from 'nestjs-i18n';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
 import { Public } from '../common/decorators/public.decorator';
-import { User as UserDecorator } from '../common/decorators/user.decorator';
 import { JwtRefreshAuthGuard } from '../common/guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
+import { CustomClsStore } from '../core/config/types/app.config.type';
+import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
@@ -20,8 +23,10 @@ import { ResetPasswordDto } from './dtos/reset-password.dto';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private configService: ConfigService,
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+    private readonly cls: ClsService<CustomClsStore>,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -68,10 +73,10 @@ export class AuthController {
     status: 200,
     description: 'User has been successfully logged out.',
   })
-  public async logout(
-    @UserDecorator('id') userId: number,
-  ): Promise<void> {
-    return this.authService.logout(userId);
+  public async logout(): Promise<void> {
+    const user = this.cls.get('user');
+    if (!user || !user.userId) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.unauthorized'));
+    return this.authService.logout(user.userId);
   }
 
   @Public()

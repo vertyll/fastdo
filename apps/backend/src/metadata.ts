@@ -21,13 +21,14 @@ export default async () => {
       './terms-and-policies/entities/terms-section-translation.entity'
     ),
     ['./core/config/types/app.config.type']: await import('./core/config/types/app.config.type'),
-    ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
-    ['./core/file/entities/file.entity']: await import('./core/file/entities/file.entity'),
-    ['./users/entities/user.entity']: await import('./users/entities/user.entity'),
-    ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
-    ['./tasks/entities/task.entity']: await import('./tasks/entities/task.entity'),
     ['./projects/entities/project.entity']: await import('./projects/entities/project.entity'),
     ['./tasks/entities/priority.entity']: await import('./tasks/entities/priority.entity'),
+    ['./users/entities/user.entity']: await import('./users/entities/user.entity'),
+    ['./tasks/entities/task.entity']: await import('./tasks/entities/task.entity'),
+    ['./projects/entities/project-user.entity']: await import('./projects/entities/project-user.entity'),
+    ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
+    ['./core/file/entities/file.entity']: await import('./core/file/entities/file.entity'),
+    ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
     ['./auth/dtos/login-response.dto']: await import('./auth/dtos/login-response.dto'),
   };
   return {
@@ -125,6 +126,40 @@ export default async () => {
           dateModification: { required: true, type: () => Date },
           dateDeletion: { required: true, type: () => Date, nullable: true },
         },
+      }], [import('./tasks/entities/priority.entity'), {
+        'Priority': { id: { required: true, type: () => Number }, name: { required: true, type: () => String } },
+      }], [import('./tasks/entities/task.entity'), {
+        'Task': {
+          id: { required: true, type: () => Number },
+          name: { required: true, type: () => String },
+          isDone: { required: true, type: () => Boolean },
+          isUrgent: { required: true, type: () => Boolean },
+          projectId: { required: true, type: () => Number, nullable: true },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          project: { required: true, type: () => t['./projects/entities/project.entity'].Project, nullable: true },
+          priority: { required: true, type: () => t['./tasks/entities/priority.entity'].Priority, nullable: true },
+          user: { required: true, type: () => t['./users/entities/user.entity'].User, nullable: true },
+          isPrivate: { required: true, type: () => Boolean },
+        },
+      }], [import('./projects/entities/project.entity'), {
+        'Project': {
+          id: { required: true, type: () => Number },
+          name: { required: true, type: () => String },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          tasks: { required: true, type: () => [t['./tasks/entities/task.entity'].Task] },
+          projectUsers: { required: true, type: () => [t['./projects/entities/project-user.entity'].ProjectUser] },
+        },
+      }], [import('./projects/entities/project-user.entity'), {
+        'ProjectUser': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          project: { required: true, type: () => t['./projects/entities/project.entity'].Project },
+          user: { required: true, type: () => t['./users/entities/user.entity'].User },
+        },
       }], [import('./users/entities/user.entity'), {
         'User': {
           id: { required: true, type: () => Number },
@@ -146,6 +181,7 @@ export default async () => {
           emailChangeToken: { required: true, type: () => String, nullable: true },
           pendingEmail: { required: true, type: () => String, nullable: true },
           emailChangeTokenExpiry: { required: true, type: () => Date, nullable: true },
+          projectUsers: { required: true, type: () => [t['./projects/entities/project-user.entity'].ProjectUser] },
         },
       }], [import('./users/entities/user-role.entity'), {
         'UserRole': {
@@ -228,28 +264,6 @@ export default async () => {
         },
       }], [import('./auth/dtos/refresh-token.dto'), {
         'RefreshTokenDto': { refreshToken: { required: true, type: () => String } },
-      }], [import('./tasks/entities/priority.entity'), {
-        'Priority': { id: { required: true, type: () => Number }, name: { required: true, type: () => String } },
-      }], [import('./projects/entities/project.entity'), {
-        'Project': {
-          id: { required: true, type: () => Number },
-          name: { required: true, type: () => String },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          tasks: { required: true, type: () => [t['./tasks/entities/task.entity'].Task] },
-        },
-      }], [import('./tasks/entities/task.entity'), {
-        'Task': {
-          id: { required: true, type: () => Number },
-          name: { required: true, type: () => String },
-          isDone: { required: true, type: () => Boolean },
-          isUrgent: { required: true, type: () => Boolean },
-          projectId: { required: true, type: () => Number, nullable: true },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          project: { required: true, type: () => t['./projects/entities/project.entity'].Project, nullable: true },
-          priority: { required: true, type: () => t['./tasks/entities/priority.entity'].Priority, nullable: true },
-        },
       }], [import('./tasks/dtos/get-all-tasks-search-params.dto'), {
         'GetAllTasksSearchParams': {
           q: { required: false, type: () => String },

@@ -22,7 +22,9 @@ export class ProjectsController {
   @Get()
   @ApiOperation({ summary: 'Get all projects' })
   @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isPaginated: true })
-  public getAll(@Query() query: GetAllProjectsSearchParams): Promise<ApiPaginatedResponse<Project>> {
+  public getAll(
+    @Query() query: GetAllProjectsSearchParams,
+  ): Promise<ApiPaginatedResponse<Project>> {
     return this.projectsService.findAll(query);
   }
 
@@ -34,7 +36,9 @@ export class ProjectsController {
     description: 'The project has been successfully created.',
     type: Project,
   })
-  public create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
+  public create(
+    @Body() createProjectDto: CreateProjectDto,
+  ): Promise<Project> {
     return this.projectsService.create(createProjectDto);
   }
 

@@ -70,6 +70,7 @@ describe('AuthService', () => {
     emailChangeTokenExpiry: null,
     pendingEmail: null,
     refreshToken: 'mock-refresh-token',
+    projectUsers: [],
   };
 
   beforeEach(async () => {

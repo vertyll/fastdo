@@ -13,6 +13,7 @@ export class TaskRepository extends Repository<Task> {
     params: GetAllTasksSearchParams,
     skip: number,
     take: number,
+    userId?: number | null,
     projectId?: number,
   ): Promise<[Task[], number]> {
     const query = this.dataSource
@@ -25,12 +26,18 @@ export class TaskRepository extends Repository<Task> {
         'task.isUrgent',
         'task.dateCreation',
         'task.dateModification',
+        'task.isPrivate',
         'project.id',
         'project.name',
       ]);
 
     if (projectId) {
       query.where('project.id = :projectId', { projectId });
+    } else {
+      query.where('(task.isPrivate = :isPrivate AND task.user.id = :userId)', {
+        isPrivate: true,
+        userId,
+      });
     }
 
     if (params.q) {

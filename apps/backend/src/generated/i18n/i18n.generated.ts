@@ -24,6 +24,7 @@ export type I18nTranslations = {
       'isInteger': string;
       'termsRequired': string;
       'privacyPolicyRequired': string;
+      'unauthorized': string;
     };
     'Auth': {
       'errors': {
@@ -35,6 +36,7 @@ export type I18nTranslations = {
         'roleNotFound': string;
         'emailNotConfirmed': string;
         'invalidRefreshToken': string;
+        'unauthorized': string;
       };
     };
     'User': {

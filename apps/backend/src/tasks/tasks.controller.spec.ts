@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
+import { User } from '../users/entities/user.entity';
 import { Task } from './entities/task.entity';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
@@ -42,6 +43,7 @@ describe('TasksController', () => {
           id: 1,
           name: 'Low',
         },
+        isPrivate: false,
         dateCreation: new Date(),
         dateModification: null,
         project: {
@@ -50,6 +52,29 @@ describe('TasksController', () => {
           dateCreation: new Date(),
           dateModification: null,
           tasks: [],
+          projectUsers: [],
+        },
+        user: {
+          id: 1,
+          email: '',
+          password: '',
+          refreshToken: null,
+          isActive: false,
+          dateCreation: new Date(),
+          dateModification: null,
+          userRoles: [],
+          isEmailConfirmed: false,
+          confirmationToken: null,
+          confirmationTokenExpiry: null,
+          termsAccepted: false,
+          privacyPolicyAccepted: false,
+          dateTermsAcceptance: null,
+          datePrivacyPolicyAcceptance: null,
+          avatar: null,
+          emailChangeToken: null,
+          pendingEmail: null,
+          emailChangeTokenExpiry: null,
+          projectUsers: [],
         },
       };
       mockTasksService.create.mockResolvedValue(createdTask);
@@ -75,6 +100,8 @@ describe('TasksController', () => {
             dateCreation: new Date(),
             dateModification: null,
             project: null,
+            user: null,
+            isPrivate: false,
           },
         ],
         pagination: {
@@ -111,7 +138,10 @@ describe('TasksController', () => {
               dateCreation: new Date(),
               dateModification: null,
               tasks: [],
+              projectUsers: [],
             },
+            user: null,
+            isPrivate: false,
           },
         ],
         pagination: {
@@ -128,6 +158,29 @@ describe('TasksController', () => {
 
   describe('findOne', () => {
     it('should return a single task', async () => {
+      const mockUser: User = {
+        id: 1,
+        email: 'user@example.com',
+        password: 'hashedPassword',
+        refreshToken: null,
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: null,
+        userRoles: [],
+        isEmailConfirmed: true,
+        confirmationToken: null,
+        confirmationTokenExpiry: null,
+        termsAccepted: true,
+        privacyPolicyAccepted: true,
+        dateTermsAcceptance: new Date(),
+        datePrivacyPolicyAcceptance: new Date(),
+        avatar: null,
+        emailChangeToken: null,
+        pendingEmail: null,
+        emailChangeTokenExpiry: null,
+        projectUsers: [],
+      };
+
       const result: Task = {
         id: 1,
         name: 'Single Task',
@@ -141,7 +194,10 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: null,
         project: null,
+        user: mockUser,
+        isPrivate: false,
       };
+
       mockTasksService.findOne.mockResolvedValue(result);
       expect(await controller.findOne('1')).toEqual(result);
     });
@@ -150,6 +206,29 @@ describe('TasksController', () => {
   describe('update', () => {
     it('should update a task', async () => {
       const updateDto = { name: 'Updated Task' };
+      const mockUser: User = {
+        id: 1,
+        email: 'user@example.com',
+        password: 'hashedPassword',
+        refreshToken: null,
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: null,
+        userRoles: [],
+        isEmailConfirmed: true,
+        confirmationToken: null,
+        confirmationTokenExpiry: null,
+        termsAccepted: true,
+        privacyPolicyAccepted: true,
+        dateTermsAcceptance: new Date(),
+        datePrivacyPolicyAcceptance: new Date(),
+        avatar: null,
+        emailChangeToken: null,
+        pendingEmail: null,
+        emailChangeTokenExpiry: null,
+        projectUsers: [],
+      };
+
       const result: Task = {
         id: 1,
         ...updateDto,
@@ -163,7 +242,10 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         project: null,
+        user: mockUser,
+        isPrivate: false,
       };
+
       mockTasksService.update.mockResolvedValue(result);
       expect(await controller.update('1', updateDto)).toEqual(result);
     });

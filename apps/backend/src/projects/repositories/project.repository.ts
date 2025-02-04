@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { GetAllProjectsSearchParams } from '../dtos/get-all-projects-search-params.dto';
+import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
 
 @Injectable()
@@ -13,8 +14,11 @@ export class ProjectRepository extends Repository<Project> {
     params: GetAllProjectsSearchParams,
     skip: number,
     take: number,
+    userId: number,
   ): Promise<[Project[], number]> {
-    const query = this.dataSource.createQueryBuilder(Project, 'project');
+    const query = this.dataSource.createQueryBuilder(Project, 'project')
+      .innerJoin(ProjectUser, 'projectUser', 'projectUser.project.id = project.id')
+      .where('projectUser.user.id = :userId', { userId });
 
     if (params.q) {
       query.andWhere('project.name LIKE :q', { q: `%${params.q}%` });

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ClsService } from 'nestjs-cls';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
 import { Project } from '../projects/entities/project.entity';
@@ -9,6 +10,7 @@ import { TasksService } from './tasks.service';
 describe('TasksService', () => {
   let service: TasksService;
   let mockTaskRepository: jest.Mocked<TaskRepository>;
+  let mockClsService: jest.Mocked<ClsService>;
 
   beforeEach(async () => {
     mockTaskRepository = {
@@ -20,14 +22,22 @@ describe('TasksService', () => {
       findAllWithParams: jest.fn(),
     } as any;
 
+    mockClsService = {
+      get: jest.fn(),
+      set: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
         { provide: TaskRepository, useValue: mockTaskRepository },
+        { provide: ClsService, useValue: mockClsService },
       ],
     }).compile();
 
     service = module.get<TasksService>(TasksService);
+
+    mockClsService.get.mockReturnValue({ userId: 1 });
   });
 
   it('should be defined', () => {
@@ -45,9 +55,32 @@ describe('TasksService', () => {
         dateCreation: expect.any(Date),
         dateModification: expect.any(Date),
         project: { id: 1 } as Project,
+        user: { id: 1 },
       } as Task;
+
       mockTaskRepository.create.mockReturnValue(result);
       mockTaskRepository.save.mockResolvedValue(result);
+
+      expect(await service.create(createDto)).toEqual(result);
+      expect(mockClsService.get).toHaveBeenCalledWith('user');
+    });
+
+    it('should create a private task when no projectId is provided', async () => {
+      const createDto = { name: 'Private Task' };
+      const result = {
+        id: expect.any(Number),
+        ...createDto,
+        isDone: false,
+        isUrgent: false,
+        isPrivate: true,
+        dateCreation: expect.any(Date),
+        dateModification: expect.any(Date),
+        user: { id: 1 },
+      } as Task;
+
+      mockTaskRepository.create.mockReturnValue(result);
+      mockTaskRepository.save.mockResolvedValue(result);
+
       expect(await service.create(createDto)).toEqual(result);
     });
   });
@@ -65,8 +98,17 @@ describe('TasksService', () => {
           totalPages: 1,
         },
       };
+
       mockTaskRepository.findAllWithParams.mockResolvedValue([result.items, result.pagination.total]);
+
       expect(await service.findAll({})).toEqual(result);
+      expect(mockClsService.get).toHaveBeenCalledWith('user');
+      expect(mockTaskRepository.findAllWithParams).toHaveBeenCalledWith(
+        {},
+        0,
+        10,
+        1,
+      );
     });
   });
 

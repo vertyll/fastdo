@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ClsService } from 'nestjs-cls';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
@@ -19,6 +20,12 @@ describe('UsersController', () => {
             findOne: jest.fn(),
           },
         },
+        {
+          provide: ClsService,
+          useValue: {
+            get: jest.fn().mockReturnValue({ userId: 1 }),
+          },
+        },
       ],
     }).compile();
 
@@ -34,9 +41,9 @@ describe('UsersController', () => {
 
       jest.spyOn(usersService, 'updateProfile').mockResolvedValue(updatedUser);
 
-      const result = await usersController.updateProfile(userId, updateProfileDto);
+      const result = await usersController.updateProfile(updateProfileDto);
       expect(result).toEqual(updatedUser);
-      expect(usersService.updateProfile).toHaveBeenCalledWith(userId, updateProfileDto);
+      expect(usersService.updateProfile).toHaveBeenCalledWith(updateProfileDto);
     });
   });
 
@@ -47,7 +54,7 @@ describe('UsersController', () => {
 
       jest.spyOn(usersService, 'findOne').mockResolvedValue(user);
 
-      const result = await usersController.getCurrentUser(userId);
+      const result = await usersController.getCurrentUser();
       expect(result).toEqual(user);
       expect(usersService.findOne).toHaveBeenCalledWith(userId);
     });

@@ -17,6 +17,7 @@ import { WrapResponseInterceptor } from './common/interceptors/wrap-response.int
 import { OpenApiConfig } from './core/config/types/app.config.type';
 import { FileMetadataDto } from './core/file/dtos/file-metadata.dto';
 import { File } from './core/file/entities/file.entity';
+import { ProjectUser } from './projects/entities/project-user.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { Priority } from './tasks/entities/priority.entity';
@@ -124,6 +125,7 @@ async function bootstrap(): Promise<void> {
     extraModels: [
       Task,
       Project,
+      ProjectUser,
       Priority,
       User,
       Role,

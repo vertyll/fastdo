@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Put, UseInterceptors } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User as UserDecorator } from '../common/decorators/user.decorator';
+import { ClsService } from 'nestjs-cls';
 import { FastifyFileInterceptor } from '../common/interceptors/fastify-file.interceptor';
+import { CustomClsStore } from '../core/config/types/app.config.type';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -11,6 +12,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
+    private readonly cls: ClsService<CustomClsStore>,
   ) {}
 
   @Put('me')
@@ -18,17 +20,15 @@ export class UsersController {
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update user profile' })
   public async updateProfile(
-    @UserDecorator('id') userId: number,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<User | null> {
-    return this.usersService.updateProfile(userId, updateProfileDto);
+    return this.usersService.updateProfile(updateProfileDto);
   }
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
-  public async getCurrentUser(
-    @UserDecorator('id') userId: number,
-  ): Promise<User | null> {
+  public async getCurrentUser(): Promise<User | null> {
+    const userId = this.cls.get('user').userId;
     return this.usersService.findOne(userId);
   }
 }

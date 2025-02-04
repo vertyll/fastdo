@@ -51,6 +51,7 @@ describe('ProjectsController', () => {
             dateCreation: new Date(),
             dateModification: null,
             tasks: [],
+            projectUsers: [],
           },
         ],
         pagination: {
@@ -75,6 +76,7 @@ describe('ProjectsController', () => {
         dateCreation: new Date(),
         dateModification: null,
         tasks: [],
+        projectUsers: [],
       };
       mockProjectsService.create.mockResolvedValue(result);
       expect(await controller.create(createDto)).toEqual(result);
@@ -89,6 +91,7 @@ describe('ProjectsController', () => {
         dateCreation: new Date(),
         dateModification: null,
         tasks: [],
+        projectUsers: [],
       };
       mockProjectsService.findOne.mockResolvedValue(result);
       expect(await controller.findOne('1')).toEqual(result);
@@ -104,6 +107,7 @@ describe('ProjectsController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         tasks: [],
+        projectUsers: [],
       };
       mockProjectsService.update.mockResolvedValue(result);
       expect(await controller.update('1', updateDto)).toEqual(result);

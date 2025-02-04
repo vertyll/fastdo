@@ -21,14 +21,18 @@ export class TasksController {
     description: 'The task has been successfully created.',
     type: Task,
   })
-  public create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+  public create(
+    @Body() createTaskDto: CreateTaskDto,
+  ): Promise<Task> {
     return this.tasksService.create(createTaskDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isPaginated: true })
-  public findAll(@Query() query: GetAllTasksSearchParams): Promise<ApiPaginatedResponse<Task>> {
+  public findAll(
+    @Query() query: GetAllTasksSearchParams,
+  ): Promise<ApiPaginatedResponse<Task>> {
     return this.tasksService.findAll(query);
   }
 

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { File } from '../../core/file/entities/file.entity';
+import { ProjectUser } from '../../projects/entities/project-user.entity';
 import { UserRole } from './user-role.entity';
 
 @Entity('user')
@@ -80,4 +81,7 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
   emailChangeTokenExpiry: Date | null;
+
+  @OneToMany(() => ProjectUser, projectUser => projectUser.project)
+  projectUsers: Relation<ProjectUser[]>;
 }

@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
 import { ConfirmationTokenService } from '../auth/confirmation-token.service';
+import { CustomClsStore } from '../core/config/types/app.config.type';
 import { FileFacade } from '../core/file/facade/file.facade';
 import { MailService } from '../core/mail/services/mail.service';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
@@ -22,6 +24,7 @@ export class UsersService {
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
     private readonly confirmationTokenService: ConfirmationTokenService,
+    private readonly cls: ClsService<CustomClsStore>,
   ) {}
 
   public async findOne(id: number): Promise<User | null> {
@@ -41,13 +44,13 @@ export class UsersService {
   }
 
   public async updateProfile(
-    userId: number,
     updateProfileDto: UpdateProfileDto,
   ): Promise<User | null> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      const userId = this.cls.get('user').userId;
       const user = await this.findOne(userId);
       if (!user) throw new NotFoundException(this.i18n.t('messages.User.errors.userNotFound'));
 

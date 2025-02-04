@@ -2,6 +2,8 @@ import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyReply } from 'fastify';
+import { ClsService } from 'nestjs-cls';
+import { I18nService } from 'nestjs-i18n';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
 import { User } from '../users/entities/user.entity';
 import { AuthController } from './auth.controller';
@@ -15,6 +17,8 @@ jest.mock('../common/guards/local-auth.guard');
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: jest.Mocked<AuthService>;
+  let clsService: jest.Mocked<ClsService>;
+  let i18nService: jest.Mocked<I18nService>;
 
   const mockUser: User = {
     id: 1,
@@ -36,6 +40,7 @@ describe('AuthController', () => {
     emailChangeTokenExpiry: null,
     pendingEmail: null,
     refreshToken: null,
+    projectUsers: [],
   };
 
   const mockLoginDto: LoginDto = {
@@ -92,11 +97,33 @@ describe('AuthController', () => {
             }),
           },
         },
+        {
+          provide: ClsService,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            t: jest.fn().mockImplementation((key: string) => {
+              switch (key) {
+                case 'messages.Auth.errors.unauthorized':
+                  return 'Unauthorized';
+                default:
+                  return key;
+              }
+            }),
+          },
+        },
       ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get(AuthService);
+    clsService = module.get(ClsService);
+    i18nService = module.get(I18nService);
   });
 
   it('should be defined', () => {
@@ -189,22 +216,56 @@ describe('AuthController', () => {
   });
 
   describe('logout', () => {
-    it('should successfully logout user', async () => {
-      const mockUserId = 1;
-      await controller.logout(mockUserId);
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
 
-      expect(authService.logout).toHaveBeenCalledWith(mockUserId);
+    it('should successfully logout user', async () => {
+      clsService.get.mockReturnValue({ userId: 1 });
+      await controller.logout();
+
+      expect(authService.logout).toHaveBeenCalledWith(1);
       expect(authService.logout).toHaveBeenCalledTimes(1);
+      expect(clsService.get).toHaveBeenCalledWith('user');
+      expect(i18nService.t).not.toHaveBeenCalled();
     });
 
     it('should handle logout failure', async () => {
-      const mockUserId = 1;
+      clsService.get.mockReturnValue({ userId: 1 });
       authService.logout.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.logout(mockUserId))
+      await expect(controller.logout())
         .rejects
         .toThrow(UnauthorizedException);
-      expect(authService.logout).toHaveBeenCalledWith(mockUserId);
+      expect(authService.logout).toHaveBeenCalledWith(1);
+      expect(clsService.get).toHaveBeenCalledWith('user');
+      expect(i18nService.t).not.toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when user is null', async () => {
+      clsService.get.mockReturnValue(null);
+      i18nService.t.mockReturnValue('Unauthorized');
+
+      await expect(controller.logout())
+        .rejects
+        .toThrow(UnauthorizedException);
+
+      expect(clsService.get).toHaveBeenCalledWith('user');
+      expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.unauthorized');
+      expect(authService.logout).not.toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException with translated message', async () => {
+      clsService.get.mockReturnValue(null);
+      i18nService.t.mockReturnValue('Unauthorized');
+
+      await expect(controller.logout())
+        .rejects
+        .toThrow('Unauthorized');
+
+      expect(clsService.get).toHaveBeenCalledWith('user');
+      expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.unauthorized');
+      expect(authService.logout).not.toHaveBeenCalled();
     });
   });
 
