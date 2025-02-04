@@ -1,3 +1,4 @@
+import { ClsStore } from 'nestjs-cls';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 export enum Environment {
@@ -114,4 +115,14 @@ export interface AppConfig {
   frontend: FrontendConfig;
   mail: MailConfig;
   file: FileConfig;
+}
+
+export interface UserContext {
+  userId: number;
+  userEmail: string;
+  userRoles: string[];
+}
+
+export interface CustomClsStore extends ClsStore {
+  user: UserContext;
 }
