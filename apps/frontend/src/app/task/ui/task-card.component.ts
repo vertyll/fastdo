@@ -46,7 +46,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
                 'bg-green-200 text-green-800': task().isPrivate,
                 'bg-red-200 text-red-800': !task().isPrivate
             }" class="rounded-full px-2 text-xs font-bold h-6 flex items-center justify-center">
-            {{ task().isPrivate ? 'Task.private' : 'Task.public' | translate }}
+            {{ task().isPrivate ? ('Task.private' | translate) : ('Task.public' | translate) }}
           </div>
           <div class="flex gap-2">
             <app-remove-item-button (confirm)="delete.emit()"/>
