@@ -5,6 +5,7 @@ export type Task = {
   dateCreation: string;
   dateModification: string | null;
   isUrgent: boolean;
+  isPrivate: boolean;
   project: Project | null;
 };
 

@@ -41,23 +41,31 @@ import { TaskNameValidator } from '../validators/task-name.validator';
         class="w-full text-left"
         (click)="!editMode && handleSingleClick()"
       >
-        <header class="flex justify-end gap-2">
-          <app-remove-item-button (confirm)="delete.emit()"/>
-          @if (!editMode) {
-            <button
-              class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
-              (click)="switchToEditMode(); $event.stopPropagation()"
-            >
-              <ng-icon name="heroPencil" size="18"/>
-            </button>
-          } @else {
-            <button
-              class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
-              (click)="updateTaskName(task().name); $event.stopPropagation()"
-            >
-              <ng-icon name="heroCheck" size="18"/>
-            </button>
-          }
+        <header class="flex justify-between gap-2">
+          <div [ngClass]="{
+                'bg-green-200 text-green-800': task().isPrivate,
+                'bg-red-200 text-red-800': !task().isPrivate
+            }" class="rounded-full px-2 text-xs font-bold h-6 flex items-center justify-center">
+            {{ task().isPrivate ? 'Task.private' : 'Task.public' | translate }}
+          </div>
+          <div class="flex gap-2">
+            <app-remove-item-button (confirm)="delete.emit()"/>
+            @if (!editMode) {
+              <button
+                class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
+                (click)="switchToEditMode(); $event.stopPropagation()"
+              >
+                <ng-icon name="heroPencil" size="18"/>
+              </button>
+            } @else {
+              <button
+                class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
+                (click)="updateTaskName(task().name); $event.stopPropagation()"
+              >
+                <ng-icon name="heroCheck" size="18"/>
+              </button>
+            }
+          </div>
         </header>
 
         <section class="text-left break-all">
