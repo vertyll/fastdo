@@ -30,7 +30,7 @@
               },
               {
                 "glob": ".htaccess",
-                "input": "/"
+                "input": "src"
               }
             ],
             "styles": ["src/styles.scss"],
