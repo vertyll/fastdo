@@ -34,10 +34,7 @@ export class TaskRepository extends Repository<Task> {
     if (projectId) {
       query.where('project.id = :projectId', { projectId });
     } else {
-      query.where('(task.isPrivate = :isPrivate AND task.user.id = :userId)', {
-        isPrivate: true,
-        userId,
-      });
+      query.where('task.user_id = :userId', { userId });
     }
 
     if (params.q) {
