@@ -47,6 +47,7 @@ async function bootstrap(): Promise<void> {
 
   await app.register(helmet, {
     crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: false,
   });
 
   app.enableCors({

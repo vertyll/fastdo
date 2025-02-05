@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProjectUser } from '../../../../projects/entities/project-user.entity';
+import { Project } from '../../../../projects/entities/project.entity';
 import { Role } from '../../../../roles/entities/role.entity';
+import { Priority } from '../../../../tasks/entities/priority.entity';
+import { Task } from '../../../../tasks/entities/task.entity';
 import {
   PrivacyPolicySectionTranslation,
 } from '../../../../terms-and-policies/entities/privacy-policy-section-translation.entity';
@@ -21,10 +25,6 @@ import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
 import { SeederRunnerService } from '../services/seeder-runner.service';
-import {ProjectUser} from "../../../../projects/entities/project-user.entity";
-import {Project} from "../../../../projects/entities/project.entity";
-import {Task} from "../../../../tasks/entities/task.entity";
-import {Priority} from "../../../../tasks/entities/priority.entity";
 
 @Module({
   imports: [
