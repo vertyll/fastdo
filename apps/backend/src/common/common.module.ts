@@ -17,6 +17,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
     ClsModule.forRoot({
       global: true,
       middleware: { mount: true },
+      guard: { mount: false },
     }),
   ],
   providers: [

@@ -21,6 +21,10 @@ import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
 import { SeederRunnerService } from '../services/seeder-runner.service';
+import {ProjectUser} from "../../../../projects/entities/project-user.entity";
+import {Project} from "../../../../projects/entities/project.entity";
+import {Task} from "../../../../tasks/entities/task.entity";
+import {Priority} from "../../../../tasks/entities/priority.entity";
 
 @Module({
   imports: [
@@ -40,6 +44,10 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
       PrivacyPolicy,
       PrivacyPolicySection,
       PrivacyPolicySectionTranslation,
+      ProjectUser,
+      Project,
+      Task,
+      Priority,
     ]),
   ],
   providers: [

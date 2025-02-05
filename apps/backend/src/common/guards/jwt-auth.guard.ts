@@ -8,6 +8,12 @@ import { CustomClsStore } from '../../core/config/types/app.config.type';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { AuthGuardEnum } from '../enums/auth-guard.enum';
 
+interface JwtUser {
+  id: number;
+  email: string;
+  roles: string[];
+}
+
 @Injectable()
 export class JwtAuthGuard extends AuthGuard(AuthGuardEnum.JwtAuthGuard) {
   constructor(
@@ -30,7 +36,7 @@ export class JwtAuthGuard extends AuthGuard(AuthGuardEnum.JwtAuthGuard) {
       : await canActivate;
 
     if (result) {
-      const request = context.switchToHttp().getRequest<FastifyRequest>();
+      const request = context.switchToHttp().getRequest<FastifyRequest & { user: JwtUser }>();
       if (request.user) {
         this.cls.set('user', {
           userId: Number(request.user.id),
