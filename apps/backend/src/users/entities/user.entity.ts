@@ -84,4 +84,8 @@ export class User {
 
   @OneToMany(() => ProjectUser, projectUser => projectUser.project)
   projectUsers: Relation<ProjectUser[]>;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }
