@@ -1,9 +1,9 @@
-import { Component, inject, output, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCheck, heroTrash, heroUser, heroXMark } from '@ng-icons/heroicons/outline';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import { ModalService } from '../../services/modal.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonRoleEnum } from '../../enums/modal.enum';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-remove-item-button',

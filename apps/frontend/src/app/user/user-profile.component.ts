@@ -1,9 +1,10 @@
-import {CommonModule, DatePipe} from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
 import { heroUserCircle } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PlatformService } from 'src/app/shared/services/platform.service';
 import { PasswordValidator } from '../auth/validators/password.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
@@ -12,7 +13,6 @@ import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
-import { PlatformService } from 'src/app/shared/services/platform.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -200,7 +200,7 @@ import { PlatformService } from 'src/app/shared/services/platform.service';
         margin-top: 1rem;
       }
     }
-  `]
+  `],
 })
 export class UserProfileComponent implements OnInit {
   private readonly userService = inject(UserService);

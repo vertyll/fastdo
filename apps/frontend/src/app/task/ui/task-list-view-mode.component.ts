@@ -1,9 +1,9 @@
-import { Component, input, output, inject, effect } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroSquares2x2 } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
-import { TasksListViewMode } from '../../shared/types/task.type';
 import { PlatformService } from 'src/app/shared/services/platform.service';
+import { TasksListViewMode } from '../../shared/types/task.type';
 
 @Component({
   imports: [NgIconComponent, TranslateModule],
