@@ -43,12 +43,12 @@ import { TaskNameValidator } from '../validators/task-name.validator';
       >
         <header class="flex justify-between gap-2">
           <div [ngClass]="{
-                'bg-green-200 text-green-800': task().isPrivate,
-                'bg-red-200 text-red-800': !task().isPrivate
-            }" class="rounded-full px-2 text-xs font-bold h-6 flex items-center justify-center">
+            'bg-green-200 text-green-800': task().isPrivate,
+            'bg-red-200 text-red-800': !task().isPrivate
+          }" class="rounded-full px-2 text-xs font-bold h-6 flex items-center justify-center whitespace-nowrap">
             {{ task().isPrivate ? ('Task.private' | translate) : ('Task.public' | translate) }}
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-2 items-start">
             <app-remove-item-button (confirm)="delete.emit()"/>
             @if (!editMode) {
               <button

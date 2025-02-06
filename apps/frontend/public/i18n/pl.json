@@ -12,7 +12,9 @@
     "cancel": "Anuluj",
     "save": "Zapisz",
     "showMore": "Pokaż więcej",
-    "showLess": "Pokaż mniej"
+    "showLess": "Pokaż mniej",
+    "deleteTitle": "Usuń",
+    "confirmDelete": "Czy na pewno chcesz usunąć ten element?"
   },
   "Filters": {
     "search": "Szukaj",
