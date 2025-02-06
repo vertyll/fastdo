@@ -19,113 +19,107 @@ export type ImageSize = 'sm' | 'md' | 'lg';
     <div class="relative">
       <!-- Base Image Container -->
       <div [ngClass]="getContainerClasses()">
-        @if (previewUrl()) {
-          <img
-            [src]="previewUrl()"
-            class="w-full h-full object-cover"
-            [ngClass]="{ 'cursor-pointer': mode() === 'preview' }"
-            alt="Preview"
-            (click)="handleImageClick()"
-          />
-        } @else {
-          <ng-icon
-            name="heroUserCircle"
-            [size]="getIconSize()"
-            class="text-gray-500"
-          />
-        }
+        <img
+          *ngIf="previewUrl()"
+          [src]="previewUrl()"
+          class="w-full h-full object-cover"
+          [ngClass]="{ 'cursor-pointer': mode() === 'preview' }"
+          alt="Preview"
+          (click)="handleImageClick()"
+        />
+        <ng-icon
+          *ngIf="!previewUrl()"
+          name="heroUserCircle"
+          [size]="getIconSize()"
+          class="text-gray-500"
+        />
 
-        @if (mode() === 'edit') {
-          <button
-            class="absolute flex bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
-            (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
-          >
-            <ng-icon
-              name="heroCamera"
-              size="20"
-              class="text-gray-700 dark:text-gray-300"
-            />
-          </button>
-          <input
-            #fileInput
-            type="file"
-            class="hidden"
-            (change)="onFileSelected($event)"
-            accept="image/jpeg,image/png"
+        <button
+          *ngIf="mode() === 'edit'"
+          class="absolute flex bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
+          (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
+        >
+          <ng-icon
+            name="heroCamera"
+            size="20"
+            class="text-gray-700 dark:text-gray-300"
           />
-        }
+        </button>
+        <input
+          #fileInput
+          type="file"
+          class="hidden"
+          (change)="onFileSelected($event)"
+          accept="image/jpeg,image/png"
+        />
       </div>
 
       <!-- Image Preview Modal -->
-      @if (showPreviewModal()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                {{ 'Image.fullPreview' | translate }}
-              </h3>
-              <button
-                (click)="closePreviewModal()"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <ng-icon name="heroXMark" size="24" />
-              </button>
-            </div>
-            <img
-              [src]="getFullImageUrl(previewUrl())"
-              class="max-h-[600px] w-auto mx-auto"
-              alt="Full Preview"
-            />
+      <div *ngIf="showPreviewModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+              {{ 'Image.fullPreview' | translate }}
+            </h3>
+            <button
+              (click)="closePreviewModal()"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              <ng-icon name="heroXMark" size="24" />
+            </button>
           </div>
+          <img
+            [src]="getFullImageUrl(previewUrl())"
+            class="max-h-[600px] w-auto mx-auto"
+            alt="Full Preview"
+          />
         </div>
-      }
+      </div>
 
       <!-- Image Cropper Modal -->
-      @if (showCropper()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                {{ 'Image.cutPhoto' | translate }}
-              </h3>
-              <button
-                (click)="closeCropper()"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <ng-icon name="heroXMark" size="24" />
-              </button>
-            </div>
+      <div *ngIf="showCropper()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+              {{ 'Image.cutPhoto' | translate }}
+            </h3>
+            <button
+              (click)="closeCropper()"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              <ng-icon name="heroXMark" size="24" />
+            </button>
+          </div>
 
-            <image-cropper
-              [imageChangedEvent]="imageChangedEvent"
-              [maintainAspectRatio]="true"
-              [aspectRatio]="format() === 'circle' ? 1 : 1"
-              [roundCropper]="format() === 'circle'"
-              format="png"
-              (imageCropped)="imageCropped($event)"
-              (imageLoaded)="imageLoaded($event)"
-              (cropperReady)="cropperReady()"
-              (loadImageFailed)="loadImageFailed()"
-              class="max-h-[400px]"
-            ></image-cropper>
+          <image-cropper
+            [imageChangedEvent]="imageChangedEvent"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="format() === 'circle' ? 1 : 1"
+            [roundCropper]="format() === 'circle'"
+            format="png"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()"
+            class="max-h-[400px]"
+          ></image-cropper>
 
-            <div class="flex justify-end mt-4 space-x-3">
-              <button
-                (click)="closeCropper()"
-                class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-              >
-                {{ 'Basic.cancel' | translate }}
-              </button>
-              <button
-                (click)="save()"
-                class="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors"
-              >
-                {{ 'Basic.save' | translate }}
-              </button>
-            </div>
+          <div class="flex justify-end mt-4 space-x-3">
+            <button
+              (click)="closeCropper()"
+              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+            >
+              {{ 'Basic.cancel' | translate }}
+            </button>
+            <button
+              (click)="save()"
+              class="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors"
+            >
+              {{ 'Basic.save' | translate }}
+            </button>
           </div>
         </div>
-      }
+      </div>
     </div>
   `,
 })
@@ -140,7 +134,7 @@ export class ImageComponent implements OnDestroy {
   imageSaved = output<{ file: File; preview: string | null; }>();
   croppingChange = output<boolean>();
 
-  protected imageChangedEvent: Event | null = null;
+  protected imageChangedEvent: Event | null | undefined = null;
   protected previewUrl = signal<string | null>(null);
   protected showCropper = signal(false);
   protected showPreviewModal = signal(false);

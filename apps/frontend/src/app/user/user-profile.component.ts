@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
@@ -12,6 +12,7 @@ import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
+import { PlatformService } from 'src/app/shared/services/platform.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -22,6 +23,7 @@ import { UserStateService } from './data-access/user.state.service';
     SpinnerComponent,
     ErrorMessageComponent,
     DatePipe,
+    CommonModule,
     ImageComponent,
   ],
   providers: [provideIcons({ heroUserCircle })],
@@ -49,14 +51,15 @@ import { UserStateService } from './data-access/user.state.service';
                   </button>
                 </div>
 
-                <div class="flex items-center mb-6">
+                <div
+                  [ngClass]="{ 'profile-info': !isMobile(), 'profile-info-mobile': isMobile() }">
                   <app-image
                     [initialUrl]="user().avatar?.url || null"
                     mode="preview"
                     size="md"
                     format="circle"
                   />
-                  <div class="ml-6">
+                  <div class="profile-details">
                     <div class="text-xl font-medium text-gray-900 dark:text-white">
                       {{ user().email }}
                     </div>
@@ -71,7 +74,7 @@ import { UserStateService } from './data-access/user.state.service';
               <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
                 <div class="flex justify-between items-center mb-6">
                   <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ 'Profile.editProfile' | translate }}
+                    {{ 'Basic.edit' | translate }}
                   </h2>
                   <div class="flex space-x-4">
                     <button
@@ -177,6 +180,27 @@ import { UserStateService } from './data-access/user.state.service';
       }
     }
   `,
+  styles: [`
+    .profile-info {
+      display: flex;
+      align-items: center;
+    }
+    .profile-info-mobile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .profile-details {
+      margin-left: 1rem;
+    }
+    @media (max-width: 640px) {
+      .profile-details {
+        margin-left: 0;
+        margin-top: 1rem;
+      }
+    }
+  `]
 })
 export class UserProfileComponent implements OnInit {
   private readonly userService = inject(UserService);
@@ -185,6 +209,7 @@ export class UserProfileComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly passwordValidator = inject(PasswordValidator);
   private readonly translateService = inject(TranslateService);
+  private readonly platformService = inject(PlatformService);
 
   protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
   protected readonly user = computed(() => this.stateService.user());
@@ -301,5 +326,9 @@ export class UserProfileComponent implements OnInit {
       errors.push(this.translateService.instant('Auth.passwordDoNotMatch'));
     }
     return errors;
+  }
+
+  protected isMobile(): boolean {
+    return this.platformService.isMobile();
   }
 }
