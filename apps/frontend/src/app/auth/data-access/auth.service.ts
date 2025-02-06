@@ -9,6 +9,7 @@ import { RegisterDto } from '../dtos/register.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -108,7 +109,7 @@ export class AuthService {
       const decoded: any = jwtDecode(token);
       if (!decoded.exp) return true;
 
-      const bufferTime = 10 * 1000;
+      const bufferTime = environment.refreshToken.bufferTime || 60 * 1000;
       return Date.now() >= (decoded.exp * 1000 - bufferTime);
     } catch {
       return true;
@@ -120,7 +121,8 @@ export class AuthService {
 
     try {
       const decoded: any = jwtDecode(token);
-      const expiresInMs = decoded.exp * 1000 - Date.now() - 10 * 1000;
+      const bufferTime = environment.refreshToken.bufferTime || 60 * 1000;
+      const expiresInMs = decoded.exp * 1000 - Date.now() - bufferTime;
 
       if (expiresInMs > 0) {
         this.refreshTokenTimeout = setTimeout(() => {

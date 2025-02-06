@@ -5,4 +5,7 @@ export const environment = {
   apiKey: '5hjk2HKJ4123khk41242hkhkF61Da6aAD',
   defaultLanguage: 'pl',
   availableLanguages: ['pl', 'en'],
+  refreshToken: {
+    bufferTime: 60 * 1000,
+  }
 };
