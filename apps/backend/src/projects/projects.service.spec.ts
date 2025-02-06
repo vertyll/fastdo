@@ -24,6 +24,7 @@ describe('ProjectsService', () => {
       manager: {
         getRepository: jest.fn().mockReturnValue({
           save: jest.fn().mockImplementation(entity => ({ id: 1, ...entity })),
+          delete: jest.fn().mockResolvedValue({ raw: [], affected: 1 }),
         }),
       },
     };
@@ -158,7 +159,9 @@ describe('ProjectsService', () => {
   describe('remove', () => {
     it('should remove a project', async () => {
       const deleteResult: DeleteResult = { raw: [], affected: 1 };
-      mockProjectRepository.delete.mockResolvedValue(deleteResult);
+      mockQueryRunner.manager.getRepository.mockReturnValue({
+        delete: jest.fn().mockResolvedValue(deleteResult),
+      });
       await expect(service.remove(1)).resolves.not.toThrow();
     });
   });

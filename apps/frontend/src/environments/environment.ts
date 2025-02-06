@@ -7,5 +7,5 @@ export const environment = {
   availableLanguages: ['pl', 'en'],
   refreshToken: {
     bufferTime: 60 * 1000,
-  }
+  },
 };

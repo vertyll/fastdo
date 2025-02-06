@@ -5,8 +5,6 @@ import { heroCalendar, heroCheck, heroPencil } from '@ng-icons/heroicons/outline
 import { TranslateModule } from '@ngx-translate/core';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
-import { RoleEnum } from 'src/app/shared/enums/role.enum';
-import { HasRoleDirective } from '../../core/directives/has-role.directive';
 import { LinkComponent } from '../../shared/components/atoms/link.component';
 import { CustomDatePipe } from '../../shared/pipes/custom-date.pipe';
 import { TruncateTextPipe } from '../../shared/pipes/truncate-text.pipe';
@@ -21,14 +19,12 @@ import { Project } from '../models/Project';
     AutosizeTextareaComponent,
     TranslateModule,
     LinkComponent,
-    HasRoleDirective,
     TruncateTextPipe,
     CustomDatePipe,
   ],
   template: `
     <div class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full">
       <header class="flex justify-end">
-        <ng-template [appHasRole]="[role.Admin]">
           <app-remove-item-button
             (confirm)="deleteProject.emit(project().id)"
           />
@@ -47,7 +43,6 @@ import { Project } from '../models/Project';
               <ng-icon name="heroCheck" size="18"/>
             </button>
           }
-        </ng-template>
       </header>
       <section class="text-left flex-grow">
         @if (isEditMode()) {
@@ -106,7 +101,6 @@ export class ProjectCardComponent {
 
   protected readonly isEditMode = computed(() => this.editModeSignal());
   protected readonly isExpanded = computed(() => this.expandedSignal());
-  protected readonly role = RoleEnum;
 
   protected toggleExpanded(): void {
     this.expandedSignal.update(value => !value);

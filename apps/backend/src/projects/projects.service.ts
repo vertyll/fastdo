@@ -77,6 +77,20 @@ export class ProjectsService {
   }
 
   public async remove(id: number): Promise<void> {
-    await this.projectRepository.delete(id);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.getRepository(ProjectUser).delete({ project: { id } });
+      await queryRunner.manager.getRepository(Project).delete(id);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

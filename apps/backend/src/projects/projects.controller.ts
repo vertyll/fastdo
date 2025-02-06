@@ -1,8 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
-import { Roles } from '../common/decorators/roles.decorator';
-import { RoleEnum } from '../common/enums/role.enum';
 import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';
@@ -50,7 +48,6 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @Roles(RoleEnum.Admin)
   @ApiOperation({ summary: 'Update a project' })
   @ApiBody({ type: UpdateProjectDto })
   @ApiWrappedResponse({
@@ -66,7 +63,6 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  @Roles(RoleEnum.Admin)
   @ApiOperation({ summary: 'Remove a project' })
   @ApiWrappedResponse({
     status: 204,

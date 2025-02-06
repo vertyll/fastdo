@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, catchError, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../shared/types/api-response.type';
 import { LoginResponse, RegisterResponse } from '../../shared/types/auth.type';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
@@ -9,7 +10,6 @@ import { RegisterDto } from '../dtos/register.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
-import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
