@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) implements IJwtStrat
     private readonly i18n: I18nService<I18nTranslations>,
     configService: ConfigService,
   ) {
-    const accessTokenSecret = configService.get<string>('app.security.jwt.accessTokenSecret');
+    const accessTokenSecret = configService.get<string>('app.security.jwt.accessToken.secret');
     if (!accessTokenSecret) throw new Error('JWT_ACCESS_SECRET is not defined');
 
     super({

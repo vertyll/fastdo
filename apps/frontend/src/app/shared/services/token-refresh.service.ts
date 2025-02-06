@@ -9,37 +9,32 @@ import { AuthService } from '../../auth/data-access/auth.service';
   providedIn: 'root',
 })
 export class TokenRefreshService {
-  private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private refreshTokenSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   public refreshToken(req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
-    if (this.isRefreshing) {
+    if (this.refreshTokenSubject.value) {
       return this.refreshTokenSubject.pipe(
-        filter(token => token !== null),
+        filter(isRefreshing => !isRefreshing),
         take(1),
-        switchMap(token => {
-          return next(this.addToken(req, token!));
-        }),
+        switchMap(() => next(this.addToken(req, this.authService.getAccessToken()!))),
       );
     }
 
-    this.isRefreshing = true;
-    this.refreshTokenSubject.next(null);
+    this.refreshTokenSubject.next(true);
 
     return this.authService.refreshToken().pipe(
-      switchMap(newToken => {
-        this.isRefreshing = false;
-        this.refreshTokenSubject.next(newToken);
+      switchMap(token => {
+        const newToken = token.data.accessToken;
+        this.refreshTokenSubject.next(false);
         return next(this.addToken(req, newToken));
       }),
       catchError(error => {
-        this.isRefreshing = false;
-        this.refreshTokenSubject.next(null);
+        this.refreshTokenSubject.next(false);
         this.authService.logout();
-        this.router.navigate(['/login']).then();
+        this.router.navigate(['/login']);
         return throwError(() => error);
       }),
     );

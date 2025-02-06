@@ -1,3 +1,4 @@
+import fastifyCookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
@@ -50,6 +51,10 @@ async function bootstrap(): Promise<void> {
     contentSecurityPolicy: false,
   });
 
+  await app.register(fastifyCookie, {
+    secret: configService.getOrThrow<string>('app.security.jwt.accessToken.secret'),
+  });
+
   app.enableCors({
     origin: configService.get('app.frontend.url'),
     credentials: true,
@@ -67,6 +72,10 @@ async function bootstrap(): Promise<void> {
     limits: {
       fileSize: maxFileSize,
     },
+  });
+
+  app.setGlobalPrefix('api', {
+    exclude: ['/', '/uploads'],
   });
 
   app.useGlobalPipes(

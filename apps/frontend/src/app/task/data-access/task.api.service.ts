@@ -12,7 +12,7 @@ import { Task } from '../models/Task';
   providedIn: 'root',
 })
 export class TasksApiService {
-  private readonly URL = environment.backendUrl;
+  private readonly URL = environment.backendUrl + '/api';
   private readonly http = inject(HttpClient);
   readonly $idle = signal(true);
   readonly $loading = signal(false);

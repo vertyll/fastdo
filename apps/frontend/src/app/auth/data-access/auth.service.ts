@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { Observable, map, tap, throwError } from 'rxjs';
+import { Observable, catchError, tap } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api-response.type';
-import { RegisterResponse } from '../../shared/types/auth.type';
+import { LoginResponse, RegisterResponse } from '../../shared/types/auth.type';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
@@ -21,14 +21,15 @@ export class AuthService {
   public readonly isLoggedIn = this.authStateService.isLoggedIn;
   public readonly userRoles = this.authStateService.roles;
 
-  public login(dto: LoginDto): Observable<void> {
+  private readonly accessToken = signal<string | null>(this.authStateService.getToken());
+
+  public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
     return this.authApiService.login(dto).pipe(
-      tap(response => {
-        this.saveTokens(response.data.accessToken, response.data.refreshToken);
-        this.decodeToken(response.data.accessToken);
-        this.setupRefreshTokenTimer(response.data.accessToken);
+      tap(response => this.setAccessToken(response.data.accessToken)),
+      catchError(error => {
+        console.error('Login failed:', error);
+        throw error;
       }),
-      map(() => void 0),
     );
   }
 
@@ -38,56 +39,10 @@ export class AuthService {
 
   public logout(): void {
     this.stopRefreshTokenTimer();
-    this.authApiService.logout().subscribe(() => {
-      this.clearTokens();
-      this.authStateService.clear();
+    this.authApiService.logout().subscribe({
+      next: () => this.clearAuthState(),
+      error: err => console.error('Logout failed:', err),
     });
-  }
-
-  public forceLogout(): void {
-    this.stopRefreshTokenTimer();
-    this.clearTokens();
-    this.authStateService.clear();
-  }
-
-  public initializeAuth(): void {
-    const accessToken: string | null = localStorage.getItem('access_token');
-    if (accessToken) {
-      try {
-        if (this.isTokenExpired(accessToken)) {
-          this.refreshToken().subscribe({
-            error: () => {
-              this.clearTokens();
-              this.authStateService.clear();
-            },
-          });
-        } else {
-          this.decodeToken(accessToken);
-          this.setupRefreshTokenTimer(accessToken);
-        }
-      } catch {
-        this.clearTokens();
-        this.authStateService.clear();
-      }
-    }
-  }
-
-  public refreshToken(): Observable<string> {
-    this.stopRefreshTokenTimer();
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken) {
-      return throwError(() => new Error('No refresh token found'));
-    }
-
-    return this.authApiService.refreshToken(refreshToken).pipe(
-      map(response => {
-        const newAccessToken = response.data.accessToken;
-        localStorage.setItem('access_token', newAccessToken);
-        this.decodeToken(newAccessToken);
-        this.setupRefreshTokenTimer(newAccessToken);
-        return newAccessToken;
-      }),
-    );
   }
 
   public forgotPassword(dto: ForgotPasswordDto): Observable<ApiResponse<void>> {
@@ -98,62 +53,95 @@ export class AuthService {
     return this.authApiService.resetPassword(dto);
   }
 
-  public isTokenValid(): boolean {
-    const accessToken = localStorage.getItem('access_token');
-    if (!accessToken) return false;
+  public getAccessToken(): string | null {
+    return this.accessToken();
+  }
 
-    try {
-      return !this.isTokenExpired(accessToken);
-    } catch {
-      return false;
+  public isTokenValid(): boolean {
+    return !!this.accessToken() && !this.isTokenExpired(this.accessToken()!);
+  }
+
+  public refreshToken(): Observable<ApiResponse<LoginResponse>> {
+    return this.authApiService.refreshToken().pipe(
+      tap(response => this.setAccessToken(response.data.accessToken)),
+      catchError(error => {
+        console.error('Token refresh failed:', error);
+        this.clearAuthState();
+        throw error;
+      }),
+    );
+  }
+
+  public initializeAuth(): void {
+    const token = this.authStateService.getToken();
+    if (!token) return;
+
+    if (this.isTokenExpired(token)) {
+      this.refreshToken().subscribe({
+        error: () => this.clearAuthState(),
+      });
+    } else {
+      this.setAccessToken(token);
     }
   }
 
-  public clearTokens(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+  private setAccessToken(token: string): void {
+    this.accessToken.set(token);
+    this.authStateService.setToken(token);
+    this.decodeToken(token);
+    this.setupRefreshTokenTimer(token);
   }
 
-  private isTokenExpired(token: string): boolean {
+  private decodeToken(token: string): void {
     try {
-      const decodedToken: any = jwtDecode(token);
-      if (!decodedToken.exp) return true;
+      const decoded: any = jwtDecode(token);
+      this.authStateService.setLoggedIn(true);
+      this.authStateService.setRoles(decoded.roles || []);
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      this.clearAuthState();
+    }
+  }
+
+  public isTokenExpired(token: string): boolean {
+    try {
+      const decoded: any = jwtDecode(token);
+      if (!decoded.exp) return true;
 
       const bufferTime = 10 * 1000;
-      const expirationTime = decodedToken.exp * 1000;
-      return Date.now() >= (expirationTime - bufferTime);
+      return Date.now() >= (decoded.exp * 1000 - bufferTime);
     } catch {
       return true;
     }
   }
 
-  private saveTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
-  }
-
-  private decodeToken(token: string): void {
-    const decodedToken: any = jwtDecode(token);
-    const roles = decodedToken.roles || null;
-    this.authStateService.setLoggedIn(true);
-    this.authStateService.setRoles(roles);
-  }
-
   private setupRefreshTokenTimer(token: string): void {
-    const decodedToken: any = jwtDecode(token);
-    const expires = new Date(decodedToken.exp * 1000);
-    const timeout = expires.getTime() - Date.now() - (60 * 1000);
+    this.stopRefreshTokenTimer();
 
-    this.refreshTokenTimeout = setTimeout(() => {
-      if (!this.isTokenExpired(token)) {
-        this.refreshToken().subscribe();
+    try {
+      const decoded: any = jwtDecode(token);
+      const expiresInMs = decoded.exp * 1000 - Date.now() - 10 * 1000;
+
+      if (expiresInMs > 0) {
+        this.refreshTokenTimeout = setTimeout(() => {
+          this.refreshToken().subscribe();
+        }, expiresInMs);
       }
-    }, Math.max(0, timeout));
+    } catch (error) {
+      console.error('Failed to set up refresh token timer:', error);
+    }
   }
 
   private stopRefreshTokenTimer(): void {
     if (this.refreshTokenTimeout) {
       clearTimeout(this.refreshTokenTimeout);
+      this.refreshTokenTimeout = undefined;
     }
+  }
+
+  public clearAuthState(): void {
+    this.stopRefreshTokenTimer();
+    this.accessToken.set(null);
+    this.authStateService.clear();
   }
 }

@@ -13,7 +13,7 @@ export class MailService {
   ) {}
 
   public async sendConfirmationEmail(to: string, token: string): Promise<void> {
-    const appUrl = this.configService.get<string>('app.appUrl');
+    const appUrl = `${this.configService.get<string>('app.appUrl')}/api`;
     await this.mailSender.sendMail({
       to,
       subject: this.i18n.t('messages.Mail.confirmationEmail.subject'),
@@ -37,7 +37,7 @@ export class MailService {
   }
 
   public async sendEmailChangeConfirmation(to: string, token: string): Promise<void> {
-    const appUrl = this.configService.get<string>('app.appUrl');
+    const appUrl = `${this.configService.get<string>('app.appUrl')}/api`;
     await this.mailSender.sendMail({
       to,
       subject: this.i18n.t('messages.Mail.emailChangeEmail.subject'),

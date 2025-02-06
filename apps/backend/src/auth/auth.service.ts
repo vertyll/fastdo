@@ -201,9 +201,9 @@ export class AuthService implements IAuthService {
     };
   }
 
-  public async refreshToken(refreshToken: string): Promise<Pick<LoginResponseDto, 'accessToken'>> {
+  public async refreshToken(refreshToken: string): Promise<LoginResponseDto> {
     const decoded = this.jwtService.verify<JwtRefreshPayload>(refreshToken, {
-      secret: this.configService.get<string>('app.security.jwt.refreshTokenSecret'),
+      secret: this.configService.get<string>('app.security.jwt.refreshToken.secret'),
     });
 
     const user = await this.userRepository.findOne({
@@ -218,6 +218,10 @@ export class AuthService implements IAuthService {
     if (!isValidRefreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidRefreshToken'));
 
     const roles = await this.rolesService.getUserRoles(user.id);
+    const newRefreshToken = this.generateRefreshToken({ sub: user.id });
+
+    const refreshTokenHash = await bcrypt.hash(newRefreshToken, 10);
+    await this.userRepository.update(user.id, { refreshToken: refreshTokenHash });
 
     return {
       accessToken: this.generateAccessToken({
@@ -225,6 +229,7 @@ export class AuthService implements IAuthService {
         email: user.email,
         roles,
       }),
+      refreshToken: newRefreshToken,
     };
   }
 
@@ -286,15 +291,15 @@ export class AuthService implements IAuthService {
 
   private generateAccessToken(payload: JwtPayload): string {
     return this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('app.security.jwt.accessTokenSecret'),
-      expiresIn: this.configService.get<string>('app.security.jwt.accessTokenExpiresIn') || '15m',
+      secret: this.configService.get<string>('app.security.jwt.accessToken.secret'),
+      expiresIn: this.configService.get<string>('app.security.jwt.accessToken.expiresIn') || '15m',
     });
   }
 
   private generateRefreshToken(payload: JwtRefreshPayload): string {
     return this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('app.security.jwt.refreshTokenSecret'),
-      expiresIn: this.configService.get<string>('app.security.jwt.refreshTokenExpiresIn') || '7d',
+      secret: this.configService.get<string>('app.security.jwt.refreshToken.secret'),
+      expiresIn: this.configService.get<string>('app.security.jwt.refreshToken.expiresIn') || '7d',
     });
   }
 }

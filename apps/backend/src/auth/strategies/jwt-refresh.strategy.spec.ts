@@ -47,7 +47,7 @@ describe('JwtRefreshStrategy', () => {
   };
 
   const mockRequest = {
-    body: {
+    cookies: {
       refreshToken: mockRefreshToken,
     },
   };
@@ -60,7 +60,7 @@ describe('JwtRefreshStrategy', () => {
     configService = {
       get: jest.fn().mockImplementation((key: string) => {
         switch (key) {
-          case 'app.security.jwt.refreshTokenSecret':
+          case 'app.security.jwt.refreshToken.secret':
             return 'test-refresh-secret';
           default:
             return null;
@@ -72,7 +72,6 @@ describe('JwtRefreshStrategy', () => {
       t: jest.fn().mockReturnValue('translated message'),
     } as unknown as jest.Mocked<I18nService<I18nTranslations>>;
 
-    // Mock bcrypt.compare
     (bcrypt.compare as jest.Mock).mockImplementation((token, hash) =>
       Promise.resolve(token === mockRefreshToken && hash === mockHashedRefreshToken)
     );
@@ -109,8 +108,8 @@ describe('JwtRefreshStrategy', () => {
       expect(result).toEqual(mockUser);
     });
 
-    it('should throw an UnauthorizedException if refresh token is not in request body', async () => {
-      const requestWithoutToken = { body: {} };
+    it('should throw an UnauthorizedException if refresh token is not in request cookies', async () => {
+      const requestWithoutToken = { cookies: {} };
 
       await expect(jwtRefreshStrategy.validate(requestWithoutToken, mockPayload))
         .rejects.toThrow(UnauthorizedException);

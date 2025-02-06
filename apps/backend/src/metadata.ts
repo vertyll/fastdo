@@ -29,7 +29,7 @@ export default async () => {
     ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
     ['./core/file/entities/file.entity']: await import('./core/file/entities/file.entity'),
     ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
-    ['./auth/dtos/login-response.dto']: await import('./auth/dtos/login-response.dto'),
+    ['./auth/dtos/access-token.dto']: await import('./auth/dtos/access-token.dto'),
   };
   return {
     '@nestjs/swagger': {
@@ -262,8 +262,8 @@ export default async () => {
           },
           password: { required: true, type: () => String, minLength: 8, pattern: '/[A-Z]/' },
         },
-      }], [import('./auth/dtos/refresh-token.dto'), {
-        'RefreshTokenDto': { refreshToken: { required: true, type: () => String } },
+      }], [import('./auth/dtos/access-token.dto'), {
+        'AccessTokenDto': { accessToken: { required: true, type: () => String } },
       }], [import('./tasks/dtos/get-all-tasks-search-params.dto'), {
         'GetAllTasksSearchParams': {
           q: { required: false, type: () => String },
@@ -331,9 +331,9 @@ export default async () => {
         { 'UsersController': { 'updateProfile': { type: Object }, 'getCurrentUser': { type: Object } } },
       ], [import('./auth/auth.controller'), {
         'AuthController': {
-          'login': { type: t['./auth/dtos/login-response.dto'].LoginResponseDto },
+          'login': { type: t['./auth/dtos/access-token.dto'].AccessTokenDto },
           'register': { type: t['./users/entities/user.entity'].User },
-          'refreshToken': { type: Object },
+          'refreshToken': { type: t['./auth/dtos/access-token.dto'].AccessTokenDto },
           'logout': {},
           'confirmEmail': {},
           'forgotPassword': {},

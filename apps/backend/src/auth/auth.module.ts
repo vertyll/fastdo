@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { CookieConfigService } from '../core/config/cookie.config';
 import { MailModule } from '../core/mail/mail.module';
 import { RolesModule } from '../roles/roles.module';
 import { UsersModule } from '../users/users.module';
@@ -20,13 +21,20 @@ import { LocalStrategy } from './strategies/local.strategy';
     MailModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('app.security.jwt.accessTokenSecret'),
-        signOptions: { expiresIn: configService.get<string>('app.security.jwt.accessTokenExpiresIn') },
+        secret: configService.get<string>('app.security.jwt.accessToken.secret'),
+        signOptions: { expiresIn: configService.get<string>('app.security.jwt.accessToken.expiresIn') },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, LocalStrategy, ConfirmationTokenService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    LocalStrategy,
+    ConfirmationTokenService,
+    CookieConfigService,
+  ],
   controllers: [AuthController],
   exports: [AuthService, ConfirmationTokenService],
 })

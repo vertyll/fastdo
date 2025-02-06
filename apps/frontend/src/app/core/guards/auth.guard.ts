@@ -10,11 +10,10 @@ export class AuthGuard implements CanActivate {
   private readonly authService = inject(AuthService);
 
   public canActivate(): boolean {
-    if (this.authService.isTokenValid()) {
-      return true;
+    if (!this.authService.isTokenValid()) {
+      this.router.navigate(['/login']).then();
+      return false;
     }
-
-    this.router.navigate(['/login']).then();
-    return false;
+    return true;
   }
 }

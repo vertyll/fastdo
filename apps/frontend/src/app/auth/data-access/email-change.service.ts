@@ -11,7 +11,7 @@ export class EmailChangeService {
 
   public handleEmailChange(force = false): void {
     if (force) {
-      this.authService.forceLogout();
+      this.authService.logout();
       this.router.navigate(['/login']).then();
     }
   }

@@ -17,11 +17,13 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     private readonly i18n: I18nService<I18nTranslations>,
     configService: ConfigService,
   ) {
-    const refreshTokenSecret = configService.get<string>('app.security.jwt.refreshTokenSecret');
+    const refreshTokenSecret = configService.get<string>('app.security.jwt.refreshToken.secret');
     if (!refreshTokenSecret) throw new Error('JWT_REFRESH_SECRET is not defined');
 
     super({
-      jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        request => request?.cookies?.refreshToken,
+      ]),
       ignoreExpiration: false,
       secretOrKey: refreshTokenSecret,
       passReqToCallback: true,
@@ -29,7 +31,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(request: any, payload: JwtRefreshPayload): Promise<User> {
-    const refreshToken = request.body?.refreshToken;
+    const refreshToken = request.cookies?.refreshToken;
     if (!refreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 
     const user = await this.usersService.findOne(payload.sub);

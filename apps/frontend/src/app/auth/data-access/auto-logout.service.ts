@@ -13,10 +13,11 @@ export class AutoLogoutService {
     private router: Router,
   ) {
     this.watcherRef = effect(() => {
+      const token = this.authService.getAccessToken();
       const isLoggedIn = this.authStateService.isLoggedIn();
 
-      if (isLoggedIn && !localStorage.getItem('access_token')) {
-        this.authService.forceLogout();
+      if (isLoggedIn && (!token || this.authService.isTokenExpired(token))) {
+        this.authService.clearAuthState();
         this.router.navigate(['/login']).then();
       }
     });

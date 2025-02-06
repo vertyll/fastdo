@@ -5,17 +5,18 @@ import { FastifyReply } from 'fastify';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
+import { Cookies } from '../common/decorators/cookies.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { JwtRefreshAuthGuard } from '../common/guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
+import { CookieConfigService } from '../core/config/cookie.config';
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
+import { AccessTokenDto } from './dtos/access-token.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 
@@ -27,6 +28,7 @@ export class AuthController {
     private readonly configService: ConfigService,
     private readonly cls: ClsService<CustomClsStore>,
     private readonly i18n: I18nService<I18nTranslations>,
+    private readonly cookieConfigService: CookieConfigService,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -36,10 +38,15 @@ export class AuthController {
   @ApiWrappedResponse({
     status: 200,
     description: 'The user has been successfully logged in.',
-    type: LoginResponseDto,
+    type: AccessTokenDto,
   })
-  public async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
-    return this.authService.login(loginDto);
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<AccessTokenDto> {
+    const tokens = await this.authService.login(loginDto);
+    res.setCookie('refreshToken', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
+    return { accessToken: tokens.accessToken };
   }
 
   @Public()
@@ -61,10 +68,15 @@ export class AuthController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Access token has been refreshed successfully.',
-    type: LoginResponseDto,
+    type: AccessTokenDto,
   })
-  public async refreshToken(@Body() refreshTokenDto: RefreshTokenDto): Promise<Pick<LoginResponseDto, 'accessToken'>> {
-    return this.authService.refreshToken(refreshTokenDto.refreshToken);
+  async refreshToken(
+    @Cookies('refreshToken') refreshToken: string,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<AccessTokenDto> {
+    const tokens = await this.authService.refreshToken(refreshToken);
+    res.setCookie('refreshToken', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
+    return { accessToken: tokens.accessToken };
   }
 
   @Post('logout')
@@ -73,10 +85,11 @@ export class AuthController {
     status: 200,
     description: 'User has been successfully logged out.',
   })
-  public async logout(): Promise<void> {
+  async logout(@Res({ passthrough: true }) res: FastifyReply): Promise<void> {
     const user = this.cls.get('user');
-    if (!user || !user.userId) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.unauthorized'));
-    return this.authService.logout(user.userId);
+    if (!user?.userId) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.unauthorized'));
+    await this.authService.logout(user.userId);
+    res.clearCookie('refreshToken', this.cookieConfigService.getClearCookieConfig());
   }
 
   @Public()

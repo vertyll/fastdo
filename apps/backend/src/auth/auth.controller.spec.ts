@@ -5,11 +5,12 @@ import { FastifyReply } from 'fastify';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
+import { CookieConfigService } from '../core/config/cookie.config';
 import { User } from '../users/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AccessTokenDto } from './dtos/access-token.dto';
 import { LoginDto } from './dtos/login.dto';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RegisterDto } from './dtos/register.dto';
 
 jest.mock('../common/guards/local-auth.guard');
@@ -19,6 +20,7 @@ describe('AuthController', () => {
   let authService: jest.Mocked<AuthService>;
   let clsService: jest.Mocked<ClsService>;
   let i18nService: jest.Mocked<I18nService>;
+  let mockResponse: jest.Mocked<FastifyReply>;
 
   const mockUser: User = {
     id: 1,
@@ -64,11 +66,27 @@ describe('AuthController', () => {
     password: 'newPassword123',
   };
 
-  const mockRefreshTokenDto: RefreshTokenDto = {
-    refreshToken: 'valid-refresh-token',
+  const mockAccessTokenDto: AccessTokenDto = {
+    accessToken: 'jwt.token.here',
   };
 
   beforeEach(async () => {
+    mockResponse = {
+      setCookie: jest.fn(),
+      clearCookie: jest.fn(),
+      redirect: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis(),
+      header: jest.fn().mockReturnThis(),
+      headers: jest.fn().mockReturnThis(),
+      getHeaders: jest.fn().mockReturnThis(),
+      raw: {},
+      request: {},
+      context: {},
+      server: {},
+    } as unknown as jest.Mocked<FastifyReply>;
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
@@ -107,13 +125,21 @@ describe('AuthController', () => {
         {
           provide: I18nService,
           useValue: {
-            t: jest.fn().mockImplementation((key: string) => {
-              switch (key) {
-                case 'messages.Auth.errors.unauthorized':
-                  return 'Unauthorized';
-                default:
-                  return key;
-              }
+            t: jest.fn().mockImplementation((key: string) => key),
+          },
+        },
+        {
+          provide: CookieConfigService,
+          useValue: {
+            getRefreshTokenConfig: jest.fn().mockReturnValue({
+              httpOnly: true,
+              secure: false,
+              sameSite: 'lax',
+              path: '/api/auth',
+              maxAge: 604800000,
+            }),
+            getClearCookieConfig: jest.fn().mockReturnValue({
+              path: '/api/auth',
             }),
           },
         },
@@ -148,17 +174,18 @@ describe('AuthController', () => {
       const expectedResponse = { accessToken: mockToken, refreshToken: mockRefresh };
       authService.login.mockResolvedValue(expectedResponse);
 
-      const result = await controller.login(mockLoginDto);
+      const result = await controller.login(mockLoginDto, mockResponse);
 
-      expect(result).toEqual(expectedResponse);
+      expect(result).toEqual({ accessToken: mockToken });
       expect(authService.login).toHaveBeenCalledWith(mockLoginDto);
       expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(mockResponse.setCookie).toHaveBeenCalledWith('refreshToken', mockRefresh, expect.any(Object));
     });
 
     it('should handle login failure', async () => {
       authService.login.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.login(mockLoginDto))
+      await expect(controller.login(mockLoginDto, mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
       expect(authService.login).toHaveBeenCalledWith(mockLoginDto);
@@ -195,23 +222,24 @@ describe('AuthController', () => {
 
   describe('refreshToken', () => {
     it('should successfully refresh access token', async () => {
-      const mockAccessToken = { accessToken: 'new.jwt.token' };
+      const mockAccessToken = { accessToken: 'new.jwt.token', refreshToken: 'new.refresh.token' };
       authService.refreshToken.mockResolvedValue(mockAccessToken);
 
-      const result = await controller.refreshToken(mockRefreshTokenDto);
+      const result = await controller.refreshToken(mockAccessTokenDto.accessToken, mockResponse);
 
-      expect(result).toEqual(mockAccessToken);
-      expect(authService.refreshToken).toHaveBeenCalledWith(mockRefreshTokenDto.refreshToken);
+      expect(result).toEqual({ accessToken: 'new.jwt.token' });
+      expect(authService.refreshToken).toHaveBeenCalledWith(mockAccessTokenDto.accessToken);
       expect(authService.refreshToken).toHaveBeenCalledTimes(1);
+      expect(mockResponse.setCookie).toHaveBeenCalledWith('refreshToken', 'new.refresh.token', expect.any(Object));
     });
 
     it('should handle refresh token failure', async () => {
       authService.refreshToken.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.refreshToken(mockRefreshTokenDto))
+      await expect(controller.refreshToken(mockAccessTokenDto.accessToken, mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
-      expect(authService.refreshToken).toHaveBeenCalledWith(mockRefreshTokenDto.refreshToken);
+      expect(authService.refreshToken).toHaveBeenCalledWith(mockAccessTokenDto.accessToken);
     });
   });
 
@@ -222,19 +250,20 @@ describe('AuthController', () => {
 
     it('should successfully logout user', async () => {
       clsService.get.mockReturnValue({ userId: 1 });
-      await controller.logout();
+      await controller.logout(mockResponse);
 
       expect(authService.logout).toHaveBeenCalledWith(1);
       expect(authService.logout).toHaveBeenCalledTimes(1);
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).not.toHaveBeenCalled();
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refreshToken', { path: '/api/auth' });
     });
 
     it('should handle logout failure', async () => {
       clsService.get.mockReturnValue({ userId: 1 });
       authService.logout.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.logout())
+      await expect(controller.logout(mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
       expect(authService.logout).toHaveBeenCalledWith(1);
@@ -246,7 +275,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue(null);
       i18nService.t.mockReturnValue('Unauthorized');
 
-      await expect(controller.logout())
+      await expect(controller.logout(mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
 
@@ -259,7 +288,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue(null);
       i18nService.t.mockReturnValue('Unauthorized');
 
-      await expect(controller.logout())
+      await expect(controller.logout(mockResponse))
         .rejects
         .toThrow('Unauthorized');
 
@@ -271,19 +300,6 @@ describe('AuthController', () => {
 
   describe('confirmEmail', () => {
     const mockToken = 'valid-token';
-    const mockResponse = {
-      redirect: jest.fn().mockReturnThis(),
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-      code: jest.fn().mockReturnThis(),
-      header: jest.fn().mockReturnThis(),
-      headers: jest.fn().mockReturnThis(),
-      getHeaders: jest.fn().mockReturnThis(),
-      raw: {},
-      request: {},
-      context: {},
-      server: {},
-    } as unknown as FastifyReply;
 
     it('should confirm email and redirect to frontend', async () => {
       authService.confirmEmail.mockResolvedValue(undefined);
@@ -374,7 +390,7 @@ describe('AuthController', () => {
       const invalidLoginDto: Partial<LoginDto> = { email: 'invalid-email', password: '' };
       authService.login.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.login(invalidLoginDto as LoginDto))
+      await expect(controller.login(invalidLoginDto as LoginDto, mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
     });

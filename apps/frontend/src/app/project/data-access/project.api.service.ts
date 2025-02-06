@@ -11,7 +11,7 @@ import { Project } from '../models/Project';
   providedIn: 'root',
 })
 export class ProjectsApiService {
-  private readonly URL = environment.backendUrl;
+  private readonly URL = environment.backendUrl + '/api';
   private readonly http = inject(HttpClient);
   readonly $idle = signal(true);
   readonly $loading = signal(false);

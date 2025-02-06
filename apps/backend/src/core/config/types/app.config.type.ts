@@ -31,22 +31,39 @@ export type DatabaseConfig = PostgresConnectionOptions & {
   retryDelay?: number;
 };
 
-interface SecurityConfig {
-  jwt: {
-    accessTokenSecret: string;
-    refreshTokenSecret: string;
-    accessTokenExpiresIn: string;
-    refreshTokenExpiresIn: string;
-    confirmationToken: {
-      expiresIn: string;
-      secret: string;
-    };
-  };
+interface JwtTokenConfig {
+  secret: string;
+  expiresIn: string;
+}
+
+interface JwtConfig {
+  accessToken: JwtTokenConfig;
+  refreshToken: JwtTokenConfig;
+  confirmationToken: JwtTokenConfig;
+}
+
+export interface RefreshTokenCookieConfig {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: 'lax' | 'strict' | 'none';
+  path: string;
+  maxAge: number;
+}
+
+interface CookieConfig {
+  refreshToken: RefreshTokenCookieConfig;
+}
+
+interface RateLimitingConfig {
+  windowMs: number;
+  max: number;
+}
+
+export interface SecurityConfig {
+  jwt: JwtConfig;
+  cookie: CookieConfig;
   bcryptSaltRounds: number;
-  rateLimiting: {
-    windowMs: number;
-    max: number;
-  };
+  rateLimiting: RateLimitingConfig;
 }
 
 export interface OpenApiConfig {
@@ -56,12 +73,19 @@ export interface OpenApiConfig {
   path: string;
 }
 
+interface FrontendPaths {
+  confirmEmail: string;
+  resetPassword: string;
+}
+
 interface FrontendConfig {
   url: string;
-  paths: {
-    confirmEmail: string;
-    resetPassword: string;
-  };
+  paths: FrontendPaths;
+}
+
+interface MailDevConfig {
+  host: string;
+  port: number;
 }
 
 export interface MailConfig {
@@ -71,29 +95,34 @@ export interface MailConfig {
   password?: string;
   from: string;
   templatesPath: string;
-  dev: {
-    host: string;
-    port: number;
-  };
+  dev: MailDevConfig;
+}
+
+interface FileStorageLocal {
+  uploadDirPath: string;
+}
+
+interface FileStorage {
+  type: StorageType;
+  local: FileStorageLocal;
+}
+
+interface FileValidation {
+  maxSize: number;
+  allowedMimeTypes: string[];
 }
 
 interface FileConfig {
-  storage: {
-    type: StorageType;
-    local: {
-      uploadDirPath: string;
-    };
-  };
-  validation: {
-    maxSize: number;
-    allowedMimeTypes: string[];
-  };
+  storage: FileStorage;
+  validation: FileValidation;
+}
+
+interface ApiKeys {
+  apiKey: string;
 }
 
 interface ApiConfig {
-  keys: {
-    apiKey: string;
-  };
+  keys: ApiKeys;
 }
 
 interface LanguageConfig {

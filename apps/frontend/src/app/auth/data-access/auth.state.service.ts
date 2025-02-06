@@ -7,12 +7,27 @@ import { AuthState } from '../../shared/types/auth.type';
 })
 export class AuthStateService {
   private readonly authState = signal<AuthState>({
-    isLoggedIn: false,
+    isLoggedIn: !!localStorage.getItem('access_token'),
     roles: null,
   });
 
+  private readonly token = signal<string | null>(localStorage.getItem('access_token'));
+
   public readonly isLoggedIn = computed(() => this.authState().isLoggedIn);
   public readonly roles = computed(() => this.authState().roles);
+
+  public getToken(): string | null {
+    return this.token();
+  }
+
+  public setToken(token: string | null): void {
+    if (token) {
+      localStorage.setItem('access_token', token);
+    } else {
+      localStorage.removeItem('access_token');
+    }
+    this.token.set(token);
+  }
 
   public setLoggedIn(isLoggedIn: boolean) {
     this.authState.update(state => ({ ...state, isLoggedIn }));
@@ -23,6 +38,7 @@ export class AuthStateService {
   }
 
   public clear() {
+    this.setToken(null);
     this.authState.set({
       isLoggedIn: false,
       roles: null,

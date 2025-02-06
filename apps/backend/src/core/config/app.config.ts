@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import * as process from 'node:process';
 import { AppConfig, DatabaseType, Environment, FILE_CONSTANTS, StorageType } from './types/app.config.type';
 
 export default registerAs('app', (): AppConfig => ({
@@ -20,7 +21,7 @@ export default registerAs('app', (): AppConfig => ({
     database: process.env.DATABASE_NAME || 'postgres',
     migrations: [(process.env.DATABASE_MIGRATIONS_DIR || './migrations') + '/*.{ts,js}'],
     migrationsTableName: process.env.DATABASE_MIGRATIONS_TABLE_NAME || 'migrations',
-    ssl: process.env.DATABASE_SSL === 'true',
+    ssl: process.env.DATABASE_SSL === 'true' || false,
     retryAttempts: parseInt(process.env.DATABASE_RETRY_ATTEMPTS || '10'),
     retryDelay: parseInt(process.env.DATABASE_RETRY_DELAY || '3000'),
   },
@@ -31,13 +32,26 @@ export default registerAs('app', (): AppConfig => ({
   },
   security: {
     jwt: {
-      accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET || 'development-secret',
-      refreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET || 'development-refresh-secret',
-      accessTokenExpiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || '15m',
-      refreshTokenExpiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || '7d',
+      accessToken: {
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'development-secret',
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || '15m',
+      },
+      refreshToken: {
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET || 'development-refresh-secret',
+        expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || '7d',
+      },
       confirmationToken: {
         secret: process.env.JWT_CONFIRMATION_TOKEN_SECRET || 'development-confirmation-secret',
         expiresIn: process.env.JWT_CONFIRMATION_TOKEN_EXPIRES_IN || '24h',
+      },
+    },
+    cookie: {
+      refreshToken: {
+        httpOnly: process.env.COOKIE_HTTP_ONLY === 'true' || true,
+        secure: process.env.COOKIE_SECURE === 'true' || false,
+        sameSite: (process.env.COOKIE_SAME_SITE as 'lax' | 'strict' | 'none') || 'lax',
+        path: process.env.COOKIE_PATH || '/api/auth',
+        maxAge: parseInt(process.env.COOKIE_MAX_AGE || String(7 * 24 * 60 * 60 * 1000)),
       },
     },
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),

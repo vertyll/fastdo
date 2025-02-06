@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../../shared/types/api-response.type';
-import { LoginResponse, RefreshTokenResponse, RegisterResponse } from '../../shared/types/auth.type';
+import { LoginResponse, RegisterResponse } from '../../shared/types/auth.type';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
@@ -13,7 +13,7 @@ import { ResetPasswordDto } from '../dtos/reset-password.dto';
   providedIn: 'root',
 })
 export class AuthApiService {
-  private readonly URL = environment.backendUrl;
+  private readonly URL = environment.backendUrl + '/api';
   private readonly http = inject(HttpClient);
 
   public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
@@ -30,11 +30,8 @@ export class AuthApiService {
     );
   }
 
-  public refreshToken(refreshToken: string): Observable<ApiResponse<RefreshTokenResponse>> {
-    return this.http.post<ApiResponse<RefreshTokenResponse>>(
-      `${this.URL}/auth/refresh-token`,
-      { refreshToken },
-    );
+  public refreshToken(): Observable<ApiResponse<LoginResponse>> {
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.URL}/auth/refresh-token`, {}, { withCredentials: true });
   }
 
   public logout(): Observable<ApiResponse<void>> {
