@@ -22,7 +22,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
 
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        request => request?.cookies?.refreshToken,
+        request => request?.cookies?.refresh_token,
       ]),
       ignoreExpiration: false,
       secretOrKey: refreshTokenSecret,
@@ -31,7 +31,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(request: any, payload: JwtRefreshPayload): Promise<User> {
-    const refreshToken = request.cookies?.refreshToken;
+    const refreshToken = request.cookies?.refresh_token;
     if (!refreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 
     const user = await this.usersService.findOne(payload.sub);

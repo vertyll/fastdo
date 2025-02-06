@@ -48,7 +48,7 @@ describe('JwtRefreshStrategy', () => {
 
   const mockRequest = {
     cookies: {
-      refreshToken: mockRefreshToken,
+      refresh_token: mockRefreshToken,
     },
   };
 

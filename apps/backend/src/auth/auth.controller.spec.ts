@@ -179,7 +179,7 @@ describe('AuthController', () => {
       expect(result).toEqual({ accessToken: mockToken });
       expect(authService.login).toHaveBeenCalledWith(mockLoginDto);
       expect(authService.login).toHaveBeenCalledTimes(1);
-      expect(mockResponse.setCookie).toHaveBeenCalledWith('refreshToken', mockRefresh, expect.any(Object));
+      expect(mockResponse.setCookie).toHaveBeenCalledWith('refresh_token', mockRefresh, expect.any(Object));
     });
 
     it('should handle login failure', async () => {
@@ -230,7 +230,7 @@ describe('AuthController', () => {
       expect(result).toEqual({ accessToken: 'new.jwt.token' });
       expect(authService.refreshToken).toHaveBeenCalledWith(mockAccessTokenDto.accessToken);
       expect(authService.refreshToken).toHaveBeenCalledTimes(1);
-      expect(mockResponse.setCookie).toHaveBeenCalledWith('refreshToken', 'new.refresh.token', expect.any(Object));
+      expect(mockResponse.setCookie).toHaveBeenCalledWith('refresh_token', 'new.refresh.token', expect.any(Object));
     });
 
     it('should handle refresh token failure', async () => {
@@ -256,7 +256,7 @@ describe('AuthController', () => {
       expect(authService.logout).toHaveBeenCalledTimes(1);
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).not.toHaveBeenCalled();
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refreshToken', { path: '/api/auth' });
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh_token', { path: '/api/auth' });
     });
 
     it('should handle logout failure', async () => {

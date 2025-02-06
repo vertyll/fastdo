@@ -45,7 +45,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<AccessTokenDto> {
     const tokens = await this.authService.login(loginDto);
-    res.setCookie('refreshToken', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
+    res.setCookie('refresh_token', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
     return { accessToken: tokens.accessToken };
   }
 
@@ -71,11 +71,11 @@ export class AuthController {
     type: AccessTokenDto,
   })
   async refreshToken(
-    @Cookies('refreshToken') refreshToken: string,
+    @Cookies('refresh_token') refreshToken: string,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<AccessTokenDto> {
     const tokens = await this.authService.refreshToken(refreshToken);
-    res.setCookie('refreshToken', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
+    res.setCookie('refresh_token', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
     return { accessToken: tokens.accessToken };
   }
 
@@ -89,7 +89,7 @@ export class AuthController {
     const user = this.cls.get('user');
     if (!user?.userId) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.unauthorized'));
     await this.authService.logout(user.userId);
-    res.clearCookie('refreshToken', this.cookieConfigService.getClearCookieConfig());
+    res.clearCookie('refresh_token', this.cookieConfigService.getClearCookieConfig());
   }
 
   @Public()
