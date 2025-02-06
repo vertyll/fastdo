@@ -14,9 +14,8 @@ export class CookieConfigService {
     return this.getCookieConfig().cookie.refreshToken;
   }
 
-  public getClearCookieConfig(): Pick<RefreshTokenCookieConfig, 'path'> {
-    return {
-      path: this.getCookieConfig().cookie.refreshToken.path,
-    };
+  public getClearCookieConfig(): Pick<RefreshTokenCookieConfig, 'path' | 'domain'> {
+    const { path, domain } = this.getCookieConfig().cookie.refreshToken;
+    return { path, domain };
   }
 }

@@ -48,6 +48,7 @@ export interface RefreshTokenCookieConfig {
   sameSite: 'lax' | 'strict' | 'none';
   path: string;
   maxAge: number;
+  domain?: string;
 }
 
 interface CookieConfig {

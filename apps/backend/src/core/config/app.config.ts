@@ -52,6 +52,7 @@ export default registerAs('app', (): AppConfig => ({
         sameSite: (process.env.COOKIE_SAME_SITE as 'lax' | 'strict' | 'none') || 'lax',
         path: process.env.COOKIE_PATH || '/api/auth',
         maxAge: parseInt(process.env.COOKIE_MAX_AGE || String(7 * 24 * 60 * 60 * 1000)),
+        domain: process.env.COOKIE_DOMAIN || undefined,
       },
     },
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),
