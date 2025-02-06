@@ -36,7 +36,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
         <button
           *ngIf="mode() === 'edit'"
-          class="absolute flex bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
+          class="absolute flex bottom-3 right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
           (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
         >
           <ng-icon
