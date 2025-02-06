@@ -65,7 +65,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)"/>
     </div>
 
-    <div class="border border-gray-300 p-2 w-36 rounded-lg flex items-center">
+    <div class="border border-gray-300 p-2 w-36 rounded-lg flex items-center my-4">
       <div
         class="flex items-center gap-1.5 cursor-help"
         [matTooltip]="getHelpText()"
@@ -81,7 +81,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
       (updateTasksListView)="configStateService.updateTasksListView($event)"
     />
 
-    <p class="mb-4">
+    <p class="my-4">
       {{ 'Task.urgentTaskCount' | translate }}:
       <span class="text-orange-500 font-semibold">
         {{ tasksStateService.urgentCount() }}
