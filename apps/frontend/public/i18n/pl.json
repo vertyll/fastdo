@@ -13,6 +13,10 @@
     "save": "Zapisz",
     "showMore": "Pokaż więcej",
     "showLess": "Pokaż mniej",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "close": "Zamknij",
+    "create": "Utwórz",
     "deleteTitle": "Usuń",
     "confirmDelete": "Czy na pewno chcesz usunąć ten element?"
   },

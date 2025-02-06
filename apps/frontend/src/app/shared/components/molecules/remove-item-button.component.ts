@@ -61,11 +61,11 @@ export class RemoveItemButtonComponent {
         buttons: [
           {
             role: ButtonRoleEnum.Cancel,
-            text: 'Cancel',
+            text: this.translateService.instant('Basic.cancel'),
           },
           {
             role: ButtonRoleEnum.Ok,
-            text: 'Delete',
+            text: this.translateService.instant('Basic.delete'),
             handler: () => this.confirm.emit(),
           },
         ],
