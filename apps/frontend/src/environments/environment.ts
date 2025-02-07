@@ -1,8 +1,8 @@
 export const environment = {
-  production: false,
-  backendUrl: 'http://localhost:3000',
-  domain: 'localhost:4200',
-  apiKey: '5hjk2HKJ4123khk41242hkhkF61Da6aAD',
+  production: true,
+  backendUrl: 'https://api.fastdo.vertyll.usermd.net',
+  domain: '.vertyll.usermd.net',
+  apiKey: '5hjkDASHKJ412da$aAd12312hkF61Da6aAD',
   defaultLanguage: 'pl',
   availableLanguages: ['pl', 'en'],
   refreshToken: {
