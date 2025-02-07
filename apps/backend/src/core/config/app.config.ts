@@ -55,6 +55,11 @@ export default registerAs('app', (): AppConfig => ({
         domain: process.env.COOKIE_DOMAIN || undefined,
       },
     },
+    cors: {
+        credentials: process.env.CORS_CREDENTIALS === 'true' || true,
+        methods: process.env.CORS_METHODS?.split(',') || ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') || ['Content-Type', 'Authorization', 'x-api-key', 'x-lang'],
+    },
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),
     rateLimiting: {
       windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),

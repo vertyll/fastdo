@@ -58,6 +58,8 @@ async function bootstrap(): Promise<void> {
   app.enableCors({
     origin: configService.get('app.frontend.url'),
     credentials: true,
+    methods: configService.getOrThrow<string[]>('app.cors.methods'),
+    allowedHeaders: configService.getOrThrow<string[]>('app.cors.allowedHeaders'),
   });
 
   const fileUploadsPath: string = configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');

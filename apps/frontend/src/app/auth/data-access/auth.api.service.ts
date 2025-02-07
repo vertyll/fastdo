@@ -31,7 +31,7 @@ export class AuthApiService {
   }
 
   public refreshToken(): Observable<ApiResponse<LoginResponse>> {
-    return this.http.post<ApiResponse<LoginResponse>>(`${this.URL}/auth/refresh-token`, {}, { withCredentials: true });
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.URL}/auth/refresh-token`, {});
   }
 
   public logout(): Observable<ApiResponse<void>> {

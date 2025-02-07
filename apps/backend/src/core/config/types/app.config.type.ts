@@ -65,6 +65,7 @@ export interface SecurityConfig {
   cookie: CookieConfig;
   bcryptSaltRounds: number;
   rateLimiting: RateLimitingConfig;
+  cors: CorsConfig;
 }
 
 export interface OpenApiConfig {
@@ -72,6 +73,12 @@ export interface OpenApiConfig {
   description: string;
   version: string;
   path: string;
+}
+
+interface CorsConfig {
+  credentials: boolean;
+  methods: string[];
+  allowedHeaders: string[];
 }
 
 interface FrontendPaths {
