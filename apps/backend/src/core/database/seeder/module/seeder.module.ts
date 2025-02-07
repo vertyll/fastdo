@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RefreshToken } from '../../../../auth/entities/refresh-token.entity';
 import { ProjectUser } from '../../../../projects/entities/project-user.entity';
 import { Project } from '../../../../projects/entities/project.entity';
 import { Role } from '../../../../roles/entities/role.entity';
@@ -48,6 +49,7 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
       Project,
       Task,
       Priority,
+      RefreshToken,
     ]),
   ],
   providers: [

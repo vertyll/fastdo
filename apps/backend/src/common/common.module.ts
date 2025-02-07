@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ClsModule } from 'nestjs-cls';
 import appConfig from '../core/config/app.config';
@@ -29,6 +30,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
   ],
   providers: [
     {

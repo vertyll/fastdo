@@ -41,7 +41,7 @@ describe('AuthController', () => {
     emailChangeToken: null,
     emailChangeTokenExpiry: null,
     pendingEmail: null,
-    refreshToken: null,
+    refreshTokens: [],
     projectUsers: [],
   };
 
@@ -244,15 +244,17 @@ describe('AuthController', () => {
   });
 
   describe('logout', () => {
+    const mockRefreshToken = 'mock-refresh-token';
+
     beforeEach(() => {
       jest.clearAllMocks();
     });
 
     it('should successfully logout user', async () => {
       clsService.get.mockReturnValue({ userId: 1 });
-      await controller.logout(mockResponse);
+      await controller.logout(mockRefreshToken, mockResponse);
 
-      expect(authService.logout).toHaveBeenCalledWith(1);
+      expect(authService.logout).toHaveBeenCalledWith(1, mockRefreshToken);
       expect(authService.logout).toHaveBeenCalledTimes(1);
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).not.toHaveBeenCalled();
@@ -263,10 +265,10 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue({ userId: 1 });
       authService.logout.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.logout(mockResponse))
+      await expect(controller.logout(mockRefreshToken, mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
-      expect(authService.logout).toHaveBeenCalledWith(1);
+      expect(authService.logout).toHaveBeenCalledWith(1, mockRefreshToken);
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).not.toHaveBeenCalled();
     });
@@ -275,7 +277,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue(null);
       i18nService.t.mockReturnValue('Unauthorized');
 
-      await expect(controller.logout(mockResponse))
+      await expect(controller.logout(mockRefreshToken, mockResponse))
         .rejects
         .toThrow(UnauthorizedException);
 
@@ -288,7 +290,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue(null);
       i18nService.t.mockReturnValue('Unauthorized');
 
-      await expect(controller.logout(mockResponse))
+      await expect(controller.logout(mockRefreshToken, mockResponse))
         .rejects
         .toThrow('Unauthorized');
 

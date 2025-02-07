@@ -85,10 +85,13 @@ export class AuthController {
     status: 200,
     description: 'User has been successfully logged out.',
   })
-  async logout(@Res({ passthrough: true }) res: FastifyReply): Promise<void> {
+  async logout(
+    @Cookies('refresh_token') refreshToken: string,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
     const user = this.cls.get('user');
     if (!user?.userId) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.unauthorized'));
-    await this.authService.logout(user.userId);
+    await this.authService.logout(user.userId, refreshToken);
     res.clearCookie('refresh_token', this.cookieConfigService.getClearCookieConfig());
   }
 

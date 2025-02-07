@@ -76,7 +76,7 @@ export interface OpenApiConfig {
   path: string;
 }
 
-export type HelmetCrossOriginResourcePolicy = "same-origin" | "same-site" | "cross-origin" | undefined;
+export type HelmetCrossOriginResourcePolicy = 'same-origin' | 'same-site' | 'cross-origin' | undefined;
 
 interface HelmetConfig {
   crossOriginResourcePolicy: HelmetCrossOriginResourcePolicy;

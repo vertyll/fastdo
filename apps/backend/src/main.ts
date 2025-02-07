@@ -12,10 +12,11 @@ import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { LoginResponseDto } from './auth/dtos/login-response.dto';
+import { RefreshToken } from './auth/entities/refresh-token.entity';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
-import {HelmetCrossOriginResourcePolicy, OpenApiConfig} from './core/config/types/app.config.type';
+import { HelmetCrossOriginResourcePolicy, OpenApiConfig } from './core/config/types/app.config.type';
 import { FileMetadataDto } from './core/file/dtos/file-metadata.dto';
 import { File } from './core/file/entities/file.entity';
 import { ProjectUser } from './projects/entities/project-user.entity';
@@ -47,7 +48,11 @@ async function bootstrap(): Promise<void> {
   const configService: ConfigService = app.get(ConfigService);
 
   await app.register(helmet, {
-    crossOriginResourcePolicy: { policy: configService.getOrThrow<HelmetCrossOriginResourcePolicy>('app.security.helmet.crossOriginResourcePolicy') },
+    crossOriginResourcePolicy: {
+      policy: configService.getOrThrow<HelmetCrossOriginResourcePolicy>(
+        'app.security.helmet.crossOriginResourcePolicy',
+      ),
+    },
     contentSecurityPolicy: configService.getOrThrow<boolean>('app.security.helmet.contentSecurityPolicy'),
   });
 
@@ -152,6 +157,7 @@ async function bootstrap(): Promise<void> {
       PrivacyPolicySection,
       PrivacyPolicySectionTranslation,
       UserEmailHistory,
+      RefreshToken,
     ],
   });
   SwaggerModule.setup(openApiConfig.path, app, document);

@@ -64,7 +64,9 @@ export default registerAs('app', (): AppConfig => ({
         || ['Content-Type', 'Authorization', 'x-api-key', 'x-lang'],
     },
     helmet: {
-      crossOriginResourcePolicy: (process.env.HELMET_CROSS_ORIGIN_RESOURCE_POLICY as "same-origin" | "same-site" | "cross-origin" | undefined) || 'cross-origin',
+      crossOriginResourcePolicy:
+        (process.env.HELMET_CROSS_ORIGIN_RESOURCE_POLICY as 'same-origin' | 'same-site' | 'cross-origin' | undefined)
+        || 'cross-origin',
       contentSecurityPolicy: process.env.HELMET_CSP_ENABLED === 'true' || false,
     },
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),

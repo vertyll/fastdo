@@ -2,9 +2,10 @@ import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
 import { Role } from '../roles/entities/role.entity';
@@ -18,6 +19,7 @@ import { AuthService } from './auth.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 jest.mock('bcrypt');
 
@@ -30,6 +32,7 @@ describe('AuthService', () => {
   let confirmationTokenService: jest.Mocked<ConfirmationTokenService>;
   let userRepository: jest.Mocked<UserRepository>;
   let roleRepository: jest.Mocked<RoleRepository>;
+  let refreshTokenRepository: jest.Mocked<Repository<RefreshToken>>;
   let mockQueryRunner: {
     connect: jest.Mock;
     startTransaction: jest.Mock;
@@ -40,6 +43,9 @@ describe('AuthService', () => {
       getRepository: jest.Mock;
       save: jest.Mock;
       update: jest.Mock;
+      findOne: jest.Mock;
+      find: jest.Mock;
+      remove: jest.Mock;
     };
     isTransactionActive: boolean;
   };
@@ -48,6 +54,13 @@ describe('AuthService', () => {
     id: 1,
     name: RoleEnum.User,
     userRoles: [],
+  };
+
+  const mockRefreshToken: RefreshToken = {
+    id: 1,
+    token: 'mock-refresh-token',
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    user: {} as User,
   };
 
   const mockUser: User = {
@@ -69,9 +82,12 @@ describe('AuthService', () => {
     emailChangeToken: null,
     emailChangeTokenExpiry: null,
     pendingEmail: null,
-    refreshToken: 'mock-refresh-token',
+    refreshTokens: [],
     projectUsers: [],
   };
+
+  mockRefreshToken.user = mockUser;
+  mockUser.refreshTokens = [mockRefreshToken];
 
   beforeEach(async () => {
     mockQueryRunner = {
@@ -84,9 +100,14 @@ describe('AuthService', () => {
         getRepository: jest.fn().mockReturnValue({
           findOne: jest.fn(),
           save: jest.fn().mockImplementation((entity: Partial<User>) => entity),
+          find: jest.fn(),
+          remove: jest.fn(),
         }),
         save: jest.fn(),
         update: jest.fn(),
+        findOne: jest.fn(),
+        find: jest.fn(),
+        remove: jest.fn(),
       },
       isTransactionActive: true,
     };
@@ -143,6 +164,17 @@ describe('AuthService', () => {
             translate: jest.fn().mockReturnValue('translated message'),
           },
         },
+        {
+          provide: getRepositoryToken(RefreshToken),
+          useValue: {
+            findOne: jest.fn(),
+            save: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
+            find: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -154,6 +186,7 @@ describe('AuthService', () => {
     confirmationTokenService = module.get(ConfirmationTokenService);
     userRepository = module.get(UserRepository);
     roleRepository = module.get(RoleRepository);
+    refreshTokenRepository = module.get(getRepositoryToken(RefreshToken));
   });
 
   describe('validateUser', () => {
@@ -303,6 +336,143 @@ describe('AuthService', () => {
     });
   });
 
+  describe('refreshToken', () => {
+    const refreshTokenString = 'valid-refresh-token';
+    const hashedToken = 'hashed-token';
+
+    beforeEach(() => {
+      jwtService.verify.mockReturnValue({ sub: mockUser.id });
+      (bcrypt.compare as jest.Mock).mockImplementation((token, hash) =>
+        Promise.resolve(token === refreshTokenString && hash === hashedToken)
+      );
+    });
+
+    it('should successfully refresh tokens', async () => {
+      const storedTokens = [{
+        id: 1,
+        token: hashedToken,
+        expiresAt: new Date(Date.now() + 10000),
+        user: mockUser,
+      }];
+
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
+      mockQueryRunner.manager.find.mockResolvedValueOnce(storedTokens);
+      rolesService.getUserRoles.mockResolvedValue([RoleEnum.User]);
+      jwtService.sign.mockReturnValue('new.token.here');
+
+      const result = await service.refreshToken(refreshTokenString);
+
+      expect(result).toEqual({
+        accessToken: 'new.token.here',
+        refreshToken: 'new.token.here',
+      });
+      expect(mockQueryRunner.manager.remove).toHaveBeenCalledWith(RefreshToken, storedTokens[0]);
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when user is not found', async () => {
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(null);
+
+      await expect(service.refreshToken(refreshTokenString))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when user is not active', async () => {
+      const inactiveUser = { ...mockUser, isActive: false };
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(inactiveUser);
+
+      await expect(service.refreshToken(refreshTokenString))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when email is not confirmed', async () => {
+      const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(unconfirmedUser);
+
+      await expect(service.refreshToken(refreshTokenString))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when no tokens are found', async () => {
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
+      mockQueryRunner.manager.find.mockResolvedValueOnce([]);
+
+      await expect(service.refreshToken(refreshTokenString))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when token has expired', async () => {
+      const expiredToken = {
+        id: 1,
+        token: hashedToken,
+        expiresAt: new Date(Date.now() - 10000),
+        user: mockUser,
+      };
+
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
+      mockQueryRunner.manager.find.mockResolvedValueOnce([expiredToken]);
+
+      await expect(service.refreshToken(refreshTokenString))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when no valid token is found', async () => {
+      const invalidToken = {
+        id: 1,
+        token: 'different-hash',
+        expiresAt: new Date(Date.now() + 10000),
+        user: mockUser,
+      };
+
+      mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
+      mockQueryRunner.manager.find.mockResolvedValueOnce([invalidToken]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+      await expect(service.refreshToken(refreshTokenString))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+  });
+
+  describe('logout', () => {
+    it('should remove the refresh token', async () => {
+      const validToken = {
+        id: 1,
+        token: 'hashed-token',
+        expiresAt: new Date(Date.now() + 10000),
+        user: mockUser,
+      };
+
+      refreshTokenRepository.find.mockResolvedValue([validToken]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+      await service.logout(mockUser.id, 'valid-token');
+
+      expect(refreshTokenRepository.remove).toHaveBeenCalledWith(validToken);
+    });
+
+    it('should not remove the refresh token if it does not match', async () => {
+      const invalidToken = {
+        id: 1,
+        token: 'hashed-token',
+        expiresAt: new Date(Date.now() + 10000),
+        user: mockUser,
+      };
+
+      refreshTokenRepository.find.mockResolvedValue([invalidToken]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+      await service.logout(mockUser.id, 'invalid-token');
+
+      expect(refreshTokenRepository.remove).not.toHaveBeenCalled();
+    });
+  });
+
   describe('confirmEmail', () => {
     const token = 'valid-confirmation-token';
 
@@ -404,6 +574,9 @@ describe('AuthService', () => {
         resetPasswordDto.password,
         10,
       );
+      expect(refreshTokenRepository.delete).toHaveBeenCalledWith({
+        user: { id: mockUser.id },
+      });
       expect(userRepository.update).toHaveBeenCalledWith(
         mockUser.id,
         expect.objectContaining({
@@ -431,7 +604,7 @@ describe('AuthService', () => {
       userRepository.findOne.mockResolvedValue({
         ...mockUser,
         confirmationToken: resetPasswordDto.token,
-        confirmationTokenExpiry: new Date(Date.now() - 1000), // expired
+        confirmationTokenExpiry: new Date(Date.now() - 1000),
       });
 
       await expect(service.resetPassword(resetPasswordDto))
