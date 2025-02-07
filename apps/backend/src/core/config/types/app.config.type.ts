@@ -66,6 +66,7 @@ export interface SecurityConfig {
   bcryptSaltRounds: number;
   rateLimiting: RateLimitingConfig;
   cors: CorsConfig;
+  helmet: HelmetConfig;
 }
 
 export interface OpenApiConfig {
@@ -73,6 +74,11 @@ export interface OpenApiConfig {
   description: string;
   version: string;
   path: string;
+}
+
+interface HelmetConfig {
+  crossOriginPolicy: string;
+  contentSecurityPolicy: boolean;
 }
 
 interface CorsConfig {
@@ -144,6 +150,8 @@ export interface AppConfig {
   port: number;
   appName: string;
   appUrl: string;
+  prefix: string;
+  excludedPrefixPaths: string[];
   language: LanguageConfig;
   database: DatabaseConfig;
   api: ApiConfig;

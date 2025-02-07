@@ -7,6 +7,8 @@ export default registerAs('app', (): AppConfig => ({
   port: parseInt(process.env.PORT || '3000', 10),
   appName: process.env.APP_NAME || 'nestjs-app',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
+  prefix: process.env.API_PREFIX || 'api',
+  excludedPrefixPaths: process.env.API_EXCLUDED_PREFIX_PATHS?.split(',') || ['/', '/uploads'],
   language: {
     fallbackLanguage: process.env.FALLBACK_LANGUAGE || 'en',
     languageDirPath: process.env.LANGUAGE_DIR_PATH || 'src/i18n/',
@@ -56,9 +58,14 @@ export default registerAs('app', (): AppConfig => ({
       },
     },
     cors: {
-        credentials: process.env.CORS_CREDENTIALS === 'true' || true,
-        methods: process.env.CORS_METHODS?.split(',') || ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') || ['Content-Type', 'Authorization', 'x-api-key', 'x-lang'],
+      credentials: process.env.CORS_CREDENTIALS === 'true' || true,
+      methods: process.env.CORS_METHODS?.split(',') || ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',')
+        || ['Content-Type', 'Authorization', 'x-api-key', 'x-lang'],
+    },
+    helmet: {
+      crossOriginPolicy: process.env.HELMET_CROSS_ORIGIN_POLICY || 'cross-origin',
+      contentSecurityPolicy: process.env.HELMET_CSP_ENABLED === 'true' || false,
     },
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),
     rateLimiting: {

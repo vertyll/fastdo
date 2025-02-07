@@ -46,10 +46,7 @@ async function bootstrap(): Promise<void> {
   );
   const configService: ConfigService = app.get(ConfigService);
 
-  await app.register(helmet, {
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-    contentSecurityPolicy: false,
-  });
+  await app.register(helmet, configService.get('app.security.helmet'));
 
   await app.register(fastifyCookie, {
     secret: configService.getOrThrow<string>('app.security.jwt.accessToken.secret'),
@@ -58,8 +55,8 @@ async function bootstrap(): Promise<void> {
   app.enableCors({
     origin: configService.get('app.frontend.url'),
     credentials: true,
-    methods: configService.getOrThrow<string[]>('app.cors.methods'),
-    allowedHeaders: configService.getOrThrow<string[]>('app.cors.allowedHeaders'),
+    methods: configService.getOrThrow<string[]>('app.security.cors.methods'),
+    allowedHeaders: configService.getOrThrow<string[]>('app.security.cors.allowedHeaders'),
   });
 
   const fileUploadsPath: string = configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');
@@ -76,8 +73,8 @@ async function bootstrap(): Promise<void> {
     },
   });
 
-  app.setGlobalPrefix('api', {
-    exclude: ['/', '/uploads'],
+  app.setGlobalPrefix(configService.getOrThrow('app.prefix'), {
+    exclude: configService.get('app.excludedPrefixPaths'),
   });
 
   app.useGlobalPipes(
@@ -157,7 +154,7 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup(openApiConfig.path, app, document);
 
   const port: number = configService.get<number>('app.port') || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap().catch(error => {
   console.error('Failed to start application:', error);

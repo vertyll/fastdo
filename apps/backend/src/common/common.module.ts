@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ClsModule } from 'nestjs-cls';
 import appConfig from '../core/config/app.config';
 import { ApiKeyGuard } from './guards/api-key.guard';
@@ -19,6 +20,15 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
       middleware: { mount: true },
       guard: { mount: false },
     }),
+    ThrottlerModule.forRootAsync({
+      useFactory: (configService: ConfigService): ThrottlerModuleOptions => ({
+        throttlers: [{
+          ttl: configService.getOrThrow<number>('app.security.rateLimiting.windowMs'),
+          limit: configService.getOrThrow<number>('app.security.rateLimiting.max'),
+        }],
+      }),
+      inject: [ConfigService],
+    }),
   ],
   providers: [
     {
@@ -32,6 +42,10 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
