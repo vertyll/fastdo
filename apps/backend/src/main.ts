@@ -15,7 +15,7 @@ import { LoginResponseDto } from './auth/dtos/login-response.dto';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
-import { OpenApiConfig } from './core/config/types/app.config.type';
+import {HelmetCrossOriginResourcePolicy, OpenApiConfig} from './core/config/types/app.config.type';
 import { FileMetadataDto } from './core/file/dtos/file-metadata.dto';
 import { File } from './core/file/entities/file.entity';
 import { ProjectUser } from './projects/entities/project-user.entity';
@@ -46,7 +46,10 @@ async function bootstrap(): Promise<void> {
   );
   const configService: ConfigService = app.get(ConfigService);
 
-  await app.register(helmet, configService.get('app.security.helmet'));
+  await app.register(helmet, {
+    crossOriginResourcePolicy: { policy: configService.getOrThrow<HelmetCrossOriginResourcePolicy>('app.security.helmet.crossOriginResourcePolicy') },
+    contentSecurityPolicy: configService.getOrThrow<boolean>('app.security.helmet.contentSecurityPolicy'),
+  });
 
   await app.register(fastifyCookie, {
     secret: configService.getOrThrow<string>('app.security.jwt.accessToken.secret'),
