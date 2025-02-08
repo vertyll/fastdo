@@ -43,6 +43,7 @@ describe('AuthController', () => {
     pendingEmail: null,
     refreshTokens: [],
     projectUsers: [],
+    emailHistories: [],
   };
 
   const mockLoginDto: LoginDto = {

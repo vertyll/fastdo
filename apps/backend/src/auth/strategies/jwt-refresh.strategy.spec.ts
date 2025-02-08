@@ -44,6 +44,7 @@ describe('JwtRefreshStrategy', () => {
     pendingEmail: null,
     refreshTokens: [],
     projectUsers: [],
+    emailHistories: [],
   };
 
   const mockPayload: JwtRefreshPayload = {

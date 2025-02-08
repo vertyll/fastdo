@@ -75,6 +75,7 @@ describe('TasksController', () => {
           pendingEmail: null,
           emailChangeTokenExpiry: null,
           projectUsers: [],
+          emailHistories: [],
         },
       };
       mockTasksService.create.mockResolvedValue(createdTask);
@@ -179,6 +180,7 @@ describe('TasksController', () => {
         pendingEmail: null,
         emailChangeTokenExpiry: null,
         projectUsers: [],
+        emailHistories: [],
       };
 
       const result: Task = {
@@ -227,6 +229,7 @@ describe('TasksController', () => {
         pendingEmail: null,
         emailChangeTokenExpiry: null,
         projectUsers: [],
+        emailHistories: [],
       };
 
       const result: Task = {

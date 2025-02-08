@@ -30,6 +30,7 @@ describe('LocalStrategy', () => {
     pendingEmail: null,
     refreshTokens: [],
     projectUsers: [],
+    emailHistories: [],
   };
 
   beforeEach(() => {

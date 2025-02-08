@@ -85,6 +85,7 @@ describe('AuthService', () => {
     pendingEmail: null,
     refreshTokens: [],
     projectUsers: [],
+    emailHistories: [],
   };
 
   mockRefreshToken.user = mockUser;
