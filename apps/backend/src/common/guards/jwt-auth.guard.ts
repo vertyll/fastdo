@@ -6,7 +6,7 @@ import { ClsService } from 'nestjs-cls';
 import { Observable, lastValueFrom } from 'rxjs';
 import { CustomClsStore } from '../../core/config/types/app.config.type';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { AuthGuardEnum } from '../enums/auth-guard.enum';
+import { AuthStrategyEnum } from '../enums/auth-strategy.enum';
 
 interface JwtUser {
   id: number;
@@ -15,7 +15,7 @@ interface JwtUser {
 }
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard(AuthGuardEnum.JwtAuthGuard) {
+export class JwtAuthGuard extends AuthGuard(AuthStrategyEnum.Jwt) {
   constructor(
     private readonly reflector: Reflector,
     private readonly cls: ClsService<CustomClsStore>,

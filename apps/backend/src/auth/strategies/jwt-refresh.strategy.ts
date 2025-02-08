@@ -7,6 +7,7 @@ import { FastifyRequest } from 'fastify';
 import { I18nService } from 'nestjs-i18n';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
+import { AuthStrategyEnum } from '../../common/enums/auth-strategy.enum';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
 import { UsersService } from '../../users/users.service';
@@ -15,7 +16,9 @@ import { JwtRefreshPayload } from '../interfaces/jwt-refresh-payload.interface';
 import { IJwtRefreshStrategy } from '../interfaces/jwt-refresh-strategy.interface';
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') implements IJwtRefreshStrategy {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyEnum.JwtRefresh)
+  implements IJwtRefreshStrategy
+{
   constructor(
     private readonly usersService: UsersService,
     private readonly i18n: I18nService<I18nTranslations>,
