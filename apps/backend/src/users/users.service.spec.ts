@@ -5,6 +5,7 @@ import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, UpdateResult } from 'typeorm';
 import { ConfirmationTokenService } from '../auth/confirmation-token.service';
+import { RefreshTokenService } from '../auth/refresh-token.service';
 import { FileFacade } from '../core/file/facade/file.facade';
 import { MailService } from '../core/mail/services/mail.service';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
@@ -18,6 +19,7 @@ describe('UsersService', () => {
   let mailService: MailService;
   let i18nService: I18nService;
   let confirmationTokenService: ConfirmationTokenService;
+  let refreshTokenService: RefreshTokenService;
   let queryRunner: any;
 
   beforeEach(async () => {
@@ -85,6 +87,12 @@ describe('UsersService', () => {
           },
         },
         {
+          provide: RefreshTokenService,
+          useValue: {
+            deleteAllUserTokens: jest.fn(),
+          },
+        },
+        {
           provide: ClsService,
           useValue: {
             get: jest.fn().mockReturnValue({ userId: 1 }),
@@ -98,6 +106,7 @@ describe('UsersService', () => {
     mailService = module.get<MailService>(MailService);
     i18nService = module.get<I18nService>(I18nService);
     confirmationTokenService = module.get<ConfirmationTokenService>(ConfirmationTokenService);
+    refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
   });
 
   describe('updateProfile', () => {
@@ -113,6 +122,7 @@ describe('UsersService', () => {
         { affected: 1 } as UpdateResult,
       );
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce(updatedUser);
+      jest.spyOn(refreshTokenService, 'deleteAllUserTokens').mockReturnValue(Promise.resolve());
       jest.spyOn(confirmationTokenService, 'generateToken').mockReturnValue('token');
       jest.spyOn(mailService, 'sendEmailChangeConfirmation').mockResolvedValueOnce(undefined);
 

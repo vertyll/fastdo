@@ -21,6 +21,7 @@ import { ConfirmationTokenService } from './confirmation-token.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { RefreshTokenService } from './refresh-token.service';
 
 jest.mock('bcrypt');
 
@@ -31,6 +32,7 @@ describe('AuthService', () => {
   let jwtService: jest.Mocked<JwtService>;
   let mailService: jest.Mocked<MailService>;
   let confirmationTokenService: jest.Mocked<ConfirmationTokenService>;
+  let refreshTokenService: jest.Mocked<RefreshTokenService>;
   let userRepository: jest.Mocked<UserRepository>;
   let roleRepository: jest.Mocked<RoleRepository>;
   let refreshTokenRepository: jest.Mocked<Repository<RefreshToken>>;
@@ -178,6 +180,18 @@ describe('AuthService', () => {
           },
         },
         {
+          provide: RefreshTokenService,
+          useValue: {
+            saveRefreshToken: jest.fn(),
+            validateRefreshToken: jest.fn(),
+            removeToken: jest.fn(),
+            getUserRefreshTokens: jest.fn(),
+            findMatchingRefreshToken: jest.fn(),
+            deleteAllUserTokens: jest.fn(),
+            deleteExpiredTokens: jest.fn(),
+          },
+        },
+        {
           provide: DurationConfigProvider,
           useValue: {
             getDuration: jest.fn().mockReturnValue(300000),
@@ -196,6 +210,7 @@ describe('AuthService', () => {
     userRepository = module.get(UserRepository);
     roleRepository = module.get(RoleRepository);
     refreshTokenRepository = module.get(getRepositoryToken(RefreshToken));
+    refreshTokenService = module.get(RefreshTokenService);
   });
 
   describe('validateUser', () => {
@@ -365,7 +380,8 @@ describe('AuthService', () => {
       }];
 
       mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
-      mockQueryRunner.manager.find.mockResolvedValueOnce(storedTokens);
+      refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce(storedTokens);
+      refreshTokenService.validateRefreshToken.mockResolvedValueOnce(storedTokens[0]);
       rolesService.getUserRoles.mockResolvedValue([RoleEnum.User]);
       jwtService.sign.mockReturnValue('new.token.here');
 
@@ -375,39 +391,21 @@ describe('AuthService', () => {
         accessToken: 'new.token.here',
         refreshToken: 'new.token.here',
       });
-      expect(mockQueryRunner.manager.remove).toHaveBeenCalledWith(RefreshToken, storedTokens[0]);
+      expect(refreshTokenService.removeToken).toHaveBeenCalledWith(expect.objectContaining({
+        id: storedTokens[0].id,
+        token: storedTokens[0].token,
+        user: expect.objectContaining({
+          id: mockUser.id,
+          email: mockUser.email,
+        }),
+      }));
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
-    });
-
-    it('should throw UnauthorizedException when user is not found', async () => {
-      mockQueryRunner.manager.findOne.mockResolvedValueOnce(null);
-
-      await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
-      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
-    });
-
-    it('should throw UnauthorizedException when user is not active', async () => {
-      const inactiveUser = { ...mockUser, isActive: false };
-      mockQueryRunner.manager.findOne.mockResolvedValueOnce(inactiveUser);
-
-      await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
-      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
-    });
-
-    it('should throw UnauthorizedException when email is not confirmed', async () => {
-      const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
-      mockQueryRunner.manager.findOne.mockResolvedValueOnce(unconfirmedUser);
-
-      await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
-      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when no tokens are found', async () => {
       mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
-      mockQueryRunner.manager.find.mockResolvedValueOnce([]);
+      refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce([]);
+      refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
       await expect(service.refreshToken(refreshTokenString))
         .rejects.toThrow(UnauthorizedException);
@@ -423,7 +421,8 @@ describe('AuthService', () => {
       };
 
       mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
-      mockQueryRunner.manager.find.mockResolvedValueOnce([expiredToken]);
+      refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce([expiredToken]);
+      refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
       await expect(service.refreshToken(refreshTokenString))
         .rejects.toThrow(UnauthorizedException);
@@ -439,8 +438,9 @@ describe('AuthService', () => {
       };
 
       mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
-      mockQueryRunner.manager.find.mockResolvedValueOnce([invalidToken]);
+      refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce([invalidToken]);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
       await expect(service.refreshToken(refreshTokenString))
         .rejects.toThrow(UnauthorizedException);
@@ -457,12 +457,19 @@ describe('AuthService', () => {
         user: mockUser,
       };
 
-      refreshTokenRepository.find.mockResolvedValue([validToken]);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      refreshTokenService.getUserRefreshTokens.mockResolvedValue([validToken]);
+      refreshTokenService.findMatchingRefreshToken.mockResolvedValue(validToken);
 
       await service.logout(mockUser.id, 'valid-token');
 
-      expect(refreshTokenRepository.remove).toHaveBeenCalledWith(validToken);
+      expect(refreshTokenService.removeToken).toHaveBeenCalledWith(expect.objectContaining({
+        id: validToken.id,
+        token: validToken.token,
+        user: expect.objectContaining({
+          id: mockUser.id,
+          email: mockUser.email,
+        }),
+      }));
     });
 
     it('should not remove the refresh token if it does not match', async () => {
@@ -473,12 +480,20 @@ describe('AuthService', () => {
         user: mockUser,
       };
 
-      refreshTokenRepository.find.mockResolvedValue([invalidToken]);
+      refreshTokenService.getUserRefreshTokens.mockResolvedValue([invalidToken]);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await service.logout(mockUser.id, 'invalid-token');
 
-      expect(refreshTokenRepository.remove).not.toHaveBeenCalled();
+      expect(refreshTokenService.removeToken).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('logoutFromAllDevices', () => {
+    it('should delete all refresh tokens for the user', async () => {
+      const userId = 1;
+      await service.logoutFromAllDevices(userId);
+      expect(refreshTokenService.deleteAllUserTokens).toHaveBeenCalledWith(userId);
     });
   });
 

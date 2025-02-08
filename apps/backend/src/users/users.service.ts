@@ -5,6 +5,7 @@ import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
 import { ConfirmationTokenService } from '../auth/confirmation-token.service';
+import { RefreshTokenService } from '../auth/refresh-token.service';
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { FileFacade } from '../core/file/facade/file.facade';
 import { MailService } from '../core/mail/services/mail.service';
@@ -24,6 +25,7 @@ export class UsersService {
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
     private readonly confirmationTokenService: ConfirmationTokenService,
+    private readonly refreshTokenService: RefreshTokenService,
     private readonly cls: ClsService<CustomClsStore>,
   ) {}
 
@@ -36,11 +38,6 @@ export class UsersService {
 
   public async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
-  }
-
-  public async create(user: Partial<User>): Promise<User> {
-    const newUser = this.usersRepository.create(user);
-    return this.usersRepository.save(newUser);
   }
 
   public async updateProfile(
@@ -66,6 +63,8 @@ export class UsersService {
       if (updateProfileDto.newPassword) {
         const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
         updateData.password = await bcrypt.hash(updateProfileDto.newPassword, saltRounds);
+
+        await this.refreshTokenService.deleteAllUserTokens(userId);
       }
 
       if (updateProfileDto.email && updateProfileDto.email !== user.email) {

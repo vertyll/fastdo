@@ -12,6 +12,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { RefreshTokenService } from './refresh-token.service';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -37,10 +38,11 @@ import { LocalStrategy } from './strategies/local.strategy';
     JwtRefreshStrategy,
     LocalStrategy,
     ConfirmationTokenService,
+    RefreshTokenService,
     CookieConfigService,
     DurationConfigProvider,
   ],
   controllers: [AuthController],
-  exports: [AuthService, ConfirmationTokenService],
+  exports: [AuthService, ConfirmationTokenService, RefreshTokenService],
 })
 export class AuthModule {}
