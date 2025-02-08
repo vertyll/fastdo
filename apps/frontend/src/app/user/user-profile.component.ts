@@ -280,6 +280,11 @@ export class UserProfileComponent implements OnInit {
         hasChanges = true;
       }
 
+      if (this.profileForm.get('newPassword')?.dirty) {
+        formData.append('newPassword', this.profileForm.get('newPassword')?.value);
+        hasChanges = true;
+      }
+
       if (this.selectedFile) {
         formData.append('avatar', this.selectedFile);
         hasChanges = true;

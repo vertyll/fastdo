@@ -4,8 +4,8 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation 
 import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 import { File } from '../../core/file/entities/file.entity';
 import { ProjectUser } from '../../projects/entities/project-user.entity';
+import { UserEmailHistory } from './user-email-history.entity';
 import { UserRole } from './user-role.entity';
-import {UserEmailHistory} from "./user-email-history.entity";
 
 @Entity('user')
 export class User {

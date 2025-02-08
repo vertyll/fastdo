@@ -15,6 +15,7 @@ import { PrivacyPolicy } from '../../../../terms-and-policies/entities/privacy-p
 import { TermsSectionTranslation } from '../../../../terms-and-policies/entities/terms-section-translation.entity';
 import { TermsSection } from '../../../../terms-and-policies/entities/terms-section.entity';
 import { Terms } from '../../../../terms-and-policies/entities/terms.entity';
+import { UserEmailHistory } from '../../../../users/entities/user-email-history.entity';
 import { UserRole } from '../../../../users/entities/user-role.entity';
 import { User } from '../../../../users/entities/user.entity';
 import appConfig from '../../../config/app.config';
@@ -26,7 +27,6 @@ import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
 import { SeederRunnerService } from '../services/seeder-runner.service';
-import {UserEmailHistory} from "../../../../users/entities/user-email-history.entity";
 
 @Module({
   imports: [
