@@ -21,6 +21,6 @@ export class UserEmailHistory {
   dateChange: Date;
 
   @ApiProperty({ type: () => User })
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, user => user.emailHistories)
   user: Relation<User>;
 }

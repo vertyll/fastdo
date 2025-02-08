@@ -26,6 +26,7 @@ import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
 import { SeederRunnerService } from '../services/seeder-runner.service';
+import {UserEmailHistory} from "../../../../users/entities/user-email-history.entity";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
       Task,
       Priority,
       RefreshToken,
+      UserEmailHistory,
     ]),
   ],
   providers: [

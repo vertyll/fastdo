@@ -5,6 +5,7 @@ import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 import { File } from '../../core/file/entities/file.entity';
 import { ProjectUser } from '../../projects/entities/project-user.entity';
 import { UserRole } from './user-role.entity';
+import {UserEmailHistory} from "./user-email-history.entity";
 
 @Entity('user')
 export class User {
@@ -84,6 +85,9 @@ export class User {
 
   @OneToMany(() => ProjectUser, projectUser => projectUser.project)
   projectUsers: Relation<ProjectUser[]>;
+
+  @OneToMany(() => UserEmailHistory, userEmailHistory => userEmailHistory.user)
+  emailHistories: Relation<UserEmailHistory[]>;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
