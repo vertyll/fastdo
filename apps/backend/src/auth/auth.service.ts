@@ -8,6 +8,7 @@ import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
+import { DurationConfigProvider } from '../core/providers/duration-config.provider';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
@@ -42,6 +43,7 @@ export class AuthService implements IAuthService {
     private readonly configService: ConfigService,
     private readonly i18n: I18nService<I18nTranslations>,
     @InjectRepository(RefreshToken) private readonly refreshTokenRepository: Repository<RefreshToken>,
+    private readonly durationConfigProvider: DurationConfigProvider,
   ) {}
 
   public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
@@ -195,8 +197,10 @@ export class AuthService implements IAuthService {
     });
 
     const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
-    const refreshTokenExpiry = new Date();
-    refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 7);
+    const refreshTokenExpiry = this.durationConfigProvider.getExpiryDate(
+      'app.security.jwt.refreshToken.expiresIn',
+      '7d',
+    );
 
     await this.refreshTokenRepository.save({
       token: refreshTokenHash,
@@ -260,8 +264,10 @@ export class AuthService implements IAuthService {
       const newRefreshToken = this.generateRefreshToken({ sub: user.id });
 
       const refreshTokenHash = await bcrypt.hash(newRefreshToken, 10);
-      const refreshTokenExpiry = new Date();
-      refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 7);
+      const refreshTokenExpiry = this.durationConfigProvider.getExpiryDate(
+        'app.security.jwt.refreshToken.expiresIn',
+        '7d',
+      );
 
       await queryRunner.manager.save(RefreshToken, {
         token: refreshTokenHash,

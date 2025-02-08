@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CookieConfigService } from '../core/config/cookie.config';
 import { MailModule } from '../core/mail/mail.module';
+import { DurationConfigProvider } from '../core/providers/duration-config.provider';
 import { RolesModule } from '../roles/roles.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
@@ -37,6 +38,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     LocalStrategy,
     ConfirmationTokenService,
     CookieConfigService,
+    DurationConfigProvider,
   ],
   controllers: [AuthController],
   exports: [AuthService, ConfirmationTokenService],

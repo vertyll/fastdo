@@ -16,7 +16,9 @@
     "minLength": "Wartość musi zawierać co najmniej {length} znaków",
     "isInteger": "Wartość musi być liczbą całkowitą",
     "termsRequired": "Warunki i postanowienia muszą zostać zaakceptowane",
-    "privacyPolicyRequired": "Polityka prywatności musi zostać zaakceptowana"
+    "privacyPolicyRequired": "Polityka prywatności musi zostać zaakceptowana",
+    "isDuration": "Wartość musi być poprawną długością czasu",
+    "mustBePositive": "Wartość musi być dodatnia"
   },
   "Auth": {
     "errors": {

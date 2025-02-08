@@ -25,6 +25,8 @@ export type I18nTranslations = {
       'termsRequired': string;
       'privacyPolicyRequired': string;
       'unauthorized': string;
+      'isDuration': string;
+      'mustBePositive': string;
     };
     'Auth': {
       'errors': {

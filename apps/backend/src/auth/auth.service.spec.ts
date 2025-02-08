@@ -8,6 +8,7 @@ import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
+import { DurationConfigProvider } from '../core/providers/duration-config.provider';
 import { Role } from '../roles/entities/role.entity';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { RolesService } from '../roles/roles.service';
@@ -173,6 +174,13 @@ describe('AuthService', () => {
             remove: jest.fn(),
             find: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: DurationConfigProvider,
+          useValue: {
+            getDuration: jest.fn().mockReturnValue(300000),
+            getExpiryDate: jest.fn().mockReturnValue(new Date(Date.now() + 300000)),
           },
         },
       ],

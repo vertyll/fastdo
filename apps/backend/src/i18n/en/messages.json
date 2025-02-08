@@ -17,7 +17,9 @@
     "isInteger": "Value must be an integer",
     "termsRequired": "Terms and conditions must be accepted",
     "privacyPolicyRequired": "Privacy policy must be accepted",
-    "unauthorized": "Unauthorized access"
+    "unauthorized": "Unauthorized access",
+    "isDuration": "Value must be a valid duration",
+    "mustBePositive": "Value must be positive"
   },
   "Auth": {
     "errors": {

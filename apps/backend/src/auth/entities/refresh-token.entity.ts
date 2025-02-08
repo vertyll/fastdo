@@ -23,4 +23,8 @@ export class RefreshToken {
   @JoinColumn()
   @Index()
   user: Relation<User>;
+
+  constructor(partial: Partial<RefreshToken>) {
+    Object.assign(this, partial);
+  }
 }

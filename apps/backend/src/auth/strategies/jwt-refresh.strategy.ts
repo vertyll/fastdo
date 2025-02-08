@@ -50,7 +50,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyE
     const storedTokens = await this.refreshTokenRepository.find({
       where: { user: { id: user.id } },
     });
-
     if (storedTokens.length === 0) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 
     let validToken: RefreshToken | undefined;
@@ -61,7 +60,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyE
         break;
       }
     }
-
     if (!validToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 
     if (validToken.expiresAt < new Date()) {
