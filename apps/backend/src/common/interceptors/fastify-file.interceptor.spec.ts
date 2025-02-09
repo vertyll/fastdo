@@ -41,24 +41,24 @@ describe('FastifyFileInterceptor', () => {
     jest.spyOn(I18nContext, 'current').mockReturnValue(undefined);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-      .rejects
-      .toThrow('I18nContext not available');
+        .rejects
+        .toThrow('I18nContext not available');
   });
 
   it('should throw BadRequestException when file processing fails', async () => {
     const mockRequest = {
       parts: jest.fn().mockImplementation(() => {
-        throw new Error('File processing error');
+        throw { code: 'FST_REQ_FILE_TOO_LARGE', part: { file: { bytesRead: 5242880 }, fieldname: 'testFile' } };
       }),
     } as unknown as FastifyRequest;
 
     mockGetRequest.mockReturnValue(mockRequest);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-      .rejects
-      .toThrow(BadRequestException);
+        .rejects
+        .toThrow(BadRequestException);
 
-    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
+    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileTooLarge', { args: { maxSize: '5.00MB' } });
   });
 
   it('should process form data and call next handler', async () => {
@@ -96,9 +96,9 @@ describe('FastifyFileInterceptor', () => {
     mockGetRequest.mockReturnValue(mockRequest);
 
     await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
-      .rejects
-      .toThrow(BadRequestException);
+        .rejects
+        .toThrow(BadRequestException);
 
-    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.formDataError');
+    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
   });
 });
