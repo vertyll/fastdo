@@ -27,7 +27,8 @@ export class FastifyFileInterceptor implements NestInterceptor {
       request.body = await this.processFormData(parts, i18n);
       return next.handle();
     } catch (error) {
-      this.handleFileError(error, i18n);
+      console.error('File interceptor error:', error);
+      throw new BadRequestException(i18n.t('messages.File.errors.fileProcessingError'));
     }
   }
 
@@ -46,8 +47,8 @@ export class FastifyFileInterceptor implements NestInterceptor {
           formData[part.fieldname] = part.value;
         }
       }
-    } catch (error) {
-      this.handleFileError(error, i18n);
+    } catch {
+      throw new BadRequestException(i18n.t('messages.File.errors.formDataError'));
     }
 
     return formData;
@@ -78,41 +79,5 @@ export class FastifyFileInterceptor implements NestInterceptor {
       fields: {},
       type: 'file',
     };
-  }
-
-  private handleFileError(error: any, i18n: I18nContext<I18nTranslations>): never {
-    console.error('File interceptor error:', error);
-
-    if (error.code === 'FST_REQ_FILE_TOO_LARGE') {
-      const maxSize = (error.part?.file?.bytesRead / 1024 / 1024).toFixed(2);
-
-      throw new BadRequestException({
-        message: i18n.t('messages.File.errors.fileTooLarge', { args: { maxSize: `${maxSize}MB` } }),
-        errors: {
-          message: [
-            {
-              field: this.fieldName,
-              errors: [i18n.t('messages.File.errors.fileTooLarge', { args: { maxSize: `${maxSize}MB` } })],
-            },
-          ],
-        },
-        error: i18n.t('messages.Validation.failed'),
-        statusCode: 400,
-      });
-    }
-
-    throw new BadRequestException({
-      message: i18n.t('messages.File.errors.fileProcessingError'),
-      errors: {
-        message: [
-          {
-            field: this.fieldName,
-            errors: [i18n.t('messages.File.errors.fileProcessingError')],
-          },
-        ],
-      },
-      error: i18n.t('messages.Validation.failed'),
-      statusCode: 400,
-    });
   }
 }
