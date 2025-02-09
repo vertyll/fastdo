@@ -21,11 +21,11 @@ export class DurationConfigProvider implements IDurationConfigProvider {
     return result as T;
   }
 
-  getDuration(key: string, defaultValue: string): number {
+  public getDuration(key: string, defaultValue: string): number {
     return this.transform(new DurationPipe(), key, defaultValue, 0);
   }
 
-  getExpiryDate(key: string, defaultValue: string): Date {
+  public getExpiryDate(key: string, defaultValue: string): Date {
     return this.transform(new ExpiryDatePipe(), key, defaultValue, new Date());
   }
 }
