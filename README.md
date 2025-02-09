@@ -53,11 +53,12 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 
 ## Zdjęcia poglądowe
 
-![Widok projektu]()
-![Widok projektu]()
-![Widok projektu]()
-![Widok projektu]()
-![Widok projektu]()
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-49-54%20Rejestracja.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-52-27%20Projekty.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-52-38%20Zadania.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-54-46%20Profil%20u%C5%BCytkownika.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-56-38%20Zadania.png)
+![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-57-08%20Zadania.png)
 
 ## Instrukcja instalacji projektu
 
