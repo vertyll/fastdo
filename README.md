@@ -13,6 +13,7 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 - TypeORM
 - PostgreSQL
 - Jest
+- OpenAPI (Swagger)
 
 ### Front-end:
 - Angular
@@ -22,18 +23,41 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 
 ### Uwierzytelnianie:
 - uwierzytelnianie za pomocą JWT - aplikacja korzysta z tokenów JWT do uwierzytelniania użytkowników i posiada mechanizm odświeżania tokenów
+- aplikacja pozwala na logowanie na wiele urządzeń jednocześnie
+
+### Core back-end:
+- aplikacja posiada mechanizm obsługi wyjątków
+- aplikacja posiada mechanizm logowania
+- aplikacja jest w pełni przetłumaczona na język angielski i polski
+- aplikacja posiada mechanizm wysyłania maili, osobno dla dev i prod (wzorzec strategii)
+- aplikacja posiada mechanizm obsługi plików (wzorzec strategii)
+- aplikacja posiada mechanizm obsługi zadań cyklicznych (cron)
+- aplikacja posiada wydzielone środowiska dla dev i prod
+- aplikacja posiada wydzielony plik konfiguracyjny
+- aplikacja posiada RBAC (Role Based Access Control)
+- napisano dokumentację API za pomocą OpenAPI (Swagger)
+- i wiele innych funkcjonalności, które można znaleźć w kodzie aplikacji
+
+### Core front-end:
+- aplikacja posiada system zarządzania stanem za pomocą NGXS
+- aplikacja jest w pełni przetłumaczona na język angielski i polski
+- komponenty są w pełni re-używalne, były pisane zgodnie z zasadami DRY oraz użyto metodologii Atomic Design
+- aplikacja pisana zgodnie z nowymi standardami Angulara - użyto m.in. sygnały
+- i wiele innych funkcjonalności, które można znaleźć w kodzie aplikacji
 
 ### Inne:
 - Turborepo w celu automatyzacji skryptów i zarządzania strukturą monorepo
 - ESLint i Dprint do statycznej analizy kodu i utrzymania jednolitej jakości kodu
 
+**Podczas pisania aplikacji stosowano zasady SOLID, DRY, composition over inheritance, dependency injection, wzorce projektowe, wzorce architektoniczne, pisano testy oraz przyjęto inne dobre praktyki programistyczne.**
+
 ## Zdjęcia poglądowe
 
-![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/1.png)
-![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/2.png)
-![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/3.png)
-![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/4.png)
-![Widok projektu](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/5.png)
+![Widok projektu]()
+![Widok projektu]()
+![Widok projektu]()
+![Widok projektu]()
+![Widok projektu]()
 
 ## Instrukcja instalacji projektu
 
