@@ -259,7 +259,7 @@ export class ImageComponent implements OnDestroy {
     fetch(this.croppedImageBlob)
       .then(res => res.blob())
       .then(blob => {
-        const originalFileName = originalFile.name.replace(/\.[^/.]+$/, "");
+        const originalFileName = originalFile.name.replace(/\.[^/.]+$/, '');
         const file = new File([blob], `${originalFileName}-cropped.png`, { type: 'image/png' });
         this.previewUrl.set(this.croppedImageBlob);
         this.imageSaved.emit({ file, preview: this.croppedImageBlob });

@@ -298,7 +298,7 @@ export class UserProfileComponent implements OnInit {
             this.profileForm.reset();
             this.toastService.presentToast(this.translateService.instant('Profile.updateSuccess'), true);
           },
-          error: (err) => {
+          error: err => {
             this.toastService.presentToast(err.error.message || this.translateService.instant('Profile.updateError'));
           },
         });
