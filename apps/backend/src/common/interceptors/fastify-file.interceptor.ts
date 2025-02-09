@@ -84,19 +84,34 @@ export class FastifyFileInterceptor implements NestInterceptor {
     console.error('File interceptor error:', error);
 
     if (error.code === 'FST_REQ_FILE_TOO_LARGE') {
-      const maxSize = (error.part.file.bytesRead / 1024 / 1024).toFixed(2);
+      const maxSize = (error.part?.file?.bytesRead / 1024 / 1024).toFixed(2);
+
       throw new BadRequestException({
-        message: i18n.t('messages.File.errors.fileTooLarge', {
-          args: { maxSize: `${maxSize}MB` },
-        }),
-        error: error.message,
+        message: i18n.t('messages.File.errors.fileTooLarge', { args: { maxSize: `${maxSize}MB` } }),
+        errors: {
+          message: [
+            {
+              field: this.fieldName,
+              errors: [i18n.t('messages.File.errors.fileTooLarge', { args: { maxSize: `${maxSize}MB` } })],
+            },
+          ],
+        },
+        error: i18n.t('messages.Validation.failed'),
         statusCode: 400,
       });
     }
 
     throw new BadRequestException({
       message: i18n.t('messages.File.errors.fileProcessingError'),
-      error: error.message,
+      errors: {
+        message: [
+          {
+            field: this.fieldName,
+            errors: [i18n.t('messages.File.errors.fileProcessingError')],
+          },
+        ],
+      },
+      error: i18n.t('messages.Validation.failed'),
       statusCode: 400,
     });
   }
