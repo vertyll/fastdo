@@ -21,7 +21,7 @@ export class UserApiService {
   }
 
   public updateProfile(formData: FormData): Observable<ApiResponse<User>> {
-    return this.withLoadingState(this.http.put<ApiResponse<User>>(`${this.URL}/users/me`, formData));
+    return this.http.put<ApiResponse<User>>(`${this.URL}/users/me`, formData);
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

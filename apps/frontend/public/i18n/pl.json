@@ -18,7 +18,8 @@
     "close": "Zamknij",
     "create": "Utwórz",
     "deleteTitle": "Usuń",
-    "confirmDelete": "Czy na pewno chcesz usunąć ten element?"
+    "confirmDelete": "Czy na pewno chcesz usunąć ten element?",
+    "saving": "Zapisywanie"
   },
   "Filters": {
     "search": "Szukaj",

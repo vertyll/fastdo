@@ -33,7 +33,10 @@
                 "input": "src"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/cropperjs/dist/cropper.css"
+            ],
             "scripts": []
           },
           "configurations": {
