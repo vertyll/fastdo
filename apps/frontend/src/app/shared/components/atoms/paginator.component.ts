@@ -82,7 +82,7 @@ import { PaginationParams } from '../../types/filter.type';
 
         <button
           (click)="onNextPage()"
-          [disabled]="isLastPage()"
+          [disabled]="isLastPage() || total() === 0"
           class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
         >
           <span class="sr-only">{{ 'Paginator.nextPage' | translate }}</span>
@@ -95,7 +95,7 @@ import { PaginationParams } from '../../types/filter.type';
 
         <button
           (click)="onLastPage()"
-          [disabled]="isLastPage()"
+          [disabled]="isLastPage() || total() === 0"
           class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
         >
           <span class="sr-only">{{ 'Paginator.lastPage' | translate }}</span>
@@ -143,7 +143,8 @@ export class PaginatorComponent {
   }
 
   isLastPage(): boolean {
-    return this.currentPage() === Math.ceil(this.total() / this.pageSize()) - 1;
+    const totalPages = Math.ceil(this.total() / this.pageSize());
+    return this.currentPage() >= totalPages - 1 || totalPages === 0;
   }
 
   onPageSizeChange(newPageSize: number): void {
@@ -173,7 +174,7 @@ export class PaginatorComponent {
   }
 
   onNextPage(): void {
-    if (!this.isLastPage()) {
+    if (!this.isLastPage() && this.total() > 0) {
       this.pageChange.emit({
         page: this.currentPage() + 1,
         pageSize: this.pageSize(),
@@ -183,7 +184,7 @@ export class PaginatorComponent {
 
   onLastPage(): void {
     const lastPage = Math.ceil(this.total() / this.pageSize()) - 1;
-    if (this.currentPage() !== lastPage) {
+    if (this.currentPage() !== lastPage && lastPage >= 0) {
       this.pageChange.emit({
         page: lastPage,
         pageSize: this.pageSize(),
