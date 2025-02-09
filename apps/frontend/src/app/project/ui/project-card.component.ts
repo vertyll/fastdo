@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, ViewChild, computed, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroCheck, heroPencil } from '@ng-icons/heroicons/outline';
@@ -25,28 +25,29 @@ import { Project } from '../models/Project';
   template: `
     <div class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full">
       <header class="flex justify-end">
-          <app-remove-item-button
-            (confirm)="deleteProject.emit(project().id)"
-          />
-          @if (!isEditMode()) {
-            <button
-              class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
-              (click)="toggleEditMode()"
-            >
-              <ng-icon name="heroPencil" size="18"/>
-            </button>
-          } @else {
-            <button
-              class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
-              (click)="onUpdateProject(project().id, project().name)"
-            >
-              <ng-icon name="heroCheck" size="18"/>
-            </button>
-          }
+        <app-remove-item-button
+          (confirm)="deleteProject.emit(project().id)"
+        />
+        @if (!isEditMode()) {
+          <button
+            class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
+            (click)="toggleEditMode()"
+          >
+            <ng-icon name="heroPencil" size="18"/>
+          </button>
+        } @else {
+          <button
+            class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
+            (click)="saveProjectName()"
+          >
+            <ng-icon name="heroCheck" size="18"/>
+          </button>
+        }
       </header>
       <section class="text-left flex-grow">
         @if (isEditMode()) {
           <app-autosize-textarea
+            #autosizeTextarea
             (keyup.escape)="setEditMode(false)"
             (submitText)="onUpdateProject(project().id, $event)"
             [value]="project().name"
@@ -96,6 +97,9 @@ export class ProjectCardComponent {
   readonly deleteProject = output<number>();
   readonly updateProject = output<{ id: number; name: string; }>();
 
+  @ViewChild('autosizeTextarea')
+  autosizeTextarea!: AutosizeTextareaComponent;
+
   private readonly editModeSignal = signal(false);
   private readonly expandedSignal = signal(false);
 
@@ -117,5 +121,9 @@ export class ProjectCardComponent {
   protected onUpdateProject(id: number, name: string): void {
     this.updateProject.emit({ id, name });
     this.setEditMode(false);
+  }
+
+  protected saveProjectName(): void {
+    this.autosizeTextarea.submit();
   }
 }

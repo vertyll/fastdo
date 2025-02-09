@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, ViewChild, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBookmark, heroCalendar, heroCheck, heroPencil } from '@ng-icons/heroicons/outline';
@@ -60,7 +60,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             } @else {
               <button
                 class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
-                (click)="updateTaskName(task().name); $event.stopPropagation()"
+                (click)="saveTaskName(); $event.stopPropagation()"
               >
                 <ng-icon name="heroCheck" size="18"/>
               </button>
@@ -71,6 +71,7 @@ import { TaskNameValidator } from '../validators/task-name.validator';
         <section class="text-left break-all">
           @if (editMode) {
             <app-autosize-textarea
+              #autosizeTextarea
               (keyup.escape)="editMode = false"
               (submitText)="updateTaskName($event)"
               [value]="task().name"
@@ -168,6 +169,9 @@ export class TaskCardComponent {
   readonly update = output<TaskUpdatePayload>();
   readonly delete = output<void>();
 
+  @ViewChild('autosizeTextarea')
+  autosizeTextarea!: AutosizeTextareaComponent;
+
   protected readonly notificationService = inject(NotificationService);
   protected readonly taskNameValidator = inject(TaskNameValidator);
   protected editMode: boolean = false;
@@ -218,5 +222,9 @@ export class TaskCardComponent {
   protected switchToEditMode(): void {
     this.isSingleClick = false;
     this.editMode = true;
+  }
+
+  protected saveTaskName(): void {
+    this.autosizeTextarea.submit();
   }
 }

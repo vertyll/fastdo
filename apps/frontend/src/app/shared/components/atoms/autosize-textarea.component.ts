@@ -35,6 +35,10 @@ export class AutosizeTextareaComponent implements AfterViewInit {
     this.calcHeight(this.textareaRef.nativeElement);
   }
 
+  public submit(): void {
+    this.emit(this.textareaRef.nativeElement);
+  }
+
   protected emit(textarea: HTMLTextAreaElement): void {
     this.submitText.emit(textarea.value.trim());
 
