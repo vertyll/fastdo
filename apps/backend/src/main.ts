@@ -11,6 +11,7 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { AccessTokenDto } from './auth/dtos/access-token.dto';
 import { LoginResponseDto } from './auth/dtos/login-response.dto';
 import { RefreshToken } from './auth/entities/refresh-token.entity';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
@@ -158,6 +159,7 @@ async function bootstrap(): Promise<void> {
       PrivacyPolicySectionTranslation,
       UserEmailHistory,
       RefreshToken,
+      AccessTokenDto,
     ],
   });
   SwaggerModule.setup(openApiConfig.path, app, document);
