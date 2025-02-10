@@ -20,12 +20,6 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'dashboard',
-    component: DashboardComponent,
-    title: 'Dashboard',
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'login',
     title: 'Logowanie',
     component: LoginComponent,
@@ -34,6 +28,32 @@ export const routes: Routes = [
     path: 'register',
     title: 'Rejestracja',
     component: RegisterComponent,
+  },
+  {
+    path: 'forgot-password',
+    title: 'Zapomniałem hasła',
+    component: ForgotPasswordComponent,
+  },
+  {
+    path: 'reset-password',
+    title: 'Resetowanie hasła',
+    component: ResetPasswordComponent,
+  },
+  {
+    path: 'terms',
+    title: 'Regulamin',
+    component: TermsPageComponent,
+  },
+  {
+    path: 'privacy-policy',
+    title: 'Polityka prywatności',
+    component: PrivacyPolicyPageComponent,
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    title: 'Dashboard',
+    canActivate: [AuthGuard],
   },
   {
     path: 'projects',
@@ -62,26 +82,6 @@ export const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
-  },
-  {
-    path: 'forgot-password',
-    title: 'Zapomniałem hasła',
-    component: ForgotPasswordComponent,
-  },
-  {
-    path: 'reset-password',
-    title: 'Resetowanie hasła',
-    component: ResetPasswordComponent,
-  },
-  {
-    path: 'terms',
-    title: 'Regulamin',
-    component: TermsPageComponent,
-  },
-  {
-    path: 'privacy-policy',
-    title: 'Polityka prywatności',
-    component: PrivacyPolicyPageComponent,
   },
   {
     path: 'user-profile',
