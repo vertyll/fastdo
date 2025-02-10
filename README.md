@@ -35,6 +35,7 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 - aplikacja posiada wydzielone środowiska dla dev i prod
 - aplikacja posiada wydzielony plik konfiguracyjny
 - aplikacja posiada RBAC (Role Based Access Control)
+- aplikacja posiada CLS (Continuation Local Storage)
 - napisano dokumentację API za pomocą OpenAPI (Swagger)
 - i wiele innych funkcjonalności, które można znaleźć w kodzie aplikacji
 
