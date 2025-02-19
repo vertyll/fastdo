@@ -106,9 +106,13 @@ export class AuthController {
     @Query('token') token: string,
     @Res() res: FastifyReply,
   ): Promise<void> {
-    await this.authService.confirmEmail(token);
-
     const frontendUrl = this.configService.get<string>('app.frontend.url');
+    const result = await this.authService.confirmEmail(token);
+
+    if (!result.success) {
+      return res.redirect(`${frontendUrl}/login?error=invalid_email_token&email=${result.email}`, 302);
+    }
+
     return res.redirect(`${frontendUrl}/login?confirmed=true`, 302);
   }
 
@@ -145,9 +149,13 @@ export class AuthController {
     @Query('token') token: string,
     @Res() res: FastifyReply,
   ): Promise<void> {
-    await this.authService.confirmEmailChange(token);
-
     const frontendUrl = this.configService.get<string>('app.frontend.url');
-    return res.redirect(`${frontendUrl}/login?emailChanged=true`, 302);
+    const result = await this.authService.confirmEmailChange(token);
+
+    if (!result.success) {
+      return res.redirect(`${frontendUrl}/login?error=invalid_email_change_token&email=${result.email}`, 302);
+    }
+
+    return res.redirect(`${frontendUrl}/login?emailChanged=true&email=${result.email}`, 302);
   }
 }

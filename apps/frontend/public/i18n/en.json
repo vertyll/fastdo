@@ -81,7 +81,9 @@
     "resetPasswordButton": "Reset password",
     "passwordResetSuccess": "Password reset successful",
     "unknownError": "An unknown error occurred",
-    "emailChanged": "Email changed"
+    "emailChanged": "Email changed",
+    "invalidEmailToken": "Invalid email token",
+    "invalidEmailChangeToken": "Invalid email change token"
   },
   "Dashboard": {
     "title": "Welcome to our application",

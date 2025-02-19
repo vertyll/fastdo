@@ -16,6 +16,8 @@ import { User } from '../users/entities/user.entity';
 import { UserRepository } from '../users/repositories/user.repository';
 import { UsersService } from '../users/users.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
+import { ConfirmEmailChangeResponseDto } from './dtos/confirm-email-change-response.dto';
+import { ConfirmEmailResponseDto } from './dtos/confirm-email-response.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
@@ -107,14 +109,13 @@ export class AuthService implements IAuthService {
     }
   }
 
-  public async confirmEmail(token: string): Promise<void> {
+  public async confirmEmail(token: string): Promise<ConfirmEmailResponseDto> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const { email } = this.confirmationTokenService.verifyToken(token);
-
       const user = await this.userRepository.findOne({ where: { email } });
 
       if (
@@ -122,10 +123,12 @@ export class AuthService implements IAuthService {
         || user.isEmailConfirmed
         || user.confirmationToken !== token
         || !user.confirmationTokenExpiry
-      ) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
+      ) {
+        return { success: false, email };
+      }
 
       if (user.confirmationTokenExpiry < new Date()) {
-        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.tokenExpired'));
+        return { success: false, email };
       }
 
       await this.userRepository.update(user.id, {
@@ -135,30 +138,32 @@ export class AuthService implements IAuthService {
       });
 
       await queryRunner.commitTransaction();
+      return { success: true, email };
     } finally {
       if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();
     }
   }
 
-  public async confirmEmailChange(token: string): Promise<void> {
+  public async confirmEmailChange(token: string): Promise<ConfirmEmailChangeResponseDto> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const { email } = this.confirmationTokenService.verifyToken(token);
-
       const user = await this.userRepository.findOne({ where: { email } });
 
       if (
         !user
         || user.emailChangeToken !== token
         || !user.emailChangeTokenExpiry
-      ) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
+      ) {
+        return { success: false, email };
+      }
 
       if (user.emailChangeTokenExpiry < new Date()) {
-        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.tokenExpired'));
+        return { success: false, email };
       }
 
       await this.userRepository.update(user.id, {
@@ -172,6 +177,7 @@ export class AuthService implements IAuthService {
       await this.refreshTokenRepository.delete({ user: { id: user.id } });
 
       await queryRunner.commitTransaction();
+      return { success: true, email: user.pendingEmail ?? user.email };
     } finally {
       if (queryRunner.isTransactionActive) await queryRunner.rollbackTransaction();
       await queryRunner.release();

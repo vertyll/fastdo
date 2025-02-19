@@ -304,8 +304,11 @@ describe('AuthController', () => {
   describe('confirmEmail', () => {
     const mockToken = 'valid-token';
 
-    it('should confirm email and redirect to frontend', async () => {
-      authService.confirmEmail.mockResolvedValue(undefined);
+    it('should confirm email and redirect to frontend when successful', async () => {
+      authService.confirmEmail.mockResolvedValue({
+        success: true,
+        email: 'test@example.com',
+      });
 
       await controller.confirmEmail(mockToken, mockResponse);
 
@@ -316,14 +319,29 @@ describe('AuthController', () => {
       );
     });
 
-    it('should handle confirmation failure', async () => {
-      authService.confirmEmail.mockRejectedValue(
-        new UnauthorizedException('Invalid token'),
+    it('should redirect with error when confirmation fails', async () => {
+      authService.confirmEmail.mockResolvedValue({
+        success: false,
+        email: 'test@example.com',
+      });
+
+      await controller.confirmEmail(mockToken, mockResponse);
+
+      expect(authService.confirmEmail).toHaveBeenCalledWith(mockToken);
+      expect(mockResponse.redirect).toHaveBeenCalledWith(
+        'http://localhost:3000/login?error=invalid_email_token&email=test@example.com',
+        302,
       );
+    });
+
+    it('should handle service errors', async () => {
+      authService.confirmEmail.mockRejectedValue(new Error('Service error'));
 
       await expect(
         controller.confirmEmail(mockToken, mockResponse),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow('Service error');
+
+      expect(authService.confirmEmail).toHaveBeenCalledWith(mockToken);
     });
   });
 

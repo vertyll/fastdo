@@ -81,7 +81,9 @@
     "resetPasswordButton": "Zresetuj hasło",
     "passwordResetSuccess": "Hasło zostało zresetowane",
     "unknownError": "Wystąpił nieznany błąd",
-    "emailChanged": "Email został zmieniony"
+    "emailChanged": "Email został zmieniony",
+    "invalidEmailToken": "Nieprawidłowy token email",
+    "invalidEmailChangeToken": "Nieprawidłowy token zmiany email"
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",

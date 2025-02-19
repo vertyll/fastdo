@@ -510,8 +510,12 @@ describe('AuthService', () => {
     });
 
     it('should successfully confirm email', async () => {
-      await service.confirmEmail(token);
+      const result = await service.confirmEmail(token);
 
+      expect(result).toEqual({
+        success: true,
+        email: mockUser.email,
+      });
       expect(userRepository.update).toHaveBeenCalledWith(mockUser.id, {
         isEmailConfirmed: true,
         confirmationToken: null,
@@ -520,7 +524,7 @@ describe('AuthService', () => {
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
     });
 
-    it('should throw UnauthorizedException when token is invalid', async () => {
+    it('should return failure when token is invalid', async () => {
       confirmationTokenService.verifyToken.mockImplementation(() => {
         throw new UnauthorizedException();
       });
@@ -529,10 +533,26 @@ describe('AuthService', () => {
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
-    it('should throw UnauthorizedException when token has expired', async () => {
+    it('should return failure when token has expired', async () => {
       userRepository.findOne.mockResolvedValue({
         ...mockUser,
+        isEmailConfirmed: false,
+        confirmationToken: token,
         confirmationTokenExpiry: new Date(Date.now() - 1000),
+      });
+
+      const result = await service.confirmEmail(token);
+
+      expect(result).toEqual({
+        success: false,
+        email: mockUser.email,
+      });
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when token is invalid', async () => {
+      confirmationTokenService.verifyToken.mockImplementation(() => {
+        throw new UnauthorizedException();
       });
 
       await expect(service.confirmEmail(token)).rejects.toThrow(UnauthorizedException);
