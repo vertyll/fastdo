@@ -49,6 +49,7 @@ Aplikacja internetowa słuząca do zarządzania projektami i zadaniami do danego
 ### Inne:
 - Turborepo w celu automatyzacji skryptów i zarządzania strukturą monorepo
 - ESLint i Dprint do statycznej analizy kodu i utrzymania jednolitej jakości kodu
+- Docker dla środowiska deweloperskiego
 
 **Podczas pisania aplikacji stosowano zasady SOLID, DRY, composition over inheritance, dependency injection, wzorce projektowe, wzorce architektoniczne, pisano testy oraz przyjęto inne dobre praktyki programistyczne.**
 
@@ -75,7 +76,10 @@ npm install
 > **Uwaga:** w tym momencie zainstalują się wszystkie zalezności potrzebne do uruchomienia projektu oraz stworzą się dla nas pliki .env w strukturze back-endu
 - W utworzonych plikach .env definiujemy swoje własne klucze API i dane konfiguracyjne.
 - W strukturze front-endu definiujemy adres naszego API w pliku `enviroment.ts`
-- Sprawdzamy czy mamy uruchomioną bazę danych lub uruchamiamy ją za pomocą Dockera, projekt krzysta z bazy danych `PostgreSQL`
+
+`Jeżeli chcemy uruchomić projekt lokalnie, to:`
+
+- Sprawdzamy czy mamy uruchomioną bazę danych, projekt korzysta z bazy danych `PostgreSQL`
 - wykonujemy:
 
 ```bash
@@ -84,7 +88,14 @@ pnpm run dev
 npm run dev
 ```
 
-Domyśnie, jeżeli użyjemy jednej z powyższej komendy:
+`Jeżeli chcemy uruchomić projekt w kontenerach Docker, to:`
+- wykonujemy:
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Domyśnie, jeżeli użyjemy jednej z powyższych ścieżek, to:
 - aplikacja back-endowa powinna być dostępna na adresie [http://localhost:3000](http://localhost:3000)
 - aplikacja front-endowa powinna być dostępna na adresie [http://localhost:4200](http://localhost:4200)
 
