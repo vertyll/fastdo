@@ -2,7 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 import { DurationConfigProvider } from '../core/providers/duration-config.provider';

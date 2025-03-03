@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
@@ -274,22 +274,22 @@ describe('AuthService', () => {
 
       expect(result).toEqual(savedUser);
       expect(mockQueryRunner.manager.getRepository(User).save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          email: registerDto.email,
-          password: 'hashedPassword123',
-          termsAccepted: true,
-          privacyPolicyAccepted: true,
-          dateTermsAcceptance: expect.any(Date),
-          datePrivacyPolicyAcceptance: expect.any(Date),
-        }),
+          expect.objectContaining({
+            email: registerDto.email,
+            password: 'hashedPassword123',
+            termsAccepted: true,
+            privacyPolicyAccepted: true,
+            dateTermsAcceptance: expect.any(Date),
+            datePrivacyPolicyAcceptance: expect.any(Date),
+          }),
       );
       expect(mockQueryRunner.manager.getRepository(UserRole).save).toHaveBeenCalledWith({
         user: { id: savedUser.id },
         role: { id: mockRole.id },
       });
       expect(mailService.sendConfirmationEmail).toHaveBeenCalledWith(
-        savedUser.email,
-        'generated-token',
+          savedUser.email,
+          'generated-token',
       );
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
     });
@@ -303,10 +303,10 @@ describe('AuthService', () => {
       await service.register(registerDto);
 
       expect(mockQueryRunner.manager.getRepository(User).save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          dateTermsAcceptance: expect.any(Date),
-          datePrivacyPolicyAcceptance: expect.any(Date),
-        }),
+          expect.objectContaining({
+            dateTermsAcceptance: expect.any(Date),
+            datePrivacyPolicyAcceptance: expect.any(Date),
+          }),
       );
     });
 
@@ -367,7 +367,7 @@ describe('AuthService', () => {
     beforeEach(() => {
       jwtService.verify.mockReturnValue({ sub: mockUser.id });
       (bcrypt.compare as jest.Mock).mockImplementation((token, hash) =>
-        Promise.resolve(token === refreshTokenString && hash === hashedToken)
+          Promise.resolve(token === refreshTokenString && hash === hashedToken)
       );
     });
 
@@ -408,7 +408,7 @@ describe('AuthService', () => {
       refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
       await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
+          .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -425,7 +425,7 @@ describe('AuthService', () => {
       refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
       await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
+          .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -443,7 +443,7 @@ describe('AuthService', () => {
       refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
       await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
+          .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });
@@ -573,15 +573,15 @@ describe('AuthService', () => {
       await service.forgotPassword({ email });
 
       expect(userRepository.update).toHaveBeenCalledWith(
-        mockUser.id,
-        expect.objectContaining({
-          confirmationToken: generatedToken,
-          confirmationTokenExpiry: expect.any(Date),
-        }),
+          mockUser.id,
+          expect.objectContaining({
+            confirmationToken: generatedToken,
+            confirmationTokenExpiry: expect.any(Date),
+          }),
       );
       expect(mailService.sendPasswordResetEmail).toHaveBeenCalledWith(
-        email,
-        generatedToken,
+          email,
+          generatedToken,
       );
     });
 
@@ -615,20 +615,20 @@ describe('AuthService', () => {
       await service.resetPassword(resetPasswordDto);
 
       expect(bcrypt.hash).toHaveBeenCalledWith(
-        resetPasswordDto.password,
-        10,
+          resetPasswordDto.password,
+          10,
       );
       expect(refreshTokenRepository.delete).toHaveBeenCalledWith({
         user: { id: mockUser.id },
       });
       expect(userRepository.update).toHaveBeenCalledWith(
-        mockUser.id,
-        expect.objectContaining({
-          password: 'newHashedPassword',
-          confirmationToken: null,
-          confirmationTokenExpiry: null,
-          dateModification: expect.any(Date),
-        }),
+          mockUser.id,
+          expect.objectContaining({
+            password: 'newHashedPassword',
+            confirmationToken: null,
+            confirmationTokenExpiry: null,
+            dateModification: expect.any(Date),
+          }),
       );
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
     });
@@ -640,7 +640,7 @@ describe('AuthService', () => {
       });
 
       await expect(service.resetPassword(resetPasswordDto))
-        .rejects.toThrow(UnauthorizedException);
+          .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -652,7 +652,7 @@ describe('AuthService', () => {
       });
 
       await expect(service.resetPassword(resetPasswordDto))
-        .rejects.toThrow(UnauthorizedException);
+          .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -660,7 +660,7 @@ describe('AuthService', () => {
       userRepository.findOne.mockResolvedValue(null);
 
       await expect(service.resetPassword(resetPasswordDto))
-        .rejects.toThrow(UnauthorizedException);
+          .rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });

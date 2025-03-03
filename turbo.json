@@ -12,8 +12,18 @@
       "cache": false,
       "persistent": false
     },
+    "setenv:docker:dev": {
+      "dependsOn": ["^setenv:docker:dev"],
+      "cache": false,
+      "persistent": false
+    },
     "turbo:dev": {
       "dependsOn": ["setenv:dev"],
+      "cache": false,
+      "persistent": true
+    },
+    "docker:dev": {
+      "dependsOn": ["setenv:docker:dev"],
       "cache": false,
       "persistent": true
     },

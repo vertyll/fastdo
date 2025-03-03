@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "build": "turbo build",
+    "build:backend": "turbo build --filter=backend",
+    "build:frontend": "turbo build --filter=frontend",
     "dev": "turbo turbo:dev",
+    "docker:dev:backend": "turbo docker:dev --filter=backend",
+    "docker:dev:frontend": "turbo docker:dev --filter=frontend",
     "format": "turbo format",
     "lint": "turbo lint"
   },

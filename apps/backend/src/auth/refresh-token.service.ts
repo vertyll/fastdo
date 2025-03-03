@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { DeleteResult, Repository } from 'typeorm';
 import { DurationConfigProvider } from '../core/providers/duration-config.provider';

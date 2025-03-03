@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
