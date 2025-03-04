@@ -1,4 +1,5 @@
-FROM node:22-alpine AS base
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-alpine AS base
 
 WORKDIR /app
 
@@ -45,7 +46,7 @@ COPY . .
 RUN pnpm run build:backend
 
 # Production stage
-FROM node:22-alpine AS production
+FROM node:${NODE_VERSION}-alpine AS production
 
 WORKDIR /app
 

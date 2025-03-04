@@ -89,10 +89,11 @@ npm run dev
 ```
 
 `Jeżeli chcemy uruchomić projekt w kontenerach Docker, to:`
+- kopiujemy plik `.env.docker.example` do `.env` w głównym katalogu projektu
 - wykonujemy:
 
 ```bash
-docker-compose -f docker-compose.dev.yml up -d
+docker-compose -f docker-compose.dev.yml --env-file .env up -d
 ```
 
 Domyśnie, jeżeli użyjemy jednej z powyższych ścieżek, to:
