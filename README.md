@@ -89,7 +89,7 @@ npm run dev
 ```
 
 `Jeżeli chcemy uruchomić projekt w kontenerach Docker, to:`
-- kopiujemy plik `.env.docker.example` do `.env` w głównym katalogu projektu
+- kopiujemy plik `.env.docker.dev.example` do `.env` w głównym katalogu projektu
 - wykonujemy:
 
 ```bash
