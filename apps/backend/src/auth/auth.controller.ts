@@ -34,7 +34,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Public()
   @Post('login')
-  @ApiOperation({ summary: 'Remove a project' })
+  @ApiOperation({ summary: 'Login to system' })
   @ApiWrappedResponse({
     status: 200,
     description: 'The user has been successfully logged in.',
