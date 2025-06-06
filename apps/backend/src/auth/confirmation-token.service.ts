@@ -12,7 +12,7 @@ export class ConfirmationTokenService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  generateToken(email: string): string {
+  public generateToken(email: string): string {
     return this.jwtService.sign(
       { email },
       {
@@ -22,7 +22,7 @@ export class ConfirmationTokenService {
     );
   }
 
-  verifyToken(token: string): { email: string; } {
+  public verifyToken(token: string): { email: string; } {
     try {
       return this.jwtService.verify(token, {
         secret: this.configService.get<string>('app.security.jwt.confirmationToken.secret'),

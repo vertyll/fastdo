@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TasksService } from '../tasks/tasks.service';
+import { TasksFacadeService } from '../tasks/facades/tasks-facade.service';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsService } from './projects.service';
 
 describe('ProjectManagementService', () => {
   let service: ProjectManagementService;
   let mockProjectsService: jest.Mocked<ProjectsService>;
-  let mockTasksService: jest.Mocked<TasksService>;
+  let mockTasksService: jest.Mocked<TasksFacadeService>;
 
   beforeEach(async () => {
     mockProjectsService = {
@@ -21,7 +21,7 @@ describe('ProjectManagementService', () => {
       providers: [
         ProjectManagementService,
         { provide: ProjectsService, useValue: mockProjectsService },
-        { provide: TasksService, useValue: mockTasksService },
+        { provide: TasksFacadeService, useValue: mockTasksService },
       ],
     }).compile();
 

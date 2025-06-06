@@ -4,8 +4,8 @@ import * as bcrypt from 'bcryptjs';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
-import { ConfirmationTokenService } from '../auth/confirmation-token.service';
-import { RefreshTokenService } from '../auth/refresh-token.service';
+import { ConfirmationTokenFacadeService } from '../auth/facades/confirmation-token-facade.service';
+import { RefreshTokenFacadeService } from '../auth/facades/refresh-token-facade.service';
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { FileFacade } from '../core/file/facade/file.facade';
 import { MailService } from '../core/mail/services/mail.service';
@@ -24,8 +24,8 @@ export class UsersService {
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
-    private readonly confirmationTokenService: ConfirmationTokenService,
-    private readonly refreshTokenService: RefreshTokenService,
+    private readonly confirmationTokenService: ConfirmationTokenFacadeService,
+    private readonly refreshTokenService: RefreshTokenFacadeService,
     private readonly cls: ClsService<CustomClsStore>,
   ) {}
 

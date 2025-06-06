@@ -4,7 +4,7 @@ import { FastifyRequest } from 'fastify';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
-import { UsersService } from '../../users/users.service';
+import { UsersFacadeService } from '../../users/facades/users-facade.service';
 import { RefreshToken } from '../entities/refresh-token.entity';
 import { JwtRefreshPayload } from '../interfaces/jwt-refresh-payload.interface';
 import { RefreshTokenService } from '../refresh-token.service';
@@ -12,7 +12,7 @@ import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 
 describe('JwtRefreshStrategy', () => {
   let jwtRefreshStrategy: JwtRefreshStrategy;
-  let usersService: jest.Mocked<UsersService>;
+  let usersService: jest.Mocked<UsersFacadeService>;
   let configService: jest.Mocked<ConfigService>;
   let i18nService: jest.Mocked<I18nService<I18nTranslations>>;
   let refreshTokenService: jest.Mocked<RefreshTokenService>;
@@ -63,7 +63,7 @@ describe('JwtRefreshStrategy', () => {
   beforeEach(() => {
     usersService = {
       findOne: jest.fn(),
-    } as unknown as jest.Mocked<UsersService>;
+    } as unknown as jest.Mocked<UsersFacadeService>;
 
     configService = {
       get: jest.fn().mockImplementation((key: string) => {

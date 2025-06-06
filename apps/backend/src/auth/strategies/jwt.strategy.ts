@@ -5,14 +5,14 @@ import { I18nService } from 'nestjs-i18n';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
-import { UsersService } from '../../users/users.service';
+import { UsersFacadeService } from '../../users/facades/users-facade.service';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { IJwtStrategy } from '../interfaces/jwt-strategy.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) implements IJwtStrategy {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersFacadeService,
     private readonly i18n: I18nService<I18nTranslations>,
     configService: ConfigService,
   ) {

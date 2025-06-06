@@ -9,12 +9,12 @@ import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
 import { MailService } from '../core/mail/services/mail.service';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
+import { RolesFacadeService } from '../roles/facades/roles-facade.service';
 import { RoleRepository } from '../roles/repositories/role.repository';
-import { RolesService } from '../roles/roles.service';
 import { UserRole } from '../users/entities/user-role.entity';
 import { User } from '../users/entities/user.entity';
+import { UsersFacadeService } from '../users/facades/users-facade.service';
 import { UserRepository } from '../users/repositories/user.repository';
-import { UsersService } from '../users/users.service';
 import { ConfirmationTokenService } from './confirmation-token.service';
 import { ConfirmEmailChangeResponseDto } from './dtos/confirm-email-change-response.dto';
 import { ConfirmEmailResponseDto } from './dtos/confirm-email-response.dto';
@@ -34,9 +34,9 @@ export class AuthService implements IAuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersFacadeService,
     private readonly jwtService: JwtService,
-    private readonly rolesService: RolesService,
+    private readonly rolesService: RolesFacadeService,
     private readonly mailService: MailService,
     private readonly confirmationTokenService: ConfirmationTokenService,
     private readonly dataSource: DataSource,

@@ -7,6 +7,7 @@ import { MailModule } from '../core/mail/mail.module';
 import { UserEmailHistory } from './entities/user-email-history.entity';
 import { UserRole } from './entities/user-role.entity';
 import { User } from './entities/user.entity';
+import { UsersFacadeService } from './facades/users-facade.service';
 import { UserEmailHistoryRepository } from './repositories/user-email-history.repository';
 import { UserRoleRepository } from './repositories/user-role.repository';
 import { UserRepository } from './repositories/user.repository';
@@ -22,12 +23,13 @@ import { UsersService } from './users.service';
   ],
   providers: [
     UsersService,
+    UsersFacadeService,
     UserRepository,
     UserRoleRepository,
     UserEmailHistoryRepository,
   ],
   exports: [
-    UsersService,
+    UsersFacadeService,
     UserRepository,
     UserRoleRepository,
   ],

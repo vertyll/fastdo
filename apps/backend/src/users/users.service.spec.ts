@@ -4,8 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, UpdateResult } from 'typeorm';
-import { ConfirmationTokenService } from '../auth/confirmation-token.service';
-import { RefreshTokenService } from '../auth/refresh-token.service';
+import { ConfirmationTokenFacadeService } from '../auth/facades/confirmation-token-facade.service';
+import { RefreshTokenFacadeService } from '../auth/facades/refresh-token-facade.service';
 import { FileFacade } from '../core/file/facade/file.facade';
 import { MailService } from '../core/mail/services/mail.service';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
@@ -18,8 +18,8 @@ describe('UsersService', () => {
   let usersRepository: UserRepository;
   let mailService: MailService;
   let i18nService: I18nService;
-  let confirmationTokenService: ConfirmationTokenService;
-  let refreshTokenService: RefreshTokenService;
+  let confirmationTokenService: ConfirmationTokenFacadeService;
+  let refreshTokenService: RefreshTokenFacadeService;
   let queryRunner: any;
 
   beforeEach(async () => {
@@ -81,13 +81,13 @@ describe('UsersService', () => {
           },
         },
         {
-          provide: ConfirmationTokenService,
+          provide: ConfirmationTokenFacadeService,
           useValue: {
             generateToken: jest.fn(),
           },
         },
         {
-          provide: RefreshTokenService,
+          provide: RefreshTokenFacadeService,
           useValue: {
             deleteAllUserTokens: jest.fn(),
           },
@@ -105,8 +105,8 @@ describe('UsersService', () => {
     usersRepository = module.get<UserRepository>(UserRepository);
     mailService = module.get<MailService>(MailService);
     i18nService = module.get<I18nService>(I18nService);
-    confirmationTokenService = module.get<ConfirmationTokenService>(ConfirmationTokenService);
-    refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
+    confirmationTokenService = module.get<ConfirmationTokenFacadeService>(ConfirmationTokenFacadeService);
+    refreshTokenService = module.get<RefreshTokenFacadeService>(RefreshTokenFacadeService);
   });
 
   describe('updateProfile', () => {
