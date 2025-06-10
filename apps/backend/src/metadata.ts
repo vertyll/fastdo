@@ -258,7 +258,6 @@ export default async () => {
             pattern: '/[A-Z]/',
           },
           newPassword: { required: false, type: () => String, minLength: 8, pattern: '/[A-Z]/' },
-          avatar: { required: false, type: () => Object, nullable: true },
         },
       }], [import('./auth/dtos/confirm-email-change-response.dto'), {
         'ConfirmEmailChangeResponseDto': {

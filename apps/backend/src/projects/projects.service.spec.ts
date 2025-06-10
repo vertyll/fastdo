@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
-import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
+import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
 import { ProjectUser } from './entities/project-user.entity';
 import { Project } from './entities/project.entity';
 import { ProjectsService } from './projects.service';

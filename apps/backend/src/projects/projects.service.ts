@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
-import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
+import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';

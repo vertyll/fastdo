@@ -9,13 +9,17 @@ import { MailTemplateService } from './services/mail-template.service';
 import { MailService } from './services/mail.service';
 import { DevTransport } from './services/transports/dev-transport.service';
 import { NodemailerTransport } from './services/transports/nodemailer-transport.service';
+import { MailLoggerToken } from './tokens/mail-logger.token';
+import { IMailServiceToken } from './tokens/mail-service.token';
+import { IMailTemplateToken } from './tokens/mail-template.token';
+import { IMailTransportToken } from './tokens/mail-transport.token';
 
 @Module({
   providers: [
     MailConfigService,
     MailTemplateService,
     {
-      provide: 'IMailTransport',
+      provide: IMailTransportToken,
       useFactory: (
         configService: ConfigService,
         mailConfigService: MailConfigService,
@@ -31,16 +35,22 @@ import { NodemailerTransport } from './services/transports/nodemailer-transport.
       inject: [ConfigService, MailConfigService, I18nService],
     },
     {
-      provide: 'IMailTemplate',
+      provide: IMailTemplateToken,
       useClass: MailTemplateService,
     },
     {
-      provide: 'MailLogger',
+      provide: MailLoggerToken,
       useValue: new Logger('MailService'),
     },
+    {
+      provide: IMailServiceToken,
+      useClass: MailService,
+    },
     MailSenderService,
-    MailService,
   ],
-  exports: [MailService],
+  exports: [
+    IMailServiceToken,
+  ],
 })
-export class MailModule {}
+export class MailModule {
+}

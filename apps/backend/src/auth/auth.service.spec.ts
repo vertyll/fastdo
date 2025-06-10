@@ -7,32 +7,37 @@ import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
-import { MailService } from '../core/mail/services/mail.service';
+import { IMailService } from '../core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
 import { DurationConfigProvider } from '../core/providers/duration-config.provider';
 import { Role } from '../roles/entities/role.entity';
-import { RolesFacadeService } from '../roles/facades/roles-facade.service';
+import { IRolesService } from '../roles/interfaces/roles-service.interface';
 import { RoleRepository } from '../roles/repositories/role.repository';
+import { IRolesServiceToken } from '../roles/tokens/roles-service.token';
 import { UserRole } from '../users/entities/user-role.entity';
 import { User } from '../users/entities/user.entity';
-import { UsersFacadeService } from '../users/facades/users-facade.service';
+import { IUsersService } from '../users/interfaces/users-service.interface';
 import { UserRepository } from '../users/repositories/user.repository';
+import { IUsersServiceToken } from '../users/tokens/users-service.token';
 import { AuthService } from './auth.service';
-import { ConfirmationTokenService } from './confirmation-token.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
-import { RefreshTokenService } from './refresh-token.service';
+import { IConfirmationTokenService } from './interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from './interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from './tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from './tokens/refresh-token-service.token';
 
 jest.mock('bcryptjs');
 
 describe('AuthService', () => {
   let service: AuthService;
-  let usersService: jest.Mocked<UsersFacadeService>;
-  let rolesService: jest.Mocked<RolesFacadeService>;
+  let usersService: jest.Mocked<IUsersService>;
+  let rolesService: jest.Mocked<IRolesService>;
   let jwtService: jest.Mocked<JwtService>;
-  let mailService: jest.Mocked<MailService>;
-  let confirmationTokenService: jest.Mocked<ConfirmationTokenService>;
-  let refreshTokenService: jest.Mocked<RefreshTokenService>;
+  let mailService: jest.Mocked<IMailService>;
+  let confirmationTokenService: jest.Mocked<IConfirmationTokenService>;
+  let refreshTokenService: jest.Mocked<IRefreshTokenService>;
   let userRepository: jest.Mocked<UserRepository>;
   let roleRepository: jest.Mocked<RoleRepository>;
   let refreshTokenRepository: jest.Mocked<Repository<RefreshToken>>;
@@ -120,29 +125,14 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
-          provide: UsersFacadeService,
-          useValue: { findByEmail: jest.fn() },
-        },
-        {
           provide: JwtService,
           useValue: { sign: jest.fn(), verify: jest.fn() },
         },
         {
-          provide: RolesFacadeService,
-          useValue: { getUserRoles: jest.fn() },
-        },
-        {
-          provide: MailService,
+          provide: IMailServiceToken,
           useValue: {
             sendConfirmationEmail: jest.fn(),
             sendPasswordResetEmail: jest.fn(),
-          },
-        },
-        {
-          provide: ConfirmationTokenService,
-          useValue: {
-            generateToken: jest.fn(() => 'generated-token'),
-            verifyToken: jest.fn(() => ({ email: 'test@example.com' })),
           },
         },
         {
@@ -180,7 +170,34 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: RefreshTokenService,
+          provide: DurationConfigProvider,
+          useValue: {
+            getDuration: jest.fn().mockReturnValue(300000),
+            getExpiryDate: jest.fn().mockReturnValue(new Date(Date.now() + 300000)),
+          },
+        },
+        {
+          provide: IUsersServiceToken,
+          useValue: {
+            findByEmail: jest.fn(),
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: IRolesServiceToken,
+          useValue: {
+            getUserRoles: jest.fn().mockResolvedValue([RoleEnum.User]),
+          },
+        },
+        {
+          provide: IConfirmationTokenServiceToken,
+          useValue: {
+            generateToken: jest.fn().mockReturnValue('generated-token'),
+            verifyToken: jest.fn().mockReturnValue({ email: 'test@example.com' }),
+          },
+        },
+        {
+          provide: IRefreshTokenServiceToken,
           useValue: {
             saveRefreshToken: jest.fn(),
             validateRefreshToken: jest.fn(),
@@ -191,26 +208,19 @@ describe('AuthService', () => {
             deleteExpiredTokens: jest.fn(),
           },
         },
-        {
-          provide: DurationConfigProvider,
-          useValue: {
-            getDuration: jest.fn().mockReturnValue(300000),
-            getExpiryDate: jest.fn().mockReturnValue(new Date(Date.now() + 300000)),
-          },
-        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    usersService = module.get(UsersFacadeService);
-    rolesService = module.get(RolesFacadeService);
     jwtService = module.get(JwtService);
-    mailService = module.get(MailService);
-    confirmationTokenService = module.get(ConfirmationTokenService);
+    mailService = module.get(IMailServiceToken);
     userRepository = module.get(UserRepository);
     roleRepository = module.get(RoleRepository);
     refreshTokenRepository = module.get(getRepositoryToken(RefreshToken));
-    refreshTokenService = module.get(RefreshTokenService);
+    usersService = module.get(IUsersServiceToken);
+    rolesService = module.get(IRolesServiceToken);
+    confirmationTokenService = module.get(IConfirmationTokenServiceToken);
+    refreshTokenService = module.get(IRefreshTokenServiceToken);
   });
 
   describe('validateUser', () => {
@@ -525,7 +535,7 @@ describe('AuthService', () => {
     });
 
     it('should return failure when token is invalid', async () => {
-      confirmationTokenService.verifyToken.mockImplementation(() => {
+      confirmationTokenService.verifyToken.mockImplementationOnce(() => {
         throw new UnauthorizedException();
       });
 

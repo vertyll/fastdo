@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TasksFacadeService } from '../tasks/facades/tasks-facade.service';
+import { ITasksService } from '../tasks/interfaces/tasks-service.interface';
+import { ITasksServiceToken } from '../tasks/tokens/tasks-service.token';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsService } from './projects.service';
 
 describe('ProjectManagementService', () => {
   let service: ProjectManagementService;
   let mockProjectsService: jest.Mocked<ProjectsService>;
-  let mockTasksService: jest.Mocked<TasksFacadeService>;
+  let mockTasksService: jest.Mocked<ITasksService>;
 
   beforeEach(async () => {
     mockProjectsService = {
@@ -21,7 +22,7 @@ describe('ProjectManagementService', () => {
       providers: [
         ProjectManagementService,
         { provide: ProjectsService, useValue: mockProjectsService },
-        { provide: TasksFacadeService, useValue: mockTasksService },
+        { provide: ITasksServiceToken, useValue: mockTasksService },
       ],
     }).compile();
 

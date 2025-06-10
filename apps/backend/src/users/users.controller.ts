@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Put, UseInterceptors } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ClsService } from 'nestjs-cls';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
@@ -6,13 +6,15 @@ import { FastifyFileInterceptor } from '../common/interceptors/fastify-file.inte
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './entities/user.entity';
+import { IUsersService } from './interfaces/users-service.interface';
+import { IUsersServiceToken } from './tokens/users-service.token';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly usersService: UsersService,
+    @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
     private readonly cls: ClsService<CustomClsStore>,
   ) {}
 

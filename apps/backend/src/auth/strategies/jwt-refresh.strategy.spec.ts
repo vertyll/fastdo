@@ -4,18 +4,18 @@ import { FastifyRequest } from 'fastify';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
-import { UsersFacadeService } from '../../users/facades/users-facade.service';
+import { IUsersService } from '../../users/interfaces/users-service.interface';
 import { RefreshToken } from '../entities/refresh-token.entity';
-import { JwtRefreshPayload } from '../interfaces/jwt-refresh-payload.interface';
-import { RefreshTokenService } from '../refresh-token.service';
+import { IRefreshTokenService } from '../interfaces/refresh-token-service.interface';
+import { JwtRefreshPayload } from '../types/jwt-refresh-payload.interface';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 
 describe('JwtRefreshStrategy', () => {
   let jwtRefreshStrategy: JwtRefreshStrategy;
-  let usersService: jest.Mocked<UsersFacadeService>;
+  let usersService: jest.Mocked<IUsersService>;
   let configService: jest.Mocked<ConfigService>;
   let i18nService: jest.Mocked<I18nService<I18nTranslations>>;
-  let refreshTokenService: jest.Mocked<RefreshTokenService>;
+  let refreshTokenService: jest.Mocked<IRefreshTokenService>;
 
   const mockRefreshToken = 'test-refresh-token';
 
@@ -63,7 +63,7 @@ describe('JwtRefreshStrategy', () => {
   beforeEach(() => {
     usersService = {
       findOne: jest.fn(),
-    } as unknown as jest.Mocked<UsersFacadeService>;
+    } as unknown as jest.Mocked<IUsersService>;
 
     configService = {
       get: jest.fn().mockImplementation((key: string) => {
@@ -86,7 +86,7 @@ describe('JwtRefreshStrategy', () => {
 
     refreshTokenService = {
       validateRefreshToken: jest.fn(),
-    } as unknown as jest.Mocked<RefreshTokenService>;
+    } as unknown as jest.Mocked<IRefreshTokenService>;
 
     jwtRefreshStrategy = new JwtRefreshStrategy(
       usersService,

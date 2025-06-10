@@ -1,31 +1,35 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, DeepPartial } from 'typeorm';
-import { ConfirmationTokenFacadeService } from '../auth/facades/confirmation-token-facade.service';
-import { RefreshTokenFacadeService } from '../auth/facades/refresh-token-facade.service';
+import { IConfirmationTokenService } from '../auth/interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from '../auth/interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from '../auth/tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from '../auth/tokens/refresh-token-service.token';
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { FileFacade } from '../core/file/facade/file.facade';
-import { MailService } from '../core/mail/services/mail.service';
+import { IMailService } from '../core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { UserEmailHistory } from './entities/user-email-history.entity';
 import { User } from './entities/user.entity';
+import { IUsersService } from './interfaces/users-service.interface';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements IUsersService {
   constructor(
     private readonly usersRepository: UserRepository,
-    private readonly mailService: MailService,
+    @Inject(IMailServiceToken) private readonly mailService: IMailService,
     private readonly fileFacade: FileFacade,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
-    private readonly confirmationTokenService: ConfirmationTokenFacadeService,
-    private readonly refreshTokenService: RefreshTokenFacadeService,
+    @Inject(IConfirmationTokenServiceToken) private readonly confirmationTokenService: IConfirmationTokenService,
+    @Inject(IRefreshTokenServiceToken) private readonly refreshTokenService: IRefreshTokenService,
     private readonly cls: ClsService<CustomClsStore>,
   ) {}
 

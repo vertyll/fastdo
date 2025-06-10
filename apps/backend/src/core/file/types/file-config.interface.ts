@@ -1,6 +1,6 @@
 import { StorageType } from '../../config/types/app.config.type';
 
-export interface IFileConfig {
+export interface FileConfig {
   storage: {
     type: StorageType;
     local: {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FILE_CONSTANTS, StorageType } from '../../config/types/app.config.type';
-import { IFileConfig } from '../interfaces/file-config.interface';
+import { FileConfig } from '../types/file-config.interface';
 
 @Injectable()
 export class FileConfigService {
@@ -9,7 +9,7 @@ export class FileConfigService {
     private configService: ConfigService,
   ) {}
 
-  public getConfig(): IFileConfig {
+  public getConfig(): FileConfig {
     return {
       storage: {
         type: this.getStorageType(),

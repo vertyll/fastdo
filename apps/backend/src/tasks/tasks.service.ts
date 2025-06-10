@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
-import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
+import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
 import { CustomClsStore } from '../core/config/types/app.config.type';
 import { Project } from '../projects/entities/project.entity';
 import { User } from '../users/entities/user.entity';
@@ -8,10 +8,11 @@ import { CreateTaskDto } from './dtos/create-task.dto';
 import { GetAllTasksSearchParams } from './dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
 import { Task } from './entities/task.entity';
+import { ITasksService } from './interfaces/tasks-service.interface';
 import { TaskRepository } from './repositories/task.repository';
 
 @Injectable()
-export class TasksService {
+export class TasksService implements ITasksService {
   constructor(
     private readonly taskRepository: TaskRepository,
     private readonly cls: ClsService<CustomClsStore>,

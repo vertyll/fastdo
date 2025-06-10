@@ -1,3 +1,3 @@
-export interface IRolesFacade {
+export interface IRolesService {
   getUserRoles(userId: number): Promise<string[]>;
 }

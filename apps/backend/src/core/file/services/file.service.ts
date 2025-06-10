@@ -7,9 +7,9 @@ import { File } from '../entities/file.entity';
 import { FileDeleteException } from '../exceptions/file-delete.exception';
 import { FileNotFoundException } from '../exceptions/file-not-found.exception';
 import { FileUploadException } from '../exceptions/file-upload.exception';
-import { FileUploadOptions } from '../interfaces/file-upload-options.interface';
 import { FileRepository } from '../repositories/file.repository';
 import { StorageStrategy } from '../storage/storage-strategy';
+import { FileUploadOptions } from '../types/file-upload-options.interface';
 import { FileValidator } from '../validators/file-validator';
 
 @Injectable()

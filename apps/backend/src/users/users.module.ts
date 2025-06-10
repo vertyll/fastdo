@@ -7,10 +7,10 @@ import { MailModule } from '../core/mail/mail.module';
 import { UserEmailHistory } from './entities/user-email-history.entity';
 import { UserRole } from './entities/user-role.entity';
 import { User } from './entities/user.entity';
-import { UsersFacadeService } from './facades/users-facade.service';
 import { UserEmailHistoryRepository } from './repositories/user-email-history.repository';
 import { UserRoleRepository } from './repositories/user-role.repository';
 import { UserRepository } from './repositories/user.repository';
+import { IUsersServiceToken } from './tokens/users-service.token';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -22,16 +22,18 @@ import { UsersService } from './users.service';
     forwardRef(() => AuthModule),
   ],
   providers: [
-    UsersService,
-    UsersFacadeService,
+    {
+      provide: IUsersServiceToken,
+      useClass: UsersService,
+    },
     UserRepository,
     UserRoleRepository,
     UserEmailHistoryRepository,
   ],
   exports: [
-    UsersFacadeService,
     UserRepository,
     UserRoleRepository,
+    IUsersServiceToken,
   ],
   controllers: [UsersController],
 })

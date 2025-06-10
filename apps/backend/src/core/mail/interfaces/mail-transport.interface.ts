@@ -1,8 +1,5 @@
+import { MailTransportOptions } from '../types/mail-transport-options.interface';
+
 export interface IMailTransport {
-  sendMail(options: {
-    from: string;
-    to: string;
-    subject: string;
-    html: string;
-  }): Promise<void>;
+  sendMail(options: MailTransportOptions): Promise<void>;
 }

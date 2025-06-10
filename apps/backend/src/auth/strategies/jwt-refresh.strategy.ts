@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { FastifyRequest } from 'fastify';
@@ -7,19 +7,21 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthStrategyEnum } from '../../common/enums/auth-strategy.enum';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
-import { UsersFacadeService } from '../../users/facades/users-facade.service';
-import { JwtRefreshPayload } from '../interfaces/jwt-refresh-payload.interface';
+import { IUsersService } from '../../users/interfaces/users-service.interface';
+import { IUsersServiceToken } from '../../users/tokens/users-service.token';
 import { IJwtRefreshStrategy } from '../interfaces/jwt-refresh-strategy.interface';
-import { RefreshTokenService } from '../refresh-token.service';
+import { IRefreshTokenService } from '../interfaces/refresh-token-service.interface';
+import { IRefreshTokenServiceToken } from '../tokens/refresh-token-service.token';
+import { JwtRefreshPayload } from '../types/jwt-refresh-payload.interface';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyEnum.JwtRefresh)
   implements IJwtRefreshStrategy
 {
   constructor(
-    private readonly usersService: UsersFacadeService,
+    @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
     private readonly i18n: I18nService<I18nTranslations>,
-    private readonly refreshTokenService: RefreshTokenService,
+    @Inject(IRefreshTokenServiceToken) private readonly refreshTokenService: IRefreshTokenService,
     configService: ConfigService,
   ) {
     const refreshTokenSecret = configService.get<string>('app.security.jwt.refreshToken.secret');

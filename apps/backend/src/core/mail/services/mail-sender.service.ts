@@ -5,6 +5,9 @@ import { MailConfigService } from '../config/mail.config';
 import { MailSendFailedException } from '../exceptions/mail-send-failed.exception';
 import { IMailTemplate } from '../interfaces/mail-template.interface';
 import { IMailTransport } from '../interfaces/mail-transport.interface';
+import { MailLoggerToken } from '../tokens/mail-logger.token';
+import { IMailTemplateToken } from '../tokens/mail-template.token';
+import { IMailTransportToken } from '../tokens/mail-transport.token';
 
 @Injectable()
 export class MailSenderService {
@@ -12,10 +15,10 @@ export class MailSenderService {
   private readonly retryDelay = 1000;
 
   constructor(
-    @Inject('IMailTransport') private readonly transport: IMailTransport,
-    @Inject('IMailTemplate') private readonly templateService: IMailTemplate,
+    @Inject(IMailTransportToken) private readonly transport: IMailTransport,
+    @Inject(IMailTemplateToken) private readonly templateService: IMailTemplate,
     private readonly mailConfig: MailConfigService,
-    @Inject('MailLogger') private readonly logger: Logger,
+    @Inject(MailLoggerToken) private readonly logger: Logger,
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 

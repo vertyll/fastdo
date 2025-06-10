@@ -7,6 +7,7 @@ import { Environment } from '../../../config/types/app.config.type';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
 import { IMailTransport } from '../../interfaces/mail-transport.interface';
+import { MailLoggerToken } from '../../tokens/mail-logger.token';
 
 @Injectable()
 export class DevTransport implements IMailTransport {
@@ -16,7 +17,7 @@ export class DevTransport implements IMailTransport {
   constructor(
     private readonly configService: ConfigService,
     private readonly mailConfig: MailConfigService,
-    @Inject('MailLogger') private readonly logger: Logger,
+    @Inject(MailLoggerToken) private readonly logger: Logger,
     private readonly i18n: I18nService<I18nTranslations>,
   ) {
     this.initializeTransporter().catch(error => {

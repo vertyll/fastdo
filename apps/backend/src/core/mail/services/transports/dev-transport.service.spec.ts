@@ -6,6 +6,7 @@ import * as nodemailer from 'nodemailer';
 import { Environment } from '../../../config/types/app.config.type';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
+import { MailLoggerToken } from '../../tokens/mail-logger.token';
 import { DevTransport } from './dev-transport.service';
 
 jest.mock('nodemailer');
@@ -43,7 +44,7 @@ describe('DevTransport', () => {
           },
         },
         {
-          provide: 'MailLogger',
+          provide: MailLoggerToken,
           useValue: {
             log: jest.fn(),
             warn: jest.fn(),
@@ -62,7 +63,7 @@ describe('DevTransport', () => {
 
     transport = module.get<DevTransport>(DevTransport);
     configService = module.get<ConfigService>(ConfigService);
-    logger = module.get<Logger>('MailLogger');
+    logger = module.get<Logger>(MailLoggerToken);
   });
 
   it('should initialize successfully when MailDev is available', async () => {

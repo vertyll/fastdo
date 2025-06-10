@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
 import { MailConfig } from '../../config/types/app.config.type';
-import { IMailConfig } from '../interfaces/mail-config.interface';
 import { MailConfigService } from './mail.config';
 
 describe('MailConfigService', () => {
@@ -43,8 +42,8 @@ describe('MailConfigService', () => {
   describe('getConfig', () => {
     it('should return the mail configuration', () => {
       const mailConfig: MailConfig = {
-        dev: { host: '', port: 0 },
-        templatesPath: '',
+        dev: { host: 'localhost', port: 1025 },
+        templatesPath: 'templates',
         host: 'smtp.example.com',
         port: 587,
         user: 'user',
@@ -53,16 +52,20 @@ describe('MailConfigService', () => {
       };
       jest.spyOn(configService, 'getOrThrow').mockReturnValue(mailConfig);
 
-      const expectedConfig: IMailConfig = {
+      const expectedConfig: MailConfig = {
         host: 'smtp.example.com',
         port: 587,
         user: 'user',
         password: 'password',
         from: 'noreply@example.com',
+        templatesPath: 'templates',
+        dev: {
+          host: 'localhost',
+          port: 1025,
+        },
       };
 
-      const result: IMailConfig = service.getConfig();
-
+      const result: MailConfig = service.getConfig();
       expect(result).toEqual(expectedConfig);
     });
 
@@ -86,7 +89,7 @@ describe('MailConfigService', () => {
   describe('getDevConfig', () => {
     it('should return the development mail configuration', () => {
       const mailConfig: MailConfig = {
-        templatesPath: '',
+        templatesPath: 'templates',
         host: 'smtp.example.com',
         port: 587,
         user: 'user',
@@ -99,14 +102,20 @@ describe('MailConfigService', () => {
       };
       jest.spyOn(configService, 'getOrThrow').mockReturnValue(mailConfig);
 
-      const expectedDevConfig: IMailConfig = {
+      const expectedDevConfig: MailConfig = {
         host: 'dev.smtp.example.com',
         port: 1025,
         from: 'noreply@example.com',
+        templatesPath: 'templates',
+        user: 'user',
+        password: 'password',
+        dev: {
+          host: 'dev.smtp.example.com',
+          port: 1025,
+        },
       };
 
-      const result: IMailConfig = service.getDevConfig();
-
+      const result: MailConfig = service.getDevConfig();
       expect(result).toEqual(expectedDevConfig);
     });
 

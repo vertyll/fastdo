@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { TasksFacadeService } from '../tasks/facades/tasks-facade.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { ITasksService } from '../tasks/interfaces/tasks-service.interface';
+import { ITasksServiceToken } from '../tasks/tokens/tasks-service.token';
 import { ProjectsService } from './projects.service';
 
 @Injectable()
 export class ProjectManagementService {
   constructor(
     private readonly projectsService: ProjectsService,
-    private readonly tasksService: TasksFacadeService,
+    @Inject(ITasksServiceToken) private readonly tasksService: ITasksService,
   ) {}
 
   public async removeProjectWithTasks(id: number): Promise<void> {

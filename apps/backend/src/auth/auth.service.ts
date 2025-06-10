@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -7,15 +7,17 @@ import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 import { RoleEnum } from '../common/enums/role.enum';
-import { MailService } from '../core/mail/services/mail.service';
+import { IMailService } from '../core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
-import { RolesFacadeService } from '../roles/facades/roles-facade.service';
+import { IRolesService } from '../roles/interfaces/roles-service.interface';
 import { RoleRepository } from '../roles/repositories/role.repository';
+import { IRolesServiceToken } from '../roles/tokens/roles-service.token';
 import { UserRole } from '../users/entities/user-role.entity';
 import { User } from '../users/entities/user.entity';
-import { UsersFacadeService } from '../users/facades/users-facade.service';
+import { IUsersService } from '../users/interfaces/users-service.interface';
 import { UserRepository } from '../users/repositories/user.repository';
-import { ConfirmationTokenService } from './confirmation-token.service';
+import { IUsersServiceToken } from '../users/tokens/users-service.token';
 import { ConfirmEmailChangeResponseDto } from './dtos/confirm-email-change-response.dto';
 import { ConfirmEmailResponseDto } from './dtos/confirm-email-response.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
@@ -25,27 +27,30 @@ import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { IAuthService } from './interfaces/auth-service.interface';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { JwtRefreshPayload } from './interfaces/jwt-refresh-payload.interface';
-import { RefreshTokenService } from './refresh-token.service';
+import { IConfirmationTokenService } from './interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from './interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from './tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from './tokens/refresh-token-service.token';
+import { JwtPayload } from './types/jwt-payload.interface';
+import { JwtRefreshPayload } from './types/jwt-refresh-payload.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
-    private readonly usersService: UsersFacadeService,
+    @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
     private readonly jwtService: JwtService,
-    private readonly rolesService: RolesFacadeService,
-    private readonly mailService: MailService,
-    private readonly confirmationTokenService: ConfirmationTokenService,
+    @Inject(IRolesServiceToken) private readonly rolesService: IRolesService,
+    @Inject(IMailServiceToken) private readonly mailService: IMailService,
+    @Inject(IConfirmationTokenServiceToken) private readonly confirmationTokenService: IConfirmationTokenService,
     private readonly dataSource: DataSource,
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
     private readonly configService: ConfigService,
     private readonly i18n: I18nService<I18nTranslations>,
     @InjectRepository(RefreshToken) private readonly refreshTokenRepository: Repository<RefreshToken>,
-    private readonly refreshTokensService: RefreshTokenService,
+    @Inject(IRefreshTokenServiceToken) private readonly refreshTokensService: IRefreshTokenService,
   ) {}
 
   public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {

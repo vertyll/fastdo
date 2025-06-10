@@ -12,7 +12,7 @@ import { I18nContext, I18nValidationException } from 'nestjs-i18n';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { I18nPath, I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { ApiResponseWrapper } from '../interfaces/api-responses.interface';
+import { ApiResponseWrapper } from '../types/api-responses.interface';
 
 interface ValidationErrorType extends ValidationError {
   property: string;

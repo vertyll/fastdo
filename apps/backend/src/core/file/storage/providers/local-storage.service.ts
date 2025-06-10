@@ -11,7 +11,7 @@ import { FileDeleteException } from '../../exceptions/file-delete.exception';
 import { FileNotFoundException } from '../../exceptions/file-not-found.exception';
 import { FileUploadException } from '../../exceptions/file-upload.exception';
 import { FileStorage } from '../../interfaces/file-storage.interface';
-import { FileUploadOptions } from '../../interfaces/file-upload-options.interface';
+import { FileUploadOptions } from '../../types/file-upload-options.interface';
 import { FilePathBuilder } from '../file-path.builder';
 
 @Injectable()

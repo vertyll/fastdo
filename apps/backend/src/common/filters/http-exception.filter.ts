@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@n
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { ApiErrorResponse } from '../interfaces/api-responses.interface';
+import { ApiErrorResponse } from '../types/api-responses.interface';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {

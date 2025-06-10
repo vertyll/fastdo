@@ -3,9 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../generated/i18n/i18n.generated';
+import { IConfirmationTokenService } from './interfaces/confirmation-token-service.interface';
 
 @Injectable()
-export class ConfirmationTokenService {
+export class ConfirmationTokenService implements IConfirmationTokenService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,

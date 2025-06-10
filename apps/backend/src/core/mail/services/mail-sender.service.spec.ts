@@ -5,6 +5,9 @@ import { MailConfigService } from '../config/mail.config';
 import { MailSendFailedException } from '../exceptions/mail-send-failed.exception';
 import { IMailTemplate } from '../interfaces/mail-template.interface';
 import { IMailTransport } from '../interfaces/mail-transport.interface';
+import { MailLoggerToken } from '../tokens/mail-logger.token';
+import { IMailTemplateToken } from '../tokens/mail-template.token';
+import { IMailTransportToken } from '../tokens/mail-transport.token';
 import { MailSenderService } from './mail-sender.service';
 
 describe('MailSenderService', () => {
@@ -19,13 +22,13 @@ describe('MailSenderService', () => {
       providers: [
         MailSenderService,
         {
-          provide: 'IMailTransport',
+          provide: IMailTransportToken,
           useValue: {
             sendMail: jest.fn(),
           },
         },
         {
-          provide: 'IMailTemplate',
+          provide: IMailTemplateToken,
           useValue: {
             getTemplate: jest.fn(),
           },
@@ -37,7 +40,7 @@ describe('MailSenderService', () => {
           },
         },
         {
-          provide: 'MailLogger',
+          provide: MailLoggerToken,
           useValue: {
             warn: jest.fn(),
           },
@@ -53,10 +56,10 @@ describe('MailSenderService', () => {
     }).compile();
 
     service = module.get<MailSenderService>(MailSenderService);
-    transport = module.get('IMailTransport');
-    templateService = module.get('IMailTemplate');
+    transport = module.get(IMailTransportToken);
+    templateService = module.get(IMailTemplateToken);
     mailConfig = module.get(MailConfigService);
-    logger = module.get('MailLogger');
+    logger = module.get(MailLoggerToken);
   });
 
   afterEach(() => {
@@ -75,6 +78,11 @@ describe('MailSenderService', () => {
         from: 'no-reply@example.com',
         host: 'smtp.example.com',
         port: 587,
+        templatesPath: 'templates',
+        dev: {
+          host: 'localhost',
+          port: 1025,
+        },
       };
       const html = '<p>Hello, John!</p>';
 
@@ -105,6 +113,11 @@ describe('MailSenderService', () => {
         from: 'no-reply@example.com',
         host: 'smtp.example.com',
         port: 587,
+        templatesPath: 'templates',
+        dev: {
+          host: 'localhost',
+          port: 1025,
+        },
       };
       const html = '<p>Hello, John!</p>';
       const error = new Error('Failed to send email');

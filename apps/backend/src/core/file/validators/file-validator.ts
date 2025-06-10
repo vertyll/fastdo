@@ -4,7 +4,7 @@ import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
 import { FileConfigService } from '../config/file-config';
 import { FileValidationException } from '../exceptions/file-validation.exception';
-import { FileUploadOptions } from '../interfaces/file-upload-options.interface';
+import { FileUploadOptions } from '../types/file-upload-options.interface';
 
 @Injectable()
 export class FileValidator {

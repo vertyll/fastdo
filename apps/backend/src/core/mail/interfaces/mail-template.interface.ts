@@ -1,8 +1,5 @@
-export interface ITemplateData {
-  confirmationUrl?: string;
-  resetUrl?: string;
-}
+import { TemplateData } from '../types/template-data.interface';
 
 export interface IMailTemplate {
-  getTemplate(templateName: string, data: ITemplateData): Promise<string>;
+  getTemplate(templateName: string, data: TemplateData): Promise<string>;
 }

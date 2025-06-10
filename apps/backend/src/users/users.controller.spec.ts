@@ -2,19 +2,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './entities/user.entity';
+import { IUsersService } from './interfaces/users-service.interface';
+import { IUsersServiceToken } from './tokens/users-service.token';
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
 
 describe('UsersController', () => {
   let usersController: UsersController;
-  let usersService: UsersService;
+  let usersService: IUsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [
         {
-          provide: UsersService,
+          provide: IUsersServiceToken,
           useValue: {
             updateProfile: jest.fn(),
             findOne: jest.fn(),
@@ -30,7 +31,7 @@ describe('UsersController', () => {
     }).compile();
 
     usersController = module.get<UsersController>(UsersController);
-    usersService = module.get<UsersService>(UsersService);
+    usersService = module.get<IUsersService>(IUsersServiceToken);
   });
 
   describe('updateProfile', () => {

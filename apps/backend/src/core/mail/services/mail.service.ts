@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
+import { IMailService } from '../interfaces/mail-service.interface';
 import { MailSenderService } from './mail-sender.service';
 
 @Injectable()
-export class MailService {
+export class MailService implements IMailService {
   constructor(
     private readonly mailSender: MailSenderService,
     private readonly configService: ConfigService,

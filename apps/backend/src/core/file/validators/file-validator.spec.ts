@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
 import { FileConfigService } from '../config/file-config';
 import { FileValidationException } from '../exceptions/file-validation.exception';
-import { FileUploadOptions } from '../interfaces/file-upload-options.interface';
+import { FileUploadOptions } from '../types/file-upload-options.interface';
 import { FileValidator } from './file-validator';
 
 describe('FileValidator', () => {

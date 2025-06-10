@@ -4,10 +4,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, UpdateResult } from 'typeorm';
-import { ConfirmationTokenFacadeService } from '../auth/facades/confirmation-token-facade.service';
-import { RefreshTokenFacadeService } from '../auth/facades/refresh-token-facade.service';
+import { IConfirmationTokenService } from '../auth/interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from '../auth/interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from '../auth/tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from '../auth/tokens/refresh-token-service.token';
 import { FileFacade } from '../core/file/facade/file.facade';
-import { MailService } from '../core/mail/services/mail.service';
+import { IMailService } from '../core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './entities/user.entity';
 import { UserRepository } from './repositories/user.repository';
@@ -16,10 +19,10 @@ import { UsersService } from './users.service';
 describe('UsersService', () => {
   let service: UsersService;
   let usersRepository: UserRepository;
-  let mailService: MailService;
+  let mailService: IMailService;
   let i18nService: I18nService;
-  let confirmationTokenService: ConfirmationTokenFacadeService;
-  let refreshTokenService: RefreshTokenFacadeService;
+  let confirmationTokenService: IConfirmationTokenService;
+  let refreshTokenService: IRefreshTokenService;
   let queryRunner: any;
 
   beforeEach(async () => {
@@ -50,7 +53,7 @@ describe('UsersService', () => {
           },
         },
         {
-          provide: MailService,
+          provide: IMailServiceToken,
           useValue: {
             sendEmailChangeConfirmation: jest.fn(),
           },
@@ -81,13 +84,13 @@ describe('UsersService', () => {
           },
         },
         {
-          provide: ConfirmationTokenFacadeService,
+          provide: IConfirmationTokenServiceToken,
           useValue: {
             generateToken: jest.fn(),
           },
         },
         {
-          provide: RefreshTokenFacadeService,
+          provide: IRefreshTokenServiceToken,
           useValue: {
             deleteAllUserTokens: jest.fn(),
           },
@@ -103,10 +106,10 @@ describe('UsersService', () => {
 
     service = module.get<UsersService>(UsersService);
     usersRepository = module.get<UserRepository>(UserRepository);
-    mailService = module.get<MailService>(MailService);
+    mailService = module.get<IMailService>(IMailServiceToken);
     i18nService = module.get<I18nService>(I18nService);
-    confirmationTokenService = module.get<ConfirmationTokenFacadeService>(ConfirmationTokenFacadeService);
-    refreshTokenService = module.get<RefreshTokenFacadeService>(RefreshTokenFacadeService);
+    confirmationTokenService = module.get<IConfirmationTokenService>(IConfirmationTokenServiceToken);
+    refreshTokenService = module.get<IRefreshTokenService>(IRefreshTokenServiceToken);
   });
 
   describe('updateProfile', () => {

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
-import { ApiPaginatedResponse } from '../common/interfaces/api-responses.interface';
+import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { GetAllProjectsSearchParams } from './dtos/get-all-projects-search-params.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
