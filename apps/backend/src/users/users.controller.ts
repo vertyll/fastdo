@@ -8,7 +8,6 @@ import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './entities/user.entity';
 import { IUsersService } from './interfaces/users-service.interface';
 import { IUsersServiceToken } from './tokens/users-service.token';
-import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
