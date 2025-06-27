@@ -42,6 +42,7 @@ A web application for managing projects and tasks for specific projects. The app
 ### Frontend Core:
 - the application includes a state management system using NGXS
 - the application is fully translated into English and Polish
+- the application includes custom Tailwind CSS theme with dark/light mode support
 - components are fully reusable, written according to DRY principles and using Atomic Design methodology
 - the application is written according to new Angular standards - including the use of signals
 - and many other features that can be found in the application code
