@@ -37,31 +37,31 @@ import { TextareaComponent } from '../atoms/textarea-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-spacing-4"
       tabindex="-1"
       role="dialog"
       [ngStyle]="{ display: modalService.modal().visible ? 'flex' : 'none' }"
       data-keyboard="true"
     >
       <div
-        class="w-full max-w-lg bg-white rounded-lg shadow-lg dark:bg-gray-800 dark:text-white transition-colors duration-200"
+        class="w-full max-w-lg bg-background-primary rounded-borderRadius-lg shadow-boxShadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
         role="document"
       >
-        <div class="px-6 py-4 border-b flex justify-between items-center">
+        <div class="px-spacing-6 py-spacing-4 border-b border-border-primary dark:border-dark-border-primary flex justify-between items-center">
           <h4 class="text-xl font-semibold">
             {{ modalService.modal().options?.title }}
           </h4>
           <button (click)="closeModalIconHandler()" aria-label="Close">
             <ng-icon
               name="heroXMarkSolid"
-              class="w-6 h-6 text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-300 transition-colors duration-200"
+              class="w-6 h-6 text-text-secondary hover:text-text-primary dark:text-dark-text-primary dark:hover:text-dark-text-secondary transition-colors duration-transitionDuration-200"
             ></ng-icon>
           </button>
         </div>
 
-        <div class="px-6 py-4">
+        <div class="px-spacing-6 py-spacing-4">
           @if (modalService.modal().options?.loading) {
-            <div class="flex justify-center py-4">
+            <div class="flex justify-center py-spacing-4">
               <app-spinner/>
             </div>
           }
@@ -69,7 +69,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
           @if (modalService.modal().options?.message) {
             <p
               [innerHTML]="modalService.modal().options?.message"
-              class="mb-4"
+              class="mb-spacing-4"
             ></p>
           }
 
@@ -80,10 +80,10 @@ import { TextareaComponent } from '../atoms/textarea-component';
               @for (input of modalService.modal().options?.inputs;
                 track input.id) {
                 @if (input.message) {
-                  <p [innerHTML]="input.message" class="mt-3 mb-2"></p>
+                  <p [innerHTML]="input.message" class="mt-spacing-3 mb-spacing-2"></p>
                 }
 
-                <div class="mb-4" [ngClass]="form.get(input.id) | inputInvalid">
+                <div class="mb-spacing-4" [ngClass]="form.get(input.id) | inputInvalid">
                   <div
                     [ngClass]="{
                       'flex items-center':
@@ -158,7 +158,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
           }
         </div>
 
-        <div class="px-6 py-4 border-t flex justify-end space-x-2">
+        <div class="px-spacing-6 py-spacing-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-spacing-2">
           @for (button of modalService.modal().options?.buttons;
             track button.role) {
             @switch (button.role) {

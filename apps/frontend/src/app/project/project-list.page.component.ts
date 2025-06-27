@@ -71,7 +71,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
           <app-error-message [customMessage]="projectsStateService.error()?.message"/>
         }
         @case (listStateValue.LOADING) {
-          <p class="text-gray-600 dark:text-white">{{ 'Basic.loading' | translate }}</p>
+          <p class="text-text-secondary-light dark:text-text-primary-dark">{{ 'Basic.loading' | translate }}</p>
         }
       }
     </div>

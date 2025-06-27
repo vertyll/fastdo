@@ -23,21 +23,21 @@ import { Project } from '../models/Project';
     CustomDatePipe,
   ],
   template: `
-    <div class="bg-white rounded-lg border transition-colors duration-200 border-gray-300 shadow-sm p-4 hover:shadow-md dark:bg-gray-600 dark:text-white flex flex-col h-full">
+    <div class="bg-surface-primary rounded-lg border transition-colors duration-200 border-border-primary dark:border-dark-border-primary shadow-sm p-4 hover:shadow-md dark:bg-dark-surface-primary dark:text-dark-text-primary flex flex-col h-full">
       <header class="flex justify-end">
         <app-remove-item-button
           (confirm)="deleteProject.emit(project().id)"
         />
         @if (!isEditMode()) {
           <button
-            class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
+            class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-text-primary dark:text-dark-text-primary"
             (click)="toggleEditMode()"
           >
             <ng-icon name="heroPencil" size="18"/>
           </button>
         } @else {
           <button
-            class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-black dark:text-white"
+            class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125 text-text-primary dark:text-dark-text-primary"
             (click)="saveProjectName()"
           >
             <ng-icon name="heroCheck" size="18"/>
@@ -61,7 +61,7 @@ import { Project } from '../models/Project';
           </h3>
         }
       </section>
-      <div class="flex flex-col text-gray-600 dark:text-white text-sm mt-2 transition-colors duration-200">
+      <div class="flex flex-col text-text-secondary dark:text-dark-text-primary text-sm mt-2 transition-colors duration-200">
         <div class="flex items-center">
           <ng-icon name="heroCalendar" class="mr-1"></ng-icon>
           <span>{{ 'Project.created' | translate }}: {{ project().dateCreation | customDate }}</span>

@@ -81,7 +81,7 @@ import { ToastComponent } from '../atoms/toast.component';
   ],
   styles: [`
     .top-nav {
-      @apply h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6 transition-colors duration-200;
+      @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6 transition-colors duration-200;
     }
 
     .nav-content {
@@ -93,11 +93,11 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .module-item {
-      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 dark:text-gray-200;
+      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary;
     }
 
     .module-item.active {
-      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
+      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
     }
 
     .auth-section {
@@ -109,23 +109,23 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .login-button {
-      @apply text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/50 transition-colors duration-200 dark:hover:bg-gray-700;
+      @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-neutral-700;
     }
 
     .register-button {
-      @apply bg-orange-500 text-white hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 transition-colors duration-200;
+      @apply bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200;
     }
 
     .logout-button {
-      @apply text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors duration-200;
+      @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
     }
 
     .menu-button {
-      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 relative transition-colors duration-200;
+      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
     }
 
     .menu-button.active {
-      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
+      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
     }
 
     .mobile-menu {
@@ -137,14 +137,14 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-menu-content {
-      @apply absolute w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
+      @apply absolute w-48 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       position: absolute;
       top: 3.5rem;
       left: 4rem;
     }
 
     .mobile-menu-content.language-menu {
-      @apply absolute w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
+      @apply absolute w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       position: absolute;
       top: 3rem;
       right: 0.5rem;
@@ -153,15 +153,15 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 text-sm cursor-pointer;
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 text-sm cursor-pointer;
     }
 
     .mobile-module-item.active {
-      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
+      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
     }
 
     .side-nav {
-      @apply hidden md:block w-24 bg-white dark:bg-gray-800 fixed left-0 top-16 bottom-0 border-r border-gray-200 dark:border-gray-700 transition-colors duration-200;
+      @apply hidden md:block w-24 bg-background-primary dark:bg-dark-background-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
     }
 
     .side-nav-content {
@@ -169,15 +169,15 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-sections {
-      @apply md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 mt-16 transition-colors duration-200;
+      @apply md:hidden bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary mt-16 transition-colors duration-200;
     }
 
     .mobile-section-item {
-      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 dark:text-gray-200;
+      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary;
     }
 
     .mobile-section-item.active {
-      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
+      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
     }
 
     .mobile-section-icon {
@@ -189,15 +189,15 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .show-more-button {
-      @apply w-full flex items-center justify-center py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200;
+      @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200;
     }
 
     .section-item {
-      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 transition-colors duration-200;
+      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 dark:text-dark-text-primary transition-colors duration-200;
     }
 
     .section-item.active {
-      @apply bg-orange-50 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400 transition-colors duration-200;
+      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
     }
 
     .section-icon {
@@ -209,7 +209,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .counter-badge {
-      @apply absolute -top-1 -right-1 bg-orange-500 dark:bg-orange-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 transition-colors duration-200;
+      @apply absolute -top-1 -right-1 bg-primary-500 dark:bg-primary-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 transition-colors duration-200;
     }
 
     .main-content {
@@ -229,31 +229,31 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .app-logo {
-      @apply text-lg md:text-xl font-bold text-gray-800 dark:text-white transition-colors duration-200;
+      @apply text-lg md:text-xl font-bold text-text-primary dark:text-dark-text-primary transition-colors duration-200;
     }
 
     .language-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
     }
 
     .profile-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors duration-200 relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
     }
 
     .language-dropdown {
-      @apply absolute right-0 top-full mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
+      @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
     }
 
     .profile-dropdown {
-      @apply absolute right-0 top-full mt-1 w-24 bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 transition-colors duration-200;
+      @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
     }
 
     .language-option {
-      @apply px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer w-full text-left transition-colors duration-200;
+      @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer w-full text-left transition-colors duration-200;
     }
 
     .language-option.active {
-      @apply text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/50 transition-colors duration-200;
+      @apply text-primary-500 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 transition-colors duration-200;
     }
 
     .hamburger-icon {
@@ -261,7 +261,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .hamburger-line {
-      @apply w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300;
+      @apply w-6 h-0.5 bg-neutral-600 dark:bg-neutral-300 transition-all duration-300;
     }
 
     .hamburger-line:not(:last-child) {
@@ -281,11 +281,11 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-nav-menu {
-      @apply md:hidden fixed inset-0 bg-white dark:bg-gray-800 pt-20 transition-all duration-300 z-40 flex flex-col items-center gap-2;
+      @apply md:hidden fixed inset-0 bg-background-primary dark:bg-dark-background-primary pt-20 transition-all duration-300 z-40 flex flex-col items-center gap-2;
     }
 
     .mobile-nav-item {
-      @apply text-center text-xl font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 py-2;
+      @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 py-2;
     }
   `],
   template: `
@@ -380,12 +380,12 @@ import { ToastComponent } from '../atoms/toast.component';
               @if (profileDropdownOpen) {
                 <div class="profile-dropdown" @dropdown>
                   <button class="auth-button" (click)="router.navigate(['/user-profile'])">
-                    <span class="hover:text-orange-500 dark:hover:text-orange-400">
+                    <span class="hover:text-link-hover dark:hover:text-link-dark-hover">
                       {{ 'Navbar.profile' | translate }}
                     </span>
                   </button>
                   <button class="auth-button" (click)="logout()">
-                    <span class="hover:text-red-500 dark:hover:text-red-400">
+                    <span class="hover:text-danger-600 dark:hover:text-danger-300">
                     {{ 'Basic.logout' | translate }}
                     </span>
                   </button>
@@ -469,11 +469,11 @@ import { ToastComponent } from '../atoms/toast.component';
                 <span>{{ module.title | translate }}</span>
               </div>
             }
-            <div class="border-t border-gray-200 mt-1">
-              <button (click)="navigateToProfileAndCloseMenu()" class="mobile-module-item text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 w-full text-left">
+            <div class="border-t border-border-primary dark:border-dark-border-primary mt-1">
+              <button (click)="navigateToProfileAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
                 {{ 'Navbar.profile' | translate }}
               </button>
-              <button (click)="logout()" class="mobile-module-item text-red-500 hover:text-red-600 w-full text-left">
+              <button (click)="logout()" class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left">
                 {{ 'Basic.logout' | translate }}
               </button>
             </div>

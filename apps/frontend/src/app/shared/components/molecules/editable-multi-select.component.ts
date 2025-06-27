@@ -24,7 +24,7 @@ import { LabelComponent } from '../atoms/label.component';
         [addTagText]="
           allowAddTag() ? ('EditableMultiSelect.addTagsAdHoc' | translate) : null
         "
-        class="dark:bg-gray-700 dark:text-white block px-2 pb-2.5 pt-3 w-full text-sm transition-colors duration-200 text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+        class="dark:bg-dark-background-primary dark:text-dark-text-primary block px-spacing-2 pb-2.5 pt-3 w-full text-sm transition-colors duration-transitionDuration-200 text-text-primary bg-background-primary rounded-borderRadius-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer"
       >
         @for (item of dataArray(); track $index) {
           <ng-option [value]="item.id">
@@ -37,13 +37,18 @@ import { LabelComponent } from '../atoms/label.component';
   `,
   styles: `
     .ng-dropdown-panel {
-      background-color: white;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      background-color: rgb(255 255 255);
+      border: 1px solid rgb(229 231 235);
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
       margin-top: 0.7rem;
       z-index: 10;
       left: 0;
+    }
+    
+    :host-context(.dark) .ng-dropdown-panel {
+      background-color: rgb(55 65 81);
+      border-color: rgb(107 114 128);
     }
   `,
   imports: [

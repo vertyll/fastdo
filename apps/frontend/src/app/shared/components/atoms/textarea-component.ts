@@ -10,7 +10,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       [formControl]="control()"
       [placeholder]="placeholder()"
       [rows]="rows()"
-      class="dark:bg-gray-700 dark:text-white transition-colors duration-200 block w-full p-2 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+      class="dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 block w-full p-spacing-2 text-sm text-text-primary bg-transparent rounded-borderRadius-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer"
     ></textarea>
   `,
 })

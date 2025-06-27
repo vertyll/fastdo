@@ -12,23 +12,23 @@ import { LabelComponent } from '../atoms/label.component';
       <div
         [id]="id()"
         (click)="toggleDropdown()"
-        class="dark:bg-gray-700 dark:text-white transition-colors duration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer cursor-pointer"
+        class="dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary bg-transparent rounded-borderRadius-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer cursor-pointer"
       >
         <span>{{ label() }}</span>
         @if (isDropdownOpen) {
           <div
             (click)="$event.stopPropagation()"
-            class="absolute bg-white  border border-gray-300 rounded-lg mt-1 w-full z-10"
+            class="absolute bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg mt-1 w-full z-10"
           >
             @for (option of translatedOptions; track $index) {
-              <div class="flex items-center p-2">
+              <div class="flex items-center p-spacing-2">
                 <input
                   type="checkbox"
                   [id]="option.value"
                   [value]="option.value"
                   (change)="onCheckboxChange($event)"
                   [checked]="isChecked(option.value)"
-                  class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+                  class="form-check-input h-4 w-4 text-primary-500 border-border-primary dark:border-dark-border-primary rounded focus:ring-primary-200 dark:focus:ring-primary-800 focus:ring-2"
                 />
                 <app-label [forId]="option.value">
                   {{ option.label }}

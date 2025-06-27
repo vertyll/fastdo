@@ -31,10 +31,10 @@ import { TaskNameValidator } from '../validators/task-name.validator';
   ],
   template: `
     <div
-      class="rounded-md border border-gray-300 shadow-sm hover:shadow-md p-4 block w-full transition-colors duration-200"
+      class="rounded-md border border-border-primary dark:border-dark-border-primary shadow-sm hover:shadow-md p-4 block w-full transition-colors duration-200"
       [ngClass]="{
-        'bg-green-300 dark:bg-green-800': task().isDone,
-        'dark:bg-gray-800': !task().isDone
+        'bg-success-300 dark:bg-success-800': task().isDone,
+        'dark:bg-dark-surface-primary': !task().isDone
       }"
     >
       <button
@@ -43,8 +43,8 @@ import { TaskNameValidator } from '../validators/task-name.validator';
       >
         <header class="flex justify-between gap-2">
           <div [ngClass]="{
-            'bg-green-200 text-green-800': task().isPrivate,
-            'bg-red-200 text-red-800': !task().isPrivate
+            'bg-success-200 text-success-800': task().isPrivate,
+            'bg-danger-200 text-danger-800': !task().isPrivate
           }" class="rounded-full px-2 text-xs font-bold h-6 flex items-center justify-center whitespace-nowrap">
             {{ task().isPrivate ? ('Task.private' | translate) : ('Task.public' | translate) }}
           </div>
@@ -52,14 +52,14 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             <app-remove-item-button (confirm)="delete.emit()"/>
             @if (!editMode) {
               <button
-                class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
+                class="md:hidden p-2 rounded-md transition-all duration-200 text-text-primary dark:text-dark-text-primary flex items-center justify-center hover:scale-125"
                 (click)="switchToEditMode(); $event.stopPropagation()"
               >
                 <ng-icon name="heroPencil" size="18"/>
               </button>
             } @else {
               <button
-                class="md:hidden p-2 rounded-md transition-all duration-200 text-black dark:text-white flex items-center justify-center hover:scale-125"
+                class="md:hidden p-2 rounded-md transition-all duration-200 text-text-primary dark:text-dark-text-primary flex items-center justify-center hover:scale-125"
                 (click)="saveTaskName(); $event.stopPropagation()"
               >
                 <ng-icon name="heroCheck" size="18"/>
@@ -100,13 +100,13 @@ import { TaskNameValidator } from '../validators/task-name.validator';
             <span>{{ 'Task.forProject' | translate }}: </span>
             <app-link
               [routerLink]="['/tasks', task().project?.id]"
-              class="text-orange-500 hover:underline"
+              class="text-primary-500 hover:underline"
             >
               {{ task().project?.name | truncateText:150:isProjectExpanded }}
             </app-link>
             @if ((task().project?.name ?? '').length > 150) {
               <button
-                class="ml-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                class="ml-1 text-xs text-text-muted hover:text-text-secondary dark:text-dark-text-muted dark:hover:text-dark-text-secondary"
                 (click)="toggleProjectExpanded(); $event.stopPropagation()"
               >
                 {{ isProjectExpanded ? '[show less]' : '[...]' }}

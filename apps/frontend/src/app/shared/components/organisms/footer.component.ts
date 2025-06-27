@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styles: [
     `
       footer {
-        @apply bg-gray-800 text-white p-4 text-center;
+        @apply bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-spacing-4 text-center;
       }
     `,
   ],

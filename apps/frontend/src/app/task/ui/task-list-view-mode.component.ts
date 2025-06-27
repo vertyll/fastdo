@@ -19,14 +19,14 @@ import { TasksListViewMode } from '../../shared/types/task.type';
         <button
           (click)="updateTasksListView.emit('list')"
           class="flex"
-          [class.text-green-500]="$view() === 'list'"
+          [class.text-secondary-500]="$view() === 'list'"
         >
           <ng-icon name="heroBars3" />
         </button>
         <button
           (click)="updateTasksListView.emit('kanban')"
           class="flex"
-          [class.text-green-500]="$view() === 'kanban'"
+          [class.text-secondary-500]="$view() === 'kanban'"
         >
           <ng-icon name="heroSquares2x2" />
         </button>

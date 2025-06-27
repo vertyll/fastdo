@@ -12,11 +12,7 @@ import { InputType } from '../../types/components.type';
       [formControl]="control()"
       [id]="id()"
       [placeholder]="placeholder()"
-      [ngClass]="{
-        'pb-3 pt-3.5': type() !== 'date',
-        'pb-1.5 pt-3': type() === 'date',
-      }"
-      class="dark:bg-gray-700 dark:text-white block w-full px-2 text-sm transition-colors duration-200 text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+      class="dark:bg-neutral-700 dark:text-dark-text-primary block w-full px-2 py-3 text-sm transition-colors duration-200 text-text-primary bg-transparent rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
     />
   `,
 })

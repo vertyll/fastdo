@@ -10,7 +10,7 @@ import { heroChevronUp } from '@ng-icons/heroicons/outline';
     @if (isVisible) {
       <button
         (click)="scrollToTop()"
-        class="fixed bottom-12 right-8 px-3 py-2 bg-orange-500 border border-black text-white rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 animate-fade-in"
+        class="fixed bottom-12 right-8 px-3 py-2 bg-primary-500 border border-neutral-900 text-white rounded-lg shadow-lg hover:bg-primary-600 transition-all duration-300 animate-fade-in"
         aria-label="Scroll to top"
       >
         <ng-icon name="heroChevronUp" class="w-6 h-6" />

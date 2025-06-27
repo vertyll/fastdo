@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@use './theme.scss' as theme;
+@use "./theme.scss" as theme;
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 @tailwind base;
 @tailwind components;
@@ -7,5 +7,5 @@
 
 html {
   font-family: system-ui;
-  @apply dark:bg-gray-700 dark:text-white;
+  @apply dark:bg-dark-background-primary dark:text-dark-text-primary;
 }

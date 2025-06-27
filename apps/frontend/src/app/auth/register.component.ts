@@ -26,7 +26,7 @@ import { PasswordValidator } from './validators/password.validator';
   ],
   template: `
    <div
-     class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
+     class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
    >
      <app-title>{{ 'Auth.register' | translate }}</app-title>
      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
@@ -35,7 +35,7 @@ import { PasswordValidator } from './validators/password.validator';
          id="email"
          formControlName="email"
          required
-         class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+         class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
        />
 
        <app-label forId="password">{{ 'Auth.password' | translate }}:</app-label>
@@ -44,7 +44,7 @@ import { PasswordValidator } from './validators/password.validator';
          type="password"
          formControlName="password"
          required
-         class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+         class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
        />
 
        <app-label forId="confirmPassword">
@@ -55,21 +55,21 @@ import { PasswordValidator } from './validators/password.validator';
          type="password"
          formControlName="confirmPassword"
          required
-         class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+         class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
        />
 
-       <div class="mb-1">
+       <div class="mb-spacing-1">
          <div class="flex items-center">
            <input
              id="terms"
              type="checkbox"
              formControlName="termsAccepted"
-             class="mr-2"
+             class="mr-spacing-2"
            />
            <app-label forId="terms" [required]="true">
              {{ 'Auth.acceptTerms' | translate }}
               <a
-               class="text-blue-500 hover:underline"
+               class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover hover:underline"
                [routerLink]="['/terms']"
              >
                {{ 'Auth.termsLink' | translate }}
@@ -83,18 +83,18 @@ import { PasswordValidator } from './validators/password.validator';
          }
        </div>
 
-       <div class="mb-4">
+       <div class="mb-spacing-4">
          <div class="flex items-center">
            <input
              id="privacy"
              type="checkbox"
              formControlName="privacyPolicyAccepted"
-             class="mr-2"
+             class="mr-spacing-2"
            />
            <app-label forId="privacy" [required]="true">
              {{ 'Auth.acceptPrivacyPolicy' | translate }}
               <a
-               class="text-blue-500 hover:underline"
+               class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover hover:underline"
                [routerLink]="['/privacy-policy']"
              >
                {{ 'Auth.privacyPolicyLink' | translate }}
@@ -132,13 +132,13 @@ import { PasswordValidator } from './validators/password.validator';
 
        <button
          type="submit"
-         class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+         class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500"
        >
          {{ 'Auth.registerButton' | translate }}
        </button>
 
        <app-link
-         class="mt-4 block"
+         class="mt-spacing-4 block"
          [routerLink]="['/login']"
          [linkType]="LinkType.Default"
        >

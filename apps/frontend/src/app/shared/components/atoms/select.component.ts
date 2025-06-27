@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
     <select
       [formControl]="control()"
       [id]="id()"
-      class="dark:bg-gray-700 transition-colors duration-200 dark:text-white block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+      class="dark:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary bg-transparent rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
     >
       @for (option of translatedOptions; track $index) {
         <option [value]="option.value">

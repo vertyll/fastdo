@@ -30,12 +30,12 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
         <app-error-message [customMessage]="stateService.error()?.message" />
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
-        <div class="max-w-4xl mx-auto p-6">
-          <div class="mb-8">
+        <div class="max-w-4xl mx-auto p-spacing-6">
+          <div class="mb-spacing-8">
             <h1 class="text-3xl font-bold">
               {{ 'TermsAndPolicies.privacyPolicy' | translate }}
             </h1>
-            <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+            <div class="mt-spacing-2 text-sm text-text-secondary-light dark:text-text-secondary-dark space-y-spacing-1">
               <p>{{ 'TermsAndPolicies.version' | translate }}: {{ policy().version }}</p>
               <p>{{ 'TermsAndPolicies.effectiveDate' | translate }}:
                 {{ policy().dateEffective | date:'mediumDate':'':translate.currentLang }}
@@ -45,28 +45,28 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
               </p>
             </div>
           </div>
-          <div class="space-y-8">
+          <div class="space-y-spacing-8">
             @for(section of sortedSections(); track section.id) {
               <section class="prose dark:prose-invert max-w-none">
-                <h2 class="text-xl font-semibold mb-4">
+                <h2 class="text-xl font-semibold mb-spacing-4">
                   {{ getCurrentTranslation(section).title }}
                 </h2>
 
                 @switch (section.type) {
                   @case (LegalSection.PARAGRAPH) {
-                    <p class="text-gray-600 dark:text-gray-300">
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">
                       {{ getCurrentTranslation(section).content }}
                     </p>
                   }
                   @case (LegalSection.LIST) {
-                    <ul class="list-disc pl-6 space-y-2">
+                    <ul class="list-disc pl-spacing-6 space-y-spacing-2">
                       @for(item of getCurrentTranslation(section).items; track item) {
-                        <li class="text-gray-600 dark:text-gray-300">{{ item }}</li>
+                        <li class="text-text-secondary-light dark:text-text-secondary-dark">{{ item }}</li>
                       }
                     </ul>
                   }
                   @case (LegalSection.HEADER) {
-                    <div class="text-gray-600 dark:text-gray-300">
+                    <div class="text-text-secondary-light dark:text-text-secondary-dark">
                       {{ getCurrentTranslation(section).content }}
                     </div>
                   }

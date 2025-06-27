@@ -13,7 +13,7 @@ import { ModalService } from '../../services/modal.service';
     <div class="relative">
       <div
         (click)="removeMode && $event.stopPropagation()"
-        class="absolute inset-0 flex items-center justify-center bg-red-700 text-white rounded-md transition-opacity duration-300"
+        class="absolute inset-0 flex items-center justify-center bg-danger-700 text-white rounded-md transition-opacity duration-300"
         [class.hidden]="!removeMode || mode() === 'modal'"
       >
         <span class="text-sm font-semibold">
@@ -35,7 +35,7 @@ import { ModalService } from '../../services/modal.service';
       @if (!removeMode) {
         <button
           (click)="toggleRemoveMode(); $event.stopPropagation()"
-          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 text-black dark:text-white hover:scale-125"
+          class="flex items-center justify-center p-2 rounded-md transition-all duration-200 text-text-primary dark:text-dark-text-primary hover:scale-125"
         >
           <ng-icon name="heroTrash" size="18"/>
         </button>

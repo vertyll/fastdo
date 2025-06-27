@@ -24,7 +24,7 @@ import { AuthService } from './data-access/auth.service';
     RouterLink,
   ],
   template: `
-    <div class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10">
+    <div class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary">
       <app-title>{{ 'Auth.forgotPassword' | translate }}</app-title>
       <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()">
         <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
@@ -32,7 +32,7 @@ import { AuthService } from './data-access/auth.service';
           id="email"
           formControlName="email"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+          class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
         />
 
         @if (emailErrors.length > 0) {
@@ -47,13 +47,13 @@ import { AuthService } from './data-access/auth.service';
 
         <button
           type="submit"
-          class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500"
         >
           {{ 'Auth.sendResetLink' | translate }}
         </button>
 
         <app-link
-          class="mt-4 block"
+          class="mt-spacing-4 block"
           [routerLink]="['/login']"
           [linkType]="LinkType.Default"
         >

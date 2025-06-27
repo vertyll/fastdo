@@ -65,14 +65,14 @@ import { TaskNameValidator } from './validators/task-name.validator';
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)"/>
     </div>
 
-    <div class="border border-gray-300 p-2 w-36 rounded-lg flex items-center my-4">
+    <div class="border border-border-primary dark:border-dark-border-primary p-2 w-36 rounded-lg flex items-center my-4">
       <div
         class="flex items-center gap-1.5 cursor-help"
         [matTooltip]="getHelpText()"
         matTooltipPosition="right"
       >
         <span class="font-semibold">{{ 'Task.howToUse' | translate }}</span>
-        <span class="text-sm text-gray-400 hover:text-gray-600">[?]</span>
+        <span class="text-sm text-text-muted dark:text-dark-text-muted hover:text-text-secondary dark:hover:text-dark-text-secondary">[?]</span>
       </div>
     </div>
 
@@ -83,7 +83,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
 
     <p class="my-4">
       {{ 'Task.urgentTaskCount' | translate }}:
-      <span class="text-orange-500 font-semibold">
+      <span class="text-primary-500 font-semibold">
         {{ tasksStateService.urgentCount() }}
       </span>
     </p>
@@ -111,7 +111,7 @@ import { TaskNameValidator } from './validators/task-name.validator';
         <app-error-message [customMessage]="tasksStateService.error()?.message"/>
       }
       @case (listStateValue.LOADING) {
-        <p class="text-gray-600 dark:text-white">{{ 'Basic.loading' | translate }}</p>
+        <p class="text-text-secondary dark:text-dark-text-primary">{{ 'Basic.loading' | translate }}</p>
       }
     }
   `,

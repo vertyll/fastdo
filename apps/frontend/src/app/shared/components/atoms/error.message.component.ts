@@ -8,7 +8,7 @@ import { ValidationService } from '../../services/validation.service';
   imports: [ErrorPipe],
   template: `
     @if (input() && input()!.invalid && (input()!.touched || input()!.dirty)) {
-      <p class="text-red-500">
+      <p class="text-danger-500">
         @for (error of input()!.errors | error; track $index) {
           <span>
             {{ validation.getValidatorErrorMessage(error, input()!) }}
@@ -17,7 +17,7 @@ import { ValidationService } from '../../services/validation.service';
       </p>
     }
     @if (customMessage() != null) {
-      <p class="text-red-500" [innerHtml]="customMessage()"></p>
+      <p class="text-danger-500" [innerHtml]="customMessage()"></p>
     }
   `,
 })

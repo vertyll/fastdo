@@ -7,11 +7,11 @@ import { SpinnerSize } from '../../types/components.type';
   selector: 'app-spinner',
   template: `
     <div
-      class="spinner border-4 border-t-4 border-gray-200 rounded-full animate-spin"
+      class="spinner border-4 border-t-4 border-border-primary dark:border-dark-border-primary rounded-full animate-spin"
       [ngClass]="{
-        'w-8 h-8 border-t-orange-500': size() === 'small',
-        'w-12 h-12 border-t-orange-500': size() === 'medium',
-        'w-16 h-16 border-t-orange-500': size() === 'large',
+        'w-8 h-8 border-t-primary-500': size() === 'small',
+        'w-12 h-12 border-t-primary-500': size() === 'medium',
+        'w-16 h-16 border-t-primary-500': size() === 'large',
       }"
     ></div>
   `,

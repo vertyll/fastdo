@@ -35,16 +35,16 @@ import { UserStateService } from './data-access/user.state.service';
         </div>
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
-        <div class="max-w-4xl mx-auto p-6">
-          <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div class="max-w-4xl mx-auto p-spacing-6">
+          <div class="bg-background-primary dark:bg-dark-background-primary shadow-boxShadow-md rounded-borderRadius-lg overflow-hidden">
             @if (!isEditing) {
-              <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                  <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <div class="p-spacing-6">
+                <div class="flex justify-between items-center mb-spacing-6">
+                  <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Profile.myProfile' | translate }}
                   </h2>
                   <button
-                    class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors duration-200"
+                    class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500 transition-colors duration-transitionDuration-200"
                     (click)="toggleEdit()"
                   >
                     {{ 'Profile.edit' | translate }}
@@ -60,10 +60,10 @@ import { UserStateService } from './data-access/user.state.service';
                     format="circle"
                   />
                   <div class="profile-details">
-                    <div class="text-xl font-medium text-gray-900 dark:text-white">
+                    <div class="text-xl font-medium text-text-primary dark:text-dark-text-primary">
                       {{ user().email }}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <div class="text-sm text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Profile.memberSince' | translate }}
                       {{ user().dateCreation | date:'mediumDate' }}
                     </div>
@@ -71,22 +71,22 @@ import { UserStateService } from './data-access/user.state.service';
                 </div>
               </div>
             } @else {
-              <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
-                <div class="flex justify-between items-center mb-6">
-                  <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-spacing-6 space-y-spacing-6">
+                <div class="flex justify-between items-center mb-spacing-6">
+                  <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Basic.edit' | translate }}
                   </h2>
-                  <div class="flex space-x-4">
+                  <div class="flex space-x-spacing-4">
                     <button
                       type="button"
-                      class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      class="px-spacing-4 py-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
                       (click)="toggleEdit()"
                     >
                       {{ 'Basic.cancel' | translate }}
                     </button>
                     <button
                       type="submit"
-                      class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
+                      class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500"
                       [disabled]="!profileForm.valid || stateService.state() === LOADING_STATE_VALUE.LOADING"
                     >
                       {{ 'Basic.save' | translate }}
@@ -94,7 +94,7 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
                 </div>
 
-                <div class="mb-6 flex items-center">
+                <div class="mb-spacing-6 flex items-center">
                   <app-image
                     [initialUrl]="user().avatar?.url || null"
                     mode="edit"
@@ -105,28 +105,28 @@ import { UserStateService } from './data-access/user.state.service';
                   />
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-spacing-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="email">
+                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="email">
                       {{ 'Profile.email' | translate }}
                     </label>
                     <input
                       id="email"
                       type="email"
                       formControlName="email"
-                      class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
+                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
                     />
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="password">
+                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="password">
                       {{ 'Profile.password' | translate }}
                     </label>
                     <input
                       id="password"
                       type="password"
                       formControlName="password"
-                      class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
+                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
                     />
                     @if (passwordErrors.length > 0) {
                       @for (error of passwordErrors; track error) {
@@ -136,14 +136,14 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="newPassword">
+                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="newPassword">
                       {{ 'Profile.newPassword' | translate }}
                     </label>
                     <input
                       id="newPassword"
                       type="password"
                       formControlName="newPassword"
-                      class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
+                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
                     />
                     @if (newPasswordErrors.length > 0) {
                       @for (error of newPasswordErrors; track error) {
@@ -153,14 +153,14 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="confirmNewPassword">
+                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="confirmNewPassword">
                       {{ 'Profile.confirmNewPassword' | translate }}
                     </label>
                     <input
                       id="confirmNewPassword"
                       type="password"
                       formControlName="confirmNewPassword"
-                      class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-600 focus:border-transparent transition-colors duration-200 text-gray-900 dark:text-white"
+                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
                     />
                     @if (confirmNewPasswordErrors.length > 0) {
                       @for (error of confirmNewPasswordErrors; track error) {

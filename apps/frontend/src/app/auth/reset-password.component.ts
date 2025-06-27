@@ -21,7 +21,7 @@ import { PasswordValidator } from './validators/password.validator';
     LabelComponent,
   ],
   template: `
-    <div class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10">
+    <div class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-surface-primary dark:bg-dark-surface-primary">
       <app-title>{{ 'Auth.resetPassword' | translate }}</app-title>
       <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
         <app-label forId="password">{{ 'Auth.newPassword' | translate }}:</app-label>
@@ -30,7 +30,7 @@ import { PasswordValidator } from './validators/password.validator';
           type="password"
           formControlName="password"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+          class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800"
         />
 
         <app-label forId="confirmPassword">
@@ -41,7 +41,7 @@ import { PasswordValidator } from './validators/password.validator';
           type="password"
           formControlName="confirmPassword"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+          class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800"
         />
 
         @if (passwordMismatch) {
@@ -62,7 +62,7 @@ import { PasswordValidator } from './validators/password.validator';
 
         <button
           type="submit"
-          class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:bg-primary-400 dark:hover:bg-primary-500 dark:focus:bg-primary-500 dark:focus:ring-primary-800 transition-colors duration-transitionDuration-200"
         >
           {{ 'Auth.resetPasswordButton' | translate }}
         </button>

@@ -11,8 +11,8 @@ import { LinkTypeEnum } from '../../enums/link.enum';
       [routerLink]="routerLink()"
       routerLinkActive="font-bold"
       [ngClass]="{
-        'text-black no-underline hover:no-underline': linkType() === LinkType.Nav,
-        'text-blue-500 underline hover:underline dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200':
+        'text-text-primary dark:text-dark-text-primary no-underline hover:no-underline': linkType() === LinkType.Nav,
+        'text-link-primary underline hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover transition-colors duration-200':
           linkType() === LinkType.Default,
       }"
     >

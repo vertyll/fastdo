@@ -26,19 +26,20 @@ import { PaginationParams } from '../../types/filter.type';
     }),
   ],
   template: `
-    <div class="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-center px-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 md:px-6 rounded-md dark:border-white">      <div class="flex flex-wrap items-center gap-2">
-        <label class="text-sm text-gray-700 dark:text-gray-300">{{ 'Paginator.itemsPerPage' | translate }}:</label>
+    <div class="flex flex-col items-center gap-spacing-4 md:flex-row md:items-center md:justify-center px-spacing-4 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary md:px-spacing-6 rounded-borderRadius-lg">
+      <div class="flex flex-wrap items-center gap-spacing-2">
+        <label class="text-sm text-text-secondary dark:text-dark-text-secondary">{{ 'Paginator.itemsPerPage' | translate }}:</label>
         <div class="relative">
           <select
             [ngModel]="pageSize()"
             (ngModelChange)="onPageSizeChange($event)"
-            class="block w-20 appearance-none rounded-md border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-600 hover:bg-gray-100 hover:dark:bg-gray-700 py-1.5 pl-3 pr-8 text-gray-900 dark:text-gray-100 focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="block w-20 appearance-none rounded-borderRadius-md border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary hover:dark:bg-dark-background-secondary py-1.5 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option *ngFor="let size of pageSizeOptions()" [value]="size">{{ size }}</option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
             <svg
-              class="h-4 w-4 text-gray-400 dark:text-gray-500"
+              class="h-4 w-4 text-text-secondary dark:text-dark-text-secondary"
               viewBox="0 0 20 20"
               fill="none"
               stroke="currentColor"
@@ -48,16 +49,16 @@ import { PaginationParams } from '../../types/filter.type';
           </div>
         </div>
 
-        <span class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+        <span class="text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap">
           {{ getRangeLabel(currentPage(), pageSize(), total()) }}
         </span>
       </div>
 
-      <div class="flex items-center gap-1.5 md:gap-2">
+      <div class="flex items-center gap-spacing-1.5 md:gap-spacing-2">
         <button
           (click)="onFirstPage()"
           [disabled]="currentPage() === 0"
-          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
+          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.firstPage' | translate }}</span>
           <ng-icon
@@ -70,7 +71,7 @@ import { PaginationParams } from '../../types/filter.type';
         <button
           (click)="onPreviousPage()"
           [disabled]="currentPage() === 0"
-          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
+          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.previousPage' | translate }}</span>
           <ng-icon
@@ -83,7 +84,7 @@ import { PaginationParams } from '../../types/filter.type';
         <button
           (click)="onNextPage()"
           [disabled]="isLastPage() || total() === 0"
-          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
+          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.nextPage' | translate }}</span>
           <ng-icon
@@ -96,7 +97,7 @@ import { PaginationParams } from '../../types/filter.type';
         <button
           (click)="onLastPage()"
           [disabled]="isLastPage() || total() === 0"
-          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-black dark:text-white border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
+          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.lastPage' | translate }}</span>
           <ng-icon

@@ -24,7 +24,7 @@ import { EmailChangeService } from './data-access/email-change.service';
   ],
   template: `
     <div
-      class="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-md mt-10"
+      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title>{{ 'Auth.login' | translate }}</app-title>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -33,7 +33,7 @@ import { EmailChangeService } from './data-access/email-change.service';
           id="email"
           formControlName="email"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+          class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
         />
         <app-label forId="password"
           >{{ 'Auth.password' | translate }}:
@@ -43,25 +43,25 @@ import { EmailChangeService } from './data-access/email-change.service';
           type="password"
           formControlName="password"
           required
-          class="input-field mb-4 p-2 border border-gray-300 rounded w-full dark:bg-gray-700 dark:text-white transition-colors duration-200"
+          class="input-field mb-spacing-4 p-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md w-full bg-background-primary dark:bg-dark-background-primary text-text-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
         />
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
         }
         <button
           type="submit"
-          class="submit-button w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500"
         >
           {{ 'Auth.loginButton' | translate }}
         </button>
         <app-link
-          class="mt-4 block"
+          class="mt-spacing-4 block"
           [routerLink]="['/register']"
           [linkType]="LinkType.Default"
           >{{ 'Auth.dontHaveAccount' | translate }}</app-link
         >
         <app-link
-          class="mt-1 block"
+          class="mt-spacing-1 block"
           [routerLink]="['/forgot-password']"
           [linkType]="LinkType.Default"
         >

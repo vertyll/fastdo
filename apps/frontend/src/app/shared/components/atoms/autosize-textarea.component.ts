@@ -7,19 +7,21 @@ import { AfterViewInit, Component, ElementRef, ViewChild, input, output } from '
       #textarea
       [placeholder]="placeholder()"
       [value]="value()"
-      class="resize-y overflow-auto focus:outline-orange-500 w-full bg-gray-100 dark:bg-gray-700 dark:text-white transition-colors duration-200 min-h-[100px]"
+      class="resize-y overflow-auto focus:outline-primary-500 w-full bg-neutral-100 dark:bg-neutral-700 dark:text-dark-text-primary transition-colors duration-200 min-h-[100px] p-2 rounded-lg border border-border-primary dark:border-dark-border-primary"
       (click)="$event.stopPropagation()"
       (keyup.enter)="emit(textarea)"
       (input)="calcHeight(textarea)"
     ></textarea>
   `,
-  styles: [`
-    textarea {
-      box-sizing: border-box;
-      padding: 8px;
-      line-height: 1.5;
-    }
-  `],
+  styles: [
+    `
+      textarea {
+        box-sizing: border-box;
+        padding: 8px;
+        line-height: 1.5;
+      }
+    `,
+  ],
 })
 export class AutosizeTextareaComponent implements AfterViewInit {
   @ViewChild('textarea')

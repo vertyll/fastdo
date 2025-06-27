@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
     @if (isLoggedIn()()) {
       <div>
         <div
-          class="fixed bottom-0 right-0 bg-orange-500 hover:bg-orange-600 border border-black text-white p-2 cursor-pointer flex items-center justify-center z-10 w-10 h-10 user-select-none"
+          class="fixed bottom-0 right-0 bg-primary-500 hover:bg-primary-600 border border-neutral-900 text-white p-2 cursor-pointer flex items-center justify-center z-10 w-10 h-10 user-select-none"
           (click)="togglePanel()()"
         >
           @if (!panelOpen()) {
@@ -26,17 +26,17 @@ import { TranslateModule } from '@ngx-translate/core';
           }
         </div>
         <div
-          class="fixed bottom-0 right-0 bg-gray-300 dark:bg-gray-600 border border-black text-black dark:text-white p-4 transition-transform transform w-[calc(100%)] h-10 duration-300 ease-in-out flex items-center gap-6 overflow-x-auto pr-8"
+          class="fixed bottom-0 right-0 bg-neutral-300 dark:bg-neutral-600 border border-neutral-900 text-text-primary dark:text-dark-text-primary p-4 transition-transform transform w-[calc(100%)] h-10 duration-300 ease-in-out flex items-center gap-6 overflow-x-auto pr-8"
           [class.translate-x-0]="panelOpen()"
           [class.translate-x-full]="!panelOpen()"
         >
           <div class="flex items-center min-w-fit">
             <b>{{ 'InfoPanel.userRoles' | translate }}</b>:
             @if (expandedSection() === 'roles') {
-              <span class="dark:text-green-500 text-orange-500 ml-2 break-all">
+              <span class="dark:text-secondary-500 text-primary-500 ml-2 break-all">
                 @if (userRolesString().length > maxVisibleChars) {
                   <button
-                    class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
+                    class="mr-1 p-1 text-white hover:bg-neutral-700 rounded"
                     (click)="toggleSection('')"
                   >
                     <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
@@ -45,7 +45,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ userRolesString() }}
               </span>
             } @else {
-              <span class="dark:text-green-500 text-orange-500 ml-2 truncate max-w-[100px]">
+              <span class="dark:text-secondary-500 text-primary-500 ml-2 truncate max-w-[100px]">
                 {{ userRolesString() }}
               </span>
               @if (userRolesString().length > maxVisibleChars) {
@@ -71,11 +71,11 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ currentTime() }}
               </span>
             } @else {
-              <span class="dark:text-green-500 text-orange-500 ml-2 truncate max-w-[100px]">
+              <span class="dark:text-secondary-500 text-primary-500 ml-2 truncate max-w-[100px]">
                 {{ currentTime() }}
               </span>
               @if (currentTime().length > maxVisibleChars) {
-                <button class="ml-2 text-white hover:bg-gray-700 rounded" (click)="toggleSection('time')">
+                <button class="ml-2 text-white hover:bg-neutral-700 rounded" (click)="toggleSection('time')">
                   <ng-icon name="heroEllipsisHorizontal" class="text-sm"></ng-icon>
                 </button>
               }
@@ -85,10 +85,10 @@ import { TranslateModule } from '@ngx-translate/core';
           <div class="flex items-center min-w-fit">
             <b>{{ 'InfoPanel.browserInfo' | translate }}</b>:
             @if (expandedSection() === 'browser') {
-              <span class="dark:text-green-500 text-orange-500 ml-2 break-all">
+              <span class="dark:text-secondary-500 text-primary-500 ml-2 break-all">
                 @if (browserInfo().length > maxVisibleChars) {
                   <button
-                    class="mr-1 p-1 text-white hover:bg-gray-700 rounded"
+                    class="mr-1 p-1 text-white hover:bg-neutral-700 rounded"
                     (click)="toggleSection('')"
                   >
                     <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
@@ -97,7 +97,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ browserInfo() }}
               </span>
             } @else {
-              <span class="dark:text-green-500 ml-2 truncate max-w-[100px] text-orange-500">
+              <span class="dark:text-secondary-500 ml-2 truncate max-w-[100px] text-primary-500">
                 {{ browserInfo() }}
               </span>
               @if (browserInfo().length > maxVisibleChars) {

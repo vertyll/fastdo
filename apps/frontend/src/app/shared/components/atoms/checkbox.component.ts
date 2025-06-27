@@ -12,7 +12,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       [formControl]="control()"
       [value]="value()"
       (change)="onChange($event)"
-      class="form-check-input h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
+      class="form-check-input h-4 w-4 text-primary-600 border-border-primary dark:border-dark-border-primary rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:bg-neutral-700 dark:text-dark-text-primary transition-colors duration-200"
     />
   `,
 })

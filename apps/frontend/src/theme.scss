@@ -34,17 +34,17 @@
 
 .success-snackbar .mdc-snackbar__surface,
 .success-snackbar .mat-mdc-snack-bar-label {
-  background-color: #198754 !important;
+  background-color: theme('colors.success.bootstrap') !important;
 }
 
 .error-snackbar .mdc-snackbar__surface,
 .error-snackbar .mat-mdc-snack-bar-label {
-  background-color: #dc3545 !important;
+  background-color: theme('colors.danger.bootstrap') !important;
 }
 
 .info-snackbar .mdc-snackbar__surface,
 .info-snackbar .mat-mdc-snack-bar-label {
-  background-color: gray !important;
+  background-color: theme('colors.neutral.600') !important;
 }
 
 @media (max-width: 600px) {

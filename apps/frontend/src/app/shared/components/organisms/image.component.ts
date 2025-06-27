@@ -41,19 +41,19 @@ export type ImageSize = 'sm' | 'md' | 'lg';
           <ng-icon
             name="heroUserCircle"
             [size]="getIconSize()"
-            class="text-gray-500"
+            class="text-text-secondary dark:text-dark-text-secondary"
           />
         }
 
         @if (mode() === 'edit') {
           <button
-            class="absolute flex bottom-3 right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg"
+            class="absolute flex bottom-3 right-2 bg-background-primary dark:bg-dark-background-primary rounded-full p-spacing-2 shadow-boxShadow-md"
             (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
           >
             <ng-icon
               name="heroCamera"
               size="20"
-              class="text-gray-700 dark:text-gray-300"
+              class="text-text-primary dark:text-dark-text-primary"
             />
           </button>
         }
@@ -68,15 +68,15 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Preview Modal -->
       @if (showPreviewModal()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-spacing-4">
+          <div class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-spacing-4">
+              <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
                 {{ 'Image.fullPreview' | translate }}
               </h3>
               <button
                 (click)="closePreviewModal()"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                class="text-text-secondary hover:text-text-primary dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
               >
                 <ng-icon name="heroXMark" size="24" />
               </button>
@@ -92,15 +92,15 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Cropper Modal -->
       @if (showCropper()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-spacing-4">
+          <div class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-spacing-4">
+              <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
                 {{ 'Image.cutPhoto' | translate }}
               </h3>
               <button
                 (click)="closeCropper()"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                class="text-text-secondary hover:text-text-primary dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
               >
                 <ng-icon name="heroXMark" size="24" />
               </button>
@@ -110,17 +110,17 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <img #cropperImage [src]="tempImageUrl()" class="max-w-full" alt="Cropper" />
             </div>
 
-            <div class="flex justify-end mt-4 space-x-3">
+            <div class="flex justify-end mt-spacing-4 space-x-spacing-3">
               <button
                 (click)="closeCropper()"
-                class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+                class="px-spacing-4 py-spacing-2 text-text-primary dark:text-dark-text-primary bg-neutral-200 dark:bg-neutral-700 rounded-borderRadius-md hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors duration-transitionDuration-200"
               >
                 {{ 'Basic.cancel' | translate }}
               </button>
               <button
                 (click)="save()"
                 [disabled]="isSaving()"
-                class="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors disabled:opacity-50"
+                class="px-spacing-4 py-spacing-2 text-white bg-primary-500 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500 transition-colors duration-transitionDuration-200 disabled:opacity-50"
               >
                 {{ isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
               </button>
@@ -231,10 +231,10 @@ export class ImageComponent implements OnDestroy {
 
     return `
       ${sizeClasses[this.size()]}
-      ${this.format() === 'circle' ? 'rounded-full' : 'rounded-lg'}
+      ${this.format() === 'circle' ? 'rounded-full' : 'rounded-borderRadius-lg'}
       overflow-hidden
-      bg-gray-200
-      dark:bg-gray-700
+      bg-neutral-200
+      dark:bg-neutral-700
       flex
       items-center
       justify-center
