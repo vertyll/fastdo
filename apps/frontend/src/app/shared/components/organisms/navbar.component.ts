@@ -81,7 +81,7 @@ import { ToastComponent } from '../atoms/toast.component';
   ],
   styles: [`
     .top-nav {
-      @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 md:px-6 transition-colors duration-200;
+      @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 transition-colors duration-200;
     }
 
     .nav-content {
@@ -89,7 +89,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .modules-container {
-      @apply hidden md:flex space-x-8;
+      @apply hidden md:flex space-x-4;
     }
 
     .module-item {
