@@ -120,7 +120,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <button
                 (click)="save()"
                 [disabled]="isSaving()"
-                class="px-spacing-4 py-spacing-2 text-white bg-primary-500 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500 transition-colors duration-transitionDuration-200 disabled:opacity-50"
+                class="px-spacing-4 py-spacing-2 text-white bg-primary-500 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-transitionDuration-200 disabled:opacity-50"
               >
                 {{ isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
               </button>

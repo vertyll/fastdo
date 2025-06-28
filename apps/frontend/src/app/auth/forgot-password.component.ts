@@ -47,7 +47,7 @@ import { AuthService } from './data-access/auth.service';
 
         <button
           type="submit"
-          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500"
+          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
         >
           {{ 'Auth.sendResetLink' | translate }}
         </button>

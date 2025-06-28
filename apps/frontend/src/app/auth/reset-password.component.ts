@@ -62,7 +62,7 @@ import { PasswordValidator } from './validators/password.validator';
 
         <button
           type="submit"
-          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:bg-primary-400 dark:hover:bg-primary-500 dark:focus:bg-primary-500 dark:focus:ring-primary-800 transition-colors duration-transitionDuration-200"
+          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:bg-primary-700 dark:focus:ring-primary-800 transition-colors duration-transitionDuration-200"
         >
           {{ 'Auth.resetPasswordButton' | translate }}
         </button>

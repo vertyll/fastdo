@@ -44,7 +44,7 @@ import { UserStateService } from './data-access/user.state.service';
                     {{ 'Profile.myProfile' | translate }}
                   </h2>
                   <button
-                    class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500 transition-colors duration-transitionDuration-200"
+                    class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-transitionDuration-200"
                     (click)="toggleEdit()"
                   >
                     {{ 'Profile.edit' | translate }}
@@ -86,7 +86,7 @@ import { UserStateService } from './data-access/user.state.service';
                     </button>
                     <button
                       type="submit"
-                      class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-400 dark:hover:bg-primary-500"
+                      class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
                       [disabled]="!profileForm.valid || stateService.state() === LOADING_STATE_VALUE.LOADING"
                     >
                       {{ 'Basic.save' | translate }}
