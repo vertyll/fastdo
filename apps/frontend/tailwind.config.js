@@ -53,11 +53,12 @@ module.exports = {
           100: '#d1fae5',
           200: '#a7f3d0',
           300: '#6ee7b7',
+          400: '#34d399',
           500: '#10b981',
           600: '#059669',
           700: '#047857',
           800: '#065f46',
-          bootstrap: '#198754',
+          900: '#064e3b',
         },
         warning: {
           50: '#fffbeb',
@@ -67,6 +68,9 @@ module.exports = {
           400: '#fbbf24',
           500: '#f59e0b',
           600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
         },
         danger: {
           50: '#fef2f2',
@@ -78,30 +82,33 @@ module.exports = {
           600: '#dc2626',
           700: '#b91c1c',
           800: '#991b1b',
-          bootstrap: '#dc3545',
+          900: '#7f1d1d',
         },
         info: {
           50: '#eff6ff',
           100: '#dbeafe',
-          500: '#3b82f6', // Blue for informational states
-          600: '#2563eb', // Darker blue for hover
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
           700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
         },
 
-        // Semantic colors - Light mode defaults, dark mode variants
+        // Semantic colors
         text: {
-          primary: '#111827', // Dark text for light mode
-          secondary: '#6b7280', // Medium gray text for light mode
-          muted: '#9ca3af', // Muted text for light mode
-          inverse: '#f9fafb', // Light text (for dark backgrounds)
+          primary: '#111827',
+          secondary: '#6b7280',
+          muted: '#9ca3af',
         },
 
         // Background colors
         background: {
-          primary: '#ffffff', // White background
-          secondary: '#f9fafb', // Light gray background
-          tertiary: '#f3f4f6', // Even lighter gray
-          inverse: '#1f2937', // Dark background (for dark mode)
+          primary: '#ffffff',
+          secondary: '#f9fafb',
+          tertiary: '#f3f4f6',
         },
 
         // Surface colors (for cards, panels, etc.)
@@ -109,33 +116,28 @@ module.exports = {
           primary: '#ffffff', // White surface
           secondary: '#f9fafb', // Light gray surface
           elevated: '#ffffff', // Elevated surface (modals, dropdowns)
-          inverse: '#374151', // Dark surface (for dark mode)
         },
 
         // Border colors
         border: {
           primary: '#e5e7eb', // Light border
           secondary: '#d1d5db', // Medium border
-          focus: '#f97316', // Orange focus border
-          inverse: '#4b5563', // Dark border (for dark mode)
+          focus: '#f97316', // Focus border
         },
 
         // Link colors
         link: {
-          primary: '#0ea5e9', // Sky blue for primary links (light mode)
-          'primary-hover': '#0284c7', // Darker sky blue for hover (light mode)
-          visited: '#7c3aed', // Purple for visited links (light mode)
-          'dark-primary': '#38bdf8', // Lighter sky blue for dark mode
-          'dark-primary-hover': '#0ea5e9', // Medium sky blue for dark mode hover
-          'dark-visited': '#a855f7', // Lighter purple for visited in dark mode
+          primary: '#0ea5e9', // Sky blue for primary links
+          hover: '#0284c7', // Darker sky blue for hover
+          visited: '#7c3aed', // Purple for visited links
         },
 
-        // Dark mode specific colors (using CSS custom properties approach)
+        // Dark mode specific colors
         dark: {
           text: {
             primary: '#f9fafb', // Light text for dark mode
             secondary: '#d1d5db', // Light gray text for dark mode
-            muted: '#6b7280', // Muted text for dark mode
+            muted: '#9ca3af', // Muted text for dark mode
           },
           background: {
             primary: '#1f2937', // Dark gray background
@@ -150,6 +152,11 @@ module.exports = {
           border: {
             primary: '#4b5563', // Dark border
             secondary: '#6b7280', // Lighter dark border
+          },
+          link: {
+            primary: '#38bdf8', // Lighter sky blue for dark mode
+            hover: '#0ea5e9', // Medium sky blue for dark mode hover
+            visited: '#a855f7', // Lighter purple for visited in dark mode
           },
         },
       },
@@ -168,8 +175,8 @@ module.exports = {
         'spacing-16': '4rem', // 64px
         'spacing-20': '5rem', // 80px
         'spacing-24': '6rem', // 96px
-        '18': '4.5rem', // 72px
-        '88': '22rem', // 352px
+        18: '4.5rem', // 72px
+        88: '22rem', // 352px
       },
 
       // Custom border radius values
@@ -191,9 +198,9 @@ module.exports = {
         'boxShadow-md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         'boxShadow-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         'boxShadow-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        'soft': '0 2px 8px 0 rgba(0, 0, 0, 0.12)',
-        'medium': '0 4px 12px 0 rgba(0, 0, 0, 0.15)',
-        'strong': '0 8px 24px 0 rgba(0, 0, 0, 0.2)',
+        soft: '0 2px 8px 0 rgba(0, 0, 0, 0.12)',
+        medium: '0 4px 12px 0 rgba(0, 0, 0, 0.15)',
+        strong: '0 8px 24px 0 rgba(0, 0, 0, 0.2)',
       },
 
       // Custom transitions
@@ -206,7 +213,7 @@ module.exports = {
         'transitionDuration-500': '500ms',
         'transitionDuration-700': '700ms',
         'transitionDuration-1000': '1000ms',
-        '400': '400ms',
+        400: '400ms',
       },
 
       // Animation keyframes
