@@ -33,7 +33,7 @@ import { PaginationParams } from '../../types/filter.type';
           <select
             [ngModel]="pageSize()"
             (ngModelChange)="onPageSizeChange($event)"
-            class="block w-20 appearance-none rounded-borderRadius-md border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary hover:dark:bg-dark-background-secondary py-1.5 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="block w-20 appearance-none rounded-borderRadius-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary hover:dark:bg-dark-background-primary py-1.5 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option *ngFor="let size of pageSizeOptions()" [value]="size">{{ size }}</option>
           </select>
