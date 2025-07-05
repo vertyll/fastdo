@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Inject, Put, UseInterceptors } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ClsService } from 'nestjs-cls';
-import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
-import { FastifyFileInterceptor } from '../common/interceptors/fastify-file.interceptor';
-import { CustomClsStore } from '../core/config/types/app.config.type';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
-import { User } from './entities/user.entity';
-import { IUsersService } from './interfaces/users-service.interface';
-import { IUsersServiceToken } from './tokens/users-service.token';
+import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
+import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor';
+import { CustomClsStore } from '../../core/config/types/app.config.type';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
+import { User } from '../entities/user.entity';
+import { IUsersService } from '../interfaces/users-service.interface';
+import { IUsersServiceToken } from '../tokens/users-service.token';
 
 @ApiTags('users')
 @Controller('users')

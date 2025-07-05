@@ -3,21 +3,21 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
+import { IConfirmationTokenService } from 'src/auth/interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from 'src/auth/interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from 'src/auth/tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from 'src/auth/tokens/refresh-token-service.token';
+import { CustomClsStore } from 'src/core/config/types/app.config.type';
+import { FileFacade } from 'src/core/file/facade/file.facade';
+import { IMailService } from 'src/core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from 'src/core/mail/tokens/mail-service.token';
+import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
 import { DataSource, DeepPartial } from 'typeorm';
-import { IConfirmationTokenService } from '../auth/interfaces/confirmation-token-service.interface';
-import { IRefreshTokenService } from '../auth/interfaces/refresh-token-service.interface';
-import { IConfirmationTokenServiceToken } from '../auth/tokens/confirmation-token-service.token';
-import { IRefreshTokenServiceToken } from '../auth/tokens/refresh-token-service.token';
-import { CustomClsStore } from '../core/config/types/app.config.type';
-import { FileFacade } from '../core/file/facade/file.facade';
-import { IMailService } from '../core/mail/interfaces/mail-service.interface';
-import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
-import { I18nTranslations } from '../generated/i18n/i18n.generated';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
-import { UserEmailHistory } from './entities/user-email-history.entity';
-import { User } from './entities/user.entity';
-import { IUsersService } from './interfaces/users-service.interface';
-import { UserRepository } from './repositories/user.repository';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
+import { UserEmailHistory } from '../entities/user-email-history.entity';
+import { User } from '../entities/user.entity';
+import { IUsersService } from '../interfaces/users-service.interface';
+import { UserRepository } from '../repositories/user.repository';
 
 @Injectable()
 export class UsersService implements IUsersService {

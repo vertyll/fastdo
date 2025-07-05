@@ -3,17 +3,17 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
+import { IConfirmationTokenService } from 'src/auth/interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from 'src/auth/interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from 'src/auth/tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from 'src/auth/tokens/refresh-token-service.token';
+import { FileFacade } from 'src/core/file/facade/file.facade';
+import { IMailService } from 'src/core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from 'src/core/mail/tokens/mail-service.token';
 import { DataSource, UpdateResult } from 'typeorm';
-import { IConfirmationTokenService } from '../auth/interfaces/confirmation-token-service.interface';
-import { IRefreshTokenService } from '../auth/interfaces/refresh-token-service.interface';
-import { IConfirmationTokenServiceToken } from '../auth/tokens/confirmation-token-service.token';
-import { IRefreshTokenServiceToken } from '../auth/tokens/refresh-token-service.token';
-import { FileFacade } from '../core/file/facade/file.facade';
-import { IMailService } from '../core/mail/interfaces/mail-service.interface';
-import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
-import { User } from './entities/user.entity';
-import { UserRepository } from './repositories/user.repository';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
+import { User } from '../entities/user.entity';
+import { UserRepository } from '../repositories/user.repository';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {

@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
-import { User } from './entities/user.entity';
-import { IUsersService } from './interfaces/users-service.interface';
-import { IUsersServiceToken } from './tokens/users-service.token';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
+import { User } from '../entities/user.entity';
+import { IUsersService } from '../interfaces/users-service.interface';
+import { IUsersServiceToken } from '../tokens/users-service.token';
 import { UsersController } from './users.controller';
 
 describe('UsersController', () => {
