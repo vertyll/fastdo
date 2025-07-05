@@ -4,10 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { DeleteResult, Repository } from 'typeorm';
-import { DurationConfigProvider } from '../core/providers/duration-config.provider';
-import { I18nTranslations } from '../generated/i18n/i18n.generated';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { IRefreshTokenService } from './interfaces/refresh-token-service.interface';
+import { DurationConfigProvider } from '../../core/providers/duration-config.provider';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { RefreshToken } from '../entities/refresh-token.entity';
+import { IRefreshTokenService } from '../interfaces/refresh-token-service.interface';
 
 @Injectable()
 export class RefreshTokenService implements IRefreshTokenService {

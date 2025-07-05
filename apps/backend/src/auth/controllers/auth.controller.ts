@@ -4,21 +4,21 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
-import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
-import { Cookies } from '../common/decorators/cookies.decorator';
-import { Public } from '../common/decorators/public.decorator';
-import { JwtRefreshAuthGuard } from '../common/guards/jwt-refresh-auth.guard';
-import { LocalAuthGuard } from '../common/guards/local-auth.guard';
-import { CookieConfigService } from '../core/config/cookie.config';
-import { CustomClsStore } from '../core/config/types/app.config.type';
-import { I18nTranslations } from '../generated/i18n/i18n.generated';
-import { User } from '../users/entities/user.entity';
-import { AuthService } from './auth.service';
-import { AccessTokenDto } from './dtos/access-token.dto';
-import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
-import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
+import { Cookies } from '../../common/decorators/cookies.decorator';
+import { Public } from '../../common/decorators/public.decorator';
+import { JwtRefreshAuthGuard } from '../../common/guards/jwt-refresh-auth.guard';
+import { LocalAuthGuard } from '../../common/guards/local-auth.guard';
+import { CookieConfigService } from '../../core/config/cookie.config';
+import { CustomClsStore } from '../../core/config/types/app.config.type';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { User } from '../../users/entities/user.entity';
+import { AccessTokenDto } from '../dtos/access-token.dto';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { LoginDto } from '../dtos/login.dto';
+import { RegisterDto } from '../dtos/register.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { AuthService } from '../services/auth.service';
 
 @ApiTags('auth')
 @Controller('auth')

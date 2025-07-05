@@ -4,14 +4,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyReply } from 'fastify';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
-import { LocalAuthGuard } from '../common/guards/local-auth.guard';
-import { CookieConfigService } from '../core/config/cookie.config';
-import { User } from '../users/entities/user.entity';
+import { LocalAuthGuard } from '../../common/guards/local-auth.guard';
+import { CookieConfigService } from '../../core/config/cookie.config';
+import { User } from '../../users/entities/user.entity';
+import { AccessTokenDto } from '../dtos/access-token.dto';
+import { LoginDto } from '../dtos/login.dto';
+import { RegisterDto } from '../dtos/register.dto';
+import { AuthService } from '../services/auth.service';
 import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { AccessTokenDto } from './dtos/access-token.dto';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
 
 jest.mock('../common/guards/local-auth.guard');
 
@@ -44,6 +44,7 @@ describe('AuthController', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
+    projectUserRoles: []
   };
 
   const mockLoginDto: LoginDto = {

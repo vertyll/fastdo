@@ -35,6 +35,7 @@ describe('JwtStrategy', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
+    projectUserRoles: []
   };
 
   const mockPayload: JwtPayload = {

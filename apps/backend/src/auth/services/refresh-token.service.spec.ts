@@ -5,8 +5,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
-import { DurationConfigProvider } from '../core/providers/duration-config.provider';
-import { RefreshToken } from './entities/refresh-token.entity';
+import { DurationConfigProvider } from '../../core/providers/duration-config.provider';
+import { RefreshToken } from '../entities/refresh-token.entity';
 import { RefreshTokenService } from './refresh-token.service';
 
 describe('RefreshTokenService', () => {

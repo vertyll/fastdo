@@ -6,27 +6,27 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
-import { RoleEnum } from '../common/enums/role.enum';
-import { IMailService } from '../core/mail/interfaces/mail-service.interface';
-import { IMailServiceToken } from '../core/mail/tokens/mail-service.token';
-import { DurationConfigProvider } from '../core/providers/duration-config.provider';
-import { Role } from '../roles/entities/role.entity';
-import { IRolesService } from '../roles/interfaces/roles-service.interface';
-import { RoleRepository } from '../roles/repositories/role.repository';
-import { IRolesServiceToken } from '../roles/tokens/roles-service.token';
-import { UserRole } from '../users/entities/user-role.entity';
-import { User } from '../users/entities/user.entity';
-import { IUsersService } from '../users/interfaces/users-service.interface';
-import { UserRepository } from '../users/repositories/user.repository';
-import { IUsersServiceToken } from '../users/tokens/users-service.token';
+import { RoleEnum } from '../../common/enums/role.enum';
+import { IMailService } from '../../core/mail/interfaces/mail-service.interface';
+import { IMailServiceToken } from '../../core/mail/tokens/mail-service.token';
+import { DurationConfigProvider } from '../../core/providers/duration-config.provider';
+import { Role } from '../../roles/entities/role.entity';
+import { IRolesService } from '../../roles/interfaces/roles-service.interface';
+import { RoleRepository } from '../../roles/repositories/role.repository';
+import { IRolesServiceToken } from '../../roles/tokens/roles-service.token';
+import { UserRole } from '../../users/entities/user-role.entity';
+import { User } from '../../users/entities/user.entity';
+import { IUsersService } from '../../users/interfaces/users-service.interface';
+import { UserRepository } from '../../users/repositories/user.repository';
+import { IUsersServiceToken } from '../../users/tokens/users-service.token';
+import { LoginDto } from '../dtos/login.dto';
+import { RegisterDto } from '../dtos/register.dto';
+import { RefreshToken } from '../entities/refresh-token.entity';
+import { IConfirmationTokenService } from '../interfaces/confirmation-token-service.interface';
+import { IRefreshTokenService } from '../interfaces/refresh-token-service.interface';
+import { IConfirmationTokenServiceToken } from '../tokens/confirmation-token-service.token';
+import { IRefreshTokenServiceToken } from '../tokens/refresh-token-service.token';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { IConfirmationTokenService } from './interfaces/confirmation-token-service.interface';
-import { IRefreshTokenService } from './interfaces/refresh-token-service.interface';
-import { IConfirmationTokenServiceToken } from './tokens/confirmation-token-service.token';
-import { IRefreshTokenServiceToken } from './tokens/refresh-token-service.token';
 
 jest.mock('bcryptjs');
 
@@ -93,6 +93,7 @@ describe('AuthService', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
+    projectUserRoles: []
   };
 
   mockRefreshToken.user = mockUser;
