@@ -1,10 +1,10 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
-import { PrivacyPolicy } from './entities/privacy-policy.entity';
-import { Terms } from './entities/terms.entity';
-import { PrivacyPolicyRepository } from './repositories/privacy-policy.repository';
-import { TermsRepository } from './repositories/terms.repository';
+import { PrivacyPolicy } from '../entities/privacy-policy.entity';
+import { Terms } from '../entities/terms.entity';
+import { PrivacyPolicyRepository } from '../repositories/privacy-policy.repository';
+import { TermsRepository } from '../repositories/terms.repository';
 import { TermsAndPoliciesService } from './terms-and-policies.service';
 
 describe('TermsAndPoliciesService', () => {

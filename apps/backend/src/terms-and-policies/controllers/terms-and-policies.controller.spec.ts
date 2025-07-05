@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrivacyPolicy } from './entities/privacy-policy.entity';
-import { Terms } from './entities/terms.entity';
+import { PrivacyPolicy } from '../entities/privacy-policy.entity';
+import { Terms } from '../entities/terms.entity';
+import { TermsAndPoliciesService } from '../services/terms-and-policies.service';
 import { TermsAndPoliciesController } from './terms-and-policies.controller';
-import { TermsAndPoliciesService } from './terms-and-policies.service';
 
 describe('TermsAndPoliciesController', () => {
   let controller: TermsAndPoliciesController;

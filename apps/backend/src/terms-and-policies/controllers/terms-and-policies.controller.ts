@@ -1,10 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiWrappedResponse } from '../common/decorators/api-wrapped-response.decorator';
-import { Public } from '../common/decorators/public.decorator';
-import { PrivacyPolicy } from './entities/privacy-policy.entity';
-import { Terms } from './entities/terms.entity';
-import { TermsAndPoliciesService } from './terms-and-policies.service';
+import { ApiWrappedResponse } from 'src/common/decorators/api-wrapped-response.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
+import { PrivacyPolicy } from '../entities/privacy-policy.entity';
+import { Terms } from '../entities/terms.entity';
+import { TermsAndPoliciesService } from '../services/terms-and-policies.service';
 
 @ApiTags('terms-and-policies')
 @Controller('terms-and-policies')
