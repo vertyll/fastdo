@@ -16,7 +16,7 @@ export class RefreshToken {
   @Exclude()
   @Column()
   @Index()
-  expiresAt: Date;
+  dateExpiration: Date;
 
   @Exclude()
   @ManyToOne(() => User, user => user.refreshTokens)

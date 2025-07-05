@@ -45,7 +45,7 @@ export class RefreshTokenService implements IRefreshTokenService {
       throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
     }
 
-    if (validToken.expiresAt < new Date()) {
+    if (validToken.dateExpiration < new Date()) {
       throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.tokenExpired'));
     }
 
@@ -62,7 +62,7 @@ export class RefreshTokenService implements IRefreshTokenService {
 
     await this.refreshTokenRepository.save({
       token: refreshTokenHash,
-      expiresAt: refreshTokenExpiry,
+      dateExpiration: refreshTokenExpiry,
       user: { id: userId },
     });
   }
@@ -79,7 +79,7 @@ export class RefreshTokenService implements IRefreshTokenService {
     const result: DeleteResult = await this.refreshTokenRepository
       .createQueryBuilder()
       .delete()
-      .where('expiresAt < :now', { now: new Date() })
+      .where('dateExpiration < :now', { now: new Date() })
       .execute();
     return result.affected || 0;
   }

@@ -47,7 +47,7 @@ describe('JwtRefreshStrategy', () => {
   const mockRefreshTokenEntity: RefreshToken = {
     id: 1,
     token: 'hashedToken',
-    expiresAt: new Date(Date.now() + 10000),
+    dateExpiration: new Date(Date.now() + 10000),
     user: mockUser,
   };
 

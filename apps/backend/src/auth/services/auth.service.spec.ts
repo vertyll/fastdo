@@ -60,14 +60,18 @@ describe('AuthService', () => {
 
   const mockRole: Role = {
     id: 1,
-    name: RoleEnum.User,
+    code: RoleEnum.User,
     userRoles: [],
+    isActive: false,
+    dateCreation: new Date(),
+    dateModification: null,
+    translations: []
   };
 
   const mockRefreshToken: RefreshToken = {
     id: 1,
     token: 'mock-refresh-token',
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    dateExpiration: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     user: {} as User,
   };
 
@@ -386,7 +390,7 @@ describe('AuthService', () => {
       const storedTokens = [{
         id: 1,
         token: hashedToken,
-        expiresAt: new Date(Date.now() + 10000),
+        dateExpiration: new Date(Date.now() + 10000),
         user: mockUser,
       }];
 
@@ -427,7 +431,7 @@ describe('AuthService', () => {
       const expiredToken = {
         id: 1,
         token: hashedToken,
-        expiresAt: new Date(Date.now() - 10000),
+        dateExpiration: new Date(Date.now() - 10000),
         user: mockUser,
       };
 
@@ -444,7 +448,7 @@ describe('AuthService', () => {
       const invalidToken = {
         id: 1,
         token: 'different-hash',
-        expiresAt: new Date(Date.now() + 10000),
+        dateExpiration: new Date(Date.now() + 10000),
         user: mockUser,
       };
 
@@ -464,7 +468,7 @@ describe('AuthService', () => {
       const validToken = {
         id: 1,
         token: 'hashed-token',
-        expiresAt: new Date(Date.now() + 10000),
+        dateExpiration: new Date(Date.now() + 10000),
         user: mockUser,
       };
 
@@ -487,7 +491,7 @@ describe('AuthService', () => {
       const invalidToken = {
         id: 1,
         token: 'hashed-token',
-        expiresAt: new Date(Date.now() + 10000),
+        dateExpiration: new Date(Date.now() + 10000),
         user: mockUser,
       };
 

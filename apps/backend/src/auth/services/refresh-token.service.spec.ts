@@ -112,7 +112,7 @@ describe('RefreshTokenService', () => {
     });
 
     it('should throw UnauthorizedException if token is expired', async () => {
-      const tokens = [{ token: 'hashed-token', expiresAt: new Date(Date.now() - 10000) }] as RefreshToken[];
+      const tokens = [{ token: 'hashed-token', dateExpiration: new Date(Date.now() - 10000) }] as RefreshToken[];
       refreshTokenRepository.find.mockResolvedValueOnce(tokens);
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(true as never);
 
@@ -122,7 +122,7 @@ describe('RefreshTokenService', () => {
     });
 
     it('should return valid token', async () => {
-      const tokens = [{ token: 'hashed-token', expiresAt: new Date(Date.now() + 10000) }] as RefreshToken[];
+      const tokens = [{ token: 'hashed-token', dateExpiration: new Date(Date.now() + 10000) }] as RefreshToken[];
       refreshTokenRepository.find.mockResolvedValueOnce(tokens);
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(true as never);
 
@@ -146,7 +146,7 @@ describe('RefreshTokenService', () => {
 
       expect(refreshTokenRepository.save).toHaveBeenCalledWith({
         token: hashedToken,
-        expiresAt: expiryDate,
+        dateExpiration: expiryDate,
         user: { id: userId },
       });
     });
@@ -178,7 +178,7 @@ describe('RefreshTokenService', () => {
 
       expect(result).toBe(1);
       expect(
-        refreshTokenRepository.createQueryBuilder().delete().where('expiresAt < :now', { now: new Date() }).execute,
+        refreshTokenRepository.createQueryBuilder().delete().where('dateExpiration < :now', { now: new Date() }).execute,
       ).toHaveBeenCalled();
     });
   });

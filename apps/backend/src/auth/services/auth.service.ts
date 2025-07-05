@@ -74,7 +74,7 @@ export class AuthService implements IAuthService {
       const existingUser = await this.userRepository.findOne({ where: { email: registerDto.email } });
       if (existingUser) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.userAlreadyExists'));
 
-      const role = await this.roleRepository.findOne({ where: { name: RoleEnum.User } });
+      const role = await this.roleRepository.findOne({ where: { code: RoleEnum.User } });
       if (!role) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.roleNotFound'));
 
       const { email, password, termsAccepted, privacyPolicyAccepted } = registerDto;
