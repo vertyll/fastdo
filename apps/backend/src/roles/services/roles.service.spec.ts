@@ -1,10 +1,10 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
-import { UserRole } from '../users/entities/user-role.entity';
-import { UserRoleRepository } from '../users/repositories/user-role.repository';
-import { Role } from './entities/role.entity';
-import { RoleRepository } from './repositories/role.repository';
+import { UserRole } from 'src/users/entities/user-role.entity';
+import { UserRoleRepository } from 'src/users/repositories/user-role.repository';
+import { Role } from '../entities/role.entity';
+import { RoleRepository } from '../repositories/role.repository';
 import { RolesService } from './roles.service';
 
 describe('RolesService', () => {

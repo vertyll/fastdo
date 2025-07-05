@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { I18nTranslations } from '../generated/i18n/i18n.generated';
-import { UserRoleRepository } from '../users/repositories/user-role.repository';
-import { Role } from './entities/role.entity';
-import { RoleRepository } from './repositories/role.repository';
+import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
+import { UserRoleRepository } from 'src/users/repositories/user-role.repository';
+import { Role } from '../entities/role.entity';
+import { RoleRepository } from '../repositories/role.repository';
 
 @Injectable()
 export class RolesService {
