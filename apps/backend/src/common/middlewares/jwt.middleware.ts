@@ -59,7 +59,7 @@ export class JwtMiddleware implements NestMiddleware {
     try {
       return this.jwt.verify(token);
     } catch (e) {
-      console.log(
+      console.error(
         this.i18n.t('messages.Auth.errors.verifyingTokenFailed'),
         e,
       );

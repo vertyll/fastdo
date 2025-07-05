@@ -43,12 +43,27 @@ export class FastifyFileInterceptor implements NestInterceptor {
           const buffer = await this.streamToBuffer(part.file);
           formData[this.fieldName] = this.createMultipartFile(part, buffer);
         } else if (part.type === 'field') {
-          formData[part.fieldname] = part.value;
+          if (formData[part.fieldname] !== undefined) {
+            if (Array.isArray(formData[part.fieldname])) {
+              formData[part.fieldname].push(part.value);
+            } else {
+              formData[part.fieldname] = [formData[part.fieldname], part.value];
+            }
+          } else {
+            formData[part.fieldname] = part.value;
+          }
         }
       }
     } catch (error) {
       this.handleFileError(error, i18n);
     }
+
+    const arrayFields = ['categories', 'statuses'];
+    arrayFields.forEach(field => {
+      if (formData[field] && !Array.isArray(formData[field])) {
+        formData[field] = [formData[field]];
+      }
+    });
 
     return formData;
   }
