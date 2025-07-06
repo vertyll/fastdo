@@ -1,13 +1,13 @@
 ## Project Overview 
 
-A web application for managing projects and tasks for specific projects. The application consists of a monorepo containing separate backend and frontend applications.
+A web application for managing projects and tasks for specific projects. The application consists of a monorepo containing separate back-end and front-end applications.
 
 ## Link: https://fastdo.vertyll.usermd.net/
 ## Swagger: https://api.fastdo.vertyll.usermd.net/api#/ 
 
 ## Technology Stack
 
-### Backend:
+### Back-end:
 - NestJS
 - Fastify
 - TypeORM
@@ -15,7 +15,7 @@ A web application for managing projects and tasks for specific projects. The app
 - Jest
 - OpenAPI (Swagger)
 
-### Frontend:
+### Front-end:
 - Angular
 - RxJS
 - NGXS
@@ -25,7 +25,7 @@ A web application for managing projects and tasks for specific projects. The app
 - JWT authentication - the application uses JWT tokens for user authentication and includes a token refresh mechanism
 - the application allows logging in on multiple devices simultaneously
 
-### Backend Core:
+### Back-end Core:
 - the application includes an exception handling mechanism
 - the application includes a logging mechanism
 - the application is fully translated into English and Polish
@@ -39,7 +39,7 @@ A web application for managing projects and tasks for specific projects. The app
 - API documentation is written using OpenAPI (Swagger)
 - and many other features that can be found in the application code
 
-### Frontend Core:
+### Front-end Core:
 - the application includes a state management system using NGXS
 - the application is fully translated into English and Polish
 - the application includes custom Tailwind CSS theme with dark/light mode support
@@ -74,9 +74,9 @@ pnpm install
 npm install
 ```
 
-> **Note:** at this point, all dependencies needed to run the project will be installed and .env files will be created in the backend structure
+> **Note:** at this point, all dependencies needed to run the project will be installed and .env files will be created in the back-end structure
 - In the created .env files, define your own API keys and configuration data.
-- In the frontend structure, define your API address in the `environment.ts` file
+- In the front-end structure, define your API address in the `environment.ts` file
 
 `If you want to run the project locally:`
 
@@ -98,7 +98,7 @@ docker-compose -f docker-compose.dev.yml --env-file .env up -d
 ```
 
 By default, if you use one of the above paths:
-- the backend application should be available at [http://localhost:3000](http://localhost:3000)
-- the frontend application should be available at [http://localhost:4200](http://localhost:4200)
+- the back-end application should be available at [http://localhost:3000](http://localhost:3000)
+- the front-end application should be available at [http://localhost:4200](http://localhost:4200)
 
 Paste the addresses into your web browser.
