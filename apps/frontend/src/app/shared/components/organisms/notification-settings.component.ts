@@ -26,112 +26,112 @@ import { UpdateNotificationSettingsDto } from '../../types/notification.type';
           <!-- App Notifications -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.appNotifications' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="appNotifications"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- Email Notifications -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.emailNotifications' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="emailNotifications"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- Project Invitations -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.projectInvitations' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="projectInvitations"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- Task Assignments -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.taskAssignments' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="taskAssignments"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- Task Comments -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.taskComments' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="taskComments"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- Task Status Changes -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.taskStatusChanges' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="taskStatusChanges"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- Project Updates -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.projectUpdates' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="projectUpdates"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
 
           <!-- System Notifications -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.systemNotifications' | translate }}
               </label>
             </div>
             <input
               type="checkbox"
               formControlName="systemNotifications"
-              class="h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
             />
           </div>
         </div>

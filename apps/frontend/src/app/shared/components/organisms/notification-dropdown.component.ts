@@ -24,19 +24,19 @@ import { NotificationDto } from '../../types/notification.type';
   template: `
     <div class="relative">
       <button
-        class="relative flex items-center justify-center p-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200"
+        class="relative flex items-center justify-center p-2 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
         (click)="toggleDropdown()"
         [title]="'Notifications.title' | translate"
       >
         <ng-icon
           [name]="unreadCount() > 0 ? 'heroBellAlert' : 'heroBell'"
           size="20"
-          [class]="unreadCount() > 0 ? 'text-orange-500' : 'text-text-secondary dark:text-dark-text-secondary'"
+          [class]="unreadCount() > 0 ? 'text-primary-500' : 'text-text-secondary dark:text-dark-text-secondary'"
         />
         
         @if (unreadCount() > 0) {
           <span
-            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
+            class="absolute -top-1 -right-1 bg-danger-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
           >
             {{ unreadCount() > 99 ? '99+' : unreadCount() }}
           </span>
@@ -45,7 +45,7 @@ import { NotificationDto } from '../../types/notification.type';
 
       @if (isDropdownOpen) {
         <div 
-          class="absolute right-0 top-full mt-2 w-80 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200 z-50"
+          class="absolute right-0 top-full mt-2 w-80 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200 z-50"
           (click)="$event.stopPropagation()"
         >
           <div class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary">
@@ -55,14 +55,14 @@ import { NotificationDto } from '../../types/notification.type';
               </h3>
               <div 
                 class="w-2 h-2 rounded-full"
-                [class]="webSocketConnected() ? 'bg-green-500' : 'bg-red-500'"
+                [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
                 [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
               ></div>
             </div>
             <div class="flex items-center space-x-2">
               @if (notifications().length > 0) {
                 <button
-                  class="p-1 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 rounded-md hover:bg-red-50 dark:hover:bg-red-900"
+                  class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
                   (click)="clearAllNotifications()"
                   [title]="'Notifications.clearAll' | translate"
                 >
@@ -88,7 +88,7 @@ import { NotificationDto } from '../../types/notification.type';
             } @else {
               @for (notification of notifications(); track notification.id) {
                 <div
-                  class="px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-700 border-b border-border-primary dark:border-dark-border-primary last:border-b-0 cursor-pointer transition-colors duration-200"
+                  class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 cursor-pointer transition-colors duration-200"
                   [class.bg-primary-50]="notification.status === 'UNREAD'"
                   (click)="markAsRead(notification)"
                 >
@@ -124,7 +124,7 @@ import { NotificationDto } from '../../types/notification.type';
               </button>
               
               <button
-                class="flex items-center space-x-1 text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                class="flex items-center space-x-1 text-xs text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
                 (click)="clearAllNotifications()"
               >
                 <ng-icon name="heroTrash" size="14" />

@@ -105,7 +105,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .module-item {
-      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary;
+      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
     }
 
     .module-item.active {
@@ -121,7 +121,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .login-button {
-      @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-neutral-700;
+      @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-dark-surface-secondary;
     }
 
     .register-button {
@@ -129,11 +129,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .logout-button {
-      @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
+      @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
     }
 
     .menu-button {
-      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
+      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
     }
 
     .menu-button.active {
@@ -149,14 +149,14 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .mobile-menu-content {
-      @apply absolute w-48 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      @apply absolute w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       position: absolute;
       top: 3.5rem;
       left: 4rem;
     }
 
     .mobile-menu-content.language-menu {
-      @apply absolute w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      @apply absolute w-24 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       position: absolute;
       top: 3rem;
       right: 0.5rem;
@@ -165,7 +165,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 text-sm cursor-pointer;
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 text-sm cursor-pointer;
     }
 
     .mobile-module-item.active {
@@ -173,7 +173,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .side-nav {
-      @apply hidden md:block w-24 bg-background-primary dark:bg-dark-background-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      @apply hidden md:block w-24 bg-surface-primary dark:bg-dark-surface-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
     }
 
     .side-nav-content {
@@ -185,7 +185,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .mobile-section-item {
-      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary;
+      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
     }
 
     .mobile-section-item.active {
@@ -201,11 +201,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .show-more-button {
-      @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200;
+      @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200;
     }
 
     .section-item {
-      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 dark:text-dark-text-primary transition-colors duration-200;
+      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary dark:text-dark-text-primary transition-colors duration-200;
     }
 
     .section-item.active {
@@ -245,11 +245,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .language-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
     }
 
     .profile-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
     }
 
     .language-dropdown {
@@ -261,7 +261,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .language-option {
-      @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer w-full text-left transition-colors duration-200;
+      @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
     }
 
     .language-option.active {
@@ -273,7 +273,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .hamburger-line {
-      @apply w-6 h-0.5 bg-neutral-600 dark:bg-neutral-300 transition-all duration-300;
+      @apply w-6 h-0.5 bg-text-secondary dark:bg-dark-text-secondary transition-all duration-300;
     }
 
     .hamburger-line:not(:last-child) {
@@ -297,7 +297,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .mobile-nav-item {
-      @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 py-2;
+      @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 py-2;
     }
   `],
   template: `
@@ -493,7 +493,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                     <span>{{ 'Notifications.title' | translate }}</span>
                   </div>
                   @if (unreadNotificationCount() > 0) {
-                    <span class="bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    <span class="bg-danger-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                       {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
                     </span>
                   }
@@ -572,16 +572,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly visibleSections = signal<NavSection[]>([]);
   protected readonly currentModule = signal<string>('');
   protected readonly currentSection = signal<string>('');
-
-  // Notification state
   protected readonly unreadNotificationCount = this.notificationStateService.unreadCount;
 
   protected menuOpen: boolean = false;
   protected mobileMenuOpen: boolean = false;
   protected showAllSections: boolean = false;
   protected languageDropdownOpen: boolean = false;
-  protected readonly languages: string[] = ['pl', 'en'];
   protected profileDropdownOpen: boolean = false;
+  protected readonly languages: string[] = ['pl', 'en'];
 
   constructor() {
     this.router.events.pipe(
