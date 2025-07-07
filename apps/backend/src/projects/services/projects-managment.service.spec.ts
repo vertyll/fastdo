@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ITasksService } from '../tasks/interfaces/tasks-service.interface';
-import { ITasksServiceToken } from '../tasks/tokens/tasks-service.token';
+import { ITasksService } from '../../tasks/interfaces/tasks-service.interface';
+import { ITasksServiceToken } from '../../tasks/tokens/tasks-service.token';
 import { ProjectManagementService } from './projects-managment.service';
 import { ProjectsService } from './projects.service';
 

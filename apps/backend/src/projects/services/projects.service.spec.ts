@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
+import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
-import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
-import { ProjectUser } from './entities/project-user.entity';
-import { Project } from './entities/project.entity';
+import { ProjectUser } from '../entities/project-user.entity';
+import { Project } from '../entities/project.entity';
+import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectsService } from './projects.service';
-import { ProjectRepository } from './repositories/project.repository';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;

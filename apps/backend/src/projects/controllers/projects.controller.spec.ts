@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
-import { Project } from './entities/project.entity';
-import { ProjectManagementService } from './projects-managment.service';
+import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
+import { Project } from '../entities/project.entity';
+import { ProjectManagementService } from '../services/projects-managment.service';
+import { ProjectsService } from '../services/projects.service';
 import { ProjectsController } from './projects.controller';
-import { ProjectsService } from './projects.service';
 
 describe('ProjectsController', () => {
   let controller: ProjectsController;
@@ -52,6 +52,14 @@ describe('ProjectsController', () => {
             dateModification: null,
             tasks: [],
             projectUsers: [],
+            description: null,
+            isPublic: false,
+            icon: null,
+            isActive: false,
+            type: null,
+            userRoles: [],
+            categories: [],
+            statuses: [],
           },
         ],
         pagination: {
@@ -77,6 +85,14 @@ describe('ProjectsController', () => {
         dateModification: null,
         tasks: [],
         projectUsers: [],
+        description: null,
+        isPublic: false,
+        icon: null,
+        isActive: false,
+        type: null,
+        userRoles: [],
+        categories: [],
+        statuses: [],
       };
       mockProjectsService.create.mockResolvedValue(result);
       expect(await controller.create(createDto)).toEqual(result);
@@ -92,6 +108,14 @@ describe('ProjectsController', () => {
         dateModification: null,
         tasks: [],
         projectUsers: [],
+        description: null,
+        isPublic: false,
+        icon: null,
+        isActive: false,
+        type: null,
+        userRoles: [],
+        categories: [],
+        statuses: [],
       };
       mockProjectsService.findOne.mockResolvedValue(result);
       expect(await controller.findOne('1')).toEqual(result);
@@ -108,6 +132,14 @@ describe('ProjectsController', () => {
         dateModification: new Date(),
         tasks: [],
         projectUsers: [],
+        description: null,
+        isPublic: false,
+        icon: null,
+        isActive: false,
+        type: null,
+        userRoles: [],
+        categories: [],
+        statuses: [],
       };
       mockProjectsService.update.mockResolvedValue(result);
       expect(await controller.update('1', updateDto)).toEqual(result);

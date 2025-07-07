@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ITasksService } from '../tasks/interfaces/tasks-service.interface';
-import { ITasksServiceToken } from '../tasks/tokens/tasks-service.token';
+import { ITasksService } from '../../tasks/interfaces/tasks-service.interface';
+import { ITasksServiceToken } from '../../tasks/tokens/tasks-service.token';
 import { ProjectsService } from './projects.service';
 
 @Injectable()
