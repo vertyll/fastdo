@@ -21,6 +21,6 @@ import { IRolesServiceToken } from './tokens/roles-service.token';
     RoleRepository,
     UserRoleRepository,
   ],
-  exports: [IRolesServiceToken, UserRoleRepository, RoleRepository, RolesService],
+  exports: [IRolesServiceToken, UserRoleRepository, RoleRepository],
 })
 export class RolesModule {}
