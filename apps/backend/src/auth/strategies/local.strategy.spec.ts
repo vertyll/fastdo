@@ -31,7 +31,7 @@ describe('LocalStrategy', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
-    projectUserRoles: []
+    projectUserRoles: [],
   };
 
   beforeEach(() => {

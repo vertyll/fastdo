@@ -178,7 +178,8 @@ describe('RefreshTokenService', () => {
 
       expect(result).toBe(1);
       expect(
-        refreshTokenRepository.createQueryBuilder().delete().where('dateExpiration < :now', { now: new Date() }).execute,
+        refreshTokenRepository.createQueryBuilder().delete().where('dateExpiration < :now', { now: new Date() })
+          .execute,
       ).toHaveBeenCalled();
     });
   });

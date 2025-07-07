@@ -44,7 +44,7 @@ describe('AuthController', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
-    projectUserRoles: []
+    projectUserRoles: [],
   };
 
   const mockLoginDto: LoginDto = {

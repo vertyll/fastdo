@@ -65,7 +65,7 @@ describe('AuthService', () => {
     isActive: false,
     dateCreation: new Date(),
     dateModification: null,
-    translations: []
+    translations: [],
   };
 
   const mockRefreshToken: RefreshToken = {
@@ -97,7 +97,7 @@ describe('AuthService', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
-    projectUserRoles: []
+    projectUserRoles: [],
   };
 
   mockRefreshToken.user = mockUser;

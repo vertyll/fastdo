@@ -41,7 +41,7 @@ describe('JwtRefreshStrategy', () => {
     refreshTokens: [],
     projectUsers: [],
     emailHistories: [],
-    projectUserRoles: []
+    projectUserRoles: [],
   };
 
   const mockRefreshTokenEntity: RefreshToken = {
