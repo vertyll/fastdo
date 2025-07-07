@@ -72,7 +72,7 @@ describe('MailSenderService', () => {
       const options = {
         to: 'test@example.com',
         subject: 'Test Subject',
-        templateName: MailTemplateName,
+        templateName: MailTemplateName.Confirmation,
         templateData: { name: 'John' },
       };
       const config = {
@@ -107,7 +107,7 @@ describe('MailSenderService', () => {
       const options = {
         to: 'test@example.com',
         subject: 'Test Subject',
-        templateName: 'testTemplate',
+        templateName: MailTemplateName.Confirmation,
         templateData: { name: 'John' },
       };
       const config = {

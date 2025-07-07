@@ -1,10 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
+import { FileFacade } from 'src/core/file/facade/file.facade';
+import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
+import { INotificationServiceToken } from 'src/notifications/tokens/notification-service.token';
+import { IUsersService } from 'src/users/interfaces/users-service.interface';
+import { IUsersServiceToken } from 'src/users/tokens/users-service.token';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
 import { ProjectUser } from '../entities/project-user.entity';
+import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { Project } from '../entities/project.entity';
+import { ProjectRole } from '../entities/project-role.entity';
 import { ProjectRepository } from '../repositories/project.repository';
+import { ProjectRoleService } from './project-role.service';
 import { ProjectsService } from './projects.service';
 
 describe('ProjectsService', () => {
@@ -12,6 +20,10 @@ describe('ProjectsService', () => {
   let mockProjectRepository: jest.Mocked<ProjectRepository>;
   let mockDataSource: jest.Mocked<DataSource>;
   let mockClsService: jest.Mocked<ClsService>;
+  let mockFileFacade: jest.Mocked<FileFacade>;
+  let mockProjectRoleService: jest.Mocked<ProjectRoleService>;
+  let mockNotificationService: jest.Mocked<INotificationService>;
+  let mockUsersService: jest.Mocked<IUsersService>;
   let mockQueryRunner: any;
 
   beforeEach(async () => {
@@ -23,8 +35,11 @@ describe('ProjectsService', () => {
       release: jest.fn(),
       manager: {
         getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockImplementation(entity => ({ id: 1, ...entity })),
           save: jest.fn().mockImplementation(entity => ({ id: 1, ...entity })),
+          update: jest.fn().mockResolvedValue({ raw: [], affected: 1 }),
           delete: jest.fn().mockResolvedValue({ raw: [], affected: 1 }),
+          findOne: jest.fn(),
         }),
       },
     };
@@ -47,12 +62,35 @@ describe('ProjectsService', () => {
       set: jest.fn(),
     } as any;
 
+    mockFileFacade = {
+      uploadFile: jest.fn(),
+      deleteFile: jest.fn(),
+    } as any;
+
+    mockProjectRoleService = {
+      findOneByCode: jest.fn(),
+      assignRoleToUserInProject: jest.fn(),
+      removeUserFromProject: jest.fn(),
+    } as any;
+
+    mockNotificationService = {
+      sendNotification: jest.fn(),
+    } as any;
+
+    mockUsersService = {
+      findOne: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProjectsService,
         { provide: ProjectRepository, useValue: mockProjectRepository },
         { provide: DataSource, useValue: mockDataSource },
         { provide: ClsService, useValue: mockClsService },
+        { provide: FileFacade, useValue: mockFileFacade },
+        { provide: ProjectRoleService, useValue: mockProjectRoleService },
+        { provide: INotificationServiceToken, useValue: mockNotificationService },
+        { provide: IUsersServiceToken, useValue: mockUsersService },
       ],
     }).compile();
 
@@ -92,13 +130,32 @@ describe('ProjectsService', () => {
     it('should create a new project and project user relation', async () => {
       const createDto = { name: 'New Project' };
       const mockNewProject = { id: 1, ...createDto };
+      const mockManagerRole: ProjectRole = {
+        id: 1,
+        code: 'manager',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+        userRoles: [],
+      } as ProjectRole;
 
-      mockQueryRunner.manager.getRepository.mockImplementation((entity: typeof Project | typeof ProjectUser) => {
+      mockProjectRoleService.findOneByCode.mockResolvedValue(mockManagerRole);
+
+      mockQueryRunner.manager.getRepository.mockImplementation((entity: any) => {
         if (entity === Project) {
-          return { save: jest.fn().mockResolvedValue(mockNewProject) };
+          return { 
+            create: jest.fn().mockReturnValue(mockNewProject),
+            save: jest.fn().mockResolvedValue(mockNewProject) 
+          };
         }
         if (entity === ProjectUser) {
           return {
+            create: jest.fn().mockReturnValue({
+              id: 1,
+              project: mockNewProject,
+              user: { id: 1 },
+            }),
             save: jest.fn().mockResolvedValue({
               id: 1,
               project: mockNewProject,
@@ -106,7 +163,20 @@ describe('ProjectsService', () => {
             }),
           };
         }
-        return { save: jest.fn() };
+        if (entity === ProjectUserRole) {
+          return {
+            save: jest.fn().mockResolvedValue({
+              id: 1,
+              project: mockNewProject,
+              user: { id: 1 },
+              projectRole: mockManagerRole,
+            }),
+          };
+        }
+        return { 
+          create: jest.fn(),
+          save: jest.fn() 
+        };
       });
 
       const result = await service.create(createDto);
@@ -123,9 +193,15 @@ describe('ProjectsService', () => {
 
       mockQueryRunner.manager.getRepository.mockImplementation((entity: typeof Project | typeof ProjectUser) => {
         if (entity === Project) {
-          return { save: jest.fn().mockRejectedValue(new Error('Test error')) };
+          return { 
+            create: jest.fn().mockReturnValue({}),
+            save: jest.fn().mockRejectedValue(new Error('Test error')) 
+          };
         }
-        return { save: jest.fn() };
+        return { 
+          create: jest.fn(),
+          save: jest.fn() 
+        };
       });
 
       await expect(service.create(createDto)).rejects.toThrow('Test error');
@@ -160,6 +236,7 @@ describe('ProjectsService', () => {
     it('should remove a project', async () => {
       const deleteResult: DeleteResult = { raw: [], affected: 1 };
       mockQueryRunner.manager.getRepository.mockReturnValue({
+        create: jest.fn(),
         delete: jest.fn().mockResolvedValue(deleteResult),
       });
       await expect(service.remove(1)).resolves.not.toThrow();

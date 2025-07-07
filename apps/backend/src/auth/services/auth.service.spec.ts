@@ -64,7 +64,7 @@ describe('AuthService', () => {
     userRoles: [],
     isActive: false,
     dateCreation: new Date(),
-    dateModification: null,
+    dateModification: new Date(),
     translations: [],
   };
 

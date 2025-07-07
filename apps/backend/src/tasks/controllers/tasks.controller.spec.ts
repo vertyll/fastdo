@@ -2,8 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
 import { User } from '../../users/entities/user.entity';
 import { Task } from '../entities/task.entity';
-import { TasksController } from '../tasks.controller';
-import { TasksService } from './tasks.service';
+import { Priority } from '../entities/priority.entity';
+import { Project } from '../../projects/entities/project.entity';
+import { TaskPriorityEnum } from '../enums/task-priority.enum';
+import { CreateTaskDto } from '../dtos/create-task.dto';
+import { UpdateTaskDto } from '../dtos/update-task.dto';
+import { TasksController } from './tasks.controller';
+import { TasksService } from '../services/tasks.service';
 
 describe('TasksController', () => {
   let controller: TasksController;
@@ -33,77 +38,94 @@ describe('TasksController', () => {
 
   describe('create', () => {
     it('should create a new task', async () => {
-      const taskDto = { name: 'New Task', projectId: 1 };
+      const taskDto: CreateTaskDto = { 
+        description: 'New Task Description', 
+        projectId: 1 
+      };
+
+      const mockPriority: Priority = {
+        id: 1,
+        code: TaskPriorityEnum.LOW,
+        color: '#green',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+      } as Priority;
+
+      const mockProject: Project = {
+        id: 1,
+        name: 'Test Project',
+        description: 'Test Description',
+        isPublic: false,
+        icon: null,
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        type: null,
+        tasks: [],
+        projectUsers: [],
+        userRoles: [],
+        categories: [],
+        statuses: [],
+      } as Project;
+
       const createdTask: Task = {
         id: 1,
-        ...taskDto,
-        isDone: false,
-        isUrgent: false,
-        priority: {
-          id: 1,
-          name: 'Low',
-        },
-        isPrivate: false,
+        description: taskDto.description,
+        additionalDescription: undefined,
+        priceEstimation: 0,
+        workedTime: 0,
+        accessRole: undefined,
         dateCreation: new Date(),
-        dateModification: null,
-        project: {
-          id: 1,
-          name: 'Test Project',
-          dateCreation: new Date(),
-          dateModification: null,
-          tasks: [],
-          projectUsers: [],
-        },
-        user: {
-          id: 1,
-          email: '',
-          password: '',
-          refreshTokens: [],
-          isActive: false,
-          dateCreation: new Date(),
-          dateModification: null,
-          userRoles: [],
-          isEmailConfirmed: false,
-          confirmationToken: null,
-          confirmationTokenExpiry: null,
-          termsAccepted: false,
-          privacyPolicyAccepted: false,
-          dateTermsAcceptance: null,
-          datePrivacyPolicyAcceptance: null,
-          avatar: null,
-          emailChangeToken: null,
-          pendingEmail: null,
-          emailChangeTokenExpiry: null,
-          projectUsers: [],
-          emailHistories: [],
-        },
-      };
-      mockTasksService.create.mockResolvedValue(createdTask);
+        dateModification: new Date(),
+        project: mockProject,
+        assignedUsers: [],
+        createdBy: {} as User,
+        priority: mockPriority,
+        categories: [],
+        status: null,
+        taskAttachments: [],
+        comments: [],
+      } as Task;
 
+      mockTasksService.create.mockResolvedValue(createdTask);
       expect(await controller.create(taskDto)).toEqual(createdTask);
     });
   });
 
   describe('findAll', () => {
     it('should return a paginated response of tasks', async () => {
+      const mockPriority: Priority = {
+        id: 1,
+        code: TaskPriorityEnum.LOW,
+        color: '#green',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+      } as Priority;
+
       const result: ApiPaginatedResponse<Task> = {
         items: [
           {
             id: 1,
-            name: 'Test Task',
-            isDone: false,
-            isUrgent: false,
-            projectId: 1,
-            priority: {
-              id: 1,
-              name: 'Low',
-            },
+            description: 'Test Task Description',
+            additionalDescription: undefined,
+            priceEstimation: 0,
+            workedTime: 0,
+            accessRole: undefined,
             dateCreation: new Date(),
-            dateModification: null,
-            project: null,
-            user: null,
-            isPrivate: false,
-          },
+            dateModification: new Date(),
+            project: {} as Project,
+            assignedUsers: [],
+            createdBy: {} as User,
+            priority: mockPriority,
+            categories: [],
+            status: null,
+            taskAttachments: [],
+            comments: [],
+          } as Task,
         ],
         pagination: {
           total: 1,
@@ -119,31 +141,53 @@ describe('TasksController', () => {
 
   describe('findAllByProjectId', () => {
     it('should return tasks for a specific project', async () => {
+      const mockPriority: Priority = {
+        id: 1,
+        code: TaskPriorityEnum.LOW,
+        color: '#green',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+      } as Priority;
+
+      const mockProject: Project = {
+        id: 1,
+        name: 'Test Project',
+        description: 'Test Description',
+        isPublic: false,
+        icon: null,
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        type: null,
+        tasks: [],
+        projectUsers: [],
+        userRoles: [],
+        categories: [],
+        statuses: [],
+      } as Project;
+
       const result: ApiPaginatedResponse<Task> = {
         items: [
           {
             id: 1,
-            name: 'Project Task',
-            isDone: false,
-            isUrgent: false,
-            projectId: 1,
-            priority: {
-              id: 1,
-              name: 'Low',
-            },
+            description: 'Project Task Description',
+            additionalDescription: undefined,
+            priceEstimation: 0,
+            workedTime: 0,
+            accessRole: undefined,
             dateCreation: new Date(),
-            dateModification: null,
-            project: {
-              id: 1,
-              name: 'Test Project',
-              dateCreation: new Date(),
-              dateModification: null,
-              tasks: [],
-              projectUsers: [],
-            },
-            user: null,
-            isPrivate: false,
-          },
+            dateModification: new Date(),
+            project: mockProject,
+            assignedUsers: [],
+            createdBy: {} as User,
+            priority: mockPriority,
+            categories: [],
+            status: null,
+            taskAttachments: [],
+            comments: [],
+          } as Task,
         ],
         pagination: {
           total: 1,
@@ -166,7 +210,7 @@ describe('TasksController', () => {
         refreshTokens: [],
         isActive: true,
         dateCreation: new Date(),
-        dateModification: null,
+        dateModification: new Date(),
         userRoles: [],
         isEmailConfirmed: true,
         confirmationToken: null,
@@ -180,25 +224,38 @@ describe('TasksController', () => {
         pendingEmail: null,
         emailChangeTokenExpiry: null,
         projectUsers: [],
+        projectUserRoles: [],
         emailHistories: [],
-      };
+      } as User;
+
+      const mockPriority: Priority = {
+        id: 1,
+        code: TaskPriorityEnum.LOW,
+        color: '#green',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+      } as Priority;
 
       const result: Task = {
         id: 1,
-        name: 'Single Task',
-        isDone: false,
-        isUrgent: false,
-        projectId: 1,
-        priority: {
-          id: 1,
-          name: 'Low',
-        },
+        description: 'Single Task Description',
+        additionalDescription: undefined,
+        priceEstimation: 0,
+        workedTime: 0,
+        accessRole: undefined,
         dateCreation: new Date(),
-        dateModification: null,
-        project: null,
-        user: mockUser,
-        isPrivate: false,
-      };
+        dateModification: new Date(),
+        project: {} as Project,
+        assignedUsers: [],
+        createdBy: mockUser,
+        priority: mockPriority,
+        categories: [],
+        status: null,
+        taskAttachments: [],
+        comments: [],
+      } as Task;
 
       mockTasksService.findOne.mockResolvedValue(result);
       expect(await controller.findOne('1')).toEqual(result);
@@ -207,7 +264,7 @@ describe('TasksController', () => {
 
   describe('update', () => {
     it('should update a task', async () => {
-      const updateDto = { name: 'Updated Task' };
+      const updateDto: UpdateTaskDto = { description: 'Updated Task Description' };
       const mockUser: User = {
         id: 1,
         email: 'user@example.com',
@@ -215,7 +272,7 @@ describe('TasksController', () => {
         refreshTokens: [],
         isActive: true,
         dateCreation: new Date(),
-        dateModification: null,
+        dateModification: new Date(),
         userRoles: [],
         isEmailConfirmed: true,
         confirmationToken: null,
@@ -229,25 +286,38 @@ describe('TasksController', () => {
         pendingEmail: null,
         emailChangeTokenExpiry: null,
         projectUsers: [],
+        projectUserRoles: [],
         emailHistories: [],
-      };
+      } as User;
+
+      const mockPriority: Priority = {
+        id: 1,
+        code: TaskPriorityEnum.LOW,
+        color: '#green',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+      } as Priority;
 
       const result: Task = {
         id: 1,
-        ...updateDto,
-        isDone: false,
-        isUrgent: false,
-        projectId: 1,
-        priority: {
-          id: 1,
-          name: 'Low',
-        },
+        description: updateDto.description!,
+        additionalDescription: undefined,
+        priceEstimation: 0,
+        workedTime: 0,
+        accessRole: undefined,
         dateCreation: new Date(),
         dateModification: new Date(),
-        project: null,
-        user: mockUser,
-        isPrivate: false,
-      };
+        project: {} as Project,
+        assignedUsers: [],
+        createdBy: mockUser,
+        priority: mockPriority,
+        categories: [],
+        status: null,
+        taskAttachments: [],
+        comments: [],
+      } as Task;
 
       mockTasksService.update.mockResolvedValue(result);
       expect(await controller.update('1', updateDto)).toEqual(result);

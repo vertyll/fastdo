@@ -13,7 +13,7 @@ import { RegisterDto } from '../dtos/register.dto';
 import { AuthService } from '../services/auth.service';
 import { AuthController } from './auth.controller';
 
-jest.mock('../common/guards/local-auth.guard');
+jest.mock('../../common/guards/local-auth.guard');
 
 describe('AuthController', () => {
   let controller: AuthController;
