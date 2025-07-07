@@ -299,6 +299,23 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     .mobile-nav-item {
       @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 py-2;
     }
+
+    @media (max-width: 768px) {
+      .relative.flex.flex-row {
+        align-items: center;
+        gap: 0;
+      }
+      
+      app-notification-dropdown button,
+      app-theme-switcher button {
+        padding: 0.5rem;
+        height: 2.5rem;
+        width: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   `],
   template: `
     @if (!authService.isLoggedIn()) {
@@ -404,7 +421,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                 </div>
               }
             </div>
-            <app-notification-dropdown />
+            <app-notification-dropdown [isMobileContext]="false" [isMobileMenuOpen]="false" />
             <app-theme-switcher />
             <div class="relative">
               <button class="language-button" (click)="toggleLanguageDropdown($event)">
@@ -432,7 +449,8 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               <span>Menu</span>
               <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
             </button>
-            <div class="relative flex flex-row">
+            <div class="relative flex flex-row items-center space-x-1">
+              <app-notification-dropdown [isMobileContext]="true" [isMobileMenuOpen]="mobileMenuOpen" />
               <app-theme-switcher />
               <button class="menu-button" (click)="toggleLanguageDropdown($event)">
                 <span>{{ getCurrentLanguage() }}</span>

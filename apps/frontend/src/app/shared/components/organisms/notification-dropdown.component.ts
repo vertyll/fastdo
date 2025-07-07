@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash } from '@ng-icons/heroicons/outline';
@@ -44,114 +44,213 @@ import { NotificationDto } from '../../types/notification.type';
       </button>
 
       @if (isDropdownOpen) {
-        <div 
-          class="absolute right-0 top-full mt-2 w-80 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200 z-50"
-          (click)="$event.stopPropagation()"
-        >
-          <div class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary">
-            <div class="flex items-center space-x-2">
-              <h3 class="text-sm font-semibold text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.title' | translate }}
-              </h3>
-              <div 
-                class="w-2 h-2 rounded-full"
-                [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
-                [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
-              ></div>
-            </div>
-            <div class="flex items-center space-x-2">
-              @if (notifications().length > 0) {
-                <button
-                  class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
-                  (click)="clearAllNotifications()"
-                  [title]="'Notifications.clearAll' | translate"
-                >
-                  <ng-icon name="heroTrash" size="16" />
-                </button>
-              }
-              @if (unreadCount() > 0) {
-                <button
-                  class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
-                  (click)="markAllAsRead()"
-                >
-                  {{ 'Notifications.markAllRead' | translate }}
-                </button>
-              }
-            </div>
-          </div>
-
-          <div class="max-h-96 overflow-y-auto">
-            @if (notifications().length === 0) {
-              <div class="px-4 py-6 text-center text-text-secondary dark:text-dark-text-secondary text-sm">
-                {{ 'Notifications.noNotifications' | translate }}
+        <!-- Mobile modal overlay when mobile context -->
+        @if (isMobileContext()) {
+          <div class="fixed inset-0 bg-black bg-opacity-50 z-[80] flex items-start justify-center pt-16 p-4" (click)="closeDropdown()">
+            <div 
+              class="notification-dropdown-panel w-full max-w-sm bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary">
+                <div class="flex items-center space-x-2">
+                  <h3 class="text-sm font-semibold text-text-primary dark:text-dark-text-primary">
+                    {{ 'Notifications.title' | translate }}
+                  </h3>
+                  <div 
+                    class="w-2 h-2 rounded-full"
+                    [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
+                    [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
+                  ></div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  @if (notifications().length > 0) {
+                    <button
+                      class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                      (click)="clearAllNotifications()"
+                      [title]="'Notifications.clearAll' | translate"
+                    >
+                      <ng-icon name="heroTrash" size="16" />
+                    </button>
+                  }
+                  @if (unreadCount() > 0) {
+                    <button
+                      class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+                      (click)="markAllAsRead()"
+                    >
+                      {{ 'Notifications.markAllRead' | translate }}
+                    </button>
+                  }
+                </div>
               </div>
-            } @else {
-              @for (notification of notifications(); track notification.id) {
-                <div
-                  class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 cursor-pointer transition-colors duration-200"
-                  [class.bg-primary-50]="notification.status === 'UNREAD'"
-                  (click)="markAsRead(notification)"
-                >
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1 min-w-0">
-                      <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
-                        {{ notification.title }}
-                      </h4>
-                      <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
-                        {{ notification.message }}
-                      </p>
-                      <span class="text-xs text-text-secondary dark:text-dark-text-secondary mt-2 block">
-                        {{ formatDate(notification.createdAt) }}
-                      </span>
-                    </div>
-                    @if (notification.status === 'UNREAD') {
-                      <div class="w-2 h-2 bg-primary-500 rounded-full mt-1 ml-2 flex-shrink-0"></div>
-                    }
+
+              <div class="max-h-96 overflow-y-auto">
+                @if (notifications().length === 0) {
+                  <div class="px-4 py-6 text-center text-text-secondary dark:text-dark-text-secondary text-sm">
+                    {{ 'Notifications.noNotifications' | translate }}
                   </div>
+                } @else {
+                  @for (notification of notifications(); track notification.id) {
+                    <div
+                      class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 cursor-pointer transition-colors duration-200"
+                      [class.bg-primary-50]="notification.status === 'UNREAD'"
+                      (click)="markAsRead(notification)"
+                    >
+                      <div class="flex items-start justify-between">
+                        <div class="flex-1 min-w-0">
+                          <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
+                            {{ notification.title }}
+                          </h4>
+                          <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
+                            {{ notification.message }}
+                          </p>
+                          <span class="text-xs text-text-secondary dark:text-dark-text-secondary mt-2 block">
+                            {{ formatDate(notification.createdAt) }}
+                          </span>
+                        </div>
+                        @if (notification.status === 'UNREAD') {
+                          <div class="w-2 h-2 bg-primary-500 rounded-full mt-1 ml-2 flex-shrink-0"></div>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+
+              @if (notifications().length > 0) {
+                <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary flex items-center justify-between">
+                  <button
+                    class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+                    (click)="navigateToSettings()"
+                  >
+                    <ng-icon name="heroCog6Tooth" size="14" />
+                    <span>{{ 'Notifications.settings' | translate }}</span>
+                  </button>
+                  
+                  <button
+                    class="flex items-center space-x-1 text-xs text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
+                    (click)="clearAllNotifications()"
+                  >
+                    <ng-icon name="heroTrash" size="14" />
+                    <span>{{ 'Notifications.clearAll' | translate }}</span>
+                  </button>
+                </div>
+              } @else {
+                <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
+                  <button
+                    class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 mx-auto"
+                    (click)="navigateToSettings()"
+                  >
+                    <ng-icon name="heroCog6Tooth" size="14" />
+                    <span>{{ 'Notifications.settings' | translate }}</span>
+                  </button>
                 </div>
               }
+            </div>
+          </div>
+        } @else {
+          <!-- Regular dropdown for desktop -->
+          <div 
+            class="notification-dropdown-panel absolute right-0 top-full mt-2 w-80 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200 z-50"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary">
+              <div class="flex items-center space-x-2">
+                <h3 class="text-sm font-semibold text-text-primary dark:text-dark-text-primary">
+                  {{ 'Notifications.title' | translate }}
+                </h3>
+                <div 
+                  class="w-2 h-2 rounded-full"
+                  [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
+                  [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
+                ></div>
+              </div>
+              <div class="flex items-center space-x-2">
+                @if (notifications().length > 0) {
+                  <button
+                    class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                    (click)="clearAllNotifications()"
+                    [title]="'Notifications.clearAll' | translate"
+                  >
+                    <ng-icon name="heroTrash" size="16" />
+                  </button>
+                }
+                @if (unreadCount() > 0) {
+                  <button
+                    class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+                    (click)="markAllAsRead()"
+                  >
+                    {{ 'Notifications.markAllRead' | translate }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="max-h-96 overflow-y-auto">
+              @if (notifications().length === 0) {
+                <div class="px-4 py-6 text-center text-text-secondary dark:text-dark-text-secondary text-sm">
+                  {{ 'Notifications.noNotifications' | translate }}
+                </div>
+              } @else {
+                @for (notification of notifications(); track notification.id) {
+                  <div
+                    class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 cursor-pointer transition-colors duration-200"
+                    [class.bg-primary-50]="notification.status === 'UNREAD'"
+                    (click)="markAsRead(notification)"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
+                          {{ notification.title }}
+                        </h4>
+                        <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
+                          {{ notification.message }}
+                        </p>
+                        <span class="text-xs text-text-secondary dark:text-dark-text-secondary mt-2 block">
+                          {{ formatDate(notification.createdAt) }}
+                        </span>
+                      </div>
+                      @if (notification.status === 'UNREAD') {
+                        <div class="w-2 h-2 bg-primary-500 rounded-full mt-1 ml-2 flex-shrink-0"></div>
+                      }
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+
+            @if (notifications().length > 0) {
+              <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary flex items-center justify-between">
+                <button
+                  class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+                  (click)="navigateToSettings()"
+                >
+                  <ng-icon name="heroCog6Tooth" size="14" />
+                  <span>{{ 'Notifications.settings' | translate }}</span>
+                </button>
+                
+                <button
+                  class="flex items-center space-x-1 text-xs text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
+                  (click)="clearAllNotifications()"
+                >
+                  <ng-icon name="heroTrash" size="14" />
+                  <span>{{ 'Notifications.clearAll' | translate }}</span>
+                </button>
+              </div>
+            } @else {
+              <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
+                <button
+                  class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 mx-auto"
+                  (click)="navigateToSettings()"
+                >
+                  <ng-icon name="heroCog6Tooth" size="14" />
+                  <span>{{ 'Notifications.settings' | translate }}</span>
+                </button>
+              </div>
             }
           </div>
-
-          @if (notifications().length > 0) {
-            <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary flex items-center justify-between">
-              <button
-                class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
-                (click)="navigateToSettings()"
-              >
-                <ng-icon name="heroCog6Tooth" size="14" />
-                <span>{{ 'Notifications.settings' | translate }}</span>
-              </button>
-              
-              <button
-                class="flex items-center space-x-1 text-xs text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
-                (click)="clearAllNotifications()"
-              >
-                <ng-icon name="heroTrash" size="14" />
-                <span>{{ 'Notifications.clearAll' | translate }}</span>
-              </button>
-            </div>
-          } @else {
-            <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
-              <button
-                class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 mx-auto"
-                (click)="navigateToSettings()"
-              >
-                <ng-icon name="heroCog6Tooth" size="14" />
-                <span>{{ 'Notifications.settings' | translate }}</span>
-              </button>
-            </div>
-          }
-        </div>
+        }
       }
     </div>
-
-    @if (isDropdownOpen) {
-      <div
-        class="fixed inset-0 z-40"
-        (click)="closeDropdown()"
-      ></div>
-    }
   `,
 })
 export class NotificationDropdownComponent {
@@ -159,6 +258,9 @@ export class NotificationDropdownComponent {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly router = inject(Router);
+
+  public readonly isMobileContext = input<boolean>(false);
+  public readonly isMobileMenuOpen = input<boolean>(false);
 
   protected readonly notifications = this.notificationStateService.notifications;
   protected readonly unreadCount = this.notificationStateService.unreadCount;
