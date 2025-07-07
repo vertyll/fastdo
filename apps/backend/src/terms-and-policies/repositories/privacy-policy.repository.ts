@@ -14,7 +14,7 @@ export class PrivacyPolicyRepository extends Repository<PrivacyPolicy> {
     return this.createQueryBuilder('privacy_policy')
       .leftJoinAndSelect('privacy_policy.sections', 'section')
       .leftJoinAndSelect('section.translations', 'sectionTranslation')
-      .where('sectionTranslation.languageCode = :lang', { lang })
+      .leftJoinAndSelect('sectionTranslation.language', 'language', 'language.code = :lang', { lang })
       .orderBy('privacy_policy.dateEffective', 'DESC')
       .addOrderBy('section.order', 'ASC')
       .getOne();

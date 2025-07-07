@@ -14,7 +14,7 @@ export class TermsRepository extends Repository<Terms> {
     return this.createQueryBuilder('terms')
       .leftJoinAndSelect('terms.sections', 'section')
       .leftJoinAndSelect('section.translations', 'sectionTranslation')
-      .where('sectionTranslation.languageCode = :lang', { lang })
+      .leftJoinAndSelect('sectionTranslation.language', 'language', 'language.code = :lang', { lang })
       .orderBy('terms.dateEffective', 'DESC')
       .addOrderBy('section.order', 'ASC')
       .getOne();
