@@ -76,7 +76,7 @@ import { UserStateService } from './data-access/user.state.service';
                   <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Basic.edit' | translate }}
                   </h2>
-                  <div class="flex space-x-spacing-4">
+                  <div class="flex justify-end space-x-spacing-4">
                     <button
                       type="button"
                       class="px-spacing-4 py-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
@@ -102,6 +102,7 @@ import { UserStateService } from './data-access/user.state.service';
                     format="circle"
                     (imageSaved)="onImageSaved($event)"
                     (croppingChange)="onCroppingChange($event)"
+                    (imageRemoved)="onImageRemoved()"
                   />
                 </div>
 
@@ -260,6 +261,10 @@ export class UserProfileComponent implements OnInit {
 
   protected onCroppingChange(isCropping: boolean): void {
     this.isCropping = isCropping;
+  }
+
+  protected onImageRemoved(): void {
+    this.selectedFile = null;
   }
 
   protected onSubmit(): void {
