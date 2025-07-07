@@ -194,7 +194,10 @@ export class ProjectsService {
     await queryRunner.startTransaction();
 
     try {
+      await queryRunner.manager.getRepository(ProjectUserRole).delete({ project: { id } });
+      
       await queryRunner.manager.getRepository(ProjectUser).delete({ project: { id } });
+      
       await queryRunner.manager.getRepository(Project).delete(id);
 
       await queryRunner.commitTransaction();
