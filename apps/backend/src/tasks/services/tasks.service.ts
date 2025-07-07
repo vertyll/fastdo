@@ -208,7 +208,6 @@ export class TasksService implements ITasksService {
   public async removeComment(commentId: number): Promise<void> {
     const userId = this.cls.get('user').userId;
 
-    // Find the comment and check if user is author or has permission
     const comment = await this.taskRepository.manager.findOne(TaskComment, {
       where: { id: commentId },
       relations: ['author', 'task'],
@@ -218,7 +217,6 @@ export class TasksService implements ITasksService {
       throw new Error('Comment not found');
     }
 
-    // Only allow comment author to delete their own comment
     // TODO: In the future, project owners/admins could also delete comments
     if (comment.author.id !== userId) {
       throw new Error('You can only delete your own comments');
@@ -230,7 +228,6 @@ export class TasksService implements ITasksService {
   public async updateComment(commentId: number, updateCommentDto: UpdateTaskCommentDto): Promise<TaskComment> {
     const userId = this.cls.get('user').userId;
 
-    // Find the comment and check if user is author
     const comment = await this.taskRepository.manager.findOne(TaskComment, {
       where: { id: commentId },
       relations: ['author', 'task'],
@@ -240,12 +237,10 @@ export class TasksService implements ITasksService {
       throw new Error('Comment not found');
     }
 
-    // Only allow comment author to edit their own comment
     if (comment.author.id !== userId) {
       throw new Error('You can only edit your own comments');
     }
 
-    // Update comment content
     comment.content = updateCommentDto.content;
     comment.dateModification = new Date();
 

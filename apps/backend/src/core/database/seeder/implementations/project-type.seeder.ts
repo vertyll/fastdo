@@ -73,7 +73,6 @@ export class ProjectTypeSeeder implements ISeeder {
       ];
 
       for (const typeData of projectTypesData) {
-        // Check if project type already exists by code
         let projectType = await this.projectTypeRepository.findOne({
           where: { code: typeData.code },
         });
@@ -87,7 +86,6 @@ export class ProjectTypeSeeder implements ISeeder {
           this.baseSeeder.getLogger().log(`Created project type: ${typeData.code}`);
         }
 
-        // Add translations if they don't exist
         if (polishLang && typeData.translations.pl) {
           const existingTranslation = await this.projectTypeTranslationRepository.findOne({
             where: {

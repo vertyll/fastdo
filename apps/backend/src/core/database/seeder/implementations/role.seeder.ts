@@ -72,7 +72,6 @@ export class RoleSeeder implements ISeeder {
           this.baseSeeder.getLogger().log(`Created role: ${roleData.code}`);
         }
 
-        // Add translations
         for (const language of languages) {
           const translationData = roleData.translations[language.code];
           if (translationData) {

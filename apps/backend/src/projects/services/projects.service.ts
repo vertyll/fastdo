@@ -83,7 +83,6 @@ export class ProjectsService {
         user: { id: userId },
       });
 
-      // Znajdź rolę managera
       const managerRole = await this.projectRoleService.findOneByCode('manager');
       if (!managerRole) {
         throw new Error('Manager role not found');
@@ -103,11 +102,9 @@ export class ProjectsService {
         await this.createStatusesInTransaction(queryRunner, newProject.id, statuses);
       }
 
-      // Priorytet dla nowego pola usersWithRoles
       if (usersWithRoles && usersWithRoles.length > 0) {
         await this.inviteUsersToProjectWithRoles(queryRunner, newProject.id, usersWithRoles, userId);
       } else if (userEmails && userEmails.length > 0) {
-        // Fallback dla legacy userEmails
         await this.inviteUsersToProject(queryRunner, newProject.id, userEmails, userId);
       }
 
@@ -173,11 +170,9 @@ export class ProjectsService {
         await this.createStatusesInTransaction(queryRunner, id, statuses);
       }
 
-      // Priorytet dla nowego pola usersWithRoles
       if (usersWithRoles && usersWithRoles.length > 0) {
         await this.inviteUsersToProjectWithRoles(queryRunner, id, usersWithRoles, userId);
       } else if (userEmails && userEmails.length > 0) {
-        // Fallback dla legacy userEmails
         await this.inviteUsersToProject(queryRunner, id, userEmails, userId);
       }
 
@@ -299,7 +294,6 @@ export class ProjectsService {
               user: { id: user.id },
             });
 
-            // Znajdź rolę member jako domyślną
             const memberRole = await this.projectRoleService.findOneByCode('member');
             if (!memberRole) {
               throw new Error('Member role not found');
@@ -365,7 +359,6 @@ export class ProjectsService {
               projectRole: { id: userWithRole.role },
             });
 
-            // Pobierz nazwę roli dla powiadomienia
             const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
             const roleName = roleInfo?.translations?.[0]?.name || 'nieznana';
 
@@ -401,7 +394,7 @@ export class ProjectsService {
 
     return projectUsers.map(pur => ({
       id: pur.user.id,
-      name: pur.user.email, // Używamy email jako name, jeśli nie ma firstName/lastName
+      name: pur.user.email,
     }));
   }
 }
