@@ -19,36 +19,41 @@ export class TaskRepository extends Repository<Task> {
     const query = this.dataSource
       .createQueryBuilder(Task, 'task')
       .leftJoinAndSelect('task.project', 'project')
+      .leftJoinAndSelect('task.assignedUsers', 'assignedUsers')
+      .leftJoinAndSelect('task.createdBy', 'createdBy')
+      .leftJoinAndSelect('task.priority', 'priority')
+      .leftJoinAndSelect('task.categories', 'categories')
+      .leftJoinAndSelect('task.status', 'status')
       .select([
         'task.id',
-        'task.name',
-        'task.isDone',
-        'task.isUrgent',
+        'task.description',
+        'task.additionalDescription',
+        'task.priceEstimation',
+        'task.workedTime',
+        'task.accessRole',
         'task.dateCreation',
         'task.dateModification',
-        'task.isPrivate',
         'project.id',
         'project.name',
+        'assignedUsers.id',
+        'assignedUsers.email',
+        'createdBy.id',
+        'createdBy.email',
+        'priority.id',
+        'priority.code',
+        'priority.color',
+        'categories.id',
+        'status.id',
       ]);
 
     if (projectId) {
       query.where('project.id = :projectId', { projectId });
-    } else {
-      query.where('task.user_id = :userId', { userId });
+    } else if (userId) {
+      query.where('(assignedUsers.id = :userId OR task.createdBy.id = :userId)', { userId });
     }
 
     if (params.q) {
-      query.andWhere('task.name LIKE :q', { q: `%${params.q}%` });
-    }
-
-    if (params.is_done === 'true') {
-      query.andWhere('task.isDone = :isDone', { isDone: true });
-    } else if (params.is_done === 'false') {
-      query.andWhere('task.isDone = :isDone', { isDone: false });
-    }
-
-    if (params.is_urgent === 'true') {
-      query.andWhere('task.isUrgent = :isUrgent', { isUrgent: true });
+      query.andWhere('(task.description LIKE :q OR task.additionalDescription LIKE :q)', { q: `%${params.q}%` });
     }
 
     if (params.sortBy && params.orderBy) {

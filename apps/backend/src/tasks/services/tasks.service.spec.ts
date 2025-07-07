@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { ApiPaginatedResponse } from '../common/types/api-responses.interface';
-import { Project } from '../projects/entities/project.entity';
-import { Task } from './entities/task.entity';
-import { TaskRepository } from './repositories/task.repository';
+
+import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
+import { Project } from 'src/projects/entities/project.entity';
+import { Task } from '../entities/task.entity';
+import { TaskRepository } from '../repositories/task.repository';
 import { TasksService } from './tasks.service';
 
 describe('TasksService', () => {

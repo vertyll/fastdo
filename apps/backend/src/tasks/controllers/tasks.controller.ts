@@ -1,0 +1,155 @@
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
+import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
+import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
+import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
+import { CreateTaskDto } from '../dtos/create-task.dto';
+import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
+import { PriorityDto } from '../dtos/priority.dto';
+import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
+import { UpdateTaskDto } from '../dtos/update-task.dto';
+import { TaskComment } from '../entities/task-comment.entity';
+import { Task } from '../entities/task.entity';
+import { TasksService } from '../services/tasks.service';
+
+@ApiTags('tasks')
+@Controller('tasks')
+export class TasksController {
+  constructor(private readonly tasksService: TasksService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new task' })
+  @ApiBody({ type: CreateTaskDto })
+  @ApiWrappedResponse({
+    status: 201,
+    description: 'The task has been successfully created.',
+    type: Task,
+  })
+  public create(
+    @Body() createTaskDto: CreateTaskDto,
+  ): Promise<Task> {
+    return this.tasksService.create(createTaskDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all tasks' })
+  @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isPaginated: true })
+  public findAll(
+    @Query() query: GetAllTasksSearchParams,
+  ): Promise<ApiPaginatedResponse<Task>> {
+    return this.tasksService.findAll(query);
+  }
+
+  @Get('project/:projectId')
+  @ApiOperation({ summary: 'Get all tasks for a specific project' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all tasks for the specified project.',
+    type: Task,
+    isPaginated: true,
+  })
+  public findAllByProjectId(
+    @Param('projectId') projectId: string,
+    @Query() query: GetAllTasksSearchParams,
+  ): Promise<ApiPaginatedResponse<Task>> {
+    return this.tasksService.findAllByProjectId(+projectId, query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a task by id' })
+  @ApiWrappedResponse({ status: 200, description: 'Return the task.', type: Task })
+  public findOne(@Param('id') id: string): Promise<Task> {
+    return this.tasksService.findOne(+id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a task' })
+  @ApiBody({ type: UpdateTaskDto })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'The task has been successfully updated.',
+    type: Task,
+  })
+  public update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
+    return this.tasksService.update(+id, updateTaskDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a task' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'The task has been successfully deleted.',
+  })
+  public remove(@Param('id') id: string): Promise<void> {
+    return this.tasksService.remove(+id);
+  }
+
+  @Get('priorities')
+  @ApiOperation({ summary: 'Get all priorities' })
+  @ApiHeader({ name: 'x-lang', enum: LanguageCodeEnum, required: false })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all priorities with translated names.',
+    type: PriorityDto,
+    isArray: true,
+  })
+  public getPriorities(
+    @Headers('x-lang') headerLang?: LanguageCodeEnum,
+  ): Promise<PriorityDto[]> {
+    const languageCode = headerLang || LanguageCodeEnum.POLISH;
+    return this.tasksService.getAllPriorities(languageCode);
+  }
+
+  @Post(':id/comments')
+  @ApiOperation({ summary: 'Create a comment for a task' })
+  @ApiBody({ type: CreateTaskCommentDto })
+  @ApiWrappedResponse({
+    status: 201,
+    description: 'The comment has been successfully created.',
+    type: TaskComment,
+  })
+  public createComment(
+    @Param('id') taskId: string,
+    @Body() createCommentDto: CreateTaskCommentDto,
+  ): Promise<TaskComment> {
+    return this.tasksService.createComment(+taskId, createCommentDto);
+  }
+
+  @Get(':id/comments')
+  @ApiOperation({ summary: 'Get all comments for a task' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all comments for the task.',
+    type: TaskComment,
+    isArray: true,
+  })
+  public getTaskComments(@Param('id') taskId: string): Promise<TaskComment[]> {
+    return this.tasksService.getTaskComments(+taskId);
+  }
+
+  @Delete('comments/:commentId')
+  @ApiOperation({ summary: 'Delete a comment' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'The comment has been successfully deleted.',
+  })
+  public removeComment(@Param('commentId') commentId: string): Promise<void> {
+    return this.tasksService.removeComment(+commentId);
+  }
+
+  @Put('comments/:commentId')
+  @ApiOperation({ summary: 'Update a comment' })
+  @ApiBody({ type: UpdateTaskCommentDto })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'The comment has been successfully updated.',
+    type: TaskComment,
+  })
+  public updateComment(
+    @Param('commentId') commentId: string,
+    @Body() updateCommentDto: UpdateTaskCommentDto,
+  ): Promise<TaskComment> {
+    return this.tasksService.updateComment(+commentId, updateCommentDto);
+  }
+}
