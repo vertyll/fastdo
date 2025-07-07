@@ -5,6 +5,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   heroBars4,
+  heroBell,
   heroChevronDown,
   heroChevronUp,
   heroClipboardDocumentList,
@@ -18,13 +19,23 @@ import { filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { NotificationStateService } from '../../services/notification-state.service';
 import { NavModule, NavSection } from '../../types/config.type';
 import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 import { ToastComponent } from '../atoms/toast.component';
+import { NotificationDropdownComponent } from './notification-dropdown.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet, ThemeSwitcherComponent, ToastComponent],
+  imports: [
+    NgIconComponent,
+    TranslateModule,
+    CommonModule,
+    RouterOutlet,
+    ThemeSwitcherComponent,
+    ToastComponent,
+    NotificationDropdownComponent,
+  ],
   viewProviders: [
     provideIcons({
       heroClipboardDocumentList,
@@ -35,6 +46,7 @@ import { ToastComponent } from '../atoms/toast.component';
       heroBars4,
       heroChevronDown,
       heroChevronUp,
+      heroBell,
     }),
   ],
   animations: [
@@ -392,6 +404,7 @@ import { ToastComponent } from '../atoms/toast.component';
                 </div>
               }
             </div>
+            <app-notification-dropdown />
             <app-theme-switcher />
             <div class="relative">
               <button class="language-button" (click)="toggleLanguageDropdown($event)">
@@ -473,6 +486,19 @@ import { ToastComponent } from '../atoms/toast.component';
               <button (click)="navigateToProfileAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
                 {{ 'Navbar.profile' | translate }}
               </button>
+              <button (click)="navigateToNotificationSettingsAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
+                <div class="flex items-center justify-between w-full">
+                  <div class="flex items-center space-x-2">
+                    <ng-icon name="heroBell" size="16"></ng-icon>
+                    <span>{{ 'Notifications.title' | translate }}</span>
+                  </div>
+                  @if (unreadNotificationCount() > 0) {
+                    <span class="bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                      {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
+                    </span>
+                  }
+                </div>
+              </button>
               <button (click)="logout()" class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left">
                 {{ 'Basic.logout' | translate }}
               </button>
@@ -491,12 +517,6 @@ import { ToastComponent } from '../atoms/toast.component';
             >
               <div class="relative">
                 <ng-icon [name]="section.icon" size="24" class="section-icon"></ng-icon>
-                @if (section.id === 'urgent' && urgentCount() > 0) {
-                  <span class="counter-badge">{{ urgentCount() }}</span>
-                }
-                @if (section.id === 'projects' && projectCount() > 0) {
-                  <span class="counter-badge">{{ projectCount() }}</span>
-                }
               </div>
               <span class="section-title">{{ section.title | translate }}</span>
             </div>
@@ -513,12 +533,6 @@ import { ToastComponent } from '../atoms/toast.component';
           >
             <div class="relative flex items-center">
               <ng-icon [name]="section.icon" size="20" class="mobile-section-icon"></ng-icon>
-              @if (section.id === 'urgent' && urgentCount() > 0) {
-                <span class="counter-badge">{{ urgentCount() }}</span>
-              }
-              @if (section.id === 'projects' && projectCount() > 0) {
-                <span class="counter-badge">{{ projectCount() }}</span>
-              }
             </div>
             <span class="mobile-section-text">{{ section.title | translate }}</span>
           </div>
@@ -543,14 +557,13 @@ import { ToastComponent } from '../atoms/toast.component';
   `,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  readonly urgentCount = input<number>(0);
-  readonly projectCount = input<number>(0);
   readonly visibleItemsCount = input<number>(2);
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly notificationStateService = inject(NotificationStateService);
 
   private readonly defaultModules: NavModule[] = configNavModules;
 
@@ -559,6 +572,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly visibleSections = signal<NavSection[]>([]);
   protected readonly currentModule = signal<string>('');
   protected readonly currentSection = signal<string>('');
+
+  // Notification state
+  protected readonly unreadNotificationCount = this.notificationStateService.unreadCount;
 
   protected menuOpen: boolean = false;
   protected mobileMenuOpen: boolean = false;
@@ -672,6 +688,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected navigateToProfileAndCloseMenu(): void {
     this.router.navigate(['/user-profile']).then();
+    this.closeMenu();
+  }
+
+  protected navigateToNotificationSettingsAndCloseMenu(): void {
+    this.router.navigate(['/notification-settings']).then();
     this.closeMenu();
   }
 

@@ -6,7 +6,11 @@ import { ResetPasswordComponent } from './auth/reset-password.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
+import { ProjectFormPageComponent } from './project/project-form.page.component';
 import { ProjectListPageComponent } from './project/project-list.page.component';
+import { NotificationSettingsComponent } from './shared/components/organisms/notification-settings.component';
+import { TaskDetailsPageComponent } from './task/task-details.page.component';
+import { TaskFormPageComponent } from './task/task-form.page.component';
 import { TaskListPageComponent } from './task/task-list.page.component';
 import { PrivacyPolicyPageComponent } from './terms-and-policies/privacy-policy.page.component';
 import { TermsPageComponent } from './terms-and-policies/terms.page.component';
@@ -57,28 +61,36 @@ export const routes: Routes = [
   },
   {
     path: 'projects',
-    component: ProjectListPageComponent,
     title: 'Projekty',
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'tasks',
-    title: 'Zadania',
     children: [
       {
         path: '',
-        component: TaskListPageComponent,
+        component: ProjectListPageComponent,
       },
       {
-        path: 'urgent',
-        data: {
-          isUrgent: true,
-        },
-        component: TaskListPageComponent,
+        path: 'new',
+        component: ProjectFormPageComponent,
+        title: 'Nowy projekt',
       },
       {
-        path: ':projectId',
+        path: 'edit/:id',
+        component: ProjectFormPageComponent,
+        title: 'Edytuj projekt',
+      },
+      {
+        path: ':id/tasks',
         component: TaskListPageComponent,
+        title: 'Zadania projektu',
+      },
+      {
+        path: ':id/tasks/new',
+        component: TaskFormPageComponent,
+        title: 'Nowe zadanie',
+      },
+      {
+        path: ':id/tasks/details/:taskId',
+        component: TaskDetailsPageComponent,
+        title: 'Szczegóły zadania',
       },
     ],
     canActivate: [AuthGuard],
@@ -90,7 +102,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'notification-settings',
+    title: 'Ustawienia powiadomień',
+    component: NotificationSettingsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
     path: '**',
-    redirectTo: 'tasks',
+    redirectTo: 'projects',
   },
 ];

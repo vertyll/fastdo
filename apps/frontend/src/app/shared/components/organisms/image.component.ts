@@ -56,6 +56,19 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               class="text-text-primary dark:text-dark-text-primary"
             />
           </button>
+          @if (previewUrl()) {
+            <button
+              class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-spacing-2 shadow-boxShadow-md"
+              (click)="$event.preventDefault(); $event.stopPropagation(); removeImage()"
+              title="{{ 'Image.removeImage' | translate }}"
+            >
+              <ng-icon
+                name="heroXMark"
+                size="20"
+                class="text-white"
+              />
+            </button>
+          }
         }
         <input
           #fileInput
@@ -148,6 +161,7 @@ export class ImageComponent implements OnDestroy {
 
   imageSaved = output<{ file: File; preview: string | null; }>();
   croppingChange = output<boolean>();
+  imageRemoved = output<void>();
 
   protected previewUrl = signal<string | null>(null);
   protected showCropper = signal(false);
@@ -259,6 +273,16 @@ export class ImageComponent implements OnDestroy {
 
   protected closePreviewModal(): void {
     this.showPreviewModal.set(false);
+  }
+
+  protected removeImage(): void {
+    this.previewUrl.set(null);
+    this.selectedFile = null;
+    this.tempImageUrl.set(null);
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+    this.imageRemoved.emit();
   }
 
   protected onFileSelected(event: Event): void {

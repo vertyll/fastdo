@@ -15,6 +15,7 @@ import { InputComponent } from '../atoms/input.component';
 import { LabelComponent } from '../atoms/label.component';
 import { SpinnerComponent } from '../atoms/spinner.component';
 import { TextareaComponent } from '../atoms/textarea-component';
+import { SelectFieldComponent } from '../molecules/select-field.component';
 
 @Component({
   selector: 'app-modal',
@@ -32,6 +33,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
     TextareaComponent,
     LabelComponent,
     AdDirective,
+    SelectFieldComponent,
   ],
   viewProviders: [provideIcons({ heroXMarkSolid })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +46,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
       data-keyboard="true"
     >
       <div
-        class="w-full max-w-lg bg-background-primary rounded-borderRadius-lg shadow-boxShadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200"
+        class="w-full max-w-lg max-h-[90vh] bg-background-primary rounded-borderRadius-lg shadow-boxShadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 overflow-hidden flex flex-col"
         role="document"
       >
         <div class="px-spacing-6 py-spacing-4 border-b border-border-primary dark:border-dark-border-primary flex justify-between items-center">
@@ -59,7 +61,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
           </button>
         </div>
 
-        <div class="px-spacing-6 py-spacing-4">
+        <div class="px-spacing-6 py-spacing-4 overflow-y-auto flex-1">
           @if (modalService.modal().options?.loading) {
             <div class="flex justify-center py-spacing-4">
               <app-spinner/>
@@ -132,6 +134,14 @@ import { TextareaComponent } from '../atoms/textarea-component';
                           [control]="getFormControl(input.id)"
                         />
                       }
+                      @case (ModalInputType.Select) {
+                        <app-select-field
+                          [id]="input.id"
+                          [label]="input.label || ''"
+                          [control]="getFormControl(input.id)"
+                          [options]="getSelectOptions(input.selectOptions)"
+                        />
+                      }
                       @default {
                         <app-input
                           [id]="input.id"
@@ -158,7 +168,7 @@ import { TextareaComponent } from '../atoms/textarea-component';
           }
         </div>
 
-        <div class="px-spacing-6 py-spacing-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-spacing-2">
+        <div class="px-spacing-6 py-spacing-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-spacing-2 flex-shrink-0">
           @for (button of modalService.modal().options?.buttons;
             track button.role) {
             @switch (button.role) {
@@ -276,6 +286,14 @@ export class ModalComponent {
 
   protected getFormControl(name: string): FormControl {
     return this.form.get(name) as FormControl;
+  }
+
+  protected getSelectOptions(selectOptions: any[] | undefined): Array<{ value: any; label: string; }> {
+    if (!selectOptions) return [];
+    return selectOptions.map(option => ({
+      value: option.id,
+      label: option.name,
+    }));
   }
 
   protected closeModal(button: any): void {

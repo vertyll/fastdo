@@ -1,11 +1,8 @@
-import { Component, OnInit, computed, effect, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { ProjectsService } from 'src/app/project/data-access/project.service';
-import { ProjectsStateService } from 'src/app/project/data-access/project.state.service';
-import { TasksService } from 'src/app/task/data-access/task.service';
-import { TasksStateService } from 'src/app/task/data-access/task.state.service';
+import { RoleService } from 'src/app/role/data-access/role.service';
 import { CookieBannerComponent } from '../molecules/cookie-banner.component';
 import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 import { FooterComponent } from '../organisms/footer.component';
@@ -23,7 +20,7 @@ import { NavbarComponent } from '../organisms/navbar.component';
   ],
   template: `
     <div class="flex flex-col min-h-screen">
-      <app-navbar [urgentCount]="urgentCount()" [projectCount]="projectCount()" />
+      <app-navbar />
       <main class="flex-grow">
         <div class="grid px-4">
           <ng-content></ng-content>
@@ -46,38 +43,48 @@ import { NavbarComponent } from '../organisms/navbar.component';
 export class LayoutComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly translateService = inject(TranslateService);
+  protected readonly roleService = inject(RoleService);
   protected readonly router = inject(Router);
 
-  private readonly tasksStateService = inject(TasksStateService);
-  private readonly projectsStateService = inject(ProjectsStateService);
-  private readonly projectsService = inject(ProjectsService);
-  private readonly tasksService = inject(TasksService);
-
-  protected urgentCount = this.tasksStateService.urgentCount;
-  protected projectCount = this.projectsStateService.projectCount;
   protected isLoggedIn = this.authService.isLoggedIn;
   protected userRoles = this.authService.userRoles;
-  protected userRolesString = computed(
-    () => this.userRoles()?.join(', ') || '',
-  );
+  protected userRolesString = computed(() => {
+    const userRoleCodes = this.userRoles();
+    if (!userRoleCodes || userRoleCodes.length === 0) return '';
+
+    const allRoles = this.roleService.getRoles();
+    if (allRoles.length === 0) return userRoleCodes.join(', ');
+
+    const translatedRoles = userRoleCodes.map(roleCode => {
+      const role = allRoles.find(r => r.code === roleCode);
+      return role?.name || roleCode;
+    });
+
+    return translatedRoles.join(', ');
+  });
   protected panelOpen: boolean = false;
   protected currentTime: string = '';
   protected browserInfo: string = '';
 
-  constructor() {
-    effect(() => {
-      if (this.isLoggedIn()) {
-        this.projectsService.getAll().subscribe();
-        this.tasksService.getAll().subscribe();
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.authService.initializeAuth();
+
+    if (this.isLoggedIn()) {
+      this.loadRoles();
+    }
+
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
     setInterval(() => this.updateTime(), 1000);
+  }
+
+  private loadRoles(): void {
+    const currentLang = this.translateService.currentLang || 'en';
+    this.roleService.getAllRoles(currentLang).subscribe({
+      error: error => {
+        console.warn('Failed to load roles:', error);
+      },
+    });
   }
 
   protected togglePanel(): void {

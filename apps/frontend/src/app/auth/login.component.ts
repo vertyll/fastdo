@@ -129,7 +129,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
-          this.router.navigate(['/tasks']).then();
+          this.router.navigate(['/projects']).then();
         },
         error: err => {
           if (err.error && err.error.message) {

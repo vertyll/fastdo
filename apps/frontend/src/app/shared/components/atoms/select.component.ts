@@ -12,6 +12,9 @@ import { Subscription } from 'rxjs';
       [id]="id()"
       class="bg-background-secondary dark:bg-dark-background-secondary transition-colors duration-200 dark:text-dark-text-primary block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
     >
+      @if (placeholder()) {
+        <option value="">{{ placeholder() }}</option>
+      }
       @for (option of translatedOptions; track $index) {
         <option [value]="option.value">
           {{ option.label }}
@@ -25,6 +28,7 @@ export class SelectFilterComponent implements OnInit, OnDestroy {
 
   readonly control = input.required<FormControl>();
   readonly id = input.required<string>();
+  readonly placeholder = input<string>('');
   readonly options = input<
     Array<{
       value: any;

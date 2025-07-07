@@ -16,23 +16,11 @@ export const configNavModules: NavModule[] = [
     ],
   },
   {
-    id: 'todo',
-    title: 'Navbar.todo',
+    id: 'projects',
+    title: 'Navbar.projects',
     icon: 'heroClipboardDocumentList',
-    route: '/tasks',
+    route: '/projects',
     sections: [
-      {
-        id: 'tasks',
-        title: 'Sidebar.tasks',
-        icon: 'heroListBullet',
-        route: '/tasks',
-      },
-      {
-        id: 'urgent',
-        title: 'Sidebar.urgentTasks',
-        icon: 'heroExclamationCircle',
-        route: '/tasks/urgent',
-      },
       {
         id: 'projects',
         title: 'Sidebar.projects',
