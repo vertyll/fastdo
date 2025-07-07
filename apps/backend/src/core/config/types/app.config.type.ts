@@ -4,7 +4,6 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 export enum Environment {
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
-  TEST = 'test',
 }
 
 export enum StorageType {
@@ -147,6 +146,16 @@ interface LanguageConfig {
   typesOutputPath: string;
 }
 
+interface WebsocketCorsConfig {
+  origin: string;
+  methods: string[];
+  transports: string[];
+}
+
+interface WebsocketConfig {
+  cors: WebsocketCorsConfig;
+}
+
 export interface AppConfig {
   environment: Environment;
   port: number;
@@ -162,6 +171,7 @@ export interface AppConfig {
   frontend: FrontendConfig;
   mail: MailConfig;
   file: FileConfig;
+  websocket: WebsocketConfig;
 }
 
 export interface UserContext {

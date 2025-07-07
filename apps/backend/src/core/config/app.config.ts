@@ -112,4 +112,11 @@ export default registerAs('app', (): AppConfig => ({
       allowedMimeTypes: process.env.ALLOWED_MIME_TYPES?.split(',') || FILE_CONSTANTS.ALLOWED_MIME_TYPES,
     },
   },
+  websocket: {
+    cors: {
+      origin: process.env.WEBSOCKET_CORS_ORIGIN || 'http://localhost:4200',
+      methods: process.env.WEBSOCKET_METHODS?.split(',') || ['GET', 'POST'],
+      transports: process.env.WEBSOCKET_TRANSPORTS?.split(',') || ['websocket', 'polling'],
+    },
+  },
 }));

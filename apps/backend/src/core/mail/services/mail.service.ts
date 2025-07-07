@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
+import { MailTemplateName } from '../enums/mail-template-name.enum';
 import { IMailService } from '../interfaces/mail-service.interface';
 import { MailSenderService } from './mail-sender.service';
 
@@ -18,7 +19,7 @@ export class MailService implements IMailService {
     await this.mailSender.sendMail({
       to,
       subject: this.i18n.t('messages.Mail.confirmationEmail.subject'),
-      templateName: 'confirmation',
+      templateName: MailTemplateName.Confirmation,
       templateData: {
         confirmationUrl: `${appUrl}/auth/confirm-email?token=${token}`,
       },
@@ -30,7 +31,7 @@ export class MailService implements IMailService {
     await this.mailSender.sendMail({
       to,
       subject: this.i18n.t('messages.Mail.resetPasswordEmail.subject'),
-      templateName: 'reset-password',
+      templateName: MailTemplateName.ResetPassword,
       templateData: {
         resetUrl: `${frontendUrl}/reset-password?token=${token}`,
       },
@@ -42,9 +43,20 @@ export class MailService implements IMailService {
     await this.mailSender.sendMail({
       to,
       subject: this.i18n.t('messages.Mail.emailChangeEmail.subject'),
-      templateName: 'email-change',
+      templateName: MailTemplateName.EmailChange,
       templateData: {
         confirmationUrl: `${appUrl}/auth/confirm-email-change?token=${token}`,
+      },
+    });
+  }
+
+  public async sendNotificationEmail(to: string, subject: string, content: string): Promise<void> {
+    await this.mailSender.sendMail({
+      to,
+      subject,
+      templateName: MailTemplateName.Notification,
+      templateData: {
+        content,
       },
     });
   }

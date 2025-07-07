@@ -1,0 +1,82 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PriorityTranslation } from '../../../../tasks/entities/priority-translation.entity';
+import { Priority } from '../../../../tasks/entities/priority.entity';
+import { TaskPriorityEnum } from '../../../../tasks/enums/task-priority.enum';
+import { Language } from '../../../language/entities/language.entity';
+import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
+import { ISeeder } from '../interfaces/seeder.interface';
+
+@Injectable()
+export class PrioritySeeder implements ISeeder {
+  constructor(
+    @InjectRepository(Priority) private readonly priorityRepository: Repository<Priority>,
+    @InjectRepository(PriorityTranslation) private readonly priorityTranslationRepository: Repository<
+      PriorityTranslation
+    >,
+    @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
+  ) {}
+
+  async seed(): Promise<void> {
+    const existingPriorities = await this.priorityRepository.count();
+    if (existingPriorities > 0) {
+      return;
+    }
+
+    const languages = await this.languageRepository.find();
+    const polishLang = languages.find(lang => lang.code === LanguageCodeEnum.POLISH);
+    const englishLang = languages.find(lang => lang.code === LanguageCodeEnum.ENGLISH);
+
+    if (!polishLang || !englishLang) {
+      throw new Error('Languages not found. Please run language seeder first.');
+    }
+
+    const prioritiesData = [
+      {
+        code: TaskPriorityEnum.LOW,
+        color: '#10B981',
+        translations: [
+          { language: polishLang, name: 'Niski', description: 'Niski priorytet' },
+          { language: englishLang, name: 'Low', description: 'Low priority' },
+        ],
+      },
+      {
+        code: TaskPriorityEnum.MEDIUM,
+        color: '#F59E0B',
+        translations: [
+          { language: polishLang, name: 'Średni', description: 'Średni priorytet' },
+          { language: englishLang, name: 'Medium', description: 'Medium priority' },
+        ],
+      },
+      {
+        code: TaskPriorityEnum.HIGH,
+        color: '#EF4444',
+        translations: [
+          { language: polishLang, name: 'Wysoki', description: 'Wysoki priorytet' },
+          { language: englishLang, name: 'High', description: 'High priority' },
+        ],
+      },
+    ];
+
+    for (const priorityData of prioritiesData) {
+      const priority = this.priorityRepository.create({
+        code: priorityData.code,
+        color: priorityData.color,
+      });
+
+      const savedPriority = await this.priorityRepository.save(priority);
+
+      for (const translationData of priorityData.translations) {
+        const translation = this.priorityTranslationRepository.create({
+          name: translationData.name,
+          description: translationData.description,
+          language: translationData.language,
+          priority: savedPriority,
+        });
+
+        await this.priorityTranslationRepository.save(translation);
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
 import { MailConfigService } from '../config/mail.config';
+import { MailTemplateName } from '../enums/mail-template-name.enum';
 import { MailSendFailedException } from '../exceptions/mail-send-failed.exception';
 import { IMailTemplate } from '../interfaces/mail-template.interface';
 import { IMailTransport } from '../interfaces/mail-transport.interface';
@@ -25,7 +26,7 @@ export class MailSenderService {
   public async sendMail(options: {
     to: string;
     subject: string;
-    templateName: string;
+    templateName: MailTemplateName;
     templateData: any;
   }): Promise<void> {
     let currentError: Error | null = null;
