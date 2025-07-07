@@ -81,7 +81,7 @@
   },
   "Roles": {
     "errors": {
-      "roleNotFound": "Rola {roleName} nie istnieje"
+      "roleNotFound": "Rola {roleCode} nie istnieje"
     }
   },
   "TermsAndPolicies": {
