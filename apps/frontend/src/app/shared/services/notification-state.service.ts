@@ -2,10 +2,8 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, filter, interval, of, startWith, switchMap } from 'rxjs';
 import { AuthService } from '../../auth/data-access/auth.service';
-import {
-  NotificationApiService,
-} from './notification-api.service';
 import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
+import { NotificationApiService } from './notification-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +64,7 @@ export class NotificationStateService {
     this.setupWebSocketEventListeners();
   }
 
-    public async markAsRead(id: number): Promise<void> {
+  public async markAsRead(id: number): Promise<void> {
     try {
       await this.notificationApiService.markAsRead(id).toPromise();
 
@@ -101,11 +99,20 @@ export class NotificationStateService {
     }
   }
 
+  public async deleteNotification(id: number): Promise<void> {
+    try {
+      await this.notificationApiService.deleteNotification(id).toPromise();
+      this._notifications.set(this._notifications().filter(n => n.id !== id));
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      this._error.set('Failed to delete notification');
+    }
+  }
+
   public async clearAllNotifications(): Promise<void> {
     try {
       await this.notificationApiService.clearAllNotifications().toPromise();
 
-      // Clear local state
       this._notifications.set([]);
     } catch (error) {
       console.error('Error clearing all notifications:', error);

@@ -3,7 +3,12 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../types/api-response.type';
-import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto, CreateNotificationDto } from '../types/notification.type';
+import {
+  CreateNotificationDto,
+  NotificationDto,
+  NotificationSettingsDto,
+  UpdateNotificationSettingsDto,
+} from '../types/notification.type';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +40,12 @@ export class NotificationApiService {
 
   public clearAllNotifications(): Observable<void> {
     return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/me/clear-all`).pipe(
+      map(() => void 0),
+    );
+  }
+
+  public deleteNotification(id: number): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/${id}`).pipe(
       map(() => void 0),
     );
   }

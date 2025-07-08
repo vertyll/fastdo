@@ -104,7 +104,7 @@ export class NotificationWebSocketService {
     this.emitWebSocketEvent('websocket-disconnected');
   }
 
-    public isConnected(): boolean {
+  public isConnected(): boolean {
     return this.socket?.connected ?? false;
   }
 
