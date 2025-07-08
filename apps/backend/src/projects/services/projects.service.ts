@@ -23,6 +23,7 @@ import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
 import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectRoleService } from './project-role.service';
+import { ProjectUserRoleService } from './project-user-role.service';
 
 @Injectable()
 export class ProjectsService {
@@ -32,6 +33,7 @@ export class ProjectsService {
     private readonly cls: ClsService<CustomClsStore>,
     private readonly fileFacade: FileFacade,
     private readonly projectRoleService: ProjectRoleService,
+    private readonly projectUserRoleService: ProjectUserRoleService,
     @Inject(INotificationServiceToken) private readonly notificationService: INotificationService,
     @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
   ) {}
@@ -43,6 +45,12 @@ export class ProjectsService {
     const userId = this.cls.get('user').userId;
 
     const [items, total] = await this.projectRepository.findAllWithParams(params, skip, pageSize, userId);
+    
+    // Add current user role to each project
+    for (const project of items) {
+      const userRole = await this.projectUserRoleService.getUserRoleCodeInProject(project.id, userId);
+      project.currentUserRole = userRole || undefined;
+    }
 
     return {
       items,
@@ -56,6 +64,8 @@ export class ProjectsService {
   }
 
   public async create(createProjectDto: CreateProjectDto): Promise<Project> {
+    console.log('Creating project with DTO:', createProjectDto);
+    
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -63,6 +73,15 @@ export class ProjectsService {
     try {
       const userId = this.cls.get('user').userId;
       const { categories, statuses, typeId, icon, userEmails, usersWithRoles, ...projectData } = createProjectDto;
+
+      console.log('Extracted data:', {
+        categories,
+        statuses,
+        typeId,
+        userEmails,
+        usersWithRoles,
+        projectData
+      });
 
       let iconFile = null;
       if (icon) {
@@ -122,16 +141,32 @@ export class ProjectsService {
     return this.projectRepository.findOneOrFail({ where: { id } });
   }
 
-  public findOneWithDetails(id: number, currentLanguage: string = 'pl'): Promise<Project> {
+  public async findOneWithDetails(id: number, currentLanguage: string = 'pl'): Promise<Project> {
     const userId = this.cls.get('user').userId;
-    return this.projectRepository.findOneWithDetails(id, userId, currentLanguage);
+    const project = await this.projectRepository.findOneWithDetails(id, userId, currentLanguage);
+    
+    // Add current user role to the project
+    const userRole = await this.projectUserRoleService.getUserRoleCodeInProject(id, userId);
+    project.currentUserRole = userRole || undefined;
+    
+    return project;
   }
 
   public async update(
     id: number,
     updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
+    console.log('Updating project with DTO:', updateProjectDto);
     const { categories, statuses, typeId, icon, userEmails, usersWithRoles, ...updateData } = updateProjectDto;
+
+    console.log('Extracted update data:', {
+      categories,
+      statuses,
+      typeId,
+      userEmails,
+      usersWithRoles,
+      updateData
+    });
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -139,6 +174,8 @@ export class ProjectsService {
 
     try {
       const userId = this.cls.get('user').userId;
+
+      await this.checkProjectEditPermission(id, userId);
 
       let iconFile = null;
       if (icon) {
@@ -189,6 +226,10 @@ export class ProjectsService {
   }
 
   public async remove(id: number): Promise<void> {
+    const userId = this.cls.get('user').userId;
+    
+    await this.checkProjectEditPermission(id, userId);
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -382,6 +423,27 @@ export class ProjectsService {
   }
 
   public async getProjectUsers(projectId: number): Promise<UserDto[]> {
+    const userId = this.cls.get('user').userId;
+    
+    const project = await this.projectRepository.findOne({
+      where: [
+        {
+          id: projectId,
+          projectUsers: {
+            user: { id: userId },
+          },
+        },
+        {
+          id: projectId,
+          isPublic: true,
+        },
+      ],
+    });
+
+    if (!project) {
+      throw new Error('Access denied to project');
+    }
+
     const projectUsers = await this.dataSource
       .getRepository(ProjectUserRole)
       .createQueryBuilder('pur')
@@ -399,5 +461,36 @@ export class ProjectsService {
       id: pur.user.id,
       name: pur.user.email,
     }));
+  }
+
+  private async checkProjectEditPermission(projectId: number, userId: number): Promise<void> {
+    const project = await this.projectRepository.findOne({
+      where: { id: projectId },
+      select: ['id', 'isPublic'],
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    if (project.isPublic) {
+      const hasManagerRole = await this.projectUserRoleService.hasManagerRole(projectId, userId);
+      if (!hasManagerRole) {
+        throw new Error('Only managers can edit public projects');
+      }
+    } else {
+      const isProjectMember = await this.projectRepository.findOne({
+        where: {
+          id: projectId,
+          projectUsers: {
+            user: { id: userId },
+          },
+        },
+      });
+
+      if (!isProjectMember) {
+        throw new Error('Access denied to project');
+      }
+    }
   }
 }

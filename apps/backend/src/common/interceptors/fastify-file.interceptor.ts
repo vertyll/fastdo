@@ -2,9 +2,11 @@ import { MultipartFile } from '@fastify/multipart';
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { I18nContext } from 'nestjs-i18n';
+import 'reflect-metadata';
 import { Observable } from 'rxjs';
 import { Readable } from 'stream';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { MULTIPART_ARRAY_FIELDS, MULTIPART_BOOLEAN_FIELDS, MULTIPART_NUMBER_FIELDS, MULTIPART_JSON_FIELDS, MULTIPART_BASE_CLASSES } from '../decorators/multipart-transform.decorator';
 
 interface CustomFileStream extends Readable {
   truncated: boolean;
@@ -14,7 +16,10 @@ interface CustomFileStream extends Readable {
 
 @Injectable()
 export class FastifyFileInterceptor implements NestInterceptor {
-  constructor(private readonly fieldName: string) {}
+  constructor(
+    private readonly fieldName: string,
+    private readonly dtoClass?: new () => any,
+  ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const i18n = I18nContext.current<I18nTranslations>(context);
@@ -58,14 +63,83 @@ export class FastifyFileInterceptor implements NestInterceptor {
       this.handleFileError(error, i18n);
     }
 
-    const arrayFields = ['categories', 'statuses'];
+    if (this.dtoClass) {
+      this.applyTransformationsFromMetadata(formData, this.dtoClass);
+    }
+
+    return formData;
+  }
+
+  private applyTransformationsFromMetadata(formData: Record<string, any>, dtoClass: new () => any): void {
+    const arrayFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_ARRAY_FIELDS);
+    const booleanFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_BOOLEAN_FIELDS);
+    const numberFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_NUMBER_FIELDS);
+    const jsonFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_JSON_FIELDS);
+
+    jsonFields.forEach(field => {
+      if (formData[field] !== undefined) {
+        if (typeof formData[field] === 'string') {
+          try {
+            const parsed = JSON.parse(formData[field]);
+            formData[field] = parsed;
+          } catch {
+            formData[field] = [];
+          }
+        }
+      }
+    });
+
     arrayFields.forEach(field => {
-      if (formData[field] && !Array.isArray(formData[field])) {
+      if (!jsonFields.includes(field) && formData[field] && !Array.isArray(formData[field])) {
         formData[field] = [formData[field]];
       }
     });
 
-    return formData;
+    booleanFields.forEach(field => {
+      if (formData[field] !== undefined) {
+        if (typeof formData[field] === 'string') {
+          formData[field] = formData[field].toLowerCase() === 'true';
+        } else {
+          formData[field] = Boolean(formData[field]);
+        }
+      }
+    });
+
+    numberFields.forEach(field => {
+      if (formData[field] !== undefined && formData[field] !== '') {
+        if (typeof formData[field] === 'string') {
+          const num = Number(formData[field]);
+          if (!isNaN(num)) {
+            formData[field] = num;
+          }
+        }
+      }
+    });
+  }
+
+  private getMetadataFromClassChain(targetClass: any, metadataKey: symbol): string[] {
+    const fields: string[] = [];
+    
+    try {
+      const classFields: string[] = Reflect.getMetadata(metadataKey, targetClass) || [];
+      fields.push(...classFields);
+    } catch (error) {
+      // Silent error - no metadata is a normal situation
+    }
+
+    try {
+      const baseClasses: any[] = Reflect.getMetadata(MULTIPART_BASE_CLASSES, targetClass) || [];
+      
+      for (const baseClass of baseClasses) {
+        const baseFields: string[] = Reflect.getMetadata(metadataKey, baseClass) || [];
+        fields.push(...baseFields);
+      }
+    } catch (error) {
+      // Silent error - no metadata is a normal situation
+    }
+
+    // Remove duplicates
+    return [...new Set(fields)];
   }
 
   private async streamToBuffer(stream: any): Promise<Buffer> {

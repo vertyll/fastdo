@@ -29,7 +29,7 @@ export class ProjectsController {
   }
 
   @Post()
-  @UseInterceptors(new FastifyFileInterceptor('icon'))
+  @UseInterceptors(new FastifyFileInterceptor('icon', CreateProjectDto))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a new project' })
   @ApiBody({ type: CreateProjectDto })
@@ -73,7 +73,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @UseInterceptors(new FastifyFileInterceptor('icon'))
+  @UseInterceptors(new FastifyFileInterceptor('icon', UpdateProjectDto))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update a project' })
   @ApiBody({ type: UpdateProjectDto })
