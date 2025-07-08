@@ -50,13 +50,34 @@ export class MailService implements IMailService {
     });
   }
 
-  public async sendNotificationEmail(to: string, subject: string, content: string): Promise<void> {
+  public async sendNotificationEmail(
+    to: string,
+    subject: string,
+    content: string,
+    invitationId?: string,
+  ): Promise<void> {
+    const frontendUrl = this.configService.get<string>('app.frontend.url');
+    let finalContent = content;
+
+    if (invitationId) {
+      const acceptUrl = `${frontendUrl}/projects/invitations/accept/${invitationId}`;
+      const rejectUrl = `${frontendUrl}/projects/invitations/reject/${invitationId}`;
+
+      finalContent += `
+      <div class="invitation-actions">
+        <a href='${acceptUrl}' class="btn-accept">Akceptuj</a>
+        <a href='${rejectUrl}' class="btn-reject">Odrzuć</a>
+      </div>
+    `;
+    }
+
     await this.mailSender.sendMail({
       to,
       subject,
       templateName: MailTemplateName.Notification,
       templateData: {
-        content,
+        content: finalContent,
+        frontendUrl,
       },
     });
   }

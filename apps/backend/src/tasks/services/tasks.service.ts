@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClsService } from 'nestjs-cls';
+import { I18nService } from 'nestjs-i18n';
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { CustomClsStore } from 'src/core/config/types/app.config.type';
 import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
@@ -10,6 +11,7 @@ import { ProjectStatus } from 'src/projects/entities/project-status.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
@@ -27,6 +29,7 @@ export class TasksService implements ITasksService {
   constructor(
     private readonly taskRepository: TaskRepository,
     private readonly cls: ClsService<CustomClsStore>,
+    private readonly i18n: I18nService<I18nTranslations>,
     @InjectRepository(Priority) private readonly priorityRepository: Repository<Priority>,
   ) {}
 
@@ -214,12 +217,12 @@ export class TasksService implements ITasksService {
     });
 
     if (!comment) {
-      throw new Error('Comment not found');
+      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
     }
 
     // TODO: In the future, project owners/admins could also delete comments
     if (comment.author.id !== userId) {
-      throw new Error('You can only delete your own comments');
+      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
     }
 
     await this.taskRepository.manager.delete(TaskComment, commentId);
@@ -234,11 +237,11 @@ export class TasksService implements ITasksService {
     });
 
     if (!comment) {
-      throw new Error('Comment not found');
+      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
     }
 
     if (comment.author.id !== userId) {
-      throw new Error('You can only edit your own comments');
+      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
     }
 
     comment.content = updateCommentDto.content;

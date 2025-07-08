@@ -7,10 +7,10 @@ import { INotificationServiceToken } from 'src/notifications/tokens/notification
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
 import { IUsersServiceToken } from 'src/users/tokens/users-service.token';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
-import { ProjectUser } from '../entities/project-user.entity';
-import { ProjectUserRole } from '../entities/project-user-role.entity';
-import { Project } from '../entities/project.entity';
 import { ProjectRole } from '../entities/project-role.entity';
+import { ProjectUserRole } from '../entities/project-user-role.entity';
+import { ProjectUser } from '../entities/project-user.entity';
+import { Project } from '../entities/project.entity';
 import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectRoleService } from './project-role.service';
 import { ProjectsService } from './projects.service';
@@ -144,9 +144,9 @@ describe('ProjectsService', () => {
 
       mockQueryRunner.manager.getRepository.mockImplementation((entity: any) => {
         if (entity === Project) {
-          return { 
+          return {
             create: jest.fn().mockReturnValue(mockNewProject),
-            save: jest.fn().mockResolvedValue(mockNewProject) 
+            save: jest.fn().mockResolvedValue(mockNewProject),
           };
         }
         if (entity === ProjectUser) {
@@ -173,9 +173,9 @@ describe('ProjectsService', () => {
             }),
           };
         }
-        return { 
+        return {
           create: jest.fn(),
-          save: jest.fn() 
+          save: jest.fn(),
         };
       });
 
@@ -193,14 +193,14 @@ describe('ProjectsService', () => {
 
       mockQueryRunner.manager.getRepository.mockImplementation((entity: typeof Project | typeof ProjectUser) => {
         if (entity === Project) {
-          return { 
+          return {
             create: jest.fn().mockReturnValue({}),
-            save: jest.fn().mockRejectedValue(new Error('Test error')) 
+            save: jest.fn().mockRejectedValue(new Error('Test error')),
           };
         }
-        return { 
+        return {
           create: jest.fn(),
-          save: jest.fn() 
+          save: jest.fn(),
         };
       });
 

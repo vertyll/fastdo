@@ -4,8 +4,10 @@ import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response
 import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
 import { UserDto } from '../../users/dtos/user.dto';
+import { AcceptInvitationDto } from '../dtos/accept-invitation.dto';
 import { CreateProjectDto } from '../dtos/create-project.dto';
 import { GetAllProjectsSearchParams } from '../dtos/get-all-projects-search-params.dto';
+import { RejectInvitationDto } from '../dtos/reject-invitation.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../entities/project.entity';
 import { ProjectManagementService } from '../services/projects-managment.service';
@@ -97,5 +99,27 @@ export class ProjectsController {
   })
   public async remove(@Param('id') id: string): Promise<void> {
     await this.projectManagementService.removeProjectWithTasks(+id);
+  }
+
+  @Post('invitations/accept')
+  @ApiOperation({ summary: 'Get all projects where the user is invited' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all projects where the user is invited.',
+    type: Project,
+    isArray: true,
+  })
+  async acceptInvitation(@Body() dto: AcceptInvitationDto) {
+    return this.projectsService.acceptInvitation(dto.invitationId);
+  }
+
+  @Post('invitations/reject')
+  @ApiOperation({ summary: 'Reject a project invitation' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'The project invitation has been successfully rejected.',
+  })
+  async rejectInvitation(@Body() dto: RejectInvitationDto) {
+    return this.projectsService.rejectInvitation(dto.invitationId);
   }
 }

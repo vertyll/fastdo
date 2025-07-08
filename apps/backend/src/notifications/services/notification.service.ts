@@ -97,6 +97,7 @@ export class NotificationService implements INotificationService {
     );
 
     // Send notification via WebSocket
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const notificationEvent = {
       id: notification.id,
       type: notification.type,
@@ -168,10 +169,16 @@ export class NotificationService implements INotificationService {
   private async sendEmailNotification(recipient: User, notification: CreateNotificationDto): Promise<void> {
     try {
       const content = `<h2>${notification.title}</h2><p>${notification.message}</p>`;
+
+      const invitationId = notification.type === NotificationType.PROJECT_INVITATION && notification.data?.invitationId
+        ? notification.data.invitationId
+        : undefined;
+
       await this.mailService.sendNotificationEmail(
         recipient.email,
         notification.title,
         content,
+        invitationId,
       );
     } catch (error) {
       console.error('Failed to send email notification:', error);

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClsService } from 'nestjs-cls';
-import { DeleteResult, UpdateResult, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ClsService } from 'nestjs-cls';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { Project } from 'src/projects/entities/project.entity';
-import { Task } from '../entities/task.entity';
-import { Priority } from '../entities/priority.entity';
-import { TaskRepository } from '../repositories/task.repository';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
+import { Priority } from '../entities/priority.entity';
+import { Task } from '../entities/task.entity';
 import { TaskPriorityEnum } from '../enums/task-priority.enum';
+import { TaskRepository } from '../repositories/task.repository';
 import { TasksService } from './tasks.service';
 
 describe('TasksService', () => {
@@ -62,7 +62,7 @@ describe('TasksService', () => {
   describe('create', () => {
     it('should create a new task', async () => {
       const createDto: CreateTaskDto = { description: 'New Task Description', projectId: 1 };
-      
+
       const mockPriority: Priority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
@@ -234,9 +234,9 @@ describe('TasksService', () => {
 
       mockTaskRepository.findOneOrFail.mockResolvedValue(existingTask);
       mockTaskRepository.save.mockResolvedValue(updatedTask);
-      
+
       const result = await service.update(1, updateDto);
-      
+
       expect(mockTaskRepository.findOneOrFail).toHaveBeenCalledWith({
         where: { id: 1 },
         relations: [

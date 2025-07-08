@@ -89,5 +89,34 @@
       "termsNotFound": "Terms not found",
       "PrivacyPolicyNotFound": "Privacy policy not found"
     }
+  },
+  "ProjectUserRole": {
+    "errors": {
+      "roleNotFound": "Project user role not found"
+    }
+  },
+  "Projects": {
+    "errors": {
+      "managerRoleNotFound": "Rola menedżera projektu nie została znaleziona",
+      "inviterNotFound": "Inviter not found",
+      "projectNotFound": "Project not found",
+      "updaterNotFound": "Updater not found",
+      "updaterNotInNewUsersList": "Updater not found in new users list",
+      "cannotRemoveYourselfFromProject": "You cannot remove yourself from the project",
+      "lastManagerCannotBeRemoved": "The last manager of the project cannot be removed",
+      "projectNotFoundOrAccessDenied": "Project not found or access denied",
+      "accessDeniedToEditPublicProject": "Access denied to edit public project",
+      "accessDeniedToEditPrivateProject": "Access denied to edit private project",
+      "invitationNotFoundOrAlreadyHandled": "Invitation not found or already handled",
+      "notAllowedToAcceptInvitation": "You are not allowed to accept this invitation",
+      "notAllowedToRejectInvitation": "You are not allowed to reject this invitation"
+    }
+  },
+  "Tasks": {
+    "errors": {
+      "taskNotFound": "Task not found",
+      "commentNotFound": "Comment not found",
+      "commentNotYourOwn": "You can only edit your own comments"
+    }
   }
 }

@@ -6,7 +6,13 @@ import 'reflect-metadata';
 import { Observable } from 'rxjs';
 import { Readable } from 'stream';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { MULTIPART_ARRAY_FIELDS, MULTIPART_BOOLEAN_FIELDS, MULTIPART_NUMBER_FIELDS, MULTIPART_JSON_FIELDS, MULTIPART_BASE_CLASSES } from '../decorators/multipart-transform.decorator';
+import {
+  MULTIPART_ARRAY_FIELDS,
+  MULTIPART_BASE_CLASSES,
+  MULTIPART_BOOLEAN_FIELDS,
+  MULTIPART_JSON_FIELDS,
+  MULTIPART_NUMBER_FIELDS,
+} from '../decorators/multipart-transform.decorator';
 
 interface CustomFileStream extends Readable {
   truncated: boolean;
@@ -18,7 +24,7 @@ interface CustomFileStream extends Readable {
 export class FastifyFileInterceptor implements NestInterceptor {
   constructor(
     private readonly fieldName: string,
-    private readonly dtoClass?: new () => any,
+    private readonly dtoClass?: new() => any,
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -70,7 +76,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     return formData;
   }
 
-  private applyTransformationsFromMetadata(formData: Record<string, any>, dtoClass: new () => any): void {
+  private applyTransformationsFromMetadata(formData: Record<string, any>, dtoClass: new() => any): void {
     const arrayFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_ARRAY_FIELDS);
     const booleanFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_BOOLEAN_FIELDS);
     const numberFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_NUMBER_FIELDS);
@@ -80,8 +86,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
       if (formData[field] !== undefined) {
         if (typeof formData[field] === 'string') {
           try {
-            const parsed = JSON.parse(formData[field]);
-            formData[field] = parsed;
+            formData[field] = JSON.parse(formData[field]);
           } catch {
             formData[field] = [];
           }
@@ -119,21 +124,23 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
   private getMetadataFromClassChain(targetClass: any, metadataKey: symbol): string[] {
     const fields: string[] = [];
-    
+
     try {
       const classFields: string[] = Reflect.getMetadata(metadataKey, targetClass) || [];
       fields.push(...classFields);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Silent error - no metadata is a normal situation
     }
 
     try {
       const baseClasses: any[] = Reflect.getMetadata(MULTIPART_BASE_CLASSES, targetClass) || [];
-      
+
       for (const baseClass of baseClasses) {
         const baseFields: string[] = Reflect.getMetadata(metadataKey, baseClass) || [];
         fields.push(...baseFields);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Silent error - no metadata is a normal situation
     }

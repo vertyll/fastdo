@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
-import { User } from '../../users/entities/user.entity';
-import { Task } from '../entities/task.entity';
-import { Priority } from '../entities/priority.entity';
 import { Project } from '../../projects/entities/project.entity';
-import { TaskPriorityEnum } from '../enums/task-priority.enum';
+import { User } from '../../users/entities/user.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
-import { TasksController } from './tasks.controller';
+import { Priority } from '../entities/priority.entity';
+import { Task } from '../entities/task.entity';
+import { TaskPriorityEnum } from '../enums/task-priority.enum';
 import { TasksService } from '../services/tasks.service';
+import { TasksController } from './tasks.controller';
 
 describe('TasksController', () => {
   let controller: TasksController;
@@ -38,9 +38,9 @@ describe('TasksController', () => {
 
   describe('create', () => {
     it('should create a new task', async () => {
-      const taskDto: CreateTaskDto = { 
-        description: 'New Task Description', 
-        projectId: 1 
+      const taskDto: CreateTaskDto = {
+        description: 'New Task Description',
+        projectId: 1,
       };
 
       const mockPriority: Priority = {

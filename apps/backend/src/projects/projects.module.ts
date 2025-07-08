@@ -14,6 +14,7 @@ import { ProjectUserRoleController } from './controllers/project-user-role.contr
 import { ProjectsController } from './controllers/projects.controller';
 import { ProjectCategoryTranslation } from './entities/project-category-translation.entity';
 import { ProjectCategory } from './entities/project-category.entity';
+import { ProjectInvitation } from './entities/project-invitation.entity';
 import { ProjectRoleTranslation } from './entities/project-role-translation.entity';
 import { ProjectRole } from './entities/project-role.entity';
 import { ProjectStatusTranslation } from './entities/project-status-translation.entity';
@@ -24,6 +25,7 @@ import { ProjectUserRole } from './entities/project-user-role.entity';
 import { ProjectUser } from './entities/project-user.entity';
 import { Project } from './entities/project.entity';
 import { ProjectCategoryRepository } from './repositories/project-category.repository';
+import { ProjectInvitationRepository } from './repositories/project-invitation.repository';
 import { ProjectRoleRepository } from './repositories/project-role.repository';
 import { ProjectStatusRepository } from './repositories/project-status.repository';
 import { ProjectTypeRepository } from './repositories/project-type.repository';
@@ -43,10 +45,10 @@ import { ProjectsService } from './services/projects.service';
     TypeOrmModule.forFeature([
       Project,
       ProjectUser,
-      ProjectType,
-      ProjectTypeTranslation,
+      ProjectUserRole,
+      ProjectRole,
       ProjectCategory,
-      ProjectCategoryTranslation,
+      ProjectType,
       ProjectStatus,
       ProjectStatusTranslation,
       ProjectUserRole,
@@ -54,6 +56,9 @@ import { ProjectsService } from './services/projects.service';
       Language,
       ProjectRole,
       ProjectRoleTranslation,
+      ProjectCategoryTranslation,
+      ProjectTypeTranslation,
+      ProjectInvitation,
     ]),
     TasksModule,
     FileModule,
@@ -83,6 +88,7 @@ import { ProjectsService } from './services/projects.service';
     ProjectStatusRepository,
     ProjectUserRoleService,
     ProjectUserRoleRepository,
+    ProjectInvitationRepository,
   ],
 })
 export class ProjectsModule {}

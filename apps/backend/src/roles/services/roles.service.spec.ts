@@ -10,11 +10,11 @@ import { RolesService } from './roles.service';
 
 jest.mock('nestjs-i18n', () => ({
   I18nContext: {
-    current: jest.fn().mockReturnValue({ lang: 'en' })
+    current: jest.fn().mockReturnValue({ lang: 'en' }),
   },
   I18nService: jest.fn().mockImplementation(() => ({
-    translate: jest.fn()
-  }))
+    translate: jest.fn(),
+  })),
 }));
 
 describe('RolesService', () => {

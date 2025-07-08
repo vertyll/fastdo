@@ -34,7 +34,7 @@ export function MultipartJSON(): PropertyDecorator {
   };
 }
 
-export function InheritsMultipartMetadata(baseClass: new () => any): ClassDecorator {
+export function InheritsMultipartMetadata(baseClass: new() => any): ClassDecorator {
   return (target: any) => {
     const baseArrayFields = Reflect.getMetadata(MULTIPART_ARRAY_FIELDS, baseClass) || [];
     const baseBooleanFields = Reflect.getMetadata(MULTIPART_BOOLEAN_FIELDS, baseClass) || [];
