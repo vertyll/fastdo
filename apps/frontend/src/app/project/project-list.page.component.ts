@@ -1,15 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import { heroCalendar } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { ButtonRoleEnum, ModalInputTypeEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
-import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { PaginationMeta } from '../shared/types/api-response.type';
 import { PaginationParams, ProjectListFiltersConfig } from '../shared/types/filter.type';
@@ -18,7 +16,6 @@ import { GetAllProjectsSearchParams } from '../shared/types/project.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
-import { AddProjectDto } from './dtos/add-project.dto';
 import { ProjectCardComponent } from './ui/project-card.component';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { ProjectNameValidator } from './validators/project-name.validator';
@@ -37,7 +34,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <app-title>{{ 'Project.title' | translate }}</app-title>
-      <app-button (click)="openAddProjectModal()">
+      <app-button (click)="navigateToAddProject()">
         {{ 'Project.addProject' | translate }}
       </app-button>
       <app-projects-list-filters
@@ -53,7 +50,9 @@ import { ProjectNameValidator } from './validators/project-name.validator';
                 <app-project-card
                   [project]="project"
                   (deleteProject)="deleteProject($event)"
+                  (editProject)="navigateToEditProject($event)"
                   (updateProject)="updateProjectName($event.id, $event.name)"
+                  (viewTasks)="navigateToProjectTasks($event)"
                 />
               } @empty {
                 <p>{{ 'Project.emptyList' | translate }}</p>
@@ -84,40 +83,27 @@ import { ProjectNameValidator } from './validators/project-name.validator';
 })
 export class ProjectListPageComponent implements OnInit {
   private readonly projectsService = inject(ProjectsService);
-  protected readonly projectsStateService = inject(ProjectsStateService);
+  private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
-  private readonly modalService = inject(ModalService);
+  protected readonly projectsStateService = inject(ProjectsStateService);
   protected readonly listStateValue = LOADING_STATE_VALUE;
 
   ngOnInit(): void {
     this.getAllProjects();
   }
 
-  protected openAddProjectModal(): void {
-    this.modalService.present({
-      title: this.translateService.instant('Project.addProject'),
-      inputs: [
-        {
-          id: 'name',
-          type: ModalInputTypeEnum.Textarea,
-          required: true,
-          label: this.translateService.instant('Project.projectName'),
-        },
-      ],
-      buttons: [
-        {
-          role: ButtonRoleEnum.Cancel,
-          text: this.translateService.instant('Basic.cancel'),
-        },
-        {
-          role: ButtonRoleEnum.Ok,
-          text: this.translateService.instant('Basic.save'),
-          handler: (data: AddProjectDto) => this.handleAddProject(data),
-        },
-      ],
-    });
+  protected async navigateToAddProject(): Promise<void> {
+    await this.router.navigate(['/projects/new']);
+  }
+
+  protected async navigateToEditProject(projectId: number): Promise<void> {
+    await this.router.navigate(['/projects/edit', projectId]);
+  }
+
+  protected async navigateToProjectTasks(projectId: number): Promise<void> {
+    await this.router.navigate(['/projects', projectId, 'tasks']);
   }
 
   protected handlePageChange(event: PaginationParams): void {
@@ -135,36 +121,6 @@ export class ProjectListPageComponent implements OnInit {
     });
 
     this.getAllProjects(searchParams);
-  }
-
-  private async handleAddProject(data: AddProjectDto): Promise<boolean> {
-    const validation = this.projectNameValidator.validateProjectName(data.name);
-    if (!validation.isValid) {
-      this.modalService.updateConfig({
-        error: validation.error,
-      });
-      return false;
-    }
-
-    try {
-      await firstValueFrom(this.projectsService.add(data.name));
-      this.notificationService.showNotification(
-        this.translateService.instant('Project.createSuccess'),
-        NotificationTypeEnum.Success,
-      );
-      return true;
-    } catch (err: any) {
-      const errorMessage = err.error?.message || this.translateService.instant('Project.createError');
-
-      this.modalService.updateConfig({
-        error: errorMessage,
-      });
-      this.notificationService.showNotification(
-        errorMessage,
-        NotificationTypeEnum.Error,
-      );
-      return false;
-    }
   }
 
   protected handleFiltersChange(filters: ProjectListFiltersConfig): void {

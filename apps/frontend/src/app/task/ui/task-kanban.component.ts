@@ -38,7 +38,7 @@ export class TasksKanbanViewComponent implements OnInit, OnChanges {
   }
 
   private filterTasks(): void {
-    this.todos = this.tasks().filter(task => !task.isDone);
-    this.tasksDone = this.tasks().filter(task => task.isDone);
+    this.todos = this.tasks();
+    this.tasksDone = [];
   }
 }

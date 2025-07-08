@@ -1,7 +1,5 @@
-import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-select',
@@ -15,7 +13,7 @@ import { Subscription } from 'rxjs';
       @if (placeholder()) {
         <option value="">{{ placeholder() }}</option>
       }
-      @for (option of translatedOptions; track $index) {
+      @for (option of options(); track $index) {
         <option [value]="option.value">
           {{ option.label }}
         </option>
@@ -23,9 +21,7 @@ import { Subscription } from 'rxjs';
     </select>
   `,
 })
-export class SelectFilterComponent implements OnInit, OnDestroy {
-  private readonly translateService = inject(TranslateService);
-
+export class SelectFilterComponent {
   readonly control = input.required<FormControl>();
   readonly id = input.required<string>();
   readonly placeholder = input<string>('');
@@ -35,29 +31,4 @@ export class SelectFilterComponent implements OnInit, OnDestroy {
       label: string;
     }>
   >([]);
-
-  protected translatedOptions: Array<{ value: any; label: string; }> = [];
-  private langChangeSubscription!: Subscription;
-
-  ngOnInit(): void {
-    this.translateOptions();
-    this.langChangeSubscription = this.translateService.onLangChange.subscribe(
-      (_event: LangChangeEvent) => {
-        this.translateOptions();
-      },
-    );
-  }
-
-  ngOnDestroy(): void {
-    if (this.langChangeSubscription) {
-      this.langChangeSubscription.unsubscribe();
-    }
-  }
-
-  private translateOptions(): void {
-    this.translatedOptions = this.options().map(option => ({
-      value: option.value,
-      label: this.translateService.instant(option.label),
-    }));
-  }
 }

@@ -14,17 +14,6 @@ export class TasksService {
   private readonly httpService = inject(TasksApiService);
   private readonly state = inject(TasksStateService);
 
-  public getAll(searchParams?: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
-    return this.httpService.getAll(searchParams).pipe(
-      tap(response => {
-        if (response.data) {
-          this.state.setTaskList(response.data.items);
-          this.state.setPagination(response.data.pagination);
-        }
-      }),
-    );
-  }
-
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
@@ -61,5 +50,29 @@ export class TasksService {
         this.state.addTask(response.data);
       }),
     );
+  }
+
+  public getOne(taskId: number): Observable<ApiResponse<Task>> {
+    return this.httpService.getOne(taskId);
+  }
+
+  public remove(taskId: number): Observable<ApiResponse<void>> {
+    return this.delete(taskId);
+  }
+
+  public createComment(taskId: number, content: { content: string; }): Observable<ApiResponse<any>> {
+    return this.httpService.createComment(taskId, content);
+  }
+
+  public getTaskComments(taskId: number): Observable<ApiResponse<any[]>> {
+    return this.httpService.getTaskComments(taskId);
+  }
+
+  public deleteComment(commentId: number): Observable<ApiResponse<void>> {
+    return this.httpService.deleteComment(commentId);
+  }
+
+  public updateComment(commentId: number, content: { content: string; }): Observable<ApiResponse<any>> {
+    return this.httpService.updateComment(commentId, content);
   }
 }

@@ -27,9 +27,7 @@ export class TasksStateService {
       : LOADING_STATE_VALUE.SUCCESS
   );
   public error = computed(() => this.apiService.$error());
-  public urgentCount = computed(
-    () => this.tasksSignal().filter(task => task.isUrgent).length,
-  );
+
   public readonly pagination = this.paginationSignal.asReadonly();
 
   public setTaskList(tasks: Task[]): void {

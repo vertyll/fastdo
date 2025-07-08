@@ -1,15 +1,56 @@
+import { File } from '../../core/file/models/File';
+import { ProjectCategory, ProjectStatus } from '../../project/models/Project';
+import { SimpleProjectRole } from '../../shared/types/simple-entities.type';
+
 export type Task = {
   id: number;
-  isDone: boolean;
-  name: string;
+  description: string;
+  additionalDescription?: string;
+  priceEstimation: number; // 0-100 where 100 = 1 hour
+  workedTime: number; // 0-100 where 100 = 1 hour
+  accessRole?: SimpleProjectRole;
   dateCreation: string;
-  dateModification: string | null;
-  isUrgent: boolean;
-  isPrivate: boolean;
-  project: Project | null;
+  dateModification: string;
+  project?: TaskProject | null;
+  assignedUsers: TaskUser[];
+  createdBy: TaskUser;
+  priority: TaskPriority;
+  categories: ProjectCategory[];
+  status?: ProjectStatus | null;
+  attachments: File[];
+  comments: TaskComment[];
 };
 
-type Project = {
+export type TaskProject = {
   id: number;
   name: string;
+  categories: ProjectCategory[];
+  statuses: ProjectStatus[];
 };
+
+export type TaskUser = {
+  id: number;
+  email: string;
+};
+
+export type TaskPriority = {
+  id: number;
+  name: string;
+  color: string;
+  code: TaskPriorityEnum;
+};
+
+export type TaskComment = {
+  id: number;
+  content: string;
+  dateCreation: string;
+  author: TaskUser;
+  attachments: File[];
+};
+
+export enum TaskPriorityEnum {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent',
+}

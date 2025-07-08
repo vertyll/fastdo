@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
 import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
+import { AddProjectDto } from '../dtos/add-project.dto';
+import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../models/Project';
 import { ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
@@ -40,8 +42,20 @@ export class ProjectsService {
     );
   }
 
-  public add(name: string): Observable<ApiResponse<Project>> {
-    return this.httpService.add(name).pipe(
+  public updateFull(
+    projectId: number,
+    projectData: UpdateProjectDto,
+    iconFile?: File | null,
+  ): Observable<ApiResponse<Project>> {
+    return this.httpService.updateFull(projectId, projectData, iconFile).pipe(
+      tap(response => {
+        this.state.updateProject(response.data);
+      }),
+    );
+  }
+
+  public add(projectData: AddProjectDto, iconFile?: File | null): Observable<ApiResponse<Project>> {
+    return this.httpService.add(projectData, iconFile).pipe(
       tap(response => {
         this.state.addProject(response.data);
       }),
@@ -50,5 +64,9 @@ export class ProjectsService {
 
   public getProjectById(projectId: number): Observable<ApiResponse<Project>> {
     return this.httpService.getById(projectId);
+  }
+
+  public getProjectByIdWithDetails(projectId: number, lang?: string): Observable<ApiResponse<Project>> {
+    return this.httpService.getByIdWithDetails(projectId, lang);
   }
 }

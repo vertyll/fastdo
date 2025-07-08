@@ -18,14 +18,6 @@ export class TasksApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getAll(searchParams?: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<ApiPaginatedResponse<Task>>>(`${this.URL}/tasks`, {
-        params: searchParams,
-      }),
-    );
-  }
-
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
@@ -52,6 +44,36 @@ export class TasksApiService {
   public add(data: AddTaskDto): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
       this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, data),
+    );
+  }
+
+  public getOne(taskId: number): Observable<ApiResponse<Task>> {
+    return this.withLoadingState(
+      this.http.get<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`),
+    );
+  }
+
+  public createComment(taskId: number, content: { content: string; }): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, content),
+    );
+  }
+
+  public getTaskComments(taskId: number): Observable<ApiResponse<any[]>> {
+    return this.withLoadingState(
+      this.http.get<ApiResponse<any[]>>(`${this.URL}/tasks/${taskId}/comments`),
+    );
+  }
+
+  public deleteComment(commentId: number): Observable<ApiResponse<void>> {
+    return this.withLoadingState(
+      this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`),
+    );
+  }
+
+  public updateComment(commentId: number, content: { content: string; }): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, content),
     );
   }
 

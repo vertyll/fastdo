@@ -1,6 +1,13 @@
 export type AddTaskDto = {
-  name: string;
-  isDone: boolean;
-  isUrgent: boolean;
-  projectId?: number;
+  description: string;
+  additionalDescription?: string;
+  priceEstimation?: number;
+  workedTime?: number;
+  accessRoleId?: number;
+  projectId: number;
+  priorityId?: number;
+  categoryIds?: number[];
+  statusId?: number;
+  assignedUserIds?: number[];
+  attachmentIds?: string[];
 };
