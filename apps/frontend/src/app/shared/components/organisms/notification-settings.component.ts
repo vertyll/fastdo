@@ -4,9 +4,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { UpdateNotificationSettingsDto } from '../../types/notification.type';
 import { ButtonComponent } from '../atoms/button.component';
 import { TitleComponent } from '../atoms/title.component';
-import { UpdateNotificationSettingsDto } from '../../types/notification.type';
 
 @Component({
   selector: 'app-notification-settings',
@@ -200,7 +200,7 @@ export class NotificationSettingsComponent implements OnInit {
     }
   }
 
-    private initializeForm(): void {
+  private initializeForm(): void {
     this.settingsForm = this.fb.group({
       appNotifications: [true],
       emailNotifications: [true],
