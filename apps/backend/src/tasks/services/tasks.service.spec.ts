@@ -3,6 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClsService } from 'nestjs-cls';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 
+import { I18nService } from 'nestjs-i18n';
+
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { Project } from 'src/projects/entities/project.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
@@ -18,6 +20,7 @@ describe('TasksService', () => {
   let mockTaskRepository: jest.Mocked<TaskRepository>;
   let mockPriorityRepository: jest.Mocked<Repository<Priority>>;
   let mockClsService: jest.Mocked<ClsService>;
+  let mockI18nService: jest.Mocked<I18nService>;
 
   beforeEach(async () => {
     mockTaskRepository = {
@@ -41,12 +44,18 @@ describe('TasksService', () => {
       set: jest.fn(),
     } as any;
 
+    mockI18nService = {
+      t: jest.fn((key: string) => key),
+      translate: jest.fn((key: string) => key),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
         { provide: TaskRepository, useValue: mockTaskRepository },
         { provide: getRepositoryToken(Priority), useValue: mockPriorityRepository },
         { provide: ClsService, useValue: mockClsService },
+        { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();
 

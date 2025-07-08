@@ -12,8 +12,12 @@ import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
 import { ProjectRepository } from '../repositories/project.repository';
+import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
 import { ProjectRoleService } from './project-role.service';
 import { ProjectsService } from './projects.service';
+import { ProjectUserRoleService } from './project-user-role.service';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;
@@ -24,9 +28,25 @@ describe('ProjectsService', () => {
   let mockProjectRoleService: jest.Mocked<ProjectRoleService>;
   let mockNotificationService: jest.Mocked<INotificationService>;
   let mockUsersService: jest.Mocked<IUsersService>;
+  let mockProjectUserRoleService: jest.Mocked<ProjectUserRoleService>;
+  let mockProjectInvitationRepository: any;
   let mockQueryRunner: any;
+  let mockI18nService: jest.Mocked<I18nService<I18nTranslations>>;
 
   beforeEach(async () => {
+    mockProjectUserRoleService = {
+      getUserRoleCodeInProject: jest.fn(),
+      hasManagerRole: jest.fn(),
+      assignRole: jest.fn(),
+      updateRole: jest.fn(),
+      removeUser: jest.fn(),
+    } as any;
+
+    mockProjectInvitationRepository = {
+      findOne: jest.fn(),
+      save: jest.fn(),
+    };
+
     mockQueryRunner = {
       connect: jest.fn(),
       startTransaction: jest.fn(),
@@ -49,6 +69,7 @@ describe('ProjectsService', () => {
       create: jest.fn(),
       save: jest.fn(),
       findOneOrFail: jest.fn(),
+      findOne: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
     } as any;
@@ -81,6 +102,11 @@ describe('ProjectsService', () => {
       findOne: jest.fn(),
     } as any;
 
+    mockI18nService = {
+      t: jest.fn((key: string) => key),
+      translate: jest.fn((key: string) => key),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProjectsService,
@@ -89,12 +115,19 @@ describe('ProjectsService', () => {
         { provide: ClsService, useValue: mockClsService },
         { provide: FileFacade, useValue: mockFileFacade },
         { provide: ProjectRoleService, useValue: mockProjectRoleService },
+        { provide: ProjectUserRoleService, useValue: mockProjectUserRoleService },
+        { provide: ProjectInvitationRepository, useValue: mockProjectInvitationRepository },
         { provide: INotificationServiceToken, useValue: mockNotificationService },
         { provide: IUsersServiceToken, useValue: mockUsersService },
+        { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();
 
     service = module.get<ProjectsService>(ProjectsService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -224,22 +257,54 @@ describe('ProjectsService', () => {
   describe('update', () => {
     it('should update a project', async () => {
       const updateDto = { name: 'Updated Project' };
-      const result = { id: expect.any(Number), ...updateDto } as Project;
+      const mockProject = { id: 1, isPublic: false, projectUsers: [{ user: { id: 1 } }] } as any;
+      const result = { id: 1, ...updateDto } as Project;
       const updateResult: UpdateResult = { generatedMaps: [], raw: [], affected: 1 };
-      mockProjectRepository.update.mockResolvedValue(updateResult);
+
+      mockProjectRepository.findOne
+        .mockResolvedValueOnce(mockProject)
+        .mockResolvedValueOnce(mockProject);
+
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
+      mockProjectRepository.update.mockResolvedValue(updateResult);
+
       expect(await service.update(1, updateDto)).toEqual(result);
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.release).toHaveBeenCalled();
+    });
+
+    it('should throw projectNotFound error if project does not exist', async () => {
+      const updateDto = { name: 'Updated Project' };
+      mockProjectRepository.findOne.mockResolvedValue(null);
+      
+      await expect(service.update(1, updateDto)).rejects.toThrow('messages.Projects.errors.projectNotFound');
     });
   });
 
   describe('remove', () => {
     it('should remove a project', async () => {
       const deleteResult: DeleteResult = { raw: [], affected: 1 };
+      const mockProject = { id: 1, isPublic: false, projectUsers: [{ user: { id: 1 } }] } as any;
+
+      mockProjectRepository.findOne
+        .mockResolvedValueOnce(mockProject) 
+        .mockResolvedValueOnce(mockProject); 
+
       mockQueryRunner.manager.getRepository.mockReturnValue({
-        create: jest.fn(),
         delete: jest.fn().mockResolvedValue(deleteResult),
       });
+
       await expect(service.remove(1)).resolves.not.toThrow();
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.release).toHaveBeenCalled();
+    });
+
+    it('should throw projectNotFound error if project does not exist', async () => {
+      mockProjectRepository.findOne.mockResolvedValue(null);
+      
+      await expect(service.remove(1)).rejects.toThrow('messages.Projects.errors.projectNotFound');
     });
   });
 });
