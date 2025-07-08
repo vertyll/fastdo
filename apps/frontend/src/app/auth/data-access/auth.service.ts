@@ -141,6 +141,21 @@ export class AuthService {
     }
   }
 
+  public getCurrentUserEmail(): string | null {
+    const token = this.authStateService.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded.email || null;
+    } catch (error) {
+      console.error('Failed to decode token for email:', error);
+      return null;
+    }
+  }
+
   public clearAuthState(): void {
     this.stopRefreshTokenTimer();
     this.accessToken.set(null);
