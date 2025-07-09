@@ -1,15 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-class TaskPriorityTranslationDto {
-  @ApiProperty({ description: 'Language code', example: 'en' })
-  lang: string;
-
-  @ApiProperty({ description: 'Name of the priority', example: 'High' })
-  name: string;
-
-  @ApiProperty({ description: 'Optional description of the priority', example: 'High priority', required: false })
-  description?: string;
-}
+import { TranslationDto } from '../../common/dtos/translation.dto';
 
 export class TaskPriorityResponseDto {
   @ApiProperty({ description: 'Priority ID', example: 1 })
@@ -17,7 +7,7 @@ export class TaskPriorityResponseDto {
 
   @ApiProperty({
     description: 'List of translations',
-    type: [TaskPriorityTranslationDto],
+    type: [TranslationDto],
   })
-  translations: TaskPriorityTranslationDto[];
+  translations: TranslationDto[];
 }

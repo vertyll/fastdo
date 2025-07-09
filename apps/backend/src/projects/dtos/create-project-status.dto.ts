@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { ProjectStatusTranslationDto } from './project-status-translation.dto';
+import { TranslationDto } from '../../common/dtos/translation.dto';
 
 export class CreateProjectStatusDto {
-  @ApiProperty({ description: 'Translations for the status', type: [ProjectStatusTranslationDto] })
+  @ApiProperty({ description: 'Translations for the status', type: [TranslationDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ProjectStatusTranslationDto)
-  translations: ProjectStatusTranslationDto[];
+  @Type(() => TranslationDto)
+  translations: TranslationDto[];
 
   @ApiProperty({ description: 'The color of the status' })
   @IsString()

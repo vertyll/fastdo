@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
+import { ProjectTypeResponseDto } from '../dtos/project-type-response.dto';
 import { ProjectTypeDto } from '../dtos/project-type.dto';
 import { ProjectTypeService } from '../services/project-type.service';
 
@@ -20,7 +21,7 @@ export class ProjectTypeController {
     type: ProjectTypeDto,
     isArray: true,
   })
-  public getAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string; }[]; }[]> {
+  public getAll(): Promise<ProjectTypeResponseDto[]> {
     return this.projectTypeService.findAll();
   }
 }

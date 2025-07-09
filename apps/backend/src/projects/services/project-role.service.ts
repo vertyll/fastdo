@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
+import { ProjectRoleResponseDto } from '../dtos/project-role-response.dto';
 import { ProjectRole } from '../entities/project-role.entity';
 import { ProjectRoleRepository } from '../repositories/project-role.repository';
 
@@ -9,9 +10,7 @@ export class ProjectRoleService {
     private readonly projectRoleRepository: ProjectRoleRepository,
   ) {}
 
-  public async findAll(): Promise<
-    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
-  > {
+  public async findAll(): Promise<ProjectRoleResponseDto[]> {
     return this.projectRoleRepository.findAll();
   }
 
@@ -19,7 +18,7 @@ export class ProjectRoleService {
     return this.projectRoleRepository.findOneByCode(code);
   }
 
-  public async findOneById(id: number, languageCode: string = LanguageCodeEnum.POLISH): Promise<ProjectRole | null> {
-    return this.projectRoleRepository.findOneById(id, languageCode);
+  public async findOneById(id: number, lang: string = LanguageCodeEnum.POLISH): Promise<ProjectRole | null> {
+    return this.projectRoleRepository.findOneById(id, lang);
   }
 }

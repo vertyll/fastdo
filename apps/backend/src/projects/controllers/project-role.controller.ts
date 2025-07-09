@@ -3,6 +3,7 @@ import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
+import { ProjectRoleResponseDto } from '../dtos/project-role-response.dto';
 import { ProjectRoleDto } from '../dtos/project-role.dto';
 import { ProjectRoleService } from '../services/project-role.service';
 
@@ -21,9 +22,7 @@ export class ProjectRoleController {
     type: ProjectRoleDto,
     isArray: true,
   })
-  public async findAll(): Promise<
-    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
-  > {
+  public async findAll(): Promise<ProjectRoleResponseDto[]> {
     return this.projectRoleService.findAll();
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ProjectTypeResponseDto } from '../dtos/project-type-response.dto';
 import { ProjectTypeRepository } from '../repositories/project-type.repository';
 
 @Injectable()
@@ -7,9 +8,7 @@ export class ProjectTypeService {
     private readonly projectTypeRepository: ProjectTypeRepository,
   ) {}
 
-  public async findAll(): Promise<
-    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
-  > {
+  public async findAll(): Promise<ProjectTypeResponseDto[]> {
     const projectTypes = await this.projectTypeRepository.find({
       where: { isActive: true },
       relations: ['translations', 'translations.language'],

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
 import { CreateProjectCategoryDto } from '../dtos/create-project-category.dto';
+import { ProjectCategoryResponseDto } from '../dtos/project-category-response.dto';
 import { UpdateProjectCategoryDto } from '../dtos/update-project-category.dto';
 import { ProjectCategoryTranslation } from '../entities/project-category-translation.entity';
 import { ProjectCategory } from '../entities/project-category.entity';
@@ -20,7 +21,7 @@ export class ProjectCategoryService {
 
   public async findByProjectId(
     projectId: number,
-  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string; }[]; }[]> {
+  ): Promise<ProjectCategoryResponseDto[]> {
     const categories = await this.projectCategoryRepository.find({
       where: { project: { id: projectId }, isActive: true },
       relations: ['translations', 'translations.language'],
@@ -54,7 +55,7 @@ export class ProjectCategoryService {
 
     for (const translationDto of createProjectCategoryDto.translations) {
       const language = await this.languageRepository.findOneByOrFail({
-        code: translationDto.languageCode as any,
+        code: translationDto.lang as any,
       });
 
       const translation = this.translationRepository.create({
@@ -90,7 +91,7 @@ export class ProjectCategoryService {
 
       for (const translationDto of updateProjectCategoryDto.translations) {
         const language = await this.languageRepository.findOneByOrFail({
-          code: translationDto.languageCode as any,
+          code: translationDto.lang as any,
         });
 
         const translation = this.translationRepository.create({

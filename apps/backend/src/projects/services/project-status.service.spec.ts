@@ -125,8 +125,8 @@ describe('ProjectStatusService', () => {
         color: '#fff',
         projectId: 1,
         translations: [
-          { languageCode: LanguageCodeEnum.POLISH, name: 'Status PL', description: 'Opis' },
-          { languageCode: LanguageCodeEnum.ENGLISH, name: 'Status EN', description: 'Desc' },
+          { lang: LanguageCodeEnum.POLISH, name: 'Status PL', description: 'Opis' },
+          { lang: LanguageCodeEnum.ENGLISH, name: 'Status EN', description: 'Desc' },
         ],
       };
       const mockStatus = { id: 1, color: '#fff' } as ProjectStatus;
@@ -190,7 +190,7 @@ describe('ProjectStatusService', () => {
     it('should update translations', async () => {
       const updateDto: UpdateProjectStatusDto = {
         translations: [
-          { languageCode: LanguageCodeEnum.POLISH, name: 'Nowy', description: 'Opis' },
+          { lang: LanguageCodeEnum.POLISH, name: 'Nowy', description: 'Opis' },
         ],
       };
       const mockStatus = { id: 1, translations: [] } as unknown as ProjectStatus;

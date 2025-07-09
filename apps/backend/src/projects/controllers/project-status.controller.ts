@@ -3,6 +3,7 @@ import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiTags } from '@nestjs/swa
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectStatusDto } from '../dtos/create-project-status.dto';
+import { ProjectStatusResponseDto } from '../dtos/project-status-response.dto';
 import { ProjectStatusDto } from '../dtos/project-status.dto';
 import { UpdateProjectStatusDto } from '../dtos/update-project-status.dto';
 import { ProjectStatus } from '../entities/project-status.entity';
@@ -24,7 +25,7 @@ export class ProjectStatusController {
   })
   public async getProjectStatuses(
     @Param('projectId') projectId: string,
-  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string; }[]; }[]> {
+  ): Promise<ProjectStatusResponseDto[]> {
     return this.projectStatusService.findByProjectId(+projectId);
   }
 

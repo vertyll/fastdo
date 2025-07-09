@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
 import { Repository } from 'typeorm';
+import { ProjectRoleResponseDto } from '../dtos/project-role-response.dto';
 import { ProjectRoleTranslation } from '../entities/project-role-translation.entity';
 import { ProjectRole } from '../entities/project-role.entity';
 
@@ -13,9 +15,7 @@ export class ProjectRoleRepository {
     >,
   ) {}
 
-  public async findAll(): Promise<
-    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
-  > {
+  public async findAll(): Promise<ProjectRoleResponseDto[]> {
     const roles = await this.projectRoleRepository
       .createQueryBuilder('pr')
       .leftJoinAndSelect('pr.translations', 'translation')
@@ -41,13 +41,13 @@ export class ProjectRoleRepository {
     });
   }
 
-  public async findOneById(id: number, languageCode: string = 'pl'): Promise<ProjectRole | null> {
+  public async findOneById(id: number, lang: string = LanguageCodeEnum.POLISH): Promise<ProjectRole | null> {
     return this.projectRoleRepository
       .createQueryBuilder('pr')
       .leftJoinAndSelect('pr.translations', 'translation')
       .leftJoinAndSelect('translation.language', 'language')
       .where('pr.id = :id', { id })
-      .andWhere('language.code = :languageCode', { languageCode })
+      .andWhere('language.code = :lang', { lang })
       .getOne();
   }
 }

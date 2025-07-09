@@ -3,6 +3,7 @@ import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiTags } from '@nestjs/swa
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectCategoryDto } from '../dtos/create-project-category.dto';
+import { ProjectCategoryResponseDto } from '../dtos/project-category-response.dto';
 import { ProjectCategoryDto } from '../dtos/project-category.dto';
 import { UpdateProjectCategoryDto } from '../dtos/update-project-category.dto';
 import { ProjectCategory } from '../entities/project-category.entity';
@@ -26,7 +27,7 @@ export class ProjectCategoryController {
   })
   public async getProjectCategories(
     @Param('projectId') projectId: string,
-  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string; }[]; }[]> {
+  ): Promise<ProjectCategoryResponseDto[]> {
     return this.projectCategoryService.findByProjectId(+projectId);
   }
 
