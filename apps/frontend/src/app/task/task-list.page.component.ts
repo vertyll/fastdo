@@ -170,10 +170,10 @@ export class TaskListPageComponent implements OnInit {
   protected navigateToAddTask(): void {
     const currentProjectId = this.projectId();
     if (currentProjectId) {
-      this.router.navigate(['/projects', currentProjectId, 'tasks', 'new']);
+      this.router.navigate(['/projects', currentProjectId, 'tasks', 'new']).then();
     } else {
       console.error('No projectId available for adding task');
-      this.router.navigate(['/projects']);
+      this.router.navigate(['/projects']).then();
     }
   }
 

@@ -64,10 +64,6 @@ export class TasksService {
     return this.httpService.createComment(taskId, content);
   }
 
-  public getTaskComments(taskId: number): Observable<ApiResponse<any[]>> {
-    return this.httpService.getTaskComments(taskId);
-  }
-
   public deleteComment(commentId: number): Observable<ApiResponse<void>> {
     return this.httpService.deleteComment(commentId);
   }

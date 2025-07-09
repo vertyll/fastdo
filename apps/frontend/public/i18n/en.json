@@ -330,7 +330,11 @@
     "projectUpdates": "Project updates",
     "systemNotifications": "System notifications",
     "settingsUpdated": "Notification settings have been updated",
-    "settingsError": "Error updating notification settings"
+    "settingsError": "Error updating notification settings",
+    "timeNow": "Now",
+    "timeMinutesAgo": "{{minutes}} min ago",
+    "timeHoursAgo": "{{hours}} hours ago",
+    "timeDaysAgo": "{{days}} days ago"
   },
   "ProjectInvitation": {
     "actionPrompt": "Do you want to join the project?",

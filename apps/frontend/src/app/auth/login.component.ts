@@ -6,8 +6,8 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
 import { LabelComponent } from '../shared/components/atoms/label.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { LinkTypeEnum } from '../shared/enums/link.enum';
-import { ToastPositionEnum } from '../shared/enums/toast.enum';
+import { LinkTypeEnum } from '../shared/enums/link-type.enum';
+import { ToastPositionEnum } from '../shared/enums/toast-position.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { EmailChangeService } from './data-access/email-change.service';

@@ -330,7 +330,11 @@
     "projectUpdates": "Aktualizacje projektów",
     "systemNotifications": "Powiadomienia systemowe",
     "settingsUpdated": "Ustawienia powiadomień zostały zaktualizowane",
-    "settingsError": "Błąd podczas aktualizacji ustawień powiadomień"
+    "settingsError": "Błąd podczas aktualizacji ustawień powiadomień",
+    "timeNow": "Teraz",
+    "timeMinutesAgo": "{{minutes}} min temu",
+    "timeHoursAgo": "{{hours}} godz. temu",
+    "timeDaysAgo": "{{days}} dni temu"
   },
   "ProjectInvitation": {
     "actionPrompt": "Czy chcesz dołączyć do projektu?",

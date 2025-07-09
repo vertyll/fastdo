@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
-import { SimpleUser } from 'src/app/shared/types/simple-entities.type';
 import { environment } from 'src/environments/environment';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
+import { User } from '../../shared/types/entities.type';
 import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
 import { AddProjectDto } from '../dtos/add-project.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
@@ -125,9 +125,9 @@ export class ProjectsApiService {
     );
   }
 
-  public getProjectUsers(projectId: number): Observable<ApiResponse<SimpleUser[]>> {
+  public getProjectUsers(projectId: number): Observable<ApiResponse<User[]>> {
     return this.withLoadingState(
-      this.http.get<ApiResponse<SimpleUser[]>>(`${this.URL}/projects/${projectId}/users`),
+      this.http.get<ApiResponse<User[]>>(`${this.URL}/projects/${projectId}/users`),
     );
   }
 

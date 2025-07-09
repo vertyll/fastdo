@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
-import { SimpleProjectRole } from 'src/app/shared/types/simple-entities.type';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../../shared/types/api-response.type';
+import { ProjectRole } from '../../shared/types/entities.type';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +16,12 @@ export class ProjectRoleApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  getAll(): Observable<ApiResponse<SimpleProjectRole[]>> {
+  getAll(): Observable<ApiResponse<ProjectRole[]>> {
     this.$loading.set(true);
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.http.get<ApiResponse<SimpleProjectRole[]>>(`${this.URL}/project-roles`).pipe(
+    return this.http.get<ApiResponse<ProjectRole[]>>(`${this.URL}/project-roles`).pipe(
       tap(() => {
         this.$loading.set(false);
         this.$idle.set(true);

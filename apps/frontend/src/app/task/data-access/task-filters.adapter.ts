@@ -4,7 +4,7 @@ import { GetAllTasksSearchParams } from '../../shared/types/task.type';
 export function getAllTasksSearchParams(
   params: Partial<TasksListFiltersConfig & PaginationParams>,
 ): GetAllTasksSearchParams {
-  let searchParams: GetAllTasksSearchParams = {
+  return {
     q: params.q || '',
     sortBy: (params.sortBy as 'dateCreation' | 'dateModification' | undefined) || 'dateCreation',
     orderBy: params.orderBy || 'desc',
@@ -15,6 +15,4 @@ export function getAllTasksSearchParams(
     page: params.page || 0,
     pageSize: params.pageSize || 10,
   };
-
-  return searchParams;
 }

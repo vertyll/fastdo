@@ -1,18 +1,18 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SimpleRole } from 'src/app/shared/types/simple-entities.type';
+import { Role } from '../../shared/types/entities.type';
 import { RoleApiService } from './role.api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleService {
-  readonly $roles = signal<SimpleRole[]>([]);
+  readonly $roles = signal<Role[]>([]);
   readonly $loading = signal(false);
 
   constructor(private readonly apiService: RoleApiService) {}
 
-  public getAllRoles(lang?: string): Observable<SimpleRole[]> {
+  public getAllRoles(lang?: string): Observable<Role[]> {
     this.$loading.set(true);
 
     return new Observable(observer => {
@@ -33,7 +33,7 @@ export class RoleService {
     });
   }
 
-  public getRoles(): SimpleRole[] {
+  public getRoles(): Role[] {
     return this.$roles();
   }
 }

@@ -59,12 +59,6 @@ export class TasksApiService {
     );
   }
 
-  public getTaskComments(taskId: number): Observable<ApiResponse<any[]>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<any[]>>(`${this.URL}/tasks/${taskId}/comments`),
-    );
-  }
-
   public deleteComment(commentId: number): Observable<ApiResponse<void>> {
     return this.withLoadingState(
       this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`),

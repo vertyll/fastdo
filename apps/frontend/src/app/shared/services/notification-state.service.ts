@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, filter, interval, of, startWith, switchMap } from 'rxjs';
+import { catchError, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
 import { NotificationApiService } from './notification-api.service';
@@ -70,72 +70,85 @@ export class NotificationStateService {
     this.setupWebSocketEventListeners();
   }
 
-  public async markAsRead(id: number): Promise<void> {
-    try {
-      await this.notificationApiService.markAsRead(id).toPromise();
-
-      // Update local state
-      const currentNotifications = this._notifications();
-      if (Array.isArray(currentNotifications)) {
-        const updatedNotifications = currentNotifications.map(n => n.id === id ? { ...n, status: 'READ' as const } : n);
-        this._notifications.set(updatedNotifications);
-      }
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-      this._error.set('Failed to mark notification as read');
-    }
+  public markAsRead(id: number) {
+    return this.notificationApiService.markAsRead(id).pipe(
+      tap(() => {
+        // Update local state
+        const currentNotifications = this._notifications();
+        if (Array.isArray(currentNotifications)) {
+          const updatedNotifications = currentNotifications.map(n =>
+            n.id === id ? { ...n, status: 'READ' as const } : n
+          );
+          this._notifications.set(updatedNotifications);
+        }
+      }),
+      catchError(error => {
+        console.error('Error marking notification as read:', error);
+        this._error.set('Failed to mark notification as read');
+        return of(null);
+      }),
+    );
   }
 
-  public async markAllAsRead(): Promise<void> {
-    try {
-      await this.notificationApiService.markAllAsRead().toPromise();
-
-      // Update local state
-      const currentNotifications = this._notifications();
-      if (Array.isArray(currentNotifications)) {
-        const updatedNotifications = currentNotifications.map(n => ({
-          ...n,
-          status: 'READ' as const,
-        }));
-        this._notifications.set(updatedNotifications);
-      }
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-      this._error.set('Failed to mark all notifications as read');
-    }
+  public markAllAsRead() {
+    return this.notificationApiService.markAllAsRead().pipe(
+      tap(() => {
+        const currentNotifications = this._notifications();
+        if (Array.isArray(currentNotifications)) {
+          const updatedNotifications = currentNotifications.map(n => ({
+            ...n,
+            status: 'READ' as const,
+          }));
+          this._notifications.set(updatedNotifications);
+        }
+      }),
+      catchError(error => {
+        console.error('Error marking all notifications as read:', error);
+        this._error.set('Failed to mark all notifications as read');
+        return of(null);
+      }),
+    );
   }
 
-  public async deleteNotification(id: number): Promise<void> {
-    try {
-      await this.notificationApiService.deleteNotification(id).toPromise();
-      this._notifications.set(this._notifications().filter(n => n.id !== id));
-    } catch (error) {
-      console.error('Error deleting notification:', error);
-      this._error.set('Failed to delete notification');
-    }
+  public deleteNotification(id: number) {
+    return this.notificationApiService.deleteNotification(id).pipe(
+      tap(() => {
+        this._notifications.set(this._notifications().filter(n => n.id !== id));
+      }),
+      catchError(error => {
+        console.error('Error deleting notification:', error);
+        this._error.set('Failed to delete notification');
+        return of(null);
+      }),
+    );
   }
 
-  public async clearAllNotifications(): Promise<void> {
-    try {
-      await this.notificationApiService.clearAllNotifications().toPromise();
-
-      this._notifications.set([]);
-    } catch (error) {
-      console.error('Error clearing all notifications:', error);
-      this._error.set('Failed to clear all notifications');
-    }
+  public clearAllNotifications() {
+    return this.notificationApiService.clearAllNotifications().pipe(
+      tap(() => {
+        this._notifications.set([]);
+      }),
+      catchError(error => {
+        console.error('Error clearing all notifications:', error);
+        this._error.set('Failed to clear all notifications');
+        return of(null);
+      }),
+    );
   }
 
-  public async updateSettings(settings: UpdateNotificationSettingsDto): Promise<void> {
-    try {
-      const updatedSettings = await this.notificationApiService.updateSettings(settings).toPromise();
-      if (updatedSettings) {
-        this._settings.set(updatedSettings);
-      }
-    } catch (error) {
-      console.error('Error updating notification settings:', error);
-      this._error.set('Failed to update notification settings');
-    }
+  public updateSettings(settings: UpdateNotificationSettingsDto) {
+    return this.notificationApiService.updateSettings(settings).pipe(
+      tap(updatedSettings => {
+        if (updatedSettings) {
+          this._settings.set(updatedSettings);
+        }
+      }),
+      catchError(error => {
+        console.error('Error updating notification settings:', error);
+        this._error.set('Failed to update notification settings');
+        throw error; // Re-throw to let component handle the error
+      }),
+    );
   }
 
   public refreshNotifications(): void {

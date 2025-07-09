@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
-import { FilterTypeEnum } from '../../enums/filter.enum';
+import { FilterTypeEnum } from '../../enums/filter-type.enum';
 import { FiltersService } from '../../services/filter.service';
 import { PlatformService } from '../../services/platform.service';
 import { ClearFilter, ClearPartial, SavePartial } from '../../store/filter/filter.actions';

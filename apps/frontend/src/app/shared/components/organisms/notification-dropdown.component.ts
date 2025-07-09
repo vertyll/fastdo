@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, DestroyRef, inject, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subject, catchError, finalize, of } from 'rxjs';
 import { ProjectsApiService } from 'src/app/project/data-access/project.api.service';
 import { ButtonRoleEnum } from '../../enums/modal.enum';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
@@ -37,7 +39,7 @@ import { NotificationDto } from '../../types/notification.type';
           size="20"
           [class]="unreadCount() > 0 ? 'text-primary-500' : 'text-text-secondary dark:text-dark-text-secondary'"
         />
-        
+
         @if (unreadCount() > 0) {
           <span
             class="absolute -top-1 -right-1 bg-danger-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
@@ -51,7 +53,7 @@ import { NotificationDto } from '../../types/notification.type';
         <!-- Mobile modal overlay when mobile context -->
         @if (isMobileContext()) {
           <div class="fixed inset-0 bg-black bg-opacity-50 z-[80] flex items-start justify-center pt-16 p-4" (click)="closeDropdown()">
-            <div 
+            <div
               class="notification-dropdown-panel w-full max-w-sm bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
               (click)="$event.stopPropagation()"
             >
@@ -60,30 +62,31 @@ import { NotificationDto } from '../../types/notification.type';
                   <h3 class="text-sm font-semibold text-text-primary dark:text-dark-text-primary">
                     {{ 'Notifications.title' | translate }}
                   </h3>
-                  <div 
+                  <div
                     class="w-2 h-2 rounded-full"
                     [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
                     [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
                   ></div>
-                </div>              <div class="flex items-center space-x-2">
-                @if (unreadCount() > 0) {
-                  <button
-                    class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
-                    (click)="markAllAsRead()"
-                  >
-                    {{ 'Notifications.markAllRead' | translate }}
-                  </button>
-                }
-                @if (notifications().length > 0) {
-                  <button
-                    class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
-                    (click)="clearAllNotifications()"
-                    [title]="'Notifications.clearAll' | translate"
-                  >
-                    <ng-icon name="heroTrash" size="16" />
-                  </button>
-                }
-              </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  @if (unreadCount() > 0) {
+                    <button
+                      class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+                      (click)="markAllAsRead()"
+                    >
+                      {{ 'Notifications.markAllRead' | translate }}
+                    </button>
+                  }
+                  @if (notifications().length > 0) {
+                    <button
+                      class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                      (click)="clearAllNotifications()"
+                      [title]="'Notifications.clearAll' | translate"
+                    >
+                      <ng-icon name="heroTrash" size="16" />
+                    </button>
+                  }
+                </div>
               </div>
 
               <div class="max-h-96 overflow-y-auto">
@@ -158,7 +161,7 @@ import { NotificationDto } from '../../types/notification.type';
                     <ng-icon name="heroCog6Tooth" size="14" />
                     <span>{{ 'Notifications.settings' | translate }}</span>
                   </button>
-                  
+
                   <button
                     class="flex items-center space-x-1 text-xs text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
                     (click)="clearAllNotifications()"
@@ -182,7 +185,7 @@ import { NotificationDto } from '../../types/notification.type';
           </div>
         } @else {
           <!-- Regular dropdown for desktop -->
-          <div 
+          <div
             class="notification-dropdown-panel absolute right-0 top-full mt-2 w-80 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200 z-50"
             (click)="$event.stopPropagation()"
           >
@@ -191,7 +194,7 @@ import { NotificationDto } from '../../types/notification.type';
                 <h3 class="text-sm font-semibold text-text-primary dark:text-dark-text-primary">
                   {{ 'Notifications.title' | translate }}
                 </h3>
-                <div 
+                <div
                   class="w-2 h-2 rounded-full"
                   [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
                   [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
@@ -319,6 +322,9 @@ export class NotificationDropdownComponent {
   private readonly modalService = inject(ModalService);
   private readonly router = inject(Router);
   private readonly projectsApi = inject(ProjectsApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly cancelInvitationRequests$ = new Subject<void>();
 
   public readonly isMobileContext = input<boolean>(false);
   public readonly isMobileMenuOpen = input<boolean>(false);
@@ -339,19 +345,40 @@ export class NotificationDropdownComponent {
 
   protected closeDropdown(): void {
     this.isDropdownOpen = false;
+    this.cancelInvitationRequests$.next();
   }
 
-  protected async markAsRead(notification: NotificationDto): Promise<void> {
+  protected markAsRead(notification: NotificationDto): void {
     if (notification.status === 'UNREAD') {
-      await this.notificationStateService.markAsRead(notification.id);
+      this.notificationStateService.markAsRead(notification.id)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          catchError(error => {
+            console.error('Error marking notification as read:', error);
+            return of(null);
+          }),
+        )
+        .subscribe();
     }
   }
 
-  protected async markAllAsRead(): Promise<void> {
-    await this.notificationStateService.markAllAsRead();
+  protected markAllAsRead(): void {
+    this.notificationStateService.markAllAsRead()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error('Error marking all notifications as read:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Notifications.markAllReadError'),
+            NotificationTypeEnum.Error,
+          );
+          return of(null);
+        }),
+      )
+      .subscribe();
   }
 
-  protected async clearAllNotifications(): Promise<void> {
+  protected clearAllNotifications(): void {
     this.modalService.present({
       title: this.translateService.instant('Notifications.clearAll'),
       message: this.translateService.instant('Notifications.confirmClearAll'),
@@ -363,19 +390,27 @@ export class NotificationDropdownComponent {
         {
           role: ButtonRoleEnum.Ok,
           text: this.translateService.instant('Basic.delete'),
-          handler: async () => {
-            try {
-              await this.notificationStateService.clearAllNotifications();
-              this.notificationService.showNotification(
-                this.translateService.instant('Notifications.clearedAll'),
-                NotificationTypeEnum.Success,
-              );
-            } catch (error) {
-              this.notificationService.showNotification(
-                this.translateService.instant('Notifications.clearError'),
-                NotificationTypeEnum.Error,
-              );
-            }
+          handler: () => {
+            this.notificationStateService.clearAllNotifications()
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                catchError(error => {
+                  console.error('Error clearing notifications:', error);
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Notifications.clearError'),
+                    NotificationTypeEnum.Error,
+                  );
+                  return of(null);
+                }),
+              )
+              .subscribe(result => {
+                if (result) {
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Notifications.clearedAll'),
+                    NotificationTypeEnum.Success,
+                  );
+                }
+              });
             return true;
           },
         },
@@ -383,25 +418,34 @@ export class NotificationDropdownComponent {
     });
   }
 
-  protected async deleteNotification(notification: NotificationDto, event: Event): Promise<void> {
+  protected deleteNotification(notification: NotificationDto, event: Event): void {
     event.stopPropagation();
-    try {
-      await this.notificationStateService.deleteNotification(notification.id);
-      this.notificationService.showNotification(
-        this.translateService.instant('Basic.deleteTitle') + ': ' + notification.title,
-        NotificationTypeEnum.Success,
-      );
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Notifications.clearError'),
-        NotificationTypeEnum.Error,
-      );
-    }
+
+    this.notificationStateService.deleteNotification(notification.id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error('Error deleting notification:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Notifications.clearError'),
+            NotificationTypeEnum.Error,
+          );
+          return of(null);
+        }),
+      )
+      .subscribe(result => {
+        if (result) {
+          this.notificationService.showNotification(
+            this.translateService.instant('Basic.deleteTitle') + ': ' + notification.title,
+            NotificationTypeEnum.Success,
+          );
+        }
+      });
   }
 
   protected navigateToSettings(): void {
     this.closeDropdown();
-    this.router.navigate(['/notification-settings']);
+    this.router.navigate(['/notification-settings']).then();
   }
 
   protected formatDate(date: Date | string): string {
@@ -415,57 +459,78 @@ export class NotificationDropdownComponent {
     const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInMinutes < 1) {
-      return this.translateService.instant('Teraz') || 'Teraz';
+      return this.translateService.instant('Notifications.timeNow');
     } else if (diffInMinutes < 60) {
-      return `${diffInMinutes} min temu`;
+      return this.translateService.instant('Notifications.timeMinutesAgo', { minutes: diffInMinutes });
     } else if (diffInHours < 24) {
-      return `${diffInHours} godz. temu`;
+      return this.translateService.instant('Notifications.timeHoursAgo', { hours: diffInHours });
     } else if (diffInDays < 7) {
-      return `${diffInDays} dni temu`;
+      return this.translateService.instant('Notifications.timeDaysAgo', { days: diffInDays });
     } else {
-      return d.toLocaleDateString('pl-PL');
+      const locale = this.translateService.currentLang || 'pl';
+      return d.toLocaleDateString(locale);
     }
   }
 
-  protected async acceptInvitation(invitationId: number, _notification: NotificationDto) {
+  protected acceptInvitation(invitationId: number, _notification: NotificationDto): void {
     this.invitationLoading = invitationId;
-    try {
-      await this.projectsApi.acceptInvitation({ invitationId }).toPromise();
-      this.notificationService.showNotification(
-        this.translateService.instant('ProjectInvitation.acceptSuccess'),
-        NotificationTypeEnum.Success,
-      );
-      this.notificationStateService.removeNotificationByInvitationId(invitationId);
-      await this.notificationStateService.refreshNotifications();
-      this.closeDropdown();
-    } catch {
-      this.notificationService.showNotification(
-        this.translateService.instant('ProjectInvitation.acceptError'),
-        NotificationTypeEnum.Error,
-      );
-    } finally {
-      this.invitationLoading = null;
-    }
+
+    this.projectsApi.acceptInvitation({ invitationId })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.invitationLoading = null;
+        }),
+        catchError(error => {
+          console.error('Error accepting invitation:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('ProjectInvitation.acceptError'),
+            NotificationTypeEnum.Error,
+          );
+          return of(null);
+        }),
+      )
+      .subscribe(result => {
+        if (result) {
+          this.notificationService.showNotification(
+            this.translateService.instant('ProjectInvitation.acceptSuccess'),
+            NotificationTypeEnum.Success,
+          );
+          this.notificationStateService.removeNotificationByInvitationId(invitationId);
+          this.notificationStateService.refreshNotifications();
+          this.closeDropdown();
+        }
+      });
   }
 
-  protected async rejectInvitation(invitationId: number, _notification: NotificationDto) {
+  protected rejectInvitation(invitationId: number, _notification: NotificationDto): void {
     this.invitationLoading = invitationId;
-    try {
-      await this.projectsApi.rejectInvitation({ invitationId }).toPromise();
-      this.notificationService.showNotification(
-        this.translateService.instant('ProjectInvitation.rejectSuccess'),
-        NotificationTypeEnum.Success,
-      );
-      this.notificationStateService.removeNotificationByInvitationId(invitationId);
-      await this.notificationStateService.refreshNotifications();
-      this.closeDropdown();
-    } catch {
-      this.notificationService.showNotification(
-        this.translateService.instant('ProjectInvitation.rejectError'),
-        NotificationTypeEnum.Error,
-      );
-    } finally {
-      this.invitationLoading = null;
-    }
+
+    this.projectsApi.rejectInvitation({ invitationId })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.invitationLoading = null;
+        }),
+        catchError(error => {
+          console.error('Error rejecting invitation:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('ProjectInvitation.rejectError'),
+            NotificationTypeEnum.Error,
+          );
+          return of(null);
+        }),
+      )
+      .subscribe(result => {
+        if (result) {
+          this.notificationService.showNotification(
+            this.translateService.instant('ProjectInvitation.rejectSuccess'),
+            NotificationTypeEnum.Success,
+          );
+          this.notificationStateService.removeNotificationByInvitationId(invitationId);
+          this.notificationStateService.refreshNotifications();
+          this.closeDropdown();
+        }
+      });
   }
 }

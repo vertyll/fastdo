@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { EMPTY, Observable, catchError, tap } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
-import { SimpleProjectCategory } from 'src/app/shared/types/simple-entities.type';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../../shared/types/api-response.type';
+import { ProjectCategory } from '../../shared/types/entities.type';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +16,12 @@ export class ProjectCategoryApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getByProjectId(projectId: number): Observable<ApiResponse<SimpleProjectCategory[]>> {
+  public getByProjectId(projectId: number): Observable<ApiResponse<ProjectCategory[]>> {
     this.$loading.set(true);
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.http.get<ApiResponse<SimpleProjectCategory[]>>(`${this.URL}/projects/${projectId}/categories`).pipe(
+    return this.http.get<ApiResponse<ProjectCategory[]>>(`${this.URL}/projects/${projectId}/categories`).pipe(
       tap(() => {
         this.$loading.set(false);
         this.$idle.set(true);

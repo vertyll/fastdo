@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subject, catchError, finalize, of, takeUntil } from 'rxjs';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
@@ -20,7 +21,7 @@ import { TitleComponent } from '../atoms/title.component';
   template: `
     <div class="max-w-2xl mx-auto p-6">
       <app-title>{{ 'Notifications.settings' | translate }}</app-title>
-      
+
       <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
         <div class="space-y-4">
           <!-- App Notifications -->
@@ -149,11 +150,12 @@ import { TitleComponent } from '../atoms/title.component';
     </div>
   `,
 })
-export class NotificationSettingsComponent implements OnInit {
+export class NotificationSettingsComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly destroy$ = new Subject<void>();
 
   protected settingsForm!: FormGroup;
   protected isSubmitting: boolean = false;
@@ -163,41 +165,53 @@ export class NotificationSettingsComponent implements OnInit {
     this.loadSettings();
   }
 
-  protected async onSubmit(): Promise<void> {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  protected onSubmit(): void {
     if (this.settingsForm.invalid || this.isSubmitting) {
       return;
     }
 
     this.isSubmitting = true;
 
-    try {
-      const formValue = this.settingsForm.value;
-      const updateData: UpdateNotificationSettingsDto = {
-        appNotifications: formValue.appNotifications,
-        emailNotifications: formValue.emailNotifications,
-        projectInvitations: formValue.projectInvitations,
-        taskAssignments: formValue.taskAssignments,
-        taskComments: formValue.taskComments,
-        taskStatusChanges: formValue.taskStatusChanges,
-        projectUpdates: formValue.projectUpdates,
-        systemNotifications: formValue.systemNotifications,
-      };
+    const formValue = this.settingsForm.value;
+    const updateData: UpdateNotificationSettingsDto = {
+      appNotifications: formValue.appNotifications,
+      emailNotifications: formValue.emailNotifications,
+      projectInvitations: formValue.projectInvitations,
+      taskAssignments: formValue.taskAssignments,
+      taskComments: formValue.taskComments,
+      taskStatusChanges: formValue.taskStatusChanges,
+      projectUpdates: formValue.projectUpdates,
+      systemNotifications: formValue.systemNotifications,
+    };
 
-      await this.notificationStateService.updateSettings(updateData);
-
-      this.notificationService.showNotification(
-        this.translateService.instant('Notifications.settingsUpdated'),
-        NotificationTypeEnum.Success,
-      );
-    } catch (error: any) {
-      const errorMessage = error.error?.message || this.translateService.instant('Notifications.settingsError');
-      this.notificationService.showNotification(
-        errorMessage,
-        NotificationTypeEnum.Error,
-      );
-    } finally {
-      this.isSubmitting = false;
-    }
+    this.notificationStateService.updateSettings(updateData)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isSubmitting = false),
+        catchError((error: any) => {
+          const errorMessage = error.error?.message || this.translateService.instant('Notifications.settingsError');
+          this.notificationService.showNotification(
+            errorMessage,
+            NotificationTypeEnum.Error,
+          );
+          return of(null);
+        }),
+      )
+      .subscribe({
+        next: result => {
+          if (result !== null) {
+            this.notificationService.showNotification(
+              this.translateService.instant('Notifications.settingsUpdated'),
+              NotificationTypeEnum.Success,
+            );
+          }
+        },
+      });
   }
 
   private initializeForm(): void {
@@ -213,23 +227,20 @@ export class NotificationSettingsComponent implements OnInit {
     });
   }
 
-  private async loadSettings(): Promise<void> {
-    try {
-      const settings = this.notificationStateService.settings();
-      if (settings) {
-        this.settingsForm.patchValue({
-          appNotifications: settings.appNotifications ?? true,
-          emailNotifications: settings.emailNotifications ?? true,
-          projectInvitations: settings.projectInvitations ?? true,
-          taskAssignments: settings.taskAssignments ?? true,
-          taskComments: settings.taskComments ?? true,
-          taskStatusChanges: settings.taskStatusChanges ?? true,
-          projectUpdates: settings.projectUpdates ?? true,
-          systemNotifications: settings.systemNotifications ?? true,
-        });
-      }
-    } catch (error) {
-      console.error('Error loading notification settings:', error);
+  private loadSettings(): void {
+    const settings = this.notificationStateService.settings();
+
+    if (settings) {
+      this.settingsForm.patchValue({
+        appNotifications: settings.appNotifications ?? true,
+        emailNotifications: settings.emailNotifications ?? true,
+        projectInvitations: settings.projectInvitations ?? true,
+        taskAssignments: settings.taskAssignments ?? true,
+        taskComments: settings.taskComments ?? true,
+        taskStatusChanges: settings.taskStatusChanges ?? true,
+        projectUpdates: settings.projectUpdates ?? true,
+        systemNotifications: settings.systemNotifications ?? true,
+      });
     }
   }
 }

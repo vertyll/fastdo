@@ -1,6 +1,6 @@
 import { File } from '../../core/file/models/File';
 import { ProjectCategory, ProjectStatus } from '../../project/models/Project';
-import { SimpleProjectRole } from '../../shared/types/simple-entities.type';
+import { ProjectRole } from '../../shared/types/entities.type';
 
 export type Task = {
   id: number;
@@ -8,7 +8,7 @@ export type Task = {
   additionalDescription?: string;
   priceEstimation: number; // 0-100 where 100 = 1 hour
   workedTime: number; // 0-100 where 100 = 1 hour
-  accessRole?: SimpleProjectRole;
+  accessRole?: ProjectRole;
   dateCreation: string;
   dateModification: string;
   project?: TaskProject | null;
@@ -37,7 +37,7 @@ export type TaskPriority = {
   id: number;
   name: string;
   color: string;
-  code: TaskPriorityEnum;
+  code: TaskPriorityCode;
 };
 
 export type TaskComment = {
@@ -48,9 +48,4 @@ export type TaskComment = {
   attachments: File[];
 };
 
-export enum TaskPriorityEnum {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
-}
+type TaskPriorityCode = 'low' | 'medium' | 'high';

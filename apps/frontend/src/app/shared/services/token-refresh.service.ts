@@ -34,7 +34,7 @@ export class TokenRefreshService {
       catchError(error => {
         this.refreshTokenSubject.next(false);
         this.authService.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login']).then();
         return throwError(() => error);
       }),
     );

@@ -183,14 +183,6 @@ export class TasksService implements ITasksService {
     return this.taskRepository.manager.save(TaskComment, comment);
   }
 
-  public async getTaskComments(taskId: number): Promise<TaskComment[]> {
-    return this.taskRepository.manager.find(TaskComment, {
-      where: { task: { id: taskId } },
-      relations: ['author', 'commentAttachments'],
-      order: { dateCreation: 'ASC' },
-    });
-  }
-
   public async removeComment(commentId: number): Promise<void> {
     const userId = this.cls.get('user').userId;
 

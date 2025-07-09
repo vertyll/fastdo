@@ -1,4 +1,4 @@
-import { FilterTypeEnum } from '../enums/filter.enum';
+import { FilterTypeEnum } from '../enums/filter-type.enum';
 import { TaskStatusEnum } from '../enums/task-status.enum';
 
 /*

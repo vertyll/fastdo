@@ -1,24 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroCalendar, heroPaperAirplane, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
-import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../auth/data-access/auth.service';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
 import { ProjectCategoryApiService } from '../project/data-access/project-category.api.service';
 import { ProjectRoleApiService } from '../project/data-access/project-role.api.service';
 import { ProjectStatusApiService } from '../project/data-access/project-status.api.service';
 import { ProjectsApiService } from '../project/data-access/project.api.service';
-import { ButtonRoleEnum, ModalInputTypeEnum } from '../shared/enums/modal.enum';
+import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
-import { TaskUpdatePayload } from '../shared/types/task.type';
-import { PriorityApiService } from './data-access/priority.api.service';
+import { TaskPriorityApiService } from './data-access/task-priority-api.service';
 import { TasksService } from './data-access/task.service';
 import { Task, TaskComment } from './models/Task';
 
@@ -502,7 +500,7 @@ import { Task, TaskComment } from './models/Task';
     </div>
   `,
 })
-export class TaskDetailsPageComponent implements OnInit {
+export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   readonly taskId = input.required<string>();
 
   protected readonly router = inject(Router);
@@ -513,7 +511,7 @@ export class TaskDetailsPageComponent implements OnInit {
   protected readonly modalService = inject(ModalService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly authStateService = inject(AuthStateService);
-  private readonly priorityApiService = inject(PriorityApiService);
+  private readonly priorityApiService = inject(TaskPriorityApiService);
   private readonly projectCategoryApiService = inject(
     ProjectCategoryApiService,
   );
@@ -542,6 +540,8 @@ export class TaskDetailsPageComponent implements OnInit {
   protected editingCommentId: number | null = null;
   protected editingCommentContent: string = '';
 
+  private readonly destroy$ = new Subject<void>();
+
   protected commentForm: FormGroup = this.formBuilder.group({
     content: ['', [Validators.required, Validators.minLength(1)]],
   });
@@ -550,30 +550,41 @@ export class TaskDetailsPageComponent implements OnInit {
     this.loadTask();
   }
 
-  private async loadTask(): Promise<void> {
-    try {
-      this.loading.set(true);
-      const response = await firstValueFrom(
-        this.tasksService.getOne(+this.taskId()),
-      );
-      this.task.set(response.data);
-      await this.loadEditOptions();
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.loadError'),
-        NotificationTypeEnum.Error,
-      );
-    } finally {
-      this.loading.set(false);
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadTask(): void {
+    this.loading.set(true);
+
+    this.tasksService.getOne(+this.taskId())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.task.set(response.data);
+          this.loadEditOptions();
+          this.loading.set(false);
+        },
+        error: error => {
+          console.error('Error loading task:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.loadError'),
+            NotificationTypeEnum.Error,
+          );
+          this.loading.set(false);
+        },
+        complete: () => {
+        },
+      });
   }
 
   protected goBack(): void {
     const projectId = this.route.snapshot.paramMap.get('id');
     if (projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks']);
+      this.router.navigate(['/projects', projectId, 'tasks']).then();
     } else {
-      this.router.navigate(['/projects']);
+      this.router.navigate(['/projects']).then();
     }
   }
 
@@ -595,7 +606,7 @@ export class TaskDetailsPageComponent implements OnInit {
     const task = this.task();
     const projectId = task?.project?.id || this.route.snapshot.paramMap.get('id');
     if (task && projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.id]);
+      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.id]).then();
     }
   }
 
@@ -617,55 +628,65 @@ export class TaskDetailsPageComponent implements OnInit {
     });
   }
 
-  private async confirmDelete(): Promise<void> {
-    try {
-      await firstValueFrom(this.tasksService.remove(+this.taskId()));
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.deleteSuccess'),
-        NotificationTypeEnum.Success,
-      );
-      const projectId = this.route.snapshot.paramMap.get('id');
-      if (projectId) {
-        this.router.navigate(['/projects', projectId, 'tasks']);
-      } else {
-        this.router.navigate(['/projects']);
-      }
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.deleteError'),
-        NotificationTypeEnum.Error,
-      );
-    }
+  private confirmDelete(): void {
+    this.tasksService.remove(+this.taskId())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.deleteSuccess'),
+            NotificationTypeEnum.Success,
+          );
+          const projectId = this.route.snapshot.paramMap.get('id');
+          if (projectId) {
+            this.router.navigate(['/projects', projectId, 'tasks']).then();
+          } else {
+            this.router.navigate(['/projects']).then();
+          }
+        },
+        error: error => {
+          console.error('Error deleting task:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.deleteError'),
+            NotificationTypeEnum.Error,
+          );
+        },
+        complete: () => {
+        },
+      });
   }
 
-  protected async onSubmitComment(): Promise<void> {
+  protected onSubmitComment(): void {
     if (this.commentForm.invalid || this.submittingComment()) {
       return;
     }
 
-    try {
-      this.submittingComment.set(true);
-      const content = this.commentForm.get('content')?.value;
+    this.submittingComment.set(true);
+    const content = this.commentForm.get('content')?.value;
 
-      await firstValueFrom(
-        this.tasksService.createComment(+this.taskId(), { content }),
-      );
-
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.commentAdded'),
-        NotificationTypeEnum.Success,
-      );
-
-      this.commentForm.reset();
-      await this.loadTask();
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.commentError'),
-        NotificationTypeEnum.Error,
-      );
-    } finally {
-      this.submittingComment.set(false);
-    }
+    this.tasksService.createComment(+this.taskId(), { content })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.commentAdded'),
+            NotificationTypeEnum.Success,
+          );
+          this.commentForm.reset();
+          this.loadTask();
+        },
+        error: error => {
+          console.error('Error adding comment:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.commentError'),
+            NotificationTypeEnum.Error,
+          );
+          this.submittingComment.set(false);
+        },
+        complete: () => {
+          this.submittingComment.set(false);
+        },
+      });
   }
 
   protected onEditComment(commentId: number, content: string): void {
@@ -678,29 +699,32 @@ export class TaskDetailsPageComponent implements OnInit {
     this.editingCommentContent = '';
   }
 
-  protected async onSaveEditComment(): Promise<void> {
+  protected onSaveEditComment(): void {
     if (!this.editingCommentId || !this.editingCommentContent.trim()) return;
 
-    try {
-      await firstValueFrom(
-        this.tasksService.updateComment(this.editingCommentId, {
-          content: this.editingCommentContent,
-        }),
-      );
-
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.commentUpdated'),
-        NotificationTypeEnum.Success,
-      );
-
-      this.onCancelEditComment();
-      await this.loadTask();
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.commentUpdateError'),
-        NotificationTypeEnum.Error,
-      );
-    }
+    this.tasksService.updateComment(this.editingCommentId, {
+      content: this.editingCommentContent,
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.commentUpdated'),
+            NotificationTypeEnum.Success,
+          );
+          this.onCancelEditComment();
+          this.loadTask();
+        },
+        error: error => {
+          console.error('Error updating comment:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.commentUpdateError'),
+            NotificationTypeEnum.Error,
+          );
+        },
+        complete: () => {
+        },
+      });
   }
 
   protected canDeleteComment(comment: TaskComment): boolean {
@@ -715,7 +739,7 @@ export class TaskDetailsPageComponent implements OnInit {
     }
   }
 
-  protected async onDeleteComment(commentId: number): Promise<void> {
+  protected onDeleteComment(commentId: number): void {
     this.modalService.present({
       title: this.translateService.instant('Basic.deleteTitle'),
       message: this.translateService.instant('Task.deleteCommentConfirm'),
@@ -727,22 +751,29 @@ export class TaskDetailsPageComponent implements OnInit {
         {
           role: ButtonRoleEnum.Ok,
           text: this.translateService.instant('Basic.delete'),
-          handler: async () => {
-            try {
-              await firstValueFrom(this.tasksService.deleteComment(commentId));
-              this.notificationService.showNotification(
-                this.translateService.instant('Task.commentDeleted'),
-                NotificationTypeEnum.Success,
-              );
-              await this.loadTask();
-              return true; // zamknij modal
-            } catch (error) {
-              this.notificationService.showNotification(
-                this.translateService.instant('Task.commentDeleteError'),
-                NotificationTypeEnum.Error,
-              );
-              return false; // nie zamykaj modala jeśli błąd
-            }
+          handler: () => {
+            this.tasksService.deleteComment(commentId)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: () => {
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Task.commentDeleted'),
+                    NotificationTypeEnum.Success,
+                  );
+                  this.loadTask();
+                  return true;
+                },
+                error: error => {
+                  console.error('Error deleting comment:', error);
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Task.commentDeleteError'),
+                    NotificationTypeEnum.Error,
+                  );
+                  return false;
+                },
+                complete: () => {
+                },
+              });
           },
         },
       ],
@@ -760,51 +791,67 @@ export class TaskDetailsPageComponent implements OnInit {
     return obj.name || '';
   }
 
-  private async loadEditOptions(): Promise<void> {
-    try {
-      const task = this.task();
-      if (!task) return;
+  private loadEditOptions(): void {
+    const task = this.task();
+    if (!task) return;
 
-      const prioritiesResponse = await firstValueFrom(
-        this.priorityApiService.getAll(),
-      );
-      if (prioritiesResponse.data) {
-        this.priorities.set(prioritiesResponse.data);
-      }
-
-      const rolesResponse = await firstValueFrom(
-        this.projectRoleApiService.getAll(),
-      );
-      if (rolesResponse.data) {
-        this.accessRoles.set(rolesResponse.data);
-      }
-
-      if (task.project?.id) {
-        const projectId = task.project.id;
-
-        const categoriesResponse = await firstValueFrom(
-          this.projectCategoryApiService.getByProjectId(projectId),
-        );
-        if (categoriesResponse.data) {
-          this.categories.set(categoriesResponse.data);
+    this.priorityApiService.getAll().subscribe({
+      next: prioritiesResponse => {
+        if (prioritiesResponse.data) {
+          this.priorities.set(prioritiesResponse.data);
         }
+      },
+      error: error => {
+        console.error('Error loading priorities:', error);
+      },
+    });
 
-        const statusesResponse = await firstValueFrom(
-          this.projectStatusApiService.getByProjectId(projectId),
-        );
-        if (statusesResponse.data) {
-          this.statuses.set(statusesResponse.data);
+    this.projectRoleApiService.getAll().subscribe({
+      next: rolesResponse => {
+        if (rolesResponse.data) {
+          this.accessRoles.set(rolesResponse.data);
         }
+      },
+      error: error => {
+        console.error('Error loading roles:', error);
+      },
+    });
 
-        const usersResponse = await firstValueFrom(
-          this.projectUsersApiService.getProjectUsers(projectId),
-        );
-        if (usersResponse.data) {
-          this.projectUsers.set(usersResponse.data);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading edit options:', error);
+    if (task.project?.id) {
+      const projectId = task.project.id;
+
+      this.projectCategoryApiService.getByProjectId(projectId).subscribe({
+        next: categoriesResponse => {
+          if (categoriesResponse.data) {
+            this.categories.set(categoriesResponse.data);
+          }
+        },
+        error: error => {
+          console.error('Error loading categories:', error);
+        },
+      });
+
+      this.projectStatusApiService.getByProjectId(projectId).subscribe({
+        next: statusesResponse => {
+          if (statusesResponse.data) {
+            this.statuses.set(statusesResponse.data);
+          }
+        },
+        error: error => {
+          console.error('Error loading statuses:', error);
+        },
+      });
+
+      this.projectUsersApiService.getProjectUsers(projectId).subscribe({
+        next: usersResponse => {
+          if (usersResponse.data) {
+            this.projectUsers.set(usersResponse.data);
+          }
+        },
+        error: error => {
+          console.error('Error loading users:', error);
+        },
+      });
     }
   }
 }

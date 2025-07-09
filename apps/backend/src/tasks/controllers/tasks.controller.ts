@@ -100,18 +100,6 @@ export class TasksController {
     return this.tasksService.createComment(+taskId, createCommentDto);
   }
 
-  @Get(':id/comments')
-  @ApiOperation({ summary: 'Get all comments for a task' })
-  @ApiWrappedResponse({
-    status: 200,
-    description: 'Return all comments for the task.',
-    type: TaskComment,
-    isArray: true,
-  })
-  public getTaskComments(@Param('id') taskId: string): Promise<TaskComment[]> {
-    return this.tasksService.getTaskComments(+taskId);
-  }
-
   @Delete('comments/:commentId')
   @ApiOperation({ summary: 'Delete a comment' })
   @ApiWrappedResponse({

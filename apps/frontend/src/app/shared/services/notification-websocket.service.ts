@@ -252,12 +252,12 @@ export class NotificationWebSocketService {
     } else {
       // Token might be expired, trigger refresh
       this.authService.refreshToken().subscribe({
-        next: response => {
+        next: () => {
           console.log('Token refreshed successfully, reconnecting WebSocket...');
           setTimeout(() => this.reconnectWithNewToken(), 500);
         },
-        error: error => {
-          console.error('Token refresh failed:', error);
+        error: err => {
+          console.error('Token refresh failed:', err);
           // Let AuthService handle logout
           this.disconnect();
         },

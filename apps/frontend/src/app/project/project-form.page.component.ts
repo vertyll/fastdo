@@ -41,7 +41,7 @@ import { Project } from './models/Project';
       <app-title>
         {{ isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate) }}
       </app-title>
-      
+
       <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
         <app-input-field
           [control]="nameControl"

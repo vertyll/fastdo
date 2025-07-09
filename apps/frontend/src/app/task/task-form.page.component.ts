@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ProjectCategoryApiService } from '../project/data-access/project-category.api.service';
 import { ProjectRoleApiService } from '../project/data-access/project-role.api.service';
 import { ProjectStatusApiService } from '../project/data-access/project-status.api.service';
@@ -16,7 +16,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
-import { PriorityApiService } from './data-access/priority.api.service';
+import { TaskPriorityApiService } from './data-access/task-priority-api.service';
 import { TasksService } from './data-access/task.service';
 import { AddTaskDto } from './dtos/add-task.dto';
 
@@ -158,18 +158,16 @@ interface SelectOption {
           }
 
           <div class="flex justify-between items-center pt-6">
-            <app-button 
+            <app-button
               type="button"
-              variant="secondary"
               (click)="onCancel()"
             >
               {{ 'Basic.cancel' | translate }}
             </app-button>
-            
-            <app-button 
+
+            <app-button
               type="submit"
               [disabled]="!taskForm.valid || submitting()"
-              variant="primary"
             >
               @if (submitting()) {
                 <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
@@ -188,12 +186,14 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
   private readonly projectsApiService = inject(ProjectsApiService);
-  private readonly priorityApiService = inject(PriorityApiService);
+  private readonly priorityApiService = inject(TaskPriorityApiService);
   private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
   private readonly projectRoleApiService = inject(ProjectRoleApiService);
   private readonly projectStatusApiService = inject(ProjectStatusApiService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+
+  private readonly destroy$ = new Subject<void>();
 
   readonly projectId = signal<string | null>(null);
   readonly taskId = signal<string | null>(null);
@@ -210,7 +210,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   readonly statuses = signal<SelectOption[]>([]);
   readonly accessRoles = signal<SelectOption[]>([]);
   readonly projectUsers = signal<SelectOption[]>([]);
-  private langChangeSub: any;
 
   taskForm: FormGroup = this.fb.group({
     description: ['', [Validators.required]],
@@ -246,12 +245,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   get accessRoleControl() {
     return this.taskForm.get('accessRole') as FormControl;
   }
-  get categoryIdsControl() {
-    return this.taskForm.get('categoryIds') as FormControl;
-  }
-  get assignedUserIdsControl() {
-    return this.taskForm.get('assignedUserIds') as FormControl;
-  }
 
   get priorityOptions() {
     return this.priorities().map(p => ({ value: p.id, label: p.name }));
@@ -265,7 +258,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     return this.accessRoles().map(r => ({ value: r.id, label: r.name }));
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     const projectIdParam = this.route.snapshot.paramMap.get('id');
     const taskIdParam = this.route.snapshot.paramMap.get('taskId');
     this.projectId.set(projectIdParam);
@@ -275,26 +268,16 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       this.taskForm.patchValue({ projectId: +projectIdParam });
     }
 
-    await this.loadOptions();
-
-    // Jeśli edycja zadania, pobierz dane i wypełnij formularz
-    if (taskIdParam) {
-      await this.loadTaskData(+taskIdParam);
-    }
-
-    this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
-      this.updateOptionsForCurrentLang();
-    });
-    this.loading.set(false);
+    this.loadOptions();
+    this.setupLanguageSubscription();
   }
 
   ngOnDestroy(): void {
-    if (this.langChangeSub) {
-      this.langChangeSub.unsubscribe();
-    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  protected async onSubmit(): Promise<void> {
+  protected onSubmit(): void {
     if (!this.taskForm.valid) {
       this.taskForm.markAllAsTouched();
       return;
@@ -303,211 +286,260 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.submitting.set(true);
     this.error.set(null);
 
-    try {
-      const formValue = this.taskForm.value;
-      const currentProjectId = this.projectId();
-      const currentTaskId = this.taskId();
+    const formValue = this.taskForm.value;
+    const currentProjectId = this.projectId();
+    const currentTaskId = this.taskId();
 
-      if (!currentProjectId) {
-        this.error.set('Projekt jest wymagany dla wszystkich zadań');
-        return;
-      }
-
-      const taskData: AddTaskDto = {
-        description: formValue.description,
-        additionalDescription: formValue.additionalDescription || undefined,
-        priceEstimation: formValue.priceEstimation || undefined,
-        workedTime: formValue.workedTime || undefined,
-        accessRoleId: formValue.accessRole || undefined,
-        priorityId: formValue.priorityId || undefined,
-        categoryIds: formValue.categoryIds && formValue.categoryIds.length > 0 ? formValue.categoryIds : undefined,
-        statusId: formValue.statusId || undefined,
-        assignedUserIds: formValue.assignedUserIds && formValue.assignedUserIds.length > 0
-          ? formValue.assignedUserIds
-          : undefined,
-        projectId: +currentProjectId,
-      };
-
-      if (currentTaskId) {
-        const { projectId, ...updateData } = taskData;
-        const response = await firstValueFrom(this.tasksService.update(+currentTaskId, updateData));
-        this.notificationService.showNotification(
-          this.translateService.instant('Task.updateSuccess'),
-          NotificationTypeEnum.Success,
-        );
-        // Pobierz projectId z odpowiedzi backendu jeśli jest, w ostateczności z sygnału
-        const updatedTask = response?.data;
-        const projectIdToUse = updatedTask?.project?.id || currentProjectId;
-        const taskIdToUse = updatedTask?.id || currentTaskId;
-        if (projectIdToUse && taskIdToUse) {
-          this.router.navigate(['/projects', projectIdToUse, 'tasks', 'details', taskIdToUse]);
-        } else {
-          this.router.navigate(['/projects']);
-        }
-      } else {
-        const response = await firstValueFrom(this.tasksService.add(taskData));
-        this.notificationService.showNotification(
-          this.translateService.instant('Task.addSuccess'),
-          NotificationTypeEnum.Success,
-        );
-        // Przekieruj na szczegóły nowego zadania jeśli id jest dostępne
-        const newTaskId = response?.data?.id;
-        if (newTaskId) {
-          this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]);
-        } else {
-          this.router.navigate(['/projects', currentProjectId, 'tasks']);
-        }
-      }
-    } catch (error: any) {
-      console.error('Error creating/updating task:', error);
-      const errorMessage = error.error?.message || this.translateService.instant('Task.addError');
-      this.error.set(errorMessage);
-      this.notificationService.showNotification(
-        errorMessage,
-        NotificationTypeEnum.Error,
-      );
-    } finally {
+    if (!currentProjectId) {
+      this.error.set('Projekt jest wymagany dla wszystkich zadań');
       this.submitting.set(false);
+      return;
     }
-  }
 
-  private async loadTaskData(taskId: number): Promise<void> {
-    try {
-      this.loading.set(true);
-      const response = await firstValueFrom(this.tasksService.getOne(taskId));
-      const data = response.data;
-      // Uzupełnij formularz danymi zadania
-      this.taskForm.patchValue({
-        description: data.description,
-        additionalDescription: data.additionalDescription || '',
-        priceEstimation: data.priceEstimation || 0,
-        workedTime: data.workedTime || 0,
-        accessRole: data.accessRole?.id || null,
-        priorityId: data.priority?.id || null,
-        statusId: data.status?.id || null,
-        categoryIds: data.categories?.map((c: any) => c.id) || [],
-        assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
-      });
-    } catch (error) {
-      this.error.set('Błąd podczas ładowania danych zadania');
-    } finally {
-      this.loading.set(false);
+    const taskData: AddTaskDto = {
+      description: formValue.description,
+      additionalDescription: formValue.additionalDescription || undefined,
+      priceEstimation: formValue.priceEstimation || undefined,
+      workedTime: formValue.workedTime || undefined,
+      accessRoleId: formValue.accessRole || undefined,
+      priorityId: formValue.priorityId || undefined,
+      categoryIds: formValue.categoryIds && formValue.categoryIds.length > 0 ? formValue.categoryIds : undefined,
+      statusId: formValue.statusId || undefined,
+      assignedUserIds: formValue.assignedUserIds && formValue.assignedUserIds.length > 0
+        ? formValue.assignedUserIds
+        : undefined,
+      projectId: +currentProjectId,
+    };
+
+    if (currentTaskId) {
+      this.updateTask(+currentTaskId, taskData);
+    } else {
+      this.createTask(taskData);
     }
   }
 
   protected onCancel(): void {
     const currentProjectId = this.projectId();
     if (currentProjectId) {
-      this.router.navigate(['/projects', currentProjectId, 'tasks']);
+      this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
     } else {
-      this.router.navigate(['/projects']);
+      this.router.navigate(['/projects']).then();
     }
   }
 
-  private async loadOptions(): Promise<void> {
-    try {
-      await Promise.all([
-        this.loadPriorities(),
-        this.loadAccessRoles(),
-      ]);
-
-      const currentProjectId = this.projectId();
-      if (currentProjectId) {
-        await Promise.all([
-          this.loadCategories(+currentProjectId),
-          this.loadStatuses(+currentProjectId),
-          this.loadProjectUsers(+currentProjectId),
-        ]);
-      }
-    } catch (error) {
-      console.error('Error loading options:', error);
-      this.error.set('Błąd podczas ładowania opcji formularza');
-    }
-  }
-
-  private async loadPriorities(): Promise<void> {
-    try {
-      const response = await firstValueFrom(this.priorityApiService.getAll());
-      if (response.data) {
-        this.prioritiesRaw.set(response.data);
+  private setupLanguageSubscription(): void {
+    this.translateService.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.updateOptionsForCurrentLang();
+      });
+  }
+
+  private loadOptions(): void {
+    const currentProjectId = this.projectId();
+
+    this.priorityApiService.getAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: prioritiesRes => {
+          this.prioritiesRaw.set(prioritiesRes.data || []);
+          this.updateOptionsForCurrentLang();
+        },
+        error: error => {
+          console.error('Error loading priorities:', error);
+          this.error.set('Błąd podczas ładowania priorytetów');
+        },
+      });
+
+    this.projectRoleApiService.getAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: accessRolesRes => {
+          this.accessRolesRaw.set(accessRolesRes.data || []);
+          this.updateOptionsForCurrentLang();
+        },
+        error: error => {
+          console.error('Error loading access roles:', error);
+          this.error.set('Błąd podczas ładowania ról dostępu');
+        },
+      });
+
+    if (currentProjectId) {
+      this.projectCategoryApiService.getByProjectId(+currentProjectId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: categoriesRes => {
+            this.categoriesRaw.set(categoriesRes.data || []);
+            this.updateOptionsForCurrentLang();
+          },
+          error: error => {
+            console.error('Error loading categories:', error);
+            this.error.set('Błąd podczas ładowania kategorii');
+          },
+        });
+
+      this.projectStatusApiService.getByProjectId(+currentProjectId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: statusesRes => {
+            this.statusesRaw.set(statusesRes.data || []);
+            this.updateOptionsForCurrentLang();
+          },
+          error: error => {
+            console.error('Error loading statuses:', error);
+            this.error.set('Błąd podczas ładowania statusów');
+          },
+        });
+
+      this.projectsApiService.getProjectUsers(+currentProjectId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: usersRes => {
+            this.projectUsers.set(usersRes.data || []);
+          },
+          error: error => {
+            console.error('Error loading project users:', error);
+            this.error.set('Błąd podczas ładowania użytkowników projektu');
+          },
+        });
+
+      const taskIdParam = this.taskId();
+      if (taskIdParam) {
+        this.loadTaskData(+taskIdParam);
+      } else {
+        this.loading.set(false);
       }
-    } catch (error) {
-      console.error('Error loading priorities:', error);
+    } else {
+      this.loading.set(false);
     }
   }
 
-  private async loadCategories(projectId: number): Promise<void> {
-    try {
-      const response = await firstValueFrom(this.projectCategoryApiService.getByProjectId(projectId));
-      if (response.data) {
-        this.categoriesRaw.set(response.data);
-        this.updateOptionsForCurrentLang();
-      }
-    } catch (error) {
-      console.error('Error loading categories:', error);
-    }
+  private loadTaskData(taskId: number): void {
+    this.tasksService.getOne(taskId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          const data = response.data;
+          this.taskForm.patchValue({
+            description: data.description,
+            additionalDescription: data.additionalDescription || '',
+            priceEstimation: data.priceEstimation || 0,
+            workedTime: data.workedTime || 0,
+            accessRole: data.accessRole?.id || null,
+            priorityId: data.priority?.id || null,
+            statusId: data.status?.id || null,
+            categoryIds: data.categories?.map((c: any) => c.id) || [],
+            assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
+          });
+          this.loading.set(false);
+        },
+        error: error => {
+          console.error('Error loading task data:', error);
+          this.error.set('Błąd podczas ładowania danych zadania');
+          this.loading.set(false);
+        },
+      });
   }
 
-  private async loadStatuses(projectId: number): Promise<void> {
-    try {
-      const response = await firstValueFrom(this.projectStatusApiService.getByProjectId(projectId));
-      if (response.data) {
-        this.statusesRaw.set(response.data);
-        this.updateOptionsForCurrentLang();
-      }
-    } catch (error) {
-      console.error('Error loading statuses:', error);
-    }
+  private createTask(taskData: AddTaskDto): void {
+    this.tasksService.add(taskData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.addSuccess'),
+            NotificationTypeEnum.Success,
+          );
+
+          const newTaskId = response?.data?.id;
+          const currentProjectId = this.projectId();
+
+          if (newTaskId) {
+            this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
+          } else {
+            this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+          }
+        },
+        error: error => {
+          this.handleSubmissionError(error);
+        },
+        complete: () => {
+          this.submitting.set(false);
+        },
+      });
   }
 
-  private async loadProjectUsers(projectId: number): Promise<void> {
-    try {
-      const response = await firstValueFrom(this.projectsApiService.getProjectUsers(projectId));
-      if (response.data) {
-        this.projectUsers.set(response.data);
-      }
-    } catch (error) {
-      console.error('Error loading project users:', error);
-    }
+  private updateTask(taskId: number, taskData: AddTaskDto): void {
+    const { projectId, ...updateData } = taskData;
+
+    this.tasksService.update(taskId, updateData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.updateSuccess'),
+            NotificationTypeEnum.Success,
+          );
+
+          const updatedTask = response?.data;
+          const projectIdToUse = updatedTask?.project?.id || this.projectId();
+          const taskIdToUse = updatedTask?.id || taskId;
+
+          if (projectIdToUse && taskIdToUse) {
+            this.router.navigate(['/projects', projectIdToUse, 'tasks', 'details', taskIdToUse]).then();
+          } else {
+            this.router.navigate(['/projects']).then();
+          }
+        },
+        error: error => {
+          this.handleSubmissionError(error);
+        },
+        complete: () => {
+          this.submitting.set(false);
+        },
+      });
   }
 
-  private async loadAccessRoles(): Promise<void> {
-    try {
-      const response = await firstValueFrom(this.projectRoleApiService.getAll());
-      if (response.data) {
-        this.accessRolesRaw.set(response.data);
-        this.updateOptionsForCurrentLang();
-      }
-    } catch (error) {
-      console.error('Error loading access roles:', error);
-    }
+  private handleSubmissionError(error: any): void {
+    console.error('Error processing task:', error);
+    const errorMessage = error.error?.message || this.translateService.instant('Task.addError');
+    this.error.set(errorMessage);
+    this.notificationService.showNotification(
+      errorMessage,
+      NotificationTypeEnum.Error,
+    );
+    this.submitting.set(false);
   }
+
   private updateOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
-    // Priorytety
+
     this.priorities.set((this.prioritiesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
-        || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
+        || item.translations?.[0]?.name
+        || item.name || '',
     })));
-    // Kategorie
+
     this.categories.set((this.categoriesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
-        || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
+        || item.translations?.[0]?.name
+        || item.name || '',
     })));
-    // Statusy
+
     this.statuses.set((this.statusesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
-        || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
+        || item.translations?.[0]?.name
+        || item.name || '',
     })));
-    // Role
+
     this.accessRoles.set((this.accessRolesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
-        || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
+        || item.translations?.[0]?.name
+        || item.name || '',
     })));
   }
 }
