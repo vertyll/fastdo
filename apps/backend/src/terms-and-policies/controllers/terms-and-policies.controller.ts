@@ -2,9 +2,9 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from 'src/common/decorators/api-wrapped-response.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
-import { PrivacyPolicy } from '../entities/privacy-policy.entity';
-import { Terms } from '../entities/terms.entity';
 import { TermsAndPoliciesService } from '../services/terms-and-policies.service';
+import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
+import { PrivacyPolicyWithTranslationsDto } from '../dtos/privacy-policy-with-translations.dto';
 
 @ApiTags('terms-and-policies')
 @Controller('terms-and-policies')
@@ -15,25 +15,26 @@ export class TermsAndPoliciesController {
 
   @Public()
   @Get('terms')
-  @ApiOperation({ summary: 'Get latest terms' })
+  @ApiOperation({ summary: 'Get latest terms with all translations' })
   @ApiWrappedResponse({
     status: 200,
-    description: 'Latest terms document',
-    type: Terms,
+    description: 'Latest terms document with all translations',
+    type: TermsWithTranslationsDto,
   })
-  public getTerms(): Promise<Terms> {
-    return this.service.getLatestTerms();
+  public getTermsWithTranslations(): Promise<TermsWithTranslationsDto> {
+    return this.service.getLatestTermsWithTranslations();
   }
+
 
   @Public()
   @Get('privacy-policy')
-  @ApiOperation({ summary: 'Get latest privacy policy' })
+  @ApiOperation({ summary: 'Get latest privacy policy with all translations' })
   @ApiWrappedResponse({
     status: 200,
-    description: 'Latest privacy policy document',
-    type: PrivacyPolicy,
+    description: 'Latest privacy policy document with all translations',
+    type: PrivacyPolicyWithTranslationsDto,
   })
-  public getPrivacyPolicy(): Promise<PrivacyPolicy> {
-    return this.service.getLatestPrivacyPolicy();
+  public getPrivacyPolicyWithTranslations(): Promise<PrivacyPolicyWithTranslationsDto> {
+    return this.service.getLatestPrivacyPolicyWithTranslations();
   }
 }

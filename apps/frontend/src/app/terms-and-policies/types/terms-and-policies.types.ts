@@ -1,8 +1,13 @@
 import { LegalSectionEnum } from '../enum/legal-section.enum';
 
+
 export type SectionTranslation = {
   id: number;
-  languageCode: string;
+  language: {
+    id: number;
+    code: string;
+    name: string;
+  };
   title: string;
   content?: string;
   items?: string[];

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { I18nContext } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 import { PrivacyPolicy } from '../entities/privacy-policy.entity';
 
@@ -9,12 +8,11 @@ export class PrivacyPolicyRepository extends Repository<PrivacyPolicy> {
     super(PrivacyPolicy, dataSource.createEntityManager());
   }
 
-  public async getLatestPrivacyPolicy(): Promise<PrivacyPolicy | null> {
-    const lang = I18nContext.current()?.lang || 'en';
+  public async getLatestPrivacyPolicyWithTranslations(): Promise<PrivacyPolicy | null> {
     return this.createQueryBuilder('privacy_policy')
       .leftJoinAndSelect('privacy_policy.sections', 'section')
       .leftJoinAndSelect('section.translations', 'sectionTranslation')
-      .leftJoinAndSelect('sectionTranslation.language', 'language', 'language.code = :lang', { lang })
+      .leftJoinAndSelect('sectionTranslation.language', 'language')
       .orderBy('privacy_policy.dateEffective', 'DESC')
       .addOrderBy('section.order', 'ASC')
       .getOne();

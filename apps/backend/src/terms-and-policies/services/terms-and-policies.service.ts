@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { PrivacyPolicy } from '../entities/privacy-policy.entity';
-import { Terms } from '../entities/terms.entity';
+import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
+import { PrivacyPolicyWithTranslationsDto } from '../dtos/privacy-policy-with-translations.dto';
 import { PrivacyPolicyRepository } from '../repositories/privacy-policy.repository';
 import { TermsRepository } from '../repositories/terms.repository';
 
@@ -13,17 +13,15 @@ export class TermsAndPoliciesService {
     private readonly i18n: I18nService,
   ) {}
 
-  public async getLatestTerms(): Promise<Terms> {
-    const terms = await this.termsRepository.getLatestTerms();
+  public async getLatestTermsWithTranslations(): Promise<TermsWithTranslationsDto> {
+    const terms = await this.termsRepository.getLatestTermsWithTranslations();
     if (!terms) throw new NotFoundException(this.i18n.t('messages.TermsAndPolicies.errors.termsNotFound'));
-
     return terms;
   }
 
-  public async getLatestPrivacyPolicy(): Promise<PrivacyPolicy> {
-    const policy = await this.privacyPolicyRepository.getLatestPrivacyPolicy();
+  public async getLatestPrivacyPolicyWithTranslations(): Promise<PrivacyPolicyWithTranslationsDto> {
+    const policy = await this.privacyPolicyRepository.getLatestPrivacyPolicyWithTranslations();
     if (!policy) throw new NotFoundException(this.i18n.t('messages.TermsAndPolicies.errors.privacyPolicyNotFound'));
-
     return policy;
   }
 }

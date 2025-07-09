@@ -96,7 +96,7 @@ export class TermsPageComponent implements OnInit, OnDestroy {
 
   protected getCurrentTranslation(section: Section): SectionTranslation {
     const currentLang = this.translate.currentLang;
-    return section.translations.find(t => t.languageCode === currentLang)
+    return section.translations.find(t => t.language?.code === currentLang)
       || section.translations[0];
   }
 
