@@ -450,12 +450,10 @@ export class ProjectsService {
     for (const userWithRole of usersWithRoles) {
       try {
         const user = await this.usersService.findByEmail(userWithRole.email);
-
         if (user) {
           const existingUserRole = currentProjectUsers.find(
             cu => cu.user.email === userWithRole.email,
           );
-
           if (existingUserRole) {
             if (existingUserRole.projectRole.id !== userWithRole.role) {
               existingUserRole.projectRole = { id: userWithRole.role } as any;
@@ -470,31 +468,43 @@ export class ProjectsService {
                   user: { id: user.id },
                 },
               });
-
             if (!existingProjectUser) {
-              await queryRunner.manager.getRepository(ProjectUser).save({
+              const invitationRepo = queryRunner.manager.getRepository(ProjectInvitation);
+              const existingInvitation = await invitationRepo.findOne({
+                where: {
+                  project: { id: projectId },
+                  user: { id: user.id },
+                  status: ProjectInvitationStatusEnum.PENDING,
+                },
+              });
+              if (!existingInvitation) {
+                const invitation = invitationRepo.create({
+                  project: { id: projectId },
+                  user: { id: user.id },
+                  inviter: { id: updaterId },
+                  role: { id: userWithRole.role },
+                  status: ProjectInvitationStatusEnum.PENDING,
+                });
+                await invitationRepo.save(invitation);
+                const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
+                const roleName = roleInfo?.translations?.[0]?.name || 'undefined';
+                await this.notificationService.createNotification({
+                  type: NotificationType.PROJECT_INVITATION,
+                  title: 'Zaproszenie do projektu',
+                  message: `${updater.email} zaprosił Cię do projektu z rolą ${roleName}.`,
+                  recipientId: user.id,
+                  data: { projectId, inviterEmail: updater.email, role: userWithRole.role, invitationId: invitation.id },
+                  sendEmail: true,
+                });
+              }
+            }
+            else {
+              await queryRunner.manager.getRepository(ProjectUserRole).save({
                 project: { id: projectId },
                 user: { id: user.id },
+                projectRole: { id: userWithRole.role },
               });
             }
-
-            await queryRunner.manager.getRepository(ProjectUserRole).save({
-              project: { id: projectId },
-              user: { id: user.id },
-              projectRole: { id: userWithRole.role },
-            });
-
-            const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
-            const roleName = roleInfo?.translations?.[0]?.name || 'undefined';
-
-            await this.notificationService.createNotification({
-              type: NotificationType.PROJECT_INVITATION,
-              title: 'Zaproszenie do projektu',
-              message: `${updater.email} zaprosił Cię do projektu z rolą ${roleName}.`,
-              recipientId: user.id,
-              data: { projectId, inviterEmail: updater.email, role: userWithRole.role },
-              sendEmail: true,
-            });
           }
         }
       } catch (error) {
