@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
@@ -25,7 +25,6 @@ export class ProjectStatusController {
   public async getProjectStatuses(
     @Param('projectId') projectId: string,
   ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string; }[]; }[]> {
-    // Język pobierany automatycznie przez nestjs-i18n resolver
     return this.projectStatusService.findByProjectId(+projectId);
   }
 
@@ -57,7 +56,6 @@ export class ProjectStatusController {
     type: ProjectStatus,
   })
   public async updateStatus(
-    @Param('projectId') projectId: string,
     @Param('statusId') statusId: string,
     @Body() updateStatusDto: UpdateProjectStatusDto,
   ): Promise<ProjectStatus> {
@@ -73,7 +71,6 @@ export class ProjectStatusController {
     description: 'The status has been successfully deleted.',
   })
   public async deleteStatus(
-    @Param('projectId') projectId: string,
     @Param('statusId') statusId: string,
   ): Promise<void> {
     await this.projectStatusService.remove(+statusId);

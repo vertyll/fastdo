@@ -110,13 +110,17 @@
       "invitationNotFoundOrAlreadyHandled": "Zaproszenie nie zostało znalezione lub już zostało obsłużone",
       "notAllowedToAcceptInvitation": "Nie masz uprawnień do zaakceptowania tego zaproszenia",
       "notAllowedToRejectInvitation": "Nie masz uprawnień do odrzucenia tego zaproszenia"
-    }
+    },
+    "invitation": "Zostałeś zaproszony do projektu {projectName}"
   },
   "Tasks": {
     "errors": {
       "taskNotFound": "Zadanie nie zostało znalezione",
       "commentNotFound": "Komentarz nie został znaleziony",
       "commentNotYourOwn": "Możesz edytować tylko swoje własne komentarze"
-    }
+    },
+    "assigned": "Zostałeś przypisany do zadania {title}",
+    "statusChanged": "Zmieniono status zadania {title} na {status}",
+    "commentAdded": "Dodano komentarz do zadania {title}"
   }
 }

@@ -5,17 +5,17 @@ import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { LanguageSeeder } from './src/core/database/seeder/implementations/language.seeder';
 import { LegalDocumentsSeeder } from './src/core/database/seeder/implementations/legal-documents.seeder';
-import { PrioritySeeder } from './src/core/database/seeder/implementations/priority.seeder';
 import { ProjectRoleSeeder } from './src/core/database/seeder/implementations/project-role.seeder';
 import { ProjectTypeSeeder } from './src/core/database/seeder/implementations/project-type.seeder';
 import { RoleSeeder } from './src/core/database/seeder/implementations/role.seeder';
+import { TaskPrioritySeeder } from './src/core/database/seeder/implementations/task-priority-seeder.service';
 import { SeederModule } from './src/core/database/seeder/module/seeder.module';
 import { SeederRunnerService } from './src/core/database/seeder/services/seeder-runner.service';
 
 const AVAILABLE_SEEDERS = [
   LanguageSeeder,
   RoleSeeder,
-  PrioritySeeder,
+  TaskPrioritySeeder,
   ProjectRoleSeeder,
   ProjectTypeSeeder,
   LegalDocumentsSeeder,

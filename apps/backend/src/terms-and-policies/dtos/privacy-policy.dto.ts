@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class TermsSectionTranslationDto {
+export class PrivacyPolicySectionTranslationDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
@@ -13,18 +13,18 @@ export class TermsSectionTranslationDto {
   language: { id: number; code: string; name: string; };
 }
 
-export class TermsSectionWithTranslationsDto {
+export class PrivacyPolicySectionDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
   order: number;
   @ApiProperty()
   type: string;
-  @ApiProperty({ type: [TermsSectionTranslationDto] })
-  translations: TermsSectionTranslationDto[];
+  @ApiProperty({ type: [PrivacyPolicySectionTranslationDto] })
+  translations: PrivacyPolicySectionTranslationDto[];
 }
 
-export class TermsWithTranslationsDto {
+export class PrivacyPolicyDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
@@ -35,6 +35,6 @@ export class TermsWithTranslationsDto {
   dateCreation: Date;
   @ApiProperty()
   dateModification: Date | null;
-  @ApiProperty({ type: [TermsSectionWithTranslationsDto] })
-  sections: TermsSectionWithTranslationsDto[];
+  @ApiProperty({ type: [PrivacyPolicySectionDto] })
+  sections: PrivacyPolicySectionDto[];
 }

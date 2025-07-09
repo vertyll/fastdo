@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Language } from '../../core/language/entities/language.entity';
-import { TaskPriorityTranslation } from '../entities/task-priority-translation.entity';
+import { TaskPriorityResponseDto } from '../dtos/task-priority-response.dto';
 import { TaskPriorityRepository } from '../repositories/task-priority.repository';
 
 @Injectable()
 export class TaskPriorityService {
   constructor(
     private readonly taskPriorityRepository: TaskPriorityRepository,
-    @InjectRepository(TaskPriorityTranslation) private readonly translationRepository: Repository<
-      TaskPriorityTranslation
-    >,
-    @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
   ) {}
 
-  public async findAllWithTranslations(): Promise<any[]> {
+  public async findAll(): Promise<TaskPriorityResponseDto[]> {
     const priorities = await this.taskPriorityRepository.find({
       where: { isActive: true },
       relations: ['translations', 'translations.language'],

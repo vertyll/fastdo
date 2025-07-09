@@ -21,10 +21,3 @@ export interface SocketServer {
     emit(event: string, data: any): void;
   };
 }
-
-export interface SocketConnectionManager {
-  addConnection(userId: number, socket: AuthenticatedSocket): void;
-  removeConnection(userId: number, socketId: string): void;
-  getUserSockets(userId: number): AuthenticatedSocket[];
-  getAllConnectedUsers(): number[];
-}

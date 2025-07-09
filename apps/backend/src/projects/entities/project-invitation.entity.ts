@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { ProjectInvitationStatusEnum } from '../enums/project-invitation.enum';
+import { ProjectInvitationStatusEnum } from '../enums/project-invitation-status.enum';
 import { ProjectRole } from './project-role.entity';
 import { Project } from './project.entity';
 

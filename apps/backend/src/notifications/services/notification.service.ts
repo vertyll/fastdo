@@ -9,8 +9,8 @@ import { CreateNotificationDto } from '../dtos/create-notification.dto';
 import { UpdateNotificationSettingsDto } from '../dtos/update-notification-settings.dto';
 import { NotificationSettings } from '../entities/notification-settings.entity';
 import { Notification } from '../entities/notification.entity';
-import { NotificationStatus } from '../enums/notification-status.enum';
-import { NotificationType } from '../enums/notification-type.enum';
+import { NotificationStatusEnum } from '../enums/notification-status.enum';
+import { NotificationTypeEnum } from '../enums/notification-type.enum';
 import { INotificationService } from '../interfaces/notification-service.interface';
 
 @Injectable()
@@ -50,7 +50,7 @@ export class NotificationService implements INotificationService {
         message: notification.message,
         recipientId: notification.recipient.id,
         data: notification.data,
-        isRead: notification.status === NotificationStatus.READ,
+        isRead: notification.status === NotificationStatusEnum.READ,
         dateCreation: notification.dateCreation,
       };
       await this.notificationWebSocketService.sendNotificationCreated(notificationEvent);
@@ -76,7 +76,7 @@ export class NotificationService implements INotificationService {
     return this.notificationRepository.count({
       where: {
         recipient: { id: userId },
-        status: NotificationStatus.UNREAD,
+        status: NotificationStatusEnum.UNREAD,
       },
     });
   }
@@ -93,7 +93,7 @@ export class NotificationService implements INotificationService {
 
     await this.notificationRepository.update(
       { id: notificationId, recipient: { id: userId } },
-      { status: NotificationStatus.READ },
+      { status: NotificationStatusEnum.READ },
     );
 
     // Send notification via WebSocket
@@ -113,8 +113,8 @@ export class NotificationService implements INotificationService {
 
   public async markAllAsRead(userId: number): Promise<void> {
     await this.notificationRepository.update(
-      { recipient: { id: userId }, status: NotificationStatus.UNREAD },
-      { status: NotificationStatus.READ },
+      { recipient: { id: userId }, status: NotificationStatusEnum.UNREAD },
+      { status: NotificationStatusEnum.READ },
     );
   }
 
@@ -149,17 +149,17 @@ export class NotificationService implements INotificationService {
     return this.settingsRepository.save(settings);
   }
 
-  private shouldReceiveNotification(type: NotificationType, settings: NotificationSettings): boolean {
+  private shouldReceiveNotification(type: NotificationTypeEnum, settings: NotificationSettings): boolean {
     switch (type) {
-      case NotificationType.PROJECT_INVITATION:
+      case NotificationTypeEnum.PROJECT_INVITATION:
         return settings.projectInvitations;
-      case NotificationType.TASK_ASSIGNED:
+      case NotificationTypeEnum.TASK_ASSIGNED:
         return settings.taskAssignments;
-      case NotificationType.PROJECT_UPDATE:
+      case NotificationTypeEnum.PROJECT_UPDATE:
         return settings.projectUpdates;
-      case NotificationType.TASK_COMPLETED:
+      case NotificationTypeEnum.TASK_COMPLETED:
         return settings.taskStatusChanges;
-      case NotificationType.SYSTEM:
+      case NotificationTypeEnum.SYSTEM:
         return settings.systemNotifications;
       default:
         return true;
@@ -170,9 +170,10 @@ export class NotificationService implements INotificationService {
     try {
       const content = `<h2>${notification.title}</h2><p>${notification.message}</p>`;
 
-      const invitationId = notification.type === NotificationType.PROJECT_INVITATION && notification.data?.invitationId
-        ? notification.data.invitationId
-        : undefined;
+      const invitationId =
+        notification.type === NotificationTypeEnum.PROJECT_INVITATION && notification.data?.invitationId
+          ? notification.data.invitationId
+          : undefined;
 
       await this.mailService.sendNotificationEmail(
         recipient.email,

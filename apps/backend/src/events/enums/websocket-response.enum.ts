@@ -1,4 +1,4 @@
-export enum WebSocketResponse {
+export enum WebSocketResponseEnum {
   JOIN_ROOM_RESPONSE = 'join_room_response',
   LEAVE_ROOM_RESPONSE = 'leave_room_response',
   MARK_NOTIFICATION_READ_RESPONSE = 'mark_notification_read_response',

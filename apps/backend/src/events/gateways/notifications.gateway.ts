@@ -12,8 +12,8 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { WebSocketEvent } from '../enums/websocket-event.enum';
-import { WebSocketResponse } from '../enums/websocket-response.enum';
+import { WebSocketEventEnum } from '../enums/websocket-event.enum';
+import { WebSocketResponseEnum } from '../enums/websocket-response.enum';
 import { SocketConnectionService } from '../services/socket-connection.service';
 import { AuthenticatedSocket, SocketServer } from '../types/socket.interface';
 
@@ -51,7 +51,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
 
       if (!token) {
         this.logger.warn(`Connection rejected from ${clientIp}: No token provided`);
-        client.emit(WebSocketResponse.CONNECTION_ERROR, { message: 'Authentication required' });
+        client.emit(WebSocketResponseEnum.CONNECTION_ERROR, { message: 'Authentication required' });
         client.disconnect();
         return;
       }
@@ -63,14 +63,14 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
         });
       } catch (jwtError) {
         this.logger.warn(`Connection rejected from ${clientIp}: Invalid token - ${jwtError.message}`);
-        client.emit(WebSocketResponse.CONNECTION_ERROR, { message: 'Invalid authentication token' });
+        client.emit(WebSocketResponseEnum.CONNECTION_ERROR, { message: 'Invalid authentication token' });
         client.disconnect();
         return;
       }
 
       if (!payload || !payload.sub) {
         this.logger.warn(`Connection rejected from ${clientIp}: Invalid token payload`);
-        client.emit(WebSocketResponse.CONNECTION_ERROR, { message: 'Invalid token payload' });
+        client.emit(WebSocketResponseEnum.CONNECTION_ERROR, { message: 'Invalid token payload' });
         client.disconnect();
         return;
       }
@@ -84,7 +84,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
 
       this.logger.log(`User ${payload.sub} (${payload.email}) connected from ${clientIp}`);
 
-      client.emit(WebSocketResponse.CONNECTED, {
+      client.emit(WebSocketResponseEnum.CONNECTED, {
         message: 'Successfully connected to notifications',
         userId: payload.sub,
       });
@@ -103,50 +103,50 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
-  @SubscribeMessage(WebSocketEvent.JOIN_ROOM)
+  @SubscribeMessage(WebSocketEventEnum.JOIN_ROOM)
   handleJoinRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { room: string; },
   ): WsResponse {
     if (!(client as any).userId) {
-      return { event: WebSocketResponse.JOIN_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
+      return { event: WebSocketResponseEnum.JOIN_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
     }
 
     client.join(data.room);
     this.logger.log(`User ${(client as any).userId} joined room: ${data.room}`);
 
     return {
-      event: WebSocketResponse.JOIN_ROOM_RESPONSE,
+      event: WebSocketResponseEnum.JOIN_ROOM_RESPONSE,
       data: { success: true, message: `Joined room: ${data.room}` },
     };
   }
 
-  @SubscribeMessage(WebSocketEvent.LEAVE_ROOM)
+  @SubscribeMessage(WebSocketEventEnum.LEAVE_ROOM)
   handleLeaveRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { room: string; },
   ): WsResponse {
     if (!(client as any).userId) {
-      return { event: WebSocketResponse.LEAVE_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
+      return { event: WebSocketResponseEnum.LEAVE_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
     }
 
     client.leave(data.room);
     this.logger.log(`User ${(client as any).userId} left room: ${data.room}`);
 
     return {
-      event: WebSocketResponse.LEAVE_ROOM_RESPONSE,
+      event: WebSocketResponseEnum.LEAVE_ROOM_RESPONSE,
       data: { success: true, message: `Left room: ${data.room}` },
     };
   }
 
-  @SubscribeMessage(WebSocketEvent.MARK_NOTIFICATION_READ)
+  @SubscribeMessage(WebSocketEventEnum.MARK_NOTIFICATION_READ)
   handleMarkNotificationRead(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { notificationId: number; },
   ): WsResponse {
     if (!(client as any).userId) {
       return {
-        event: WebSocketResponse.MARK_NOTIFICATION_READ_RESPONSE,
+        event: WebSocketResponseEnum.MARK_NOTIFICATION_READ_RESPONSE,
         data: { success: false, message: 'Unauthorized' },
       };
     }
@@ -154,22 +154,22 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     this.logger.log(`User ${(client as any).userId} marked notification ${data.notificationId} as read`);
 
     return {
-      event: WebSocketResponse.MARK_NOTIFICATION_READ_RESPONSE,
+      event: WebSocketResponseEnum.MARK_NOTIFICATION_READ_RESPONSE,
       data: { success: true, message: 'Notification marked as read' },
     };
   }
 
-  @SubscribeMessage(WebSocketEvent.UPDATE_AUTH)
+  @SubscribeMessage(WebSocketEventEnum.UPDATE_AUTH)
   async handleUpdateAuth(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { token: string; },
-  ): Promise<WsResponse<any>> {
+  ): Promise<WsResponse> {
     try {
       const token = data.token?.startsWith('Bearer ') ? data.token.substring(7) : data.token;
 
       if (!token) {
         return {
-          event: WebSocketResponse.UPDATE_AUTH_RESPONSE,
+          event: WebSocketResponseEnum.UPDATE_AUTH_RESPONSE,
           data: { success: false, message: 'No token provided' },
         };
       }
@@ -179,7 +179,10 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
       });
 
       if (!payload || !payload.sub) {
-        return { event: WebSocketResponse.UPDATE_AUTH_RESPONSE, data: { success: false, message: 'Invalid token' } };
+        return {
+          event: WebSocketResponseEnum.UPDATE_AUTH_RESPONSE,
+          data: { success: false, message: 'Invalid token' },
+        };
       }
 
       (client as any).userId = payload.sub;
@@ -188,13 +191,13 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
       this.logger.log(`User ${payload.sub} updated auth token`);
 
       return {
-        event: WebSocketResponse.UPDATE_AUTH_RESPONSE,
+        event: WebSocketResponseEnum.UPDATE_AUTH_RESPONSE,
         data: { success: true, message: 'Token updated successfully' },
       };
     } catch (error) {
       this.logger.error('Error updating auth token:', error);
       return {
-        event: WebSocketResponse.UPDATE_AUTH_RESPONSE,
+        event: WebSocketResponseEnum.UPDATE_AUTH_RESPONSE,
         data: { success: false, message: 'Token update failed' },
       };
     }
@@ -247,7 +250,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     if (warningTime > 0) {
       setTimeout(() => {
         if (client.connected) {
-          client.emit(WebSocketResponse.TOKEN_WARNING, {
+          client.emit(WebSocketResponseEnum.TOKEN_WARNING, {
             message: 'Token will expire soon, please refresh',
             expiresIn: 5 * 60 * 1000, // 5 minutes
           });
@@ -259,7 +262,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
       setTimeout(() => {
         if (client.connected) {
           this.logger.warn(`Disconnecting user ${payload.sub} due to token expiration`);
-          client.emit(WebSocketResponse.TOKEN_EXPIRED, { message: 'Token expired' });
+          client.emit(WebSocketResponseEnum.TOKEN_EXPIRED, { message: 'Token expired' });
           client.disconnect();
         }
       }, timeUntilExpiration);

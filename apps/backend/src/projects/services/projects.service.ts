@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
-import { NotificationType } from 'src/notifications/enums/notification-type.enum';
+import { NotificationTypeEnum } from 'src/notifications/enums/notification-type.enum';
 import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
 import { INotificationServiceToken } from 'src/notifications/tokens/notification-service.token';
 import { UserDto } from 'src/users/dtos/user.dto';
@@ -24,7 +24,7 @@ import { ProjectStatus } from '../entities/project-status.entity';
 import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
-import { ProjectInvitationStatusEnum } from '../enums/project-invitation.enum';
+import { ProjectInvitationStatusEnum } from '../enums/project-invitation-status.enum';
 import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
 import { ProjectRepository } from '../repositories/project.repository';
@@ -325,7 +325,7 @@ export class ProjectsService {
             await queryRunner.manager.getRepository(ProjectInvitation).save(invitation);
 
             await this.notificationService.createNotification({
-              type: NotificationType.PROJECT_INVITATION,
+              type: NotificationTypeEnum.PROJECT_INVITATION,
               title: 'Zaproszenie do projektu',
               message: `${inviter.email} zaprosił Cię do projektu.`,
               recipientId: user.id,
@@ -379,7 +379,7 @@ export class ProjectsService {
             const roleName = roleInfo?.translations?.[0]?.name || 'nieznana';
 
             await this.notificationService.createNotification({
-              type: NotificationType.PROJECT_INVITATION,
+              type: NotificationTypeEnum.PROJECT_INVITATION,
               title: 'Zaproszenie do projektu',
               message: `${inviter.email} zaprosił Cię do projektu z rolą ${roleName}.`,
               recipientId: user.id,
@@ -489,7 +489,7 @@ export class ProjectsService {
                 const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
                 const roleName = roleInfo?.translations?.[0]?.name || 'undefined';
                 await this.notificationService.createNotification({
-                  type: NotificationType.PROJECT_INVITATION,
+                  type: NotificationTypeEnum.PROJECT_INVITATION,
                   title: 'Zaproszenie do projektu',
                   message: `${updater.email} zaprosił Cię do projektu z rolą ${roleName}.`,
                   recipientId: user.id,

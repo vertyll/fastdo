@@ -119,6 +119,7 @@ export type I18nTranslations = {
         'notAllowedToAcceptInvitation': string;
         'notAllowedToRejectInvitation': string;
       };
+      'invitation': string;
     };
     'Tasks': {
       'errors': {
@@ -126,6 +127,9 @@ export type I18nTranslations = {
         'commentNotFound': string;
         'commentNotYourOwn': string;
       };
+      'assigned': string;
+      'statusChanged': string;
+      'commentAdded': string;
     };
   };
 };

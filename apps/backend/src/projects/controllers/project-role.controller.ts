@@ -24,7 +24,6 @@ export class ProjectRoleController {
   public async findAll(): Promise<
     { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
   > {
-    // Język pobierany automatycznie przez nestjs-i18n resolver
     return this.projectRoleService.findAll();
   }
 }

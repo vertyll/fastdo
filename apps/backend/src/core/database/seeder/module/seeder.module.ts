@@ -38,10 +38,10 @@ import { Language } from '../../../language/entities/language.entity';
 import { DatabaseModule } from '../../database.module';
 import { LanguageSeeder } from '../implementations/language.seeder';
 import { LegalDocumentsSeeder } from '../implementations/legal-documents.seeder';
-import { PrioritySeeder } from '../implementations/priority.seeder';
 import { ProjectRoleSeeder } from '../implementations/project-role.seeder';
 import { ProjectTypeSeeder } from '../implementations/project-type.seeder';
 import { RoleSeeder } from '../implementations/role.seeder';
+import { TaskPrioritySeeder } from '../implementations/task-priority-seeder.service';
 import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
@@ -94,7 +94,7 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
     SeederErrorHandler,
     LanguageSeeder,
     RoleSeeder,
-    PrioritySeeder,
+    TaskPrioritySeeder,
     ProjectRoleSeeder,
     ProjectTypeSeeder,
     LegalDocumentsSeeder,

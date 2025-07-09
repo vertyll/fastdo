@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { NotificationStatus } from '../enums/notification-status.enum';
-import { NotificationType } from '../enums/notification-type.enum';
+import { NotificationStatusEnum } from '../enums/notification-status.enum';
+import { NotificationTypeEnum } from '../enums/notification-type.enum';
 
 @Entity('notification')
 export class Notification {
@@ -18,9 +18,9 @@ export class Notification {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ enum: NotificationType })
-  @Column({ type: 'enum', enum: NotificationType })
-  type: NotificationType;
+  @ApiProperty({ enum: NotificationTypeEnum })
+  @Column({ type: 'enum', enum: NotificationTypeEnum })
+  type: NotificationTypeEnum;
 
   @ApiProperty()
   @Column({ type: 'varchar', length: 255 })
@@ -30,9 +30,9 @@ export class Notification {
   @Column({ type: 'text' })
   message: string;
 
-  @ApiProperty({ enum: NotificationStatus })
-  @Column({ type: 'enum', enum: NotificationStatus, default: NotificationStatus.UNREAD })
-  status: NotificationStatus;
+  @ApiProperty({ enum: NotificationStatusEnum })
+  @Column({ type: 'enum', enum: NotificationStatusEnum, default: NotificationStatusEnum.UNREAD })
+  status: NotificationStatusEnum;
 
   @ApiProperty()
   @Column({ type: 'json', nullable: true })

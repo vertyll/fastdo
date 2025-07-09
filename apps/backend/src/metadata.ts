@@ -68,7 +68,11 @@ export default async () => {
     ['./projects/dtos/project-status-translation.dto']: await import('./projects/dtos/project-status-translation.dto'),
     ['./projects/dtos/project-type-translation.dto']: await import('./projects/dtos/project-type-translation.dto'),
     ['./projects/dtos/user-with-role.dto']: await import('./projects/dtos/user-with-role.dto'),
-    ['./projects/enums/project-invitation.enum']: await import('./projects/enums/project-invitation.enum'),
+    ['./projects/enums/project-invitation.enum']: await import('./projects/enums/project-invitation-status.enum'),
+    ['./terms-and-policies/dtos/privacy-policy-with-translations.dto']: await import(
+      './terms-and-policies/dtos/privacy-policy.dto'
+    ),
+    ['./terms-and-policies/dtos/terms-with-translations.dto']: await import('./terms-and-policies/dtos/terms.dto'),
     ['./tasks/entities/task-category-translation.entity']: await import(
       './tasks/entities/task-category-translation.entity'
     ),
@@ -77,12 +81,6 @@ export default async () => {
       './tasks/entities/task-status-translation.entity'
     ),
     ['./tasks/entities/task-status.entity']: await import('./tasks/entities/task-status.entity'),
-    ['./terms-and-policies/dtos/terms-with-translations.dto']: await import(
-      './terms-and-policies/dtos/terms-with-translations.dto'
-    ),
-    ['./terms-and-policies/dtos/privacy-policy-with-translations.dto']: await import(
-      './terms-and-policies/dtos/privacy-policy-with-translations.dto'
-    ),
     ['./roles/dtos/role.dto']: await import('./roles/dtos/role.dto'),
     ['./auth/dtos/access-token.dto']: await import('./auth/dtos/access-token.dto'),
     ['./notifications/entities/notification.entity']: await import('./notifications/entities/notification.entity'),
@@ -575,7 +573,7 @@ export default async () => {
         },
       }], [import('./notifications/dtos/create-notification.dto'), {
         'CreateNotificationDto': {
-          type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationType },
+          type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationTypeEnum },
           title: { required: true, type: () => String },
           message: { required: true, type: () => String },
           data: { required: false, type: () => Object },
@@ -611,10 +609,10 @@ export default async () => {
       }], [import('./notifications/entities/notification.entity'), {
         'Notification': {
           id: { required: true, type: () => Number },
-          type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationType },
+          type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationTypeEnum },
           title: { required: true, type: () => String },
           message: { required: true, type: () => String },
-          status: { required: true, enum: t['./notifications/enums/notification-status.enum'].NotificationStatus },
+          status: { required: true, enum: t['./notifications/enums/notification-status.enum'].NotificationStatusEnum },
           data: { required: false, type: () => Object },
           dateCreation: { required: true, type: () => Date },
           dateModification: { required: true, type: () => Date },
@@ -679,8 +677,6 @@ export default async () => {
           accessRoleId: { required: false, type: () => Number },
           assignedUserIds: { required: false, type: () => [Number] },
         },
-      }], [import('./tasks/dtos/priority.dto'), {
-        'PriorityDto': { id: { required: true, type: () => Number }, name: { required: true, type: () => String } },
       }], [import('./projects/dtos/project-category-translation.dto'), {
         'ProjectCategoryTranslationDto': {
           languageCode: {
@@ -874,6 +870,78 @@ export default async () => {
           dateCreated: { required: true, type: () => Date },
           dateUpdated: { required: true, type: () => Date },
         },
+      }], [import('./terms-and-policies/dtos/privacy-policy.dto'), {
+        'PrivacyPolicySectionTranslationDto': {
+          id: { required: true, type: () => Number },
+          title: { required: true, type: () => String },
+          content: { required: true, type: () => String },
+          items: { required: true, type: () => [String] },
+          language: {
+            required: true,
+            type: () => ({
+              id: { required: true, type: () => Number },
+              code: { required: true, type: () => String },
+              name: { required: true, type: () => String },
+            }),
+          },
+        },
+        'PrivacyPolicySectionWithTranslationsDto': {
+          id: { required: true, type: () => Number },
+          order: { required: true, type: () => Number },
+          type: { required: true, type: () => String },
+          translations: {
+            required: true,
+            type: () => [
+              t['./terms-and-policies/dtos/privacy-policy-with-translations.dto'].PrivacyPolicySectionTranslationDto,
+            ],
+          },
+        },
+        'PrivacyPolicyWithTranslationsDto': {
+          id: { required: true, type: () => Number },
+          version: { required: true, type: () => String },
+          dateEffective: { required: true, type: () => Date },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          sections: {
+            required: true,
+            type: () => [t['./terms-and-policies/dtos/privacy-policy-with-translations.dto'].PrivacyPolicySectionDto],
+          },
+        },
+      }], [import('./terms-and-policies/dtos/terms.dto'), {
+        'TermsSectionTranslationDto': {
+          id: { required: true, type: () => Number },
+          title: { required: true, type: () => String },
+          content: { required: true, type: () => String },
+          items: { required: true, type: () => [String] },
+          language: {
+            required: true,
+            type: () => ({
+              id: { required: true, type: () => Number },
+              code: { required: true, type: () => String },
+              name: { required: true, type: () => String },
+            }),
+          },
+        },
+        'TermsSectionWithTranslationsDto': {
+          id: { required: true, type: () => Number },
+          order: { required: true, type: () => Number },
+          type: { required: true, type: () => String },
+          translations: {
+            required: true,
+            type: () => [t['./terms-and-policies/dtos/terms-with-translations.dto'].TermsSectionTranslationDto],
+          },
+        },
+        'TermsWithTranslationsDto': {
+          id: { required: true, type: () => Number },
+          version: { required: true, type: () => String },
+          dateEffective: { required: true, type: () => Date },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          sections: {
+            required: true,
+            type: () => [t['./terms-and-policies/dtos/terms-with-translations.dto'].TermsSectionWithTranslationsDto],
+          },
+        },
       }], [import('./tasks/entities/task-category.entity'), {
         'TaskCategory': {
           id: { required: true, type: () => Number },
@@ -911,6 +979,8 @@ export default async () => {
           language: { required: true, type: () => t['./core/language/entities/language.entity'].Language },
           taskStatus: { required: true, type: () => t['./tasks/entities/task-status.entity'].TaskStatus },
         },
+      }], [import('./tasks/dtos/task-priority-response.dto'), {
+        'PriorityDto': { id: { required: true, type: () => Number }, name: { required: true, type: () => String } },
       }], [import('./common/dtos/pagination-query.dto'), {
         'PaginationQueryDto': {
           limit: {
@@ -930,81 +1000,6 @@ export default async () => {
           status: { required: true, enum: t['./projects/enums/project-invitation.enum'].ProjectInvitationStatusEnum },
           dateCreated: { required: true, type: () => Date },
           dateUpdated: { required: true, type: () => Date },
-        },
-      }], [import('./terms-and-policies/dtos/terms-with-translations.dto'), {
-        'TermsSectionTranslationDto': {
-          id: { required: true, type: () => Number },
-          title: { required: true, type: () => String },
-          content: { required: true, type: () => String },
-          items: { required: true, type: () => [String] },
-          language: {
-            required: true,
-            type: () => ({
-              id: { required: true, type: () => Number },
-              code: { required: true, type: () => String },
-              name: { required: true, type: () => String },
-            }),
-          },
-        },
-        'TermsSectionWithTranslationsDto': {
-          id: { required: true, type: () => Number },
-          order: { required: true, type: () => Number },
-          type: { required: true, type: () => String },
-          translations: {
-            required: true,
-            type: () => [t['./terms-and-policies/dtos/terms-with-translations.dto'].TermsSectionTranslationDto],
-          },
-        },
-        'TermsWithTranslationsDto': {
-          id: { required: true, type: () => Number },
-          version: { required: true, type: () => String },
-          dateEffective: { required: true, type: () => Date },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          sections: {
-            required: true,
-            type: () => [t['./terms-and-policies/dtos/terms-with-translations.dto'].TermsSectionWithTranslationsDto],
-          },
-        },
-      }], [import('./terms-and-policies/dtos/privacy-policy-with-translations.dto'), {
-        'PrivacyPolicySectionTranslationDto': {
-          id: { required: true, type: () => Number },
-          title: { required: true, type: () => String },
-          content: { required: true, type: () => String },
-          items: { required: true, type: () => [String] },
-          language: {
-            required: true,
-            type: () => ({
-              id: { required: true, type: () => Number },
-              code: { required: true, type: () => String },
-              name: { required: true, type: () => String },
-            }),
-          },
-        },
-        'PrivacyPolicySectionWithTranslationsDto': {
-          id: { required: true, type: () => Number },
-          order: { required: true, type: () => Number },
-          type: { required: true, type: () => String },
-          translations: {
-            required: true,
-            type: () => [
-              t['./terms-and-policies/dtos/privacy-policy-with-translations.dto'].PrivacyPolicySectionTranslationDto,
-            ],
-          },
-        },
-        'PrivacyPolicyWithTranslationsDto': {
-          id: { required: true, type: () => Number },
-          version: { required: true, type: () => String },
-          dateEffective: { required: true, type: () => Date },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          sections: {
-            required: true,
-            type: () => [
-              t['./terms-and-policies/dtos/privacy-policy-with-translations.dto']
-                .PrivacyPolicySectionWithTranslationsDto,
-            ],
-          },
         },
       }]],
       'controllers': [
@@ -1052,6 +1047,9 @@ export default async () => {
             },
           },
         }],
+        [import('./tasks/controllers/task-priority.controller'), {
+          'TaskPriorityController': { 'findAll': { type: [Object] } },
+        }],
         [import('./tasks/controllers/tasks.controller'), {
           'TasksController': {
             'create': { type: t['./tasks/entities/task.entity'].Task },
@@ -1065,9 +1063,6 @@ export default async () => {
             'removeComment': {},
             'updateComment': { type: t['./tasks/entities/task-comment.entity'].TaskComment },
           },
-        }],
-        [import('./tasks/controllers/task-priority.controller'), {
-          'TaskPriorityController': { 'findAll': { type: [Object] } },
         }],
         [import('./projects/controllers/project-category.controller'), {
           'ProjectCategoryController': {
@@ -1120,14 +1115,9 @@ export default async () => {
         }],
         [import('./terms-and-policies/controllers/terms-and-policies.controller'), {
           'TermsAndPoliciesController': {
-            'getTerms': { type: t['./terms-and-policies/entities/terms.entity'].Terms },
-            'getPrivacyPolicy': { type: t['./terms-and-policies/entities/privacy-policy.entity'].PrivacyPolicy },
-            'getTermsWithTranslations': {
-              type: t['./terms-and-policies/dtos/terms-with-translations.dto'].TermsWithTranslationsDto,
-            },
+            'getTermsWithTranslations': { type: t['./terms-and-policies/dtos/terms-with-translations.dto'].TermsDto },
             'getPrivacyPolicyWithTranslations': {
-              type:
-                t['./terms-and-policies/dtos/privacy-policy-with-translations.dto'].PrivacyPolicyWithTranslationsDto,
+              type: t['./terms-and-policies/dtos/privacy-policy-with-translations.dto'].PrivacyPolicyDto,
             },
           },
         }],

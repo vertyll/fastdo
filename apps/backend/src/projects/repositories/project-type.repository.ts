@@ -7,8 +7,4 @@ export class ProjectTypeRepository extends Repository<ProjectType> {
   constructor(private readonly dataSource: DataSource) {
     super(ProjectType, dataSource.createEntityManager());
   }
-
-  public async findAllActive(): Promise<ProjectType[]> {
-    return this.find({ where: { isActive: true } });
-  }
 }

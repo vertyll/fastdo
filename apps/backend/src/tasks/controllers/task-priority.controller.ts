@@ -7,6 +7,6 @@ export class TaskPriorityController {
 
   @Get()
   async findAll() {
-    return this.taskPriorityService.findAllWithTranslations();
+    return this.taskPriorityService.findAll();
   }
 }

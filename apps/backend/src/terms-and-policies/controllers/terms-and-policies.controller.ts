@@ -2,8 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from 'src/common/decorators/api-wrapped-response.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
-import { PrivacyPolicyWithTranslationsDto } from '../dtos/privacy-policy-with-translations.dto';
-import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
+import { PrivacyPolicyDto } from '../dtos/privacy-policy.dto';
+import { TermsDto } from '../dtos/terms.dto';
 import { TermsAndPoliciesService } from '../services/terms-and-policies.service';
 
 @ApiTags('terms-and-policies')
@@ -19,10 +19,10 @@ export class TermsAndPoliciesController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Latest terms document with all translations',
-    type: TermsWithTranslationsDto,
+    type: TermsDto,
   })
-  public getTermsWithTranslations(): Promise<TermsWithTranslationsDto> {
-    return this.service.getLatestTermsWithTranslations();
+  public getTermsWithTranslations(): Promise<TermsDto> {
+    return this.service.getLatestTerms();
   }
 
   @Public()
@@ -31,9 +31,9 @@ export class TermsAndPoliciesController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Latest privacy policy document with all translations',
-    type: PrivacyPolicyWithTranslationsDto,
+    type: PrivacyPolicyDto,
   })
-  public getPrivacyPolicyWithTranslations(): Promise<PrivacyPolicyWithTranslationsDto> {
-    return this.service.getLatestPrivacyPolicyWithTranslations();
+  public getPrivacyPolicyWithTranslations(): Promise<PrivacyPolicyDto> {
+    return this.service.getLatestPrivacyPolicy();
   }
 }

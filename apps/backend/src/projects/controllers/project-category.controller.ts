@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
@@ -11,7 +11,9 @@ import { ProjectCategoryService } from '../services/project-category.service';
 @ApiTags('project-categories')
 @Controller('projects/:projectId/categories')
 export class ProjectCategoryController {
-  constructor(private readonly projectCategoryService: ProjectCategoryService) {}
+  constructor(
+    private readonly projectCategoryService: ProjectCategoryService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all categories for a project' })
@@ -25,7 +27,6 @@ export class ProjectCategoryController {
   public async getProjectCategories(
     @Param('projectId') projectId: string,
   ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string; }[]; }[]> {
-    // Język pobierany automatycznie przez nestjs-i18n resolver
     return this.projectCategoryService.findByProjectId(+projectId);
   }
 

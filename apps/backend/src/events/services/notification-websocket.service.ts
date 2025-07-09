@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NotificationEvent as NotificationEventEnum } from '../enums/notification-event.enum';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { NotificationEventEnum as NotificationEventEnum } from '../enums/notification-event.enum';
 import { IEventEmitterService } from '../interfaces/event-emitter.interface';
 import { IEventEmitterServiceToken } from '../tokens/event-emitter-service.token';
 import { NotificationEvent } from '../types/notification-event.type';
@@ -8,6 +10,7 @@ import { NotificationEvent } from '../types/notification-event.type';
 export class NotificationWebSocketService {
   constructor(
     @Inject(IEventEmitterServiceToken) private readonly eventEmitter: IEventEmitterService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   public async sendNotificationCreated(notification: NotificationEvent): Promise<void> {
@@ -41,7 +44,7 @@ export class NotificationWebSocketService {
       {
         taskId,
         title: taskTitle,
-        message: 'Zostałeś przypisany do nowego zadania',
+        message: this.i18n.t('messages.Tasks.assigned', { args: { title: taskTitle } }),
       },
     );
   }
@@ -59,7 +62,7 @@ export class NotificationWebSocketService {
         taskId,
         title: taskTitle,
         newStatus,
-        message: `Status zadania został zmieniony na: ${newStatus}`,
+        message: this.i18n.t('messages.Tasks.statusChanged', { args: { title: taskTitle, status: newStatus } }),
       },
     );
   }
@@ -71,7 +74,7 @@ export class NotificationWebSocketService {
       {
         projectId,
         projectName,
-        message: `Zostałeś zaproszony do projektu: ${projectName}`,
+        message: this.i18n.t('messages.Projects.invitation', { args: { projectName } }),
       },
     );
   }
@@ -83,7 +86,7 @@ export class NotificationWebSocketService {
       {
         taskId,
         title: taskTitle,
-        message: 'Dodano nowy komentarz do zadania',
+        message: this.i18n.t('messages.Tasks.commentAdded', { args: { title: taskTitle } }),
       },
     );
   }

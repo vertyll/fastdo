@@ -13,7 +13,7 @@ export class ProjectRoleRepository {
     >,
   ) {}
 
-  public async findAllWithTranslations(): Promise<
+  public async findAll(): Promise<
     { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
   > {
     const roles = await this.projectRoleRepository

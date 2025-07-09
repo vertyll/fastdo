@@ -43,12 +43,7 @@ export class RolesService {
   public async getAllRoles(): Promise<RoleDto[]> {
     const lang = I18nContext.current()?.lang || 'en';
 
-    const roles = await this.roleRepository
-      .createQueryBuilder('role')
-      .leftJoinAndSelect('role.translations', 'translation')
-      .leftJoinAndSelect('translation.language', 'language', 'language.code = :lang', { lang })
-      .where('role.isActive = :isActive', { isActive: true })
-      .getMany();
+    const roles = await this.roleRepository.findAllActive(lang);
 
     return roles.map(role => {
       const translation = role.translations?.find(t => t.language?.code === lang);

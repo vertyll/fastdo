@@ -1,4 +1,4 @@
-export enum NotificationStatus {
+export enum NotificationStatusEnum {
   UNREAD = 'unread',
   READ = 'read',
 }

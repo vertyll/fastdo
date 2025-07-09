@@ -8,7 +8,7 @@ export class TermsRepository extends Repository<Terms> {
     super(Terms, dataSource.createEntityManager());
   }
 
-  public async getLatestTermsWithTranslations(): Promise<Terms | null> {
+  public async getLatestTerms(): Promise<Terms | null> {
     return this.createQueryBuilder('terms')
       .leftJoinAndSelect('terms.sections', 'section')
       .leftJoinAndSelect('section.translations', 'sectionTranslation')
