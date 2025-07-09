@@ -20,7 +20,7 @@ export class ProjectStatusService {
 
   public async findByProjectId(
     projectId: number,
-  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string }[] }[]> {
+  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string; }[]; }[]> {
     const statuses = await this.projectStatusRepository.find({
       where: { project: { id: projectId }, isActive: true },
       relations: ['translations', 'translations.language'],

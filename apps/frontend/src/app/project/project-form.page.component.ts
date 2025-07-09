@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,11 +13,11 @@ import { SelectFieldComponent } from '../shared/components/molecules/select-fiel
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
+import { ProjectCategoryApiService } from './data-access/project-category.api.service';
 import { ProjectRoleApiService } from './data-access/project-role.api.service';
+import { ProjectStatusApiService } from './data-access/project-status.api.service';
 import { ProjectTypeService } from './data-access/project-type.service';
 import { ProjectsService } from './data-access/project.service';
-import { ProjectStatusApiService } from './data-access/project-status.api.service';
-import { ProjectCategoryApiService } from './data-access/project-category.api.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { AddProjectDto } from './dtos/add-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';

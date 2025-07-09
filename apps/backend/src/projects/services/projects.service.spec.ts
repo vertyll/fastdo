@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
+import { I18nService } from 'nestjs-i18n';
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { FileFacade } from 'src/core/file/facade/file.facade';
 import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
@@ -7,17 +8,16 @@ import { INotificationServiceToken } from 'src/notifications/tokens/notification
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
 import { IUsersServiceToken } from 'src/users/tokens/users-service.token';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { ProjectRole } from '../entities/project-role.entity';
 import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
-import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
+import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectRoleService } from './project-role.service';
-import { ProjectsService } from './projects.service';
 import { ProjectUserRoleService } from './project-user-role.service';
-import { I18nService } from 'nestjs-i18n';
-import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { ProjectsService } from './projects.service';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;
@@ -277,7 +277,7 @@ describe('ProjectsService', () => {
     it('should throw projectNotFound error if project does not exist', async () => {
       const updateDto = { name: 'Updated Project' };
       mockProjectRepository.findOne.mockResolvedValue(null);
-      
+
       await expect(service.update(1, updateDto)).rejects.toThrow('messages.Projects.errors.projectNotFound');
     });
   });
@@ -288,8 +288,8 @@ describe('ProjectsService', () => {
       const mockProject = { id: 1, isPublic: false, projectUsers: [{ user: { id: 1 } }] } as any;
 
       mockProjectRepository.findOne
-        .mockResolvedValueOnce(mockProject) 
-        .mockResolvedValueOnce(mockProject); 
+        .mockResolvedValueOnce(mockProject)
+        .mockResolvedValueOnce(mockProject);
 
       mockQueryRunner.manager.getRepository.mockReturnValue({
         delete: jest.fn().mockResolvedValue(deleteResult),
@@ -303,7 +303,7 @@ describe('ProjectsService', () => {
 
     it('should throw projectNotFound error if project does not exist', async () => {
       mockProjectRepository.findOne.mockResolvedValue(null);
-      
+
       await expect(service.remove(1)).rejects.toThrow('messages.Projects.errors.projectNotFound');
     });
   });

@@ -136,7 +136,7 @@ describe('ProjectUserRoleService', () => {
       mockProjectUserRoleRepository.findByProjectAndUser.mockResolvedValue(null);
 
       await expect(service.updateRole(1, 1, updateDto)).rejects.toThrow(
-        'messages.ProjectUserRole.errors.roleNotFound'
+        'messages.ProjectUserRole.errors.roleNotFound',
       );
       expect(mockI18nService.t).toHaveBeenCalledWith('messages.ProjectUserRole.errors.roleNotFound');
     });

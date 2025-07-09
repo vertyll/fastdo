@@ -16,9 +16,9 @@ import { ProjectRole } from '../../projects/entities/project-role.entity';
 import { ProjectStatus } from '../../projects/entities/project-status.entity';
 import { Project } from '../../projects/entities/project.entity';
 import { User } from '../../users/entities/user.entity';
-import { TaskPriority } from './task-priority.entity';
 import { TaskAttachment } from './task-attachment.entity';
 import { TaskComment } from './task-comment.entity';
+import { TaskPriority } from './task-priority.entity';
 
 @Entity('task')
 export class Task {

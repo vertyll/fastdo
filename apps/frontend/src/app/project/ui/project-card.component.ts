@@ -1,18 +1,6 @@
-import {
-  Component,
-  ViewChild,
-  computed,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, ViewChild, computed, input, output, signal } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  heroCalendar,
-  heroCheck,
-  heroListBullet,
-  heroPencil,
-} from '@ng-icons/heroicons/outline';
+import { heroCalendar, heroCheck, heroListBullet, heroPencil } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasProjectRoleDirective } from 'src/app/core/directives/has-project-role.directive';
 import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
@@ -189,7 +177,7 @@ export class ProjectCardComponent {
   readonly project = input.required<Project>();
   readonly deleteProject = output<number>();
   readonly editProject = output<number>();
-  readonly updateProject = output<{ id: number; name: string }>();
+  readonly updateProject = output<{ id: number; name: string; }>();
   readonly viewTasks = output<number>();
 
   protected readonly ProjectRoleEnum = ProjectRoleEnum;
@@ -204,11 +192,11 @@ export class ProjectCardComponent {
   protected readonly isExpanded = computed(() => this.expandedSignal());
 
   protected toggleExpanded(): void {
-    this.expandedSignal.update((value) => !value);
+    this.expandedSignal.update(value => !value);
   }
 
   protected toggleEditMode(): void {
-    this.editModeSignal.update((value) => !value);
+    this.editModeSignal.update(value => !value);
   }
 
   protected setEditMode(value: boolean): void {

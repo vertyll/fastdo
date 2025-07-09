@@ -13,7 +13,9 @@ export class ProjectRoleRepository {
     >,
   ) {}
 
-  public async findAllWithTranslations(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
+  public async findAllWithTranslations(): Promise<
+    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
+  > {
     const roles = await this.projectRoleRepository
       .createQueryBuilder('pr')
       .leftJoinAndSelect('pr.translations', 'translation')

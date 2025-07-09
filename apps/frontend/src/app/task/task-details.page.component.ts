@@ -1,21 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, input, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import {
-  heroArrowLeft,
-  heroCalendar,
-  heroPaperAirplane,
-  heroPencil,
-  heroTrash,
-} from '@ng-icons/heroicons/outline';
+import { heroArrowLeft, heroCalendar, heroPaperAirplane, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
 import { firstValueFrom } from 'rxjs';
@@ -537,17 +525,17 @@ export class TaskDetailsPageComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly submittingComment = signal(false);
 
-  protected readonly priorities = signal<Array<{ id: number; name: string }>>(
+  protected readonly priorities = signal<Array<{ id: number; name: string; }>>(
     [],
   );
-  protected readonly categories = signal<Array<{ id: number; name: string }>>(
+  protected readonly categories = signal<Array<{ id: number; name: string; }>>(
     [],
   );
-  protected readonly statuses = signal<Array<{ id: number; name: string }>>([]);
-  protected readonly projectUsers = signal<Array<{ id: number; name: string }>>(
+  protected readonly statuses = signal<Array<{ id: number; name: string; }>>([]);
+  protected readonly projectUsers = signal<Array<{ id: number; name: string; }>>(
     [],
   );
-  protected readonly accessRoles = signal<Array<{ id: number; name: string }>>(
+  protected readonly accessRoles = signal<Array<{ id: number; name: string; }>>(
     [],
   );
 

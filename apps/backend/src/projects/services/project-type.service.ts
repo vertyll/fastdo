@@ -80,7 +80,9 @@ export class ProjectTypeService {
     await this.projectTypeRepository.update(id, { isActive: false });
   }
 
-  public async findAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
+  public async findAll(): Promise<
+    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
+  > {
     const projectTypes = await this.projectTypeRepository.find({
       where: { isActive: true },
       relations: ['translations', 'translations.language'],

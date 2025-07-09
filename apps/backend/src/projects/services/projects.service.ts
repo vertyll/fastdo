@@ -493,12 +493,16 @@ export class ProjectsService {
                   title: 'Zaproszenie do projektu',
                   message: `${updater.email} zaprosił Cię do projektu z rolą ${roleName}.`,
                   recipientId: user.id,
-                  data: { projectId, inviterEmail: updater.email, role: userWithRole.role, invitationId: invitation.id },
+                  data: {
+                    projectId,
+                    inviterEmail: updater.email,
+                    role: userWithRole.role,
+                    invitationId: invitation.id,
+                  },
                   sendEmail: true,
                 });
               }
-            }
-            else {
+            } else {
               await queryRunner.manager.getRepository(ProjectUserRole).save({
                 project: { id: projectId },
                 user: { id: user.id },

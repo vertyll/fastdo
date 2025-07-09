@@ -1,6 +1,5 @@
 import { LegalSectionEnum } from '../enum/legal-section.enum';
 
-
 export type SectionTranslation = {
   id: number;
   language: {

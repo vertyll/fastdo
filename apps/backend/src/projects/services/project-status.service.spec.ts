@@ -133,9 +133,22 @@ describe('ProjectStatusService', () => {
       const mockSavedStatus = { ...mockStatus };
       const mockLangPL = { id: 1, code: LanguageCodeEnum.POLISH } as Language;
       const mockLangEN = { id: 2, code: LanguageCodeEnum.ENGLISH } as Language;
-      const mockTranslationPL = { name: 'Status PL', description: 'Opis', projectStatus: mockSavedStatus, language: mockLangPL } as ProjectStatusTranslation;
-      const mockTranslationEN = { name: 'Status EN', description: 'Desc', projectStatus: mockSavedStatus, language: mockLangEN } as ProjectStatusTranslation;
-      const mockStatusWithTranslations = { ...mockStatus, translations: [mockTranslationPL, mockTranslationEN] } as ProjectStatus;
+      const mockTranslationPL = {
+        name: 'Status PL',
+        description: 'Opis',
+        projectStatus: mockSavedStatus,
+        language: mockLangPL,
+      } as ProjectStatusTranslation;
+      const mockTranslationEN = {
+        name: 'Status EN',
+        description: 'Desc',
+        projectStatus: mockSavedStatus,
+        language: mockLangEN,
+      } as ProjectStatusTranslation;
+      const mockStatusWithTranslations = {
+        ...mockStatus,
+        translations: [mockTranslationPL, mockTranslationEN],
+      } as ProjectStatus;
 
       mockProjectStatusRepository.create.mockReturnValue(mockStatus);
       mockProjectStatusRepository.save.mockResolvedValue(mockSavedStatus);
@@ -182,7 +195,12 @@ describe('ProjectStatusService', () => {
       };
       const mockStatus = { id: 1, translations: [] } as unknown as ProjectStatus;
       const mockLang = { id: 1, code: LanguageCodeEnum.POLISH } as Language;
-      const mockTranslation = { name: 'Nowy', description: 'Opis', projectStatus: mockStatus, language: mockLang } as ProjectStatusTranslation;
+      const mockTranslation = {
+        name: 'Nowy',
+        description: 'Opis',
+        projectStatus: mockStatus,
+        language: mockLang,
+      } as ProjectStatusTranslation;
       const mockUpdatedStatus = { ...mockStatus, translations: [mockTranslation] } as ProjectStatus;
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(mockStatus).mockResolvedValueOnce(mockUpdatedStatus);
       mockTranslationRepository.delete.mockResolvedValue({ affected: 1 } as any);
@@ -193,7 +211,12 @@ describe('ProjectStatusService', () => {
       expect(result).toEqual(mockUpdatedStatus);
       expect(mockTranslationRepository.delete).toHaveBeenCalledWith({ projectStatus: { id: 1 } });
       expect(mockLanguageRepository.findOneByOrFail).toHaveBeenCalledWith({ code: LanguageCodeEnum.POLISH });
-      expect(mockTranslationRepository.create).toHaveBeenCalledWith({ name: 'Nowy', description: 'Opis', projectStatus: mockStatus, language: mockLang });
+      expect(mockTranslationRepository.create).toHaveBeenCalledWith({
+        name: 'Nowy',
+        description: 'Opis',
+        projectStatus: mockStatus,
+        language: mockLang,
+      });
       expect(mockTranslationRepository.save).toHaveBeenCalledWith(mockTranslation);
     });
   });

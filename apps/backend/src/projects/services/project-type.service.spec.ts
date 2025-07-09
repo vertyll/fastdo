@@ -183,10 +183,10 @@ describe('ProjectTypeService', () => {
       };
 
       const mockProjectType = {
-          id: 1,
-          code: 'test-type',
-          isActive: true,
-          translations: [],
+        id: 1,
+        code: 'test-type',
+        isActive: true,
+        translations: [],
       } as unknown as ProjectType;
 
       const mockUpdatedProjectType = {
@@ -284,10 +284,10 @@ describe('ProjectTypeService', () => {
       };
 
       const mockProjectType = {
-          id: 1,
-          code: 'combo-update-type',
-          isActive: true,
-          translations: [],
+        id: 1,
+        code: 'combo-update-type',
+        isActive: true,
+        translations: [],
       } as unknown as ProjectType;
 
       const mockLanguage = { id: 2, code: LanguageCodeEnum.ENGLISH } as Language;
@@ -465,12 +465,12 @@ describe('ProjectTypeService', () => {
 
     it('should return empty name and undefined description when no translations', async () => {
       const mockProjectTypes = [
-          {
-              id: 1,
-              code: 'no-trans-type',
-              isActive: true,
-              translations: [],
-          },
+        {
+          id: 1,
+          code: 'no-trans-type',
+          isActive: true,
+          translations: [],
+        },
       ] as unknown as ProjectType[];
 
       mockProjectTypeRepository.find.mockResolvedValue(mockProjectTypes);

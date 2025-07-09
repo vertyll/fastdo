@@ -2,9 +2,9 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from 'src/common/decorators/api-wrapped-response.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
-import { TermsAndPoliciesService } from '../services/terms-and-policies.service';
-import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
 import { PrivacyPolicyWithTranslationsDto } from '../dtos/privacy-policy-with-translations.dto';
+import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
+import { TermsAndPoliciesService } from '../services/terms-and-policies.service';
 
 @ApiTags('terms-and-policies')
 @Controller('terms-and-policies')
@@ -24,7 +24,6 @@ export class TermsAndPoliciesController {
   public getTermsWithTranslations(): Promise<TermsWithTranslationsDto> {
     return this.service.getLatestTermsWithTranslations();
   }
-
 
   @Public()
   @Get('privacy-policy')

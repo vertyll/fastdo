@@ -23,7 +23,7 @@ export class ProjectTypeController {
     type: ProjectTypeDto,
     isArray: true,
   })
-  public getAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
+  public getAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string; }[]; }[]> {
     return this.projectTypeService.findAll();
   }
 

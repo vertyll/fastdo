@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
+import { ProjectCategoryApiService } from '../project/data-access/project-category.api.service';
+import { ProjectRoleApiService } from '../project/data-access/project-role.api.service';
+import { ProjectStatusApiService } from '../project/data-access/project-status.api.service';
+import { ProjectsApiService } from '../project/data-access/project.api.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { TextareaComponent } from '../shared/components/atoms/textarea-component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { EditableMultiSelectComponent } from '../shared/components/molecules/editable-multi-select.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
-import { ProjectCategoryApiService } from '../project/data-access/project-category.api.service';
-import { ProjectRoleApiService } from '../project/data-access/project-role.api.service';
-import { ProjectStatusApiService } from '../project/data-access/project-status.api.service';
-import { ProjectsApiService } from '../project/data-access/project.api.service';
-import { PriorityApiService } from './data-access/priority.api.service';
-import { TasksService } from './data-access/task.service';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
+import { PriorityApiService } from './data-access/priority.api.service';
+import { TasksService } from './data-access/task.service';
 import { AddTaskDto } from './dtos/add-task.dto';
 
 interface SelectOption {
@@ -488,22 +488,26 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     // Priorytety
     this.priorities.set((this.prioritiesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
+        || '',
     })));
     // Kategorie
     this.categories.set((this.categoriesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
+        || '',
     })));
     // Statusy
     this.statuses.set((this.statusesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
+        || '',
     })));
     // Role
     this.accessRoles.set((this.accessRolesRaw() || []).map((item: any) => ({
       id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name
+        || '',
     })));
   }
 }

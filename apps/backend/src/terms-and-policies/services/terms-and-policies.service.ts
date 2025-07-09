@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
 import { PrivacyPolicyWithTranslationsDto } from '../dtos/privacy-policy-with-translations.dto';
+import { TermsWithTranslationsDto } from '../dtos/terms-with-translations.dto';
 import { PrivacyPolicyRepository } from '../repositories/privacy-policy.repository';
 import { TermsRepository } from '../repositories/terms.repository';
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClsService } from 'nestjs-cls';
+import { I18nService } from 'nestjs-i18n';
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { CustomClsStore } from 'src/core/config/types/app.config.type';
 import { ProjectCategory } from 'src/projects/entities/project-category.entity';
@@ -9,18 +10,17 @@ import { ProjectStatus } from 'src/projects/entities/project-status.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
-import { TaskPriority } from '../entities/task-priority.entity';
 import { TaskComment } from '../entities/task-comment.entity';
+import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
-import {I18nService} from "nestjs-i18n";
-import {I18nTranslations} from "../../generated/i18n/i18n.generated";
 
 @Injectable()
 export class TasksService implements ITasksService {

@@ -10,7 +10,7 @@ export class PrivacyPolicySectionTranslationDto {
   @ApiProperty()
   items: string[];
   @ApiProperty()
-  language: { id: number; code: string; name: string };
+  language: { id: number; code: string; name: string; };
 }
 
 export class PrivacyPolicySectionWithTranslationsDto {

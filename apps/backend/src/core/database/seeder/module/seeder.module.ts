@@ -15,11 +15,11 @@ import { ProjectUser } from '../../../../projects/entities/project-user.entity';
 import { Project } from '../../../../projects/entities/project.entity';
 import { RoleTranslation } from '../../../../roles/entities/role-translation.entity';
 import { Role } from '../../../../roles/entities/role.entity';
-import { TaskPriorityTranslation } from '../../../../tasks/entities/task-priority-translation.entity';
-import { TaskPriority } from '../../../../tasks/entities/task-priority.entity';
 import { TaskAttachment } from '../../../../tasks/entities/task-attachment.entity';
 import { TaskCommentAttachment } from '../../../../tasks/entities/task-comment-attachment.entity';
 import { TaskComment } from '../../../../tasks/entities/task-comment.entity';
+import { TaskPriorityTranslation } from '../../../../tasks/entities/task-priority-translation.entity';
+import { TaskPriority } from '../../../../tasks/entities/task-priority.entity';
 import { Task } from '../../../../tasks/entities/task.entity';
 import {
   PrivacyPolicySectionTranslation,

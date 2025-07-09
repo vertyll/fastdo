@@ -8,8 +8,9 @@ export class ProjectRoleService {
     private readonly projectRoleRepository: ProjectRoleRepository,
   ) {}
 
-
-  public async findAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
+  public async findAll(): Promise<
+    { id: number; translations: { lang: string; name: string; description?: string; }[]; }[]
+  > {
     return this.projectRoleRepository.findAllWithTranslations();
   }
 
