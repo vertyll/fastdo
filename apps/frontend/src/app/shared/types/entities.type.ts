@@ -1,30 +1,30 @@
-export interface SimplePriority {
+export interface TaskPriority {
   id: number;
   name: string;
 }
 
-export interface SimpleProjectCategory {
+export interface ProjectCategory {
   id: number;
   name: string;
 }
 
-export interface SimpleProjectStatus {
+export interface ProjectStatus {
   id: number;
   name: string;
 }
 
-export interface SimpleProjectRole {
+export interface ProjectRole {
   id: number;
   name: string;
   description?: string;
 }
 
-export interface SimpleUser {
+export interface User {
   id: number;
   name: string;
 }
 
-export interface SimpleRole {
+export interface Role {
   id: number;
   code: string;
   name: string;

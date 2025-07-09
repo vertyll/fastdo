@@ -58,7 +58,6 @@ export class ProjectCategoryController {
     type: ProjectCategory,
   })
   public async updateCategory(
-    @Param('projectId') projectId: string,
     @Param('categoryId') categoryId: string,
     @Body() updateCategoryDto: UpdateProjectCategoryDto,
   ): Promise<ProjectCategory> {
@@ -74,7 +73,6 @@ export class ProjectCategoryController {
     description: 'The category has been successfully deleted.',
   })
   public async deleteCategory(
-    @Param('projectId') projectId: string,
     @Param('categoryId') categoryId: string,
   ): Promise<void> {
     await this.projectCategoryService.remove(+categoryId);
