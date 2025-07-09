@@ -237,7 +237,7 @@ import { NotificationDto } from '../../types/notification.type';
                         <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
                           {{ notification.message }}
                         </p>
-                        @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status === 'UNREAD') {
+                        @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === 'UNREAD') {
                           <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
                             <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
                               {{ 'ProjectInvitation.projectInfo' | translate }}
@@ -435,6 +435,7 @@ export class NotificationDropdownComponent {
         this.translateService.instant('ProjectInvitation.acceptSuccess'),
         NotificationTypeEnum.Success,
       );
+      this.notificationStateService.removeNotificationByInvitationId(invitationId);
       await this.notificationStateService.refreshNotifications();
       this.closeDropdown();
     } catch {
@@ -455,6 +456,7 @@ export class NotificationDropdownComponent {
         this.translateService.instant('ProjectInvitation.rejectSuccess'),
         NotificationTypeEnum.Success,
       );
+      this.notificationStateService.removeNotificationByInvitationId(invitationId);
       await this.notificationStateService.refreshNotifications();
       this.closeDropdown();
     } catch {

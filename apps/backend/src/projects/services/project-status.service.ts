@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
-import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectStatusDto } from '../dtos/create-project-status.dto';
-import { ProjectStatusDto } from '../dtos/project-status.dto';
 import { UpdateProjectStatusDto } from '../dtos/update-project-status.dto';
 import { ProjectStatusTranslation } from '../entities/project-status-translation.entity';
 import { ProjectStatus } from '../entities/project-status.entity';
@@ -22,22 +20,21 @@ export class ProjectStatusService {
 
   public async findByProjectId(
     projectId: number,
-    languageCode: LanguageCodeEnum = LanguageCodeEnum.POLISH,
-  ): Promise<ProjectStatusDto[]> {
+  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string }[] }[]> {
     const statuses = await this.projectStatusRepository.find({
       where: { project: { id: projectId }, isActive: true },
       relations: ['translations', 'translations.language'],
     });
 
-    return statuses.map(status => {
-      const translation = status.translations.find(t => t.language.code === languageCode)
-        || status.translations[0]; // fallback to first translation
-
-      return {
-        id: status.id,
-        name: translation ? translation.name : `Status ${status.id}`,
-      };
-    });
+    return statuses.map(status => ({
+      id: status.id,
+      color: status.color,
+      translations: (status.translations || []).map(t => ({
+        lang: t.language?.code,
+        name: t.name,
+        description: t.description ?? undefined,
+      })),
+    }));
   }
 
   public async findOne(id: number): Promise<ProjectStatus> {

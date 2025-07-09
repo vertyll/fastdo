@@ -9,10 +9,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
-import { Priority } from './priority.entity';
+import { TaskPriority } from './task-priority.entity';
 
-@Entity('priority_translation')
-export class PriorityTranslation {
+@Entity('task_priority_translation')
+export class TaskPriorityTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
@@ -37,7 +37,7 @@ export class PriorityTranslation {
   @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE' })
   language: Relation<Language>;
 
-  @ApiProperty({ type: () => Priority })
-  @ManyToOne(() => Priority, priority => priority.translations, { onDelete: 'CASCADE' })
-  priority: Relation<Priority>;
+  @ApiProperty({ type: () => TaskPriority })
+  @ManyToOne(() => TaskPriority, priority => priority.translations, { onDelete: 'CASCADE' })
+  priority: Relation<TaskPriority>;
 }

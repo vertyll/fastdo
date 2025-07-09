@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,14 +13,15 @@ import { SelectFieldComponent } from '../shared/components/molecules/select-fiel
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
-import { SimpleProjectRole } from '../shared/types/simple-entities.type';
 import { ProjectRoleApiService } from './data-access/project-role.api.service';
 import { ProjectTypeService } from './data-access/project-type.service';
 import { ProjectsService } from './data-access/project.service';
+import { ProjectStatusApiService } from './data-access/project-status.api.service';
+import { ProjectCategoryApiService } from './data-access/project-category.api.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { AddProjectDto } from './dtos/add-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
-import { Project, SimpleProjectType } from './models/Project';
+import { Project } from './models/Project';
 
 @Component({
   selector: 'app-project-form-page',
@@ -252,21 +253,29 @@ import { Project, SimpleProjectType } from './models/Project';
     </div>
   `,
 })
-export class ProjectFormPageComponent implements OnInit {
+export class ProjectFormPageComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly projectsService = inject(ProjectsService);
   private readonly projectTypeService = inject(ProjectTypeService);
   private readonly projectRoleService = inject(ProjectRoleApiService);
+  private readonly projectStatusApiService = inject(ProjectStatusApiService);
+  private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly authService = inject(AuthService);
 
   protected projectForm!: FormGroup;
-  protected projectTypes: SimpleProjectType[] = [];
-  protected projectRoles: SimpleProjectRole[] = [];
+  protected projectTypesRaw: any[] = [];
+  protected projectStatusesRaw: any[] = [];
+  protected projectCategoriesRaw: any[] = [];
+  protected projectRolesRaw: any[] = [];
+  protected projectTypes: any[] = [];
+  protected projectStatuses: any[] = [];
+  protected projectCategories: any[] = [];
+  protected projectRoles: any[] = [];
   protected isSubmitting: boolean = false;
   protected isEditMode: boolean = false;
   protected projectId: number | null = null;
@@ -274,12 +283,22 @@ export class ProjectFormPageComponent implements OnInit {
   protected selectedIconFile: File | null = null;
   protected isCropping: boolean = false;
 
+  private langChangeSub: any;
+
   ngOnInit(): void {
     this.checkEditMode();
     this.initializeForm();
     this.loadCurrentUser();
-    this.loadProjectTypes();
-    this.loadProjectRoles();
+    this.loadAllOptions();
+    this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
+      this.updateOptionsForCurrentLang();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.langChangeSub) {
+      this.langChangeSub.unsubscribe();
+    }
   }
 
   private checkEditMode(): void {
@@ -302,30 +321,50 @@ export class ProjectFormPageComponent implements OnInit {
       usersWithRoles: this.fb.array([]),
     });
   }
-  private async loadProjectTypes(): Promise<void> {
+
+  private async loadAllOptions(): Promise<void> {
     try {
-      const currentLang = this.translateService.currentLang || 'pl';
-      const response = await firstValueFrom(this.projectTypeService.getAllSimple(currentLang));
-      this.projectTypes = response.data;
+      const typesResp = await firstValueFrom(this.projectTypeService.getAll());
+      this.projectTypesRaw = typesResp.data || [];
+
+      const rolesResp = await firstValueFrom(this.projectRoleService.getAll());
+      this.projectRolesRaw = rolesResp.data || [];
+
+      if (this.isEditMode && this.projectId) {
+        const statusesResp = await firstValueFrom(this.projectStatusApiService.getByProjectId(this.projectId));
+        this.projectStatusesRaw = statusesResp.data || [];
+        const categoriesResp = await firstValueFrom(this.projectCategoryApiService.getByProjectId(this.projectId));
+        this.projectCategoriesRaw = categoriesResp.data || [];
+      }
+
+      this.updateOptionsForCurrentLang();
 
       if (this.isEditMode && this.projectId) {
         await this.loadProject();
       }
     } catch (error) {
-      console.error('Error loading project types:', error);
+      console.error('Error loading project options:', error);
     }
   }
 
-  private async loadProjectRoles(): Promise<void> {
-    try {
-      const response = await firstValueFrom(this.projectRoleService.getAll());
-      this.projectRoles = response.data;
-    } catch (error) {
-      console.error('Error loading project roles:', error);
-      if (error instanceof Error && error.message.includes('401')) {
-        console.warn('Unauthorized access to project roles - user may need to login');
-      }
-    }
+  private updateOptionsForCurrentLang(): void {
+    const lang = this.translateService.currentLang || 'pl';
+    this.projectTypes = (this.projectTypesRaw || []).map((type: any) => ({
+      ...type,
+      name: (type.translations?.find((t: any) => t.lang === lang)?.name) || type.translations?.[0]?.name || '',
+    }));
+    this.projectRoles = (this.projectRolesRaw || []).map((role: any) => ({
+      ...role,
+      name: (role.translations?.find((t: any) => t.lang === lang)?.name) || role.translations?.[0]?.name || '',
+    }));
+    this.projectStatuses = (this.projectStatusesRaw || []).map((status: any) => ({
+      ...status,
+      name: (status.translations?.find((t: any) => t.lang === lang)?.name) || status.translations?.[0]?.name || '',
+    }));
+    this.projectCategories = (this.projectCategoriesRaw || []).map((cat: any) => ({
+      ...cat,
+      name: (cat.translations?.find((t: any) => t.lang === lang)?.name) || cat.translations?.[0]?.name || '',
+    }));
   }
 
   private async loadProject(): Promise<void> {
@@ -501,10 +540,6 @@ export class ProjectFormPageComponent implements OnInit {
   }
 
   protected async addUserWithRole(): Promise<void> {
-    if (this.projectRoles.length === 0) {
-      await this.loadProjectRoles();
-    }
-
     this.usersWithRolesFormArray.push(this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       role: ['', [Validators.required]],

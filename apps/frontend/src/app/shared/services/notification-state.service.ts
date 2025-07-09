@@ -9,6 +9,12 @@ import { NotificationApiService } from './notification-api.service';
   providedIn: 'root',
 })
 export class NotificationStateService {
+  public removeNotificationByInvitationId(invitationId: number): void {
+    const current = this._notifications();
+    if (Array.isArray(current)) {
+      this._notifications.set(current.filter(n => n.data?.invitationId !== invitationId));
+    }
+  }
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly authService = inject(AuthService);
 

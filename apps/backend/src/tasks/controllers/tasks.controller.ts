@@ -1,12 +1,10 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Put, Query } from '@nestjs/common';
-import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
-import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
-import { PriorityDto } from '../dtos/priority.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
 import { TaskComment } from '../entities/task-comment.entity';
@@ -16,7 +14,9 @@ import { TasksService } from '../services/tasks.service';
 @ApiTags('tasks')
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new task' })
@@ -83,22 +83,6 @@ export class TasksController {
   })
   public remove(@Param('id') id: string): Promise<void> {
     return this.tasksService.remove(+id);
-  }
-
-  @Get('priorities')
-  @ApiOperation({ summary: 'Get all priorities' })
-  @ApiHeader({ name: 'x-lang', enum: LanguageCodeEnum, required: false })
-  @ApiWrappedResponse({
-    status: 200,
-    description: 'Return all priorities with translated names.',
-    type: PriorityDto,
-    isArray: true,
-  })
-  public getPriorities(
-    @Headers('x-lang') headerLang?: LanguageCodeEnum,
-  ): Promise<PriorityDto[]> {
-    const languageCode = headerLang || LanguageCodeEnum.POLISH;
-    return this.tasksService.getAllPriorities(languageCode);
   }
 
   @Post(':id/comments')

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -182,7 +182,7 @@ interface SelectOption {
     </div>
   `,
 })
-export class TaskFormPageComponent implements OnInit {
+export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -200,11 +200,16 @@ export class TaskFormPageComponent implements OnInit {
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
 
+  readonly prioritiesRaw = signal<any[]>([]);
+  readonly categoriesRaw = signal<any[]>([]);
+  readonly statusesRaw = signal<any[]>([]);
+  readonly accessRolesRaw = signal<any[]>([]);
   readonly priorities = signal<SelectOption[]>([]);
   readonly categories = signal<SelectOption[]>([]);
   readonly statuses = signal<SelectOption[]>([]);
-  readonly projectUsers = signal<SelectOption[]>([]);
   readonly accessRoles = signal<SelectOption[]>([]);
+  readonly projectUsers = signal<SelectOption[]>([]);
+  private langChangeSub: any;
 
   taskForm: FormGroup = this.fb.group({
     description: ['', [Validators.required]],
@@ -268,7 +273,16 @@ export class TaskFormPageComponent implements OnInit {
     }
 
     await this.loadOptions();
+    this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
+      this.updateOptionsForCurrentLang();
+    });
     this.loading.set(false);
+  }
+
+  ngOnDestroy(): void {
+    if (this.langChangeSub) {
+      this.langChangeSub.unsubscribe();
+    }
   }
 
   protected async onSubmit(): Promise<void> {
@@ -359,7 +373,8 @@ export class TaskFormPageComponent implements OnInit {
     try {
       const response = await firstValueFrom(this.priorityApiService.getAll());
       if (response.data) {
-        this.priorities.set(response.data);
+        this.prioritiesRaw.set(response.data);
+        this.updateOptionsForCurrentLang();
       }
     } catch (error) {
       console.error('Error loading priorities:', error);
@@ -370,7 +385,8 @@ export class TaskFormPageComponent implements OnInit {
     try {
       const response = await firstValueFrom(this.projectCategoryApiService.getByProjectId(projectId));
       if (response.data) {
-        this.categories.set(response.data);
+        this.categoriesRaw.set(response.data);
+        this.updateOptionsForCurrentLang();
       }
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -381,7 +397,8 @@ export class TaskFormPageComponent implements OnInit {
     try {
       const response = await firstValueFrom(this.projectStatusApiService.getByProjectId(projectId));
       if (response.data) {
-        this.statuses.set(response.data);
+        this.statusesRaw.set(response.data);
+        this.updateOptionsForCurrentLang();
       }
     } catch (error) {
       console.error('Error loading statuses:', error);
@@ -403,10 +420,34 @@ export class TaskFormPageComponent implements OnInit {
     try {
       const response = await firstValueFrom(this.projectRoleApiService.getAll());
       if (response.data) {
-        this.accessRoles.set(response.data);
+        this.accessRolesRaw.set(response.data);
+        this.updateOptionsForCurrentLang();
       }
     } catch (error) {
       console.error('Error loading access roles:', error);
     }
+  }
+  private updateOptionsForCurrentLang(): void {
+    const lang = this.translateService.currentLang || 'pl';
+    // Priorytety
+    this.priorities.set((this.prioritiesRaw() || []).map((item: any) => ({
+      id: item.id,
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+    })));
+    // Kategorie
+    this.categories.set((this.categoriesRaw() || []).map((item: any) => ({
+      id: item.id,
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+    })));
+    // Statusy
+    this.statuses.set((this.statusesRaw() || []).map((item: any) => ({
+      id: item.id,
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+    })));
+    // Role
+    this.accessRoles.set((this.accessRolesRaw() || []).map((item: any) => ({
+      id: item.id,
+      name: (item.translations?.find((t: any) => t.lang === lang)?.name) || item.translations?.[0]?.name || item.name || '',
+    })));
   }
 }

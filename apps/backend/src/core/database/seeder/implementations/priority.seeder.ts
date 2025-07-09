@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PriorityTranslation } from '../../../../tasks/entities/priority-translation.entity';
-import { Priority } from '../../../../tasks/entities/priority.entity';
+import { TaskPriorityTranslation } from '../../../../tasks/entities/task-priority-translation.entity';
+import { TaskPriority } from '../../../../tasks/entities/task-priority.entity';
 import { TaskPriorityEnum } from '../../../../tasks/enums/task-priority.enum';
 import { Language } from '../../../language/entities/language.entity';
 import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
@@ -11,9 +11,9 @@ import { ISeeder } from '../interfaces/seeder.interface';
 @Injectable()
 export class PrioritySeeder implements ISeeder {
   constructor(
-    @InjectRepository(Priority) private readonly priorityRepository: Repository<Priority>,
-    @InjectRepository(PriorityTranslation) private readonly priorityTranslationRepository: Repository<
-      PriorityTranslation
+    @InjectRepository(TaskPriority) private readonly priorityRepository: Repository<TaskPriority>,
+    @InjectRepository(TaskPriorityTranslation) private readonly priorityTranslationRepository: Repository<
+      TaskPriorityTranslation
     >,
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
   ) {}

@@ -13,20 +13,22 @@ export class ProjectRoleRepository {
     >,
   ) {}
 
-  public async findAll(languageCode: string = 'pl'): Promise<{ id: number; name: string; description?: string; }[]> {
+  public async findAllWithTranslations(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
     const roles = await this.projectRoleRepository
       .createQueryBuilder('pr')
       .leftJoinAndSelect('pr.translations', 'translation')
       .leftJoinAndSelect('translation.language', 'language')
       .where('pr.isActive = :isActive', { isActive: true })
-      .andWhere('language.code = :languageCode', { languageCode })
       .orderBy('pr.id', 'ASC')
       .getMany();
 
     return roles.map(role => ({
       id: role.id,
-      name: role.translations[0]?.name || role.code,
-      description: role.translations[0]?.description,
+      translations: (role.translations || []).map(t => ({
+        lang: t.language?.code,
+        name: t.name,
+        description: t.description,
+      })),
     }));
   }
 

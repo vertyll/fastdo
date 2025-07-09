@@ -1,28 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClsService } from 'nestjs-cls';
-import { I18nService } from 'nestjs-i18n';
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { CustomClsStore } from 'src/core/config/types/app.config.type';
-import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
 import { ProjectCategory } from 'src/projects/entities/project-category.entity';
 import { ProjectRole } from 'src/projects/entities/project-role.entity';
 import { ProjectStatus } from 'src/projects/entities/project-status.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
-import { PriorityDto } from '../dtos/priority.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
-import { Priority } from '../entities/priority.entity';
+import { TaskPriority } from '../entities/task-priority.entity';
 import { TaskComment } from '../entities/task-comment.entity';
 import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
+import {I18nService} from "nestjs-i18n";
+import {I18nTranslations} from "../../generated/i18n/i18n.generated";
 
 @Injectable()
 export class TasksService implements ITasksService {
@@ -30,7 +28,6 @@ export class TasksService implements ITasksService {
     private readonly taskRepository: TaskRepository,
     private readonly cls: ClsService<CustomClsStore>,
     private readonly i18n: I18nService<I18nTranslations>,
-    @InjectRepository(Priority) private readonly priorityRepository: Repository<Priority>,
   ) {}
 
   public async create(createTaskDto: CreateTaskDto): Promise<Task> {
@@ -64,7 +61,7 @@ export class TasksService implements ITasksService {
     }
 
     if (createTaskDto.priorityId) {
-      taskData.priority = { id: createTaskDto.priorityId } as Priority;
+      taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
     }
 
     return this.taskRepository.save(taskData);
@@ -153,7 +150,7 @@ export class TasksService implements ITasksService {
     }
 
     if (updateTaskDto.priorityId !== undefined) {
-      task.priority = { id: updateTaskDto.priorityId } as Priority;
+      task.priority = { id: updateTaskDto.priorityId } as TaskPriority;
     }
 
     task.dateModification = new Date();
@@ -188,23 +185,6 @@ export class TasksService implements ITasksService {
       where: { task: { id: taskId } },
       relations: ['author', 'commentAttachments'],
       order: { dateCreation: 'ASC' },
-    });
-  }
-
-  public async getAllPriorities(languageCode: LanguageCodeEnum = LanguageCodeEnum.POLISH): Promise<PriorityDto[]> {
-    const priorities = await this.priorityRepository.find({
-      where: { isActive: true },
-      relations: ['translations', 'translations.language'],
-    });
-
-    return priorities.map(priority => {
-      const translation = priority.translations.find(t => t.language.code === languageCode)
-        || priority.translations[0]; // fallback to first translation
-
-      return {
-        id: priority.id,
-        name: translation ? translation.name : priority.code,
-      };
     });
   }
 

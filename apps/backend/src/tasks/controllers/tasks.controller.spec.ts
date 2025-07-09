@@ -4,7 +4,7 @@ import { Project } from '../../projects/entities/project.entity';
 import { User } from '../../users/entities/user.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
-import { Priority } from '../entities/priority.entity';
+import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { TaskPriorityEnum } from '../enums/task-priority.enum';
 import { TasksService } from '../services/tasks.service';
@@ -43,7 +43,7 @@ describe('TasksController', () => {
         projectId: 1,
       };
 
-      const mockPriority: Priority = {
+      const mockPriority: TaskPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
@@ -51,7 +51,7 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         translations: [],
-      } as Priority;
+      } as TaskPriority;
 
       const mockProject: Project = {
         id: 1,
@@ -96,7 +96,7 @@ describe('TasksController', () => {
 
   describe('findAll', () => {
     it('should return a paginated response of tasks', async () => {
-      const mockPriority: Priority = {
+      const mockPriority: TaskPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
@@ -104,7 +104,7 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         translations: [],
-      } as Priority;
+      } as TaskPriority;
 
       const result: ApiPaginatedResponse<Task> = {
         items: [
@@ -141,7 +141,7 @@ describe('TasksController', () => {
 
   describe('findAllByProjectId', () => {
     it('should return tasks for a specific project', async () => {
-      const mockPriority: Priority = {
+      const mockPriority: TaskPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
@@ -149,7 +149,7 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         translations: [],
-      } as Priority;
+      } as TaskPriority;
 
       const mockProject: Project = {
         id: 1,
@@ -228,7 +228,7 @@ describe('TasksController', () => {
         emailHistories: [],
       } as User;
 
-      const mockPriority: Priority = {
+      const mockPriority: TaskPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
@@ -236,7 +236,7 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         translations: [],
-      } as Priority;
+      } as TaskPriority;
 
       const result: Task = {
         id: 1,
@@ -290,7 +290,7 @@ describe('TasksController', () => {
         emailHistories: [],
       } as User;
 
-      const mockPriority: Priority = {
+      const mockPriority: TaskPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
@@ -298,7 +298,7 @@ describe('TasksController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         translations: [],
-      } as Priority;
+      } as TaskPriority;
 
       const result: Task = {
         id: 1,

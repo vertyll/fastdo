@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
-import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectTypeDto } from '../dtos/create-project-type.dto';
-import { ProjectTypeDto } from '../dtos/project-type.dto';
 import { UpdateProjectTypeDto } from '../dtos/update-project-type.dto';
 import { ProjectTypeTranslation } from '../entities/project-type-translation.entity';
 import { ProjectType } from '../entities/project-type.entity';
@@ -82,26 +80,19 @@ export class ProjectTypeService {
     await this.projectTypeRepository.update(id, { isActive: false });
   }
 
-  public async findAll(
-    languageCode: LanguageCodeEnum = LanguageCodeEnum.POLISH,
-  ): Promise<ProjectTypeDto[]> {
+  public async findAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
     const projectTypes = await this.projectTypeRepository.find({
       where: { isActive: true },
       relations: ['translations', 'translations.language'],
     });
 
-    return projectTypes.map(projectType => {
-      const translation = projectType.translations.find(
-        t => t.language.code === languageCode,
-      ) || projectType.translations.find(
-        t => t.language.isDefault,
-      ) || projectType.translations[0];
-
-      return {
-        id: projectType.id,
-        name: translation?.name || '',
-        description: translation?.description || undefined,
-      };
-    });
+    return projectTypes.map(type => ({
+      id: type.id,
+      translations: (type.translations || []).map(t => ({
+        lang: t.language?.code,
+        name: t.name,
+        description: t.description ?? undefined,
+      })),
+    }));
   }
 }

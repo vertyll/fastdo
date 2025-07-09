@@ -9,10 +9,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TaskPriorityEnum } from '../enums/task-priority.enum';
-import { PriorityTranslation } from './priority-translation.entity';
+import { TaskPriorityTranslation } from './task-priority-translation.entity';
 
-@Entity('priority')
-export class Priority {
+@Entity('task_priority')
+export class TaskPriority {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
@@ -37,10 +37,10 @@ export class Priority {
   @UpdateDateColumn()
   dateModification: Date;
 
-  @ApiProperty({ type: () => PriorityTranslation, isArray: true })
-  @OneToMany(() => PriorityTranslation, translation => translation.priority, {
+  @ApiProperty({ type: () => TaskPriorityTranslation, isArray: true })
+  @OneToMany(() => TaskPriorityTranslation, translation => translation.priority, {
     cascade: true,
     eager: true,
   })
-  translations: Relation<PriorityTranslation[]>;
+  translations: Relation<TaskPriorityTranslation[]>;
 }

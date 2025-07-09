@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectRoleDto } from '../dtos/project-role.dto';
 import { ProjectRole } from '../entities/project-role.entity';
 import { ProjectRoleRepository } from '../repositories/project-role.repository';
 
@@ -9,8 +8,9 @@ export class ProjectRoleService {
     private readonly projectRoleRepository: ProjectRoleRepository,
   ) {}
 
-  public async findAll(languageCode: string = 'pl'): Promise<ProjectRoleDto[]> {
-    return this.projectRoleRepository.findAll(languageCode);
+
+  public async findAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
+    return this.projectRoleRepository.findAllWithTranslations();
   }
 
   public async findOneByCode(code: string): Promise<ProjectRole | null> {

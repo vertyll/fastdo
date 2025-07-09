@@ -23,12 +23,8 @@ export class ProjectTypeController {
     type: ProjectTypeDto,
     isArray: true,
   })
-  public getAll(
-    @Query('lang') lang?: LanguageCodeEnum,
-    @Headers('x-lang') headerLang?: LanguageCodeEnum,
-  ): Promise<ProjectTypeDto[]> {
-    const languageCode = lang || headerLang || LanguageCodeEnum.POLISH;
-    return this.projectTypeService.findAll(languageCode);
+  public getAll(): Promise<{ id: number; translations: { lang: string; name: string; description?: string }[] }[]> {
+    return this.projectTypeService.findAll();
   }
 
   @Post()

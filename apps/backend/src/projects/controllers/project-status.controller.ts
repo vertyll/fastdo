@@ -24,10 +24,9 @@ export class ProjectStatusController {
   })
   public async getProjectStatuses(
     @Param('projectId') projectId: string,
-    @Headers('x-lang') headerLang?: LanguageCodeEnum,
-  ): Promise<ProjectStatusDto[]> {
-    const languageCode = headerLang || LanguageCodeEnum.POLISH;
-    return this.projectStatusService.findByProjectId(+projectId, languageCode);
+  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string }[] }[]> {
+    // Język pobierany automatycznie przez nestjs-i18n resolver
+    return this.projectStatusService.findByProjectId(+projectId);
   }
 
   @Post()

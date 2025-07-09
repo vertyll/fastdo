@@ -24,10 +24,9 @@ export class ProjectCategoryController {
   })
   public async getProjectCategories(
     @Param('projectId') projectId: string,
-    @Headers('x-lang') headerLang?: LanguageCodeEnum,
-  ): Promise<ProjectCategoryDto[]> {
-    const languageCode = headerLang || LanguageCodeEnum.POLISH;
-    return this.projectCategoryService.findByProjectId(+projectId, languageCode);
+  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string }[] }[]> {
+    // Język pobierany automatycznie przez nestjs-i18n resolver
+    return this.projectCategoryService.findByProjectId(+projectId);
   }
 
   @Post()

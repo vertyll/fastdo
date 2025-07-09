@@ -9,7 +9,7 @@ import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { Project } from 'src/projects/entities/project.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
-import { Priority } from '../entities/priority.entity';
+import { Priority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { TaskPriorityEnum } from '../enums/task-priority.enum';
 import { TaskRepository } from '../repositories/task.repository';

@@ -21,7 +21,7 @@ export class PriorityApiService {
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.http.get<ApiResponse<SimplePriority[]>>(`${this.URL}/tasks/priorities`).pipe(
+    return this.http.get<ApiResponse<SimplePriority[]>>(`${this.URL}/task-priorities`).pipe(
       tap(() => {
         this.$loading.set(false);
         this.$idle.set(true);

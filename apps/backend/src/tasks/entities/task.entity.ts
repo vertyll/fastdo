@@ -16,7 +16,7 @@ import { ProjectRole } from '../../projects/entities/project-role.entity';
 import { ProjectStatus } from '../../projects/entities/project-status.entity';
 import { Project } from '../../projects/entities/project.entity';
 import { User } from '../../users/entities/user.entity';
-import { Priority } from './priority.entity';
+import { TaskPriority } from './task-priority.entity';
 import { TaskAttachment } from './task-attachment.entity';
 import { TaskComment } from './task-comment.entity';
 
@@ -71,9 +71,9 @@ export class Task {
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   createdBy: Relation<User>;
 
-  @ApiProperty({ type: () => Priority })
-  @ManyToOne(() => Priority, priority => priority.id, { onDelete: 'SET NULL' })
-  priority: Relation<Priority>;
+  @ApiProperty({ type: () => TaskPriority })
+  @ManyToOne(() => TaskPriority, priority => priority.id, { onDelete: 'SET NULL' })
+  priority: Relation<TaskPriority>;
 
   @ApiProperty({ type: () => ProjectCategory, isArray: true })
   @ManyToMany(() => ProjectCategory, { onDelete: 'CASCADE' })

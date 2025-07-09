@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
-import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectCategoryDto } from '../dtos/create-project-category.dto';
-import { ProjectCategoryDto } from '../dtos/project-category.dto';
 import { UpdateProjectCategoryDto } from '../dtos/update-project-category.dto';
 import { ProjectCategoryTranslation } from '../entities/project-category-translation.entity';
 import { ProjectCategory } from '../entities/project-category.entity';
@@ -22,22 +20,21 @@ export class ProjectCategoryService {
 
   public async findByProjectId(
     projectId: number,
-    languageCode: LanguageCodeEnum = LanguageCodeEnum.POLISH,
-  ): Promise<ProjectCategoryDto[]> {
+  ): Promise<{ id: number; color: string; translations: { lang: string; name: string; description?: string }[] }[]> {
     const categories = await this.projectCategoryRepository.find({
       where: { project: { id: projectId }, isActive: true },
       relations: ['translations', 'translations.language'],
     });
 
-    return categories.map(category => {
-      const translation = category.translations.find(t => t.language.code === languageCode)
-        || category.translations[0]; // fallback to first translation
-
-      return {
-        id: category.id,
-        name: translation ? translation.name : `Category ${category.id}`,
-      };
-    });
+    return categories.map(category => ({
+      id: category.id,
+      color: category.color,
+      translations: (category.translations || []).map(t => ({
+        lang: t.language?.code,
+        name: t.name,
+        description: t.description ?? undefined,
+      })),
+    }));
   }
 
   public async findOne(id: number): Promise<ProjectCategory> {

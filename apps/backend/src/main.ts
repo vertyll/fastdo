@@ -23,7 +23,7 @@ import { File } from './core/file/entities/file.entity';
 import { ProjectUser } from './projects/entities/project-user.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
-import { Priority } from './tasks/entities/priority.entity';
+import { TaskPriority } from './tasks/entities/task-priority.entity';
 import { Task } from './tasks/entities/task.entity';
 import { PrivacyPolicySectionTranslation } from './terms-and-policies/entities/privacy-policy-section-translation.entity';
 import { PrivacyPolicySection } from './terms-and-policies/entities/privacy-policy-section.entity';
@@ -144,7 +144,7 @@ async function bootstrap(): Promise<void> {
       Task,
       Project,
       ProjectUser,
-      Priority,
+      TaskPriority,
       User,
       Role,
       UserRole,
