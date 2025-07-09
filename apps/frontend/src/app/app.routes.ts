@@ -92,6 +92,11 @@ export const routes: Routes = [
         component: TaskDetailsPageComponent,
         title: 'Szczegóły zadania',
       },
+      {
+        path: ':id/tasks/edit/:taskId',
+        component: TaskFormPageComponent,
+        title: 'Edytuj zadanie',
+      },
     ],
     canActivate: [AuthGuard],
   },

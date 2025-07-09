@@ -196,6 +196,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
 
   readonly projectId = signal<string | null>(null);
+  readonly taskId = signal<string | null>(null);
   readonly loading = signal(true);
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
@@ -266,13 +267,21 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     const projectIdParam = this.route.snapshot.paramMap.get('id');
+    const taskIdParam = this.route.snapshot.paramMap.get('taskId');
     this.projectId.set(projectIdParam);
+    this.taskId.set(taskIdParam);
 
     if (projectIdParam) {
       this.taskForm.patchValue({ projectId: +projectIdParam });
     }
 
     await this.loadOptions();
+
+    // Jeśli edycja zadania, pobierz dane i wypełnij formularz
+    if (taskIdParam) {
+      await this.loadTaskData(+taskIdParam);
+    }
+
     this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
       this.updateOptionsForCurrentLang();
     });
@@ -297,6 +306,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     try {
       const formValue = this.taskForm.value;
       const currentProjectId = this.projectId();
+      const currentTaskId = this.taskId();
 
       if (!currentProjectId) {
         this.error.set('Projekt jest wymagany dla wszystkich zadań');
@@ -318,16 +328,38 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         projectId: +currentProjectId,
       };
 
-      await firstValueFrom(this.tasksService.add(taskData));
-
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.addSuccess'),
-        NotificationTypeEnum.Success,
-      );
-
-      this.router.navigate(['/projects', currentProjectId, 'tasks']);
+      if (currentTaskId) {
+        const { projectId, ...updateData } = taskData;
+        const response = await firstValueFrom(this.tasksService.update(+currentTaskId, updateData));
+        this.notificationService.showNotification(
+          this.translateService.instant('Task.updateSuccess'),
+          NotificationTypeEnum.Success,
+        );
+        // Pobierz projectId z odpowiedzi backendu jeśli jest, w ostateczności z sygnału
+        const updatedTask = response?.data;
+        const projectIdToUse = updatedTask?.project?.id || currentProjectId;
+        const taskIdToUse = updatedTask?.id || currentTaskId;
+        if (projectIdToUse && taskIdToUse) {
+          this.router.navigate(['/projects', projectIdToUse, 'tasks', 'details', taskIdToUse]);
+        } else {
+          this.router.navigate(['/projects']);
+        }
+      } else {
+        const response = await firstValueFrom(this.tasksService.add(taskData));
+        this.notificationService.showNotification(
+          this.translateService.instant('Task.addSuccess'),
+          NotificationTypeEnum.Success,
+        );
+        // Przekieruj na szczegóły nowego zadania jeśli id jest dostępne
+        const newTaskId = response?.data?.id;
+        if (newTaskId) {
+          this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]);
+        } else {
+          this.router.navigate(['/projects', currentProjectId, 'tasks']);
+        }
+      }
     } catch (error: any) {
-      console.error('Error creating task:', error);
+      console.error('Error creating/updating task:', error);
       const errorMessage = error.error?.message || this.translateService.instant('Task.addError');
       this.error.set(errorMessage);
       this.notificationService.showNotification(
@@ -336,6 +368,30 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       );
     } finally {
       this.submitting.set(false);
+    }
+  }
+
+  private async loadTaskData(taskId: number): Promise<void> {
+    try {
+      this.loading.set(true);
+      const response = await firstValueFrom(this.tasksService.getOne(taskId));
+      const data = response.data;
+      // Uzupełnij formularz danymi zadania
+      this.taskForm.patchValue({
+        description: data.description,
+        additionalDescription: data.additionalDescription || '',
+        priceEstimation: data.priceEstimation || 0,
+        workedTime: data.workedTime || 0,
+        accessRole: data.accessRole?.id || null,
+        priorityId: data.priority?.id || null,
+        statusId: data.status?.id || null,
+        categoryIds: data.categories?.map((c: any) => c.id) || [],
+        assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
+      });
+    } catch (error) {
+      this.error.set('Błąd podczas ładowania danych zadania');
+    } finally {
+      this.loading.set(false);
     }
   }
 

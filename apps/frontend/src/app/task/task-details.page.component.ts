@@ -1,9 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, input, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroArrowLeft, heroCalendar, heroPaperAirplane, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
+import {
+  heroArrowLeft,
+  heroCalendar,
+  heroPaperAirplane,
+  heroPencil,
+  heroTrash,
+} from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
 import { firstValueFrom } from 'rxjs';
@@ -51,7 +63,7 @@ import { Task, TaskComment } from './models/Task';
           <ng-icon name="heroArrowLeft" size="20"></ng-icon>
           {{ 'Basic.back' | translate }}
         </button>
-        
+
         @if (task()) {
           <div class="flex gap-2">
             <button
@@ -78,17 +90,25 @@ import { Task, TaskComment } from './models/Task';
         </div>
       } @else if (task()) {
         <!-- Task Details -->
-        <div class="bg-white dark:bg-dark-surface-primary rounded-lg shadow-sm border border-border-primary dark:border-dark-border-primary p-6 mb-6">
-          <h1 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
+        <div
+          class="bg-white dark:bg-dark-surface-primary rounded-lg shadow-sm border border-border-primary dark:border-dark-border-primary p-6 mb-6"
+        >
+          <h1
+            class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
+          >
             {{ 'Task.details' | translate }}
           </h1>
-          
+
           <!-- Main Description -->
           <div class="mb-6">
-            <h3 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">
+            <h3
+              class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2"
+            >
               {{ 'Task.description' | translate }}
             </h3>
-            <p class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap">
+            <p
+              class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap"
+            >
               {{ task()!.description }}
             </p>
           </div>
@@ -96,60 +116,90 @@ import { Task, TaskComment } from './models/Task';
           <!-- Additional Description -->
           @if (task()!.additionalDescription) {
             <div class="mb-6">
-              <h3 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">
+              <h3
+                class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.additionalDescription' | translate }}
               </h3>
-              <p class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap">
+              <p
+                class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap"
+              >
                 {{ task()!.additionalDescription }}
               </p>
             </div>
           }
 
           <!-- Task Info Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6"
+          >
             <!-- Price Estimation -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.priceEstimation' | translate }}
               </h4>
-              <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
+              <p
+                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+              >
                 {{ formatHours(task()!.priceEstimation) }}
               </p>
             </div>
 
             <!-- Worked Time -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.workedTime' | translate }}
               </h4>
-              <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
+              <p
+                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+              >
                 {{ formatHours(task()!.workedTime) }}
               </p>
             </div>
 
             <!-- Access Role -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.accessRole' | translate }}
               </h4>
-              <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
-                {{ task()!.accessRole?.name || ('Task.noAccessRoleSet' | translate) }}
+              <p
+                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+              >
+                {{ task()!.accessRole ? getTranslatedName(task()!.accessRole) : ('Task.noAccessRoleSet' | translate) }}
               </p>
             </div>
 
             <!-- Priority -->
             @if (task()!.priority) {
-              <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-                <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+              <div
+                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              >
+                <h4
+                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+                >
                   {{ 'Task.priority' | translate }}
                 </h4>
                 <div class="flex items-center gap-2">
-                  <div 
+                  <div
                     class="w-4 h-4 rounded-full"
                     [style.background-color]="task()!.priority.color"
                   ></div>
-                  <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
-                    {{ task()!.priority.name }}
+                  <p
+                    class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+                  >
+                    {{ getTranslatedName(task()!.priority) }}
                   </p>
                 </div>
               </div>
@@ -157,11 +207,17 @@ import { Task, TaskComment } from './models/Task';
 
             <!-- Project -->
             @if (task()?.project) {
-              <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-                <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+              <div
+                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              >
+                <h4
+                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+                >
                   {{ 'Task.project' | translate }}
                 </h4>
-                <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
+                <p
+                  class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+                >
                   {{ task()?.project?.name }}
                 </p>
               </div>
@@ -169,19 +225,27 @@ import { Task, TaskComment } from './models/Task';
 
             <!-- Categories -->
             @if (task()?.categories && task()!.categories.length > 0) {
-              <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-                <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+              <div
+                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              >
+                <h4
+                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+                >
                   {{ 'Task.categories' | translate }}
                 </h4>
                 <div class="flex flex-wrap gap-2">
                   @for (category of task()!.categories; track category.id) {
-                    <div class="flex items-center gap-2 bg-white dark:bg-dark-surface-primary rounded-full px-3 py-1 border border-border-primary dark:border-dark-border-primary">
-                      <div 
+                    <div
+                      class="flex items-center gap-2 bg-white dark:bg-dark-surface-primary rounded-full px-3 py-1 border border-border-primary dark:border-dark-border-primary"
+                    >
+                      <div
                         class="w-3 h-3 rounded-full"
                         [style.background-color]="category.color"
                       ></div>
-                      <span class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                        {{ category.name }}
+                      <span
+                        class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                      >
+                        {{ getTranslatedName(category) }}
                       </span>
                     </div>
                   }
@@ -191,17 +255,23 @@ import { Task, TaskComment } from './models/Task';
 
             <!-- Status -->
             @if (task()?.status) {
-              <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-                <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+              <div
+                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              >
+                <h4
+                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+                >
                   {{ 'Task.status' | translate }}
                 </h4>
                 <div class="flex items-center gap-2">
-                  <div 
+                  <div
                     class="w-4 h-4 rounded-full"
                     [style.background-color]="task()?.status?.color"
                   ></div>
-                  <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
-                    {{ task()?.status?.name }}
+                  <p
+                    class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+                  >
+                    {{ getTranslatedName(task()?.status) }}
                   </p>
                 </div>
               </div>
@@ -211,34 +281,50 @@ import { Task, TaskComment } from './models/Task';
           <!-- Users -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Assigned Users -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.assignedUsers' | translate }}
               </h4>
               @if (task()!.assignedUsers && task()!.assignedUsers.length > 0) {
                 <div class="space-y-2">
                   @for (user of task()!.assignedUsers; track user.id) {
-                    <div class="flex items-center gap-2 bg-white dark:bg-dark-surface-primary rounded-md px-3 py-2 border border-border-primary dark:border-dark-border-primary">
+                    <div
+                      class="flex items-center gap-2 bg-white dark:bg-dark-surface-primary rounded-md px-3 py-2 border border-border-primary dark:border-dark-border-primary"
+                    >
                       <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
-                      <span class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+                      <span
+                        class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                      >
                         {{ user.email }}
                       </span>
                     </div>
                   }
                 </div>
               } @else {
-                <p class="text-sm text-text-muted dark:text-dark-text-muted italic">
+                <p
+                  class="text-sm text-text-muted dark:text-dark-text-muted italic"
+                >
                   {{ 'Task.noAssignedUsers' | translate }}
                 </p>
               }
             </div>
 
             <!-- Created By -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.createdBy' | translate }}
               </h4>
-              <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
+              <p
+                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+              >
                 {{ task()!.createdBy.email }}
               </p>
             </div>
@@ -247,40 +333,65 @@ import { Task, TaskComment } from './models/Task';
           <!-- Dates -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Created Date -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.created' | translate }}
               </h4>
-              <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
-                {{ task()!.dateCreation | date:'medium' }}
+              <p
+                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+              >
+                {{ task()!.dateCreation | date: 'medium' }}
               </p>
             </div>
 
             <!-- Modified Date -->
-            <div class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4">
-              <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+            <div
+              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+            >
+              <h4
+                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.modified' | translate }}
               </h4>
-              <p class="text-lg font-semibold text-text-primary dark:text-dark-text-primary">
-                {{ task()!.dateModification | date:'medium' }}
+              <p
+                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
+              >
+                {{ task()!.dateModification | date: 'medium' }}
               </p>
             </div>
           </div>
         </div>
 
         <!-- Comments Section -->
-        <div class="bg-white dark:bg-dark-surface-primary rounded-lg shadow-sm border border-border-primary dark:border-dark-border-primary p-6">
-          <h2 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
-            {{ 'Task.comments' | translate }} 
+        <div
+          class="bg-white dark:bg-dark-surface-primary rounded-lg shadow-sm border border-border-primary dark:border-dark-border-primary p-6"
+        >
+          <h2
+            class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
+          >
+            {{ 'Task.comments' | translate }}
             @if (task()!.comments && task()!.comments.length > 0) {
-              <span class="text-sm font-normal text-text-muted dark:text-dark-text-muted">({{ task()!.comments.length }})</span>
+              <span
+                class="text-sm font-normal text-text-muted dark:text-dark-text-muted"
+                >({{ task()!.comments.length }})</span
+              >
             }
           </h2>
-          
+
           <!-- Add Comment Form -->
-          <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="mb-6">
+          <form
+            [formGroup]="commentForm"
+            (ngSubmit)="onSubmitComment()"
+            class="mb-6"
+          >
             <div class="mb-4">
-              <label class="block text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2">
+              <label
+                class="block text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
                 {{ 'Task.addComment' | translate }}
               </label>
               <textarea
@@ -289,7 +400,10 @@ import { Task, TaskComment } from './models/Task';
                 class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary resize-none"
                 [placeholder]="'Task.commentPlaceholder' | translate"
               ></textarea>
-              @if (commentForm.get('content')?.invalid && commentForm.get('content')?.touched) {
+              @if (
+                commentForm.get('content')?.invalid &&
+                commentForm.get('content')?.touched
+              ) {
                 <div class="text-red-500 text-sm mt-1">
                   {{ 'Task.commentRequired' | translate }}
                 </div>
@@ -315,14 +429,20 @@ import { Task, TaskComment } from './models/Task';
           @if (task()!.comments && task()!.comments.length > 0) {
             <div class="space-y-4">
               @for (comment of task()!.comments; track comment.id) {
-                <div class="border-b border-border-primary dark:border-dark-border-primary last:border-b-0 pb-4 last:pb-0">
+                <div
+                  class="border-b border-border-primary dark:border-dark-border-primary last:border-b-0 pb-4 last:pb-0"
+                >
                   <div class="flex justify-between items-start mb-2">
-                    <span class="font-medium text-text-secondary dark:text-dark-text-secondary">
+                    <span
+                      class="font-medium text-text-secondary dark:text-dark-text-secondary"
+                    >
                       {{ comment.author.email }}
                     </span>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm text-text-muted dark:text-dark-text-muted">
-                        {{ comment.dateCreation | date:'medium' }}
+                      <span
+                        class="text-sm text-text-muted dark:text-dark-text-muted"
+                      >
+                        {{ comment.dateCreation | date: 'medium' }}
                       </span>
                       @if (canDeleteComment(comment)) {
                         <button
@@ -331,7 +451,7 @@ import { Task, TaskComment } from './models/Task';
                           class="text-blue-600 hover:text-blue-800 text-sm p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900"
                           [title]="'Task.editComment' | translate"
                         >
-                          ✏️
+                          <ng-icon name="heroPencil" size="16"></ng-icon>
                         </button>
                         <button
                           type="button"
@@ -339,7 +459,7 @@ import { Task, TaskComment } from './models/Task';
                           class="text-red-600 hover:text-red-800 text-sm p-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
                           [title]="'Task.deleteComment' | translate"
                         >
-                          🗑️
+                          <ng-icon name="heroTrash" size="16"></ng-icon>
                         </button>
                       }
                     </div>
@@ -369,7 +489,9 @@ import { Task, TaskComment } from './models/Task';
                       </div>
                     </div>
                   } @else {
-                    <p class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap">
+                    <p
+                      class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap"
+                    >
                       {{ comment.content }}
                     </p>
                   }
@@ -377,7 +499,9 @@ import { Task, TaskComment } from './models/Task';
               }
             </div>
           } @else {
-            <div class="text-center py-4 text-text-muted dark:text-dark-text-muted">
+            <div
+              class="text-center py-4 text-text-muted dark:text-dark-text-muted"
+            >
               {{ 'Task.noComments' | translate }}
             </div>
           }
@@ -400,10 +524,11 @@ export class TaskDetailsPageComponent implements OnInit {
   protected readonly notificationService = inject(NotificationService);
   protected readonly modalService = inject(ModalService);
   private readonly formBuilder = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
   private readonly authStateService = inject(AuthStateService);
   private readonly priorityApiService = inject(PriorityApiService);
-  private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
+  private readonly projectCategoryApiService = inject(
+    ProjectCategoryApiService,
+  );
   private readonly projectStatusApiService = inject(ProjectStatusApiService);
   private readonly projectUsersApiService = inject(ProjectsApiService);
   private readonly projectRoleApiService = inject(ProjectRoleApiService);
@@ -412,11 +537,19 @@ export class TaskDetailsPageComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly submittingComment = signal(false);
 
-  protected readonly priorities = signal<Array<{ id: number; name: string; }>>([]);
-  protected readonly categories = signal<Array<{ id: number; name: string; }>>([]);
-  protected readonly statuses = signal<Array<{ id: number; name: string; }>>([]);
-  protected readonly projectUsers = signal<Array<{ id: number; name: string; }>>([]);
-  protected readonly accessRoles = signal<Array<{ id: number; name: string; }>>([]);
+  protected readonly priorities = signal<Array<{ id: number; name: string }>>(
+    [],
+  );
+  protected readonly categories = signal<Array<{ id: number; name: string }>>(
+    [],
+  );
+  protected readonly statuses = signal<Array<{ id: number; name: string }>>([]);
+  protected readonly projectUsers = signal<Array<{ id: number; name: string }>>(
+    [],
+  );
+  protected readonly accessRoles = signal<Array<{ id: number; name: string }>>(
+    [],
+  );
 
   protected editingCommentId: number | null = null;
   protected editingCommentContent: string = '';
@@ -432,7 +565,9 @@ export class TaskDetailsPageComponent implements OnInit {
   private async loadTask(): Promise<void> {
     try {
       this.loading.set(true);
-      const response = await firstValueFrom(this.tasksService.getOne(+this.taskId()));
+      const response = await firstValueFrom(
+        this.tasksService.getOne(+this.taskId()),
+      );
       this.task.set(response.data);
       await this.loadEditOptions();
     } catch (error) {
@@ -469,97 +604,10 @@ export class TaskDetailsPageComponent implements OnInit {
   }
 
   protected editTask(): void {
-    if (!this.task()) return;
-
-    const statusOptions = this.statuses().map(s => ({ id: s.id, name: s.name }));
-    const priorityOptions = this.priorities().map(p => ({ id: p.id, name: p.name }));
-    const accessRoleOptions = this.accessRoles().map(r => ({ id: r.id, name: r.name }));
-
-    this.modalService.present({
-      title: this.translateService.instant('Task.editTask'),
-      inputs: [
-        {
-          id: 'description',
-          type: ModalInputTypeEnum.Textarea,
-          required: true,
-          label: this.translateService.instant('Task.taskDescription'),
-          value: this.task()!.description,
-        },
-        {
-          id: 'additionalDescription',
-          type: ModalInputTypeEnum.Textarea,
-          required: false,
-          label: this.translateService.instant('Task.additionalDescription'),
-          value: this.task()!.additionalDescription || '',
-        },
-        {
-          id: 'priceEstimation',
-          type: ModalInputTypeEnum.Number,
-          required: false,
-          label: this.translateService.instant('Task.priceEstimation'),
-          value: this.task()!.priceEstimation,
-        },
-        {
-          id: 'workedTime',
-          type: ModalInputTypeEnum.Number,
-          required: false,
-          label: this.translateService.instant('Task.workedTime'),
-          value: this.task()!.workedTime,
-        },
-        {
-          id: 'priorityId',
-          type: ModalInputTypeEnum.Select,
-          required: false,
-          label: this.translateService.instant('Task.priority'),
-          value: this.task()!.priority?.id || null,
-          selectOptions: priorityOptions,
-        },
-        {
-          id: 'statusId',
-          type: ModalInputTypeEnum.Select,
-          required: false,
-          label: this.translateService.instant('Task.status'),
-          value: this.task()!.status?.id || null,
-          selectOptions: statusOptions,
-        },
-        {
-          id: 'accessRoleId',
-          type: ModalInputTypeEnum.Select,
-          required: false,
-          label: this.translateService.instant('Task.accessRole'),
-          value: this.task()!.accessRole?.id || null,
-          selectOptions: accessRoleOptions,
-        },
-      ],
-      buttons: [
-        {
-          role: ButtonRoleEnum.Cancel,
-          text: this.translateService.instant('Basic.cancel'),
-        },
-        {
-          role: ButtonRoleEnum.Ok,
-          text: this.translateService.instant('Basic.save'),
-          handler: (data: TaskUpdatePayload) => this.updateTask(data),
-        },
-      ],
-    });
-  }
-
-  private async updateTask(data: TaskUpdatePayload): Promise<boolean> {
-    try {
-      await firstValueFrom(this.tasksService.update(+this.taskId(), data));
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.updateSuccess'),
-        NotificationTypeEnum.Success,
-      );
-      await this.loadTask();
-      return true;
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.updateError'),
-        NotificationTypeEnum.Error,
-      );
-      return false;
+    const task = this.task();
+    const projectId = task?.project?.id || this.route.snapshot.paramMap.get('id');
+    if (task && projectId) {
+      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.id]);
     }
   }
 
@@ -611,7 +659,9 @@ export class TaskDetailsPageComponent implements OnInit {
       this.submittingComment.set(true);
       const content = this.commentForm.get('content')?.value;
 
-      await firstValueFrom(this.tasksService.createComment(+this.taskId(), { content }));
+      await firstValueFrom(
+        this.tasksService.createComment(+this.taskId(), { content }),
+      );
 
       this.notificationService.showNotification(
         this.translateService.instant('Task.commentAdded'),
@@ -645,7 +695,9 @@ export class TaskDetailsPageComponent implements OnInit {
 
     try {
       await firstValueFrom(
-        this.tasksService.updateComment(this.editingCommentId, { content: this.editingCommentContent }),
+        this.tasksService.updateComment(this.editingCommentId, {
+          content: this.editingCommentContent,
+        }),
       );
 
       this.notificationService.showNotification(
@@ -676,24 +728,48 @@ export class TaskDetailsPageComponent implements OnInit {
   }
 
   protected async onDeleteComment(commentId: number): Promise<void> {
-    const confirmed = confirm(this.translateService.instant('Task.deleteCommentConfirm'));
-    if (!confirmed) return;
+    this.modalService.present({
+      title: this.translateService.instant('Basic.deleteTitle'),
+      message: this.translateService.instant('Task.deleteCommentConfirm'),
+      buttons: [
+        {
+          role: ButtonRoleEnum.Cancel,
+          text: this.translateService.instant('Basic.cancel'),
+        },
+        {
+          role: ButtonRoleEnum.Ok,
+          text: this.translateService.instant('Basic.delete'),
+          handler: async () => {
+            try {
+              await firstValueFrom(this.tasksService.deleteComment(commentId));
+              this.notificationService.showNotification(
+                this.translateService.instant('Task.commentDeleted'),
+                NotificationTypeEnum.Success,
+              );
+              await this.loadTask();
+              return true; // zamknij modal
+            } catch (error) {
+              this.notificationService.showNotification(
+                this.translateService.instant('Task.commentDeleteError'),
+                NotificationTypeEnum.Error,
+              );
+              return false; // nie zamykaj modala jeśli błąd
+            }
+          },
+        },
+      ],
+    });
+  }
 
-    try {
-      await firstValueFrom(this.tasksService.deleteComment(commentId));
-
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.commentDeleted'),
-        NotificationTypeEnum.Success,
-      );
-
-      await this.loadTask();
-    } catch (error) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Task.commentDeleteError'),
-        NotificationTypeEnum.Error,
-      );
+  protected getTranslatedName(obj: any): string {
+    if (!obj) return '';
+    const lang = this.translateService.currentLang || 'pl';
+    if (obj.translations && Array.isArray(obj.translations)) {
+      const found = obj.translations.find((t: any) => t.lang === lang);
+      if (found && found.name) return found.name;
+      if (obj.translations[0]?.name) return obj.translations[0].name;
     }
+    return obj.name || '';
   }
 
   private async loadEditOptions(): Promise<void> {
@@ -701,12 +777,16 @@ export class TaskDetailsPageComponent implements OnInit {
       const task = this.task();
       if (!task) return;
 
-      const prioritiesResponse = await firstValueFrom(this.priorityApiService.getAll());
+      const prioritiesResponse = await firstValueFrom(
+        this.priorityApiService.getAll(),
+      );
       if (prioritiesResponse.data) {
         this.priorities.set(prioritiesResponse.data);
       }
 
-      const rolesResponse = await firstValueFrom(this.projectRoleApiService.getAll());
+      const rolesResponse = await firstValueFrom(
+        this.projectRoleApiService.getAll(),
+      );
       if (rolesResponse.data) {
         this.accessRoles.set(rolesResponse.data);
       }
