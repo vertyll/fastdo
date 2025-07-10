@@ -124,7 +124,7 @@ import { Project } from './models/Project';
                 <button
                   type="button"
                   (click)="removeCategory($index)"
-                  class="px-3 py-2 text-red-600 hover:text-red-800 rounded-md hover:bg-red-50 dark:hover:bg-red-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
                 >
                   {{ 'Basic.remove' | translate }}
                 </button>
@@ -146,7 +146,7 @@ import { Project } from './models/Project';
           </label>
           <div formArrayName="statuses" class="space-y-3">
             @for (status of statusesFormArray.controls; track $index) {
-              <div class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg">
+              <div class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary">
                 <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
                   <div class="flex-1">
                     <app-input-field
@@ -160,7 +160,7 @@ import { Project } from './models/Project';
                     <input
                       type="color"
                       [formControl]="getStatusColorControl($index)"
-                      class="w-12 h-11 border border-border-primary dark:border-dark-border-primary rounded-md cursor-pointer"
+                      class="w-12 h-11 border border-border-primary dark:border-dark-border-primary rounded-md cursor-pointer bg-background-primary dark:bg-dark-background-primary"
                       [title]="'Project.selectColor' | translate"
                     />
                   </div>
@@ -168,7 +168,7 @@ import { Project } from './models/Project';
                 <button
                   type="button"
                   (click)="removeStatus($index)"
-                  class="px-3 py-2 text-red-600 hover:text-red-800 rounded-md hover:bg-red-50 dark:hover:bg-red-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
                 >
                   {{ 'Basic.remove' | translate }}
                 </button>
@@ -193,7 +193,7 @@ import { Project } from './models/Project';
           </p>
           <div formArrayName="usersWithRoles" class="space-y-3">
             @for (userWithRole of usersWithRolesFormArray.controls; track $index) {
-              <div class="flex items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg" [formGroupName]="$index">
+              <div class="flex items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary" [formGroupName]="$index">
                 <div class="flex-1">
                   <app-input-field
                     [control]="getUserEmailControl($index)"
@@ -214,7 +214,7 @@ import { Project } from './models/Project';
                 <button
                   type="button"
                   (click)="removeUserWithRole($index)"
-                  class="px-3 py-2 text-red-600 hover:text-red-800 rounded-md hover:bg-red-50 dark:hover:bg-red-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
                   [disabled]="isCurrentUser($index)"
                   [class.opacity-50]="isCurrentUser($index)"
                   [class.cursor-not-allowed]="isCurrentUser($index)"

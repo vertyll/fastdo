@@ -61,7 +61,7 @@ import { Task, TaskComment } from './models/Task';
             </button>
             <button
               (click)="deleteTask()"
-              class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              class="flex items-center gap-2 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 transition-colors"
             >
               <ng-icon name="heroTrash" size="16"></ng-icon>
               {{ 'Basic.delete' | translate }}
@@ -121,7 +121,7 @@ import { Task, TaskComment } from './models/Task';
           >
             <!-- Price Estimation -->
             <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
             >
               <h4
                 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -137,7 +137,7 @@ import { Task, TaskComment } from './models/Task';
 
             <!-- Worked Time -->
             <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
             >
               <h4
                 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -153,7 +153,7 @@ import { Task, TaskComment } from './models/Task';
 
             <!-- Access Role -->
             <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
             >
               <h4
                 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -170,7 +170,7 @@ import { Task, TaskComment } from './models/Task';
             <!-- Priority -->
             @if (task()!.priority) {
               <div
-                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
               >
                 <h4
                   class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -194,7 +194,7 @@ import { Task, TaskComment } from './models/Task';
             <!-- Project -->
             @if (task()?.project) {
               <div
-                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
               >
                 <h4
                   class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -212,7 +212,7 @@ import { Task, TaskComment } from './models/Task';
             <!-- Categories -->
             @if (task()?.categories && task()!.categories.length > 0) {
               <div
-                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
               >
                 <h4
                   class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -242,7 +242,7 @@ import { Task, TaskComment } from './models/Task';
             <!-- Status -->
             @if (task()?.status) {
               <div
-                class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
               >
                 <h4
                   class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -268,7 +268,7 @@ import { Task, TaskComment } from './models/Task';
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Assigned Users -->
             <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
             >
               <h4
                 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -301,7 +301,7 @@ import { Task, TaskComment } from './models/Task';
 
             <!-- Created By -->
             <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
+              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
             >
               <h4
                 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
@@ -434,7 +434,7 @@ import { Task, TaskComment } from './models/Task';
                         <button
                           type="button"
                           (click)="onEditComment(comment.id, comment.content)"
-                          class="text-blue-600 hover:text-blue-800 text-sm p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900"
+                          class="text-info-600 hover:text-info-800 text-sm p-1 rounded hover:bg-info-50 dark:hover:bg-info-900"
                           [title]="'Task.editComment' | translate"
                         >
                           <ng-icon name="heroPencil" size="16"></ng-icon>
@@ -442,7 +442,7 @@ import { Task, TaskComment } from './models/Task';
                         <button
                           type="button"
                           (click)="onDeleteComment(comment.id)"
-                          class="text-red-600 hover:text-red-800 text-sm p-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
+                          class="text-danger-600 hover:text-danger-800 text-sm p-1 rounded hover:bg-danger-50 dark:hover:bg-danger-900"
                           [title]="'Task.deleteComment' | translate"
                         >
                           <ng-icon name="heroTrash" size="16"></ng-icon>
@@ -455,20 +455,20 @@ import { Task, TaskComment } from './models/Task';
                       <textarea
                         [(ngModel)]="editingCommentContent"
                         rows="3"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+                        class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary"
                       ></textarea>
                       <div class="flex gap-2">
                         <button
                           type="button"
                           (click)="onSaveEditComment()"
-                          class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                          class="px-3 py-1 bg-info-600 text-white rounded hover:bg-info-700 text-sm"
                         >
                           {{ 'Task.saveComment' | translate }}
                         </button>
                         <button
                           type="button"
                           (click)="onCancelEditComment()"
-                          class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+                          class="px-3 py-1 bg-neutral-500 text-white rounded hover:bg-neutral-600 text-sm"
                         >
                           {{ 'Basic.cancel' | translate }}
                         </button>

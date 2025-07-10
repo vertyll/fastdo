@@ -152,8 +152,8 @@ interface SelectOption {
           </div>
 
           @if (error()) {
-            <div class="p-4 bg-red-50 border border-red-200 rounded-md">
-              <p class="text-red-600 text-sm">{{ error() }}</p>
+            <div class="p-4 bg-danger-50 border border-danger-200 rounded-md">
+              <p class="text-danger-600 text-sm">{{ error() }}</p>
             </div>
           }
 
