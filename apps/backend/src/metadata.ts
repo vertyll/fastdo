@@ -713,14 +713,6 @@ export default async () => {
           color: { required: true, type: () => String },
           translations: { required: true, type: () => [t['./common/dtos/translation.dto'].TranslationDto] },
         },
-      }], [import('./projects/dtos/project-category.dto'), {
-        'ProjectCategoryDto': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          name: { required: true, type: () => String },
-        },
       }], [import('./projects/dtos/update-project-category.dto'), {
         'UpdateProjectCategoryDto': {
           translations: { required: false, type: () => [t['./common/dtos/translation.dto'].TranslationDto] },
@@ -737,15 +729,6 @@ export default async () => {
             type: () => Number,
           },
           translations: { required: true, type: () => [t['./common/dtos/translation.dto'].TranslationDto] },
-        },
-      }], [import('./projects/dtos/project-role.dto'), {
-        'ProjectRoleDto': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          name: { required: true, type: () => String },
-          description: { required: false, type: () => String },
         },
       }], [import('./projects/dtos/create-project-status.dto'), {
         'CreateProjectStatusDto': {
@@ -765,11 +748,6 @@ export default async () => {
           color: { required: true, type: () => String },
           translations: { required: true, type: () => [t['./common/dtos/translation.dto'].TranslationDto] },
         },
-      }], [import('./projects/dtos/project-status.dto'), {
-        'ProjectStatusDto': {
-          id: { required: true, type: () => Number },
-          name: { required: true, type: () => String },
-        },
       }], [import('./projects/dtos/update-project-status.dto'), {
         'UpdateProjectStatusDto': {
           translations: { required: false, type: () => [t['./common/dtos/translation.dto'].TranslationDto] },
@@ -786,15 +764,6 @@ export default async () => {
             type: () => Number,
           },
           translations: { required: true, type: () => [t['./common/dtos/translation.dto'].TranslationDto] },
-        },
-      }], [import('./projects/dtos/project-type.dto'), {
-        'ProjectTypeDto': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          name: { required: true, type: () => String },
-          description: { required: false, type: () => String },
         },
       }], [import('./projects/dtos/project-user-role.dto'), {
         'AssignProjectRoleDto': {
@@ -935,6 +904,24 @@ export default async () => {
           dateModification: { required: true, type: () => Date, nullable: true },
           sections: { required: true, type: () => [t['./terms-and-policies/dtos/terms.dto'].TermsSectionDto] },
         },
+      }], [import('./projects/dtos/project-role.dto'), {
+        'ProjectRoleDto': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          name: { required: true, type: () => String },
+          description: { required: false, type: () => String },
+        },
+      }], [import('./projects/dtos/project-type.dto'), {
+        'ProjectTypeDto': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          name: { required: true, type: () => String },
+          description: { required: false, type: () => String },
+        },
       }], [import('./tasks/entities/task-category.entity'), {
         'TaskCategory': {
           id: { required: true, type: () => Number },
@@ -971,6 +958,19 @@ export default async () => {
           description: { required: false, type: () => String },
           language: { required: true, type: () => t['./core/language/entities/language.entity'].Language },
           taskStatus: { required: true, type: () => t['./tasks/entities/task-status.entity'].TaskStatus },
+        },
+      }], [import('./projects/dtos/project-category.dto'), {
+        'ProjectCategoryDto': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          name: { required: true, type: () => String },
+        },
+      }], [import('./projects/dtos/project-status.dto'), {
+        'ProjectStatusDto': {
+          id: { required: true, type: () => Number },
+          name: { required: true, type: () => String },
         },
       }], [import('./common/dtos/pagination-query.dto'), {
         'PaginationQueryDto': {
@@ -1095,10 +1095,8 @@ export default async () => {
         },
       }], [import('./terms-and-policies/controllers/terms-and-policies.controller'), {
         'TermsAndPoliciesController': {
-          'getTermsWithTranslations': { type: t['./terms-and-policies/dtos/terms.dto'].TermsDto },
-          'getPrivacyPolicyWithTranslations': {
-            type: t['./terms-and-policies/dtos/privacy-policy.dto'].PrivacyPolicyDto,
-          },
+          'getTerms': { type: t['./terms-and-policies/dtos/terms.dto'].TermsDto },
+          'getPrivacyPolicy': { type: t['./terms-and-policies/dtos/privacy-policy.dto'].PrivacyPolicyDto },
         },
       }]],
     },

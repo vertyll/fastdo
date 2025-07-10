@@ -1,9 +1,8 @@
-import { Component, ViewChild, computed, input, output, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroCheck, heroListBullet, heroPencil } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasProjectRoleDirective } from 'src/app/core/directives/has-project-role.directive';
-import { AutosizeTextareaComponent } from 'src/app/shared/components/atoms/autosize-textarea.component';
 import { RemoveItemButtonComponent } from 'src/app/shared/components/molecules/remove-item-button.component';
 import { ProjectRoleEnum } from 'src/app/shared/enums/project-role.enum';
 import { CustomDatePipe } from '../../shared/pipes/custom-date.pipe';
@@ -15,7 +14,6 @@ import { Project } from '../models/Project';
   imports: [
     NgIconComponent,
     RemoveItemButtonComponent,
-    AutosizeTextareaComponent,
     TranslateModule,
     TruncateTextPipe,
     CustomDatePipe,
@@ -68,28 +66,18 @@ import { Project } from '../models/Project';
       </header>
 
       <section class="text-left flex-grow">
-        @if (isEditMode()) {
-          <app-autosize-textarea
-            #autosizeTextarea
-            (keyup.escape)="setEditMode(false)"
-            (submitText)="onUpdateProject(project().id, $event)"
-            [value]="project().name"
-          />
-        } @else {
+        <div>
           <h3
-            class="text-xl font-semibold mb-2 break-words cursor-pointer text-gray-900 dark:text-gray-100"
-            (click)="toggleExpanded()"
+            class="text-lg font-semibold text-text-primary dark:text-dark-text-primary mb-1"
           >
-            {{ project().name | truncateText: 100 : isExpanded() }}
+            {{ project().name }}
           </h3>
-          @if (project().description) {
-            <p
-              class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2"
-            >
-              {{ project().description }}
-            </p>
-          }
-        }
+          <p
+            class="text-sm text-text-secondary dark:text-dark-text-primary line-clamp-2 break-all"
+          >
+            {{ project().description | truncateText: 50 }}
+          </p>
+        </div>
       </section>
 
       @if ((project().categories || []).length > 0) {
@@ -138,17 +126,6 @@ import { Project } from '../models/Project';
           </div>
         }
       </div>
-
-      <footer
-        class="pt-3 flex justify-between items-center mt-auto border-t border-gray-200 dark:border-gray-700"
-      >
-        @if ((project().statuses || []).length > 0) {
-          <span class="text-xs text-gray-500 dark:text-gray-400">
-            {{ (project().statuses || []).length }}
-            {{ 'Project.statusesCount' | translate }}
-          </span>
-        }
-      </footer>
     </div>
   `,
   styles: [
@@ -181,34 +158,4 @@ export class ProjectCardComponent {
   readonly viewTasks = output<number>();
 
   protected readonly ProjectRoleEnum = ProjectRoleEnum;
-
-  @ViewChild('autosizeTextarea')
-  autosizeTextarea!: AutosizeTextareaComponent;
-
-  private readonly editModeSignal = signal(false);
-  private readonly expandedSignal = signal(false);
-
-  protected readonly isEditMode = computed(() => this.editModeSignal());
-  protected readonly isExpanded = computed(() => this.expandedSignal());
-
-  protected toggleExpanded(): void {
-    this.expandedSignal.update(value => !value);
-  }
-
-  protected toggleEditMode(): void {
-    this.editModeSignal.update(value => !value);
-  }
-
-  protected setEditMode(value: boolean): void {
-    this.editModeSignal.set(value);
-  }
-
-  protected onUpdateProject(id: number, name: string): void {
-    this.updateProject.emit({ id, name });
-    this.setEditMode(false);
-  }
-
-  protected saveProjectName(): void {
-    this.autosizeTextarea.submit();
-  }
 }

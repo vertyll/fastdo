@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
+import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { AuthService } from '../auth/data-access/auth.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
@@ -237,7 +237,6 @@ import { Project } from './models/Project';
         <div class="flex justify-between items-center pt-6">
           <app-button
             type="button"
-            variant="secondary"
             (click)="cancel()"
           >
             {{ 'Basic.cancel' | translate }}
@@ -267,6 +266,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
   private readonly authService = inject(AuthService);
 
+  private destroy$ = new Subject<void>();
+
   protected projectForm!: FormGroup;
   protected projectTypesRaw: any[] = [];
   protected projectStatusesRaw: any[] = [];
@@ -283,22 +284,17 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   protected selectedIconFile: File | null = null;
   protected isCropping: boolean = false;
 
-  private langChangeSub: any;
-
   ngOnInit(): void {
     this.checkEditMode();
     this.initializeForm();
     this.loadCurrentUser();
     this.loadAllOptions();
-    this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
-      this.updateOptionsForCurrentLang();
-    });
+    this.subscribeToLanguageChanges();
   }
 
   ngOnDestroy(): void {
-    if (this.langChangeSub) {
-      this.langChangeSub.unsubscribe();
-    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private checkEditMode(): void {
@@ -317,34 +313,78 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
       isPublic: [false],
       categories: this.fb.array([]),
       statuses: this.fb.array([]),
-      userEmails: this.fb.array([]),
       usersWithRoles: this.fb.array([]),
     });
   }
 
-  private async loadAllOptions(): Promise<void> {
-    try {
-      const typesResp = await firstValueFrom(this.projectTypeService.getAll());
-      this.projectTypesRaw = typesResp.data || [];
+  private subscribeToLanguageChanges(): void {
+    this.translateService.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.updateOptionsForCurrentLang();
+        },
+        error: error => {
+          console.error('Error handling language change:', error);
+        },
+      });
+  }
 
-      const rolesResp = await firstValueFrom(this.projectRoleService.getAll());
-      this.projectRolesRaw = rolesResp.data || [];
+  private loadAllOptions(): void {
+    const types$ = this.projectTypeService.getAll();
+    const roles$ = this.projectRoleService.getAll();
 
-      if (this.isEditMode && this.projectId) {
-        const statusesResp = await firstValueFrom(this.projectStatusApiService.getByProjectId(this.projectId));
-        this.projectStatusesRaw = statusesResp.data || [];
-        const categoriesResp = await firstValueFrom(this.projectCategoryApiService.getByProjectId(this.projectId));
-        this.projectCategoriesRaw = categoriesResp.data || [];
-      }
+    forkJoin({
+      types: types$,
+      roles: roles$,
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: responses => {
+        this.projectTypesRaw = responses.types.data || [];
+        this.projectRolesRaw = responses.roles.data || [];
+        this.updateOptionsForCurrentLang();
 
-      this.updateOptionsForCurrentLang();
+        if (this.isEditMode && this.projectId) {
+          this.loadProjectSpecificData();
+        }
+      },
+      error: error => {
+        console.error('Error loading project options:', error);
+        this.notificationService.showNotification(
+          this.translateService.instant('Project.loadError'),
+          NotificationTypeEnum.Error,
+        );
+      },
+    });
+  }
 
-      if (this.isEditMode && this.projectId) {
-        await this.loadProject();
-      }
-    } catch (error) {
-      console.error('Error loading project options:', error);
-    }
+  private loadProjectSpecificData(): void {
+    if (!this.projectId) return;
+
+    const statuses$ = this.projectStatusApiService.getByProjectId(this.projectId);
+    const categories$ = this.projectCategoryApiService.getByProjectId(this.projectId);
+
+    forkJoin({
+      statuses: statuses$,
+      categories: categories$,
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: responses => {
+        this.projectStatusesRaw = responses.statuses.data || [];
+        this.projectCategoriesRaw = responses.categories.data || [];
+        this.updateOptionsForCurrentLang();
+        this.loadProject();
+      },
+      error: error => {
+        console.error('Error loading project-specific data:', error);
+        this.notificationService.showNotification(
+          this.translateService.instant('Project.loadError'),
+          NotificationTypeEnum.Error,
+        );
+      },
+    });
   }
 
   private updateOptionsForCurrentLang(): void {
@@ -367,24 +407,27 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private async loadProject(): Promise<void> {
+  private loadProject(): void {
     if (!this.projectId) return;
 
-    try {
-      const currentLang = this.translateService.currentLang || 'pl';
-      const response = await firstValueFrom(
-        this.projectsService.getProjectByIdWithDetails(this.projectId, currentLang),
-      );
-      this.currentProject = response.data;
-      this.populateForm();
-    } catch (error) {
-      console.error('Error loading project:', error);
-      this.notificationService.showNotification(
-        this.translateService.instant('Project.loadError'),
-        NotificationTypeEnum.Error,
-      );
-      await this.router.navigate(['/projects']);
-    }
+    const currentLang = this.translateService.currentLang || 'pl';
+
+    this.projectsService.getProjectByIdWithDetails(this.projectId, currentLang)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.currentProject = response.data;
+          this.populateForm();
+        },
+        error: error => {
+          console.error('Error loading project:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Project.loadError'),
+            NotificationTypeEnum.Error,
+          );
+          this.router.navigate(['/projects']).then();
+        },
+      });
   }
 
   private populateForm(): void {
@@ -428,7 +471,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   }
 
   private loadCurrentUser(): void {
-    // Ensure current user data is loaded from JWT
     const currentUserEmail = this.authService.getCurrentUserEmail();
     if (!currentUserEmail) {
       console.warn('No current user email found in JWT token');
@@ -441,10 +483,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
   get statusesFormArray(): FormArray {
     return this.projectForm.get('statuses') as FormArray;
-  }
-
-  get userEmailsFormArray(): FormArray {
-    return this.projectForm.get('userEmails') as FormArray;
   }
 
   get usersWithRolesFormArray(): FormArray {
@@ -529,17 +567,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     this.statusesFormArray.removeAt(index);
   }
 
-  protected addUserEmail(): void {
-    this.userEmailsFormArray.push(this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-    }));
-  }
-
-  protected removeUserEmail(index: number): void {
-    this.userEmailsFormArray.removeAt(index);
-  }
-
-  protected async addUserWithRole(): Promise<void> {
+  protected addUserWithRole(): void {
     this.usersWithRolesFormArray.push(this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       role: ['', [Validators.required]],
@@ -582,93 +610,97 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     this.selectedIconFile = null;
   }
 
-  protected async onSubmit(): Promise<void> {
+  protected onSubmit(): void {
     if (this.projectForm.invalid || this.isSubmitting || this.isCropping) {
       return;
     }
 
     this.isSubmitting = true;
+    const formValue = this.projectForm.value;
 
-    try {
-      const formValue = this.projectForm.value;
+    if (this.isEditMode && this.projectId) {
+      const projectData: UpdateProjectDto = {
+        name: formValue.name,
+        description: formValue.description || undefined,
+        isPublic: formValue.isPublic || false,
+        typeId: formValue.typeId || undefined,
+        categories: formValue.categories
+          .filter((cat: any) => cat.name && cat.name.trim())
+          .map((cat: any) => cat.name.trim()),
+        statuses: formValue.statuses
+          .filter((status: any) => status.name && status.name.trim())
+          .map((status: any) => status.name.trim()),
+        usersWithRoles: formValue.usersWithRoles
+          ?.filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
+          ?.map((userWithRole: any) => ({
+            email: userWithRole.email.trim(),
+            role: userWithRole.role,
+          })) || [],
+        userEmails: formValue.userEmails
+          ?.filter((userEmail: any) => userEmail.email && userEmail.email.trim())
+          ?.map((userEmail: any) => userEmail.email.trim()) || [],
+      };
 
-      let response;
-      if (this.isEditMode && this.projectId) {
-        const projectData: UpdateProjectDto = {
-          name: formValue.name,
-          description: formValue.description || undefined,
-          isPublic: formValue.isPublic || false,
-          typeId: formValue.typeId || undefined,
-          categories: formValue.categories
-            .filter((cat: any) => cat.name && cat.name.trim())
-            .map((cat: any) => cat.name.trim()),
-          statuses: formValue.statuses
-            .filter((status: any) => status.name && status.name.trim())
-            .map((status: any) => status.name.trim()),
-          usersWithRoles: formValue.usersWithRoles
-            ?.filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
-            ?.map((userWithRole: any) => ({
-              email: userWithRole.email.trim(),
-              role: userWithRole.role,
-            })) || [],
-          userEmails: formValue.userEmails
-            ?.filter((userEmail: any) => userEmail.email && userEmail.email.trim())
-            ?.map((userEmail: any) => userEmail.email.trim()) || [],
-        };
-        response = await firstValueFrom(
-          this.projectsService.updateFull(this.projectId, projectData, this.selectedIconFile),
-        );
-      } else {
-        const projectData: AddProjectDto = {
-          name: formValue.name,
-          description: formValue.description || undefined,
-          isPublic: formValue.isPublic || false,
-          typeId: formValue.typeId || undefined,
-          categories: formValue.categories
-            .filter((cat: any) => cat.name && cat.name.trim())
-            .map((cat: any) => cat.name.trim()),
-          statuses: formValue.statuses
-            .filter((status: any) => status.name && status.name.trim())
-            .map((status: any) => status.name.trim()),
-          usersWithRoles: formValue.usersWithRoles
-            ?.filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
-            ?.map((userWithRole: any) => ({
-              email: userWithRole.email.trim(),
-              role: userWithRole.role,
-            })) || [],
-          userEmails: formValue.userEmails
-            ?.filter((userEmail: any) => userEmail.email && userEmail.email.trim())
-            ?.map((userEmail: any) => userEmail.email.trim()) || [],
-        };
-        response = await firstValueFrom(this.projectsService.add(projectData, this.selectedIconFile));
-        this.projectsStateService.addProject(response.data);
-      }
+      this.projectsService.updateFull(this.projectId, projectData, this.selectedIconFile)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            const successMessage = this.translateService.instant('Project.updateSuccess');
+            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
+            this.router.navigate(['/projects']).then();
+          },
+          error: error => {
+            const errorMessage = error.error?.message || this.translateService.instant('Project.updateError');
+            this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+          },
+          complete: () => {
+            this.isSubmitting = false;
+          },
+        });
+    } else {
+      const projectData: AddProjectDto = {
+        name: formValue.name,
+        description: formValue.description || undefined,
+        isPublic: formValue.isPublic || false,
+        typeId: formValue.typeId || undefined,
+        categories: formValue.categories
+          .filter((cat: any) => cat.name && cat.name.trim())
+          .map((cat: any) => cat.name.trim()),
+        statuses: formValue.statuses
+          .filter((status: any) => status.name && status.name.trim())
+          .map((status: any) => status.name.trim()),
+        usersWithRoles: formValue.usersWithRoles
+          ?.filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
+          ?.map((userWithRole: any) => ({
+            email: userWithRole.email.trim(),
+            role: userWithRole.role,
+          })) || [],
+        userEmails: formValue.userEmails
+          ?.filter((userEmail: any) => userEmail.email && userEmail.email.trim())
+          ?.map((userEmail: any) => userEmail.email.trim()) || [],
+      };
 
-      const successMessage = this.isEditMode
-        ? this.translateService.instant('Project.updateSuccess')
-        : this.translateService.instant('Project.addSuccess');
-
-      this.notificationService.showNotification(
-        successMessage,
-        NotificationTypeEnum.Success,
-      );
-
-      await this.router.navigate(['/projects']);
-    } catch (error: any) {
-      const errorMessage = error.error?.message
-        || this.translateService.instant(
-          this.isEditMode ? 'Project.updateError' : 'Project.addError',
-        );
-      this.notificationService.showNotification(
-        errorMessage,
-        NotificationTypeEnum.Error,
-      );
-    } finally {
-      this.isSubmitting = false;
+      this.projectsService.add(projectData, this.selectedIconFile)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: response => {
+            this.projectsStateService.addProject(response.data);
+            const successMessage = this.translateService.instant('Project.addSuccess');
+            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
+            this.router.navigate(['/projects']).then();
+          },
+          error: error => {
+            const errorMessage = error.error?.message || this.translateService.instant('Project.addError');
+            this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+          },
+          complete: () => {
+            this.isSubmitting = false;
+          },
+        });
     }
   }
 
-  protected async cancel(): Promise<void> {
-    await this.router.navigate(['/projects']);
+  protected cancel(): void {
+    this.router.navigate(['/projects']).then();
   }
 }
