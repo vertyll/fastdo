@@ -258,7 +258,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly projectsService = inject(ProjectsService);
   private readonly projectTypeService = inject(ProjectTypeService);
-  private readonly projectRoleService = inject(ProjectRoleApiService);
+  private readonly projectRoleApiService = inject(ProjectRoleApiService);
   private readonly projectStatusApiService = inject(ProjectStatusApiService);
   private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
   private readonly projectsStateService = inject(ProjectsStateService);
@@ -332,7 +332,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
   private loadAllOptions(): void {
     const types$ = this.projectTypeService.getAll();
-    const roles$ = this.projectRoleService.getAll();
+    const roles$ = this.projectRoleApiService.getAll();
 
     forkJoin({
       types: types$,

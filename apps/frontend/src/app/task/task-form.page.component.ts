@@ -186,7 +186,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
   private readonly projectsApiService = inject(ProjectsApiService);
-  private readonly priorityApiService = inject(TaskPriorityApiService);
+  private readonly taskPriorityApiService = inject(TaskPriorityApiService);
   private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
   private readonly projectRoleApiService = inject(ProjectRoleApiService);
   private readonly projectStatusApiService = inject(ProjectStatusApiService);
@@ -338,7 +338,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private loadOptions(): void {
     const currentProjectId = this.projectId();
 
-    this.priorityApiService.getAll()
+    this.taskPriorityApiService.getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: prioritiesRes => {

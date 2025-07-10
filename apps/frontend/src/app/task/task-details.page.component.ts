@@ -8,15 +8,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
-import { ProjectCategoryApiService } from '../project/data-access/project-category.api.service';
-import { ProjectRoleApiService } from '../project/data-access/project-role.api.service';
-import { ProjectStatusApiService } from '../project/data-access/project-status.api.service';
-import { ProjectsApiService } from '../project/data-access/project.api.service';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
-import { TaskPriorityApiService } from './data-access/task-priority-api.service';
 import { TasksService } from './data-access/task.service';
 import { Task, TaskComment } from './models/Task';
 
@@ -511,13 +506,6 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   protected readonly modalService = inject(ModalService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly authStateService = inject(AuthStateService);
-  private readonly priorityApiService = inject(TaskPriorityApiService);
-  private readonly projectCategoryApiService = inject(
-    ProjectCategoryApiService,
-  );
-  private readonly projectStatusApiService = inject(ProjectStatusApiService);
-  private readonly projectUsersApiService = inject(ProjectsApiService);
-  private readonly projectRoleApiService = inject(ProjectRoleApiService);
 
   protected readonly task = signal<Task | null>(null);
   protected readonly loading = signal(true);
@@ -548,6 +536,11 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTask();
+    this.translateService.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadTask();
+      });
   }
 
   ngOnDestroy(): void {
@@ -557,13 +550,11 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   private loadTask(): void {
     this.loading.set(true);
-
     this.tasksService.getOne(+this.taskId())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
           this.task.set(response.data);
-          this.loadEditOptions();
           this.loading.set(false);
         },
         error: error => {
@@ -789,69 +780,5 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       if (obj.translations[0]?.name) return obj.translations[0].name;
     }
     return obj.name || '';
-  }
-
-  private loadEditOptions(): void {
-    const task = this.task();
-    if (!task) return;
-
-    this.priorityApiService.getAll().subscribe({
-      next: prioritiesResponse => {
-        if (prioritiesResponse.data) {
-          this.priorities.set(prioritiesResponse.data);
-        }
-      },
-      error: error => {
-        console.error('Error loading priorities:', error);
-      },
-    });
-
-    this.projectRoleApiService.getAll().subscribe({
-      next: rolesResponse => {
-        if (rolesResponse.data) {
-          this.accessRoles.set(rolesResponse.data);
-        }
-      },
-      error: error => {
-        console.error('Error loading roles:', error);
-      },
-    });
-
-    if (task.project?.id) {
-      const projectId = task.project.id;
-
-      this.projectCategoryApiService.getByProjectId(projectId).subscribe({
-        next: categoriesResponse => {
-          if (categoriesResponse.data) {
-            this.categories.set(categoriesResponse.data);
-          }
-        },
-        error: error => {
-          console.error('Error loading categories:', error);
-        },
-      });
-
-      this.projectStatusApiService.getByProjectId(projectId).subscribe({
-        next: statusesResponse => {
-          if (statusesResponse.data) {
-            this.statuses.set(statusesResponse.data);
-          }
-        },
-        error: error => {
-          console.error('Error loading statuses:', error);
-        },
-      });
-
-      this.projectUsersApiService.getProjectUsers(projectId).subscribe({
-        next: usersResponse => {
-          if (usersResponse.data) {
-            this.projectUsers.set(usersResponse.data);
-          }
-        },
-        error: error => {
-          console.error('Error loading users:', error);
-        },
-      });
-    }
   }
 }
