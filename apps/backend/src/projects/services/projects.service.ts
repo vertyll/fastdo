@@ -326,8 +326,13 @@ export class ProjectsService {
 
             await this.notificationService.createNotification({
               type: NotificationTypeEnum.PROJECT_INVITATION,
-              title: 'Zaproszenie do projektu',
-              message: `${inviter.email} zaprosił Cię do projektu.`,
+              title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
+              message: this.i18n.t('messages.Projects.notifications.invitationMessage', {
+                args: {
+                  inviterEmail: inviter.email,
+                  projectName,
+                },
+              }),
               recipientId: user.id,
               data: { projectId, projectName, inviterEmail: inviter.email, invitationId: invitation.id },
               sendEmail: true,
@@ -380,8 +385,13 @@ export class ProjectsService {
 
             await this.notificationService.createNotification({
               type: NotificationTypeEnum.PROJECT_INVITATION,
-              title: 'Zaproszenie do projektu',
-              message: `${inviter.email} zaprosił Cię do projektu z rolą ${roleName}.`,
+              title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
+              message: this.i18n.t('messages.Projects.notifications.invitationMessage', {
+                args: {
+                  inviterEmail: inviter.email,
+                  projectName,
+                },
+              }),
               recipientId: user.id,
               data: {
                 projectId,
@@ -488,10 +498,16 @@ export class ProjectsService {
                 await invitationRepo.save(invitation);
                 const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
                 const roleName = roleInfo?.translations?.[0]?.name || 'undefined';
+                const project = await queryRunner.manager.getRepository(Project).findOne({ where: { id: projectId } });
                 await this.notificationService.createNotification({
                   type: NotificationTypeEnum.PROJECT_INVITATION,
-                  title: 'Zaproszenie do projektu',
-                  message: `${updater.email} zaprosił Cię do projektu z rolą ${roleName}.`,
+                  title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
+                  message: this.i18n.t('messages.Projects.notifications.invitationMessage', {
+                    args: {
+                      inviterEmail: updater.email,
+                      projectName: project?.name || '',
+                    },
+                  }),
                   recipientId: user.id,
                   data: {
                     projectId,

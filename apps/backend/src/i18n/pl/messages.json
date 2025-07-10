@@ -111,6 +111,10 @@
       "notAllowedToAcceptInvitation": "Nie masz uprawnień do zaakceptowania tego zaproszenia",
       "notAllowedToRejectInvitation": "Nie masz uprawnień do odrzucenia tego zaproszenia"
     },
+    "notifications": {
+      "invitationTitle": "Zaproszenie do projektu",
+      "invitationMessage": "{inviterEmail} zaprosił Cię do projektu {projectName}"
+    },
     "invitation": "Zostałeś zaproszony do projektu {projectName}"
   },
   "Tasks": {

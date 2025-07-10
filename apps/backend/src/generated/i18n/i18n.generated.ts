@@ -119,6 +119,10 @@ export type I18nTranslations = {
         'notAllowedToAcceptInvitation': string;
         'notAllowedToRejectInvitation': string;
       };
+      'notifications': {
+        'invitationTitle': string;
+        'invitationMessage': string;
+      };
       'invitation': string;
     };
     'Tasks': {

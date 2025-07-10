@@ -111,6 +111,10 @@
       "notAllowedToAcceptInvitation": "You are not allowed to accept this invitation",
       "notAllowedToRejectInvitation": "You are not allowed to reject this invitation"
     },
+    "notifications": {
+      "invitationTitle": "Project invitation",
+      "invitationMessage": "{inviterEmail} invited you to the project {projectName}"
+    },
     "invitation": "You have been invited to the project {projectName}"
   },
   "Tasks": {
