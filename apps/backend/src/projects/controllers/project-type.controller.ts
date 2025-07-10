@@ -3,7 +3,6 @@ import { ApiHeader, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { ProjectTypeResponseDto } from '../dtos/project-type-response.dto';
-import { ProjectTypeDto } from '../dtos/project-type.dto';
 import { ProjectTypeService } from '../services/project-type.service';
 
 @ApiTags('project-types')
@@ -18,7 +17,7 @@ export class ProjectTypeController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Return all project types.',
-    type: ProjectTypeDto,
+    type: ProjectTypeResponseDto,
     isArray: true,
   })
   public getAll(): Promise<ProjectTypeResponseDto[]> {

@@ -4,7 +4,6 @@ import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectStatusDto } from '../dtos/create-project-status.dto';
 import { ProjectStatusResponseDto } from '../dtos/project-status-response.dto';
-import { ProjectStatusDto } from '../dtos/project-status.dto';
 import { UpdateProjectStatusDto } from '../dtos/update-project-status.dto';
 import { ProjectStatus } from '../entities/project-status.entity';
 import { ProjectStatusService } from '../services/project-status.service';
@@ -21,7 +20,8 @@ export class ProjectStatusController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Return all statuses for the project with translated names.',
-    type: [ProjectStatusDto],
+    type: ProjectStatusResponseDto,
+    isArray: true,
   })
   public async getProjectStatuses(
     @Param('projectId') projectId: string,

@@ -21,7 +21,7 @@ export class TermsAndPoliciesController {
     description: 'Latest terms document with all translations',
     type: TermsDto,
   })
-  public getTermsWithTranslations(): Promise<TermsDto> {
+  public getTerms(): Promise<TermsDto> {
     return this.service.getLatestTerms();
   }
 
@@ -33,7 +33,7 @@ export class TermsAndPoliciesController {
     description: 'Latest privacy policy document with all translations',
     type: PrivacyPolicyDto,
   })
-  public getPrivacyPolicyWithTranslations(): Promise<PrivacyPolicyDto> {
+  public getPrivacyPolicy(): Promise<PrivacyPolicyDto> {
     return this.service.getLatestPrivacyPolicy();
   }
 }

@@ -109,7 +109,7 @@ export class ProjectsController {
     type: Project,
     isArray: true,
   })
-  async acceptInvitation(@Body() dto: AcceptInvitationDto) {
+  async acceptInvitation(@Body() dto: AcceptInvitationDto): Promise<void> {
     return this.projectsService.acceptInvitation(dto.invitationId);
   }
 
@@ -119,7 +119,7 @@ export class ProjectsController {
     status: 200,
     description: 'The project invitation has been successfully rejected.',
   })
-  async rejectInvitation(@Body() dto: RejectInvitationDto) {
+  async rejectInvitation(@Body() dto: RejectInvitationDto): Promise<void> {
     return this.projectsService.rejectInvitation(dto.invitationId);
   }
 }

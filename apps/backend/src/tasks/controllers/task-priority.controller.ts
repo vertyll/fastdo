@@ -16,6 +16,7 @@ export class TaskPriorityController {
     description: 'Return all task priorities with translations.',
     type: TaskPriorityResponseDto,
     isPaginated: false,
+    isArray: true,
   })
   async findAll(): Promise<TaskPriorityResponseDto[]> {
     return this.taskPriorityService.findAll();

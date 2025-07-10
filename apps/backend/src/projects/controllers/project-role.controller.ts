@@ -4,7 +4,6 @@ import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response
 import { Public } from '../../common/decorators/public.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { ProjectRoleResponseDto } from '../dtos/project-role-response.dto';
-import { ProjectRoleDto } from '../dtos/project-role.dto';
 import { ProjectRoleService } from '../services/project-role.service';
 
 @ApiTags('project-roles')
@@ -19,7 +18,7 @@ export class ProjectRoleController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Return all project roles with translated names.',
-    type: ProjectRoleDto,
+    type: ProjectRoleResponseDto,
     isArray: true,
   })
   public async findAll(): Promise<ProjectRoleResponseDto[]> {

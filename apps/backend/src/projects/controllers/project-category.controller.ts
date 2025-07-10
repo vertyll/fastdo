@@ -4,7 +4,6 @@ import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { CreateProjectCategoryDto } from '../dtos/create-project-category.dto';
 import { ProjectCategoryResponseDto } from '../dtos/project-category-response.dto';
-import { ProjectCategoryDto } from '../dtos/project-category.dto';
 import { UpdateProjectCategoryDto } from '../dtos/update-project-category.dto';
 import { ProjectCategory } from '../entities/project-category.entity';
 import { ProjectCategoryService } from '../services/project-category.service';
@@ -23,7 +22,8 @@ export class ProjectCategoryController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Return all categories for the project with translated names.',
-    type: [ProjectCategoryDto],
+    type: ProjectCategoryResponseDto,
+    isArray: true,
   })
   public async getProjectCategories(
     @Param('projectId') projectId: string,
