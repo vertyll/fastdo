@@ -18,7 +18,7 @@ export class TaskCategoryTranslation {
   description?: string;
 
   @ApiProperty({ type: () => Language })
-  @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE', eager: true })
   language: Relation<Language>;
 
   @ApiProperty({ type: () => TaskCategory })

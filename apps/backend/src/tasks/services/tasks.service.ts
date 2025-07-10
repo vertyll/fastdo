@@ -8,10 +8,12 @@ import { ProjectRole } from 'src/projects/entities/project-role.entity';
 import { ProjectStatus } from 'src/projects/entities/project-status.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
+import { TranslationDto } from '../../common/dtos/translation.dto';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
+import { TaskResponseDto } from '../dtos/task-response.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
 import { TaskComment } from '../entities/task-comment.entity';
@@ -105,8 +107,8 @@ export class TasksService implements ITasksService {
     };
   }
 
-  public findOne(id: number): Promise<Task> {
-    return this.taskRepository.findOneOrFail({
+  public async findOne(id: number): Promise<TaskResponseDto> {
+    const task = await this.taskRepository.findOneOrFail({
       where: { id },
       relations: [
         'project',
@@ -125,10 +127,29 @@ export class TasksService implements ITasksService {
         'comments.author',
       ],
     });
+    return this.mapTaskToResponseDto(task);
   }
 
-  public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
-    const task = await this.findOne(id);
+  public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
+    const task = await this.taskRepository.findOneOrFail({
+      where: { id },
+      relations: [
+        'project',
+        'assignedUsers',
+        'createdBy',
+        'priority',
+        'priority.translations',
+        'categories',
+        'categories.translations',
+        'status',
+        'status.translations',
+        'accessRole',
+        'accessRole.translations',
+        'taskAttachments',
+        'comments',
+        'comments.author',
+      ],
+    });
 
     if (updateTaskDto.description !== undefined) task.description = updateTaskDto.description;
     if (updateTaskDto.additionalDescription !== undefined) {
@@ -158,12 +179,51 @@ export class TasksService implements ITasksService {
 
     task.dateModification = new Date();
 
-    return this.taskRepository.save(task);
+    await this.taskRepository.save(task);
+    const updatedTask = await this.taskRepository.findOneOrFail({
+      where: { id },
+      relations: [
+        'project',
+        'assignedUsers',
+        'createdBy',
+        'priority',
+        'priority.translations',
+        'categories',
+        'categories.translations',
+        'status',
+        'status.translations',
+        'accessRole',
+        'accessRole.translations',
+        'taskAttachments',
+        'comments',
+        'comments.author',
+      ],
+    });
+    return this.mapTaskToResponseDto(updatedTask);
   }
 
-  public async remove(id: number): Promise<void> {
-    const task = await this.findOne(id);
+  public async remove(id: number): Promise<TaskResponseDto> {
+    const task = await this.taskRepository.findOneOrFail({
+      where: { id },
+      relations: [
+        'project',
+        'assignedUsers',
+        'createdBy',
+        'priority',
+        'priority.translations',
+        'categories',
+        'categories.translations',
+        'status',
+        'status.translations',
+        'accessRole',
+        'accessRole.translations',
+        'taskAttachments',
+        'comments',
+        'comments.author',
+      ],
+    });
     await this.taskRepository.remove(task);
+    return this.mapTaskToResponseDto(task);
   }
 
   public async removeByProjectId(projectId: number): Promise<void> {
@@ -225,5 +285,49 @@ export class TasksService implements ITasksService {
     // TODO: Handle attachments if provided in updateCommentDto
 
     return this.taskRepository.manager.save(TaskComment, comment);
+  }
+
+  private mapTaskToResponseDto(task: Task): TaskResponseDto {
+    const mapTranslations = this.mapTranslations;
+    const accessRole = task.accessRole
+      ? { ...task.accessRole, translations: mapTranslations(task.accessRole.translations) }
+      : undefined;
+    const priority = task.priority
+      ? { ...task.priority, translations: mapTranslations(task.priority.translations) }
+      : undefined;
+    const categories = Array.isArray(task.categories)
+      ? task.categories.map(cat => ({ ...cat, translations: mapTranslations(cat.translations) }))
+      : [];
+    const status = task.status
+      ? { ...task.status, translations: mapTranslations(task.status.translations) }
+      : null;
+
+    return {
+      id: task.id,
+      description: task.description,
+      additionalDescription: task.additionalDescription,
+      priceEstimation: task.priceEstimation,
+      workedTime: task.workedTime,
+      accessRole,
+      dateCreation: task.dateCreation,
+      dateModification: task.dateModification,
+      project: task.project,
+      assignedUsers: task.assignedUsers,
+      createdBy: task.createdBy,
+      priority,
+      categories,
+      status,
+      taskAttachments: task.taskAttachments,
+      comments: task.comments,
+    };
+  }
+
+  private mapTranslations(translations: any[]): TranslationDto[] {
+    if (!translations) return [];
+    return translations.map(t => ({
+      lang: t.language?.code || t.lang || '',
+      name: t.name,
+      description: t.description ?? undefined,
+    }));
   }
 }

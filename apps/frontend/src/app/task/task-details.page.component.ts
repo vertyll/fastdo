@@ -511,20 +511,6 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   protected readonly loading = signal(true);
   protected readonly submittingComment = signal(false);
 
-  protected readonly priorities = signal<Array<{ id: number; name: string; }>>(
-    [],
-  );
-  protected readonly categories = signal<Array<{ id: number; name: string; }>>(
-    [],
-  );
-  protected readonly statuses = signal<Array<{ id: number; name: string; }>>([]);
-  protected readonly projectUsers = signal<Array<{ id: number; name: string; }>>(
-    [],
-  );
-  protected readonly accessRoles = signal<Array<{ id: number; name: string; }>>(
-    [],
-  );
-
   protected editingCommentId: number | null = null;
   protected editingCommentContent: string = '';
 
@@ -534,12 +520,15 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     content: ['', [Validators.required, Validators.minLength(1)]],
   });
 
+  private currentLang: string = this.translateService.currentLang || 'pl';
+
   ngOnInit(): void {
     this.loadTask();
     this.translateService.onLangChange
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loadTask();
+      .subscribe(({ lang }) => {
+        this.currentLang = lang;
+        this.task.set(this.task());
       });
   }
 
@@ -773,11 +762,11 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected getTranslatedName(obj: any): string {
     if (!obj) return '';
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.currentLang;
     if (obj.translations && Array.isArray(obj.translations)) {
-      const found = obj.translations.find((t: any) => t.lang === lang);
+      let found = obj.translations.find((t: any) => t.lang === lang);
+      if (!found && obj.translations[0]?.name) found = obj.translations[0];
       if (found && found.name) return found.name;
-      if (obj.translations[0]?.name) return obj.translations[0].name;
     }
     return obj.name || '';
   }
