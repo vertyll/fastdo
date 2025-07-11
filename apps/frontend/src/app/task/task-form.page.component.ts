@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -65,6 +66,14 @@ interface SelectOption {
             <label for="description" class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1">
               {{ 'Task.taskDescription' | translate }} *
             </label>
+
+            @if (fieldErrors['description']) {
+              <div class="mt-1">
+                @for (err of fieldErrors['description']; track err) {
+                  <div class="text-danger-600 text-xs">{{ err }}</div>
+                }
+              </div>
+            }
           </div>
 
           <div class="relative">
@@ -77,6 +86,14 @@ interface SelectOption {
             <label for="additionalDescription" class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1">
               {{ 'Task.additionalDescription' | translate }}
             </label>
+
+            @if (fieldErrors['additionalDescription']) {
+              <div class="mt-1">
+                @for (err of fieldErrors['additionalDescription']; track err) {
+                  <div class="text-danger-600 text-xs">{{ err }}</div>
+                }
+              </div>
+            }
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -105,7 +122,6 @@ interface SelectOption {
             />
 
             @if (projectId()) {
-              <div class="lg:col-span-1">
                 <app-editable-multi-select
                   [dataArray]="categories()"
                   [maxSelectedItems]="10"
@@ -113,10 +129,8 @@ interface SelectOption {
                   [placeholder]="'Task.categories' | translate"
                   formControlName="categoryIds"
                 ></app-editable-multi-select>
-              </div>
 
               @if (projectUsers().length > 0) {
-                <div class="lg:col-span-1">
                   <app-editable-multi-select
                     [dataArray]="projectUsers()"
                     [maxSelectedItems]="20"
@@ -124,7 +138,6 @@ interface SelectOption {
                     [placeholder]="'Task.assignedUsers' | translate"
                     formControlName="assignedUserIds"
                   ></app-editable-multi-select>
-                </div>
               } @else {
                 <p class="text-sm text-text-muted dark:text-dark-text-muted italic">
                   {{ 'Task.noProjectUsers' | translate }}
@@ -192,6 +205,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly projectStatusApiService = inject(ProjectStatusApiService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -223,6 +237,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     categoryIds: [[]],
     assignedUserIds: [[]],
   });
+
+  protected fieldErrors: Record<string, string[]> = {};
 
   get descriptionControl() {
     return this.taskForm.get('description') as FormControl;
@@ -285,6 +301,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     this.submitting.set(true);
     this.error.set(null);
+    this.fieldErrors = {};
 
     const formValue = this.taskForm.value;
     const currentProjectId = this.projectId();
@@ -461,6 +478,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           }
         },
         error: error => {
+          console.log('createTask error callback:', error);
           this.handleSubmissionError(error);
         },
         complete: () => {
@@ -492,6 +510,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           }
         },
         error: error => {
+          console.log('updateTask error callback:', error);
           this.handleSubmissionError(error);
         },
         complete: () => {
@@ -501,13 +520,27 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   private handleSubmissionError(error: any): void {
-    console.error('Error processing task:', error);
-    const errorMessage = error.error?.message || this.translateService.instant('Task.addError');
-    this.error.set(errorMessage);
-    this.notificationService.showNotification(
-      errorMessage,
-      NotificationTypeEnum.Error,
-    );
+    const messages = error?.error?.errors?.message ?? [];
+    if (Array.isArray(messages) && messages.length > 0) {
+      Object.keys(this.fieldErrors).forEach(key => delete this.fieldErrors[key]);
+      messages.forEach((errObj: any) => {
+        if (errObj.field && Array.isArray(errObj.errors)) {
+          this.fieldErrors[errObj.field] = errObj.errors;
+        }
+      });
+      this.cdr.markForCheck();
+      this.error.set(null);
+    } else {
+      const errorMessage = error?.error?.errors?.error
+        || error?.error?.message
+        || error?.message
+        || 'Wystąpił błąd';
+      this.error.set(errorMessage);
+      this.notificationService.showNotification(
+        errorMessage,
+        NotificationTypeEnum.Error,
+      );
+    }
     this.submitting.set(false);
   }
 

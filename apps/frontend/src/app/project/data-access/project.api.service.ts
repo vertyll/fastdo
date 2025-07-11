@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { EMPTY, Observable, catchError, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
@@ -152,7 +152,7 @@ export class ProjectsApiService {
       catchError((e: HttpErrorResponse) => {
         this.$error.set({ message: e.message, status: e.status });
         this.$loading.set(false);
-        return EMPTY;
+        return throwError(() => e);
       }),
       tap(() => {
         this.$loading.set(false);

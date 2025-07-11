@@ -33,6 +33,7 @@ import { ProjectUser } from './projects/entities/project-user.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { TaskPriorityResponseDto } from './tasks/dtos/task-priority-response.dto';
+import { TaskResponseDto } from './tasks/dtos/task-response.dto';
 import { TaskPriority } from './tasks/entities/task-priority.entity';
 import { Task } from './tasks/entities/task.entity';
 import { PrivacyPolicyDto } from './terms-and-policies/dtos/privacy-policy.dto';
@@ -47,7 +48,6 @@ import { UserDto } from './users/dtos/user.dto';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
-import { TaskResponseDto } from './tasks/dtos/task-response.dto';
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(

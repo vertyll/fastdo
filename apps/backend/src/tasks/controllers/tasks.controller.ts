@@ -5,12 +5,12 @@ import { ApiPaginatedResponse } from '../../common/types/api-responses.interface
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
+import { TaskResponseDto } from '../dtos/task-response.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
 import { TaskComment } from '../entities/task-comment.entity';
 import { Task } from '../entities/task.entity';
 import { TasksService } from '../services/tasks.service';
-import { TaskResponseDto } from '../dtos/task-response.dto';
 
 @ApiTags('tasks')
 @Controller('tasks')
@@ -59,10 +59,10 @@ export class TasksController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
-  @ApiWrappedResponse({ 
-    status: 200, 
-    description: 'Return the task.', 
-    type: TaskResponseDto, 
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return the task.',
+    type: TaskResponseDto,
   })
   public findOne(@Param('id') id: string): Promise<TaskResponseDto> {
     return this.tasksService.findOne(+id);

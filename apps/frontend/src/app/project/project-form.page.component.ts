@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,6 +27,7 @@ import { Project } from './models/Project';
 @Component({
   selector: 'app-project-form-page',
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     TitleComponent,
@@ -248,6 +250,55 @@ import { Project } from './models/Project';
             {{ isSubmitting ? ('Basic.saving' | translate) : (isEditMode ? ('Basic.update' | translate) : ('Basic.save' | translate)) }}
           </app-button>
         </div>
+
+
+        @if (fieldErrors['name']) {
+          <div class="mt-1">
+            @for (err of fieldErrors['name']; track err) {
+              <div class="text-danger-600 text-xs">{{ err }}</div>
+            }
+          </div>
+        }
+
+        @if (fieldErrors['description']) {
+          <div class="mt-1">
+            @for (err of fieldErrors['description']; track err) {
+              <div class="text-danger-600 text-xs">{{ err }}</div>
+            }
+          </div>
+        }
+
+        @if (fieldErrors['typeId']) {
+          <div class="mt-1">
+            @for (err of fieldErrors['typeId']; track err) {
+              <div class="text-danger-600 text-xs">{{ err }}</div>
+            }
+          </div>
+        }
+
+        @if (fieldErrors['categories']) {
+          <div class="mt-1">
+            @for (err of fieldErrors['categories']; track err) {
+              <div class="text-danger-600 text-xs">{{ err }}</div>
+            }
+          </div>
+        }
+
+        @if (fieldErrors['statuses']) {
+          <div class="mt-1">
+            @for (err of fieldErrors['statuses']; track err) {
+              <div class="text-danger-600 text-xs">{{ err }}</div>
+            }
+          </div>
+        }
+
+        @if (fieldErrors['usersWithRoles']) {
+          <div class="mt-1">
+            @for (err of fieldErrors['usersWithRoles']; track err) {
+              <div class="text-danger-600 text-xs">{{ err }}</div>
+            }
+          </div>
+        }
       </form>
     </div>
   `,
@@ -283,6 +334,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   protected currentProject: Project | null = null;
   protected selectedIconFile: File | null = null;
   protected isCropping: boolean = false;
+  protected fieldErrors: Record<string, string[]> = {};
 
   ngOnInit(): void {
     this.checkEditMode();
@@ -616,6 +668,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     }
 
     this.isSubmitting = true;
+    this.fieldErrors = {};
     const formValue = this.projectForm.value;
 
     if (this.isEditMode && this.projectId) {
@@ -650,8 +703,17 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
             this.router.navigate(['/projects']).then();
           },
           error: error => {
-            const errorMessage = error.error?.message || this.translateService.instant('Project.updateError');
-            this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+            if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
+              this.fieldErrors = {};
+              error.error.errors.message.forEach((errObj: any) => {
+                if (errObj.field && Array.isArray(errObj.errors)) {
+                  this.fieldErrors[errObj.field] = errObj.errors;
+                }
+              });
+            } else {
+              const errorMessage = error.error?.message || this.translateService.instant('Project.updateError');
+              this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+            }
           },
           complete: () => {
             this.isSubmitting = false;
@@ -690,8 +752,17 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
             this.router.navigate(['/projects']).then();
           },
           error: error => {
-            const errorMessage = error.error?.message || this.translateService.instant('Project.addError');
-            this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+            if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
+              this.fieldErrors = {};
+              error.error.errors.message.forEach((errObj: any) => {
+                if (errObj.field && Array.isArray(errObj.errors)) {
+                  this.fieldErrors[errObj.field] = errObj.errors;
+                }
+              });
+            } else {
+              const errorMessage = error.error?.message || this.translateService.instant('Project.addError');
+              this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+            }
           },
           complete: () => {
             this.isSubmitting = false;
