@@ -1,5 +1,4 @@
 import { FilterTypeEnum } from '../enums/filter-type.enum';
-import { TaskStatusEnum } from '../enums/task-status.enum';
 
 /*
  * Interface
@@ -36,7 +35,10 @@ export type FilterModel = {
 
 export type TasksListFiltersConfig = {
   q: string;
-  status: TaskStatusEnum;
+  priorityIds: number[];
+  categoryIds: number[];
+  statusIds: number[];
+  assignedUserIds: number[];
   sortBy: 'dateCreation' | 'dateModification' | 'name';
   orderBy: 'asc' | 'desc';
   createdFrom: string;
@@ -45,7 +47,7 @@ export type TasksListFiltersConfig = {
   updatedTo: string;
 };
 
-export type ProjectListFiltersConfig = {
+export interface ProjectListFiltersConfig {
   q: string;
   sortBy: 'dateCreation' | 'dateModification' | 'name';
   orderBy: 'asc' | 'desc';
@@ -53,29 +55,30 @@ export type ProjectListFiltersConfig = {
   createdTo: string;
   updatedFrom: string;
   updatedTo: string;
-};
+  typeIds: number[];
+  page: number;
+  pageSize: number;
+}
 
 export type PaginationParams = {
   page: number;
   pageSize: number;
 };
 
-export const TASKS_LIST_FILTERS: FilterMetadata[] = [
+/*
+ * Const
+ */
+export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
     type: FilterTypeEnum.Text,
     formControlName: 'q',
     labelKey: 'Filters.search',
   },
   {
-    type: FilterTypeEnum.Select,
-    formControlName: 'status',
-    labelKey: 'Filters.status',
-    defaultValue: TaskStatusEnum.All,
-    options: [
-      { value: TaskStatusEnum.All, label: 'Filters.statusAll' },
-      { value: TaskStatusEnum.Todo, label: 'Filters.statusTodo' },
-      { value: TaskStatusEnum.Done, label: 'Filters.statusDone' },
-    ],
+    type: FilterTypeEnum.EditableMultiSelect,
+    formControlName: 'typeIds',
+    labelKey: 'Filters.projectTypes',
+    multiselectOptions: [],
   },
   {
     type: FilterTypeEnum.Select,
@@ -83,8 +86,8 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     labelKey: 'Filters.sortBy',
     defaultValue: 'dateCreation',
     options: [
-      { value: 'dateCreation', label: 'Filters.sortByCreatedAt' },
-      { value: 'dateModification', label: 'Filters.sortByUpdatedAt' },
+      { value: 'dateCreation', label: 'Filters.createdFrom' },
+      { value: 'dateModification', label: 'Filters.updatedFrom' },
       { value: 'name', label: 'Filters.sortByName' },
     ],
   },
@@ -120,14 +123,35 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   },
 ];
 
-/*
- * Const
- */
-export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
+export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   {
     type: FilterTypeEnum.Text,
     formControlName: 'q',
     labelKey: 'Filters.search',
+  },
+  {
+    type: FilterTypeEnum.EditableMultiSelect,
+    formControlName: 'priorityIds',
+    labelKey: 'Filters.priorities',
+    multiselectOptions: [],
+  },
+  {
+    type: FilterTypeEnum.EditableMultiSelect,
+    formControlName: 'categoryIds',
+    labelKey: 'Filters.categories',
+    multiselectOptions: [],
+  },
+  {
+    type: FilterTypeEnum.EditableMultiSelect,
+    formControlName: 'statusIds',
+    labelKey: 'Filters.statuses',
+    multiselectOptions: [],
+  },
+  {
+    type: FilterTypeEnum.EditableMultiSelect,
+    formControlName: 'assignedUserIds',
+    labelKey: 'Filters.assignedUsers',
+    multiselectOptions: [],
   },
   {
     type: FilterTypeEnum.Select,
@@ -135,8 +159,8 @@ export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
     labelKey: 'Filters.sortBy',
     defaultValue: 'dateCreation',
     options: [
-      { value: 'dateCreation', label: 'Filters.sortByCreatedAt' },
-      { value: 'dateModification', label: 'Filters.sortByUpdatedAt' },
+      { value: 'dateCreation', label: 'Filters.createdFrom' },
+      { value: 'dateModification', label: 'Filters.updatedFrom' },
       { value: 'name', label: 'Filters.sortByName' },
     ],
   },

@@ -12,7 +12,6 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { TaskStatusEnum } from '../shared/enums/task-status.enum';
 import { PaginationMeta } from '../shared/types/api-response.type';
 import { PaginationParams, TasksListFiltersConfig } from '../shared/types/filter.type';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
@@ -189,7 +188,6 @@ export class TaskListPageComponent implements OnInit {
           }
           const searchParams = getAllTasksSearchParams({
             q: '',
-            status: TaskStatusEnum.All,
             sortBy: 'dateCreation',
             orderBy: 'desc',
             createdFrom: '',

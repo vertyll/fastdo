@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { GetAllProjectsSearchParams } from '../dtos/get-all-projects-search-params.dto';
+import { GetAllProjectsSearchParamsDto } from '../dtos/get-all-projects-search-params.dto';
 import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
 
@@ -11,11 +11,18 @@ export class ProjectRepository extends Repository<Project> {
   }
 
   public async findAllWithParams(
-    params: GetAllProjectsSearchParams,
+    params: GetAllProjectsSearchParamsDto,
     skip: number,
     take: number,
     userId: number,
   ): Promise<[Project[], number]> {
+    console.log('=== findAllWithParams DEBUG ===');
+    console.log('Received params:', JSON.stringify(params, null, 2));
+    console.log('typeIds:', params.typeIds);
+    console.log('typeIds type:', typeof params.typeIds);
+    console.log('typeIds length:', params.typeIds?.length);
+    console.log('userId:', userId);
+
     const query = this.dataSource
       .createQueryBuilder(Project, 'project')
       .leftJoin(
@@ -24,9 +31,32 @@ export class ProjectRepository extends Repository<Project> {
         'projectUser.project.id = project.id AND projectUser.user.id = :userId',
         { userId },
       )
-      .where('projectUser.user.id = :userId OR project.isPublic = true', {
-        userId,
-      });
+      .leftJoinAndSelect('project.type', 'type');
+
+    query.where('(projectUser.user.id = :userId OR project.isPublic = true)', { userId });
+
+    // DODAJ WIĘCEJ DEBUGOWANIA
+    console.log('=== BEFORE TYPE FILTER ===');
+    console.log('Current SQL:', query.getSql());
+    console.log('Current parameters:', query.getParameters());
+
+    if (params.typeIds && params.typeIds.length > 0) {
+      console.log('=== APPLYING TYPE FILTER ===');
+      console.log('typeIds to filter:', params.typeIds);
+      console.log('typeIds is array:', Array.isArray(params.typeIds));
+
+      query.andWhere('type.id IS NOT NULL')
+        .andWhere('type.id IN (:...typeIds)', { typeIds: params.typeIds });
+
+      console.log('=== AFTER TYPE FILTER ===');
+      console.log('SQL after type filter:', query.getSql());
+      console.log('Parameters after type filter:', query.getParameters());
+    } else {
+      console.log('=== NO TYPE FILTER APPLIED ===');
+      console.log('typeIds is falsy or empty:', !params.typeIds || params.typeIds.length === 0);
+    }
+
+    // reszta kodu...
 
     if (params.q) {
       query.andWhere('project.name LIKE :q', { q: `%${params.q}%` });
@@ -66,6 +96,11 @@ export class ProjectRepository extends Repository<Project> {
     }
 
     query.skip(skip).take(take);
+
+    console.log('=== FINAL QUERY ===');
+    console.log('Final SQL:', query.getSql());
+    console.log('Final parameters:', query.getParameters());
+    console.log('=== END DEBUG ===');
 
     return query.getManyAndCount();
   }

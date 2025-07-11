@@ -14,7 +14,7 @@ import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { IUsersService } from '../../users/interfaces/users-service.interface';
 import { IUsersServiceToken } from '../../users/tokens/users-service.token';
 import { CreateProjectDto } from '../dtos/create-project.dto';
-import { GetAllProjectsSearchParams } from '../dtos/get-all-projects-search-params.dto';
+import { GetAllProjectsSearchParamsDto } from '../dtos/get-all-projects-search-params.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { ProjectCategoryTranslation } from '../entities/project-category-translation.entity';
 import { ProjectCategory } from '../entities/project-category.entity';
@@ -46,7 +46,7 @@ export class ProjectsService {
     @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
   ) {}
 
-  public async findAll(params: GetAllProjectsSearchParams): Promise<ApiPaginatedResponse<Project>> {
+  public async findAll(params: GetAllProjectsSearchParamsDto): Promise<ApiPaginatedResponse<Project>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
     const skip = page * pageSize;

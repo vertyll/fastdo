@@ -157,7 +157,7 @@ import { LabelComponent } from '../atoms/label.component';
 })
 export class EditableMultiSelectComponent implements ControlValueAccessor, Validators {
   readonly dataArray = input.required<any[]>();
-  readonly maxSelectedItems = input.required<number>();
+  readonly maxSelectedItems = input<number | undefined>(undefined);
   readonly multiple = input<boolean>(true);
   readonly id = input.required<string>();
   readonly minTermLength = input<number>(0);

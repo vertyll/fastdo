@@ -27,7 +27,6 @@
   },
   "Filters": {
     "search": "Search",
-    "status": "Status",
     "sortBy": "Sort by",
     "orderBy": "Order by",
     "createdFrom": "Created from",
@@ -38,15 +37,11 @@
     "showMoreFilters": "Show more filters",
     "clearFilters": "Clear filters",
     "filtersSet": "Selected filters",
-    "statusAll": "All",
-    "statusTodo": "To do",
-    "statusDone": "Done",
     "sortByName": "Name",
-    "sortByCreatedAt": "Creation date",
-    "sortByUpdatedAt": "Update date",
     "orderByAsc": "Ascending",
     "orderByDesc": "Descending",
-    "q": "Name"
+    "q": "Name",
+    "projectTypes": "Project types"
   },
   "Auth": {
     "login": "Login",

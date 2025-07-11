@@ -9,6 +9,7 @@ export type GetAllProjectsSearchParams = {
   createdTo?: string;
   updatedFrom?: string;
   updatedTo?: string;
+  typeIds?: number[];
   page?: number;
   pageSize?: number;
 };

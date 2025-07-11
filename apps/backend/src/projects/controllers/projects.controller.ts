@@ -6,7 +6,7 @@ import { ApiPaginatedResponse } from '../../common/types/api-responses.interface
 import { UserDto } from '../../users/dtos/user.dto';
 import { AcceptInvitationDto } from '../dtos/accept-invitation.dto';
 import { CreateProjectDto } from '../dtos/create-project.dto';
-import { GetAllProjectsSearchParams } from '../dtos/get-all-projects-search-params.dto';
+import { GetAllProjectsSearchParamsDto } from '../dtos/get-all-projects-search-params.dto';
 import { RejectInvitationDto } from '../dtos/reject-invitation.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../entities/project.entity';
@@ -25,7 +25,7 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Get all projects' })
   @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isPaginated: true })
   public getAll(
-    @Query() query: GetAllProjectsSearchParams,
+    @Query() query: GetAllProjectsSearchParamsDto,
   ): Promise<ApiPaginatedResponse<Project>> {
     return this.projectsService.findAll(query);
   }

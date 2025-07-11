@@ -19,11 +19,10 @@ export type GetAllTasksSearchParams = {
   q: string;
   sortBy: 'dateCreation' | 'dateModification';
   orderBy: 'desc' | 'asc';
-  projectId?: number;
-  priorityId?: number;
-  categoryId?: number;
-  statusId?: number;
-  accessRoleId?: number;
+  priorityIds?: number[];
+  categoryIds?: number[];
+  statusIds?: number[];
+  assignedUserIds?: number[];
   createdFrom?: string;
   createdTo?: string;
   updatedFrom?: string;

@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-select',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   template: `
     <select
       [formControl]="control()"
@@ -15,7 +16,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       }
       @for (option of options(); track $index) {
         <option [value]="option.value">
-          {{ option.label }}
+          {{ option.label | translate }}
         </option>
       }
     </select>

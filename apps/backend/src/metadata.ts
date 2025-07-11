@@ -674,28 +674,6 @@ export default async () => {
           page: { required: false, type: () => Number },
           pageSize: { required: false, type: () => Number },
         },
-      }], [import('./tasks/dtos/update-task-comment.dto'), {
-        'UpdateTaskCommentDto': {
-          content: {
-            required: true,
-            type: () => String,
-            minLength: 1,
-          },
-          attachmentIds: { required: false, type: () => [String] },
-        },
-      }], [import('./tasks/dtos/update-task.dto'), {
-        'UpdateTaskDto': {
-          description: { required: false, type: () => String, minLength: 3 },
-          additionalDescription: { required: false, type: () => String },
-          priorityId: { required: false, type: () => Number },
-          categoryId: { required: false, type: () => Number },
-          categoryIds: { required: false, type: () => [Number] },
-          statusId: { required: false, type: () => Number },
-          priceEstimation: { required: false, type: () => Number, minimum: 0, maximum: 10000 },
-          workedTime: { required: false, type: () => Number, minimum: 0, maximum: 10000 },
-          accessRoleId: { required: false, type: () => Number },
-          assignedUserIds: { required: false, type: () => [Number] },
-        },
       }], [import('./tasks/dtos/task-response.dto'), {
         'TaskResponseDto': {
           id: { required: true, type: () => Number },
@@ -747,6 +725,28 @@ export default async () => {
             type: () => [t['./tasks/entities/task-attachment.entity'].TaskAttachment],
           },
           comments: { required: true, type: () => [t['./tasks/entities/task-comment.entity'].TaskComment] },
+        },
+      }], [import('./tasks/dtos/update-task-comment.dto'), {
+        'UpdateTaskCommentDto': {
+          content: {
+            required: true,
+            type: () => String,
+            minLength: 1,
+          },
+          attachmentIds: { required: false, type: () => [String] },
+        },
+      }], [import('./tasks/dtos/update-task.dto'), {
+        'UpdateTaskDto': {
+          description: { required: false, type: () => String, minLength: 3 },
+          additionalDescription: { required: false, type: () => String },
+          priorityId: { required: false, type: () => Number },
+          categoryId: { required: false, type: () => Number },
+          categoryIds: { required: false, type: () => [Number] },
+          statusId: { required: false, type: () => Number },
+          priceEstimation: { required: false, type: () => Number, minimum: 0, maximum: 10000 },
+          workedTime: { required: false, type: () => Number, minimum: 0, maximum: 10000 },
+          accessRoleId: { required: false, type: () => Number },
+          assignedUserIds: { required: false, type: () => [Number] },
         },
       }], [import('./projects/dtos/create-project-category.dto'), {
         'CreateProjectCategoryDto': {
@@ -853,7 +853,7 @@ export default async () => {
           userEmails: { required: false, type: () => [String] },
         },
       }], [import('./projects/dtos/get-all-projects-search-params.dto'), {
-        'GetAllProjectsSearchParams': {
+        'GetAllProjectsSearchParamsDto': {
           q: { required: false, type: () => String },
           sortBy: { required: false, type: () => String },
           orderBy: { required: false, type: () => Object },
@@ -861,7 +861,7 @@ export default async () => {
           createdTo: { required: false, type: () => String },
           updatedFrom: { required: false, type: () => String },
           updatedTo: { required: false, type: () => String },
-          status: { required: false, type: () => Object },
+          typeIds: { required: false, type: () => [Number] },
           page: { required: false, type: () => Number },
           pageSize: { required: false, type: () => Number },
         },

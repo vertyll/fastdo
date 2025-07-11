@@ -6,6 +6,10 @@ export function getAllTasksSearchParams(
 ): GetAllTasksSearchParams {
   return {
     q: params.q || '',
+    priorityIds: params.priorityIds || [],
+    categoryIds: params.categoryIds || [],
+    statusIds: params.statusIds || [],
+    assignedUserIds: params.assignedUserIds || [],
     sortBy: (params.sortBy as 'dateCreation' | 'dateModification' | undefined) || 'dateCreation',
     orderBy: params.orderBy || 'desc',
     createdFrom: params.createdFrom || '',
