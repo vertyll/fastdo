@@ -202,7 +202,7 @@ export class TasksService implements ITasksService {
     return this.mapTaskToResponseDto(updatedTask);
   }
 
-  public async remove(id: number): Promise<TaskResponseDto> {
+  public async remove(id: number): Promise<void> {
     const task = await this.taskRepository.findOneOrFail({
       where: { id },
       relations: [
@@ -223,7 +223,6 @@ export class TasksService implements ITasksService {
       ],
     });
     await this.taskRepository.remove(task);
-    return this.mapTaskToResponseDto(task);
   }
 
   public async removeByProjectId(projectId: number): Promise<void> {

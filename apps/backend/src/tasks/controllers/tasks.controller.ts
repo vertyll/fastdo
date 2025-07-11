@@ -10,6 +10,7 @@ import { UpdateTaskDto } from '../dtos/update-task.dto';
 import { TaskComment } from '../entities/task-comment.entity';
 import { Task } from '../entities/task.entity';
 import { TasksService } from '../services/tasks.service';
+import { TaskResponseDto } from '../dtos/task-response.dto';
 
 @ApiTags('tasks')
 @Controller('tasks')
@@ -58,8 +59,12 @@ export class TasksController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
-  @ApiWrappedResponse({ status: 200, description: 'Return the task.', type: Task })
-  public findOne(@Param('id') id: string): Promise<Task> {
+  @ApiWrappedResponse({ 
+    status: 200, 
+    description: 'Return the task.', 
+    type: TaskResponseDto, 
+  })
+  public findOne(@Param('id') id: string): Promise<TaskResponseDto> {
     return this.tasksService.findOne(+id);
   }
 
@@ -69,9 +74,9 @@ export class TasksController {
   @ApiWrappedResponse({
     status: 200,
     description: 'The task has been successfully updated.',
-    type: Task,
+    type: TaskResponseDto,
   })
-  public update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
+  public update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
     return this.tasksService.update(+id, updateTaskDto);
   }
 
