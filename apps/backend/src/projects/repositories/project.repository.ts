@@ -24,7 +24,8 @@ export class ProjectRepository extends Repository<Project> {
         'projectUserRole.project.id = project.id AND projectUserRole.user.id = :userId',
         { userId },
       )
-      .leftJoinAndSelect('project.type', 'type');
+      .leftJoinAndSelect('project.type', 'type')
+      .leftJoinAndSelect('project.icon', 'icon');
 
     query.where(
       '(projectUserRole.user.id = :userId OR project.isPublic = true)',

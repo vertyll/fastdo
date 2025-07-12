@@ -109,7 +109,8 @@
       "accessDeniedToEditPrivateProject": "Access denied to edit private project",
       "invitationNotFoundOrAlreadyHandled": "Invitation not found or already handled",
       "notAllowedToAcceptInvitation": "You are not allowed to accept this invitation",
-      "notAllowedToRejectInvitation": "You are not allowed to reject this invitation"
+      "notAllowedToRejectInvitation": "You are not allowed to reject this invitation",
+      "accessDeniedToManageProject": "Access denied to manage project"
     },
     "notifications": {
       "invitationTitle": "Project invitation",

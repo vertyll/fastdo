@@ -1,13 +1,13 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
+import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
 import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
 import { UserRole } from 'src/users/entities/user-role.entity';
 import { UserRoleRepository } from 'src/users/repositories/user-role.repository';
 import { Role } from '../entities/role.entity';
 import { RoleRepository } from '../repositories/role.repository';
 import { RolesService } from './roles.service';
-import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
 
 jest.mock('nestjs-i18n', () => ({
   I18nContext: {

@@ -287,7 +287,7 @@ describe('TasksService', () => {
         expect.objectContaining({
           ...updatedTaskFull,
           priority: expect.objectContaining({ translations: [] }),
-        })
+        }),
       );
     });
   });

@@ -28,7 +28,6 @@ import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
 import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectRoleService } from './project-role.service';
-import { ProjectUserRoleService } from './project-user-role.service';
 
 @Injectable()
 export class ProjectsService {
@@ -38,7 +37,6 @@ export class ProjectsService {
     private readonly cls: ClsService<CustomClsStore>,
     private readonly fileFacade: FileFacade,
     private readonly projectRoleService: ProjectRoleService,
-    private readonly projectUserRoleService: ProjectUserRoleService,
     private readonly projectInvitationRepository: ProjectInvitationRepository,
     private readonly i18n: I18nService<I18nTranslations>,
     @Inject(INotificationServiceToken) private readonly notificationService: INotificationService,
@@ -52,11 +50,6 @@ export class ProjectsService {
     const userId = this.cls.get('user').userId;
 
     const [items, total] = await this.projectRepository.findAllWithParams(params, skip, pageSize, userId);
-
-    for (const project of items) {
-      const userRole = await this.projectUserRoleService.getUserRoleCodeInProject(project.id, userId);
-      project.currentUserRole = userRole || undefined;
-    }
 
     return {
       items,
@@ -141,10 +134,7 @@ export class ProjectsService {
       throw new Error(this.i18n.t('messages.Projects.errors.projectNotFoundOrAccessDenied'));
     }
 
-    const userRole = await this.projectUserRoleService.getUserRoleCodeInProject(id, userId);
-    project.currentUserRole = userRole || undefined;
-
-    return project;
+    return project
   }
 
   public async update(
@@ -160,7 +150,11 @@ export class ProjectsService {
     try {
       const userId = this.cls.get('user').userId;
 
-      await this.checkProjectEditPermission(id, userId);
+      const project = await this.projectRepository.findOne({ where: { id } });
+      if (!project) {
+        throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
+      }
+      await this.checkProjectManagementPermission(id, userId);
 
       let iconFile = null;
       if (icon) {
@@ -213,7 +207,11 @@ export class ProjectsService {
   public async remove(id: number): Promise<void> {
     const userId = this.cls.get('user').userId;
 
-    await this.checkProjectEditPermission(id, userId);
+    const project = await this.projectRepository.findOne({ where: { id } });
+    if (!project) {
+      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
+    }
+    await this.checkProjectManagementPermission(id, userId);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -378,9 +376,6 @@ export class ProjectsService {
             });
             await queryRunner.manager.getRepository(ProjectInvitation).save(invitation);
 
-            const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
-            const roleName = roleInfo?.translations?.[0]?.name || 'nieznana';
-
             await this.notificationService.createNotification({
               type: NotificationTypeEnum.PROJECT_INVITATION,
               title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
@@ -518,34 +513,16 @@ export class ProjectsService {
     }));
   }
 
-  private async checkProjectEditPermission(projectId: number, userId: number): Promise<void> {
-    const project = await this.projectRepository.findOne({
-      where: { id: projectId },
-      select: ['id', 'isPublic'],
+  private async checkProjectManagementPermission(projectId: number, userId: number): Promise<void> {
+    const userRole = await this.dataSource.getRepository(ProjectUserRole).findOne({
+      where: {
+        project: { id: projectId },
+        user: { id: userId },
+      },
+      relations: ['projectRole'],
     });
-
-    if (!project) {
-      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
-    }
-
-    if (project.isPublic) {
-      const hasManagerRole = await this.projectUserRoleService.hasManagerRole(projectId, userId);
-      if (!hasManagerRole) {
-        throw new Error(this.i18n.t('messages.Projects.errors.accessDeniedToEditPublicProject'));
-      }
-    } else {
-      const isProjectMember = await this.projectRepository.findOne({
-        where: {
-          id: projectId,
-          projectUserRoles: {
-            user: { id: userId },
-          },
-        },
-      });
-
-      if (!isProjectMember) {
-        throw new Error(this.i18n.t('messages.Projects.errors.accessDeniedToEditPrivateProject'));
-      }
+    if (!userRole || userRole.projectRole.code !== ProjectRoleEnum.MANAGER) {
+      throw new Error(this.i18n.t('messages.Projects.errors.accessDeniedToManageProject'));
     }
   }
 

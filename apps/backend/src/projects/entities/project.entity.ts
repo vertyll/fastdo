@@ -60,8 +60,4 @@ export class Project {
   @ApiProperty({ type: () => ProjectStatus })
   @OneToMany(() => ProjectStatus, status => status.project)
   statuses: Relation<ProjectStatus[]>;
-
-  // Virtual field - not stored in database, populated by service
-  @ApiProperty({ required: false, description: 'Current user role in this project' })
-  currentUserRole?: string;
 }

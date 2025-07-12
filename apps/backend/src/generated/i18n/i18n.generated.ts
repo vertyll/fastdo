@@ -118,6 +118,7 @@ export type I18nTranslations = {
                 "invitationNotFoundOrAlreadyHandled": string;
                 "notAllowedToAcceptInvitation": string;
                 "notAllowedToRejectInvitation": string;
+                "accessDeniedToManageProject": string;
             };
             "notifications": {
                 "invitationTitle": string;

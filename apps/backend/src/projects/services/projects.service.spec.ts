@@ -75,6 +75,52 @@ describe('ProjectsService', () => {
 
     mockDataSource = {
       createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+      getRepository: jest.fn().mockImplementation((entity: any) => {
+        // ProjectUserRole
+        if (entity && entity.name === 'ProjectUserRole') {
+          return {
+            findOne: jest.fn().mockResolvedValue({
+              projectRole: {
+                code: 'manager',
+                translations: [],
+              },
+            }),
+            find: jest.fn().mockResolvedValue([]),
+            remove: jest.fn(),
+            save: jest.fn(),
+            createQueryBuilder: jest.fn().mockReturnValue({
+              leftJoinAndSelect: jest.fn().mockReturnThis(),
+              where: jest.fn().mockReturnThis(),
+              select: jest.fn().mockReturnThis(),
+              getMany: jest.fn().mockResolvedValue([]),
+            }),
+            delete: jest.fn(),
+            update: jest.fn(),
+          };
+        }
+        // Project
+        if (entity && entity.name === 'Project') {
+          return {
+            findOne: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+          };
+        }
+        return {
+          findOne: jest.fn(),
+          find: jest.fn(),
+          save: jest.fn(),
+          remove: jest.fn(),
+          createQueryBuilder: jest.fn().mockReturnValue({
+            leftJoinAndSelect: jest.fn().mockReturnThis(),
+            where: jest.fn().mockReturnThis(),
+            select: jest.fn().mockReturnThis(),
+            getMany: jest.fn().mockResolvedValue([]),
+          }),
+          delete: jest.fn(),
+          update: jest.fn(),
+        };
+      }),
     } as any;
 
     mockClsService = {
@@ -142,8 +188,19 @@ describe('ProjectsService', () => {
 
       mockProjectRepository.findAllWithParams.mockResolvedValue([projects, total]);
 
-      const result: ApiPaginatedResponse<Project> = {
-        items: projects,
+      const expectedResult = {
+        items: [
+          {
+            id: 1,
+            name: 'Test Project',
+            description: undefined,
+            isPublic: undefined,
+            icon: undefined,
+            dateCreation: undefined,
+            dateModification: undefined,
+            type: undefined,
+          },
+        ],
         pagination: {
           total,
           page: 0,
@@ -152,7 +209,7 @@ describe('ProjectsService', () => {
         },
       };
 
-      expect(await service.findAll({})).toEqual(result);
+      expect(await service.findAll({})).toEqual(expectedResult);
       expect(mockClsService.get).toHaveBeenCalledWith('user');
       expect(mockProjectRepository.findAllWithParams).toHaveBeenCalledWith({}, 0, 10, 1);
     });
