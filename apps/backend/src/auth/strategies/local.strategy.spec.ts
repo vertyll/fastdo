@@ -29,7 +29,6 @@ describe('LocalStrategy', () => {
     emailChangeTokenExpiry: null,
     pendingEmail: null,
     refreshTokens: [],
-    projectUsers: [],
     emailHistories: [],
     projectUserRoles: [],
   };

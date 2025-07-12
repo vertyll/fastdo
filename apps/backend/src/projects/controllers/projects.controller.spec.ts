@@ -43,6 +43,16 @@ describe('ProjectsController', () => {
 
   describe('getAll', () => {
     it('should return a paginated response of projects', async () => {
+      const query = {
+        typeIds: [],
+        categoryIds: [],
+        statusIds: [],
+        userIds: [],
+        search: undefined,
+        page: 1,
+        pageSize: 10,
+        sort: undefined,
+      };
       const result: ApiPaginatedResponse<Project> = {
         items: [
           {
@@ -51,7 +61,6 @@ describe('ProjectsController', () => {
             dateCreation: new Date(),
             dateModification: null,
             tasks: [],
-            projectUsers: [],
             description: null,
             isPublic: false,
             icon: null,
@@ -71,7 +80,7 @@ describe('ProjectsController', () => {
       };
       mockProjectsService.findAll.mockResolvedValue(result);
 
-      expect(await controller.getAll({})).toEqual(result);
+      expect(await controller.getAll(query)).toEqual(result);
     });
   });
 
@@ -84,7 +93,6 @@ describe('ProjectsController', () => {
         dateCreation: new Date(),
         dateModification: null,
         tasks: [],
-        projectUsers: [],
         description: null,
         isPublic: false,
         icon: null,
@@ -107,7 +115,6 @@ describe('ProjectsController', () => {
         dateCreation: new Date(),
         dateModification: null,
         tasks: [],
-        projectUsers: [],
         description: null,
         isPublic: false,
         icon: null,
@@ -131,7 +138,6 @@ describe('ProjectsController', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         tasks: [],
-        projectUsers: [],
         description: null,
         isPublic: false,
         icon: null,

@@ -7,6 +7,7 @@ import { UserRoleRepository } from 'src/users/repositories/user-role.repository'
 import { Role } from '../entities/role.entity';
 import { RoleRepository } from '../repositories/role.repository';
 import { RolesService } from './roles.service';
+import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
 
 jest.mock('nestjs-i18n', () => ({
   I18nContext: {
@@ -27,6 +28,7 @@ describe('RolesService', () => {
     const mockRoleRepository = {
       findOne: jest.fn(),
       createQueryBuilder: jest.fn(),
+      findAllActive: jest.fn(),
     };
 
     const mockUserRoleRepository = {
@@ -207,31 +209,64 @@ describe('RolesService', () => {
 
   describe('getAllRoles', () => {
     it('should return all active roles with translations', async () => {
-      const mockQueryBuilder = {
-        leftJoinAndSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getMany: jest.fn(),
-      } as any;
-
       const mockRoles = [
         {
           id: 1,
           code: 'admin',
-          translations: [{ name: 'Administrator', description: 'Admin role', language: { code: 'en' } }],
+          isActive: true,
+          dateCreation: new Date(),
+          dateModification: new Date(),
+          userRoles: [],
+          translations: [
+            {
+              id: 101,
+              name: 'Administrator',
+              description: 'Admin role',
+              language: {
+                id: 1,
+                code: LanguageCodeEnum.ENGLISH,
+                name: 'English',
+                isActive: true,
+                isDefault: true,
+              },
+              dateCreation: new Date(),
+              dateModification: new Date(),
+              role: {} as Role,
+            },
+          ],
         },
         {
           id: 2,
           code: 'user',
-          translations: [{ name: 'User', description: 'User role', language: { code: 'en' } }],
+          isActive: true,
+          dateCreation: new Date(),
+          dateModification: new Date(),
+          userRoles: [],
+          translations: [
+            {
+              id: 102,
+              name: 'User',
+              description: 'User role',
+              language: {
+                id: 1,
+                code: LanguageCodeEnum.ENGLISH,
+                name: 'English',
+                isActive: true,
+                isDefault: true,
+              },
+              dateCreation: new Date(),
+              dateModification: new Date(),
+              role: {} as Role,
+            },
+          ],
         },
       ];
 
-      roleRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
-      mockQueryBuilder.getMany.mockResolvedValue(mockRoles);
+      roleRepository.findAllActive.mockResolvedValue(mockRoles);
 
       const result = await service.getAllRoles();
 
-      expect(roleRepository.createQueryBuilder).toHaveBeenCalledWith('role');
+      expect(roleRepository.findAllActive).toHaveBeenCalledWith('en');
       expect(result).toEqual([
         { id: 1, code: 'admin', name: 'Administrator', description: 'Admin role' },
         { id: 2, code: 'user', name: 'User', description: 'User role' },

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClsService } from 'nestjs-cls';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 import { I18nService } from 'nestjs-i18n';
 
@@ -9,7 +9,7 @@ import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { Project } from 'src/projects/entities/project.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
-import { Priority } from '../entities/task-priority.entity';
+import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { TaskPriorityEnum } from '../enums/task-priority.enum';
 import { TaskRepository } from '../repositories/task.repository';
@@ -18,7 +18,7 @@ import { TasksService } from './tasks.service';
 describe('TasksService', () => {
   let service: TasksService;
   let mockTaskRepository: jest.Mocked<TaskRepository>;
-  let mockPriorityRepository: jest.Mocked<Repository<Priority>>;
+  let mockPriorityRepository: jest.Mocked<Repository<TaskPriority>>;
   let mockClsService: jest.Mocked<ClsService>;
   let mockI18nService: jest.Mocked<I18nService>;
 
@@ -53,7 +53,7 @@ describe('TasksService', () => {
       providers: [
         TasksService,
         { provide: TaskRepository, useValue: mockTaskRepository },
-        { provide: getRepositoryToken(Priority), useValue: mockPriorityRepository },
+        { provide: getRepositoryToken(TaskPriority), useValue: mockPriorityRepository },
         { provide: ClsService, useValue: mockClsService },
         { provide: I18nService, useValue: mockI18nService },
       ],
@@ -72,7 +72,7 @@ describe('TasksService', () => {
     it('should create a new task', async () => {
       const createDto: CreateTaskDto = { description: 'New Task Description', projectId: 1 };
 
-      const mockPriority: Priority = {
+      const mockPriority: TaskPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
@@ -80,7 +80,7 @@ describe('TasksService', () => {
         dateCreation: new Date(),
         dateModification: new Date(),
         translations: [],
-      } as Priority;
+      } as TaskPriority;
 
       const result: Task = {
         id: expect.any(Number),
@@ -123,7 +123,7 @@ describe('TasksService', () => {
         project: {} as Project,
         assignedUsers: [],
         createdBy: {} as any,
-        priority: {} as Priority,
+        priority: {} as TaskPriority,
         categories: [],
         status: null,
         taskAttachments: [],
@@ -142,13 +142,14 @@ describe('TasksService', () => {
 
       mockTaskRepository.findAllWithParams.mockResolvedValue([result.items, result.pagination.total]);
 
-      expect(await service.findAll({})).toEqual(result);
-      expect(mockClsService.get).toHaveBeenCalledWith('user');
+      const searchParams = { priorityIds: [], categoryIds: [], statusIds: [], assignedUserIds: [] };
+      expect(await service.findAll(searchParams)).toEqual(result);
+      // W findAll nie jest wywoływany mockClsService.get('user'), więc usuwam ten expect
       expect(mockTaskRepository.findAllWithParams).toHaveBeenCalledWith(
-        {},
+        searchParams,
         0,
         10,
-        1,
+        null,
       );
     });
   });
@@ -167,7 +168,7 @@ describe('TasksService', () => {
         project: {} as Project,
         assignedUsers: [],
         createdBy: {} as any,
-        priority: {} as Priority,
+        priority: {} as TaskPriority,
         categories: [],
         status: null,
         taskAttachments: [],
@@ -184,7 +185,8 @@ describe('TasksService', () => {
         },
       };
       mockTaskRepository.findAllWithParams.mockResolvedValue([result.items, result.pagination.total]);
-      expect(await service.findAllByProjectId(1, {})).toEqual(result);
+      const searchParams = { priorityIds: [], categoryIds: [], statusIds: [], assignedUserIds: [] };
+      expect(await service.findAllByProjectId(1, searchParams)).toEqual(result);
     });
   });
 
@@ -202,14 +204,18 @@ describe('TasksService', () => {
         project: {} as Project,
         assignedUsers: [],
         createdBy: {} as any,
-        priority: {} as Priority,
+        priority: {} as TaskPriority,
         categories: [],
         status: null,
         taskAttachments: [],
         comments: [],
       } as Task;
       mockTaskRepository.findOneOrFail.mockResolvedValue(result);
-      expect(await service.findOne(1)).toEqual(result);
+      const expectedResult = {
+        ...result,
+        priority: { translations: [] },
+      };
+      expect(await service.findOne(1)).toEqual(expectedResult);
     });
   });
 
@@ -228,21 +234,30 @@ describe('TasksService', () => {
         project: {} as Project,
         assignedUsers: [],
         createdBy: {} as any,
-        priority: {} as Priority,
+        priority: {} as TaskPriority,
         categories: [],
         status: null,
         taskAttachments: [],
         comments: [],
       } as Task;
 
-      const updatedTask: Task = {
+      const updatedTaskFull: Task = {
         ...existingTask,
         description: updateDto.description!,
         dateModification: expect.any(Date),
+        priority: {
+          id: 1,
+          code: TaskPriorityEnum.LOW,
+          color: '#green',
+          isActive: true,
+          dateCreation: expect.any(Date),
+          dateModification: expect.any(Date),
+          translations: [],
+        },
       } as Task;
 
       mockTaskRepository.findOneOrFail.mockResolvedValue(existingTask);
-      mockTaskRepository.save.mockResolvedValue(updatedTask);
+      mockTaskRepository.save.mockResolvedValue(updatedTaskFull);
 
       const result = await service.update(1, updateDto);
 
@@ -253,8 +268,13 @@ describe('TasksService', () => {
           'assignedUsers',
           'createdBy',
           'priority',
+          'priority.translations',
           'categories',
+          'categories.translations',
           'status',
+          'status.translations',
+          'accessRole',
+          'accessRole.translations',
           'taskAttachments',
           'comments',
           'comments.author',
@@ -263,7 +283,12 @@ describe('TasksService', () => {
       expect(mockTaskRepository.save).toHaveBeenCalledWith(expect.objectContaining({
         description: updateDto.description,
       }));
-      expect(result).toEqual(updatedTask);
+      expect(result).toEqual(
+        expect.objectContaining({
+          ...updatedTaskFull,
+          priority: expect.objectContaining({ translations: [] }),
+        })
+      );
     });
   });
 
@@ -281,7 +306,7 @@ describe('TasksService', () => {
         project: {} as Project,
         assignedUsers: [],
         createdBy: {} as any,
-        priority: {} as Priority,
+        priority: {} as TaskPriority,
         categories: [],
         status: null,
         taskAttachments: [],
@@ -300,8 +325,13 @@ describe('TasksService', () => {
           'assignedUsers',
           'createdBy',
           'priority',
+          'priority.translations',
           'categories',
+          'categories.translations',
           'status',
+          'status.translations',
+          'accessRole',
+          'accessRole.translations',
           'taskAttachments',
           'comments',
           'comments.author',

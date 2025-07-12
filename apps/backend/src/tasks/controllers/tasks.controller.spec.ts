@@ -106,6 +106,17 @@ describe('TasksController', () => {
         translations: [],
       } as TaskPriority;
 
+      const query = {
+        priorityIds: [],
+        categoryIds: [],
+        statusIds: [],
+        assignedUserIds: [],
+        search: undefined,
+        page: 1,
+        pageSize: 10,
+        sort: undefined,
+      };
+
       const result: ApiPaginatedResponse<Task> = {
         items: [
           {
@@ -135,7 +146,7 @@ describe('TasksController', () => {
         },
       };
       mockTasksService.findAll.mockResolvedValue(result);
-      expect(await controller.findAll({})).toEqual(result);
+      expect(await controller.findAll(query)).toEqual(result);
     });
   });
 
@@ -168,6 +179,17 @@ describe('TasksController', () => {
         statuses: [],
       } as Project;
 
+      const query = {
+        priorityIds: [],
+        categoryIds: [],
+        statusIds: [],
+        assignedUserIds: [],
+        search: undefined,
+        page: 1,
+        pageSize: 10,
+        sort: undefined,
+      };
+
       const result: ApiPaginatedResponse<Task> = {
         items: [
           {
@@ -197,7 +219,7 @@ describe('TasksController', () => {
         },
       };
       mockTasksService.findAllByProjectId.mockResolvedValue(result);
-      expect(await controller.findAllByProjectId('1', {})).toEqual(result);
+      expect(await controller.findAllByProjectId('1', query)).toEqual(result);
     });
   });
 
@@ -228,23 +250,44 @@ describe('TasksController', () => {
         emailHistories: [],
       } as User;
 
-      const mockPriority: TaskPriority = {
+      const mockPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
         isActive: true,
         dateCreation: new Date(),
         dateModification: new Date(),
-        translations: [],
-      } as TaskPriority;
+        translations: [
+          {
+            id: 1,
+            lang: 'pl',
+            name: 'Niski',
+            description: 'Niski priorytet',
+          },
+        ],
+      };
 
-      const result: Task = {
+      const result = {
         id: 1,
         description: 'Single Task Description',
         additionalDescription: undefined,
         priceEstimation: 0,
         workedTime: 0,
-        accessRole: undefined,
+        accessRole: {
+          id: 1,
+          code: 'MANAGER',
+          isActive: true,
+          dateCreation: new Date(),
+          dateModification: new Date(),
+          translations: [
+            {
+              id: 1,
+              lang: 'pl',
+              name: 'Manager',
+              description: 'Zarządca',
+            },
+          ],
+        },
         dateCreation: new Date(),
         dateModification: new Date(),
         project: {} as Project,
@@ -255,7 +298,7 @@ describe('TasksController', () => {
         status: null,
         taskAttachments: [],
         comments: [],
-      } as Task;
+      };
 
       mockTasksService.findOne.mockResolvedValue(result);
       expect(await controller.findOne('1')).toEqual(result);
@@ -290,23 +333,44 @@ describe('TasksController', () => {
         emailHistories: [],
       } as User;
 
-      const mockPriority: TaskPriority = {
+      const mockPriority = {
         id: 1,
         code: TaskPriorityEnum.LOW,
         color: '#green',
         isActive: true,
         dateCreation: new Date(),
         dateModification: new Date(),
-        translations: [],
-      } as TaskPriority;
+        translations: [
+          {
+            id: 1,
+            lang: 'pl',
+            name: 'Niski',
+            description: 'Niski priorytet',
+          },
+        ],
+      };
 
-      const result: Task = {
+      const result = {
         id: 1,
         description: updateDto.description!,
         additionalDescription: undefined,
         priceEstimation: 0,
         workedTime: 0,
-        accessRole: undefined,
+        accessRole: {
+          id: 1,
+          code: 'MANAGER',
+          isActive: true,
+          dateCreation: new Date(),
+          dateModification: new Date(),
+          translations: [
+            {
+              id: 1,
+              lang: 'pl',
+              name: 'Manager',
+              description: 'Zarządca',
+            },
+          ],
+        },
         dateCreation: new Date(),
         dateModification: new Date(),
         project: {} as Project,
@@ -317,7 +381,7 @@ describe('TasksController', () => {
         status: null,
         taskAttachments: [],
         comments: [],
-      } as Task;
+      };
 
       mockTasksService.update.mockResolvedValue(result);
       expect(await controller.update('1', updateDto)).toEqual(result);

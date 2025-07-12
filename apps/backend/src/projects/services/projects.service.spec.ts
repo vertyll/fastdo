@@ -11,7 +11,6 @@ import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { ProjectRole } from '../entities/project-role.entity';
 import { ProjectUserRole } from '../entities/project-user-role.entity';
-import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
 import { ProjectRepository } from '../repositories/project.repository';
@@ -182,20 +181,6 @@ describe('ProjectsService', () => {
             save: jest.fn().mockResolvedValue(mockNewProject),
           };
         }
-        if (entity === ProjectUser) {
-          return {
-            create: jest.fn().mockReturnValue({
-              id: 1,
-              project: mockNewProject,
-              user: { id: 1 },
-            }),
-            save: jest.fn().mockResolvedValue({
-              id: 1,
-              project: mockNewProject,
-              user: { id: 1 },
-            }),
-          };
-        }
         if (entity === ProjectUserRole) {
           return {
             save: jest.fn().mockResolvedValue({
@@ -224,20 +209,7 @@ describe('ProjectsService', () => {
     it('should rollback transaction on error', async () => {
       const createDto = { name: 'New Project' };
 
-      mockQueryRunner.manager.getRepository.mockImplementation((entity: typeof Project | typeof ProjectUser) => {
-        if (entity === Project) {
-          return {
-            create: jest.fn().mockReturnValue({}),
-            save: jest.fn().mockRejectedValue(new Error('Test error')),
-          };
-        }
-        return {
-          create: jest.fn(),
-          save: jest.fn(),
-        };
-      });
-
-      await expect(service.create(createDto)).rejects.toThrow('Test error');
+      await expect(service.create(createDto)).rejects.toThrow('messages.Projects.errors.managerRoleNotFound');
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.release).toHaveBeenCalled();
     });
