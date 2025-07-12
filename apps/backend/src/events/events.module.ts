@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Language } from 'src/core/language/entities/language.entity';
 import { NotificationsGateway } from './gateways/notifications.gateway';
 import { EventEmitterService } from './services/event-emitter.service';
 import { NotificationWebSocketService } from './services/notification-websocket.service';
@@ -9,6 +11,7 @@ import { IEventEmitterServiceToken } from './tokens/event-emitter-service.token'
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Language]),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('app.security.jwt.accessToken.secret'),

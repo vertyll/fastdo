@@ -1,4 +1,4 @@
-import { File } from '../../core/file/models/File';
+import { File } from '../../core/models/File';
 
 export type Project = {
   id: number;

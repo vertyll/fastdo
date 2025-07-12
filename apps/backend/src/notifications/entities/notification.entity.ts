@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -11,6 +12,7 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { NotificationStatusEnum } from '../enums/notification-status.enum';
 import { NotificationTypeEnum } from '../enums/notification-type.enum';
+import { NotificationTranslation } from './notification-translation.entity';
 
 @Entity('notification')
 export class Notification {
@@ -21,14 +23,6 @@ export class Notification {
   @ApiProperty({ enum: NotificationTypeEnum })
   @Column({ type: 'enum', enum: NotificationTypeEnum })
   type: NotificationTypeEnum;
-
-  @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
-  title: string;
-
-  @ApiProperty()
-  @Column({ type: 'text' })
-  message: string;
 
   @ApiProperty({ enum: NotificationStatusEnum })
   @Column({ type: 'enum', enum: NotificationStatusEnum, default: NotificationStatusEnum.UNREAD })
@@ -49,4 +43,11 @@ export class Notification {
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   recipient: Relation<User>;
+
+  @ApiProperty({ type: () => NotificationTranslation, isArray: true })
+  @OneToMany(() => NotificationTranslation, translation => translation.notification, {
+    cascade: true,
+    eager: true,
+  })
+  translations: Relation<NotificationTranslation[]>;
 }

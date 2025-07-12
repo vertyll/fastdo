@@ -61,6 +61,10 @@ export default async () => {
     ),
     ['./notifications/enums/notification-type.enum']: await import('./notifications/enums/notification-type.enum'),
     ['./notifications/enums/notification-status.enum']: await import('./notifications/enums/notification-status.enum'),
+    ['./notifications/entities/notification-translation.entity']: await import(
+      './notifications/entities/notification-translation.entity'
+    ),
+    ['./notifications/entities/notification.entity']: await import('./notifications/entities/notification.entity'),
     ['./common/dtos/translation.dto']: await import('./common/dtos/translation.dto'),
     ['./projects/dtos/user-with-role.dto']: await import('./projects/dtos/user-with-role.dto'),
     ['./projects/enums/project-invitation-status.enum']: await import(
@@ -78,7 +82,6 @@ export default async () => {
     ['./tasks/entities/task-status.entity']: await import('./tasks/entities/task-status.entity'),
     ['./roles/dtos/role.dto']: await import('./roles/dtos/role.dto'),
     ['./auth/dtos/access-token.dto']: await import('./auth/dtos/access-token.dto'),
-    ['./notifications/entities/notification.entity']: await import('./notifications/entities/notification.entity'),
     ['./notifications/entities/notification-settings.entity']: await import(
       './notifications/entities/notification-settings.entity'
     ),
@@ -561,6 +564,28 @@ export default async () => {
           },
           refreshToken: { required: true, type: () => String },
         },
+      }], [import('./notifications/entities/notification.entity'), {
+        'Notification': {
+          id: { required: true, type: () => Number },
+          type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationTypeEnum },
+          status: { required: true, enum: t['./notifications/enums/notification-status.enum'].NotificationStatusEnum },
+          data: { required: false, type: () => Object },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date },
+          recipient: { required: true, type: () => t['./users/entities/user.entity'].User },
+          translations: {
+            required: true,
+            type: () => [t['./notifications/entities/notification-translation.entity'].NotificationTranslation],
+          },
+        },
+      }], [import('./notifications/entities/notification-translation.entity'), {
+        'NotificationTranslation': {
+          id: { required: true, type: () => Number },
+          title: { required: true, type: () => String },
+          message: { required: true, type: () => String },
+          language: { required: true, type: () => t['./core/language/entities/language.entity'].Language },
+          notification: { required: true, type: () => t['./notifications/entities/notification.entity'].Notification },
+        },
       }], [import('./notifications/dtos/create-notification.dto'), {
         'CreateNotificationDto': {
           type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationTypeEnum },
@@ -595,18 +620,6 @@ export default async () => {
           dateCreation: { required: true, type: () => Date },
           dateModification: { required: true, type: () => Date },
           user: { required: true, type: () => t['./users/entities/user.entity'].User },
-        },
-      }], [import('./notifications/entities/notification.entity'), {
-        'Notification': {
-          id: { required: true, type: () => Number },
-          type: { required: true, enum: t['./notifications/enums/notification-type.enum'].NotificationTypeEnum },
-          title: { required: true, type: () => String },
-          message: { required: true, type: () => String },
-          status: { required: true, enum: t['./notifications/enums/notification-status.enum'].NotificationStatusEnum },
-          data: { required: false, type: () => Object },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date },
-          recipient: { required: true, type: () => t['./users/entities/user.entity'].User },
         },
       }], [import('./common/dtos/translation.dto'), {
         'TranslationDto': {
@@ -1059,6 +1072,7 @@ export default async () => {
         'NotificationController': {
           'create': { type: Object },
           'findAll': { type: [t['./notifications/entities/notification.entity'].Notification] },
+          'deleteMyNotification': {},
           'getMyNotifications': { type: [t['./notifications/entities/notification.entity'].Notification] },
           'getMyUnreadCount': { type: Number },
           'markAllMyAsRead': {},
@@ -1074,7 +1088,6 @@ export default async () => {
           'updateUserSettings': {
             type: t['./notifications/entities/notification-settings.entity'].NotificationSettings,
           },
-          'deleteMyNotification': {},
         },
       }], [import('./tasks/controllers/task-priority.controller'), {
         'TaskPriorityController': {

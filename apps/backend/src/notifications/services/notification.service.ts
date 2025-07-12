@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { I18nService } from 'nestjs-i18n';
+import { Language } from 'src/core/language/entities/language.entity';
+import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
 import { Repository } from 'typeorm';
 import { IMailService } from '../../core/mail/interfaces/mail-service.interface';
 import { IMailServiceToken } from '../../core/mail/tokens/mail-service.token';
@@ -8,6 +11,7 @@ import { User } from '../../users/entities/user.entity';
 import { CreateNotificationDto } from '../dtos/create-notification.dto';
 import { UpdateNotificationSettingsDto } from '../dtos/update-notification-settings.dto';
 import { NotificationSettings } from '../entities/notification-settings.entity';
+import { NotificationTranslation } from '../entities/notification-translation.entity';
 import { Notification } from '../entities/notification.entity';
 import { NotificationStatusEnum } from '../enums/notification-status.enum';
 import { NotificationTypeEnum } from '../enums/notification-type.enum';
@@ -19,7 +23,9 @@ export class NotificationService implements INotificationService {
     @InjectRepository(Notification) private readonly notificationRepository: Repository<Notification>,
     @InjectRepository(NotificationSettings) private readonly settingsRepository: Repository<NotificationSettings>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
     @Inject(IMailServiceToken) private readonly mailService: IMailService,
+    private readonly i18n: I18nService<I18nTranslations>,
     private readonly notificationWebSocketService: NotificationWebSocketService,
   ) {}
 
@@ -36,18 +42,36 @@ export class NotificationService implements INotificationService {
     if (settings.appNotifications) {
       notification = this.notificationRepository.create({
         type: createNotificationDto.type,
-        title: createNotificationDto.title,
-        message: createNotificationDto.message,
         data: createNotificationDto.data,
         recipient,
       });
       notification = await this.notificationRepository.save(notification);
 
+      const languages = await this.languageRepository.find({ where: { isActive: true } });
+      notification.translations = [];
+
+      for (const lang of languages) {
+        const translation = new NotificationTranslation();
+
+        const translatedContent = await this.getTranslatedContent(
+          createNotificationDto.type,
+          createNotificationDto,
+          lang.code,
+        );
+
+        translation.title = translatedContent.title;
+        translation.message = translatedContent.message;
+        translation.language = lang;
+        translation.notification = notification;
+
+        await this.notificationRepository.manager.save(translation);
+        notification.translations.push(translation);
+      }
+
       const notificationEvent = {
         id: notification.id,
         type: notification.type,
-        title: notification.title,
-        message: notification.message,
+        translations: notification.translations,
         recipientId: notification.recipient.id,
         data: notification.data,
         isRead: notification.status === NotificationStatusEnum.READ,
@@ -96,19 +120,16 @@ export class NotificationService implements INotificationService {
       { status: NotificationStatusEnum.READ },
     );
 
-    // Send notification via WebSocket
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const notificationEvent = {
       id: notification.id,
       type: notification.type,
-      title: notification.title,
-      message: notification.message,
+      translations: notification.translations,
       recipientId: notification.recipient.id,
       data: notification.data,
       isRead: true,
       dateCreation: notification.dateCreation,
     };
-    await this.notificationWebSocketService.sendNotificationRead(notification.id, notification.recipient.id);
+    await this.notificationWebSocketService.sendNotificationRead(notificationEvent);
   }
 
   public async markAllAsRead(userId: number): Promise<void> {
@@ -195,6 +216,74 @@ export class NotificationService implements INotificationService {
       );
     } catch (error) {
       console.error('Failed to send email notification:', error);
+    }
+  }
+
+  private async getTranslatedContent(
+    type: NotificationTypeEnum,
+    dto: CreateNotificationDto,
+    langCode: string,
+  ): Promise<{ title: string; message: string; }> {
+    try {
+      let title: string;
+      let message: string;
+
+      switch (type) {
+        case NotificationTypeEnum.PROJECT_INVITATION:
+          title = this.i18n.t('messages.Projects.notifications.invitationTitle', {
+            lang: langCode,
+            args: { projectName: dto.data?.projectName },
+          });
+          message = this.i18n.t('messages.Projects.notifications.invitationMessage', {
+            lang: langCode,
+            args: {
+              inviterEmail: dto.data?.inviterEmail,
+              projectName: dto.data?.projectName,
+            },
+          });
+          break;
+
+        case NotificationTypeEnum.TASK_ASSIGNED:
+          title = this.i18n.t('messages.Tasks.assigned', {
+            lang: langCode,
+            args: { title: dto.data?.taskTitle },
+          });
+          message = this.i18n.t('messages.Tasks.assigned', {
+            lang: langCode,
+            args: { title: dto.data?.taskTitle },
+          });
+          break;
+
+        case NotificationTypeEnum.TASK_COMPLETED:
+          title = this.i18n.t('messages.Tasks.statusChanged', {
+            lang: langCode,
+            args: {
+              title: dto.data?.taskTitle,
+              status: dto.data?.status,
+            },
+          });
+          message = this.i18n.t('messages.Tasks.statusChanged', {
+            lang: langCode,
+            args: {
+              title: dto.data?.taskTitle,
+              status: dto.data?.status,
+            },
+          });
+          break;
+
+        case NotificationTypeEnum.SYSTEM:
+        default:
+          title = dto.title;
+          message = dto.message;
+      }
+
+      return { title, message };
+    } catch (error) {
+      console.error('Error translating notification content:', error);
+      return {
+        title: dto.title,
+        message: dto.message,
+      };
     }
   }
 }

@@ -1,4 +1,4 @@
-import { File } from '../../core/file/models/File';
+import { File } from '../../core/models/File';
 import { ProjectCategory, ProjectStatus } from '../../project/models/Project';
 import { ProjectRole } from '../../shared/types/entities.type';
 

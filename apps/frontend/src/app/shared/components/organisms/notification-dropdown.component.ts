@@ -98,16 +98,15 @@ import { NotificationDto } from '../../types/notification.type';
                   @for (notification of notifications(); track notification.id) {
                     <div
                       class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 cursor-pointer transition-colors duration-200"
-                      [class.bg-primary-50]="notification.status === 'UNREAD'"
                       (click)="markAsRead(notification)"
                     >
                       <div class="flex items-start justify-between">
                         <div class="flex-1 min-w-0">
                           <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
-                            {{ notification.title }}
+                            {{ getTranslation(notification).title }}
                           </h4>
                           <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
-                            {{ notification.message }}
+                            {{ getTranslation(notification).message }}
                           </p>
                           @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === 'UNREAD') {
                             <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
@@ -222,15 +221,14 @@ import { NotificationDto } from '../../types/notification.type';
                 @for (notification of notifications(); track notification.id) {
                   <div
                     class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 transition-colors duration-200 group"
-                    [class.bg-primary-50]="notification.status === 'UNREAD'"
                   >
                     <div class="flex items-start justify-between">
                       <div class="flex-1 min-w-0 cursor-pointer" (click)="markAsRead(notification)">
                         <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
-                          {{ notification.title }}
+                          {{ getTranslation(notification).title }}
                         </h4>
                         <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
-                          {{ notification.message }}
+                          {{ getTranslation(notification).message }}
                         </p>
                         @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === 'UNREAD') {
                           <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
@@ -308,7 +306,11 @@ import { NotificationDto } from '../../types/notification.type';
   `,
 })
 export class NotificationDropdownComponent {
-  constructor() {
+  constructor(private readonly translateService: TranslateService) {
+    this.currentLang = this.translateService.currentLang || 'pl';
+    this.translateService.onLangChange.subscribe(event => {
+      this.currentLang = event.lang;
+    });
     this.listenNotificationSignals();
   }
 
@@ -326,7 +328,6 @@ export class NotificationDropdownComponent {
   }
   private readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
-  private readonly translateService = inject(TranslateService);
   private readonly modalService = inject(ModalService);
   private readonly router = inject(Router);
   private readonly projectsApi = inject(ProjectsApiService);
@@ -343,6 +344,18 @@ export class NotificationDropdownComponent {
 
   protected isDropdownOpen: boolean = false;
   protected invitationLoading: number | null = null;
+  protected currentLang: string = 'pl';
+
+  protected getTranslation(notification: NotificationDto) {
+    if (notification.translations && notification.translations.length > 0) {
+      return (
+        notification.translations.find(t => t.language.code === this.currentLang)
+        || notification.translations[0]
+      );
+    }
+    // fallback
+    return { title: '', message: '' };
+  }
 
   protected toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -357,7 +370,7 @@ export class NotificationDropdownComponent {
   }
 
   protected markAsRead(notification: NotificationDto): void {
-    if (notification.status === 'UNREAD') {
+    if (notification.status.toUpperCase() === 'UNREAD') {
       this.notificationStateService.markAsRead(notification.id)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
@@ -444,7 +457,7 @@ export class NotificationDropdownComponent {
       .subscribe(result => {
         if (result) {
           this.notificationService.showNotification(
-            this.translateService.instant('Basic.deleteTitle') + ': ' + notification.title,
+            this.translateService.instant('Basic.deleteTitle') + ': ' + this.getTranslation(notification).title,
             NotificationTypeEnum.Success,
           );
         }
