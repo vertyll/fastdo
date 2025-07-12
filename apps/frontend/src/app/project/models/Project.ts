@@ -12,7 +12,7 @@ export type Project = {
   type?: ProjectType;
   categories?: ProjectCategory[];
   statuses?: ProjectStatus[];
-  userRoles?: ProjectUserRole[];
+  projectUserRoles?: ProjectUserRole[];
   currentUserRole?: string;
   isExpanded?: boolean;
   editMode?: boolean;

@@ -121,7 +121,8 @@
     "errors": {
       "taskNotFound": "Task not found",
       "commentNotFound": "Comment not found",
-      "commentNotYourOwn": "You can only edit your own comments"
+      "commentNotYourOwn": "You can only edit your own comments",
+      "accessDeniedToTask": "Access denied to task"
     },
     "assigned": "You have been assigned to a task {title}",
     "statusChanged": "Task {title} status changed to {status}",

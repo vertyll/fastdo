@@ -6,7 +6,6 @@ import { ProjectCategory } from './project-category.entity';
 import { ProjectStatus } from './project-status.entity';
 import { ProjectType } from './project-type.entity';
 import { ProjectUserRole } from './project-user-role.entity';
-import { ProjectUser } from './project-user.entity';
 
 @Entity('project')
 export class Project {
@@ -50,13 +49,9 @@ export class Project {
   @OneToMany(() => Task, task => task.project, { onDelete: 'CASCADE' })
   tasks: Relation<Task[]>;
 
-  @ApiProperty({ type: () => ProjectUser })
-  @OneToMany(() => ProjectUser, projectUser => projectUser.project)
-  projectUsers: Relation<ProjectUser[]>;
-
   @ApiProperty({ type: () => ProjectUserRole })
   @OneToMany(() => ProjectUserRole, projectUserRole => projectUserRole.project)
-  userRoles: Relation<ProjectUserRole[]>;
+  projectUserRoles: Relation<ProjectUserRole[]>;
 
   @ApiProperty({ type: () => ProjectCategory })
   @OneToMany(() => ProjectCategory, category => category.project)

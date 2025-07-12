@@ -121,7 +121,8 @@
     "errors": {
       "taskNotFound": "Zadanie nie zostało znalezione",
       "commentNotFound": "Komentarz nie został znaleziony",
-      "commentNotYourOwn": "Możesz edytować tylko swoje własne komentarze"
+      "commentNotYourOwn": "Możesz edytować tylko swoje własne komentarze",
+      "accessDeniedToTask": "Brak dostępu do zadania"
     },
     "assigned": "Zostałeś przypisany do zadania {title}",
     "statusChanged": "Zmieniono status zadania {title} na {status}",

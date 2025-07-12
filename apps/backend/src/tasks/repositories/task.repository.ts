@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
+import { GetAllTasksSearchParamsDto } from '../dtos/get-all-tasks-search-params.dto';
 import { Task } from '../entities/task.entity';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class TaskRepository extends Repository<Task> {
   }
 
   public async findAllWithParams(
-    params: GetAllTasksSearchParams,
+    params: GetAllTasksSearchParamsDto,
     skip: number,
     take: number,
     userId?: number | null,
@@ -24,6 +24,7 @@ export class TaskRepository extends Repository<Task> {
       .leftJoinAndSelect('task.priority', 'priority')
       .leftJoinAndSelect('task.categories', 'categories')
       .leftJoinAndSelect('task.status', 'status')
+      .leftJoinAndSelect('task.accessRole', 'accessRole')
       .select([
         'task.id',
         'task.description',
@@ -44,12 +45,49 @@ export class TaskRepository extends Repository<Task> {
         'priority.color',
         'categories.id',
         'status.id',
+        'accessRole.id',
       ]);
 
-    if (projectId) {
-      query.where('project.id = :projectId', { projectId });
+    if (userId) {
+      query.leftJoin('project_user_role', 'pur', 'pur.project_id = project.id AND pur.user_id = :userId', { userId });
+    }
+
+    if (projectId && userId) {
+      query.where(
+        `project.id = :projectId AND (
+        pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
+        OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
+        OR task.createdBy.id = :userId
+      )`,
+        { projectId, userId },
+      );
     } else if (userId) {
-      query.where('(assignedUsers.id = :userId OR task.createdBy.id = :userId)', { userId });
+      query.where(
+        `(
+        pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
+        OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
+        OR task.createdBy.id = :userId
+      )`,
+        { userId },
+      );
+    } else if (projectId) {
+      query.where('project.id = :projectId', { projectId });
+    }
+
+    if (params.priorityIds && params.priorityIds.length > 0) {
+      query.andWhere('priority.id IN (:...pirorityIds)', { pirorityIds: params.priorityIds });
+    }
+
+    if (params.categoryIds && params.categoryIds.length > 0) {
+      query.andWhere('categories.id IN (:...categoryIds)', { categoryIds: params.categoryIds });
+    }
+
+    if (params.statusIds && params.statusIds.length > 0) {
+      query.andWhere('status.id IN (:...statusIds)', { statusIds: params.statusIds });
+    }
+
+    if (params.assignedUserIds && params.assignedUserIds.length > 0) {
+      query.andWhere('assignedUsers.id IN (:...assignedUserIds)', { assignedUserIds: params.assignedUserIds });
     }
 
     if (params.q) {
@@ -91,6 +129,8 @@ export class TaskRepository extends Repository<Task> {
 
     query.skip(skip).take(take);
 
-    return query.getManyAndCount();
+    const result = await query.getManyAndCount();
+
+    return result;
   }
 }

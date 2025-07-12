@@ -11,7 +11,6 @@ import { ProjectStatus } from '../../../../projects/entities/project-status.enti
 import { ProjectTypeTranslation } from '../../../../projects/entities/project-type-translation.entity';
 import { ProjectType } from '../../../../projects/entities/project-type.entity';
 import { ProjectUserRole } from '../../../../projects/entities/project-user-role.entity';
-import { ProjectUser } from '../../../../projects/entities/project-user.entity';
 import { Project } from '../../../../projects/entities/project.entity';
 import { RoleTranslation } from '../../../../roles/entities/role-translation.entity';
 import { Role } from '../../../../roles/entities/role.entity';
@@ -68,7 +67,6 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
       PrivacyPolicySection,
       PrivacyPolicySectionTranslation,
       Project,
-      ProjectUser,
       ProjectRole,
       ProjectRoleTranslation,
       ProjectType,

@@ -106,4 +106,13 @@ export class ProjectUserRoleService {
     const roleCode = await this.getUserRoleCodeInProject(projectId, userId);
     return roleCode === ProjectRoleEnum.MANAGER;
   }
+
+  public async getUsersInProject(
+    projectId: number,
+  ): Promise<ProjectUserRole[]> {
+    return this.projectUserRoleRepository.find({
+      where: { project: { id: projectId } },
+      relations: ['user', 'projectRole'],
+    });
+  }
 }

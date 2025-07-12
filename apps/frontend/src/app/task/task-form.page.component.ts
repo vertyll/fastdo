@@ -478,7 +478,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           }
         },
         error: error => {
-          console.log('createTask error callback:', error);
           this.handleSubmissionError(error);
         },
         complete: () => {
@@ -510,7 +509,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           }
         },
         error: error => {
-          console.log('updateTask error callback:', error);
           this.handleSubmissionError(error);
         },
         complete: () => {

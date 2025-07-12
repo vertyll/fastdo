@@ -1,16 +1,53 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayTransform } from 'src/common/decorators/array-transform.decorator';
 
-export class GetAllTasksSearchParams {
+export class GetAllTasksSearchParamsDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   q?: string;
 
-  @ApiProperty({ required: false, enum: ['dateCreation', 'dateModification', 'name'] })
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by task priority IDs (multiselect)',
+  })
+  @IsOptional()
+  @ArrayTransform()
+  priorityIds: number[];
+
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by task category IDs (multiselect)',
+  })
+  @IsOptional()
+  @ArrayTransform()
+  categoryIds: number[];
+
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by task status IDs (multiselect)',
+  })
+  @IsOptional()
+  @ArrayTransform()
+  statusIds: number[];
+
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by assigned user IDs (multiselect)',
+  })
+  @IsOptional()
+  @ArrayTransform()
+  assignedUserIds: number[];
+
+  @ApiProperty({ required: false, enum: ['dateCreation', 'dateModification'] })
   @IsOptional()
   @IsString()
-  @IsIn(['dateCreation', 'dateModification', 'name'])
+  @IsIn(['dateCreation', 'dateModification'])
   sortBy?: string;
 
   @ApiProperty({ required: false, enum: ['asc', 'desc'] })
@@ -18,18 +55,6 @@ export class GetAllTasksSearchParams {
   @IsString()
   @IsIn(['asc', 'desc'])
   orderBy?: 'asc' | 'desc';
-
-  @ApiProperty({ required: false, enum: ['true', 'false', ''] })
-  @IsOptional()
-  @IsString()
-  @IsIn(['true', 'false', ''])
-  is_done?: 'true' | 'false' | '';
-
-  @ApiProperty({ required: false, enum: ['true', ''] })
-  @IsOptional()
-  @IsString()
-  @IsIn(['true', ''])
-  is_urgent?: 'true' | '';
 
   @ApiProperty({
     required: false,

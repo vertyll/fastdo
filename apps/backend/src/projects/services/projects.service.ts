@@ -22,7 +22,6 @@ import { ProjectInvitation } from '../entities/project-invitation.entity';
 import { ProjectStatusTranslation } from '../entities/project-status-translation.entity';
 import { ProjectStatus } from '../entities/project-status.entity';
 import { ProjectUserRole } from '../entities/project-user-role.entity';
-import { ProjectUser } from '../entities/project-user.entity';
 import { Project } from '../entities/project.entity';
 import { ProjectInvitationStatusEnum } from '../enums/project-invitation-status.enum';
 import { ProjectRoleEnum } from '../enums/project-role.enum';
@@ -93,11 +92,6 @@ export class ProjectsService {
       }
       const newProject = await queryRunner.manager.getRepository(Project).save(projectEntity);
 
-      await queryRunner.manager.getRepository(ProjectUser).save({
-        project: { id: newProject.id },
-        user: { id: userId },
-      });
-
       const managerRole = await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER);
       if (!managerRole) {
         throw new Error(this.i18n.t('messages.Projects.errors.managerRoleNotFound'));
@@ -140,6 +134,12 @@ export class ProjectsService {
   public async findOneWithDetails(id: number, currentLanguage: string = 'pl'): Promise<Project> {
     const userId = this.cls.get('user').userId;
     const project = await this.projectRepository.findOneWithDetails(id, userId, currentLanguage);
+
+    const isPublic = project.isPublic;
+    const isMember = project.projectUserRoles?.some(role => role.user.id === userId);
+    if (!isPublic && !isMember) {
+      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFoundOrAccessDenied'));
+    }
 
     const userRole = await this.projectUserRoleService.getUserRoleCodeInProject(id, userId);
     project.currentUserRole = userRole || undefined;
@@ -221,8 +221,6 @@ export class ProjectsService {
 
     try {
       await queryRunner.manager.getRepository(ProjectUserRole).delete({ project: { id } });
-
-      await queryRunner.manager.getRepository(ProjectUser).delete({ project: { id } });
 
       await queryRunner.manager.getRepository(Project).delete(id);
 
@@ -450,10 +448,6 @@ export class ProjectsService {
           }
         }
         await queryRunner.manager.getRepository(ProjectUserRole).remove(currentUser);
-        await queryRunner.manager.getRepository(ProjectUser).delete({
-          project: { id: projectId },
-          user: { id: currentUser.user.id },
-        });
       }
     }
 
@@ -470,61 +464,11 @@ export class ProjectsService {
               await queryRunner.manager.getRepository(ProjectUserRole).save(existingUserRole);
             }
           } else {
-            const existingProjectUser = await queryRunner.manager
-              .getRepository(ProjectUser)
-              .findOne({
-                where: {
-                  project: { id: projectId },
-                  user: { id: user.id },
-                },
-              });
-            if (!existingProjectUser) {
-              const invitationRepo = queryRunner.manager.getRepository(ProjectInvitation);
-              const existingInvitation = await invitationRepo.findOne({
-                where: {
-                  project: { id: projectId },
-                  user: { id: user.id },
-                  status: ProjectInvitationStatusEnum.PENDING,
-                },
-              });
-              if (!existingInvitation) {
-                const invitation = invitationRepo.create({
-                  project: { id: projectId },
-                  user: { id: user.id },
-                  inviter: { id: updaterId },
-                  role: { id: userWithRole.role },
-                  status: ProjectInvitationStatusEnum.PENDING,
-                });
-                await invitationRepo.save(invitation);
-                const roleInfo = await this.projectRoleService.findOneById(userWithRole.role);
-                const roleName = roleInfo?.translations?.[0]?.name || 'undefined';
-                const project = await queryRunner.manager.getRepository(Project).findOne({ where: { id: projectId } });
-                await this.notificationService.createNotification({
-                  type: NotificationTypeEnum.PROJECT_INVITATION,
-                  title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
-                  message: this.i18n.t('messages.Projects.notifications.invitationMessage', {
-                    args: {
-                      inviterEmail: updater.email,
-                      projectName: project?.name || '',
-                    },
-                  }),
-                  recipientId: user.id,
-                  data: {
-                    projectId,
-                    inviterEmail: updater.email,
-                    role: userWithRole.role,
-                    invitationId: invitation.id,
-                  },
-                  sendEmail: true,
-                });
-              }
-            } else {
-              await queryRunner.manager.getRepository(ProjectUserRole).save({
-                project: { id: projectId },
-                user: { id: user.id },
-                projectRole: { id: userWithRole.role },
-              });
-            }
+            await queryRunner.manager.getRepository(ProjectUserRole).save({
+              project: { id: projectId },
+              user: { id: user.id },
+              projectRole: { id: userWithRole.role },
+            });
           }
         }
       } catch (error) {
@@ -540,7 +484,7 @@ export class ProjectsService {
       where: [
         {
           id: projectId,
-          projectUsers: {
+          projectUserRoles: {
             user: { id: userId },
           },
         },
@@ -593,7 +537,7 @@ export class ProjectsService {
       const isProjectMember = await this.projectRepository.findOne({
         where: {
           id: projectId,
-          projectUsers: {
+          projectUserRoles: {
             user: { id: userId },
           },
         },
@@ -618,10 +562,6 @@ export class ProjectsService {
       throw new Error(this.i18n.t('messages.Projects.errors.notAllowedToAcceptInvitation'));
     }
     await this.dataSource.transaction(async manager => {
-      await manager.getRepository(ProjectUser).save({
-        project: invitation.project,
-        user: invitation.user,
-      });
       if (invitation.role) {
         await manager.getRepository(ProjectUserRole).save({
           project: invitation.project,

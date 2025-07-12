@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ArrayTransform } from 'src/common/decorators/array-transform.decorator';
 

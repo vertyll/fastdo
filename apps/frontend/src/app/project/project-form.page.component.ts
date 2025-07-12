@@ -512,11 +512,11 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (this.currentProject.userRoles) {
-      this.currentProject.userRoles.forEach(userRole => {
+    if (this.currentProject.projectUserRoles) {
+      this.currentProject.projectUserRoles.forEach(projectUserRole => {
         this.usersWithRolesFormArray.push(this.fb.group({
-          email: [userRole.user.email, [Validators.required, Validators.email]],
-          role: [userRole.projectRole.id, Validators.required],
+          email: [projectUserRole.user.email, [Validators.required, Validators.email]],
+          role: [projectUserRole.projectRole.id, Validators.required],
         }));
       });
     }

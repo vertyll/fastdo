@@ -41,7 +41,12 @@
     "orderByAsc": "Rosnąco",
     "orderByDesc": "Malejąco",
     "q": "Nazwa",
-    "projectTypes": "Typy projektów"
+    "projectTypes": "Typy projektów",
+    "priorities": "Priorytety",
+    "statuses": "Statusy",
+    "categories": "Kategorie",
+    "accessRoles": "Role dostępu",
+    "assignedUsers": "Przypisani użytkownicy"
   },
   "Auth": {
     "login": "Logowanie",

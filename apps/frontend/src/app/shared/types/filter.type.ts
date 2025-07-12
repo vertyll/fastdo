@@ -161,7 +161,6 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     options: [
       { value: 'dateCreation', label: 'Filters.createdFrom' },
       { value: 'dateModification', label: 'Filters.updatedFrom' },
-      { value: 'name', label: 'Filters.sortByName' },
     ],
   },
   {

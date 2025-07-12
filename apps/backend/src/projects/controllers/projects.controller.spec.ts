@@ -57,7 +57,7 @@ describe('ProjectsController', () => {
             icon: null,
             isActive: false,
             type: null,
-            userRoles: [],
+            projectUserRoles: [],
             categories: [],
             statuses: [],
           },
@@ -90,7 +90,7 @@ describe('ProjectsController', () => {
         icon: null,
         isActive: false,
         type: null,
-        userRoles: [],
+        projectUserRoles: [],
         categories: [],
         statuses: [],
       };
@@ -113,7 +113,7 @@ describe('ProjectsController', () => {
         icon: null,
         isActive: false,
         type: null,
-        userRoles: [],
+        projectUserRoles: [],
         categories: [],
         statuses: [],
       };
@@ -137,7 +137,7 @@ describe('ProjectsController', () => {
         icon: null,
         isActive: false,
         type: null,
-        userRoles: [],
+        projectUserRoles: [],
         categories: [],
         statuses: [],
       };

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { GetAllProjectsSearchParamsDto } from '../dtos/get-all-projects-search-params.dto';
-import { ProjectUser } from '../entities/project-user.entity';
+import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { Project } from '../entities/project.entity';
 
 @Injectable()
@@ -16,47 +16,26 @@ export class ProjectRepository extends Repository<Project> {
     take: number,
     userId: number,
   ): Promise<[Project[], number]> {
-    console.log('=== findAllWithParams DEBUG ===');
-    console.log('Received params:', JSON.stringify(params, null, 2));
-    console.log('typeIds:', params.typeIds);
-    console.log('typeIds type:', typeof params.typeIds);
-    console.log('typeIds length:', params.typeIds?.length);
-    console.log('userId:', userId);
-
     const query = this.dataSource
       .createQueryBuilder(Project, 'project')
       .leftJoin(
-        ProjectUser,
-        'projectUser',
-        'projectUser.project.id = project.id AND projectUser.user.id = :userId',
+        ProjectUserRole,
+        'projectUserRole',
+        'projectUserRole.project.id = project.id AND projectUserRole.user.id = :userId',
         { userId },
       )
       .leftJoinAndSelect('project.type', 'type');
 
-    query.where('(projectUser.user.id = :userId OR project.isPublic = true)', { userId });
-
-    // DODAJ WIĘCEJ DEBUGOWANIA
-    console.log('=== BEFORE TYPE FILTER ===');
-    console.log('Current SQL:', query.getSql());
-    console.log('Current parameters:', query.getParameters());
+    query.where(
+      '(projectUserRole.user.id = :userId OR project.isPublic = true)',
+      { userId },
+    );
 
     if (params.typeIds && params.typeIds.length > 0) {
-      console.log('=== APPLYING TYPE FILTER ===');
-      console.log('typeIds to filter:', params.typeIds);
-      console.log('typeIds is array:', Array.isArray(params.typeIds));
-
-      query.andWhere('type.id IS NOT NULL')
+      query
+        .andWhere('type.id IS NOT NULL')
         .andWhere('type.id IN (:...typeIds)', { typeIds: params.typeIds });
-
-      console.log('=== AFTER TYPE FILTER ===');
-      console.log('SQL after type filter:', query.getSql());
-      console.log('Parameters after type filter:', query.getParameters());
-    } else {
-      console.log('=== NO TYPE FILTER APPLIED ===');
-      console.log('typeIds is falsy or empty:', !params.typeIds || params.typeIds.length === 0);
     }
-
-    // reszta kodu...
 
     if (params.q) {
       query.andWhere('project.name LIKE :q', { q: `%${params.q}%` });
@@ -97,11 +76,6 @@ export class ProjectRepository extends Repository<Project> {
 
     query.skip(skip).take(take);
 
-    console.log('=== FINAL QUERY ===');
-    console.log('Final SQL:', query.getSql());
-    console.log('Final parameters:', query.getParameters());
-    console.log('=== END DEBUG ===');
-
     return query.getManyAndCount();
   }
 
@@ -111,18 +85,7 @@ export class ProjectRepository extends Repository<Project> {
     currentLanguage: string = 'pl',
   ): Promise<Project> {
     const project = await this.findOneOrFail({
-      where: [
-        {
-          id,
-          projectUsers: {
-            user: { id: userId },
-          },
-        },
-        {
-          id,
-          isPublic: true,
-        },
-      ],
+      where: { id },
       relations: [
         'type',
         'type.translations',
@@ -134,11 +97,11 @@ export class ProjectRepository extends Repository<Project> {
         'statuses',
         'statuses.translations',
         'statuses.translations.language',
-        'userRoles',
-        'userRoles.user',
-        'userRoles.projectRole',
-        'userRoles.projectRole.translations',
-        'userRoles.projectRole.translations.language',
+        'projectUserRoles',
+        'projectUserRoles.user',
+        'projectUserRoles.projectRole',
+        'projectUserRoles.projectRole.translations',
+        'projectUserRoles.projectRole.translations.language',
       ],
     });
 
@@ -181,8 +144,8 @@ export class ProjectRepository extends Repository<Project> {
       } as any;
     }
 
-    if (project.userRoles) {
-      project.userRoles = project.userRoles.map(userRole => {
+    if (project.projectUserRoles) {
+      project.projectUserRoles = project.projectUserRoles.map(userRole => {
         const roleTranslation = userRole.projectRole?.translations?.find(
           t => t.language.code === currentLanguage,
         );

@@ -29,7 +29,6 @@ import { ProjectRoleDto } from './projects/dtos/project-role.dto';
 import { ProjectStatusResponseDto } from './projects/dtos/project-status-response.dto';
 import { ProjectTypeResponseDto } from './projects/dtos/project-type-response.dto';
 import { ProjectTypeDto } from './projects/dtos/project-type.dto';
-import { ProjectUser } from './projects/entities/project-user.entity';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
 import { TaskPriorityResponseDto } from './tasks/dtos/task-priority-response.dto';
@@ -157,7 +156,6 @@ async function bootstrap(): Promise<void> {
     extraModels: [
       Task,
       Project,
-      ProjectUser,
       TaskPriority,
       User,
       Role,

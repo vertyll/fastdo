@@ -11,7 +11,7 @@ export class ProjectUserRole {
   id: number;
 
   @ApiProperty({ type: () => Project })
-  @ManyToOne(() => Project, project => project.userRoles)
+  @ManyToOne(() => Project, project => project.projectUserRoles)
   project: Relation<Project>;
 
   @ApiProperty({ type: () => User })

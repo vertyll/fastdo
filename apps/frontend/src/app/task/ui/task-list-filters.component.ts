@@ -4,9 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectCategoryApiService } from 'src/app/project/data-access/project-category.api.service';
 import { ProjectStatusApiService } from 'src/app/project/data-access/project-status.api.service';
+import { ProjectUserRoleApiService } from 'src/app/project/data-access/project-user-role.api.service';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
 import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
 import { TaskPriorityApiService } from '../data-access/task-priority-api.service';
+import { TasksService } from '../data-access/task.service';
 
 @Component({
   selector: 'app-tasks-list-filters',
@@ -24,6 +26,7 @@ export class TasksListFiltersComponent implements OnInit {
   private readonly taskPriorityApiService = inject(TaskPriorityApiService);
   private readonly projectStatusApiService = inject(ProjectStatusApiService);
   private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
+  private readonly projectUserRoleApiService = inject(ProjectUserRoleApiService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly filtersChange = output<TasksListFiltersConfig>();
@@ -41,6 +44,8 @@ export class TasksListFiltersComponent implements OnInit {
     this.getPriorities();
     this.getStatuses();
     this.getCategories();
+    this.getUsersInProject();
+
     this.setupLanguageSubscription();
   }
 
@@ -69,6 +74,24 @@ export class TasksListFiltersComponent implements OnInit {
       },
       error: err => {
         console.error('Error fetching project statuses:', err);
+      },
+    });
+  }
+
+  private getUsersInProject(): void {
+    if (this.projectId === null) return;
+    this.projectUserRoleApiService.getUsersInProject(this.projectId).subscribe({
+      next: users => {
+        const userFilter = this.filters.find(filter => filter.formControlName === 'assignedUserIds');
+        if (userFilter) {
+          userFilter.multiselectOptions = users.data.map(user => ({
+            id: user.user.id,
+            name: user.user.email,
+          }));
+        }
+      },
+      error: err => {
+        console.error('Error fetching users in project:', err);
       },
     });
   }

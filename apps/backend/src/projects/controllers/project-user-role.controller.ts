@@ -87,4 +87,16 @@ export class ProjectUserRoleController {
   ): Promise<void> {
     await this.projectUserRoleService.removeRole(+projectId, +userId);
   }
+
+  @Get('project/:projectId/users')
+  @ApiOperation({ summary: 'Get all users assigned to project' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all users assigned to the project.',
+    type: ProjectUserRole,
+    isArray: true,
+  })
+  public getUsersInProject(@Param('projectId') projectId: string): Promise<ProjectUserRole[]> {
+    return this.projectUserRoleService.getUsersInProject(+projectId);
+  }
 }

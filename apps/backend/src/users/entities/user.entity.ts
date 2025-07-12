@@ -4,7 +4,6 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation 
 import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 import { File } from '../../core/file/entities/file.entity';
 import { ProjectUserRole } from '../../projects/entities/project-user-role.entity';
-import { ProjectUser } from '../../projects/entities/project-user.entity';
 import { UserEmailHistory } from './user-email-history.entity';
 import { UserRole } from './user-role.entity';
 
@@ -83,9 +82,6 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
   emailChangeTokenExpiry: Date | null;
-
-  @OneToMany(() => ProjectUser, projectUser => projectUser.user)
-  projectUsers: Relation<ProjectUser[]>;
 
   @OneToMany(() => ProjectUserRole, projectUserRole => projectUserRole.user)
   projectUserRoles: Relation<ProjectUserRole[]>;

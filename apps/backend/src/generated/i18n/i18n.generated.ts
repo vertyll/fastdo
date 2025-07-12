@@ -130,6 +130,7 @@ export type I18nTranslations = {
         'taskNotFound': string;
         'commentNotFound': string;
         'commentNotYourOwn': string;
+        'accessDeniedToTask': string;
       };
       'assigned': string;
       'statusChanged': string;

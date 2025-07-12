@@ -41,7 +41,11 @@
     "orderByAsc": "Ascending",
     "orderByDesc": "Descending",
     "q": "Name",
-    "projectTypes": "Project types"
+    "projectTypes": "Project types",
+    "priorities": "Priorities",
+    "statuses": "Statuses",
+    "categories": "Categories",
+    "accessRoles": "Access roles"
   },
   "Auth": {
     "login": "Login",

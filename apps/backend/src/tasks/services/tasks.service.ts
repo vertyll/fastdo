@@ -7,12 +7,13 @@ import { ProjectCategory } from 'src/projects/entities/project-category.entity';
 import { ProjectRole } from 'src/projects/entities/project-role.entity';
 import { ProjectStatus } from 'src/projects/entities/project-status.entity';
 import { Project } from 'src/projects/entities/project.entity';
+import { ProjectRoleEnum } from 'src/projects/enums/project-role.enum';
 import { User } from 'src/users/entities/user.entity';
 import { TranslationDto } from '../../common/dtos/translation.dto';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
-import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
+import { GetAllTasksSearchParamsDto } from '../dtos/get-all-tasks-search-params.dto';
 import { TaskResponseDto } from '../dtos/task-response.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
@@ -67,13 +68,12 @@ export class TasksService implements ITasksService {
     return this.taskRepository.save(taskData);
   }
 
-  public async findAll(params: GetAllTasksSearchParams): Promise<ApiPaginatedResponse<Task>> {
+  public async findAll(params: GetAllTasksSearchParamsDto): Promise<ApiPaginatedResponse<Task>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
     const skip = page * pageSize;
-    const userId = this.cls.get('user').userId;
 
-    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, userId);
+    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, null);
 
     return {
       items,
@@ -88,13 +88,14 @@ export class TasksService implements ITasksService {
 
   public async findAllByProjectId(
     projectId: number,
-    params: GetAllTasksSearchParams,
+    params: GetAllTasksSearchParamsDto,
   ): Promise<ApiPaginatedResponse<Task>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
     const skip = page * pageSize;
+    const userId = this.cls.get('user').userId;
 
-    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, null, projectId);
+    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, userId, projectId);
 
     return {
       items,
@@ -108,10 +109,14 @@ export class TasksService implements ITasksService {
   }
 
   public async findOne(id: number): Promise<TaskResponseDto> {
+    const userId = this.cls.get('user').userId;
     const task = await this.taskRepository.findOneOrFail({
       where: { id },
       relations: [
         'project',
+        'project.projectUserRoles',
+        'project.projectUserRoles.user',
+        'project.projectUserRoles.projectRole',
         'assignedUsers',
         'createdBy',
         'priority',
@@ -127,10 +132,12 @@ export class TasksService implements ITasksService {
         'comments.author',
       ],
     });
+    this.validateTaskAccess(task, userId);
     return this.mapTaskToResponseDto(task);
   }
 
   public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
+    const userId = this.cls.get('user').userId;
     const task = await this.taskRepository.findOneOrFail({
       where: { id },
       relations: [
@@ -150,6 +157,7 @@ export class TasksService implements ITasksService {
         'comments.author',
       ],
     });
+    this.validateTaskAccess(task, userId);
 
     if (updateTaskDto.description !== undefined) task.description = updateTaskDto.description;
     if (updateTaskDto.additionalDescription !== undefined) {
@@ -203,6 +211,7 @@ export class TasksService implements ITasksService {
   }
 
   public async remove(id: number): Promise<void> {
+    const userId = this.cls.get('user').userId;
     const task = await this.taskRepository.findOneOrFail({
       where: { id },
       relations: [
@@ -222,6 +231,7 @@ export class TasksService implements ITasksService {
         'comments.author',
       ],
     });
+    this.validateTaskAccess(task, userId);
     await this.taskRepository.remove(task);
   }
 
@@ -284,6 +294,24 @@ export class TasksService implements ITasksService {
     // TODO: Handle attachments if provided in updateCommentDto
 
     return this.taskRepository.manager.save(TaskComment, comment);
+  }
+
+  private validateTaskAccess(task: Task, userId: number): void {
+    if (task.accessRole && task.project && Array.isArray(task.project.projectUserRoles)) {
+      const isCreator = task.createdBy && task.createdBy.id === userId;
+      const isAssigned = Array.isArray(task.assignedUsers) && task.assignedUsers.some(u => u.id === userId);
+      const hasRole = task.project.projectUserRoles.some(
+        ur =>
+          ur.user && ur.user.id === userId && ur.projectRole && task.accessRole?.id !== undefined
+          && ur.projectRole.id === task.accessRole.id,
+      );
+      const isManager = task.project.projectUserRoles.some(
+        ur => ur.user && ur.user.id === userId && ur.projectRole && ur.projectRole.code === ProjectRoleEnum.MANAGER,
+      );
+      if (!(isCreator || isAssigned || hasRole || isManager)) {
+        throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
+      }
+    }
   }
 
   private mapTaskToResponseDto(task: Task): TaskResponseDto {

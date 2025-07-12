@@ -24,6 +24,13 @@ export default async () => {
     ),
     ['./users/entities/user.entity']: await import('./users/entities/user.entity'),
     ['./core/config/types/app.config.type']: await import('./core/config/types/app.config.type'),
+    ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
+    ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
+    ['./roles/entities/role-translation.entity']: await import('./roles/entities/role-translation.entity'),
+    ['./auth/entities/refresh-token.entity']: await import('./auth/entities/refresh-token.entity'),
+    ['./core/file/entities/file.entity']: await import('./core/file/entities/file.entity'),
+    ['./projects/entities/project-user-role.entity']: await import('./projects/entities/project-user-role.entity'),
+    ['./users/entities/user-email-history.entity']: await import('./users/entities/user-email-history.entity'),
     ['./projects/entities/project-category.entity']: await import('./projects/entities/project-category.entity'),
     ['./projects/entities/project.entity']: await import('./projects/entities/project.entity'),
     ['./projects/entities/project-category-translation.entity']: await import(
@@ -34,7 +41,6 @@ export default async () => {
       './projects/entities/project-status-translation.entity'
     ),
     ['./tasks/entities/task.entity']: await import('./tasks/entities/task.entity'),
-    ['./core/file/entities/file.entity']: await import('./core/file/entities/file.entity'),
     ['./tasks/entities/task-comment.entity']: await import('./tasks/entities/task-comment.entity'),
     ['./tasks/entities/task-comment-attachment.entity']: await import(
       './tasks/entities/task-comment-attachment.entity'
@@ -50,13 +56,6 @@ export default async () => {
     ['./projects/entities/project-type-translation.entity']: await import(
       './projects/entities/project-type-translation.entity'
     ),
-    ['./projects/entities/project-user.entity']: await import('./projects/entities/project-user.entity'),
-    ['./projects/entities/project-user-role.entity']: await import('./projects/entities/project-user-role.entity'),
-    ['./roles/entities/role.entity']: await import('./roles/entities/role.entity'),
-    ['./users/entities/user-role.entity']: await import('./users/entities/user-role.entity'),
-    ['./roles/entities/role-translation.entity']: await import('./roles/entities/role-translation.entity'),
-    ['./auth/entities/refresh-token.entity']: await import('./auth/entities/refresh-token.entity'),
-    ['./users/entities/user-email-history.entity']: await import('./users/entities/user-email-history.entity'),
     ['./projects/entities/project-role-translation.entity']: await import(
       './projects/entities/project-role-translation.entity'
     ),
@@ -203,6 +202,73 @@ export default async () => {
           dateCreation: { required: true, type: () => Date },
           dateModification: { required: true, type: () => Date },
           dateDeletion: { required: true, type: () => Date, nullable: true },
+        },
+      }], [import('./users/entities/user-email-history.entity'), {
+        'UserEmailHistory': {
+          id: { required: true, type: () => Number },
+          oldEmail: { required: true, type: () => String },
+          newEmail: { required: true, type: () => String },
+          dateChange: { required: true, type: () => Date },
+          user: { required: true, type: () => t['./users/entities/user.entity'].User },
+        },
+      }], [import('./roles/entities/role-translation.entity'), {
+        'RoleTranslation': {
+          id: { required: true, type: () => Number },
+          name: { required: true, type: () => String },
+          description: { required: true, type: () => String },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date },
+          language: { required: true, type: () => t['./core/language/entities/language.entity'].Language },
+          role: { required: true, type: () => t['./roles/entities/role.entity'].Role },
+        },
+      }], [import('./roles/entities/role.entity'), {
+        'Role': {
+          id: { required: true, type: () => Number },
+          code: { required: true, type: () => String },
+          isActive: { required: true, type: () => Boolean },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date },
+          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
+          translations: { required: true, type: () => [t['./roles/entities/role-translation.entity'].RoleTranslation] },
+        },
+      }], [import('./users/entities/user-role.entity'), {
+        'UserRole': {
+          id: {
+            required: true,
+            type: () => Number,
+          },
+          user: { required: true, type: () => t['./users/entities/user.entity'].User },
+          role: { required: true, type: () => t['./roles/entities/role.entity'].Role },
+        },
+      }], [import('./users/entities/user.entity'), {
+        'User': {
+          id: { required: true, type: () => Number },
+          email: { required: true, type: () => String },
+          password: { required: true, type: () => String },
+          refreshTokens: { required: true, type: () => [t['./auth/entities/refresh-token.entity'].RefreshToken] },
+          isActive: { required: true, type: () => Boolean },
+          dateCreation: { required: true, type: () => Date },
+          dateModification: { required: true, type: () => Date, nullable: true },
+          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
+          isEmailConfirmed: { required: true, type: () => Boolean },
+          confirmationToken: { required: true, type: () => String, nullable: true },
+          confirmationTokenExpiry: { required: true, type: () => Date, nullable: true },
+          termsAccepted: { required: true, type: () => Boolean },
+          privacyPolicyAccepted: { required: true, type: () => Boolean },
+          dateTermsAcceptance: { required: true, type: () => Date, nullable: true },
+          datePrivacyPolicyAcceptance: { required: true, type: () => Date, nullable: true },
+          avatar: { required: true, type: () => t['./core/file/entities/file.entity'].File, nullable: true },
+          emailChangeToken: { required: true, type: () => String, nullable: true },
+          pendingEmail: { required: true, type: () => String, nullable: true },
+          emailChangeTokenExpiry: { required: true, type: () => Date, nullable: true },
+          projectUserRoles: {
+            required: true,
+            type: () => [t['./projects/entities/project-user-role.entity'].ProjectUserRole],
+          },
+          emailHistories: {
+            required: true,
+            type: () => [t['./users/entities/user-email-history.entity'].UserEmailHistory],
+          },
         },
       }], [import('./projects/entities/project-category-translation.entity'), {
         'ProjectCategoryTranslation': {
@@ -361,8 +427,7 @@ export default async () => {
             nullable: true,
           },
           tasks: { required: true, type: () => [t['./tasks/entities/task.entity'].Task] },
-          projectUsers: { required: true, type: () => [t['./projects/entities/project-user.entity'].ProjectUser] },
-          userRoles: {
+          projectUserRoles: {
             required: true,
             type: () => [t['./projects/entities/project-user-role.entity'].ProjectUserRole],
           },
@@ -372,83 +437,6 @@ export default async () => {
           },
           statuses: { required: true, type: () => [t['./projects/entities/project-status.entity'].ProjectStatus] },
           currentUserRole: { required: false, type: () => String },
-        },
-      }], [import('./projects/entities/project-user.entity'), {
-        'ProjectUser': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          project: { required: true, type: () => t['./projects/entities/project.entity'].Project },
-          user: { required: true, type: () => t['./users/entities/user.entity'].User },
-        },
-      }], [import('./users/entities/user-email-history.entity'), {
-        'UserEmailHistory': {
-          id: { required: true, type: () => Number },
-          oldEmail: { required: true, type: () => String },
-          newEmail: { required: true, type: () => String },
-          dateChange: { required: true, type: () => Date },
-          user: { required: true, type: () => t['./users/entities/user.entity'].User },
-        },
-      }], [import('./roles/entities/role-translation.entity'), {
-        'RoleTranslation': {
-          id: { required: true, type: () => Number },
-          name: { required: true, type: () => String },
-          description: { required: true, type: () => String },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date },
-          language: { required: true, type: () => t['./core/language/entities/language.entity'].Language },
-          role: { required: true, type: () => t['./roles/entities/role.entity'].Role },
-        },
-      }], [import('./roles/entities/role.entity'), {
-        'Role': {
-          id: { required: true, type: () => Number },
-          code: { required: true, type: () => String },
-          isActive: { required: true, type: () => Boolean },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date },
-          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
-          translations: { required: true, type: () => [t['./roles/entities/role-translation.entity'].RoleTranslation] },
-        },
-      }], [import('./users/entities/user-role.entity'), {
-        'UserRole': {
-          id: {
-            required: true,
-            type: () => Number,
-          },
-          user: { required: true, type: () => t['./users/entities/user.entity'].User },
-          role: { required: true, type: () => t['./roles/entities/role.entity'].Role },
-        },
-      }], [import('./users/entities/user.entity'), {
-        'User': {
-          id: { required: true, type: () => Number },
-          email: { required: true, type: () => String },
-          password: { required: true, type: () => String },
-          refreshTokens: { required: true, type: () => [t['./auth/entities/refresh-token.entity'].RefreshToken] },
-          isActive: { required: true, type: () => Boolean },
-          dateCreation: { required: true, type: () => Date },
-          dateModification: { required: true, type: () => Date, nullable: true },
-          userRoles: { required: true, type: () => [t['./users/entities/user-role.entity'].UserRole] },
-          isEmailConfirmed: { required: true, type: () => Boolean },
-          confirmationToken: { required: true, type: () => String, nullable: true },
-          confirmationTokenExpiry: { required: true, type: () => Date, nullable: true },
-          termsAccepted: { required: true, type: () => Boolean },
-          privacyPolicyAccepted: { required: true, type: () => Boolean },
-          dateTermsAcceptance: { required: true, type: () => Date, nullable: true },
-          datePrivacyPolicyAcceptance: { required: true, type: () => Date, nullable: true },
-          avatar: { required: true, type: () => t['./core/file/entities/file.entity'].File, nullable: true },
-          emailChangeToken: { required: true, type: () => String, nullable: true },
-          pendingEmail: { required: true, type: () => String, nullable: true },
-          emailChangeTokenExpiry: { required: true, type: () => Date, nullable: true },
-          projectUsers: { required: true, type: () => [t['./projects/entities/project-user.entity'].ProjectUser] },
-          projectUserRoles: {
-            required: true,
-            type: () => [t['./projects/entities/project-user-role.entity'].ProjectUserRole],
-          },
-          emailHistories: {
-            required: true,
-            type: () => [t['./users/entities/user-email-history.entity'].UserEmailHistory],
-          },
         },
       }], [import('./projects/entities/project-user-role.entity'), {
         'ProjectUserRole': {
@@ -661,12 +649,14 @@ export default async () => {
           attachmentIds: { required: false, type: () => [String] },
         },
       }], [import('./tasks/dtos/get-all-tasks-search-params.dto'), {
-        'GetAllTasksSearchParams': {
+        'GetAllTasksSearchParamsDto': {
           q: { required: false, type: () => String },
+          priorityIds: { required: true, type: () => [Number] },
+          categoryIds: { required: true, type: () => [Number] },
+          statusIds: { required: true, type: () => [Number] },
+          assignedUserIds: { required: true, type: () => [Number] },
           sortBy: { required: false, type: () => String },
           orderBy: { required: false, type: () => Object },
-          is_done: { required: false, type: () => Object },
-          is_urgent: { required: false, type: () => Object },
           createdFrom: { required: false, type: () => String },
           createdTo: { required: false, type: () => String },
           updatedFrom: { required: false, type: () => String },
@@ -1133,6 +1123,7 @@ export default async () => {
           'getUserRoleInProject': { type: Object },
           'updateRole': { type: t['./projects/entities/project-user-role.entity'].ProjectUserRole },
           'removeRole': {},
+          'getUsersInProject': { type: [t['./projects/entities/project-user-role.entity'].ProjectUserRole] },
         },
       }], [import('./projects/controllers/projects.controller'), {
         'ProjectsController': {

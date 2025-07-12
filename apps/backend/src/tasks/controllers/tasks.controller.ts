@@ -4,7 +4,7 @@ import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
-import { GetAllTasksSearchParams } from '../dtos/get-all-tasks-search-params.dto';
+import { GetAllTasksSearchParamsDto } from '../dtos/get-all-tasks-search-params.dto';
 import { TaskResponseDto } from '../dtos/task-response.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
@@ -37,7 +37,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isPaginated: true })
   public findAll(
-    @Query() query: GetAllTasksSearchParams,
+    @Query() query: GetAllTasksSearchParamsDto,
   ): Promise<ApiPaginatedResponse<Task>> {
     return this.tasksService.findAll(query);
   }
@@ -52,7 +52,7 @@ export class TasksController {
   })
   public findAllByProjectId(
     @Param('projectId') projectId: string,
-    @Query() query: GetAllTasksSearchParams,
+    @Query() query: GetAllTasksSearchParamsDto,
   ): Promise<ApiPaginatedResponse<Task>> {
     return this.tasksService.findAllByProjectId(+projectId, query);
   }

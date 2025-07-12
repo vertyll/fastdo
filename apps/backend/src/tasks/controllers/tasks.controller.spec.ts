@@ -65,7 +65,7 @@ describe('TasksController', () => {
         type: null,
         tasks: [],
         projectUsers: [],
-        userRoles: [],
+        projectUserRoles: [],
         categories: [],
         statuses: [],
       } as Project;
@@ -163,7 +163,7 @@ describe('TasksController', () => {
         type: null,
         tasks: [],
         projectUsers: [],
-        userRoles: [],
+        projectUserRoles: [],
         categories: [],
         statuses: [],
       } as Project;

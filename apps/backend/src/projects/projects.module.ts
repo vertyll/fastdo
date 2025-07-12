@@ -22,7 +22,6 @@ import { ProjectStatus } from './entities/project-status.entity';
 import { ProjectTypeTranslation } from './entities/project-type-translation.entity';
 import { ProjectType } from './entities/project-type.entity';
 import { ProjectUserRole } from './entities/project-user-role.entity';
-import { ProjectUser } from './entities/project-user.entity';
 import { Project } from './entities/project.entity';
 import { ProjectCategoryRepository } from './repositories/project-category.repository';
 import { ProjectInvitationRepository } from './repositories/project-invitation.repository';
@@ -30,7 +29,6 @@ import { ProjectRoleRepository } from './repositories/project-role.repository';
 import { ProjectStatusRepository } from './repositories/project-status.repository';
 import { ProjectTypeRepository } from './repositories/project-type.repository';
 import { ProjectUserRoleRepository } from './repositories/project-user-role.repository';
-import { ProjectUserRepository } from './repositories/project-user.repository';
 import { ProjectRepository } from './repositories/project.repository';
 import { ProjectCategoryService } from './services/project-category.service';
 import { ProjectRoleService } from './services/project-role.service';
@@ -44,7 +42,6 @@ import { ProjectsService } from './services/projects.service';
   imports: [
     TypeOrmModule.forFeature([
       Project,
-      ProjectUser,
       ProjectUserRole,
       ProjectRole,
       ProjectCategory,
@@ -77,7 +74,6 @@ import { ProjectsService } from './services/projects.service';
     ProjectsService,
     ProjectManagementService,
     ProjectRepository,
-    ProjectUserRepository,
     ProjectRoleService,
     ProjectRoleRepository,
     ProjectTypeService,
