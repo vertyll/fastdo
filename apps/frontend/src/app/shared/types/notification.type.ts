@@ -1,10 +1,11 @@
 import { Language } from 'src/app/core/models/Language';
+import { NotificationStatusEnum } from '../enums/notification-status.enum';
 
 export interface NotificationDto {
   id: number;
   type: string;
   data?: any;
-  status: NotificationStatus;
+  status: NotificationStatusEnum;
   createdAt: Date;
   updatedAt: Date;
   translations: NotificationTranslation[];
@@ -16,8 +17,6 @@ export interface NotificationTranslation {
   message: string;
   language: Language;
 }
-
-type NotificationStatus = 'UNREAD' | 'READ';
 
 export interface NotificationSettingsDto {
   id: number;

@@ -1,7 +1,8 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Observable, Subject, catchError, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../auth/data-access/auth.service';
+import { NotificationStatusEnum } from '../enums/notification-status.enum';
 import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
 import { NotificationApiService } from './notification-api.service';
 
@@ -44,7 +45,9 @@ export class NotificationStateService {
 
   public readonly unreadCount = computed(() => {
     const notifications = this._notifications();
-    return Array.isArray(notifications) ? notifications.filter(n => n.status === 'UNREAD').length : 0;
+    return Array.isArray(notifications)
+      ? notifications.filter(n => n.status === NotificationStatusEnum.UNREAD).length
+      : 0;
   });
 
   // Auto-refresh notifications every 30 seconds (only when WebSocket is not connected AND user is logged in)
@@ -89,7 +92,7 @@ export class NotificationStateService {
         const currentNotifications = this._notifications();
         if (Array.isArray(currentNotifications)) {
           const updatedNotifications = currentNotifications.map(n =>
-            n.id === id ? { ...n, status: 'READ' as const } : n
+            n.id === id ? { ...n, status: NotificationStatusEnum.READ } : n
           );
           this._notifications.set(updatedNotifications);
         }
@@ -109,7 +112,7 @@ export class NotificationStateService {
         if (Array.isArray(currentNotifications)) {
           const updatedNotifications = currentNotifications.map(n => ({
             ...n,
-            status: 'READ' as const,
+            status: NotificationStatusEnum.READ,
           }));
           this._notifications.set(updatedNotifications);
         }

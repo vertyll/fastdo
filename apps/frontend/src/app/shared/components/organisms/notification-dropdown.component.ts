@@ -8,6 +8,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, finalize, of } from 'rxjs';
 import { ProjectsApiService } from 'src/app/project/data-access/project.api.service';
 import { ButtonRoleEnum } from '../../enums/modal.enum';
+import { NotificationStatusEnum } from '../../enums/notification-status.enum';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
 import { ModalService } from '../../services/modal.service';
 import { NotificationStateService } from '../../services/notification-state.service';
@@ -77,15 +78,6 @@ import { NotificationDto } from '../../types/notification.type';
                       {{ 'Notifications.markAllRead' | translate }}
                     </button>
                   }
-                  @if (notifications().length > 0) {
-                    <button
-                      class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
-                      (click)="clearAllNotifications()"
-                      [title]="'Notifications.clearAll' | translate"
-                    >
-                      <ng-icon name="heroTrash" size="16" />
-                    </button>
-                  }
                 </div>
               </div>
 
@@ -108,7 +100,7 @@ import { NotificationDto } from '../../types/notification.type';
                           <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
                             {{ getTranslation(notification).message }}
                           </p>
-                          @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === 'UNREAD') {
+                          @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status === NotificationStatusEnum.UNREAD) {
                             <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
                               <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
                                 {{ 'ProjectInvitation.projectInfo' | translate }}
@@ -142,7 +134,7 @@ import { NotificationDto } from '../../types/notification.type';
                             {{ formatDate(notification.createdAt) }}
                           </span>
                         </div>
-                        @if (notification.status === 'UNREAD') {
+                        @if (notification.status === NotificationStatusEnum.UNREAD) {
                           <div class="w-2 h-2 bg-primary-500 rounded-full mt-1 ml-2 flex-shrink-0"></div>
                         }
                       </div>
@@ -159,6 +151,13 @@ import { NotificationDto } from '../../types/notification.type';
                   >
                     <ng-icon name="heroCog6Tooth" size="14" />
                     <span>{{ 'Notifications.settings' | translate }}</span>
+                  </button>
+                  <button
+                    class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                    (click)="clearAllNotifications()"
+                    [title]="'Notifications.clearAll' | translate"
+                  >
+                    <ng-icon name="heroTrash" size="16" />
                   </button>
                 </div>
               } @else {
@@ -200,15 +199,6 @@ import { NotificationDto } from '../../types/notification.type';
                     {{ 'Notifications.markAllRead' | translate }}
                   </button>
                 }
-                @if (notifications().length > 0) {
-                  <button
-                    class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
-                    (click)="clearAllNotifications()"
-                    [title]="'Notifications.clearAll' | translate"
-                  >
-                    <ng-icon name="heroTrash" size="16" />
-                  </button>
-                }
               </div>
             </div>
 
@@ -230,7 +220,7 @@ import { NotificationDto } from '../../types/notification.type';
                         <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
                           {{ getTranslation(notification).message }}
                         </p>
-                        @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === 'UNREAD') {
+                        @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === NotificationStatusEnum.UNREAD) {
                           <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
                             <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
                               {{ 'ProjectInvitation.projectInfo' | translate }}
@@ -261,7 +251,7 @@ import { NotificationDto } from '../../types/notification.type';
                         </span>
                       </div>
                       <div class="flex items-center space-x-2 ml-2">
-                        @if (notification.status === 'UNREAD') {
+                        @if (notification.status === NotificationStatusEnum.UNREAD) {
                           <div class="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
                         }
                         <button
@@ -287,6 +277,13 @@ import { NotificationDto } from '../../types/notification.type';
                   <ng-icon name="heroCog6Tooth" size="14" />
                   <span>{{ 'Notifications.settings' | translate }}</span>
                 </button>
+                <button
+                  class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                  (click)="clearAllNotifications()"
+                  [title]="'Notifications.clearAll' | translate"
+                >
+                  <ng-icon name="heroTrash" size="16" />
+                </button>
               </div>
             } @else {
               <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
@@ -306,6 +303,8 @@ import { NotificationDto } from '../../types/notification.type';
   `,
 })
 export class NotificationDropdownComponent {
+  protected readonly NotificationStatusEnum = NotificationStatusEnum;
+
   constructor(private readonly translateService: TranslateService) {
     this.currentLang = this.translateService.currentLang || 'pl';
     this.translateService.onLangChange.subscribe(event => {
@@ -370,7 +369,7 @@ export class NotificationDropdownComponent {
   }
 
   protected markAsRead(notification: NotificationDto): void {
-    if (notification.status.toUpperCase() === 'UNREAD') {
+    if (notification.status === NotificationStatusEnum.UNREAD) {
       this.notificationStateService.markAsRead(notification.id)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
