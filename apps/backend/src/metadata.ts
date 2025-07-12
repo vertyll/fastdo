@@ -1074,6 +1074,7 @@ export default async () => {
           'updateUserSettings': {
             type: t['./notifications/entities/notification-settings.entity'].NotificationSettings,
           },
+          'deleteMyNotification': {},
         },
       }], [import('./tasks/controllers/task-priority.controller'), {
         'TaskPriorityController': {

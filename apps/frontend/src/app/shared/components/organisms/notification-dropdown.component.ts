@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, input } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -161,14 +161,6 @@ import { NotificationDto } from '../../types/notification.type';
                     <ng-icon name="heroCog6Tooth" size="14" />
                     <span>{{ 'Notifications.settings' | translate }}</span>
                   </button>
-
-                  <button
-                    class="flex items-center space-x-1 text-xs text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
-                    (click)="clearAllNotifications()"
-                  >
-                    <ng-icon name="heroTrash" size="14" />
-                    <span>{{ 'Notifications.clearAll' | translate }}</span>
-                  </button>
                 </div>
               } @else {
                 <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
@@ -316,6 +308,22 @@ import { NotificationDto } from '../../types/notification.type';
   `,
 })
 export class NotificationDropdownComponent {
+  constructor() {
+    this.listenNotificationSignals();
+  }
+
+  private listenNotificationSignals(): void {
+    effect(() => {
+      const readId = this.notificationStateService.notificationRead();
+      if (readId) {
+        this.notificationStateService.removeNotificationById(readId);
+      }
+      const deletedId = this.notificationStateService.notificationDeleted();
+      if (deletedId) {
+        this.notificationStateService.removeNotificationById(deletedId);
+      }
+    });
+  }
   private readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
@@ -472,9 +480,8 @@ export class NotificationDropdownComponent {
     }
   }
 
-  protected acceptInvitation(invitationId: number, _notification: NotificationDto): void {
+  protected acceptInvitation(invitationId: number, notification: NotificationDto): void {
     this.invitationLoading = invitationId;
-
     this.projectsApi.acceptInvitation({ invitationId })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -496,16 +503,24 @@ export class NotificationDropdownComponent {
             this.translateService.instant('ProjectInvitation.acceptSuccess'),
             NotificationTypeEnum.Success,
           );
-          this.notificationStateService.removeNotificationByInvitationId(invitationId);
-          this.notificationStateService.refreshNotifications();
-          this.closeDropdown();
+          this.notificationStateService.deleteNotification(notification.id)
+            .pipe(
+              takeUntilDestroyed(this.destroyRef),
+              catchError(error => {
+                console.error('Error deleting notification:', error);
+                return of(null);
+              }),
+            )
+            .subscribe(() => {
+              this.notificationStateService.refreshNotifications();
+              this.closeDropdown();
+            });
         }
       });
   }
 
-  protected rejectInvitation(invitationId: number, _notification: NotificationDto): void {
+  protected rejectInvitation(invitationId: number, notification: NotificationDto): void {
     this.invitationLoading = invitationId;
-
     this.projectsApi.rejectInvitation({ invitationId })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -527,9 +542,18 @@ export class NotificationDropdownComponent {
             this.translateService.instant('ProjectInvitation.rejectSuccess'),
             NotificationTypeEnum.Success,
           );
-          this.notificationStateService.removeNotificationByInvitationId(invitationId);
-          this.notificationStateService.refreshNotifications();
-          this.closeDropdown();
+          this.notificationStateService.deleteNotification(notification.id)
+            .pipe(
+              takeUntilDestroyed(this.destroyRef),
+              catchError(error => {
+                console.error('Error deleting notification:', error);
+                return of(null);
+              }),
+            )
+            .subscribe(() => {
+              this.notificationStateService.refreshNotifications();
+              this.closeDropdown();
+            });
         }
       });
   }

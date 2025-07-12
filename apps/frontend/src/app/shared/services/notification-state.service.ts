@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
+import { Observable, Subject, catchError, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
 import { NotificationApiService } from './notification-api.service';
@@ -9,6 +9,18 @@ import { NotificationApiService } from './notification-api.service';
   providedIn: 'root',
 })
 export class NotificationStateService {
+  private readonly _notificationRead = signal<number | null>(null);
+  private readonly _notificationDeleted = signal<number | null>(null);
+
+  public notificationRead = this._notificationRead.asReadonly();
+  public notificationDeleted = this._notificationDeleted.asReadonly();
+
+  public removeNotificationById(id: number): void {
+    const current = this._notifications();
+    if (Array.isArray(current)) {
+      this._notifications.set(current.filter(n => n.id !== id));
+    }
+  }
   public removeNotificationByInvitationId(invitationId: number): void {
     const current = this._notifications();
     if (Array.isArray(current)) {
@@ -168,6 +180,17 @@ export class NotificationStateService {
 
     window.addEventListener('notification-refresh', () => {
       this.refreshNotifications();
+    });
+
+    window.addEventListener('notification.read', (event: any) => {
+      if (event?.detail?.notificationId) {
+        this._notificationRead.set(event.detail.notificationId);
+      }
+    });
+    window.addEventListener('notification.deleted', (event: any) => {
+      if (event?.detail?.notificationId) {
+        this._notificationDeleted.set(event.detail.notificationId);
+      }
     });
   }
 

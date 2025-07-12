@@ -149,6 +149,18 @@ export class NotificationService implements INotificationService {
     return this.settingsRepository.save(settings);
   }
 
+  public async deleteNotification(userId: number, notificationId: number): Promise<void> {
+    const notification = await this.notificationRepository.findOne({
+      where: { id: notificationId, recipient: { id: userId } },
+      relations: ['recipient'],
+    });
+    if (!notification) {
+      return;
+    }
+    await this.notificationRepository.delete({ id: notificationId, recipient: { id: userId } });
+    await this.notificationWebSocketService.sendNotificationDeleted(notification.id, notification.recipient.id);
+  }
+
   private shouldReceiveNotification(type: NotificationTypeEnum, settings: NotificationSettings): boolean {
     switch (type) {
       case NotificationTypeEnum.PROJECT_INVITATION:

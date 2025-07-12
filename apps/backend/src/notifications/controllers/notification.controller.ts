@@ -42,6 +42,17 @@ export class NotificationController {
     return Promise.resolve([]);
   }
 
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete notification for current user' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Notification deleted.',
+  })
+  public deleteMyNotification(@Param('id') id: string): Promise<void> {
+    const userId = this.cls.get('user').userId;
+    return this.notificationService.deleteNotification(userId, +id);
+  }
+
   @Get('me')
   @ApiOperation({ summary: 'Get notifications for current user' })
   @ApiWrappedResponse({
