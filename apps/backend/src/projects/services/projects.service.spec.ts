@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
-import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { FileFacade } from 'src/core/file/facade/file.facade';
 import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
 import { INotificationServiceToken } from 'src/notifications/tokens/notification-service.token';
@@ -17,6 +16,7 @@ import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectRoleService } from './project-role.service';
 import { ProjectUserRoleService } from './project-user-role.service';
 import { ProjectsService } from './projects.service';
+import { ProjectUserRoleRepository } from '../repositories/project-user-role.repository';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;
@@ -75,42 +75,22 @@ describe('ProjectsService', () => {
 
     mockDataSource = {
       createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
-      getRepository: jest.fn().mockImplementation((entity: any) => {
-        // ProjectUserRole
-        if (entity && entity.name === 'ProjectUserRole') {
-          return {
-            findOne: jest.fn().mockResolvedValue({
-              projectRole: {
-                code: 'manager',
-                translations: [],
-              },
-            }),
-            find: jest.fn().mockResolvedValue([]),
-            remove: jest.fn(),
-            save: jest.fn(),
-            createQueryBuilder: jest.fn().mockReturnValue({
-              leftJoinAndSelect: jest.fn().mockReturnThis(),
-              where: jest.fn().mockReturnThis(),
-              select: jest.fn().mockReturnThis(),
-              getMany: jest.fn().mockResolvedValue([]),
-            }),
-            delete: jest.fn(),
-            update: jest.fn(),
-          };
-        }
-        // Project
-        if (entity && entity.name === 'Project') {
-          return {
-            findOne: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
-          };
-        }
+    getRepository: jest.fn().mockImplementation((entity: any) => {
+      if (entity && entity.name === 'ProjectUserRole') {
         return {
-          findOne: jest.fn(),
-          find: jest.fn(),
-          save: jest.fn(),
+          findOne: jest.fn().mockResolvedValue({
+            projectRole: {
+              code: 'manager',
+              translations: [],
+              permissions: [
+                { code: 'EDIT_PROJECT' },
+                { code: 'DELETE_PROJECT' },
+              ],
+            },
+          }),
+          find: jest.fn().mockResolvedValue([]),
           remove: jest.fn(),
+          save: jest.fn(),
           createQueryBuilder: jest.fn().mockReturnValue({
             leftJoinAndSelect: jest.fn().mockReturnThis(),
             where: jest.fn().mockReturnThis(),
@@ -120,7 +100,29 @@ describe('ProjectsService', () => {
           delete: jest.fn(),
           update: jest.fn(),
         };
-      }),
+      }
+      if (entity && entity.name === 'Project') {
+        return {
+          findOne: jest.fn(),
+          update: jest.fn(),
+          delete: jest.fn(),
+        };
+      }
+      return {
+        findOne: jest.fn(),
+        find: jest.fn(),
+        save: jest.fn(),
+        remove: jest.fn(),
+        createQueryBuilder: jest.fn().mockReturnValue({
+          leftJoinAndSelect: jest.fn().mockReturnThis(),
+          where: jest.fn().mockReturnThis(),
+          select: jest.fn().mockReturnThis(),
+          getMany: jest.fn().mockResolvedValue([]),
+        }),
+        delete: jest.fn(),
+        update: jest.fn(),
+      };
+    }),
     } as any;
 
     mockClsService = {
@@ -152,6 +154,51 @@ describe('ProjectsService', () => {
       translate: jest.fn((key: string) => key),
     } as any;
 
+    const mockProjectUserRole = {
+      id: 1,
+      project: { id: 1 },
+      user: { id: 1 },
+      projectRole: {
+        id: 1,
+        code: 'manager',
+        translations: [],
+        permissions: [
+          { code: 'EDIT_PROJECT' },
+          { code: 'DELETE_PROJECT' },
+        ],
+      },
+    };
+
+    const mockProjectUserRoleRepository = {
+      find: jest.fn().mockResolvedValue([mockProjectUserRole]),
+      findOne: jest.fn().mockResolvedValue(mockProjectUserRole),
+      save: jest.fn(),
+      remove: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([mockProjectUserRole]),
+      }),
+      delete: jest.fn(),
+      update: jest.fn(),
+    };
+
+    const mockNotificationRepository = {
+      find: jest.fn(),
+      findOne: jest.fn(),
+      save: jest.fn(),
+      remove: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([]),
+      }),
+      delete: jest.fn(),
+      update: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProjectsService,
@@ -165,6 +212,8 @@ describe('ProjectsService', () => {
         { provide: INotificationServiceToken, useValue: mockNotificationService },
         { provide: IUsersServiceToken, useValue: mockUsersService },
         { provide: I18nService, useValue: mockI18nService },
+        { provide: ProjectUserRoleRepository, useValue: mockProjectUserRoleRepository },
+        { provide: 'NotificationRepository', useValue: mockNotificationRepository },
       ],
     }).compile();
 
@@ -195,10 +244,12 @@ describe('ProjectsService', () => {
             name: 'Test Project',
             description: undefined,
             isPublic: undefined,
-            icon: undefined,
+            icon: null,
             dateCreation: undefined,
             dateModification: undefined,
             type: undefined,
+            isActive: undefined,
+            permissions: ['EDIT_PROJECT', 'DELETE_PROJECT'],
           },
         ],
         pagination: {
@@ -227,6 +278,7 @@ describe('ProjectsService', () => {
         dateModification: new Date(),
         translations: [],
         userRoles: [],
+        permissions: [],
       } as ProjectRole;
 
       mockProjectRoleService.findOneByCode.mockResolvedValue(mockManagerRole);

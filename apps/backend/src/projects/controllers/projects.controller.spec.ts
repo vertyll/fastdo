@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
 import { ProjectListResponseDto } from '../dtos/project-list-response.dto';
 import { Project } from '../entities/project.entity';
@@ -24,6 +25,7 @@ describe('ProjectsController', () => {
       removeProjectWithTasks: jest.fn(),
     } as any;
 
+    const mockDataSource = {};
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProjectsController],
       providers: [
@@ -32,6 +34,7 @@ describe('ProjectsController', () => {
           provide: ProjectManagementService,
           useValue: mockProjectManagementService,
         },
+        { provide: DataSource, useValue: mockDataSource },
       ],
     }).compile();
 
@@ -65,7 +68,7 @@ describe('ProjectsController', () => {
             isPublic: false,
             icon: null,
             isActive: false,
-            type: null,
+            type: undefined,
             categories: [],
             statuses: [],
           },
