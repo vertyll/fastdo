@@ -182,7 +182,8 @@ export interface TableConfig {
                       [initialUrl]="getValue(row, column.key)"
                       format="square"
                       size="sm"
-                      mode="view"
+                      mode="preview"
+                      (click)="$event.stopPropagation(); projectImageClick.emit(row)"
                     />
                   </div>
                 }
@@ -360,6 +361,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   actionClick = output<{ action: string; row: any; }>();
   sortChange = output<{ column: string; direction: 'asc' | 'desc'; }>();
   rowClick = output<any>();
+  projectImageClick = output<any>();
 
   @ContentChild('customTemplate')
   customTemplate!: TemplateRef<any>;
