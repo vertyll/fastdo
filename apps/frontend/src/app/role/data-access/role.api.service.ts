@@ -24,12 +24,23 @@ export class RoleApiService {
       options.headers = { 'x-lang': lang };
     }
 
-    return this.http.get<ApiResponse<Role[]>>(`${this.URL}/roles`, options).pipe(
-      tap(() => this.$idle.set(true)),
+    return this.withLoadingState(
+      this.http.get<ApiResponse<Role[]>>(`${this.URL}/roles`, options),
+    );
+  }
+
+  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
+    this.$idle.set(false);
+    this.$error.set(null);
+
+    return source$.pipe(
+      tap(() => {
+        this.$idle.set(true);
+      }),
       catchError((error: HttpErrorResponse) => {
         this.$idle.set(true);
         this.$error.set({
-          message: error.message,
+          message: error.error?.message || 'An error occurred',
           status: error.status,
         });
         return EMPTY;

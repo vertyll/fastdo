@@ -16,12 +16,26 @@ export class ProjectCategoryApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getByProjectId(projectId: number): Observable<ApiResponse<ProjectCategory[]>> {
+  public getByProjectId(
+    projectId: number,
+  ): Observable<ApiResponse<ProjectCategory[]>> {
     this.$loading.set(true);
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.http.get<ApiResponse<ProjectCategory[]>>(`${this.URL}/projects/${projectId}/categories`).pipe(
+    return this.withLoadingState(
+      this.http.get<ApiResponse<ProjectCategory[]>>(
+        `${this.URL}/projects/${projectId}/categories`,
+      ),
+    );
+  }
+
+  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
+    this.$idle.set(false);
+    this.$error.set(null);
+    this.$loading.set(true);
+
+    return source$.pipe(
       tap(() => {
         this.$loading.set(false);
         this.$idle.set(true);

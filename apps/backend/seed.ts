@@ -5,10 +5,12 @@ import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { LanguageSeeder } from './src/core/database/seeder/implementations/language.seeder';
 import { LegalDocumentsSeeder } from './src/core/database/seeder/implementations/legal-documents.seeder';
+import { ProjectRolePermissionSeeder } from './src/core/database/seeder/implementations/project-role-permission.seeder';
+import { ProjectRoleToPermissionSeeder } from './src/core/database/seeder/implementations/project-role-to-permission.seeder';
 import { ProjectRoleSeeder } from './src/core/database/seeder/implementations/project-role.seeder';
 import { ProjectTypeSeeder } from './src/core/database/seeder/implementations/project-type.seeder';
 import { RoleSeeder } from './src/core/database/seeder/implementations/role.seeder';
-import { TaskPrioritySeeder } from './src/core/database/seeder/implementations/task-priority-seeder.service';
+import { TaskPrioritySeeder } from './src/core/database/seeder/implementations/task-priority-seeder';
 import { SeederModule } from './src/core/database/seeder/module/seeder.module';
 import { SeederRunnerService } from './src/core/database/seeder/services/seeder-runner.service';
 
@@ -18,6 +20,8 @@ const AVAILABLE_SEEDERS = [
   TaskPrioritySeeder,
   ProjectRoleSeeder,
   ProjectTypeSeeder,
+  ProjectRolePermissionSeeder,
+  ProjectRoleToPermissionSeeder,
   LegalDocumentsSeeder,
 ];
 

@@ -5,7 +5,7 @@ export type Project = {
   name: string;
   description?: string;
   isPublic: boolean;
-  icon?: File;
+  icon?: File | null;
   isActive: boolean;
   dateCreation: number;
   dateModification: number;
@@ -13,7 +13,6 @@ export type Project = {
   categories?: ProjectCategory[];
   statuses?: ProjectStatus[];
   projectUserRoles?: ProjectUserRole[];
-  currentUserRole?: string;
   isExpanded?: boolean;
   editMode?: boolean;
 };
@@ -43,15 +42,19 @@ export type ProjectStatus = {
 
 export type ProjectUserRole = {
   id: number;
-  user: {
-    id: number;
-    email: string;
-  };
-  projectRole: {
-    id: number;
-    code: string;
-    name: string;
-    description?: string;
-  };
+  user: User;
+  projectRole: ProjectRole;
   dateAssigned?: string;
+};
+
+type ProjectRole = {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+};
+
+type User = {
+  id: number;
+  email: string;
 };

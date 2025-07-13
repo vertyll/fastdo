@@ -1,9 +1,14 @@
-import { NotificationTranslation } from '../../notifications/entities/notification-translation.entity';
+export interface NotificationEventTranslation {
+  id: number;
+  title: string;
+  message: string;
+  language: any;
+}
 
 export interface NotificationEvent {
   id: number;
   type: string;
-  translations: NotificationTranslation[];
+  translations: NotificationEventTranslation[];
   recipientId: number;
   data?: Record<string, any>;
   isRead: boolean;

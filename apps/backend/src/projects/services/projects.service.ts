@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { NotificationTypeEnum } from 'src/notifications/enums/notification-type.enum';
 import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
 import { INotificationServiceToken } from 'src/notifications/tokens/notification-service.token';
 import { UserDto } from 'src/users/dtos/user.dto';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource, EntityManager, In, QueryRunner, Repository } from 'typeorm';
+import { TranslationDto } from '../../common/dtos/translation.dto';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
 import { CustomClsStore } from '../../core/config/types/app.config.type';
 import { FileFacade } from '../../core/file/facade/file.facade';
@@ -15,17 +18,22 @@ import { IUsersService } from '../../users/interfaces/users-service.interface';
 import { IUsersServiceToken } from '../../users/tokens/users-service.token';
 import { CreateProjectDto } from '../dtos/create-project.dto';
 import { GetAllProjectsSearchParamsDto } from '../dtos/get-all-projects-search-params.dto';
+import { ProjectDetailsResponseDto } from '../dtos/project-details-response.dto';
+import { ProjectListResponseDto } from '../dtos/project-list-response.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { ProjectCategoryTranslation } from '../entities/project-category-translation.entity';
 import { ProjectCategory } from '../entities/project-category.entity';
 import { ProjectInvitation } from '../entities/project-invitation.entity';
+import { ProjectRole } from '../entities/project-role.entity';
 import { ProjectStatusTranslation } from '../entities/project-status-translation.entity';
 import { ProjectStatus } from '../entities/project-status.entity';
 import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { Project } from '../entities/project.entity';
 import { ProjectInvitationStatusEnum } from '../enums/project-invitation-status.enum';
+import { ProjectRolePermissionEnum } from '../enums/project-role-permission.enum';
 import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
+import { ProjectUserRoleRepository } from '../repositories/project-user-role.repository';
 import { ProjectRepository } from '../repositories/project.repository';
 import { ProjectRoleService } from './project-role.service';
 
@@ -39,11 +47,13 @@ export class ProjectsService {
     private readonly projectRoleService: ProjectRoleService,
     private readonly projectInvitationRepository: ProjectInvitationRepository,
     private readonly i18n: I18nService<I18nTranslations>,
+    private readonly projectUserRoleRepository: ProjectUserRoleRepository,
+    @InjectRepository(Notification) private readonly notificationRepository: Repository<Notification>,
     @Inject(INotificationServiceToken) private readonly notificationService: INotificationService,
     @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
   ) {}
 
-  public async findAll(params: GetAllProjectsSearchParamsDto): Promise<ApiPaginatedResponse<Project>> {
+  public async findAll(params: GetAllProjectsSearchParamsDto): Promise<ApiPaginatedResponse<ProjectListResponseDto>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
     const skip = page * pageSize;
@@ -51,8 +61,23 @@ export class ProjectsService {
 
     const [items, total] = await this.projectRepository.findAllWithParams(params, skip, pageSize, userId);
 
+    const projectUserRoles = await this.projectUserRoleRepository.find({
+      where: { user: { id: userId }, project: { id: In(items.map(item => item.id)) } },
+      relations: ['projectRole', 'project', 'projectRole.translations', 'projectRole.permissions'],
+    });
+
+    const userRolesByProjectId = new Map<number, ProjectUserRole>();
+    projectUserRoles.forEach(role => {
+      userRolesByProjectId.set(role.project.id, role);
+    });
+
+    const data = items.map(item => {
+      const userRole = userRolesByProjectId.get(item.id);
+      return this.mapProjectToListResponseDto(item, userRole);
+    });
+
     return {
-      items,
+      items: data,
       pagination: {
         total,
         page,
@@ -124,7 +149,7 @@ export class ProjectsService {
     return this.projectRepository.findOneOrFail({ where: { id } });
   }
 
-  public async findOneWithDetails(id: number, currentLanguage: string = 'pl'): Promise<Project> {
+  public async findOneWithDetails(id: number, currentLanguage: string = 'pl'): Promise<ProjectDetailsResponseDto> {
     const userId = this.cls.get('user').userId;
     const project = await this.projectRepository.findOneWithDetails(id, userId, currentLanguage);
 
@@ -134,7 +159,8 @@ export class ProjectsService {
       throw new Error(this.i18n.t('messages.Projects.errors.projectNotFoundOrAccessDenied'));
     }
 
-    return project
+    const userRole = project.projectUserRoles?.find(role => role.user.id === userId);
+    return this.mapProjectToDetailsResponseDto(project, userRole);
   }
 
   public async update(
@@ -157,7 +183,12 @@ export class ProjectsService {
       await this.checkProjectManagementPermission(id, userId);
 
       let iconFile = null;
-      if (icon) {
+      if (String(icon) === 'null' || icon === null) {
+        if (project.icon) {
+          await this.fileFacade.delete(project.icon.id);
+        }
+        (updateData as any).icon = null;
+      } else if (icon) {
         iconFile = await this.fileFacade.upload(icon);
       }
 
@@ -357,7 +388,6 @@ export class ProjectsService {
     for (const userWithRole of usersWithRoles) {
       try {
         const user = await this.usersService.findByEmail(userWithRole.email);
-
         if (user) {
           const existingInvitation = await queryRunner.manager.getRepository(ProjectInvitation).findOne({
             where: {
@@ -365,17 +395,18 @@ export class ProjectsService {
               user: { id: user.id },
               status: ProjectInvitationStatusEnum.PENDING,
             },
+            relations: ['user', 'project', 'role', 'inviter'],
           });
-          if (!existingInvitation) {
-            const invitation = queryRunner.manager.getRepository(ProjectInvitation).create({
-              project: { id: projectId },
-              user: { id: user.id },
-              inviter: { id: inviterId },
-              role: { id: userWithRole.role },
-              status: ProjectInvitationStatusEnum.PENDING,
+          if (existingInvitation) {
+            const newRole = await queryRunner.manager.getRepository(ProjectRole).findOne({
+              where: { id: userWithRole.role },
             });
-            await queryRunner.manager.getRepository(ProjectInvitation).save(invitation);
-
+            if (newRole) {
+              existingInvitation.role = newRole;
+            }
+            existingInvitation.inviter = inviter;
+            existingInvitation.dateUpdated = new Date();
+            await queryRunner.manager.getRepository(ProjectInvitation).save(existingInvitation);
             await this.notificationService.createNotification({
               type: NotificationTypeEnum.PROJECT_INVITATION,
               title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
@@ -391,11 +422,42 @@ export class ProjectsService {
                 projectName,
                 inviterEmail: inviter.email,
                 role: userWithRole.role,
-                invitationId: invitation.id,
+                invitationId: existingInvitation.id,
+                invitationStatus: existingInvitation.status,
+                invitationDateUpdated: existingInvitation.dateUpdated,
               },
               sendEmail: true,
             });
+            continue;
           }
+          const invitation = queryRunner.manager.getRepository(ProjectInvitation).create({
+            project: { id: projectId },
+            user: { id: user.id },
+            inviter: { id: inviterId },
+            role: { id: userWithRole.role },
+            status: ProjectInvitationStatusEnum.PENDING,
+          });
+          await queryRunner.manager.getRepository(ProjectInvitation).save(invitation);
+          await this.notificationService.createNotification({
+            type: NotificationTypeEnum.PROJECT_INVITATION,
+            title: this.i18n.t('messages.Projects.notifications.invitationTitle'),
+            message: this.i18n.t('messages.Projects.notifications.invitationMessage', {
+              args: {
+                inviterEmail: inviter.email,
+                projectName,
+              },
+            }),
+            recipientId: user.id,
+            data: {
+              projectId,
+              projectName,
+              inviterEmail: inviter.email,
+              role: userWithRole.role,
+              invitationId: invitation.id,
+              invitationStatus: invitation.status,
+            },
+            sendEmail: true,
+          });
         }
       } catch (error) {
         console.error(`Error inviting user ${userWithRole.email}:`, error);
@@ -446,6 +508,7 @@ export class ProjectsService {
       }
     }
 
+    const newUsersToInvite: { email: string; role: number; }[] = [];
     for (const userWithRole of usersWithRoles) {
       try {
         const user = await this.usersService.findByEmail(userWithRole.email);
@@ -459,16 +522,16 @@ export class ProjectsService {
               await queryRunner.manager.getRepository(ProjectUserRole).save(existingUserRole);
             }
           } else {
-            await queryRunner.manager.getRepository(ProjectUserRole).save({
-              project: { id: projectId },
-              user: { id: user.id },
-              projectRole: { id: userWithRole.role },
-            });
+            newUsersToInvite.push({ email: userWithRole.email, role: userWithRole.role });
           }
         }
       } catch (error) {
         console.error(`Error updating user ${userWithRole.email}:`, error);
       }
+    }
+
+    if (newUsersToInvite.length > 0) {
+      await this.inviteUsersToProjectWithRoles(queryRunner, projectId, newUsersToInvite, updaterId);
     }
   }
 
@@ -519,9 +582,13 @@ export class ProjectsService {
         project: { id: projectId },
         user: { id: userId },
       },
-      relations: ['projectRole'],
+      relations: ['projectRole', 'projectRole.permissions'],
     });
-    if (!userRole || userRole.projectRole.code !== ProjectRoleEnum.MANAGER) {
+    const permissions = userRole?.projectRole?.permissions?.map(p => p.code) ?? [];
+    if (
+      !permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT)
+      && !permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT)
+    ) {
       throw new Error(this.i18n.t('messages.Projects.errors.accessDeniedToManageProject'));
     }
   }
@@ -548,6 +615,8 @@ export class ProjectsService {
       }
       invitation.status = ProjectInvitationStatusEnum.ACCEPTED;
       await manager.getRepository(ProjectInvitation).save(invitation);
+
+      await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.ACCEPTED, manager);
     });
   }
 
@@ -565,5 +634,137 @@ export class ProjectsService {
     }
     invitation.status = ProjectInvitationStatusEnum.REJECTED;
     await this.projectInvitationRepository.save(invitation);
+
+    await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.REJECTED);
+  }
+
+  private async updateInvitationNotificationsStatus(
+    invitationId: number,
+    status: ProjectInvitationStatusEnum,
+    manager?: EntityManager,
+  ) {
+    const repo = manager ? manager.getRepository(Notification) : this.notificationRepository;
+    const notifications = await repo.find({ where: { type: NotificationTypeEnum.PROJECT_INVITATION } });
+    for (const notification of notifications) {
+      if (notification.data && notification.data.invitationId === invitationId) {
+        notification.data.invitationStatus = status;
+        await repo.save(notification);
+      }
+    }
+  }
+
+  private mapProjectToListResponseDto(
+    project: Project,
+    userRole?: ProjectUserRole,
+  ): ProjectListResponseDto {
+    const mapTranslations = (translations: any[]): TranslationDto[] => {
+      if (!translations) return [];
+      return translations.map(t => ({
+        lang: t.language?.code || t.lang || '',
+        name: t.name,
+        description: t.description ?? undefined,
+      }));
+    };
+
+    let permissions: string[] = [];
+    if (userRole?.projectRole?.permissions) {
+      permissions = userRole.projectRole.permissions.map(p => p.code);
+    }
+
+    return {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      isPublic: project.isPublic,
+      icon: project.icon ? { url: project.icon.url } : null,
+      isActive: project.isActive,
+      dateCreation: project.dateCreation,
+      dateModification: project.dateModification,
+      type: project.type && Array.isArray(project.type.translations)
+        ? { id: project.type.id, name: project.type.translations[0]?.name ?? '' }
+        : null,
+      permissions,
+    };
+  }
+
+  private mapProjectToDetailsResponseDto(
+    project: Project,
+    userRole?: ProjectUserRole,
+  ): ProjectDetailsResponseDto {
+    const mapTranslations = (translations: any[]): TranslationDto[] => {
+      if (!translations) return [];
+      return translations.map(t => ({
+        lang: t.language?.code || '',
+        name: t.name,
+        description: t.description ?? undefined,
+      }));
+    };
+
+    let permissions: string[] = [];
+    if (userRole?.projectRole?.permissions) {
+      permissions = userRole.projectRole.permissions.map(p => p.code);
+    }
+
+    const categories = Array.isArray(project.categories)
+      ? project.categories.map(cat => ({
+        id: cat.id,
+        name: (cat as any).name ?? cat.translations?.[0]?.name ?? '',
+      }))
+      : [];
+
+    const statuses = Array.isArray(project.statuses)
+      ? project.statuses.map(status => ({
+        id: status.id,
+        name: (status as any).name ?? status.translations?.[0]?.name ?? '',
+      }))
+      : [];
+
+    const projectUserRoles = Array.isArray(project.projectUserRoles)
+      ? project.projectUserRoles.map(userRole => {
+        const role = userRole.projectRole;
+        const name = (role as any).name ?? role.translations?.[0]?.name ?? '';
+        const description = (role as any).description ?? role.translations?.[0]?.description ?? '';
+        return {
+          user: {
+            id: userRole.user.id,
+            email: userRole.user.email,
+          },
+          projectRole: {
+            id: role.id,
+            code: role.code,
+            translations: Array.isArray(role.translations)
+              ? role.translations.map(t => ({
+                lang: t.language?.code || '',
+                name: t.name,
+                description: t.description ?? undefined,
+              }))
+              : [],
+            name,
+            description,
+          },
+        };
+      })
+      : [];
+
+    return {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      isPublic: project.isPublic,
+      icon: project.icon ? { url: project.icon.url } : null,
+      isActive: project.isActive,
+      dateCreation: project.dateCreation,
+      dateModification: project.dateModification,
+      type: project.type
+        ? {
+          id: project.type.id,
+          name: (project.type as any).name ?? project.type.translations?.[0]?.name ?? '',
+        }
+        : null,
+      categories,
+      statuses,
+      permissions,
+      projectUserRoles,
+    };
   }
 }

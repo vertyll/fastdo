@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { File } from '../core/file/entities/file.entity';
 import { FileModule } from '../core/file/file.module';
 import { Language } from '../core/language/entities/language.entity';
@@ -15,6 +16,8 @@ import { ProjectsController } from './controllers/projects.controller';
 import { ProjectCategoryTranslation } from './entities/project-category-translation.entity';
 import { ProjectCategory } from './entities/project-category.entity';
 import { ProjectInvitation } from './entities/project-invitation.entity';
+import { ProjectRolePermissionTranslation } from './entities/project-role-permission-translation.entity';
+import { ProjectRolePermission } from './entities/project-role-permission.entity';
 import { ProjectRoleTranslation } from './entities/project-role-translation.entity';
 import { ProjectRole } from './entities/project-role.entity';
 import { ProjectStatusTranslation } from './entities/project-status-translation.entity';
@@ -56,6 +59,9 @@ import { ProjectsService } from './services/projects.service';
       ProjectCategoryTranslation,
       ProjectTypeTranslation,
       ProjectInvitation,
+      ProjectRolePermission,
+      ProjectRolePermissionTranslation,
+      Notification,
     ]),
     TasksModule,
     FileModule,

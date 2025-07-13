@@ -1,13 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
-import { heroCalendar } from '@ng-icons/heroicons/outline';
+import { heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
+import { TableComponent, TableConfig, TableRow } from '../shared/components/organisms/table-component';
+import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ProjectRoleEnum } from '../shared/enums/project-role.enum';
+import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { PaginationMeta } from '../shared/types/api-response.type';
 import { PaginationParams, ProjectListFiltersConfig } from '../shared/types/filter.type';
@@ -16,7 +20,6 @@ import { GetAllProjectsSearchParams } from '../shared/types/project.type';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
-import { ProjectCardComponent } from './ui/project-card.component';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { ProjectNameValidator } from './validators/project-name.validator';
 
@@ -28,8 +31,8 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     ErrorMessageComponent,
     TitleComponent,
     ButtonComponent,
-    ProjectCardComponent,
     PaginatorComponent,
+    TableComponent,
   ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
@@ -45,19 +48,15 @@ import { ProjectNameValidator } from './validators/project-name.validator';
       @switch (projectsStateService.state()) {
         @case (listStateValue.SUCCESS) {
           <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              @for (project of projectsStateService.projects(); track project.id) {
-                <app-project-card
-                  [project]="project"
-                  (deleteProject)="deleteProject($event)"
-                  (editProject)="navigateToEditProject($event)"
-                  (updateProject)="updateProjectName($event.id, $event.name)"
-                  (viewTasks)="navigateToProjectTasks($event)"
-                />
-              } @empty {
-                <p>{{ 'Project.emptyList' | translate }}</p>
-              }
-            </div>
+            <app-table
+              [data]="tableRows"
+              [config]="tableConfig"
+              [customTemplates]="customTemplates"
+              (selectionChange)="onSelectionChange($event)"
+              (actionClick)="onActionClick($event)"
+              (rowClick)="onRowClick($event)"
+              (sortChange)="onSortChange($event)"
+            />
             <app-paginator
               [total]="projectsStateService.pagination().total"
               [pageSize]="projectsStateService.pagination().pageSize"
@@ -67,17 +66,33 @@ import { ProjectNameValidator } from './validators/project-name.validator';
           </div>
         }
         @case (listStateValue.ERROR) {
-          <app-error-message [customMessage]="projectsStateService.error()?.message"/>
+          <app-error-message
+            [customMessage]="projectsStateService.error()?.message"
+          />
         }
         @case (listStateValue.LOADING) {
-          <p class="text-text-secondary-light dark:text-text-primary-dark">{{ 'Basic.loading' | translate }}</p>
+          <p class="text-text-secondary-light dark:text-text-primary-dark">
+            {{ 'Basic.loading' | translate }}
+          </p>
         }
       }
     </div>
+
+    <!-- Custom template for current user role -->
+    <ng-template #projectUserRoleTemplate let-row let-column="column">
+      <div>
+        <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          {{ row.projectUserRole }}
+        </span>
+      </div>
+    </ng-template>
   `,
   viewProviders: [
     provideIcons({
       heroCalendar,
+      heroEye,
+      heroPencil,
+      heroTrash,
     }),
   ],
 })
@@ -88,10 +103,124 @@ export class ProjectListPageComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
   protected readonly projectsStateService = inject(ProjectsStateService);
+  private readonly modalService = inject(ModalService);
   protected readonly listStateValue = LOADING_STATE_VALUE;
+
+  protected readonly ProjectRoleEnum = ProjectRoleEnum;
+
+  @ViewChild('projectUserRoleTemplate')
+  projectUserRoleTemplate!: TemplateRef<any>;
+
+  protected tableRows: TableRow[] = [];
+  private rawProjects: any[] = [];
+  private selectedProjects: number[] = [];
+
+  protected tableConfig: TableConfig = {
+    columns: [
+      {
+        key: 'image',
+        label: 'Project.image',
+        type: 'image',
+        sortable: false,
+        width: '80px',
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'name',
+        label: 'Project.name',
+        type: 'text',
+        sortable: false,
+        width: '200px',
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'description',
+        label: 'Project.description',
+        type: 'text',
+        sortable: false,
+        width: '300px',
+        autoTruncate: true,
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'isPublic',
+        label: 'Project.isPublic',
+        type: 'boolean',
+        sortable: false,
+        width: '120px',
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'dateCreation',
+        label: 'Project.dateCreation',
+        type: 'date',
+        sortable: false,
+        width: '150px',
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'projectUserRole',
+        label: 'Project.projectUserRole',
+        type: 'text',
+        sortable: false,
+        width: '100px',
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+    ],
+    actions: [
+      {
+        key: 'view',
+        label: 'Basic.view',
+        icon: 'heroEye',
+        color: 'primary',
+        visible: () => true,
+        disabled: () => false,
+      },
+      {
+        key: 'edit',
+        label: 'Basic.edit',
+        icon: 'heroPencil',
+        color: 'secondary',
+        visible: (row: any) => this.canEditProject(row),
+        disabled: () => false,
+      },
+      {
+        key: 'delete',
+        label: 'Basic.delete',
+        icon: 'heroTrash',
+        color: 'danger',
+        visible: (row: any) => this.canDeleteProject(row),
+        disabled: () => false,
+      },
+    ],
+    selectable: true,
+    sortable: true,
+    striped: true,
+    hover: true,
+    responsiveBreakpoint: 768,
+  };
+
+  protected customTemplates: { [key: string]: TemplateRef<any>; } = {};
 
   ngOnInit(): void {
     this.getAllProjects();
+    this.translateService.onLangChange.subscribe(() => {
+      if (this.rawProjects.length > 0) {
+        this.tableRows = this.mapProjectsToTableRows(this.rawProjects);
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.customTemplates = {
+      projectUserRoleTemplate: this.projectUserRoleTemplate,
+    };
   }
 
   protected async navigateToAddProject(): Promise<void> {
@@ -115,10 +244,12 @@ export class ProjectListPageComponent implements OnInit {
       page,
     });
 
-    const searchParams: GetAllProjectsSearchParams = getAllProjectsSearchParams({
-      page,
-      pageSize,
-    });
+    const searchParams: GetAllProjectsSearchParams = getAllProjectsSearchParams(
+      {
+        page,
+        pageSize,
+      },
+    );
 
     this.getAllProjects(searchParams);
   }
@@ -126,6 +257,46 @@ export class ProjectListPageComponent implements OnInit {
   protected handleFiltersChange(filters: ProjectListFiltersConfig): void {
     const searchParams = getAllProjectsSearchParams(filters);
     this.getAllProjects(searchParams);
+  }
+
+  protected onSelectionChange(selected: any[]): void {
+    this.selectedProjects = selected.map(item => item.id);
+    // TODO: Handle selection change logic
+  }
+
+  protected onActionClick(event: { action: string; row: any; }): void {
+    const { action, row } = event;
+
+    switch (action) {
+      case 'view':
+        this.navigateToProjectTasks(row.id);
+        break;
+      case 'edit':
+        this.navigateToEditProject(row.id);
+        break;
+      case 'delete':
+        this.deleteProject(row.id);
+        break;
+      case 'tasks':
+        this.navigateToProjectTasks(row.id);
+        break;
+    }
+  }
+
+  protected onRowClick(row: any): void {
+    this.navigateToProjectTasks(row.id);
+  }
+
+  protected onSortChange(event: { column: string; direction: 'asc' | 'desc'; }): void {
+    // TODO: Implement sorting logic
+  }
+
+  private canEditProject(row: any): boolean {
+    return true;
+  }
+
+  private canDeleteProject(row: any): boolean {
+    return true;
   }
 
   protected updateProjectName(id: number, newName: string): void {
@@ -157,31 +328,84 @@ export class ProjectListPageComponent implements OnInit {
   }
 
   protected deleteProject(id: number): void {
-    this.projectsService.delete(id).subscribe({
-      error: err => {
-        if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationTypeEnum.Error,
-          );
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Project.deleteError'),
-            NotificationTypeEnum.Error,
-          );
-        }
-      },
-      complete: () => {
-        this.notificationService.showNotification(
-          this.translateService.instant('Project.deleteSuccess'),
-          NotificationTypeEnum.Success,
+    this.modalService.present({
+      title: this.translateService.instant('Basic.deleteTitle'),
+      message: this.translateService.instant('Basic.confirmDelete'),
+      buttons: [
+        {
+          role: ButtonRoleEnum.Cancel,
+          text: this.translateService.instant('Basic.cancel'),
+          handler: () => {},
+        },
+        {
+          role: ButtonRoleEnum.Ok,
+          text: this.translateService.instant('Basic.delete'),
+          handler: () => {
+            this.projectsService.delete(id).subscribe({
+              error: err => {
+                if (err.error && err.error.message) {
+                  this.notificationService.showNotification(
+                    err.error.message,
+                    NotificationTypeEnum.Error,
+                  );
+                } else {
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Project.deleteError'),
+                    NotificationTypeEnum.Error,
+                  );
+                }
+              },
+              complete: () => {
+                this.notificationService.showNotification(
+                  this.translateService.instant('Project.deleteSuccess'),
+                  NotificationTypeEnum.Success,
+                );
+                this.getAllProjects();
+              },
+            });
+          },
+        },
+      ],
+    });
+  }
+
+  private mapProjectsToTableRows(projects: any[]): TableRow[] {
+    const lang = this.translateService.currentLang || 'pl';
+    return projects.map(project => {
+      let projectUserRoleName = '';
+      if (project.projectUserRole?.translations) {
+        const found = project.projectUserRole.translations.find(
+          (t: any) => t.lang === lang,
         );
-      },
+        projectUserRoleName = found?.name || project.projectUserRole.translations[0]?.name || '';
+      } else if (typeof project.projectUserRole === 'string') {
+        projectUserRoleName = project.projectUserRole;
+      } else {
+        projectUserRoleName = project.projectUserRole?.code || '';
+      }
+
+      return {
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        isPublic: project.isPublic,
+        dateCreation: project.dateCreation,
+        dateModification: project.dateModification,
+        type: project.type,
+        projectUserRole: projectUserRoleName,
+        image: project.icon?.url || null,
+      };
     });
   }
 
   private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
     this.projectsService.getAll(searchParams).subscribe({
+      next: (response: any) => {
+        if (response?.data?.items) {
+          this.rawProjects = response.data.items;
+          this.tableRows = this.mapProjectsToTableRows(response.data.items);
+        }
+      },
       error: err => {
         if (err.error && err.error.message) {
           this.notificationService.showNotification(

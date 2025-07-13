@@ -1,12 +1,9 @@
+import { Language } from 'src/app/core/models/Language';
 import { LegalSectionEnum } from '../enum/legal-section.enum';
 
 export type SectionTranslation = {
   id: number;
-  language: {
-    id: number;
-    code: string;
-    name: string;
-  };
+  language: Language;
   title: string;
   content?: string;
   items?: string[];

@@ -21,7 +21,17 @@ export class TaskPriorityApiService {
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.http.get<ApiResponse<TaskPriority[]>>(`${this.URL}/task-priorities`).pipe(
+    return this.withLoadingState(
+      this.http.get<ApiResponse<TaskPriority[]>>(`${this.URL}/task-priorities`),
+    );
+  }
+
+  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
+    this.$idle.set(false);
+    this.$error.set(null);
+    this.$loading.set(true);
+
+    return source$.pipe(
       tap(() => {
         this.$loading.set(false);
         this.$idle.set(true);

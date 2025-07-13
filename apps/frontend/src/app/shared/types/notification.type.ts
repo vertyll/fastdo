@@ -9,6 +9,7 @@ export interface NotificationDto {
   createdAt: Date;
   updatedAt: Date;
   translations: NotificationTranslation[];
+  isLatestPendingInvitation?: boolean;
 }
 
 export interface NotificationTranslation {

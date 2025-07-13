@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ProjectRoleResponseDto } from '../dtos/project-role-response.dto';
 import { ProjectRoleTranslation } from '../entities/project-role-translation.entity';
 import { ProjectRole } from '../entities/project-role.entity';
+import { ProjectRoleEnum } from '../enums/project-role.enum';
 
 @Injectable()
 export class ProjectRoleRepository {
@@ -34,7 +35,7 @@ export class ProjectRoleRepository {
     }));
   }
 
-  public async findOneByCode(code: string): Promise<ProjectRole | null> {
+  public async findOneByCode(code: ProjectRoleEnum): Promise<ProjectRole | null> {
     return this.projectRoleRepository.findOne({
       where: { code },
       relations: ['translations', 'translations.language'],

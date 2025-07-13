@@ -100,7 +100,16 @@ import { NotificationDto } from '../../types/notification.type';
                           <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
                             {{ getTranslation(notification).message }}
                           </p>
-                          @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status === NotificationStatusEnum.UNREAD) {
+                          @if (
+  notification.type === 'project_invitation' &&
+  notification.data?.invitationId &&
+  (
+    notification.status === NotificationStatusEnum.UNREAD ||
+    notification.status === NotificationStatusEnum.READ
+  ) &&
+  notification.data?.invitationStatus === 'pending' &&
+  notification.isLatestPendingInvitation
+) {
                             <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
                               <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
                                 {{ 'ProjectInvitation.projectInfo' | translate }}
@@ -220,7 +229,16 @@ import { NotificationDto } from '../../types/notification.type';
                         <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
                           {{ getTranslation(notification).message }}
                         </p>
-                        @if (notification.type === 'project_invitation' && notification.data?.invitationId && notification.status.toUpperCase() === NotificationStatusEnum.UNREAD) {
+                        @if (
+  notification.type === 'project_invitation' &&
+  notification.data?.invitationId &&
+  (
+    notification.status === NotificationStatusEnum.UNREAD ||
+    notification.status === NotificationStatusEnum.READ
+  ) &&
+  notification.data?.invitationStatus === 'pending' &&
+  notification.isLatestPendingInvitation
+) {
                           <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
                             <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
                               {{ 'ProjectInvitation.projectInfo' | translate }}
@@ -337,7 +355,36 @@ export class NotificationDropdownComponent {
   public readonly isMobileContext = input<boolean>(false);
   public readonly isMobileMenuOpen = input<boolean>(false);
 
-  protected readonly notifications = this.notificationStateService.notifications;
+  protected readonly notifications = () => {
+    const all = this.notificationStateService.notifications();
+    const latestInvitationMap = new Map<number, NotificationDto>();
+    for (const n of all) {
+      if (
+        n.type === 'project_invitation'
+        && n.data?.invitationId
+        && n.data?.invitationStatus === 'pending'
+      ) {
+        const id = n.data.invitationId;
+        const prev = latestInvitationMap.get(id);
+        const nDate = new Date(n.data.invitationDateUpdated || n.updatedAt || n.createdAt);
+        const prevDate = prev ? new Date(prev.data.invitationDateUpdated || prev.updatedAt || prev.createdAt) : null;
+        if (!prev || !prevDate || nDate > prevDate) {
+          latestInvitationMap.set(id, n);
+        }
+      }
+    }
+    return all.map(n => {
+      if (
+        n.type === 'project_invitation'
+        && n.data?.invitationId
+        && n.data?.invitationStatus === 'pending'
+      ) {
+        const latest = latestInvitationMap.get(n.data.invitationId);
+        return { ...n, isLatestPendingInvitation: latest?.id === n.id };
+      }
+      return n;
+    });
+  };
   protected readonly unreadCount = this.notificationStateService.unreadCount;
   protected readonly webSocketConnected = this.notificationStateService.webSocketConnected;
 

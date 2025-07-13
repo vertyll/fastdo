@@ -71,7 +71,12 @@ export class NotificationService implements INotificationService {
       const notificationEvent = {
         id: notification.id,
         type: notification.type,
-        translations: notification.translations,
+        translations: notification.translations.map(t => ({
+          id: t.id,
+          title: t.title,
+          message: t.message,
+          language: t.language,
+        })),
         recipientId: notification.recipient.id,
         data: notification.data,
         isRead: notification.status === NotificationStatusEnum.READ,
@@ -123,7 +128,12 @@ export class NotificationService implements INotificationService {
     const notificationEvent = {
       id: notification.id,
       type: notification.type,
-      translations: notification.translations,
+      translations: notification.translations.map(t => ({
+        id: t.id,
+        title: t.title,
+        message: t.message,
+        language: t.language,
+      })),
       recipientId: notification.recipient.id,
       data: notification.data,
       isRead: true,

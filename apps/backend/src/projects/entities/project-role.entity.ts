@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { ProjectRoleEnum } from '../enums/project-role.enum';
+import { ProjectRolePermission } from './project-role-permission.entity';
 import { ProjectRoleTranslation } from './project-role-translation.entity';
 import { ProjectUserRole } from './project-user-role.entity';
 
@@ -9,9 +11,9 @@ export class ProjectRole {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
-  @Column({ unique: true })
-  code: string;
+  @ApiProperty({ enum: ProjectRoleEnum, enumName: 'ProjectRoleEnum' })
+  @Column({ type: 'enum', enum: ProjectRoleEnum, unique: true })
+  code: ProjectRoleEnum;
 
   @ApiProperty()
   @Column({ default: true })
@@ -30,4 +32,7 @@ export class ProjectRole {
 
   @OneToMany(() => ProjectUserRole, userRole => userRole.projectRole)
   userRoles: Relation<ProjectUserRole[]>;
+
+  @ManyToMany(() => ProjectRolePermission, permission => permission.roles)
+  permissions: Relation<ProjectRolePermission[]>;
 }

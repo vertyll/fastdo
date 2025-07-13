@@ -2,13 +2,12 @@ import { Component, OnInit, inject, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ProjectCategoryApiService } from 'src/app/project/data-access/project-category.api.service';
-import { ProjectStatusApiService } from 'src/app/project/data-access/project-status.api.service';
-import { ProjectUserRoleApiService } from 'src/app/project/data-access/project-user-role.api.service';
+import { ProjectCategoryService } from 'src/app/project/data-access/project-category.service';
+import { ProjectStatusService } from 'src/app/project/data-access/project-status.service';
+import { ProjectUserRoleService } from 'src/app/project/data-access/project-user-role.service';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
 import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
-import { TaskPriorityApiService } from '../data-access/task-priority-api.service';
-import { TasksService } from '../data-access/task.service';
+import { TaskPriorityService } from '../data-access/task-priority.service';
 
 @Component({
   selector: 'app-tasks-list-filters',
@@ -23,10 +22,10 @@ import { TasksService } from '../data-access/task.service';
 })
 export class TasksListFiltersComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
-  private readonly taskPriorityApiService = inject(TaskPriorityApiService);
-  private readonly projectStatusApiService = inject(ProjectStatusApiService);
-  private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
-  private readonly projectUserRoleApiService = inject(ProjectUserRoleApiService);
+  private readonly taskPriorityService = inject(TaskPriorityService);
+  private readonly projectStatusService = inject(ProjectStatusService);
+  private readonly projectCategoryService = inject(ProjectCategoryService);
+  private readonly projectUserRoleService = inject(ProjectUserRoleService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly filtersChange = output<TasksListFiltersConfig>();
@@ -54,7 +53,7 @@ export class TasksListFiltersComponent implements OnInit {
   }
 
   private getPriorities(): void {
-    this.taskPriorityApiService.getAll().subscribe({
+    this.taskPriorityService.getAll().subscribe({
       next: priorities => {
         this.prioritiesRaw = priorities.data || [];
         this.updatePriorityOptionsForCurrentLang();
@@ -67,7 +66,7 @@ export class TasksListFiltersComponent implements OnInit {
 
   private getStatuses(): void {
     if (this.projectId === null) return;
-    this.projectStatusApiService.getByProjectId(this.projectId).subscribe({
+    this.projectStatusService.getByProjectId(this.projectId).subscribe({
       next: statuses => {
         this.statusesRaw = statuses.data || [];
         this.updateStatusOptionsForCurrentLang();
@@ -80,7 +79,7 @@ export class TasksListFiltersComponent implements OnInit {
 
   private getUsersInProject(): void {
     if (this.projectId === null) return;
-    this.projectUserRoleApiService.getUsersInProject(this.projectId).subscribe({
+    this.projectUserRoleService.getUsersInProject(this.projectId).subscribe({
       next: users => {
         const userFilter = this.filters.find(filter => filter.formControlName === 'assignedUserIds');
         if (userFilter) {
@@ -98,7 +97,7 @@ export class TasksListFiltersComponent implements OnInit {
 
   private getCategories(): void {
     if (this.projectId === null) return;
-    this.projectCategoryApiService.getByProjectId(this.projectId).subscribe({
+    this.projectCategoryService.getByProjectId(this.projectId).subscribe({
       next: categories => {
         this.categoriesRaw = categories.data || [];
         this.updateCategoryOptionsForCurrentLang();

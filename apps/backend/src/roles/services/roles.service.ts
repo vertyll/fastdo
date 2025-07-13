@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
 import { UserRoleRepository } from 'src/users/repositories/user-role.repository';
+import { RoleEnum } from '../../common/enums/role.enum';
 import { RoleDto } from '../dtos/role.dto';
 import { Role } from '../entities/role.entity';
 import { RoleRepository } from '../repositories/role.repository';
@@ -14,11 +15,11 @@ export class RolesService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  public async findRoleByCode(code: string): Promise<Role | null> {
+  public async findRoleByCode(code: RoleEnum): Promise<Role | null> {
     return this.roleRepository.findOne({ where: { code } });
   }
 
-  public async addRoleToUser(userId: number, roleCode: string): Promise<void> {
+  public async addRoleToUser(userId: number, roleCode: RoleEnum): Promise<void> {
     const role = await this.findRoleByCode(roleCode);
     if (!role) {
       throw new NotFoundException(this.i18n.translate('messages.Roles.errors.roleNotFound', { args: { roleCode } }));

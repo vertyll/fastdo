@@ -16,12 +16,22 @@ export class ProjectRoleApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  getAll(): Observable<ApiResponse<ProjectRole[]>> {
+  public getAll(): Observable<ApiResponse<ProjectRole[]>> {
     this.$loading.set(true);
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.http.get<ApiResponse<ProjectRole[]>>(`${this.URL}/project-roles`).pipe(
+    return this.withLoadingState(
+      this.http.get<ApiResponse<ProjectRole[]>>(`${this.URL}/project-roles`),
+    );
+  }
+
+  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
+    this.$loading.set(true);
+    this.$idle.set(false);
+    this.$error.set(null);
+
+    return source$.pipe(
       tap(() => {
         this.$loading.set(false);
         this.$idle.set(true);

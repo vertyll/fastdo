@@ -5,9 +5,9 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ProjectCategoryApiService } from '../project/data-access/project-category.api.service';
-import { ProjectRoleApiService } from '../project/data-access/project-role.api.service';
-import { ProjectStatusApiService } from '../project/data-access/project-status.api.service';
+import { ProjectCategoryService } from '../project/data-access/project-category.service';
+import { ProjectRoleService } from '../project/data-access/project-role.service';
+import { ProjectStatusService } from '../project/data-access/project-status.service';
 import { ProjectsApiService } from '../project/data-access/project.api.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { TextareaComponent } from '../shared/components/atoms/textarea-component';
@@ -17,7 +17,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
-import { TaskPriorityApiService } from './data-access/task-priority-api.service';
+import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
 import { AddTaskDto } from './dtos/add-task.dto';
 
@@ -199,10 +199,10 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
   private readonly projectsApiService = inject(ProjectsApiService);
-  private readonly taskPriorityApiService = inject(TaskPriorityApiService);
-  private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
-  private readonly projectRoleApiService = inject(ProjectRoleApiService);
-  private readonly projectStatusApiService = inject(ProjectStatusApiService);
+  private readonly taskPriorityService = inject(TaskPriorityService);
+  private readonly projectCategoryService = inject(ProjectCategoryService);
+  private readonly projectRoleService = inject(ProjectRoleService);
+  private readonly projectStatusService = inject(ProjectStatusService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -355,7 +355,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private loadOptions(): void {
     const currentProjectId = this.projectId();
 
-    this.taskPriorityApiService.getAll()
+    this.taskPriorityService.getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: prioritiesRes => {
@@ -368,7 +368,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.projectRoleApiService.getAll()
+    this.projectRoleService.getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: accessRolesRes => {
@@ -382,7 +382,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
 
     if (currentProjectId) {
-      this.projectCategoryApiService.getByProjectId(+currentProjectId)
+      this.projectCategoryService.getByProjectId(+currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: categoriesRes => {
@@ -395,7 +395,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           },
         });
 
-      this.projectStatusApiService.getByProjectId(+currentProjectId)
+      this.projectStatusService.getByProjectId(+currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: statusesRes => {

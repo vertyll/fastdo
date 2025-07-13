@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Seeder } from '../../../../common/decorators/seeder.decorator';
 import { ProjectRoleTranslation } from '../../../../projects/entities/project-role-translation.entity';
 import { ProjectRole } from '../../../../projects/entities/project-role.entity';
+import { ProjectRoleEnum } from '../../../../projects/enums/project-role.enum';
 import { Environment } from '../../../config/types/app.config.type';
 import { Language } from '../../../language/entities/language.entity';
 import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
@@ -48,7 +49,7 @@ export class ProjectRoleSeeder implements ISeeder {
 
       const projectRolesData = [
         {
-          code: 'manager',
+          code: ProjectRoleEnum.MANAGER,
           translations: [
             {
               language: polishLang,
@@ -63,7 +64,7 @@ export class ProjectRoleSeeder implements ISeeder {
           ],
         },
         {
-          code: 'client',
+          code: ProjectRoleEnum.CLIENT,
           translations: [
             {
               language: polishLang,
@@ -78,7 +79,7 @@ export class ProjectRoleSeeder implements ISeeder {
           ],
         },
         {
-          code: 'member',
+          code: ProjectRoleEnum.MEMBER,
           translations: [
             {
               language: polishLang,

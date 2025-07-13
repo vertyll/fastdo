@@ -25,7 +25,9 @@ export class ProjectRepository extends Repository<Project> {
         { userId },
       )
       .leftJoinAndSelect('project.type', 'type')
-      .leftJoinAndSelect('project.icon', 'icon');
+      .leftJoinAndSelect('project.icon', 'icon')
+      .leftJoinAndSelect('projectUserRole.projectRole', 'projectRole')
+      .leftJoinAndSelect('projectRole.permissions', 'permissions');
 
     query.where(
       '(projectUserRole.user.id = :userId OR project.isPublic = true)',
@@ -103,6 +105,7 @@ export class ProjectRepository extends Repository<Project> {
         'projectUserRoles.projectRole',
         'projectUserRoles.projectRole.translations',
         'projectUserRoles.projectRole.translations.language',
+        'projectUserRoles.projectRole.permissions',
       ],
     });
 
@@ -159,7 +162,6 @@ export class ProjectRepository extends Repository<Project> {
               || '',
             description: roleTranslation?.description
               || userRole.projectRole?.translations?.[0]?.description,
-            translations: undefined, // Remove translations to clean up response
           },
           user: {
             id: userRole.user.id,

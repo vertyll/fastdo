@@ -18,6 +18,7 @@ export function IsFile(options: FileValidationOptions = {}) {
       validator: {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         validate(value: any, _args: ValidationArguments) {
+          if (value === 'null') return true;
           if (!value) return true;
           if (!value.type || value.type !== 'file') return false;
 
@@ -31,6 +32,11 @@ export function IsFile(options: FileValidationOptions = {}) {
         defaultMessage(args: ValidationArguments): string {
           const file = args.value as MultipartFile;
           const mimeTypes = options.mimeTypes || [];
+
+          if (args.value === 'null') {
+            // Dealing with 'null' as a string to allow clearing the file
+            return '';
+          }
 
           if (!file?.type || file.type !== 'file') {
             return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidFile')(args);

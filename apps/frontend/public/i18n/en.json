@@ -23,7 +23,10 @@
     "deleteTitle": "Delete",
     "confirmDelete": "Are you sure you want to delete this item?",
     "saving": "Saving",
-    "back": "Back"
+    "back": "Back",
+    "actions": "Actions",
+    "no": "No",
+    "yes": "Yes"
   },
   "Filters": {
     "search": "Search",
@@ -144,7 +147,11 @@
     "addUserEmail": "Add email",
     "addUserWithRole": "Add user with role",
     "selectRole": "Select role",
-    "cannotRemoveYourself": "You cannot remove yourself from the project"
+    "cannotRemoveYourself": "You cannot remove yourself from the project",
+    "image": "Image",
+    "dateCreation": "Creation date",
+    "dateModification": "Modification date",
+    "projectUserRole": "Project user role"
   },
   "ProjectRole": {
     "manager": "Manager",

@@ -216,6 +216,7 @@ export class UserProfileComponent implements OnInit {
   protected readonly user = computed(() => this.stateService.user());
   protected isEditing = false;
   protected selectedFile: File | null = null;
+  protected avatarRemoved: boolean = false;
   protected profileForm: FormGroup;
 
   protected passwordErrors: string[] = [];
@@ -257,6 +258,7 @@ export class UserProfileComponent implements OnInit {
 
   protected onImageSaved(event: { file: File; preview: string | null; }): void {
     this.selectedFile = event.file;
+    this.avatarRemoved = false;
   }
 
   protected onCroppingChange(isCropping: boolean): void {
@@ -265,6 +267,7 @@ export class UserProfileComponent implements OnInit {
 
   protected onImageRemoved(): void {
     this.selectedFile = null;
+    this.avatarRemoved = true;
   }
 
   protected onSubmit(): void {
@@ -290,8 +293,12 @@ export class UserProfileComponent implements OnInit {
         hasChanges = true;
       }
 
+      const hadAvatar = !!this.user()?.avatar;
       if (this.selectedFile) {
         formData.append('avatar', this.selectedFile);
+        hasChanges = true;
+      } else if (hadAvatar && this.avatarRemoved) {
+        formData.append('avatar', 'null');
         hasChanges = true;
       }
 

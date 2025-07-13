@@ -23,7 +23,10 @@
     "saving": "Zapisywanie",
     "submitting": "Wysyłanie...",
     "remove": "Usuń",
-    "back": "Powrót"
+    "back": "Powrót",
+    "actions": "Akcje",
+    "no": "Nie",
+    "yes": "Tak"
   },
   "Filters": {
     "search": "Szukaj",
@@ -145,7 +148,11 @@
     "addUserEmail": "Dodaj email",
     "addUserWithRole": "Dodaj użytkownika z rolą",
     "selectRole": "Wybierz rolę",
-    "cannotRemoveYourself": "Nie możesz usunąć samego siebie z projektu"
+    "cannotRemoveYourself": "Nie możesz usunąć samego siebie z projektu",
+    "image": "Obraz",
+    "dateCreation": "Data utworzenia",
+    "dateModification": "Data modyfikacji",
+    "projectUserRole": "Rola w projekcie"
   },
   "ProjectRole": {
     "manager": "Menedżer",

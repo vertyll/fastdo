@@ -14,14 +14,12 @@ import { SelectFieldComponent } from '../shared/components/molecules/select-fiel
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
-import { ProjectCategoryApiService } from './data-access/project-category.api.service';
-import { ProjectRoleApiService } from './data-access/project-role.api.service';
-import { ProjectStatusApiService } from './data-access/project-status.api.service';
+import { ProjectCategoryService } from './data-access/project-category.service';
+import { ProjectRoleService } from './data-access/project-role.service';
+import { ProjectStatusService } from './data-access/project-status.service';
 import { ProjectTypeService } from './data-access/project-type.service';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
-import { AddProjectDto } from './dtos/add-project.dto';
-import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Project } from './models/Project';
 
 @Component({
@@ -309,9 +307,9 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly projectsService = inject(ProjectsService);
   private readonly projectTypeService = inject(ProjectTypeService);
-  private readonly projectRoleApiService = inject(ProjectRoleApiService);
-  private readonly projectStatusApiService = inject(ProjectStatusApiService);
-  private readonly projectCategoryApiService = inject(ProjectCategoryApiService);
+  private readonly projectRoleService = inject(ProjectRoleService);
+  private readonly projectStatusService = inject(ProjectStatusService);
+  private readonly projectCategoryService = inject(ProjectCategoryService);
   private readonly projectsStateService = inject(ProjectsStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
@@ -333,6 +331,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   protected projectId: number | null = null;
   protected currentProject: Project | null = null;
   protected selectedIconFile: File | null = null;
+  protected iconRemoved: boolean = false;
   protected isCropping: boolean = false;
   protected fieldErrors: Record<string, string[]> = {};
 
@@ -384,7 +383,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
   private loadAllOptions(): void {
     const types$ = this.projectTypeService.getAll();
-    const roles$ = this.projectRoleApiService.getAll();
+    const roles$ = this.projectRoleService.getAll();
 
     forkJoin({
       types: types$,
@@ -414,8 +413,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   private loadProjectSpecificData(): void {
     if (!this.projectId) return;
 
-    const statuses$ = this.projectStatusApiService.getByProjectId(this.projectId);
-    const categories$ = this.projectCategoryApiService.getByProjectId(this.projectId);
+    const statuses$ = this.projectStatusService.getByProjectId(this.projectId);
+    const categories$ = this.projectCategoryService.getByProjectId(this.projectId);
 
     forkJoin({
       statuses: statuses$,
@@ -652,6 +651,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
   protected onImageSaved(event: { file: File; preview: string | null; }): void {
     this.selectedIconFile = event.file;
+    this.iconRemoved = false;
   }
 
   protected onCroppingChange(isCropping: boolean): void {
@@ -660,6 +660,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
   protected onImageRemoved(): void {
     this.selectedIconFile = null;
+    this.iconRemoved = true;
   }
 
   protected onSubmit(): void {
@@ -671,30 +672,60 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     this.fieldErrors = {};
     const formValue = this.projectForm.value;
 
-    if (this.isEditMode && this.projectId) {
-      const projectData: UpdateProjectDto = {
-        name: formValue.name,
-        description: formValue.description || undefined,
-        isPublic: formValue.isPublic || false,
-        typeId: formValue.typeId || undefined,
-        categories: formValue.categories
-          .filter((cat: any) => cat.name && cat.name.trim())
-          .map((cat: any) => cat.name.trim()),
-        statuses: formValue.statuses
-          .filter((status: any) => status.name && status.name.trim())
-          .map((status: any) => status.name.trim()),
-        usersWithRoles: formValue.usersWithRoles
-          ?.filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
-          ?.map((userWithRole: any) => ({
-            email: userWithRole.email.trim(),
-            role: userWithRole.role,
-          })) || [],
-        userEmails: formValue.userEmails
-          ?.filter((userEmail: any) => userEmail.email && userEmail.email.trim())
-          ?.map((userEmail: any) => userEmail.email.trim()) || [],
-      };
+    const formData = new FormData();
 
-      this.projectsService.updateFull(this.projectId, projectData, this.selectedIconFile)
+    formData.append('name', formValue.name);
+    if (formValue.description) {
+      formData.append('description', formValue.description);
+    }
+    formData.append('isPublic', String(formValue.isPublic || false));
+    if (formValue.typeId) {
+      formData.append('typeId', formValue.typeId);
+    }
+
+    if (formValue.categories && Array.isArray(formValue.categories)) {
+      formValue.categories
+        .filter((cat: any) => cat.name && cat.name.trim())
+        .forEach((cat: any) => {
+          formData.append('categories', cat.name.trim());
+        });
+    }
+
+    if (formValue.statuses && Array.isArray(formValue.statuses)) {
+      formValue.statuses
+        .filter((status: any) => status.name && status.name.trim())
+        .forEach((status: any) => {
+          formData.append('statuses', status.name.trim());
+        });
+    }
+
+    if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
+      const usersWithRoles = formValue.usersWithRoles
+        .filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
+        .map((userWithRole: any) => ({
+          email: userWithRole.email.trim(),
+          role: userWithRole.role,
+        }));
+      formData.append('usersWithRoles', JSON.stringify(usersWithRoles));
+    }
+
+    if (formValue.userEmails && Array.isArray(formValue.userEmails)) {
+      formValue.userEmails
+        .filter((userEmail: any) => userEmail.email && userEmail.email.trim())
+        .forEach((userEmail: any) => {
+          formData.append('userEmails', userEmail.email.trim());
+        });
+    }
+
+    const hadIcon = !!this.currentProject?.icon?.url;
+    if (this.selectedIconFile) {
+      formData.append('icon', this.selectedIconFile);
+    } else if (hadIcon && this.iconRemoved) {
+      formData.append('icon', 'null');
+    }
+
+    if (this.isEditMode && this.projectId) {
+      this.projectsService.updateFull(this.projectId, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
@@ -720,29 +751,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      const projectData: AddProjectDto = {
-        name: formValue.name,
-        description: formValue.description || undefined,
-        isPublic: formValue.isPublic || false,
-        typeId: formValue.typeId || undefined,
-        categories: formValue.categories
-          .filter((cat: any) => cat.name && cat.name.trim())
-          .map((cat: any) => cat.name.trim()),
-        statuses: formValue.statuses
-          .filter((status: any) => status.name && status.name.trim())
-          .map((status: any) => status.name.trim()),
-        usersWithRoles: formValue.usersWithRoles
-          ?.filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
-          ?.map((userWithRole: any) => ({
-            email: userWithRole.email.trim(),
-            role: userWithRole.role,
-          })) || [],
-        userEmails: formValue.userEmails
-          ?.filter((userEmail: any) => userEmail.email && userEmail.email.trim())
-          ?.map((userEmail: any) => userEmail.email.trim()) || [],
-      };
-
-      this.projectsService.add(projectData, this.selectedIconFile)
+      this.projectsService.add(formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: response => {

@@ -6,7 +6,7 @@ import { ProjectRoleEnum } from 'src/app/shared/enums/project-role.enum';
 })
 export class HasProjectRoleDirective implements OnInit, OnChanges {
   readonly allowedRoles = input.required<ProjectRoleEnum[] | ProjectRoleEnum>({ alias: 'appHasProjectRole' });
-  readonly currentUserRole = input<string | undefined>();
+  readonly projectUserRole = input<string | undefined>();
 
   private elementRef = inject(ElementRef);
   private renderer = inject(Renderer2);
@@ -22,7 +22,7 @@ export class HasProjectRoleDirective implements OnInit, OnChanges {
   }
 
   private checkPermissions(): void {
-    const userRole = this.currentUserRole();
+    const userRole = this.projectUserRole();
     const allowedRoles = this.allowedRoles();
 
     if (!userRole) {

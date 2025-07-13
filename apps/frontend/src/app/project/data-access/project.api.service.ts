@@ -6,8 +6,6 @@ import { environment } from 'src/environments/environment';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
 import { User } from '../../shared/types/entities.type';
 import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
-import { AddProjectDto } from '../dtos/add-project.dto';
-import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../models/Project';
 
 @Injectable({
@@ -42,68 +40,16 @@ export class ProjectsApiService {
 
   public updateFull(
     projectId: number,
-    projectData: UpdateProjectDto,
-    iconFile?: File | null,
+    formData: FormData,
   ): Observable<ApiResponse<Project>> {
-    const formData = new FormData();
-
-    if (projectData.name) formData.append('name', projectData.name);
-    if (projectData.description) formData.append('description', projectData.description);
-    if (projectData.isPublic !== undefined) formData.append('isPublic', projectData.isPublic.toString());
-    if (projectData.typeId) formData.append('typeId', projectData.typeId.toString());
-    if (projectData.isActive !== undefined) formData.append('isActive', projectData.isActive.toString());
-
-    if (projectData.categories) {
-      projectData.categories.forEach(category => formData.append('categories', category));
-    }
-    if (projectData.statuses) {
-      projectData.statuses.forEach(status => formData.append('statuses', status));
-    }
-
-    if (projectData.userEmails) {
-      projectData.userEmails.forEach(email => formData.append('userEmails', email));
-    }
-
-    if (projectData.usersWithRoles) {
-      formData.append('usersWithRoles', JSON.stringify(projectData.usersWithRoles));
-    }
-
-    if (iconFile) {
-      formData.append('icon', iconFile);
-    }
-
     return this.withLoadingState(
       this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, formData),
     );
   }
 
-  public add(projectData: AddProjectDto, iconFile?: File | null): Observable<ApiResponse<Project>> {
-    const formData = new FormData();
-
-    formData.append('name', projectData.name);
-    if (projectData.description) formData.append('description', projectData.description);
-    if (projectData.isPublic !== undefined) formData.append('isPublic', projectData.isPublic.toString());
-    if (projectData.typeId) formData.append('typeId', projectData.typeId.toString());
-
-    if (projectData.categories) {
-      projectData.categories.forEach(category => formData.append('categories', category));
-    }
-    if (projectData.statuses) {
-      projectData.statuses.forEach(status => formData.append('statuses', status));
-    }
-
-    if (projectData.userEmails) {
-      projectData.userEmails.forEach(email => formData.append('userEmails', email));
-    }
-
-    if (projectData.usersWithRoles) {
-      formData.append('usersWithRoles', JSON.stringify(projectData.usersWithRoles));
-    }
-
-    if (iconFile) {
-      formData.append('icon', iconFile);
-    }
-
+  public add(
+    formData: FormData,
+  ): Observable<ApiResponse<Project>> {
     return this.withLoadingState(
       this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, formData),
     );

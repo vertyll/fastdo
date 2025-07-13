@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ProjectRoles } from 'src/common/decorators/project-roles.decorator';
+import { ProjectRolesGuard } from 'src/common/guards/project-roles.guard';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
@@ -7,9 +9,12 @@ import { UserDto } from '../../users/dtos/user.dto';
 import { AcceptInvitationDto } from '../dtos/accept-invitation.dto';
 import { CreateProjectDto } from '../dtos/create-project.dto';
 import { GetAllProjectsSearchParamsDto } from '../dtos/get-all-projects-search-params.dto';
+import { ProjectDetailsResponseDto } from '../dtos/project-details-response.dto';
+import { ProjectListResponseDto } from '../dtos/project-list-response.dto';
 import { RejectInvitationDto } from '../dtos/reject-invitation.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../entities/project.entity';
+import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectManagementService } from '../services/projects-managment.service';
 import { ProjectsService } from '../services/projects.service';
 
@@ -23,10 +28,15 @@ export class ProjectsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all projects' })
-  @ApiWrappedResponse({ status: 200, description: 'Return all projects.', type: Project, isPaginated: true })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all projects.',
+    type: ProjectListResponseDto,
+    isPaginated: true,
+  })
   public getAll(
     @Query() query: GetAllProjectsSearchParamsDto,
-  ): Promise<ApiPaginatedResponse<Project>> {
+  ): Promise<ApiPaginatedResponse<ProjectListResponseDto>> {
     return this.projectsService.findAll(query);
   }
 
@@ -69,12 +79,14 @@ export class ProjectsController {
   @Get(':id/details')
   @ApiOperation({ summary: 'Get a project by id with details' })
   @ApiQuery({ name: 'lang', required: false, description: 'Language code (default: pl)' })
-  @ApiWrappedResponse({ status: 200, description: 'Return the project with details.', type: Project })
-  public findOneWithDetails(@Param('id') id: string, @Query('lang') lang?: string): Promise<Project> {
+  @ApiWrappedResponse({ status: 200, description: 'Return the project with details.', type: ProjectDetailsResponseDto })
+  public findOneWithDetails(@Param('id') id: string, @Query('lang') lang?: string): Promise<ProjectDetailsResponseDto> {
     return this.projectsService.findOneWithDetails(+id, lang || 'pl');
   }
 
   @Patch(':id')
+  @UseGuards(ProjectRolesGuard)
+  @ProjectRoles(ProjectRoleEnum.MANAGER, 'id')
   @UseInterceptors(new FastifyFileInterceptor('icon', UpdateProjectDto))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update a project' })
@@ -92,6 +104,8 @@ export class ProjectsController {
   }
 
   @Delete(':id')
+  @UseGuards(ProjectRolesGuard)
+  @ProjectRoles(ProjectRoleEnum.MANAGER, 'id')
   @ApiOperation({ summary: 'Remove a project' })
   @ApiWrappedResponse({
     status: 204,

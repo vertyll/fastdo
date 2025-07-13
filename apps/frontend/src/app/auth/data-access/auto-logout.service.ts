@@ -23,7 +23,7 @@ export class AutoLogoutService {
     });
   }
 
-  stopWatching(): void {
+  public stopWatching(): void {
     this.watcherRef?.destroy();
   }
 }

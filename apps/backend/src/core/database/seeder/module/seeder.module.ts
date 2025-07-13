@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken } from '../../../../auth/entities/refresh-token.entity';
 import { ProjectCategoryTranslation } from '../../../../projects/entities/project-category-translation.entity';
 import { ProjectCategory } from '../../../../projects/entities/project-category.entity';
+import { ProjectRolePermissionTranslation } from '../../../../projects/entities/project-role-permission-translation.entity';
+import { ProjectRolePermission } from '../../../../projects/entities/project-role-permission.entity';
 import { ProjectRoleTranslation } from '../../../../projects/entities/project-role-translation.entity';
 import { ProjectRole } from '../../../../projects/entities/project-role.entity';
 import { ProjectStatusTranslation } from '../../../../projects/entities/project-status-translation.entity';
@@ -37,10 +39,12 @@ import { Language } from '../../../language/entities/language.entity';
 import { DatabaseModule } from '../../database.module';
 import { LanguageSeeder } from '../implementations/language.seeder';
 import { LegalDocumentsSeeder } from '../implementations/legal-documents.seeder';
+import { ProjectRolePermissionSeeder } from '../implementations/project-role-permission.seeder';
+import { ProjectRoleToPermissionSeeder } from '../implementations/project-role-to-permission.seeder';
 import { ProjectRoleSeeder } from '../implementations/project-role.seeder';
 import { ProjectTypeSeeder } from '../implementations/project-type.seeder';
 import { RoleSeeder } from '../implementations/role.seeder';
-import { TaskPrioritySeeder } from '../implementations/task-priority-seeder.service';
+import { TaskPrioritySeeder } from '../implementations/task-priority-seeder';
 import { SeederErrorHandler } from '../services/error-handler.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 import { SeederLogger } from '../services/seeder-logger.service';
@@ -84,6 +88,8 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
       TaskPriorityTranslation,
       RefreshToken,
       UserEmailHistory,
+      ProjectRolePermission,
+      ProjectRolePermissionTranslation,
     ]),
   ],
   providers: [
@@ -97,6 +103,8 @@ import { SeederRunnerService } from '../services/seeder-runner.service';
     ProjectTypeSeeder,
     LegalDocumentsSeeder,
     SeederFactoryService,
+    ProjectRolePermissionSeeder,
+    ProjectRoleToPermissionSeeder,
   ],
   exports: [SeederRunnerService],
 })

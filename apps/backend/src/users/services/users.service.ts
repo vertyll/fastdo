@@ -99,15 +99,22 @@ export class UsersService implements IUsersService {
         }
       }
 
-      if (updateProfileDto.avatar) {
-        try {
-          if (user.avatar) await this.fileFacade.delete(user.avatar.id);
+      if (updateProfileDto.avatar !== undefined) {
+        if (String(updateProfileDto.avatar) === 'null') {
+          if (user.avatar) {
+            await this.fileFacade.delete(user.avatar.id);
+          }
+          updateData.avatar = null;
+        } else if (updateProfileDto.avatar) {
+          try {
+            if (user.avatar) await this.fileFacade.delete(user.avatar.id);
 
-          const { id: fileId } = await this.fileFacade.upload(updateProfileDto.avatar);
+            const { id: fileId } = await this.fileFacade.upload(updateProfileDto.avatar);
 
-          updateData.avatar = { id: fileId };
-        } catch {
-          throw new UnauthorizedException(this.i18n.t('messages.User.errors.avatarUploadFailed'));
+            updateData.avatar = { id: fileId };
+          } catch {
+            throw new UnauthorizedException(this.i18n.t('messages.User.errors.avatarUploadFailed'));
+          }
         }
       }
 

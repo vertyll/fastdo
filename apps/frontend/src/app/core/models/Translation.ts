@@ -1,5 +1,5 @@
 export type Translation = {
-    lang: string;
-    name: string;
-    description?: string;
+  lang: string;
+  name: string;
+  description?: string;
 };

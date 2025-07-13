@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
+import { RoleEnum } from 'src/common/enums/role.enum';
 import { LanguageCodeEnum } from 'src/core/language/enums/language-code.enum';
 import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
 import { UserRole } from 'src/users/entities/user-role.entity';
@@ -78,7 +79,7 @@ describe('RolesService', () => {
       } as Role;
       roleRepository.findOne.mockResolvedValue(mockRole);
 
-      const result = await service.findRoleByCode('admin');
+      const result = await service.findRoleByCode(RoleEnum.Admin);
 
       expect(roleRepository.findOne).toHaveBeenCalledWith({ where: { code: 'admin' } });
       expect(result).toEqual(mockRole);
@@ -87,7 +88,7 @@ describe('RolesService', () => {
     it('should return null if role not found', async () => {
       roleRepository.findOne.mockResolvedValue(null);
 
-      const result = await service.findRoleByCode('nonexistent');
+      const result = await service.findRoleByCode('nonexistent' as RoleEnum);
 
       expect(roleRepository.findOne).toHaveBeenCalledWith({ where: { code: 'nonexistent' } });
       expect(result).toBeNull();
@@ -116,7 +117,7 @@ describe('RolesService', () => {
       userRoleRepository.create.mockReturnValue(mockUserRole as UserRole);
       userRoleRepository.save.mockResolvedValue(mockUserRole as UserRole);
 
-      await service.addRoleToUser(1, 'admin');
+      await service.addRoleToUser(1, RoleEnum.Admin);
 
       expect(roleRepository.findOne).toHaveBeenCalledWith({ where: { code: 'admin' } });
       expect(userRoleRepository.create).toHaveBeenCalledWith({
@@ -127,7 +128,7 @@ describe('RolesService', () => {
     });
 
     it('should throw NotFoundException with translated message if role does not exist', async () => {
-      const roleCode = 'nonexistent';
+      const roleCode = 'nonexistent' as RoleEnum;
       roleRepository.findOne.mockResolvedValue(null);
       i18nService.translate.mockReturnValue('Translated error message');
 
@@ -155,7 +156,7 @@ describe('RolesService', () => {
       roleRepository.findOne.mockResolvedValue(mockRole);
       userRoleRepository.save.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.addRoleToUser(1, 'admin'))
+      await expect(service.addRoleToUser(1, RoleEnum.Admin))
         .rejects
         .toThrow('Database error');
     });
@@ -212,7 +213,7 @@ describe('RolesService', () => {
       const mockRoles = [
         {
           id: 1,
-          code: 'admin',
+          code: RoleEnum.Admin,
           isActive: true,
           dateCreation: new Date(),
           dateModification: new Date(),
@@ -237,7 +238,7 @@ describe('RolesService', () => {
         },
         {
           id: 2,
-          code: 'user',
+          code: RoleEnum.User,
           isActive: true,
           dateCreation: new Date(),
           dateModification: new Date(),

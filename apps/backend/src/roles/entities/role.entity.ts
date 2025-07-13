@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { RoleEnum } from '../../common/enums/role.enum';
 import { UserRole } from '../../users/entities/user-role.entity';
 import { RoleTranslation } from './role-translation.entity';
 
@@ -9,9 +10,9 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
-  @Column({ unique: true })
-  code: string;
+  @ApiProperty({ enum: RoleEnum, enumName: 'RoleEnum' })
+  @Column({ type: 'enum', enum: RoleEnum, unique: true })
+  code: RoleEnum;
 
   @ApiProperty()
   @Column({ default: true })

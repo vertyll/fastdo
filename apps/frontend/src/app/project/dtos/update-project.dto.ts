@@ -10,4 +10,5 @@ export type UpdateProjectDto = {
   isActive?: boolean;
   userEmails?: string[];
   usersWithRoles?: UserWithRoleDto[];
+  icon?: File | null;
 };

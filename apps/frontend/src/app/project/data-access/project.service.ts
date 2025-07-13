@@ -2,8 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
 import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
-import { AddProjectDto } from '../dtos/add-project.dto';
-import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../models/Project';
 import { ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
@@ -44,18 +42,19 @@ export class ProjectsService {
 
   public updateFull(
     projectId: number,
-    projectData: UpdateProjectDto,
-    iconFile?: File | null,
+    formData: FormData,
   ): Observable<ApiResponse<Project>> {
-    return this.httpService.updateFull(projectId, projectData, iconFile).pipe(
+    return this.httpService.updateFull(projectId, formData).pipe(
       tap(response => {
         this.state.updateProject(response.data);
       }),
     );
   }
 
-  public add(projectData: AddProjectDto, iconFile?: File | null): Observable<ApiResponse<Project>> {
-    return this.httpService.add(projectData, iconFile).pipe(
+  public add(
+    formData: FormData,
+  ): Observable<ApiResponse<Project>> {
+    return this.httpService.add(formData).pipe(
       tap(response => {
         this.state.addProject(response.data);
       }),

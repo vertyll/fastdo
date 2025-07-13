@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
+import { ProjectListResponseDto } from '../dtos/project-list-response.dto';
 import { Project } from '../entities/project.entity';
 import { ProjectManagementService } from '../services/projects-managment.service';
 import { ProjectsService } from '../services/projects.service';
@@ -53,20 +54,18 @@ describe('ProjectsController', () => {
         pageSize: 10,
         sort: undefined,
       };
-      const result: ApiPaginatedResponse<Project> = {
+      const result: ApiPaginatedResponse<ProjectListResponseDto> = {
         items: [
           {
             id: 1,
             name: 'Test Project',
             dateCreation: new Date(),
             dateModification: null,
-            tasks: [],
             description: null,
             isPublic: false,
             icon: null,
             isActive: false,
             type: null,
-            projectUserRoles: [],
             categories: [],
             statuses: [],
           },

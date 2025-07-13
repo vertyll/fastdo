@@ -22,7 +22,9 @@ export class AuthService {
   public readonly isLoggedIn = this.authStateService.isLoggedIn;
   public readonly userRoles = this.authStateService.roles;
 
-  private readonly accessToken = signal<string | null>(this.authStateService.getToken());
+  private readonly accessToken = signal<string | null>(
+    this.authStateService.getToken(),
+  );
 
   public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
     return this.authApiService.login(dto).pipe(
@@ -86,6 +88,39 @@ export class AuthService {
     }
   }
 
+  public getCurrentUserEmail(): string | null {
+    const token = this.authStateService.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded.email || null;
+    } catch (error) {
+      console.error('Failed to decode token for email:', error);
+      return null;
+    }
+  }
+
+  public clearAuthState(): void {
+    this.stopRefreshTokenTimer();
+    this.accessToken.set(null);
+    this.authStateService.clear();
+  }
+
+  public isTokenExpired(token: string): boolean {
+    try {
+      const decoded: any = jwtDecode(token);
+      if (!decoded.exp) return true;
+
+      const bufferTime = environment.refreshToken.bufferTime || 60 * 1000;
+      return Date.now() >= decoded.exp * 1000 - bufferTime;
+    } catch {
+      return true;
+    }
+  }
+
   private setAccessToken(token: string): void {
     this.accessToken.set(token);
     this.authStateService.setToken(token);
@@ -101,18 +136,6 @@ export class AuthService {
     } catch (error) {
       console.error('Failed to decode token:', error);
       this.clearAuthState();
-    }
-  }
-
-  public isTokenExpired(token: string): boolean {
-    try {
-      const decoded: any = jwtDecode(token);
-      if (!decoded.exp) return true;
-
-      const bufferTime = environment.refreshToken.bufferTime || 60 * 1000;
-      return Date.now() >= (decoded.exp * 1000 - bufferTime);
-    } catch {
-      return true;
     }
   }
 
@@ -139,26 +162,5 @@ export class AuthService {
       clearTimeout(this.refreshTokenTimeout);
       this.refreshTokenTimeout = undefined;
     }
-  }
-
-  public getCurrentUserEmail(): string | null {
-    const token = this.authStateService.getToken();
-    if (!token) {
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-      return decoded.email || null;
-    } catch (error) {
-      console.error('Failed to decode token for email:', error);
-      return null;
-    }
-  }
-
-  public clearAuthState(): void {
-    this.stopRefreshTokenTimer();
-    this.accessToken.set(null);
-    this.authStateService.clear();
   }
 }

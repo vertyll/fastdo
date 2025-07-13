@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { ProjectTypeEnum } from '../enums/project-type.enum';
 import { ProjectTypeTranslation } from './project-type-translation.entity';
 import { Project } from './project.entity';
 
@@ -9,9 +10,9 @@ export class ProjectType {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
-  @Column({ unique: true })
-  code: string;
+  @ApiProperty({ enum: ProjectTypeEnum, enumName: 'ProjectTypeEnum' })
+  @Column({ type: 'enum', enum: ProjectTypeEnum, unique: true })
+  code: ProjectTypeEnum;
 
   @ApiProperty()
   @Column({ default: true })
