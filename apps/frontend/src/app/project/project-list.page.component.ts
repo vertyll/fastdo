@@ -166,8 +166,8 @@ export class ProjectListPageComponent implements OnInit {
         verticalAlign: 'middle',
       },
       {
-        key: 'projectUserRole',
-        label: 'Project.projectUserRole',
+        key: 'type',
+        label: 'Project.type',
         type: 'text',
         sortable: false,
         width: '100px',
@@ -367,16 +367,12 @@ export class ProjectListPageComponent implements OnInit {
   private mapProjectsToTableRows(projects: any[]): TableRow[] {
     const lang = this.translateService.currentLang || 'pl';
     return projects.map(project => {
-      let projectUserRoleName = '';
-      if (project.projectUserRole?.translations) {
-        const found = project.projectUserRole.translations.find(
-          (t: any) => t.lang === lang,
-        );
-        projectUserRoleName = found?.name || project.projectUserRole.translations[0]?.name || '';
-      } else if (typeof project.projectUserRole === 'string') {
-        projectUserRoleName = project.projectUserRole;
-      } else {
-        projectUserRoleName = project.projectUserRole?.code || '';
+      let typeName = '';
+      if (project.type?.translations) {
+        const found = project.type.translations.find((t: any) => t.lang === lang);
+        typeName = found?.name || project.type.translations[0]?.name || project.type.code || '';
+      } else if (project.type?.code) {
+        typeName = project.type.code;
       }
 
       return {
@@ -386,8 +382,7 @@ export class ProjectListPageComponent implements OnInit {
         isPublic: project.isPublic,
         dateCreation: project.dateCreation,
         dateModification: project.dateModification,
-        type: project.type,
-        projectUserRole: projectUserRoleName,
+        type: typeName,
         image: project.icon?.url || null,
         permissions: project.permissions,
       };
