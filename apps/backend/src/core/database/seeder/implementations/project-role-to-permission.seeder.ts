@@ -39,6 +39,7 @@ export class ProjectRoleToPermissionSeeder implements ISeeder {
           ProjectRolePermissionEnum.INVITE_USERS,
           ProjectRolePermissionEnum.MANAGE_MEMBERS,
           ProjectRolePermissionEnum.VIEW_PROJECT,
+          ProjectRolePermissionEnum.MANAGE_TASKS,
         ],
         [ProjectRoleEnum.CLIENT]: [
           ProjectRolePermissionEnum.SHOW_TASKS,

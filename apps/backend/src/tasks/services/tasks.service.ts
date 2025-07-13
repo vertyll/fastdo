@@ -22,6 +22,7 @@ import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
+import { ProjectRolePermissionEnum } from 'src/projects/enums/project-role-permission.enum';
 
 @Injectable()
 export class TasksService implements ITasksService {
@@ -308,7 +309,14 @@ export class TasksService implements ITasksService {
       const isManager = task.project.projectUserRoles.some(
         ur => ur.user && ur.user.id === userId && ur.projectRole && ur.projectRole.code === ProjectRoleEnum.MANAGER,
       );
-      if (!(isCreator || isAssigned || hasRole || isManager)) {
+
+      const hasManageTasksPermission = task.project.projectUserRoles.some(
+        ur =>
+          ur.user && ur.user.id === userId && Array.isArray(ur.projectRole.permissions)
+          && ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS)
+      );
+
+      if (!(isCreator || isAssigned || hasRole || isManager || hasManageTasksPermission)) {
         throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
       }
     }
