@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
@@ -9,6 +9,7 @@ import { PasswordValidator } from '../auth/validators/password.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
+import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
@@ -22,7 +23,7 @@ import { UserStateService } from './data-access/user.state.service';
     ReactiveFormsModule,
     SpinnerComponent,
     ErrorMessageComponent,
-    DatePipe,
+    CustomDatePipe,
     CommonModule,
     ImageComponent,
   ],
@@ -65,7 +66,7 @@ import { UserStateService } from './data-access/user.state.service';
                     </div>
                     <div class="text-sm text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Profile.memberSince' | translate }}
-                      {{ user().dateCreation | date:'mediumDate' }}
+                      {{ user().dateCreation | customDate }}
                     </div>
                   </div>
                 </div>

@@ -28,7 +28,11 @@ export class ProjectListResponseDto {
   dateModification?: Date | null;
 
   @ApiProperty({ required: false })
-  type?: { id: number; name?: string; } | null;
+  type?: {
+    id: number;
+    code: string;
+    translations: TranslationDto[];
+  };
 
   @ApiProperty({ type: [Object], required: false })
   categories?: Array<{ id: number; translations: TranslationDto[]; }>;

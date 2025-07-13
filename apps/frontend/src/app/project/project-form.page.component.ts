@@ -1,13 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
@@ -450,7 +443,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
         next: () => {
           this.updateOptionsForCurrentLang();
         },
-        error: (error) => {
+        error: error => {
           console.error('Error handling language change:', error);
         },
       });
@@ -466,7 +459,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (responses) => {
+        next: responses => {
           this.projectTypesRaw = responses.types.data || [];
           this.projectRolesRaw = responses.roles.data || [];
           this.updateOptionsForCurrentLang();
@@ -475,7 +468,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
             this.loadProjectSpecificData();
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('Error loading project options:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
@@ -499,13 +492,13 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (responses) => {
+        next: responses => {
           this.projectStatusesRaw = responses.statuses.data || [];
           this.projectCategoriesRaw = responses.categories.data || [];
           this.updateOptionsForCurrentLang();
           this.loadProject();
         },
-        error: (error) => {
+        error: error => {
           console.error('Error loading project-specific data:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
@@ -519,34 +512,30 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     const lang = this.translateService.currentLang || 'pl';
     this.projectTypes = (this.projectTypesRaw || []).map((type: any) => ({
       ...type,
-      name:
-        type.translations?.find((t: any) => t.lang === lang)?.name ||
-        type.translations?.[0]?.name ||
-        '',
+      name: type.translations?.find((t: any) => t.lang === lang)?.name
+        || type.translations?.[0]?.name
+        || '',
     }));
     this.projectRoles = (this.projectRolesRaw || []).map((role: any) => ({
       ...role,
-      name:
-        role.translations?.find((t: any) => t.lang === lang)?.name ||
-        role.translations?.[0]?.name ||
-        '',
+      name: role.translations?.find((t: any) => t.lang === lang)?.name
+        || role.translations?.[0]?.name
+        || '',
     }));
     this.projectStatuses = (this.projectStatusesRaw || []).map(
       (status: any) => ({
         ...status,
-        name:
-          status.translations?.find((t: any) => t.lang === lang)?.name ||
-          status.translations?.[0]?.name ||
-          '',
+        name: status.translations?.find((t: any) => t.lang === lang)?.name
+          || status.translations?.[0]?.name
+          || '',
       }),
     );
     this.projectCategories = (this.projectCategoriesRaw || []).map(
       (cat: any) => ({
         ...cat,
-        name:
-          cat.translations?.find((t: any) => t.lang === lang)?.name ||
-          cat.translations?.[0]?.name ||
-          '',
+        name: cat.translations?.find((t: any) => t.lang === lang)?.name
+          || cat.translations?.[0]?.name
+          || '',
       }),
     );
   }
@@ -560,11 +549,11 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
       .getProjectByIdWithDetails(this.projectId, currentLang)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.currentProject = response.data;
           this.populateForm();
         },
-        error: (error) => {
+        error: error => {
           console.error('Error loading project:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
@@ -586,7 +575,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     });
 
     if (this.currentProject.categories) {
-      this.currentProject.categories.forEach((category) => {
+      this.currentProject.categories.forEach(category => {
         this.categoriesFormArray.push(
           this.fb.group({
             id: [category.id],
@@ -598,7 +587,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     }
 
     if (this.currentProject.statuses) {
-      this.currentProject.statuses.forEach((status) => {
+      this.currentProject.statuses.forEach(status => {
         this.statusesFormArray.push(
           this.fb.group({
             id: [status.id],
@@ -610,7 +599,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     }
 
     if (this.currentProject.projectUserRoles) {
-      this.currentProject.projectUserRoles.forEach((projectUserRole) => {
+      this.currentProject.projectUserRoles.forEach(projectUserRole => {
         this.usersWithRolesFormArray.push(
           this.fb.group({
             email: [
@@ -684,14 +673,14 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected get projectTypeOptions() {
-    return this.projectTypes.map((type) => ({
+    return this.projectTypes.map(type => ({
       value: type.id,
       label: type.name,
     }));
   }
 
   protected get projectRoleOptions() {
-    return this.projectRoles.map((role) => ({
+    return this.projectRoles.map(role => ({
       value: role.id,
       label: role.name,
     }));
@@ -758,7 +747,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     return userEmail === currentUserEmail;
   }
 
-  protected onImageSaved(event: { file: File; preview: string | null }): void {
+  protected onImageSaved(event: { file: File; preview: string | null; }): void {
     this.selectedIconFile = event.file;
     this.iconRemoved = false;
   }
@@ -811,8 +800,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
       const usersWithRoles = formValue.usersWithRoles
         .filter(
-          (userWithRole: any) =>
-            userWithRole.email && userWithRole.email.trim(),
+          (userWithRole: any) => userWithRole.email && userWithRole.email.trim(),
         )
         .map((userWithRole: any) => ({
           email: userWithRole.email.trim(),
@@ -851,10 +839,10 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
             );
             this.router.navigate(['/projects']).then();
           },
-          error: (error) => {
+          error: error => {
             if (
-              error?.error?.errors?.message &&
-              Array.isArray(error.error.errors.message)
+              error?.error?.errors?.message
+              && Array.isArray(error.error.errors.message)
             ) {
               this.fieldErrors = {};
               error.error.errors.message.forEach((errObj: any) => {
@@ -863,9 +851,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
                 }
               });
             } else {
-              const errorMessage =
-                error.error?.message ||
-                this.translateService.instant('Project.updateError');
+              const errorMessage = error.error?.message
+                || this.translateService.instant('Project.updateError');
               this.notificationService.showNotification(
                 errorMessage,
                 NotificationTypeEnum.Error,
@@ -881,20 +868,19 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
         .add(formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (response) => {
+          next: response => {
             this.projectsStateService.addProject(response.data);
-            const successMessage =
-              this.translateService.instant('Project.addSuccess');
+            const successMessage = this.translateService.instant('Project.addSuccess');
             this.notificationService.showNotification(
               successMessage,
               NotificationTypeEnum.Success,
             );
             this.router.navigate(['/projects']).then();
           },
-          error: (error) => {
+          error: error => {
             if (
-              error?.error?.errors?.message &&
-              Array.isArray(error.error.errors.message)
+              error?.error?.errors?.message
+              && Array.isArray(error.error.errors.message)
             ) {
               this.fieldErrors = {};
               error.error.errors.message.forEach((errObj: any) => {
@@ -903,9 +889,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
                 }
               });
             } else {
-              const errorMessage =
-                error.error?.message ||
-                this.translateService.instant('Project.addError');
+              const errorMessage = error.error?.message
+                || this.translateService.instant('Project.addError');
               this.notificationService.showNotification(
                 errorMessage,
                 NotificationTypeEnum.Error,

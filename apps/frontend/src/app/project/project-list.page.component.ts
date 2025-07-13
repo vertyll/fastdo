@@ -103,10 +103,10 @@ export class ProjectListPageComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly projectNameValidator = inject(ProjectNameValidator);
-  protected readonly projectsStateService = inject(ProjectsStateService);
   private readonly modalService = inject(ModalService);
-  protected readonly listStateValue = LOADING_STATE_VALUE;
+  protected readonly projectsStateService = inject(ProjectsStateService);
 
+  protected readonly listStateValue = LOADING_STATE_VALUE;
   protected readonly ProjectRoleEnum = ProjectRoleEnum;
 
   @ViewChild('projectUserRoleTemplate')
@@ -132,7 +132,8 @@ export class ProjectListPageComponent implements OnInit {
         label: 'Project.name',
         type: 'text',
         sortable: false,
-        width: '200px',
+        width: '250px',
+        autoTruncate: true,
         align: 'center',
         verticalAlign: 'middle',
       },

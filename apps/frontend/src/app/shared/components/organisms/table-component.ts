@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroEye, heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
+import { CustomDatePipe } from '../../pipes/custom-date.pipe';
 import { TruncateTextPipe } from '../../pipes/truncate-text.pipe';
 import { ImageComponent } from './image.component';
 
@@ -72,6 +73,7 @@ export interface TableConfig {
     NgIconComponent,
     TranslateModule,
     TruncateTextPipe,
+    CustomDatePipe,
   ],
   providers: [provideIcons({ heroCalendar, heroXMark, heroPencil, heroEye, heroTrash })],
   template: `
@@ -174,7 +176,7 @@ export interface TableConfig {
                   <span>{{ getValue(row, column.key) ? ('Basic.yes' | translate) : ('Basic.no' | translate) }}</span>
                 }
                 @case ('date') {
-                  <span>{{ getValue(row, column.key) | date:'short' }}</span>
+                  <span>{{ getValue(row, column.key) | customDate }}</span>
                 }
                 @case ('image') {
                   <div class="py-2 flex-shrink-0">

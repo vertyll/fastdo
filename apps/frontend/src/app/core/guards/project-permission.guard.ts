@@ -1,6 +1,5 @@
-
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { ProjectRolePermissionEnum } from 'src/app/shared/enums/project-role-permission.enum';
 import { ProjectsService } from '../../project/data-access/project.service';
@@ -13,8 +12,8 @@ export class ProjectPermissionGuard implements CanActivate {
   ) {}
 
   public canActivate(
-    route: ActivatedRouteSnapshot & { data: { requiredPermission: ProjectRolePermissionEnum } },
-    _state: RouterStateSnapshot
+    route: ActivatedRouteSnapshot & { data: { requiredPermission: ProjectRolePermissionEnum; }; },
+    _state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
     const projectId = route.params['id'];
     const requiredPermission = route.data.requiredPermission;
@@ -25,7 +24,7 @@ export class ProjectPermissionGuard implements CanActivate {
           return true;
         }
         return this.router.createUrlTree(['/projects']);
-      })
+      }),
     );
   }
 }

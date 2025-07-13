@@ -63,7 +63,15 @@ export class ProjectsService {
 
     const projectUserRoles = await this.projectUserRoleRepository.find({
       where: { user: { id: userId }, project: { id: In(items.map(item => item.id)) } },
-      relations: ['projectRole', 'project', 'projectRole.translations', 'projectRole.permissions'],
+      relations: [
+        'projectRole',
+        'project',
+        'projectRole.translations',
+        'projectRole.permissions',
+        'project.type',
+        'project.type.translations',
+        'project.type.translations.language',
+      ],
     });
 
     const userRolesByProjectId = new Map<number, ProjectUserRole>();
@@ -666,9 +674,14 @@ export class ProjectsService {
       }));
     };
 
-    let permissions: string[] = [];
-    if (userRole?.projectRole?.permissions) {
-      permissions = userRole.projectRole.permissions.map(p => p.code);
+    let type: { id: number; code: string; translations: TranslationDto[]; } | undefined = undefined;
+    const typeObj = project.type || userRole?.project?.type;
+    if (typeObj && Array.isArray(typeObj.translations)) {
+      type = {
+        id: typeObj.id,
+        code: String(typeObj.code),
+        translations: mapTranslations(typeObj.translations),
+      };
     }
 
     return {
@@ -680,10 +693,8 @@ export class ProjectsService {
       isActive: project.isActive,
       dateCreation: project.dateCreation,
       dateModification: project.dateModification,
-      type: project.type && Array.isArray(project.type.translations)
-        ? { id: project.type.id, name: project.type.translations[0]?.name ?? '' }
-        : null,
-      permissions,
+      type,
+      permissions: userRole?.projectRole?.permissions.map(p => p.code) ?? [],
     };
   }
 
@@ -722,8 +733,6 @@ export class ProjectsService {
     const projectUserRoles = Array.isArray(project.projectUserRoles)
       ? project.projectUserRoles.map(userRole => {
         const role = userRole.projectRole;
-        const name = (role as any).name ?? role.translations?.[0]?.name ?? '';
-        const description = (role as any).description ?? role.translations?.[0]?.description ?? '';
         return {
           user: {
             id: userRole.user.id,
@@ -739,8 +748,6 @@ export class ProjectsService {
                 description: t.description ?? undefined,
               }))
               : [],
-            name,
-            description,
           },
         };
       })
@@ -755,12 +762,13 @@ export class ProjectsService {
       isActive: project.isActive,
       dateCreation: project.dateCreation,
       dateModification: project.dateModification,
-      type: project.type
+      type: (project.type && Array.isArray(project.type.translations))
         ? {
           id: project.type.id,
-          name: (project.type as any).name ?? project.type.translations?.[0]?.name ?? '',
+          code: String(project.type.code),
+          translations: mapTranslations(project.type.translations),
         }
-        : null,
+        : undefined,
       categories,
       statuses,
       permissions,

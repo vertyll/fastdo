@@ -7,6 +7,7 @@ import { ProjectCategory } from 'src/projects/entities/project-category.entity';
 import { ProjectRole } from 'src/projects/entities/project-role.entity';
 import { ProjectStatus } from 'src/projects/entities/project-status.entity';
 import { Project } from 'src/projects/entities/project.entity';
+import { ProjectRolePermissionEnum } from 'src/projects/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from 'src/projects/enums/project-role.enum';
 import { User } from 'src/users/entities/user.entity';
 import { TranslationDto } from '../../common/dtos/translation.dto';
@@ -22,7 +23,6 @@ import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
-import { ProjectRolePermissionEnum } from 'src/projects/enums/project-role-permission.enum';
 
 @Injectable()
 export class TasksService implements ITasksService {
@@ -313,7 +313,7 @@ export class TasksService implements ITasksService {
       const hasManageTasksPermission = task.project.projectUserRoles.some(
         ur =>
           ur.user && ur.user.id === userId && Array.isArray(ur.projectRole.permissions)
-          && ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS)
+          && ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
       );
 
       if (!(isCreator || isAssigned || hasRole || isManager || hasManageTasksPermission)) {

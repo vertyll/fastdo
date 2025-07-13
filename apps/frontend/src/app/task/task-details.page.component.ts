@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { TasksService } from './data-access/task.service';
@@ -23,6 +24,7 @@ import { Task, TaskComment } from './models/Task';
     NgIcon,
     ReactiveFormsModule,
     FormsModule,
+    CustomDatePipe,
   ],
   providers: [
     provideIcons({
@@ -325,7 +327,7 @@ import { Task, TaskComment } from './models/Task';
               <p
                 class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
               >
-                {{ task()!.dateCreation | date: 'medium' }}
+                {{ task()!.dateCreation | customDate:'dd.MM.yyyy HH:mm:ss' }}
               </p>
             </div>
 
@@ -341,7 +343,7 @@ import { Task, TaskComment } from './models/Task';
               <p
                 class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
               >
-                {{ task()!.dateModification | date: 'medium' }}
+                {{ task()!.dateModification | customDate:'dd.MM.yyyy HH:mm:ss' }}
               </p>
             </div>
           </div>
@@ -423,7 +425,7 @@ import { Task, TaskComment } from './models/Task';
                       <span
                         class="text-sm text-text-muted dark:text-dark-text-muted"
                       >
-                        {{ comment.dateCreation | date: 'medium' }}
+                        {{ comment.dateCreation | customDate:'dd.MM.yyyy HH:mm:ss' }}
                       </span>
                       @if (canDeleteComment(comment)) {
                         <button

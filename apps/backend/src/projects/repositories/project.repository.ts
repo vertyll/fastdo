@@ -25,6 +25,8 @@ export class ProjectRepository extends Repository<Project> {
         { userId },
       )
       .leftJoinAndSelect('project.type', 'type')
+      .leftJoinAndSelect('type.translations', 'typeTranslations')
+      .leftJoinAndSelect('typeTranslations.language', 'typeTranslationsLanguage')
       .leftJoinAndSelect('project.icon', 'icon')
       .leftJoinAndSelect('projectUserRole.projectRole', 'projectRole')
       .leftJoinAndSelect('projectRole.permissions', 'permissions');
@@ -131,43 +133,6 @@ export class ProjectRepository extends Repository<Project> {
           ...status,
           name: translation?.name || status.translations?.[0]?.name || '',
           translations: undefined, // Remove translations to clean up response
-        } as any;
-      });
-    }
-
-    if (project.type) {
-      const typeTranslation = project.type.translations?.find(
-        t => t.language.code === currentLanguage,
-      );
-      project.type = {
-        ...project.type,
-        name: typeTranslation?.name || project.type.translations?.[0]?.name || '',
-        description: typeTranslation?.description
-          || project.type.translations?.[0]?.description,
-        translations: undefined, // Remove translations to clean up response
-      } as any;
-    }
-
-    if (project.projectUserRoles) {
-      project.projectUserRoles = project.projectUserRoles.map(userRole => {
-        const roleTranslation = userRole.projectRole?.translations?.find(
-          t => t.language.code === currentLanguage,
-        );
-        return {
-          ...userRole,
-          projectRole: {
-            ...userRole.projectRole,
-            name: roleTranslation?.name
-              || userRole.projectRole?.translations?.[0]?.name
-              || '',
-            description: roleTranslation?.description
-              || userRole.projectRole?.translations?.[0]?.description,
-          },
-          user: {
-            id: userRole.user.id,
-            email: userRole.user.email,
-            // Only include necessary user fields for security
-          },
         } as any;
       });
     }

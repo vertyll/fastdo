@@ -97,7 +97,11 @@ export class ProjectRolePermissionSeeder implements ISeeder {
         {
           code: ProjectRolePermissionEnum.MANAGE_TASKS,
           translations: [
-            { language: polishLang, name: 'Zarządzanie zadaniami', description: 'Może zarządzać wszystkimi zadaniami projektu' },
+            {
+              language: polishLang,
+              name: 'Zarządzanie zadaniami',
+              description: 'Może zarządzać wszystkimi zadaniami projektu',
+            },
             { language: englishLang, name: 'Manage tasks', description: 'Can manage all project tasks' },
           ],
         },
