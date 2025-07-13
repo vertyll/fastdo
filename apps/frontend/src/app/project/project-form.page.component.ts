@@ -1,10 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { AuthService } from '../auth/data-access/auth.service';
+import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
 import { TextareaComponent } from '../shared/components/atoms/textarea-component';
@@ -13,6 +21,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
 import { NotificationService } from '../shared/services/notification.service';
 import { ProjectCategoryService } from './data-access/project-category.service';
 import { ProjectRoleService } from './data-access/project-role.service';
@@ -35,14 +44,23 @@ import { Project } from './models/Project';
     TextareaComponent,
     CheckboxComponent,
     ImageComponent,
+    HasProjectPermissionDirective,
   ],
   template: `
     <div class="max-w-2xl mx-auto p-6">
       <app-title>
-        {{ isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate) }}
+        {{
+          isEditMode
+            ? ('Project.editProject' | translate)
+            : ('Project.addProject' | translate)
+        }}
       </app-title>
 
-      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
+      <form
+        [formGroup]="projectForm"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6 mt-6"
+      >
         <app-input-field
           [control]="nameControl"
           id="name"
@@ -56,7 +74,10 @@ import { Project } from './models/Project';
             [placeholder]="'Project.descriptionPlaceholder' | translate"
             [rows]="4"
           />
-          <label for="description" class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1">
+          <label
+            for="description"
+            class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1"
+          >
             {{ 'Project.description' | translate }}
           </label>
         </div>
@@ -72,17 +93,19 @@ import { Project } from './models/Project';
         </div>
 
         <div class="flex items-center">
-          <app-checkbox
-            [control]="isPublicControl"
-            id="isPublic"
-          />
-          <label for="isPublic" class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary">
+          <app-checkbox [control]="isPublicControl" id="isPublic" />
+          <label
+            for="isPublic"
+            class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary"
+          >
             {{ 'Project.isPublic' | translate }}
           </label>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
+          <label
+            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
+          >
             {{ 'Project.icon' | translate }}
           </label>
           <app-image
@@ -97,13 +120,20 @@ import { Project } from './models/Project';
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
+          <label
+            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
+          >
             {{ 'Project.categories' | translate }}
           </label>
           <div formArrayName="categories" class="space-y-3">
             @for (category of categoriesFormArray.controls; track $index) {
-              <div class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg">
-                <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
+              <div
+                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
+              >
+                <div
+                  [formGroupName]="$index"
+                  class="flex flex-1 gap-3 items-end"
+                >
                   <div class="flex-1">
                     <app-input-field
                       [control]="getCategoryNameControl($index)"
@@ -112,7 +142,9 @@ import { Project } from './models/Project';
                     />
                   </div>
                   <div class="flex flex-col justify-end pb-1">
-                    <label class="text-xs text-text-secondary mb-1">{{ 'Project.selectColor' | translate }}</label>
+                    <label class="text-xs text-text-secondary mb-1">{{
+                      'Project.selectColor' | translate
+                    }}</label>
                     <input
                       type="color"
                       [formControl]="getCategoryColorControl($index)"
@@ -141,13 +173,20 @@ import { Project } from './models/Project';
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
+          <label
+            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
+          >
             {{ 'Project.statuses' | translate }}
           </label>
           <div formArrayName="statuses" class="space-y-3">
             @for (status of statusesFormArray.controls; track $index) {
-              <div class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary">
-                <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
+              <div
+                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary"
+              >
+                <div
+                  [formGroupName]="$index"
+                  class="flex flex-1 gap-3 items-end"
+                >
                   <div class="flex-1">
                     <app-input-field
                       [control]="getStatusNameControl($index)"
@@ -156,7 +195,9 @@ import { Project } from './models/Project';
                     />
                   </div>
                   <div class="flex flex-col justify-end pb-1">
-                    <label class="text-xs text-text-secondary mb-1">{{ 'Project.selectColor' | translate }}</label>
+                    <label class="text-xs text-text-secondary mb-1">{{
+                      'Project.selectColor' | translate
+                    }}</label>
                     <input
                       type="color"
                       [formControl]="getStatusColorControl($index)"
@@ -185,15 +226,33 @@ import { Project } from './models/Project';
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
-            {{ isEditMode ? ('Project.inviteAdditionalUsers' | translate) : ('Project.inviteUsers' | translate) }}
+          <label
+            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
+          >
+            {{
+              isEditMode
+                ? ('Project.inviteAdditionalUsers' | translate)
+                : ('Project.inviteUsers' | translate)
+            }}
           </label>
-          <p class="text-sm text-text-secondary dark:text-dark-text-secondary mb-3">
-            {{ isEditMode ? ('Project.inviteAdditionalUsersDescription' | translate) : ('Project.inviteUsersDescription' | translate) }}
+          <p
+            class="text-sm text-text-secondary dark:text-dark-text-secondary mb-3"
+          >
+            {{
+              isEditMode
+                ? ('Project.inviteAdditionalUsersDescription' | translate)
+                : ('Project.inviteUsersDescription' | translate)
+            }}
           </p>
           <div formArrayName="usersWithRoles" class="space-y-3">
-            @for (userWithRole of usersWithRolesFormArray.controls; track $index) {
-              <div class="flex items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary" [formGroupName]="$index">
+            @for (
+              userWithRole of usersWithRolesFormArray.controls;
+              track $index
+            ) {
+              <div
+                class="flex items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary"
+                [formGroupName]="$index"
+              >
                 <div class="flex-1">
                   <app-input-field
                     [control]="getUserEmailControl($index)"
@@ -218,7 +277,11 @@ import { Project } from './models/Project';
                   [disabled]="isCurrentUser($index)"
                   [class.opacity-50]="isCurrentUser($index)"
                   [class.cursor-not-allowed]="isCurrentUser($index)"
-                  [title]="isCurrentUser($index) ? ('Project.cannotRemoveYourself' | translate) : ('Basic.remove' | translate)"
+                  [title]="
+                    isCurrentUser($index)
+                      ? ('Project.cannotRemoveYourself' | translate)
+                      : ('Basic.remove' | translate)
+                  "
                 >
                   {{ 'Basic.remove' | translate }}
                 </button>
@@ -235,20 +298,30 @@ import { Project } from './models/Project';
         </div>
 
         <div class="flex justify-between items-center pt-6">
-          <app-button
-            type="button"
-            (click)="cancel()"
-          >
+          <app-button type="button" (click)="cancel()">
             {{ 'Basic.cancel' | translate }}
           </app-button>
-          <app-button
-            type="submit"
-            [disabled]="projectForm.invalid || isSubmitting"
-          >
-            {{ isSubmitting ? ('Basic.saving' | translate) : (isEditMode ? ('Basic.update' | translate) : ('Basic.save' | translate)) }}
-          </app-button>
-        </div>
 
+          <ng-container
+            *appHasProjectPermission="{
+              requiredPermissions: [ProjectRolePermissionEnum.EDIT_PROJECT],
+              userPermissions: currentProject?.permissions ?? [],
+            }"
+          >
+            <app-button
+              type="submit"
+              [disabled]="projectForm.invalid || isSubmitting"
+            >
+              {{
+                isSubmitting
+                  ? ('Basic.saving' | translate)
+                  : isEditMode
+                    ? ('Basic.update' | translate)
+                    : ('Basic.save' | translate)
+              }}
+            </app-button>
+          </ng-container>
+        </div>
 
         @if (fieldErrors['name']) {
           <div class="mt-1">
@@ -335,6 +408,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   protected isCropping: boolean = false;
   protected fieldErrors: Record<string, string[]> = {};
 
+  protected readonly ProjectRolePermissionEnum = ProjectRolePermissionEnum;
+
   ngOnInit(): void {
     this.checkEditMode();
     this.initializeForm();
@@ -375,7 +450,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
         next: () => {
           this.updateOptionsForCurrentLang();
         },
-        error: error => {
+        error: (error) => {
           console.error('Error handling language change:', error);
         },
       });
@@ -388,74 +463,92 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     forkJoin({
       types: types$,
       roles: roles$,
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
-      next: responses => {
-        this.projectTypesRaw = responses.types.data || [];
-        this.projectRolesRaw = responses.roles.data || [];
-        this.updateOptionsForCurrentLang();
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (responses) => {
+          this.projectTypesRaw = responses.types.data || [];
+          this.projectRolesRaw = responses.roles.data || [];
+          this.updateOptionsForCurrentLang();
 
-        if (this.isEditMode && this.projectId) {
-          this.loadProjectSpecificData();
-        }
-      },
-      error: error => {
-        console.error('Error loading project options:', error);
-        this.notificationService.showNotification(
-          this.translateService.instant('Project.loadError'),
-          NotificationTypeEnum.Error,
-        );
-      },
-    });
+          if (this.isEditMode && this.projectId) {
+            this.loadProjectSpecificData();
+          }
+        },
+        error: (error) => {
+          console.error('Error loading project options:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Project.loadError'),
+            NotificationTypeEnum.Error,
+          );
+        },
+      });
   }
 
   private loadProjectSpecificData(): void {
     if (!this.projectId) return;
 
     const statuses$ = this.projectStatusService.getByProjectId(this.projectId);
-    const categories$ = this.projectCategoryService.getByProjectId(this.projectId);
+    const categories$ = this.projectCategoryService.getByProjectId(
+      this.projectId,
+    );
 
     forkJoin({
       statuses: statuses$,
       categories: categories$,
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
-      next: responses => {
-        this.projectStatusesRaw = responses.statuses.data || [];
-        this.projectCategoriesRaw = responses.categories.data || [];
-        this.updateOptionsForCurrentLang();
-        this.loadProject();
-      },
-      error: error => {
-        console.error('Error loading project-specific data:', error);
-        this.notificationService.showNotification(
-          this.translateService.instant('Project.loadError'),
-          NotificationTypeEnum.Error,
-        );
-      },
-    });
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (responses) => {
+          this.projectStatusesRaw = responses.statuses.data || [];
+          this.projectCategoriesRaw = responses.categories.data || [];
+          this.updateOptionsForCurrentLang();
+          this.loadProject();
+        },
+        error: (error) => {
+          console.error('Error loading project-specific data:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Project.loadError'),
+            NotificationTypeEnum.Error,
+          );
+        },
+      });
   }
 
   private updateOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
     this.projectTypes = (this.projectTypesRaw || []).map((type: any) => ({
       ...type,
-      name: (type.translations?.find((t: any) => t.lang === lang)?.name) || type.translations?.[0]?.name || '',
+      name:
+        type.translations?.find((t: any) => t.lang === lang)?.name ||
+        type.translations?.[0]?.name ||
+        '',
     }));
     this.projectRoles = (this.projectRolesRaw || []).map((role: any) => ({
       ...role,
-      name: (role.translations?.find((t: any) => t.lang === lang)?.name) || role.translations?.[0]?.name || '',
+      name:
+        role.translations?.find((t: any) => t.lang === lang)?.name ||
+        role.translations?.[0]?.name ||
+        '',
     }));
-    this.projectStatuses = (this.projectStatusesRaw || []).map((status: any) => ({
-      ...status,
-      name: (status.translations?.find((t: any) => t.lang === lang)?.name) || status.translations?.[0]?.name || '',
-    }));
-    this.projectCategories = (this.projectCategoriesRaw || []).map((cat: any) => ({
-      ...cat,
-      name: (cat.translations?.find((t: any) => t.lang === lang)?.name) || cat.translations?.[0]?.name || '',
-    }));
+    this.projectStatuses = (this.projectStatusesRaw || []).map(
+      (status: any) => ({
+        ...status,
+        name:
+          status.translations?.find((t: any) => t.lang === lang)?.name ||
+          status.translations?.[0]?.name ||
+          '',
+      }),
+    );
+    this.projectCategories = (this.projectCategoriesRaw || []).map(
+      (cat: any) => ({
+        ...cat,
+        name:
+          cat.translations?.find((t: any) => t.lang === lang)?.name ||
+          cat.translations?.[0]?.name ||
+          '',
+      }),
+    );
   }
 
   private loadProject(): void {
@@ -463,14 +556,15 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
     const currentLang = this.translateService.currentLang || 'pl';
 
-    this.projectsService.getProjectByIdWithDetails(this.projectId, currentLang)
+    this.projectsService
+      .getProjectByIdWithDetails(this.projectId, currentLang)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: response => {
+        next: (response) => {
           this.currentProject = response.data;
           this.populateForm();
         },
-        error: error => {
+        error: (error) => {
           console.error('Error loading project:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
@@ -492,31 +586,40 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     });
 
     if (this.currentProject.categories) {
-      this.currentProject.categories.forEach(category => {
-        this.categoriesFormArray.push(this.fb.group({
-          id: [category.id],
-          name: [category.name || '', Validators.required],
-          color: [category.color || '#3B82F6', Validators.required],
-        }));
+      this.currentProject.categories.forEach((category) => {
+        this.categoriesFormArray.push(
+          this.fb.group({
+            id: [category.id],
+            name: [category.name || '', Validators.required],
+            color: [category.color || '#3B82F6', Validators.required],
+          }),
+        );
       });
     }
 
     if (this.currentProject.statuses) {
-      this.currentProject.statuses.forEach(status => {
-        this.statusesFormArray.push(this.fb.group({
-          id: [status.id],
-          name: [status.name || '', Validators.required],
-          color: [status.color || '#10B981', Validators.required],
-        }));
+      this.currentProject.statuses.forEach((status) => {
+        this.statusesFormArray.push(
+          this.fb.group({
+            id: [status.id],
+            name: [status.name || '', Validators.required],
+            color: [status.color || '#10B981', Validators.required],
+          }),
+        );
       });
     }
 
     if (this.currentProject.projectUserRoles) {
-      this.currentProject.projectUserRoles.forEach(projectUserRole => {
-        this.usersWithRolesFormArray.push(this.fb.group({
-          email: [projectUserRole.user.email, [Validators.required, Validators.email]],
-          role: [projectUserRole.projectRole.id, Validators.required],
-        }));
+      this.currentProject.projectUserRoles.forEach((projectUserRole) => {
+        this.usersWithRolesFormArray.push(
+          this.fb.group({
+            email: [
+              projectUserRole.user.email,
+              [Validators.required, Validators.email],
+            ],
+            role: [projectUserRole.projectRole.id, Validators.required],
+          }),
+        );
       });
     }
   }
@@ -581,25 +684,27 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected get projectTypeOptions() {
-    return this.projectTypes.map(type => ({
+    return this.projectTypes.map((type) => ({
       value: type.id,
       label: type.name,
     }));
   }
 
   protected get projectRoleOptions() {
-    return this.projectRoles.map(role => ({
+    return this.projectRoles.map((role) => ({
       value: role.id,
       label: role.name,
     }));
   }
 
   protected addCategory(): void {
-    this.categoriesFormArray.push(this.fb.group({
-      id: [null],
-      name: ['', Validators.required],
-      color: ['#3B82F6', Validators.required],
-    }));
+    this.categoriesFormArray.push(
+      this.fb.group({
+        id: [null],
+        name: ['', Validators.required],
+        color: ['#3B82F6', Validators.required],
+      }),
+    );
   }
 
   protected removeCategory(index: number): void {
@@ -607,11 +712,13 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected addStatus(): void {
-    this.statusesFormArray.push(this.fb.group({
-      id: [null],
-      name: ['', Validators.required],
-      color: ['#10B981', Validators.required],
-    }));
+    this.statusesFormArray.push(
+      this.fb.group({
+        id: [null],
+        name: ['', Validators.required],
+        color: ['#10B981', Validators.required],
+      }),
+    );
   }
 
   protected removeStatus(index: number): void {
@@ -619,10 +726,12 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected addUserWithRole(): void {
-    this.usersWithRolesFormArray.push(this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      role: ['', [Validators.required]],
-    }));
+    this.usersWithRolesFormArray.push(
+      this.fb.group({
+        email: ['', [Validators.required, Validators.email]],
+        role: ['', [Validators.required]],
+      }),
+    );
   }
 
   protected removeUserWithRole(index: number): void {
@@ -649,7 +758,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     return userEmail === currentUserEmail;
   }
 
-  protected onImageSaved(event: { file: File; preview: string | null; }): void {
+  protected onImageSaved(event: { file: File; preview: string | null }): void {
     this.selectedIconFile = event.file;
     this.iconRemoved = false;
   }
@@ -701,7 +810,10 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
 
     if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
       const usersWithRoles = formValue.usersWithRoles
-        .filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
+        .filter(
+          (userWithRole: any) =>
+            userWithRole.email && userWithRole.email.trim(),
+        )
         .map((userWithRole: any) => ({
           email: userWithRole.email.trim(),
           role: userWithRole.role,
@@ -725,16 +837,25 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
     }
 
     if (this.isEditMode && this.projectId) {
-      this.projectsService.updateFull(this.projectId, formData)
+      this.projectsService
+        .updateFull(this.projectId, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            const successMessage = this.translateService.instant('Project.updateSuccess');
-            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
+            const successMessage = this.translateService.instant(
+              'Project.updateSuccess',
+            );
+            this.notificationService.showNotification(
+              successMessage,
+              NotificationTypeEnum.Success,
+            );
             this.router.navigate(['/projects']).then();
           },
-          error: error => {
-            if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
+          error: (error) => {
+            if (
+              error?.error?.errors?.message &&
+              Array.isArray(error.error.errors.message)
+            ) {
               this.fieldErrors = {};
               error.error.errors.message.forEach((errObj: any) => {
                 if (errObj.field && Array.isArray(errObj.errors)) {
@@ -742,8 +863,13 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
                 }
               });
             } else {
-              const errorMessage = error.error?.message || this.translateService.instant('Project.updateError');
-              this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+              const errorMessage =
+                error.error?.message ||
+                this.translateService.instant('Project.updateError');
+              this.notificationService.showNotification(
+                errorMessage,
+                NotificationTypeEnum.Error,
+              );
             }
           },
           complete: () => {
@@ -751,17 +877,25 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      this.projectsService.add(formData)
+      this.projectsService
+        .add(formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: response => {
+          next: (response) => {
             this.projectsStateService.addProject(response.data);
-            const successMessage = this.translateService.instant('Project.addSuccess');
-            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
+            const successMessage =
+              this.translateService.instant('Project.addSuccess');
+            this.notificationService.showNotification(
+              successMessage,
+              NotificationTypeEnum.Success,
+            );
             this.router.navigate(['/projects']).then();
           },
-          error: error => {
-            if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
+          error: (error) => {
+            if (
+              error?.error?.errors?.message &&
+              Array.isArray(error.error.errors.message)
+            ) {
               this.fieldErrors = {};
               error.error.errors.message.forEach((errObj: any) => {
                 if (errObj.field && Array.isArray(errObj.errors)) {
@@ -769,8 +903,13 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
                 }
               });
             } else {
-              const errorMessage = error.error?.message || this.translateService.instant('Project.addError');
-              this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+              const errorMessage =
+                error.error?.message ||
+                this.translateService.instant('Project.addError');
+              this.notificationService.showNotification(
+                errorMessage,
+                NotificationTypeEnum.Error,
+              );
             }
           },
           complete: () => {

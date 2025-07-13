@@ -10,6 +10,7 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 import { TableComponent, TableConfig, TableRow } from '../shared/components/organisms/table-component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from '../shared/enums/project-role.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
@@ -179,24 +180,25 @@ export class ProjectListPageComponent implements OnInit {
         label: 'Basic.view',
         icon: 'heroEye',
         color: 'primary',
-        visible: () => true,
-        disabled: () => false,
+        visible: (row: any) => row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS),
+        disabled: (row: any) => !(row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
       },
       {
         key: 'edit',
         label: 'Basic.edit',
         icon: 'heroPencil',
         color: 'secondary',
-        visible: (row: any) => this.canEditProject(row),
-        disabled: () => false,
+        visible: (row: any) => row.permissions && row.permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT),
+        disabled: (row: any) => !(row.permissions && row.permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT)),
       },
       {
         key: 'delete',
         label: 'Basic.delete',
         icon: 'heroTrash',
         color: 'danger',
-        visible: (row: any) => this.canDeleteProject(row),
-        disabled: () => false,
+        visible: (row: any) => row.permissions && row.permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT),
+        disabled: (row: any) =>
+          !(row.permissions && row.permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT)),
       },
     ],
     selectable: true,
@@ -289,14 +291,6 @@ export class ProjectListPageComponent implements OnInit {
 
   protected onSortChange(event: { column: string; direction: 'asc' | 'desc'; }): void {
     // TODO: Implement sorting logic
-  }
-
-  private canEditProject(row: any): boolean {
-    return true;
-  }
-
-  private canDeleteProject(row: any): boolean {
-    return true;
   }
 
   protected updateProjectName(id: number, newName: string): void {
@@ -394,6 +388,7 @@ export class ProjectListPageComponent implements OnInit {
         type: project.type,
         projectUserRole: projectUserRoleName,
         image: project.icon?.url || null,
+        permissions: project.permissions,
       };
     });
   }

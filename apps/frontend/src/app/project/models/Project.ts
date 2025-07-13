@@ -1,3 +1,4 @@
+import { ProjectRolePermissionEnum } from 'src/app/shared/enums/project-role-permission.enum';
 import { File } from '../../core/models/File';
 
 export type Project = {
@@ -15,6 +16,7 @@ export type Project = {
   projectUserRoles?: ProjectUserRole[];
   isExpanded?: boolean;
   editMode?: boolean;
+  permissions?: ProjectRolePermissionEnum[];
 };
 
 export type ProjectType = {
