@@ -2,22 +2,23 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 import { ProjectUserRole } from '../../projects/entities/project-user-role.entity';
-import { ProjectRoleEnum } from '../../projects/enums/project-role.enum';
-import { PROJECT_ID_PARAM_KEY, PROJECT_ROLES_KEY } from '../decorators/project-roles.decorator';
+import { ProjectRolePermissionEnum } from '../../projects/enums/project-role-permission.enum';
+import { PROJECT_ID_PARAM_KEY, PROJECT_ROLE_PERMISSIONS_KEY } from '../decorators/project-role-permissions.decorator';
 
 @Injectable()
-export class ProjectRolesGuard implements CanActivate {
+export class ProjectRolePermissionsGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly dataSource: DataSource,
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<ProjectRoleEnum[]>(PROJECT_ROLES_KEY, [
+    const requiredPermissions = this.reflector.getAllAndOverride<ProjectRolePermissionEnum[]>(PROJECT_ROLE_PERMISSIONS_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredRoles || requiredRoles.length === 0) return true;
+
+    if (!requiredPermissions || requiredPermissions.length === 0) return true;
 
     const projectIdParamKey = this.reflector.getAllAndOverride<string>(PROJECT_ID_PARAM_KEY, [
       context.getHandler(),
@@ -28,16 +29,18 @@ export class ProjectRolesGuard implements CanActivate {
     const user = request.user;
     const projectId = Number(request.params[projectIdParamKey] || request.body[projectIdParamKey]);
 
-    if (user.roles?.includes('ADMIN')) return true;
-
     const userRole = await this.dataSource.getRepository(ProjectUserRole).findOne({
       where: {
         project: { id: projectId },
         user: { id: user.id },
       },
-      relations: ['projectRole'],
+      relations: ['projectRole', 'projectRole.permissions'],
     });
-    const projectRoleType: ProjectRoleEnum | undefined = userRole?.projectRole?.code;
-    return projectRoleType ? requiredRoles.includes(projectRoleType) : false;
+
+    if (!userRole || !userRole.projectRole?.permissions) return false;
+
+    const userPermissions = userRole.projectRole.permissions.map(p => p.code);
+    
+    return requiredPermissions.some(permission => userPermissions.includes(permission));
   }
 }

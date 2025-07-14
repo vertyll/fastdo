@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ProjectRoles } from 'src/common/decorators/project-roles.decorator';
-import { ProjectRolesGuard } from 'src/common/guards/project-roles.guard';
+import { ProjectRolePermissionsGuard } from 'src/common/guards/project-role-permissions.guard';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor';
 import { ApiPaginatedResponse } from '../../common/types/api-responses.interface';
@@ -14,9 +13,10 @@ import { ProjectListResponseDto } from '../dtos/project-list-response.dto';
 import { RejectInvitationDto } from '../dtos/reject-invitation.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { Project } from '../entities/project.entity';
-import { ProjectRoleEnum } from '../enums/project-role.enum';
+import { ProjectRolePermissionEnum } from '../enums/project-role-permission.enum';
 import { ProjectManagementService } from '../services/projects-managment.service';
 import { ProjectsService } from '../services/projects.service';
+import { ProjectRolePermissions } from 'src/common/decorators/project-role-permissions.decorator';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -85,8 +85,8 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @UseGuards(ProjectRolesGuard)
-  @ProjectRoles(ProjectRoleEnum.MANAGER, 'id')
+  @UseGuards(ProjectRolePermissionsGuard)
+  @ProjectRolePermissions(ProjectRolePermissionEnum.EDIT_PROJECT, 'id')
   @UseInterceptors(new FastifyFileInterceptor('icon', UpdateProjectDto))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update a project' })
@@ -104,8 +104,8 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  @UseGuards(ProjectRolesGuard)
-  @ProjectRoles(ProjectRoleEnum.MANAGER, 'id')
+  @UseGuards(ProjectRolePermissionsGuard)
+  @ProjectRolePermissions(ProjectRolePermissionEnum.DELETE_PROJECT, 'id')
   @ApiOperation({ summary: 'Remove a project' })
   @ApiWrappedResponse({
     status: 204,
