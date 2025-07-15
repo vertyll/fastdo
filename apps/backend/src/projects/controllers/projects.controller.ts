@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ProjectRolePermissions } from 'src/common/decorators/project-role-permissions.decorator';
 import { ProjectRolePermissionsGuard } from 'src/common/guards/project-role-permissions.guard';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor';
@@ -16,7 +17,6 @@ import { Project } from '../entities/project.entity';
 import { ProjectRolePermissionEnum } from '../enums/project-role-permission.enum';
 import { ProjectManagementService } from '../services/projects-managment.service';
 import { ProjectsService } from '../services/projects.service';
-import { ProjectRolePermissions } from 'src/common/decorators/project-role-permissions.decorator';
 
 @ApiTags('projects')
 @Controller('projects')

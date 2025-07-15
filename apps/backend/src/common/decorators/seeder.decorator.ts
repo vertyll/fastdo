@@ -1,4 +1,4 @@
-import { SetMetadata, CustomDecorator } from '@nestjs/common';
+import { CustomDecorator, SetMetadata } from '@nestjs/common';
 import { SeederConfig } from '../../core/database/seeder/types/seeder-config.type';
 
 export const SEEDER_CONFIG_KEY = 'seeder:config';

@@ -6,7 +6,7 @@ export const PROJECT_ID_PARAM_KEY = 'projectIdParamKey';
 
 export const ProjectRolePermissions = (
   permissions: ProjectRolePermissionEnum | ProjectRolePermissionEnum[],
-  projectIdParamKey: string = 'id'
+  projectIdParamKey: string = 'id',
 ): ReturnType<typeof applyDecorators> => {
   const permissionsArray = Array.isArray(permissions) ? permissions : [permissions];
   return applyDecorators(
