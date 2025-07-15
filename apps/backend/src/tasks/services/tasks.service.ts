@@ -3,6 +3,7 @@ import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { ApiPaginatedResponse } from 'src/common/types/api-responses.interface';
 import { CustomClsStore } from 'src/core/config/types/app.config.type';
+import { FileFacade } from 'src/core/file/facade/file.facade';
 import { ProjectCategory } from 'src/projects/entities/project-category.entity';
 import { ProjectRole } from 'src/projects/entities/project-role.entity';
 import { ProjectStatus } from 'src/projects/entities/project-status.entity';
@@ -19,6 +20,8 @@ import { GetAllTasksSearchParamsDto } from '../dtos/get-all-tasks-search-params.
 import { TaskResponseDto } from '../dtos/task-response.dto';
 import { UpdateTaskCommentDto } from '../dtos/update-task-comment.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
+import { TaskAttachment } from '../entities/task-attachment.entity';
+import { TaskCommentAttachment } from '../entities/task-comment-attachment.entity';
 import { TaskComment } from '../entities/task-comment.entity';
 import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
@@ -32,6 +35,7 @@ export class TasksService implements ITasksService {
     private readonly taskRepository: TaskRepository,
     private readonly cls: ClsService<CustomClsStore>,
     private readonly i18n: I18nService<I18nTranslations>,
+    private readonly fileFacade: FileFacade,
   ) {}
 
   public async create(createTaskDto: CreateTaskDto): Promise<Task> {
@@ -68,7 +72,23 @@ export class TasksService implements ITasksService {
       taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
     }
 
-    return this.taskRepository.save(taskData);
+    const savedTask = await this.taskRepository.save(taskData);
+
+    if (createTaskDto.attachments && createTaskDto.attachments.length > 0) {
+      const attachmentPromises = createTaskDto.attachments.map(async (file) => {
+        const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${savedTask.id}` });
+        
+        const taskAttachment = new TaskAttachment();
+        taskAttachment.task = savedTask;
+        taskAttachment.file = { id: uploadedFile.id } as any;
+        
+        return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
+      });
+
+      await Promise.all(attachmentPromises);
+    }
+
+    return savedTask;
   }
 
   public async findAll(params: GetAllTasksSearchParamsDto): Promise<ApiPaginatedResponse<TaskResponseDto>> {
@@ -202,6 +222,21 @@ export class TasksService implements ITasksService {
     task.dateModification = new Date();
 
     await this.taskRepository.save(task);
+
+    if (updateTaskDto.attachments && updateTaskDto.attachments.length > 0) {
+      const attachmentPromises = updateTaskDto.attachments.map(async (file) => {
+        const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${task.id}` });
+        
+        const taskAttachment = new TaskAttachment();
+        taskAttachment.task = task;
+        taskAttachment.file = { id: uploadedFile.id } as any;
+        
+        return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
+      });
+
+      await Promise.all(attachmentPromises);
+    }
+
     const updatedTask = await this.taskRepository.findOneOrFail({
       where: { id },
       relations: [
@@ -295,9 +330,23 @@ export class TasksService implements ITasksService {
     comment.task = { id: taskId } as Task;
     comment.author = { id: userId } as User;
 
-    // TODO: Handle attachments if provided in createCommentDto
+    const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
 
-    return this.taskRepository.manager.save(TaskComment, comment);
+    if (createCommentDto.attachments && createCommentDto.attachments.length > 0) {
+      const attachmentPromises = createCommentDto.attachments.map(async (file) => {
+        const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${savedComment.id}` });
+        
+        const commentAttachment = new TaskCommentAttachment();
+        commentAttachment.comment = savedComment;
+        commentAttachment.file = { id: uploadedFile.id } as any;
+        
+        return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
+      });
+
+      await Promise.all(attachmentPromises);
+    }
+
+    return savedComment;
   }
 
   public async removeComment(commentId: number): Promise<void> {

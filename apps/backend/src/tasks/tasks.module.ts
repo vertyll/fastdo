@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FileModule } from 'src/core/file/file.module';
 import { Language } from 'src/core/language/entities/language.entity';
 import { TaskPriorityController } from './controllers/task-priority.controller';
 import { TasksController } from './controllers/tasks.controller';
@@ -16,15 +17,18 @@ import { TasksService } from './services/tasks.service';
 import { ITasksServiceToken } from './tokens/tasks-service.token';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([
-    Task,
-    TaskPriority,
-    TaskPriorityTranslation,
-    TaskComment,
-    TaskAttachment,
-    TaskCommentAttachment,
-    Language,
-  ])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Task,
+      TaskPriority,
+      TaskPriorityTranslation,
+      TaskComment,
+      TaskAttachment,
+      TaskCommentAttachment,
+      Language,
+    ]),
+    FileModule,
+  ],
   controllers: [TasksController, TaskPriorityController],
   providers: [
     TasksService,

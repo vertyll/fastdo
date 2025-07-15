@@ -61,6 +61,12 @@ export class TasksApiService {
     );
   }
 
+  public addWithFiles(formData: FormData): Observable<ApiResponse<Task>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, formData),
+    );
+  }
+
   public getOne(taskId: number): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
       this.http.get<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`),

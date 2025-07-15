@@ -60,7 +60,9 @@
       "fileProcessingError": "Błąd przetwarzania pliku",
       "invalidFile": "Nieprawidłowy plik",
       "invalidMimeType": "Niedozwolony typ pliku. Dozwolone typy: {allowed}",
-      "fileTooLarge": "Plik jest za duży. Maksymalny rozmiar to {maxSize}"
+      "fileTooLarge": "Plik jest za duży. Maksymalny rozmiar to {maxSize}",
+      "tooManyFiles": "Za dużo plików. Maksymalna dozwolona liczba: {maxFiles}",
+      "totalSizeTooLarge": "Całkowity rozmiar plików jest za duży. Maksymalny dozwolony rozmiar: {maxSize}"
     }
   },
   "Mail": {

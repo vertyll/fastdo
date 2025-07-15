@@ -27,7 +27,11 @@
     "back": "Back",
     "actions": "Actions",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "selectFiles": "Select Files",
+    "selectedFiles": "Selected Files",
+    "maxFiles": "Max {{count}} files",
+    "maxFileSize": "Max file size: {{size}}"
   },
   "Filters": {
     "search": "Search",
@@ -238,7 +242,8 @@
     "commentDeleteError": "Error deleting comment",
     "commentUpdateSuccess": "Comment updated",
     "commentUpdateError": "Error updating comment",
-    "noAccessRoleSet": "No access role set"
+    "noAccessRoleSet": "No access role set",
+    "attachments": "Attachments"
   },
   "CookiesBanner": {
     "text": "This site uses cookies to improve your experience. By using our site, you agree to our use of cookies."

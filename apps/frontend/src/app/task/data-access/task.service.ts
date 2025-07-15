@@ -106,6 +106,14 @@ export class TasksService {
     );
   }
 
+  public addWithFiles(formData: FormData): Observable<ApiResponse<Task>> {
+    return this.httpService.addWithFiles(formData).pipe(
+      tap(response => {
+        this.state.addTask(response.data);
+      }),
+    );
+  }
+
   public getOne(taskId: number): Observable<ApiResponse<Task>> {
     return this.httpService.getOne(taskId);
   }

@@ -38,9 +38,11 @@ import { ProjectNameValidator } from './validators/project-name.validator';
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <app-title>{{ 'Project.title' | translate }}</app-title>
-      <app-button (click)="navigateToAddProject()">
-        {{ 'Project.addProject' | translate }}
-      </app-button>
+      <div>
+        <app-button (click)="navigateToAddProject()">
+          {{ 'Project.addProject' | translate }}
+        </app-button>
+      </div>
       <app-projects-list-filters
         (filtersChange)="handleFiltersChange($event)"
       />

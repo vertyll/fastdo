@@ -1,6 +1,9 @@
+import { MultipartFile } from '@fastify/multipart';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsOptional, IsString, MinLength } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
+import { IsFile } from '../../common/decorators/is-file.decorator';
+import { MultipartArray } from '../../common/decorators/multipart-transform.decorator';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 export class CreateTaskCommentDto {
@@ -11,9 +14,20 @@ export class CreateTaskCommentDto {
   })
   content: string;
 
-  @ApiProperty({ required: false, description: 'Attachment file IDs', type: [String] })
+  @ApiProperty({ 
+    type: 'array',
+    items: { 
+      type: 'string', 
+      format: 'binary' 
+    },
+    required: false,
+    description: 'Comment attachment files' 
+  })
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  attachmentIds?: string[];
+  @MultipartArray()
+  @IsFile({
+    mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
+    maxSize: 10 * 1024 * 1024, // 10MB
+  })
+  attachments?: MultipartFile[];
 }

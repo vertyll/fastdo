@@ -13,6 +13,7 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { TextareaComponent } from '../shared/components/atoms/textarea-component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { EditableMultiSelectComponent } from '../shared/components/molecules/editable-multi-select.component';
+import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
@@ -39,6 +40,7 @@ interface SelectOption {
     EditableMultiSelectComponent,
     InputFieldComponent,
     SelectFieldComponent,
+    FileUploadComponent,
   ],
   template: `
     <div class="max-w-4xl mx-auto p-6">
@@ -164,6 +166,20 @@ interface SelectOption {
             />
           </div>
 
+          <!-- File Attachments -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+              {{ 'Task.attachments' | translate }}
+            </h3>
+            <app-file-upload
+              [multiple]="true"
+              [maxFiles]="5"
+              [maxSizeBytes]="10485760"
+              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+              (filesChange)="onFilesChange($event)"
+            />
+          </div>
+
           @if (error()) {
             <div class="p-4 bg-danger-50 border border-danger-200 rounded-md">
               <p class="text-danger-600 text-sm">{{ error() }}</p>
@@ -224,6 +240,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   readonly statuses = signal<SelectOption[]>([]);
   readonly accessRoles = signal<SelectOption[]>([]);
   readonly projectUsers = signal<SelectOption[]>([]);
+  readonly attachments = signal<FileUploadItem[]>([]);
 
   taskForm: FormGroup = this.fb.group({
     description: ['', [Validators.required]],
@@ -291,6 +308,10 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  protected onFilesChange(files: FileUploadItem[]): void {
+    this.attachments.set(files);
   }
 
   protected onSubmit(): void {
@@ -459,31 +480,81 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   private createTask(taskData: AddTaskDto): void {
-    this.tasksService.add(taskData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: response => {
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.addSuccess'),
-            NotificationTypeEnum.Success,
-          );
-
-          const newTaskId = response?.data?.id;
-          const currentProjectId = this.projectId();
-
-          if (newTaskId) {
-            this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
+    // Check if we have files to upload
+    if (this.attachments().length > 0) {
+      // Use FormData for files
+      const formData = new FormData();
+      
+      // Add all form fields
+      Object.keys(taskData).forEach(key => {
+        const value = (taskData as any)[key];
+        if (value !== undefined) {
+          if (Array.isArray(value)) {
+            value.forEach(item => formData.append(key, item.toString()));
           } else {
-            this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+            formData.append(key, value.toString());
           }
-        },
-        error: error => {
-          this.handleSubmissionError(error);
-        },
-        complete: () => {
-          this.submitting.set(false);
-        },
+        }
       });
+
+      // Add attachments
+      this.attachments().forEach(attachment => {
+        formData.append('attachments', attachment.file);
+      });
+
+      this.tasksService.addWithFiles(formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: response => {
+            this.notificationService.showNotification(
+              this.translateService.instant('Task.addSuccess'),
+              NotificationTypeEnum.Success,
+            );
+
+            const newTaskId = response?.data?.id;
+            const currentProjectId = this.projectId();
+
+            if (newTaskId) {
+              this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
+            } else {
+              this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+            }
+          },
+          error: error => {
+            this.handleSubmissionError(error);
+          },
+          complete: () => {
+            this.submitting.set(false);
+          },
+        });
+    } else {
+      // Use regular JSON request
+      this.tasksService.add(taskData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: response => {
+            this.notificationService.showNotification(
+              this.translateService.instant('Task.addSuccess'),
+              NotificationTypeEnum.Success,
+            );
+
+            const newTaskId = response?.data?.id;
+            const currentProjectId = this.projectId();
+
+            if (newTaskId) {
+              this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
+            } else {
+              this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+            }
+          },
+          error: error => {
+            this.handleSubmissionError(error);
+          },
+          complete: () => {
+            this.submitting.set(false);
+          },
+        });
+    }
   }
 
   private updateTask(taskId: number, taskData: AddTaskDto): void {

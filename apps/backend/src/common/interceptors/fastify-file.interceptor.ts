@@ -25,6 +25,15 @@ export class FastifyFileInterceptor implements NestInterceptor {
   constructor(
     private readonly fieldName: string,
     private readonly dtoClass?: new() => any,
+    private readonly options: {
+      maxFileSize?: number;
+      maxFiles?: number;
+      maxTotalSize?: number;
+    } = {
+      maxFileSize: 10 * 1024 * 1024, // 10MB per file
+      maxFiles: 10, // max 10 files
+      maxTotalSize: 100 * 1024 * 1024, // 100MB total
+    }
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -47,12 +56,41 @@ export class FastifyFileInterceptor implements NestInterceptor {
     i18n: I18nContext<I18nTranslations>,
   ): Promise<Record<string, any>> {
     const formData: Record<string, any> = {};
+    const files: MultipartFile[] = [];
+    let totalSize = 0;
+    let fileCount = 0;
 
     try {
       for await (const part of parts) {
         if (part.type === 'file' && part.fieldname === this.fieldName) {
-          const buffer = await this.streamToBuffer(part.file);
-          formData[this.fieldName] = this.createMultipartFile(part, buffer);
+          // Validate file count
+          if (fileCount >= (this.options.maxFiles || 10)) {
+            throw new BadRequestException({
+              message: i18n.t('messages.File.errors.tooManyFiles', {
+                args: { maxFiles: (this.options.maxFiles || 10).toString() },
+              }),
+              error: 'Too many files',
+              statusCode: 400,
+            });
+          }
+
+          // Process file with streaming validation
+          const { multipartFile, fileSize } = await this.processFileStream(part, i18n);
+          
+          // Validate total size
+          totalSize += fileSize;
+          if (totalSize > (this.options.maxTotalSize || 100 * 1024 * 1024)) {
+            throw new BadRequestException({
+              message: i18n.t('messages.File.errors.totalSizeTooLarge', {
+                args: { maxSize: `${((this.options.maxTotalSize || 100 * 1024 * 1024) / 1024 / 1024).toFixed(2)}MB` },
+              }),
+              error: 'Total size too large',
+              statusCode: 400,
+            });
+          }
+
+          files.push(multipartFile);
+          fileCount++;
         } else if (part.type === 'field') {
           if (formData[part.fieldname] !== undefined) {
             if (Array.isArray(formData[part.fieldname])) {
@@ -69,11 +107,52 @@ export class FastifyFileInterceptor implements NestInterceptor {
       this.handleFileError(error, i18n);
     }
 
+    // Assign files to formData
+    if (files.length > 0) {
+      // For single file interceptor, assign first file only
+      // For multiple files interceptor, assign array
+      const isSingleFile = this.options.maxFiles === 1;
+      formData[this.fieldName] = isSingleFile ? files[0] : files;
+      
+      console.log(`FastifyFileInterceptor: fieldName=${this.fieldName}, isSingleFile=${isSingleFile}, filesCount=${files.length}, result=`, formData[this.fieldName]);
+    }
+
     if (this.dtoClass) {
       this.applyTransformationsFromMetadata(formData, this.dtoClass);
     }
 
     return formData;
+  }
+
+  private async processFileStream(
+    part: any,
+    i18n: I18nContext<I18nTranslations>,
+  ): Promise<{ multipartFile: MultipartFile; fileSize: number }> {
+    const chunks: Buffer[] = [];
+    let currentSize = 0;
+
+    // Stream processing with size validation
+    for await (const chunk of part.file) {
+      currentSize += chunk.length;
+      
+      // Check individual file size during streaming
+      if (currentSize > (this.options.maxFileSize || 10 * 1024 * 1024)) {
+        throw new BadRequestException({
+          message: i18n.t('messages.File.errors.fileTooLarge', {
+            args: { maxSize: `${((this.options.maxFileSize || 10 * 1024 * 1024) / 1024 / 1024).toFixed(2)}MB` },
+          }),
+          error: 'File too large',
+          statusCode: 400,
+        });
+      }
+      
+      chunks.push(chunk);
+    }
+
+    const buffer = Buffer.concat(chunks);
+    const multipartFile = this.createMultipartFile(part, buffer);
+    
+    return { multipartFile, fileSize: currentSize };
   }
 
   private applyTransformationsFromMetadata(formData: Record<string, any>, dtoClass: new() => any): void {
@@ -99,6 +178,11 @@ export class FastifyFileInterceptor implements NestInterceptor {
         formData[field] = [formData[field]];
       }
     });
+
+    // Ensure file field is always an array if it exists (only for multiple files)
+    if (formData[this.fieldName] && !Array.isArray(formData[this.fieldName]) && this.options.maxFiles !== 1) {
+      formData[this.fieldName] = [formData[this.fieldName]];
+    }
 
     booleanFields.forEach(field => {
       if (formData[field] !== undefined) {

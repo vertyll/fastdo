@@ -60,7 +60,9 @@
       "fileProcessingError": "File processing error",
       "invalidFile": "Invalid file",
       "invalidMimeType": "Invalid file type. Allowed types: {allowed}",
-      "fileTooLarge": "File is too large. Maximum size is {maxSize}"
+      "fileTooLarge": "File is too large. Maximum size is {maxSize}",
+      "tooManyFiles": "Too many files. Maximum allowed: {maxFiles}",
+      "totalSizeTooLarge": "Total file size is too large. Maximum allowed: {maxSize}"
     }
   },
   "Mail": {

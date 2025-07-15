@@ -1,7 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsOptional, IsString, Max, Min, MinLength } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
+import { MultipartFile } from '@fastify/multipart';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
+import { MultipartArray } from '../../common/decorators/multipart-transform.decorator';
+import { IsFile } from '../../common/decorators/is-file.decorator';
 
 export class UpdateTaskDto {
   @ApiProperty({ required: false, description: 'Task description' })
@@ -67,4 +70,21 @@ export class UpdateTaskDto {
   @IsArray()
   @IsNumber({}, { each: true })
   assignedUserIds?: number[];
+
+  @ApiProperty({ 
+    type: 'array',
+    items: { 
+      type: 'string', 
+      format: 'binary' 
+    },
+    required: false,
+    description: 'Task attachment files' 
+  })
+  @IsOptional()
+  @MultipartArray()
+  @IsFile({
+    mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
+    maxSize: 10 * 1024 * 1024, // 10MB
+  })
+  attachments?: MultipartFile[];
 }
