@@ -62,7 +62,9 @@
       "invalidMimeType": "Invalid file type. Allowed types: {allowed}",
       "fileTooLarge": "File is too large. Maximum size is {maxSize}",
       "tooManyFiles": "Too many files. Maximum allowed: {maxFiles}",
-      "totalSizeTooLarge": "Total file size is too large. Maximum allowed: {maxSize}"
+      "totalSizeTooLarge": "Total file size is too large. Maximum allowed: {maxSize}",
+      "singleFileExpected": "Expected single file, received {count}",
+      "multipleFilesExpected": "Expected multiple files, received single file"
     }
   },
   "Mail": {

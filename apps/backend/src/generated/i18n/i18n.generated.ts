@@ -71,6 +71,8 @@ export type I18nTranslations = {
                 "fileTooLarge": string;
                 "tooManyFiles": string;
                 "totalSizeTooLarge": string;
+                "singleFileExpected": string;
+                "multipleFilesExpected": string;
             };
         };
         "Mail": {

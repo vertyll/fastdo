@@ -20,19 +20,23 @@ interface CustomFileStream extends Readable {
   index: number;
 }
 
+export interface FastifyFileInterceptorOptions {
+  maxFileSize?: number;
+  maxFiles?: number;
+  maxTotalSize?: number;
+  multiple?: boolean;
+}
+
 @Injectable()
 export class FastifyFileInterceptor implements NestInterceptor {
   constructor(
     private readonly fieldName: string,
     private readonly dtoClass?: new() => any,
-    private readonly options: {
-      maxFileSize?: number;
-      maxFiles?: number;
-      maxTotalSize?: number;
-    } = {
+    private readonly options: FastifyFileInterceptorOptions = {
       maxFileSize: 10 * 1024 * 1024, // 10MB per file
       maxFiles: 10, // max 10 files
       maxTotalSize: 100 * 1024 * 1024, // 100MB total
+      multiple: false,
     }
   ) {}
 
@@ -107,14 +111,12 @@ export class FastifyFileInterceptor implements NestInterceptor {
       this.handleFileError(error, i18n);
     }
 
-    // Assign files to formData
+    // Assign files to formData based on multiple flag
     if (files.length > 0) {
-      // For single file interceptor, assign first file only
-      // For multiple files interceptor, assign array
-      const isSingleFile = this.options.maxFiles === 1;
-      formData[this.fieldName] = isSingleFile ? files[0] : files;
+      const isMultiple = this.options.multiple !== false;
+      formData[this.fieldName] = isMultiple ? files : files[0];
       
-      console.log(`FastifyFileInterceptor: fieldName=${this.fieldName}, isSingleFile=${isSingleFile}, filesCount=${files.length}, result=`, formData[this.fieldName]);
+      console.log(`FastifyFileInterceptor: fieldName=${this.fieldName}, isMultiple=${isMultiple}, filesCount=${files.length}, result=`, formData[this.fieldName]);
     }
 
     if (this.dtoClass) {
@@ -180,7 +182,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     });
 
     // Ensure file field is always an array if it exists (only for multiple files)
-    if (formData[this.fieldName] && !Array.isArray(formData[this.fieldName]) && this.options.maxFiles !== 1) {
+    if (formData[this.fieldName] && !Array.isArray(formData[this.fieldName]) && this.options.multiple) {
       formData[this.fieldName] = [formData[this.fieldName]];
     }
 

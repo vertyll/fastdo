@@ -23,8 +23,9 @@ export class TasksController {
   @Post()
   @UseInterceptors(new FastifyFileInterceptor('attachments', CreateTaskDto, {
     maxFileSize: 10 * 1024 * 1024, // 10MB per file
-    maxFiles: 5, // max 5 files per task
-    maxTotalSize: 50 * 1024 * 1024 // 50MB total
+    maxFiles: 5,
+    maxTotalSize: 50 * 1024 * 1024, // 50MB total
+    multiple: true
   }))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a new task' })
@@ -83,8 +84,9 @@ export class TasksController {
   @Patch(':id')
   @UseInterceptors(new FastifyFileInterceptor('attachments', UpdateTaskDto, {
     maxFileSize: 10 * 1024 * 1024, // 10MB per file
-    maxFiles: 5, // max 5 files per task
-    maxTotalSize: 50 * 1024 * 1024 // 50MB total
+    maxFiles: 5,
+    maxTotalSize: 50 * 1024 * 1024, // 50MB total
+    multiple: true
   }))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update a task' })
@@ -134,8 +136,9 @@ export class TasksController {
   @Post(':id/comments')
   @UseInterceptors(new FastifyFileInterceptor('attachments', CreateTaskCommentDto, {
     maxFileSize: 5 * 1024 * 1024, // 5MB per file for comments
-    maxFiles: 3, // max 3 files per comment
-    maxTotalSize: 15 * 1024 * 1024 // 15MB total
+    maxFiles: 3,
+    maxTotalSize: 15 * 1024 * 1024, // 15MB total
+    multiple: true
   }))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a comment for a task' })
