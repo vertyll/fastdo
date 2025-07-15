@@ -34,17 +34,17 @@ export type FilterModel = {
 };
 
 export type TasksListFiltersConfig = {
-  q: string;
-  priorityIds: number[];
-  categoryIds: number[];
-  statusIds: number[];
-  assignedUserIds: number[];
-  sortBy: 'dateCreation' | 'dateModification' | 'name';
-  orderBy: 'asc' | 'desc';
-  createdFrom: string;
-  createdTo: string;
-  updatedFrom: string;
-  updatedTo: string;
+  q?: string;
+  priorityIds?: number[];
+  categoryIds?: number[];
+  statusIds?: number[];
+  assignedUserIds?: number[];
+  sortBy?: 'dateCreation' | 'dateModification' | 'description' | 'id';
+  orderBy?: 'asc' | 'desc';
+  createdFrom?: string;
+  createdTo?: string;
+  updatedFrom?: string;
+  updatedTo?: string;
 };
 
 export interface ProjectListFiltersConfig {

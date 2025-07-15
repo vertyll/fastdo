@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   ContentChild,
   ElementRef,
   OnDestroy,
   TemplateRef,
+  computed,
+  effect,
+  inject,
   input,
   output,
 } from '@angular/core';
@@ -14,10 +18,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroCalendar, heroEye, heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
+import {
+  heroArrowDown,
+  heroArrowUp,
+  heroArrowsUpDown,
+  heroCalendar,
+  heroEye,
+  heroPencil,
+  heroTrash,
+  heroXMark,
+} from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 import { CustomDatePipe } from '../../pipes/custom-date.pipe';
-import { TruncateTextPipe } from '../../pipes/truncate-text.pipe';
+import { PlatformService } from '../../services/platform.service';
+import { ThemeService } from '../../services/theme.service';
 import { ImageComponent } from './image.component';
 
 export interface TableColumn {
@@ -33,6 +47,8 @@ export interface TableColumn {
   autoTruncate?: boolean;
   align?: 'left' | 'center' | 'right';
   verticalAlign?: 'top' | 'middle' | 'bottom';
+  hideOn?: 'mobile' | 'tablet' | never;
+  priority?: number; // 1 = highest priority, shown first on mobile
 }
 
 export interface TableAction {
@@ -58,6 +74,9 @@ export interface TableConfig {
   hover?: boolean;
   scrollable?: boolean;
   responsiveBreakpoint?: number;
+  infiniteScroll?: boolean;
+  loadingMore?: boolean;
+  rowClassFunction?: (row: any) => string;
 }
 
 @Component({
@@ -72,32 +91,40 @@ export interface TableConfig {
     ImageComponent,
     NgIconComponent,
     TranslateModule,
-    TruncateTextPipe,
     CustomDatePipe,
   ],
-  providers: [provideIcons({ heroCalendar, heroXMark, heroPencil, heroEye, heroTrash })],
+  providers: [
+    provideIcons({
+      heroCalendar,
+      heroXMark,
+      heroPencil,
+      heroEye,
+      heroTrash,
+      heroArrowUp,
+      heroArrowDown,
+      heroArrowsUpDown,
+    }),
+  ],
   template: `
-    <div [class]="getTableContainerClass()">
-      <table mat-table [dataSource]="data()" class="mat-elevation-z1 w-full min-w-max" #tableElement>
+    <div class="table-container" [class.mobile-view]="isMobile()" [class.dark]="isDarkMode()">
+      <table mat-table [dataSource]="data()" class="mat-elevation-z1 responsive-table">
         <!-- Checkbox Column -->
         @if (config().selectable) {
           <ng-container matColumnDef="select">
-            <th mat-header-cell *matHeaderCellDef [style.width]="'60px'" class="text-center">
+            <th mat-header-cell *matHeaderCellDef class="select-column">
               <mat-checkbox
                 (change)="toggleSelectAll($event)"
                 [checked]="isAllSelected()"
                 [indeterminate]="isIndeterminate()"
                 color="primary"
-                class="text-primary-500 accent-primary-500"
               ></mat-checkbox>
             </th>
-            <td mat-cell *matCellDef="let row" class="text-center align-middle">
+            <td mat-cell *matCellDef="let row" class="select-cell">
               <mat-checkbox
                 (change)="toggleSelection(row)"
                 (click)="$event.stopPropagation()"
                 [checked]="isSelected(row)"
                 color="primary"
-                class="text-primary-500 accent-primary-500"
               ></mat-checkbox>
             </td>
           </ng-container>
@@ -107,79 +134,65 @@ export interface TableConfig {
         @for (column of config().columns; track column.key) {
           <ng-container [matColumnDef]="column.key">
             <th mat-header-cell *matHeaderCellDef 
-                [style.width]="getColumnWidth(column)"
-                [class]="getHeaderAlignmentClass(column)">
+                [class]="getHeaderClass(column)"
+                [style.width]="getColumnWidth(column)">
               {{ column.label | translate }}
               @if (column.sortable && config().sortable) {
                 <button 
                   (click)="sort(column.key)"
-                  class="ml-2 text-xs hover:text-blue-500 transition-colors"
+                  class="sort-button"
+                  [attr.aria-label]="'Sort by ' + (column.label | translate)"
                 >
                   @if (currentSort?.column === column.key) {
                     @if (currentSort?.direction === 'asc') {
-                      ↑
+                      <ng-icon name="heroArrowUp" size="12"></ng-icon>
                     } @else {
-                      ↓
+                      <ng-icon name="heroArrowDown" size="12"></ng-icon>
                     }
                   } @else {
-                    ↕
+                    <ng-icon name="heroArrowsUpDown" size="12"></ng-icon>
                   }
                 </button>
               }
             </th>
             <td mat-cell *matCellDef="let row" 
-                [attr.data-column]="column.key"
-                [class]="getCellAlignmentClass(column)">
+                [class]="getCellClass(column)"
+                [attr.data-column]="column.key">
               @switch (column.type) {
                 @case ('text') {
                   @if (column.truncate || column.autoTruncate) {
-                    <div 
-                      class="text-cell-container"
-                      [class.line-clamp]="!isTextExpanded(row, column.key) && (column.maxLines || getResponsiveMaxLines())"
-                      [style.--max-lines]="column.maxLines || getResponsiveMaxLines()"
-                      #textCell
-                    >
-                      <span 
+                    <div class="text-cell" [class.expandable]="shouldShowExpandButton(row, column.key, column)">
+                      <div 
+                        class="text-content"
+                        [class.expanded]="isTextExpanded(row, column.key)"
+                        [class.truncated]="!isTextExpanded(row, column.key) && shouldShowExpandButton(row, column.key, column)"
+                        [style.--max-lines]="getMaxLines(column)"
                         [title]="getValue(row, column.key)"
-                        class="break-words select-text"
                       >
-                        @if (isTextExpanded(row, column.key)) {
-                          {{ getValue(row, column.key) }}
-                          <button 
-                            (click)="toggleTextExpansion(row, column.key, $event)"
-                            class="ml-1 text-blue-500 hover:text-blue-700 font-medium text-sm cursor-pointer inline-flex items-center"
-                            [title]="'Basic.showLess' | translate"
-                          >
-                            [{{ 'Basic.showLess' | translate }}]
-                          </button>
-                        } @else {
-                          @if (shouldShowExpandButton(row, column.key, column)) {
-                            {{ getValue(row, column.key) | truncateText:(getEffectiveTruncateLength(column)):false }}
-                            <button 
-                              (click)="toggleTextExpansion(row, column.key, $event)"
-                              class="ml-1 text-blue-500 hover:text-blue-700 font-medium text-sm cursor-pointer inline-flex items-center"
-                              [title]="'Basic.showMore' | translate"
-                            >
-                              [{{ 'Basic.showMore' | translate }}]
-                            </button>
-                          } @else {
-                            {{ getValue(row, column.key) }}
-                          }
-                        }
-                      </span>
+                        {{ getValue(row, column.key) || '-' }}
+                      </div>
+                      @if (shouldShowExpandButton(row, column.key, column)) {
+                        <span 
+                          (click)="toggleTextExpansion(row, column.key, $event)"
+                          class="expand-link"
+                          [attr.aria-label]="isTextExpanded(row, column.key) ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate)"
+                        >
+                          {{ isTextExpanded(row, column.key) ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate) }}
+                        </span>
+                      }
                     </div>
                   } @else {
-                    <span class="break-words">{{ getValue(row, column.key) || '-' }}</span>
+                    <span class="simple-text">{{ getValue(row, column.key) || '-' }}</span>
                   }
                 }
                 @case ('boolean') {
-                  <span>{{ getValue(row, column.key) ? ('Basic.yes' | translate) : ('Basic.no' | translate) }}</span>
+                  <span class="boolean-cell">{{ getValue(row, column.key) ? ('Basic.yes' | translate) : ('Basic.no' | translate) }}</span>
                 }
                 @case ('date') {
-                  <span>{{ getValue(row, column.key) | customDate }}</span>
+                  <span class="date-cell">{{ getValue(row, column.key) | customDate }}</span>
                 }
                 @case ('image') {
-                  <div class="py-2 flex-shrink-0">
+                  <div class="image-cell">
                     <app-image 
                       [initialUrl]="getValue(row, column.key)"
                       format="square"
@@ -190,9 +203,11 @@ export interface TableConfig {
                   </div>
                 }
                 @case ('custom') {
-                  <ng-container 
-                    *ngTemplateOutlet="getCustomTemplate(column.customTemplate); context: { $implicit: row, column: column }"
-                  ></ng-container>
+                  <div class="custom-cell">
+                    <ng-container 
+                      *ngTemplateOutlet="getCustomTemplate(column.customTemplate); context: { $implicit: row, column: column }"
+                    ></ng-container>
+                  </div>
                 }
               }
             </td>
@@ -200,31 +215,25 @@ export interface TableConfig {
         }
 
         <!-- Actions Column -->
-        @if (config().actions && config()) {
+        @if (config().actions?.length) {
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef 
-                [style.width]="getActionsWidth()"
-                class="text-center">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">
               {{ 'Basic.actions' | translate }}
             </th>
-            <td mat-cell *matCellDef="let row" class="text-center align-middle">
-              <div class="flex gap-1 flex-shrink-0 justify-center">
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <div class="actions-container">
                 @for (action of config().actions; track action.key) {
                   @if (isActionVisible(action, row)) {
                     <button 
                       [disabled]="isActionDisabled(action, row)"
                       (click)="$event.stopPropagation(); executeAction(action.key, row)"
                       [class]="getActionButtonClass(action)"
-                      [title]="action.label | translate"
+                      [attr.aria-label]="action.label | translate"
                     >
                       @if (action.icon) {
-                        <ng-icon 
-                          [name]="action.icon" 
-                          size="18"
-                          class="transition-transform duration-200 ease-in-out group-hover:scale-125"
-                        />
+                        <ng-icon [name]="action.icon" size="1.125rem" />
                       } @else {
-                        <span class="text-xs">{{ action.label | translate }}</span>
+                        <span>{{ action.label | translate }}</span>
                       }
                     </button>
                   }
@@ -234,217 +243,703 @@ export interface TableConfig {
           </ng-container>
         }
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr 
           mat-row 
           *matRowDef="let row; columns: displayedColumns;" 
-          [class]="getRowClass()"
+          [class]="getRowClass(row)"
           (click)="onRowClick(row)"
         ></tr>
       </table>
+      
+      @if (config().infiniteScroll && config().loadingMore) {
+        <div class="loading-more-overlay">
+          <div class="loading-more-content">
+            <div class="loading-more-spinner"></div>
+            <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
-    .text-cell-container {
-      min-height: 1.5rem;
-      overflow: hidden;
-      word-wrap: break-word;
-      hyphens: auto;
+    .table-container {
+      width: 100%;
+      height: 600px;
+      overflow-y: auto;
+      overflow-x: auto;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
 
-    .line-clamp {
+    .responsive-table {
+      width: 100%;
+      min-width: 600px;
+      table-layout: fixed;
+    }
+
+    .select-column {
+      width: 3.5rem;
+      min-width: 3.5rem;
+    }
+
+    .actions-header {
+      width: 8rem;
+      min-width: 8rem;
+    }
+
+    .mat-mdc-header-cell {
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    .header-center { text-align: center; }
+    .header-right { text-align: right; }
+
+    .mat-mdc-cell {
+      border-bottom: 1px solid #f3f4f6;
+      padding: 0.75rem 1rem;
+      vertical-align: top;
+    }
+
+    .cell-center { text-align: center; }
+    .cell-right { text-align: right; }
+    .cell-middle { vertical-align: middle; }
+    .cell-bottom { vertical-align: bottom; }
+
+    .select-column, .select-cell {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true])~.mdc-checkbox__background {
+      border-color: #f97316;
+    }
+
+    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
+    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background,
+    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control[data-indeterminate=true]:enabled~.mdc-checkbox__background {
+      background-color: #f97316;
+      border-color: #f97316;
+    }
+
+    ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true])~.mdc-checkbox__background {
+      border-color: #ea580c;
+    }
+
+    ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
+    ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background,
+    ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control[data-indeterminate=true]:enabled~.mdc-checkbox__background {
+      background-color: #ea580c;
+      border-color: #ea580c;
+    }
+
+    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__ripple {
+      color: #f97316;
+    }
+
+    .text-cell {
+      position: relative;
+      max-width: 100%;
+    }
+
+    .text-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      line-height: 1.5;
+    }
+
+    .text-content.truncated {
       display: -webkit-box;
       -webkit-line-clamp: var(--max-lines, 2);
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    .break-words {
+    .text-content.expanded {
+      display: block;
+    }
+
+    .simple-text {
       word-wrap: break-word;
       overflow-wrap: break-word;
       hyphens: auto;
     }
 
-    .text-left {
-      text-align: left;
+    .expand-link {
+      display: inline-block;
+      margin-top: 0.25rem;
+      margin-left: 0.25rem;
+      padding: 0.125rem 0.25rem;
+      color: #f97316;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: 0.25rem;
+      text-decoration: none;
+      user-select: none;
     }
 
-    .text-center {
+    .expand-link:hover {
+      color: #ea580c;
+      background-color: #fff7ed;
+    }
+
+    .expand-link:active {
+      color: #c2410c;
+      background-color: #ffedd5;
+    }
+
+    .expand-link:focus {
+      outline: 2px solid #f97316;
+      outline-offset: 2px;
+    }
+
+    .boolean-cell {
+      font-weight: 500;
+    }
+
+    .date-cell {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .image-cell {
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .custom-cell {
+      padding: 0.25rem;
+    }
+
+    .actions-header {
       text-align: center;
     }
 
-    .text-right {
-      text-align: right;
-    }
-
-    .align-top {
-      vertical-align: top;
-    }
-
-    .align-middle {
+    .actions-cell {
+      text-align: center;
       vertical-align: middle;
     }
 
-    .align-bottom {
-      vertical-align: bottom;
+    .actions-container {
+      display: flex;
+      gap: 0.25rem;
+      justify-content: center;
+      align-items: center;
     }
 
+    .action-button {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+      min-height: 2rem;
+    }
+
+    .action-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .action-primary {
+      color: #f97316; 
+      background-color: #fff7ed;
+    }
+
+    .action-primary:hover:not(:disabled) {
+      background-color: #ffedd5;
+      color: #ea580c; 
+    }
+
+    .action-secondary {
+      color: #6b7280; 
+      background-color: #f9fafb; 
+    }
+
+    .action-secondary:hover:not(:disabled) {
+      background-color: #f3f4f6; 
+      color: #4b5563; 
+    }
+
+    .action-danger {
+      color: #ef4444; 
+      background-color: #fef2f2; 
+    }
+
+    .action-danger:hover:not(:disabled) {
+      background-color: #fee2e2; 
+      color: #dc2626; 
+    }
+
+    .action-success {
+      color: #10b981; 
+      background-color: #ecfdf5; 
+    }
+
+    .action-success:hover:not(:disabled) {
+      background-color: #d1fae5; 
+      color: #059669; 
+    }
+
+    .action-warning {
+      color: #f59e0b; 
+      background-color: #fffbeb; 
+    }
+
+    .action-warning:hover:not(:disabled) {
+      background-color: #fef3c7; 
+      color: #d97706; 
+    }
+
+    
+    .sort-button {
+      margin-left: 0.5rem;
+      padding: 0.125rem 0.25rem;
+      color: #6b7280; 
+      font-size: 0.75rem;
+      background: none;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .sort-button:hover {
+      color: #f97316; 
+    }
+
+    .sort-button:focus {
+      outline: 2px solid #f97316; 
+      outline-offset: 2px;
+    }
+
+    
+    .mat-mdc-row {
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .mat-mdc-row:hover {
+      background-color: #fff7ed; 
+    }
+
+    .mat-mdc-row:nth-child(even) {
+      background-color: #f9fafb; 
+    }
+
+    .mat-mdc-row:nth-child(even):hover {
+      background-color: #ffedd5; 
+    }
+
+    
     @media (max-width: 768px) {
-      .text-cell-container {
+      .responsive-table {
+        min-width: 500px;
+      }
+      
+      .text-content {
         font-size: 0.875rem;
-        line-height: 1.25rem;
+        line-height: 1.25;
+      }
+      
+      .mat-mdc-cell, .mat-mdc-header-cell {
+        padding: 0.5rem 0.75rem;
+      }
+      
+      .actions-container {
+        gap: 0.125rem;
+      }
+      
+      .action-button {
+        min-width: 1.75rem;
+        min-height: 1.75rem;
+        padding: 0.375rem;
       }
     }
 
     @media (max-width: 640px) {
-      .text-cell-container {
+      .responsive-table {
+        min-width: 400px;
+      }
+      
+      .text-content {
         font-size: 0.75rem;
-        line-height: 1rem;
+        line-height: 1.1;
+      }
+      
+      .mat-mdc-cell, .mat-mdc-header-cell {
+        padding: 0.5rem;
+      }
+      
+      .expand-toggle {
+        font-size: 0.625rem;
+        padding: 0.125rem;
+      }
+
+      .expand-link {
+        font-size: 0.625rem;
+        padding: 0.125rem;
       }
     }
 
-    table {
-      table-layout: fixed;
+    
+    .dark .mat-mdc-header-cell {
+      color: #d1d5db; 
+      border-bottom-color: #4b5563; 
+      background-color: #374151; 
+    }
+    
+    .dark .mat-mdc-cell {
+      color: #e5e7eb; 
+      border-bottom-color: #374151; 
+    }
+    
+    .dark .mat-mdc-row {
+      background-color: #1f2937; 
+    }
+    
+    .dark .mat-mdc-row:hover {
+      background-color: #7c2d12; 
+    }
+    
+    .dark .mat-mdc-row:nth-child(even) {
+      background-color: #374151; 
+    }
+    
+    .dark .mat-mdc-row:nth-child(even):hover {
+      background-color: #9a3412; 
     }
 
-    td, th {
-      overflow: hidden;
-      padding: 0.5rem;
+    .dark .expand-link {
+      color: #fdba74; 
     }
 
-    .expand-button {
-      display: inline-flex;
+    .dark .expand-link:hover {
+      color: #fed7aa; 
+      background-color: #9a3412; 
+    }
+
+    .dark .expand-link:active {
+      color: #ffedd5; 
+      background-color: #7c2d12; 
+    }
+
+    
+    .dark ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true])~.mdc-checkbox__background {
+      border-color: #fdba74; 
+    }
+
+    .dark ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
+    .dark ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background,
+    .dark ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control[data-indeterminate=true]:enabled~.mdc-checkbox__background {
+      background-color: #fdba74; 
+      border-color: #fdba74; 
+    }
+
+    .dark ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true])~.mdc-checkbox__background {
+      border-color: #fed7aa; 
+    }
+
+    .dark ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
+    .dark ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background,
+    .dark ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control[data-indeterminate=true]:enabled~.mdc-checkbox__background {
+      background-color: #fed7aa; 
+      border-color: #fed7aa; 
+    }
+
+    
+    .dark .action-primary {
+      color: #fdba74; 
+      background-color: #9a3412; 
+    }
+
+    .dark .action-primary:hover:not(:disabled) {
+      background-color: #7c2d12; 
+      color: #fed7aa; 
+    }
+
+    .dark .action-secondary {
+      color: #d1d5db; 
+      background-color: #4b5563; 
+    }
+
+    .dark .action-secondary:hover:not(:disabled) {
+      background-color: #374151; 
+      color: #e5e7eb; 
+    }
+
+    .dark .action-danger {
+      color: #fca5a5; 
+      background-color: #991b1b; 
+    }
+
+    .dark .action-danger:hover:not(:disabled) {
+      background-color: #7f1d1d; 
+      color: #fecaca; 
+    }
+
+    .dark .action-success {
+      color: #6ee7b7; 
+      background-color: #065f46; 
+    }
+
+    .dark .action-success:hover:not(:disabled) {
+      background-color: #064e3b; 
+      color: #a7f3d0; 
+    }
+
+    .dark .action-warning {
+      color: #fcd34d; 
+      background-color: #92400e; 
+    }
+
+    .dark .action-warning:hover:not(:disabled) {
+      background-color: #78350f; 
+      color: #fde68a; 
+    }
+
+    .dark .sort-button {
+      color: #9ca3af; 
+    }
+
+    .dark .sort-button:hover {
+      color: #fdba74; 
+    }
+
+    
+    .loading-more-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(2px);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .loading-more-content {
+      display: flex;
       align-items: center;
-      margin-left: 0.25rem;
-      color: #3b82f6;
-      font-weight: 500;
+      justify-content: center;
+      padding: 1rem;
+      gap: 0.5rem;
+    }
+
+    .loading-more-spinner {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #f3f4f6; 
+      border-top: 2px solid #f97316; 
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-more-text {
       font-size: 0.875rem;
-      cursor: pointer;
-      transition: color 0.2s;
-      user-select: none;
-      white-space: nowrap;
+      color: #6b7280; 
+      font-weight: 500;
     }
 
-    .expand-button:hover {
-      color: #1d4ed8;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    .expand-button:focus {
-      outline: 2px solid #3b82f6;
-      outline-offset: 2px;
-      border-radius: 0.25rem;
+    
+    .dark .loading-more-overlay {
+      background: rgba(31, 41, 55, 0.9); 
     }
 
-    .select-text {
-      user-select: text;
+    .dark .loading-more-spinner {
+      border-color: #4b5563; 
+      border-top-color: #fdba74; 
     }
 
-    @media (max-width: 1024px) {
-      td[data-column="dateCreation"],
-      th[data-column="dateCreation"] {
-        display: none !important;
-      }
+    .dark .loading-more-text {
+      color: #d1d5db; 
     }
 
-    @media (max-width: 768px) {
-      td[data-column="isPublic"],
-      th[data-column="isPublic"] {
-        display: none !important;
-      }
+    
+    .priority-high {
+      background-color: #fef2f2 !important; 
+      border-left: 4px solid #ef4444; 
+    }
+
+    .priority-high:hover {
+      background-color: #fee2e2 !important; 
+    }
+
+    .priority-low {
+      background-color: #eff6ff !important; 
+      border-left: 4px solid #3b82f6; 
+    }
+
+    .priority-low:hover {
+      background-color: #dbeafe !important; 
+    }
+
+    
+    .dark .priority-high {
+      background-color: #7f1d1d !important; 
+      border-left-color: #fca5a5; 
+    }
+
+    .dark .priority-high:hover {
+      background-color: #991b1b !important; 
+    }
+
+    .dark .priority-low {
+      background-color: #1e3a8a !important; 
+      border-left-color: #93c5fd; 
+    }
+
+    .dark .priority-low:hover {
+      background-color: #1e40af !important; 
     }
   `],
 })
-export class TableComponent implements AfterViewInit, OnDestroy {
+export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   data = input.required<TableRow[]>();
   config = input.required<TableConfig>();
   loading = input(false);
   customTemplates = input<{ [key: string]: TemplateRef<any>; }>({});
+  initialSort = input<{ column: string; direction: 'asc' | 'desc'; } | null>(null);
   selectionChange = output<any[]>();
   actionClick = output<{ action: string; row: any; }>();
   sortChange = output<{ column: string; direction: 'asc' | 'desc'; }>();
   rowClick = output<any>();
   projectImageClick = output<any>();
+  loadMore = output<void>();
 
   @ContentChild('customTemplate')
   customTemplate!: TemplateRef<any>;
 
+  private readonly themeService = inject(ThemeService);
+  private readonly platformService = inject(PlatformService);
+  protected readonly isDarkMode = computed(() => this.themeService.currentTheme === 'dark');
+  protected readonly isMobile = computed(() => this.platformService.isMobile());
+
   private selection: any[] = [];
   private expandedTexts: Map<string, boolean> = new Map();
   protected currentSort: { column: string; direction: 'asc' | 'desc'; } | null = null;
-  private resizeObserver?: ResizeObserver;
-  private currentScreenSize: 'mobile' | 'tablet' | 'desktop' = 'desktop';
+  private intersectionObserver?: IntersectionObserver;
+  private previousDataLength = 0;
+  private shouldPreserveScroll = false;
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef) {
+    // Update infinite scroll observer when data changes
+    effect(() => {
+      if (this.data()) {
+        const currentDataLength = this.data().length;
+
+        // If we have more data than before and we're loading more, preserve scroll
+        if (currentDataLength > this.previousDataLength && this.config().loadingMore) {
+          this.shouldPreserveScroll = true;
+        }
+
+        this.updateInfiniteScrollObserver();
+        this.previousDataLength = currentDataLength;
+      }
+    });
+
+    // Set initial sort when it changes
+    effect(() => {
+      const initialSort = this.initialSort();
+      if (initialSort) {
+        this.currentSort = initialSort;
+      }
+    });
+  }
 
   ngAfterViewInit() {
-    this.initializeResponsiveObserver();
-    this.updateScreenSize();
+    this.initializeInfiniteScroll();
+  }
+
+  ngAfterViewChecked() {
+    // Preserve scroll position after view is updated when loading more
+    if (this.shouldPreserveScroll) {
+      this.shouldPreserveScroll = false;
+      // Small delay to ensure the new rows are rendered
+      setTimeout(() => {
+        this.preserveScrollPosition();
+      }, 0);
+    }
+  }
+
+  private preserveScrollPosition() {
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    if (tableContainer) {
+      // Keep the scroll position slightly adjusted to account for new content
+      const currentScrollTop = tableContainer.scrollTop;
+      if (currentScrollTop > 0) {
+        tableContainer.scrollTop = currentScrollTop;
+      }
+    }
   }
 
   ngOnDestroy() {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
     }
   }
 
-  private initializeResponsiveObserver() {
-    if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => {
-        this.updateScreenSize();
-      });
-      this.resizeObserver.observe(this.elementRef.nativeElement);
+  private updateInfiniteScrollObserver() {
+    if (!this.config().infiniteScroll || !this.intersectionObserver) {
+      return;
     }
-  }
 
-  private updateScreenSize() {
-    const width = window.innerWidth;
-    const breakpoint = this.config().responsiveBreakpoint || 768;
+    // Disconnect from previous observation
+    this.intersectionObserver.disconnect();
 
-    if (width < 640) {
-      this.currentScreenSize = 'mobile';
-    } else if (width < breakpoint) {
-      this.currentScreenSize = 'tablet';
-    } else {
-      this.currentScreenSize = 'desktop';
-    }
-  }
-
-  protected getResponsiveMaxLines(): number {
-    switch (this.currentScreenSize) {
-      case 'mobile':
-        return 1;
-      case 'tablet':
-        return 2;
-      case 'desktop':
-      default:
-        return 3;
-    }
-  }
-
-  protected getEffectiveTruncateLength(column: TableColumn): number {
-    if (column.autoTruncate) {
-      switch (this.currentScreenSize) {
-        case 'mobile':
-          return 30;
-        case 'tablet':
-          return 60;
-        case 'desktop':
-        default:
-          return column.truncateLength || 100;
+    // Re-observe the new last row
+    setTimeout(() => {
+      const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
+      if (lastRow) {
+        this.intersectionObserver?.observe(lastRow);
       }
+    }, 100);
+  }
+
+  private initializeInfiniteScroll() {
+    if (!this.config().infiniteScroll || typeof IntersectionObserver === 'undefined') {
+      return;
     }
-    return column.truncateLength || 50;
-  }
 
-  protected getHeaderAlignmentClass(column: TableColumn): string {
-    const align = column.align || 'left';
-    return `text-${align}`;
-  }
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    if (!tableContainer) return;
 
-  protected getCellAlignmentClass(column: TableColumn): string {
-    const horizontalAlign = column.align || 'left';
-    const verticalAlign = column.verticalAlign || 'top';
-    return `text-${horizontalAlign} align-${verticalAlign}`;
+    this.intersectionObserver = new IntersectionObserver(entries => {
+      const target = entries[0];
+      if (target.isIntersecting && !this.config().loadingMore) {
+        this.loadMore.emit();
+      }
+    }, {
+      threshold: 0.1,
+      rootMargin: '50px',
+      root: tableContainer, // Use table container as root instead of viewport
+    });
+
+    // Observe the last row when it exists
+    setTimeout(() => {
+      const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
+      if (lastRow) {
+        this.intersectionObserver?.observe(lastRow);
+      }
+    }, 100);
   }
 
   get displayedColumns(): string[] {
@@ -454,41 +949,38 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     }
 
     const visibleColumns = this.config().columns.filter(col => {
-      if (this.currentScreenSize === 'mobile') {
-        return ['name', 'image'].includes(col.key);
-      } else if (this.currentScreenSize === 'tablet') {
-        return !['dateCreation', 'isPublic'].includes(col.key);
+      if (col.hideOn === 'mobile' && this.isMobile()) {
+        return false;
+      }
+      if (col.hideOn === 'tablet' && this.isMobile()) {
+        return false;
       }
       return true;
     });
 
+    if (this.isMobile()) {
+      visibleColumns.sort((a, b) => (a.priority || 999) - (b.priority || 999));
+    }
+
     columns.push(...visibleColumns.map((col: TableColumn) => col.key));
 
-    const cfg = this.config();
-    if (cfg && cfg.actions && cfg.actions.length > 0) {
+    if (this.config().actions?.length) {
       columns.push('actions');
     }
     return columns;
-  }
-
-  protected getTableContainerClass(): string {
-    const baseClass = 'w-full';
-    const scrollableClass = this.config().scrollable !== false ? 'overflow-x-auto' : '';
-    const responsiveClass = 'overflow-hidden';
-    return `${baseClass} ${scrollableClass} ${responsiveClass}`.trim();
   }
 
   protected getColumnWidth(column: TableColumn): string {
     if (!column.width) {
       switch (column.type) {
         case 'image':
-          return '80px';
+          return '5rem';
         case 'boolean':
-          return '100px';
+          return '6rem';
         case 'date':
-          return '150px';
+          return '9rem';
         default:
-          return this.currentScreenSize === 'mobile' ? '120px' : 'auto';
+          return this.isMobile() ? '8rem' : 'auto';
       }
     }
 
@@ -518,8 +1010,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     const text = this.getValue(row, columnKey);
     if (!text) return false;
 
-    const effectiveLength = this.getEffectiveTruncateLength(column);
-    return text.length > effectiveLength;
+    const maxLines = this.getMaxLines(column);
+    const approximateCharsPerLine = this.isMobile() ? 20 : 60;
+    const approximateMaxChars = maxLines * approximateCharsPerLine;
+
+    return text.length > approximateMaxChars;
   }
 
   protected isTextExpanded(row: any, columnKey: string): boolean {
@@ -546,11 +1041,31 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 
   protected sort(column: string) {
     if (!this.config().sortable) return;
-    const direction = this.currentSort?.column === column && this.currentSort.direction === 'asc'
-      ? 'desc'
-      : 'asc';
-    this.currentSort = { column, direction };
-    this.sortChange.emit({ column, direction });
+
+    let direction: 'asc' | 'desc' | null;
+
+    if (this.currentSort?.column === column) {
+      // Cycling through: asc -> desc -> null (default)
+      if (this.currentSort.direction === 'asc') {
+        direction = 'desc';
+      } else if (this.currentSort.direction === 'desc') {
+        direction = null; // Reset to default
+      } else {
+        direction = 'asc';
+      }
+    } else {
+      // First click on new column starts with asc
+      direction = 'asc';
+    }
+
+    if (direction === null) {
+      // Reset to default sort
+      this.currentSort = null;
+      this.sortChange.emit({ column: '', direction: 'desc' }); // Default sort
+    } else {
+      this.currentSort = { column, direction };
+      this.sortChange.emit({ column, direction });
+    }
   }
 
   protected getCustomTemplate(templateName?: string): TemplateRef<any> | null {
@@ -581,28 +1096,22 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   }
 
   protected getActionButtonClass(action: TableAction): string {
-    const baseClass = 'p-2 rounded-full transition-all duration-200 ease-in-out group flex-shrink-0';
+    const baseClass = 'action-button';
     const colorClass = this.getActionColorClass(action.color);
-    const disabledClass = 'disabled:opacity-50 disabled:cursor-not-allowed';
-    return `${baseClass} ${colorClass} ${disabledClass}`;
+    return `${baseClass} ${colorClass}`;
   }
 
-  protected getActionsWidth(): string {
-    const actionsCount = this.config().actions?.length || 0;
-    const baseWidth = this.currentScreenSize === 'mobile' ? 80 : 100;
-    return `${Math.max(baseWidth, actionsCount * 40)}px`;
-  }
+  protected getRowClass(row?: any): string {
+    let baseClass = 'table-row';
 
-  protected getRowClass(): string {
-    let classes = 'cursor-pointer ';
-    if (this.config().striped) {
-      classes +=
-        'odd:bg-neutral-50 even:bg-neutral-100 dark:odd:bg-dark-background-secondary dark:even:bg-dark-background-tertiary ';
+    if (this.config().rowClassFunction && row) {
+      const customClass = this.config().rowClassFunction!(row);
+      if (customClass) {
+        baseClass += ` ${customClass}`;
+      }
     }
-    if (this.config().hover) {
-      classes += 'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 ';
-    }
-    return classes.trim();
+
+    return baseClass;
   }
 
   private getRowId(row: any): any {
@@ -612,17 +1121,17 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   private getActionColorClass(color?: string): string {
     switch (color) {
       case 'primary':
-        return 'text-blue-500 hover:text-blue-600';
+        return 'action-primary';
       case 'secondary':
-        return 'text-gray-500 hover:text-gray-600';
+        return 'action-secondary';
       case 'danger':
-        return 'text-red-500 hover:text-red-600';
+        return 'action-danger';
       case 'success':
-        return 'text-green-500 hover:text-green-600';
+        return 'action-success';
       case 'warning':
-        return 'text-yellow-500 hover:text-yellow-600';
+        return 'action-warning';
       default:
-        return 'text-gray-600 hover:text-gray-700';
+        return 'action-secondary';
     }
   }
 
@@ -637,4 +1146,27 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   public onRowClick(row: any) {
     this.rowClick.emit(row);
   }
+
+  protected getHeaderClass(column: TableColumn): string {
+    const align = column.align || 'left';
+    return `header-${align}`;
+  }
+
+  protected getCellClass(column: TableColumn): string {
+    const horizontalAlign = column.align || 'left';
+    const verticalAlign = column.verticalAlign || 'top';
+    return `cell-${horizontalAlign} cell-${verticalAlign}`;
+  }
+
+  protected getMaxLines(column: TableColumn): number {
+    if (column.maxLines) {
+      return column.maxLines;
+    }
+
+    return this.isMobile() ? 1 : 3;
+  }
+
+  protected trackByFunction = (index: number, item: any): any => {
+    return item.id || item.uuid || index;
+  };
 }

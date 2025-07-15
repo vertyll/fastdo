@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, tap } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
 import { GetAllTasksSearchParams, TaskUpdatePayload } from '../../shared/types/task.type';
 import { AddTaskDto } from '../dtos/add-task.dto';
@@ -14,6 +14,30 @@ export class TasksService {
   private readonly httpService = inject(TasksApiService);
   private readonly state = inject(TasksStateService);
 
+  public getAll(searchParams: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+    return this.httpService.getAll(searchParams).pipe(
+      tap(response => {
+        if (response.data) {
+          this.state.setTaskList(response.data.items);
+          this.state.setPagination(response.data.pagination);
+        }
+      }),
+    );
+  }
+
+  public loadMore(searchParams: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+    this.state.setLoadingMore(true);
+    return this.httpService.getAll(searchParams).pipe(
+      tap(response => {
+        if (response.data) {
+          this.state.appendTaskList(response.data.items);
+          this.state.setPagination(response.data.pagination);
+        }
+        this.state.setLoadingMore(false);
+      }),
+    );
+  }
+
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
@@ -24,6 +48,26 @@ export class TasksService {
           this.state.setTaskList(response.data.items);
           this.state.setPagination(response.data.pagination);
         }
+      }),
+    );
+  }
+
+  public loadMoreByProjectId(
+    projectId: string,
+    searchParams: GetAllTasksSearchParams,
+  ): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+    this.state.setLoadingMore(true);
+    return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
+      tap(response => {
+        if (response.data) {
+          this.state.appendTaskList(response.data.items);
+          this.state.setPagination(response.data.pagination);
+        }
+        this.state.setLoadingMore(false);
+      }),
+      catchError((error: any) => {
+        this.state.setLoadingMore(false);
+        throw error;
       }),
     );
   }

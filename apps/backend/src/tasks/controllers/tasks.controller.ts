@@ -35,10 +35,15 @@ export class TasksController {
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
-  @ApiWrappedResponse({ status: 200, description: 'Return all tasks.', type: Task, isPaginated: true })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Return all tasks.',
+    type: TaskResponseDto,
+    isPaginated: true,
+  })
   public findAll(
     @Query() query: GetAllTasksSearchParamsDto,
-  ): Promise<ApiPaginatedResponse<Task>> {
+  ): Promise<ApiPaginatedResponse<TaskResponseDto>> {
     return this.tasksService.findAll(query);
   }
 
@@ -47,13 +52,13 @@ export class TasksController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Return all tasks for the specified project.',
-    type: Task,
+    type: TaskResponseDto,
     isPaginated: true,
   })
   public findAllByProjectId(
     @Param('projectId') projectId: string,
     @Query() query: GetAllTasksSearchParamsDto,
-  ): Promise<ApiPaginatedResponse<Task>> {
+  ): Promise<ApiPaginatedResponse<TaskResponseDto>> {
     return this.tasksService.findAllByProjectId(+projectId, query);
   }
 

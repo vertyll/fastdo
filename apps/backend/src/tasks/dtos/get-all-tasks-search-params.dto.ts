@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ArrayTransform } from 'src/common/decorators/array-transform.decorator';
+import { OrderByEnum } from '../../common/enums/order-by.enum';
+import { TaskSortByEnum } from '../enums/task-sort-by.enum';
 
 export class GetAllTasksSearchParamsDto {
   @ApiProperty({ required: false })
@@ -44,17 +46,25 @@ export class GetAllTasksSearchParamsDto {
   @ArrayTransform()
   assignedUserIds: number[];
 
-  @ApiProperty({ required: false, enum: ['dateCreation', 'dateModification'] })
+  @ApiProperty({
+    required: false,
+    enum: TaskSortByEnum,
+    enumName: 'TaskSortByEnum',
+  })
   @IsOptional()
   @IsString()
-  @IsIn(['dateCreation', 'dateModification'])
-  sortBy?: string;
+  @IsIn(Object.values(TaskSortByEnum))
+  sortBy?: TaskSortByEnum;
 
-  @ApiProperty({ required: false, enum: ['asc', 'desc'] })
+  @ApiProperty({
+    required: false,
+    enum: OrderByEnum,
+    enumName: 'OrderByEnum',
+  })
   @IsOptional()
   @IsString()
-  @IsIn(['asc', 'desc'])
-  orderBy?: 'asc' | 'desc';
+  @IsIn(Object.values(OrderByEnum))
+  orderBy?: OrderByEnum;
 
   @ApiProperty({
     required: false,

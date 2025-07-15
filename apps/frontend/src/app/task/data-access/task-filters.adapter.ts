@@ -10,7 +10,7 @@ export function getAllTasksSearchParams(
     categoryIds: params.categoryIds || [],
     statusIds: params.statusIds || [],
     assignedUserIds: params.assignedUserIds || [],
-    sortBy: (params.sortBy as 'dateCreation' | 'dateModification' | undefined) || 'dateCreation',
+    sortBy: params.sortBy || 'dateCreation',
     orderBy: params.orderBy || 'desc',
     createdFrom: params.createdFrom || '',
     createdTo: params.createdTo || '',

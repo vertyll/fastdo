@@ -17,7 +17,7 @@ export type TaskUpdatePayload = {
 
 export type GetAllTasksSearchParams = {
   q: string;
-  sortBy: 'dateCreation' | 'dateModification';
+  sortBy: 'dateCreation' | 'dateModification' | 'description' | 'id';
   orderBy: 'desc' | 'asc';
   priorityIds?: number[];
   categoryIds?: number[];

@@ -21,6 +21,7 @@ export function ApiWrappedResponse(options: ApiWrappedResponseOptions): MethodDe
               page: { type: 'number' },
               pageSize: { type: 'number' },
               totalPages: { type: 'number' },
+              hasMore: { type: 'boolean' },
             },
           },
         },

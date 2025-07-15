@@ -18,6 +18,14 @@ export class TasksApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
+  public getAll(searchParams: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+    return this.withLoadingState(
+      this.http.get<ApiResponse<ApiPaginatedResponse<Task>>>(`${this.URL}/tasks`, {
+        params: searchParams,
+      }),
+    );
+  }
+
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,

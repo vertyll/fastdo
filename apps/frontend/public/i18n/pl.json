@@ -1,6 +1,7 @@
 {
   "Basic": {
     "loading": "Ładowanie...",
+    "loadingMore": "Ładowanie więcej...",
     "accept": "Akceptuj",
     "appName": "FastDo",
     "logout": "Wyloguj",
@@ -127,7 +128,7 @@
     "descriptionPlaceholder": "Wprowadź opis projektu",
     "type": "Typ projektu",
     "selectType": "Wybierz typ projektu",
-    "isPublic": "Projekt publiczny",
+    "isPublic": "Publiczny",
     "icon": "Ikona projektu",
     "categories": "Kategorie",
     "categoryName": "Nazwa kategorii",
@@ -152,7 +153,10 @@
     "image": "Obraz",
     "dateCreation": "Data utworzenia",
     "dateModification": "Data modyfikacji",
-    "projectUserRole": "Rola w projekcie"
+    "projectUserRole": "Rola w projekcie",
+    "id": "ID",
+    "status": "Status",
+    "noStatus": "Brak statusu"
   },
   "ProjectRole": {
     "manager": "Menedżer",
@@ -160,6 +164,7 @@
     "member": "Członek"
   },
   "Task": {
+    "id": "ID",
     "created": "Utworzono",
     "modified": "Zaktualizowano",
     "todo": "Do zrobienia",
@@ -168,6 +173,7 @@
     "emptyList": "Brak zadań",
     "deleteError": "Wystąpił błąd podczas usuwania zadania",
     "deleteSuccess": "Zadanie zostało usunięte",
+    "deleteConfirm": "Czy na pewno chcesz usunąć to zadanie?",
     "updateError": "Wystąpił błąd podczas aktualizacji zadania",
     "updateSuccess": "Zadanie zostało zaktualizowane",
     "taskNameMinLength": "Nazwa zadania musi mieć co najmniej 3 znaki.",
@@ -203,10 +209,13 @@
     "category": "Kategoria",
     "selectCategory": "Wybierz kategorię",
     "status": "Status",
+    "noStatus": "Brak statusu",
     "selectStatus": "Wybierz status",
     "assignedUser": "Przypisany użytkownik",
     "assignedUsers": "Przypisani użytkownicy",
     "noAssignedUsers": "Brak przypisanych użytkowników",
+    "dateCreation": "Data utworzenia",
+    "dateModification": "Data modyfikacji",
     "noProjectUsers": "Brak użytkowników w projekcie",
     "createdBy": "Utworzony przez",
     "comments": "Komentarze",

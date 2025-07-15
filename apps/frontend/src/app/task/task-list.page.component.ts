@@ -1,4 +1,15 @@
-import { Component, OnInit, booleanAttribute, computed, inject, input, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  booleanAttribute,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,33 +21,27 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { AppConfigStateService } from '../config/config.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { PaginationMeta } from '../shared/types/api-response.type';
-import { PaginationParams, TasksListFiltersConfig } from '../shared/types/filter.type';
+import { TableColumn, TableComponent, TableConfig } from '../shared/components/organisms/table-component';
+import { TasksListFiltersConfig } from '../shared/types/filter.type';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
-import { GetAllTasksSearchParams, TasksListViewMode } from '../shared/types/task.type';
+import { GetAllTasksSearchParams } from '../shared/types/task.type';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
-import { TasksKanbanViewComponent } from './ui/task-kanban.component';
+import { Task } from './models/Task';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
-import { TasksListViewModeComponent } from './ui/task-list-view-mode.component';
-import { TasksListComponent } from './ui/task-list.component';
 
 @Component({
   selector: 'app-task-list-page',
   imports: [
-    TasksListComponent,
     TasksListFiltersComponent,
-    TasksKanbanViewComponent,
-    TasksListViewModeComponent,
+    TableComponent,
     TranslateModule,
     ButtonComponent,
     TitleComponent,
     MatTooltipModule,
     ErrorMessageComponent,
-    PaginatorComponent,
   ],
   template: `
     <div class="flex flex-col gap-4">
@@ -60,39 +65,70 @@ import { TasksListComponent } from './ui/task-list.component';
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)"/>
     </div>
 
-    <div class="border border-border-primary dark:border-dark-border-primary p-2 w-36 rounded-lg flex items-center my-4">
-      <div
-        class="flex items-center gap-1.5 cursor-help"
-        [matTooltip]="getHelpText()"
-        matTooltipPosition="right"
-      >
-        <span class="font-semibold">{{ 'Task.howToUse' | translate }}</span>
-        <span class="text-sm text-text-muted dark:text-dark-text-muted hover:text-text-secondary dark:hover:text-dark-text-secondary">[?]</span>
+    <!-- Templates definition outside of @switch -->
+    <ng-template #statusTemplate let-task>
+      <div class="flex items-center justify-center">
+        @if (task.status) {
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+            {{ getStatusName(task.status) }}
+          </span>
+        } @else {
+          <span class="text-sm text-gray-500 dark:text-gray-400">
+            -
+          </span>
+        }
       </div>
-    </div>
+    </ng-template>
 
-    <app-tasks-list-view-mode
-      [$view]="$view()"
-      (updateTasksListView)="configStateService.updateTasksListView($event)"
-    />
+    <ng-template #categoriesTemplate let-task>
+      <div class="flex items-center justify-center">
+        @if (task.categories && task.categories.length > 0) {
+          <div class="flex flex-wrap gap-1">
+            @for (category of task.categories; track category.id) {
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200">
+                {{ getCategoryName(category) }}
+              </span>
+            }
+          </div>
+        } @else {
+          <span class="text-sm text-gray-500 dark:text-gray-400">
+            -
+          </span>
+        }
+      </div>
+    </ng-template>
+
+    <ng-template #assignedUsersTemplate let-task>
+      <div class="flex items-center justify-center">
+        @if (task.assignedUsers && task.assignedUsers.length > 0) {
+          <div class="flex flex-wrap gap-1">
+            @for (user of task.assignedUsers; track user.id) {
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200">
+                {{ user.email }}
+              </span>
+            }
+          </div>
+        } @else {
+          <span class="text-sm text-gray-500 dark:text-gray-400">
+            -
+          </span>
+        }
+      </div>
+    </ng-template>
 
     @switch (tasksStateService.state()) {
       @case (listStateValue.SUCCESS) {
-        @if ($view() === 'list') {
-          <app-tasks-list
-            class="block mt-4"
-            [tasks]="tasksStateService.tasks()"
-          />
-        } @else {
-          <app-tasks-kanban-view
-            [tasks]="tasksStateService.tasks()"
-          />
-        }
-        <app-paginator
-          [total]="tasksStateService.pagination().total"
-          [pageSize]="tasksStateService.pagination().pageSize"
-          [currentPage]="tasksStateService.pagination().page"
-          (pageChange)="handlePageChange($event)"
+        <app-table
+          [data]="tasksStateService.tasks()"
+          [config]="tableConfig()"
+          [loading]="tasksStateService.state() === listStateValue.LOADING"
+          [customTemplates]="customTemplates()"
+          [initialSort]="currentSort()"
+          (loadMore)="handleLoadMore()"
+          (rowClick)="handleTaskClick($event)"
+          (actionClick)="handleActionClick($event)"
+          (sortChange)="handleSortChange($event)"
+          (selectionChange)="handleSelectionChange($event)"
         />
       }
       @case (listStateValue.ERROR) {
@@ -104,9 +140,15 @@ import { TasksListComponent } from './ui/task-list.component';
     }
   `,
 })
-export class TaskListPageComponent implements OnInit {
-  readonly view = input<TasksListViewMode>();
+export class TaskListPageComponent implements OnInit, AfterViewInit {
   readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
+
+  @ViewChild('statusTemplate', { static: false })
+  statusTemplate!: TemplateRef<any>;
+  @ViewChild('categoriesTemplate', { static: false })
+  categoriesTemplate!: TemplateRef<any>;
+  @ViewChild('assignedUsersTemplate', { static: false })
+  assignedUsersTemplate!: TemplateRef<any>;
 
   protected readonly listStateValue = LOADING_STATE_VALUE;
 
@@ -119,36 +161,154 @@ export class TaskListPageComponent implements OnInit {
 
   protected readonly configStateService = inject(AppConfigStateService);
   protected readonly tasksStateService = inject(TasksStateService);
-  protected readonly $view = computed(
-    () => this.configStateService.$value().tasksListView,
-  );
 
   protected projectId = signal<string | null>(null);
   protected projectName = signal<string>('');
+  protected customTemplates = signal<{ [key: string]: TemplateRef<any>; }>({});
+  protected currentSearchParams = signal<GetAllTasksSearchParams>({
+    q: '',
+    sortBy: 'dateCreation',
+    orderBy: 'desc',
+    page: 0,
+    pageSize: 10,
+  });
+
+  protected currentSort = computed(() => {
+    const params = this.currentSearchParams();
+    if (params.sortBy === 'dateCreation' && params.orderBy === 'desc') {
+      return null;
+    }
+    return {
+      column: params.sortBy,
+      direction: params.orderBy,
+    };
+  });
+
+  protected readonly tableConfig = computed<TableConfig>(() => ({
+    columns: this.getTableColumns(),
+    actions: [
+      {
+        key: 'view',
+        label: 'Basic.view',
+        icon: 'heroEye',
+        color: 'primary',
+      },
+    ],
+    selectable: true,
+    sortable: true,
+    infiniteScroll: true,
+    loadingMore: this.tasksStateService.isLoadingMore(),
+    hover: true,
+    striped: true,
+    responsiveBreakpoint: 768,
+    rowClassFunction: (row: Task) => this.getRowClassByPriority(row),
+  }));
 
   ngOnInit(): void {
-    const view = this.view();
-    if (view) {
-      this.configStateService.updateTasksListView(view);
-    }
     this.initializeTaskList();
   }
 
-  protected handlePageChange(event: PaginationParams): void {
-    const { page, pageSize } = event;
-    const currentPagination: PaginationMeta = this.tasksStateService.pagination();
+  ngAfterViewInit(): void {
+    const templates: { [key: string]: TemplateRef<any>; } = {};
 
-    this.tasksStateService.setPagination({
-      ...currentPagination,
-      page,
-    });
+    if (this.statusTemplate) {
+      templates['status'] = this.statusTemplate;
+    }
 
-    const searchParams: GetAllTasksSearchParams = getAllTasksSearchParams({
-      page,
-      pageSize,
-    });
+    if (this.categoriesTemplate) {
+      templates['categories'] = this.categoriesTemplate;
+    }
 
-    this.getAllTasks(searchParams).subscribe();
+    if (this.assignedUsersTemplate) {
+      templates['assignedUsers'] = this.assignedUsersTemplate;
+    }
+
+    this.customTemplates.set(templates);
+  }
+
+  private getTableColumns(): TableColumn[] {
+    return [
+      {
+        key: 'id',
+        label: 'Task.id',
+        type: 'text',
+        sortable: true,
+        width: '6rem',
+        priority: 1,
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'description',
+        label: 'Task.description',
+        type: 'text',
+        align: 'center',
+        verticalAlign: 'middle',
+        sortable: true,
+        truncate: true,
+        maxLines: 2,
+        priority: 2,
+      },
+      {
+        key: 'status',
+        label: 'Task.status',
+        type: 'custom',
+        customTemplate: 'status',
+        sortable: false,
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '8rem',
+        priority: 3,
+      },
+      {
+        key: 'assignedUsers',
+        label: 'Task.assignedUsers',
+        type: 'custom',
+        customTemplate: 'assignedUsers',
+        sortable: false,
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '12rem',
+        priority: 4,
+        hideOn: 'mobile',
+      },
+      {
+        key: 'dateCreation',
+        label: 'Task.dateCreation',
+        type: 'date',
+        sortable: true,
+        hideOn: 'mobile',
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '12rem',
+        priority: 5,
+      },
+      {
+        key: 'dateModification',
+        label: 'Task.dateModification',
+        type: 'date',
+        sortable: true,
+        hideOn: 'mobile',
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '12rem',
+        priority: 6,
+      },
+    ];
+  }
+
+  private getRowClassByPriority(task: Task): string {
+    if (!task.priority) return '';
+
+    switch (task.priority.code) {
+      case 'high':
+        return 'priority-high';
+      case 'low':
+        return 'priority-low';
+      case 'medium':
+      default:
+        return '';
+    }
   }
 
   protected getHelpText(): string {
@@ -163,6 +323,7 @@ export class TaskListPageComponent implements OnInit {
     const searchParams = getAllTasksSearchParams({
       ...filters,
     });
+    this.currentSearchParams.set(searchParams);
     this.getAllTasks(searchParams).subscribe();
   }
 
@@ -194,7 +355,10 @@ export class TaskListPageComponent implements OnInit {
             createdTo: '',
             updatedFrom: '',
             updatedTo: '',
+            page: 0,
+            pageSize: 10,
           });
+          this.currentSearchParams.set(searchParams);
           return this.getAllTasks(searchParams);
         }),
       )
@@ -213,6 +377,9 @@ export class TaskListPageComponent implements OnInit {
       this.tasksStateService.setTaskList([]);
       return EMPTY;
     }
+
+    // Reset state for new search
+    this.tasksStateService.resetState();
 
     return this.tasksService.getAllByProjectId(projectId, searchParams).pipe(
       map(response => {
@@ -235,5 +402,127 @@ export class TaskListPageComponent implements OnInit {
         return EMPTY;
       }),
     );
+  }
+
+  protected handleLoadMore(): void {
+    if (!this.tasksStateService.hasMore() || this.tasksStateService.isLoadingMore()) {
+      return;
+    }
+
+    const currentPagination = this.tasksStateService.pagination();
+    const nextPage = currentPagination.page + 1;
+
+    const currentParams = this.currentSearchParams();
+    const searchParams = {
+      ...currentParams,
+      page: nextPage,
+    };
+
+    const projectId = this.projectId();
+    if (projectId) {
+      this.tasksService.loadMoreByProjectId(projectId, searchParams).pipe(
+        catchError(err => {
+          this.tasksStateService.setLoadingMore(false);
+          if (err.error && err.error.message) {
+            this.notificationService.showNotification(
+              err.error.message,
+              NotificationTypeEnum.Error,
+            );
+          } else {
+            this.notificationService.showNotification(
+              this.translateService.instant('Task.loadMoreError'),
+              NotificationTypeEnum.Error,
+            );
+          }
+          return EMPTY;
+        }),
+      ).subscribe();
+    }
+  }
+
+  protected handleTaskClick(task: any): void {
+    const projectId = this.projectId();
+    if (projectId) {
+      this.router.navigate(['/projects', projectId, 'tasks', 'details', task.id]);
+    }
+  }
+
+  protected handleActionClick(event: { action: string; row: any; }): void {
+    const projectId = this.projectId();
+    if (!projectId) return;
+
+    switch (event.action) {
+      case 'view':
+        this.router.navigate(['/projects', projectId, 'tasks', 'details', event.row.id]);
+        break;
+      case 'edit':
+        this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]);
+        break;
+      case 'delete':
+        if (confirm(this.translateService.instant('Task.deleteConfirm'))) {
+          this.tasksService.delete(event.row.id).subscribe(() => {
+            this.notificationService.showNotification(
+              this.translateService.instant('Task.deleteSuccess'),
+              NotificationTypeEnum.Success,
+            );
+          });
+        }
+        break;
+    }
+  }
+
+  protected handleSortChange(event: { column: string; direction: 'asc' | 'desc'; }): void {
+    const sortByMapping: { [key: string]: string; } = {
+      'dateCreation': 'dateCreation',
+      'dateModification': 'dateModification',
+      'description': 'description',
+      'id': 'id',
+    };
+
+    const backendSortBy = event.column === '' ? 'dateCreation' : (sortByMapping[event.column] || 'dateCreation');
+
+    const currentParams = this.currentSearchParams();
+    const searchParams = {
+      ...currentParams,
+      sortBy: backendSortBy as 'dateCreation' | 'dateModification' | 'description' | 'id',
+      orderBy: event.direction,
+      page: 0, // Reset to first page when sorting
+    };
+
+    this.currentSearchParams.set(searchParams);
+    this.getAllTasks(searchParams).subscribe();
+  }
+
+  protected handleSelectionChange(selectedTasks: Task[]): void {
+    console.log('Selected tasks:', selectedTasks);
+    // TODO: Implement selection handling logic
+  }
+
+  protected getStatusName(status: any): string {
+    if (!status) return '';
+
+    if (status.translations && Array.isArray(status.translations)) {
+      const currentLang = this.translateService.currentLang || 'pl';
+      const translation = status.translations.find((t: any) => t.lang === currentLang);
+      if (translation && translation.name) {
+        return translation.name;
+      }
+    }
+
+    return status.name || `Status #${status.id}`;
+  }
+
+  protected getCategoryName(category: any): string {
+    if (!category) return '';
+
+    if (category.translations && Array.isArray(category.translations)) {
+      const currentLang = this.translateService.currentLang || 'pl';
+      const translation = category.translations.find((t: any) => t.lang === currentLang);
+      if (translation && translation.name) {
+        return translation.name;
+      }
+    }
+
+    return category.name || `Category #${category.id}`;
   }
 }

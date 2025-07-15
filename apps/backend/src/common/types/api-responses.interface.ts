@@ -31,4 +31,5 @@ interface PaginationMeta {
   page: number;
   pageSize: number;
   totalPages: number;
+  hasMore?: boolean;
 }

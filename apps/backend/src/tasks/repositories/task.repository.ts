@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { OrderByEnum } from '../../common/enums/order-by.enum';
 import { GetAllTasksSearchParamsDto } from '../dtos/get-all-tasks-search-params.dto';
 import { Task } from '../entities/task.entity';
+import { TaskSortByEnum } from '../enums/task-sort-by.enum';
 
 @Injectable()
 export class TaskRepository extends Repository<Task> {
@@ -22,8 +24,14 @@ export class TaskRepository extends Repository<Task> {
       .leftJoinAndSelect('task.assignedUsers', 'assignedUsers')
       .leftJoinAndSelect('task.createdBy', 'createdBy')
       .leftJoinAndSelect('task.priority', 'priority')
+      .leftJoinAndSelect('priority.translations', 'priorityTranslations')
+      .leftJoinAndSelect('priorityTranslations.language', 'priorityLanguage')
       .leftJoinAndSelect('task.categories', 'categories')
+      .leftJoinAndSelect('categories.translations', 'categoriesTranslations')
+      .leftJoinAndSelect('categoriesTranslations.language', 'categoriesLanguage')
       .leftJoinAndSelect('task.status', 'status')
+      .leftJoinAndSelect('status.translations', 'statusTranslations')
+      .leftJoinAndSelect('statusTranslations.language', 'statusLanguage')
       .leftJoinAndSelect('task.accessRole', 'accessRole')
       .select([
         'task.id',
@@ -43,8 +51,23 @@ export class TaskRepository extends Repository<Task> {
         'priority.id',
         'priority.code',
         'priority.color',
+        'priorityTranslations.id',
+        'priorityTranslations.name',
+        'priorityTranslations.description',
+        'priorityLanguage.id',
+        'priorityLanguage.code',
         'categories.id',
+        'categoriesTranslations.id',
+        'categoriesTranslations.name',
+        'categoriesTranslations.description',
+        'categoriesLanguage.id',
+        'categoriesLanguage.code',
         'status.id',
+        'statusTranslations.id',
+        'statusTranslations.name',
+        'statusTranslations.description',
+        'statusLanguage.id',
+        'statusLanguage.code',
         'accessRole.id',
       ]);
 
@@ -95,10 +118,23 @@ export class TaskRepository extends Repository<Task> {
     }
 
     if (params.sortBy && params.orderBy) {
-      query.orderBy(
-        `task.${params.sortBy}`,
-        params.orderBy.toUpperCase() as 'ASC' | 'DESC',
-      );
+      const orderDirection = params.orderBy.toUpperCase() as 'ASC' | 'DESC';
+      switch (params.sortBy) {
+        case TaskSortByEnum.DATE_CREATION:
+          query.orderBy('task.dateCreation', orderDirection);
+          break;
+        case TaskSortByEnum.DATE_MODIFICATION:
+          query.orderBy('task.dateModification', orderDirection);
+          break;
+        case TaskSortByEnum.DESCRIPTION:
+          query.orderBy('task.description', orderDirection);
+          break;
+        case TaskSortByEnum.ID:
+          query.orderBy('task.id', orderDirection);
+          break;
+        default:
+          query.orderBy('task.dateCreation', 'DESC');
+      }
     } else {
       query.orderBy('task.dateCreation', 'DESC');
     }

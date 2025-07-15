@@ -70,20 +70,26 @@ export class TasksService implements ITasksService {
     return this.taskRepository.save(taskData);
   }
 
-  public async findAll(params: GetAllTasksSearchParamsDto): Promise<ApiPaginatedResponse<Task>> {
+  public async findAll(params: GetAllTasksSearchParamsDto): Promise<ApiPaginatedResponse<TaskResponseDto>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
     const skip = page * pageSize;
+    const userId = this.cls.get('user').userId;
 
-    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, null);
+    const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, userId);
+
+    const mappedItems = items.map(task => this.mapTaskToResponseDto(task));
+
+    const hasMore = items.length === pageSize && (skip + pageSize) < total;
 
     return {
-      items,
+      items: mappedItems,
       pagination: {
         total,
         page,
         pageSize,
         totalPages: Math.ceil(total / pageSize),
+        hasMore,
       },
     };
   }
@@ -91,7 +97,7 @@ export class TasksService implements ITasksService {
   public async findAllByProjectId(
     projectId: number,
     params: GetAllTasksSearchParamsDto,
-  ): Promise<ApiPaginatedResponse<Task>> {
+  ): Promise<ApiPaginatedResponse<TaskResponseDto>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
     const skip = page * pageSize;
@@ -99,13 +105,18 @@ export class TasksService implements ITasksService {
 
     const [items, total] = await this.taskRepository.findAllWithParams(params, skip, pageSize, userId, projectId);
 
+    const mappedItems = items.map(task => this.mapTaskToResponseDto(task));
+
+    const hasMore = items.length === pageSize && (skip + pageSize) < total;
+
     return {
-      items,
+      items: mappedItems,
       pagination: {
         total,
         page,
         pageSize,
         totalPages: Math.ceil(total / pageSize),
+        hasMore,
       },
     };
   }
