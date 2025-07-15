@@ -18,6 +18,7 @@ export interface ITasksService {
   findOne(id: number): Promise<TaskResponseDto>;
   update(id: number, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto>;
   remove(id: number): Promise<void>;
+  batchDelete(taskIds: number[]): Promise<void>;
   removeByProjectId(projectId: number): Promise<void>;
   createComment(taskId: number, createCommentDto: CreateTaskCommentDto): Promise<TaskComment>;
   removeComment(commentId: number): Promise<void>;

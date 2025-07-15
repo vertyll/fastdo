@@ -16,7 +16,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, distinctUntilChanged, map, switchMap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
+import { ButtonRoleEnum } from 'src/app/shared/enums/modal.enum';
 import { NotificationTypeEnum } from 'src/app/shared/enums/notification.enum';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { AppConfigStateService } from '../config/config.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
@@ -59,9 +61,20 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
           : {{ projectName() }}
         </app-title>
       }
-      <app-button (click)="navigateToAddTask()">
-        {{ 'Task.addTask' | translate }}
-      </app-button>
+      <div class="flex gap-2">
+        <app-button (click)="navigateToAddTask()">
+          {{ 'Task.addTask' | translate }}
+        </app-button>
+        @if (selectedTasks().length > 0) {
+          <app-button 
+            (click)="handleBatchDelete()"
+            [disabled]="selectedTasks().length === 0"
+            cssClass="bg-red-500 hover:bg-red-600 text-white"
+          >
+            {{ 'Task.deleteSelected' | translate }} ({{ selectedTasks().length }})
+          </app-button>
+        }
+      </div>
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)"/>
     </div>
 
@@ -156,6 +169,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
+  private readonly modalService = inject(ModalService);
   private readonly projectsService = inject(ProjectsService);
   private readonly translateService = inject(TranslateService);
 
@@ -164,6 +178,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   protected projectId = signal<string | null>(null);
   protected projectName = signal<string>('');
+  protected selectedTasks = signal<Task[]>([]);
   protected customTemplates = signal<{ [key: string]: TemplateRef<any>; }>({});
   protected currentSearchParams = signal<GetAllTasksSearchParams>({
     q: '',
@@ -494,8 +509,62 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   }
 
   protected handleSelectionChange(selectedTasks: Task[]): void {
-    console.log('Selected tasks:', selectedTasks);
-    // TODO: Implement selection handling logic
+    this.selectedTasks.set(selectedTasks);
+  }
+
+  protected handleBatchDelete(): void {
+    const selected = this.selectedTasks();
+    if (selected.length === 0) return;
+
+    this.modalService.present({
+      title: this.translateService.instant('Task.deleteSelected'),
+      message: this.translateService.instant('Task.batchDeleteConfirm', { count: selected.length }),
+      buttons: [
+        {
+          text: this.translateService.instant('Basic.cancel'),
+          role: ButtonRoleEnum.Cancel,
+          handler: () => {
+            return true;
+          },
+        },
+        {
+          text: this.translateService.instant('Basic.delete'),
+          role: ButtonRoleEnum.Reject,
+          handler: () => {
+            this.performBatchDelete(selected);
+            return true;
+          },
+        },
+      ],
+    });
+  }
+
+  private performBatchDelete(selectedTasks: Task[]): void {
+    const taskIds = selectedTasks.map(task => task.id);
+    this.tasksService.batchDelete(taskIds).subscribe({
+      next: () => {
+        this.notificationService.showNotification(
+          this.translateService.instant('Task.batchDeleteSuccess', { count: selectedTasks.length }),
+          NotificationTypeEnum.Success,
+        );
+        this.selectedTasks.set([]);
+        const currentParams = this.currentSearchParams();
+        this.getAllTasks(currentParams).subscribe();
+      },
+      error: (err: any) => {
+        if (err.error && err.error.message) {
+          this.notificationService.showNotification(
+            err.error.message,
+            NotificationTypeEnum.Error,
+          );
+        } else {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.batchDeleteError'),
+            NotificationTypeEnum.Error,
+          );
+        }
+      },
+    });
   }
 
   protected getStatusName(status: any): string {

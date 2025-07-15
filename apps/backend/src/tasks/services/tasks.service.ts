@@ -10,6 +10,7 @@ import { Project } from 'src/projects/entities/project.entity';
 import { ProjectRolePermissionEnum } from 'src/projects/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from 'src/projects/enums/project-role.enum';
 import { User } from 'src/users/entities/user.entity';
+import { In } from 'typeorm';
 import { TranslationDto } from '../../common/dtos/translation.dto';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
@@ -246,6 +247,40 @@ export class TasksService implements ITasksService {
     });
     this.validateTaskAccess(task, userId);
     await this.taskRepository.remove(task);
+  }
+
+  public async batchDelete(taskIds: number[]): Promise<void> {
+    const userId = this.cls.get('user').userId;
+
+    const tasks = await this.taskRepository.find({
+      where: { id: In(taskIds) },
+      relations: [
+        'project',
+        'assignedUsers',
+        'createdBy',
+        'priority',
+        'priority.translations',
+        'categories',
+        'categories.translations',
+        'status',
+        'status.translations',
+        'accessRole',
+        'accessRole.translations',
+        'taskAttachments',
+        'comments',
+        'comments.author',
+      ],
+    });
+
+    if (tasks.length !== taskIds.length) {
+      throw new Error('Some tasks not found');
+    }
+
+    tasks.forEach(task => {
+      this.validateTaskAccess(task, userId);
+    });
+
+    await this.taskRepository.remove(tasks);
   }
 
   public async removeByProjectId(projectId: number): Promise<void> {

@@ -295,10 +295,12 @@ export interface TableConfig {
       border-bottom: 1px solid #e5e7eb;
       padding: 0.75rem 1rem;
       text-align: left;
+      z-index: 1;
     }
 
-    .header-center { text-align: center; }
-    .header-right { text-align: right; }
+    .mat-mdc-header-row {
+      z-index: 1;
+    }
 
     .mat-mdc-cell {
       border-bottom: 1px solid #f3f4f6;
@@ -599,7 +601,8 @@ export interface TableConfig {
     .dark .mat-mdc-header-cell {
       color: #d1d5db; 
       border-bottom-color: #4b5563; 
-      background-color: #374151; 
+      background-color: #374151;
+      z-index: 1; 
     }
     
     .dark .mat-mdc-cell {
@@ -776,7 +779,6 @@ export interface TableConfig {
     
     .priority-high {
       background-color: #fef2f2 !important; 
-      border-left: 4px solid #ef4444; 
     }
 
     .priority-high:hover {
@@ -785,7 +787,6 @@ export interface TableConfig {
 
     .priority-low {
       background-color: #eff6ff !important; 
-      border-left: 4px solid #3b82f6; 
     }
 
     .priority-low:hover {
@@ -795,7 +796,6 @@ export interface TableConfig {
     
     .dark .priority-high {
       background-color: #7f1d1d !important; 
-      border-left-color: #fca5a5; 
     }
 
     .dark .priority-high:hover {
@@ -804,7 +804,6 @@ export interface TableConfig {
 
     .dark .priority-low {
       background-color: #1e3a8a !important; 
-      border-left-color: #93c5fd; 
     }
 
     .dark .priority-low:hover {

@@ -39,7 +39,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-spacing-4"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-spacing-4"
       tabindex="-1"
       role="dialog"
       [ngStyle]="{ display: modalService.modal().visible ? 'flex' : 'none' }"

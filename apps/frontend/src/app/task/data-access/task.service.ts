@@ -80,6 +80,16 @@ export class TasksService {
     );
   }
 
+  public batchDelete(taskIds: number[]): Observable<ApiResponse<void>> {
+    return this.httpService.batchDelete(taskIds).pipe(
+      tap(() => {
+        taskIds.forEach(taskId => {
+          this.state.removeTask(taskId);
+        });
+      }),
+    );
+  }
+
   public update(taskId: number, payload: TaskUpdatePayload): Observable<ApiResponse<Task>> {
     return this.httpService.update(taskId, payload).pipe(
       tap(response => {

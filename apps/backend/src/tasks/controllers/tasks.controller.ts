@@ -95,6 +95,29 @@ export class TasksController {
     return this.tasksService.remove(+id);
   }
 
+  @Post('batch-delete')
+  @ApiOperation({ summary: 'Delete multiple tasks' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        taskIds: {
+          type: 'array',
+          items: { type: 'number' },
+          description: 'Array of task IDs to delete',
+        },
+      },
+      required: ['taskIds'],
+    },
+  })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'The tasks have been successfully deleted.',
+  })
+  public batchDelete(@Body() body: { taskIds: number[]; }): Promise<void> {
+    return this.tasksService.batchDelete(body.taskIds);
+  }
+
   @Post(':id/comments')
   @ApiOperation({ summary: 'Create a comment for a task' })
   @ApiBody({ type: CreateTaskCommentDto })

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { OrderByEnum } from '../../common/enums/order-by.enum';
 import { GetAllTasksSearchParamsDto } from '../dtos/get-all-tasks-search-params.dto';
 import { Task } from '../entities/task.entity';
 import { TaskSortByEnum } from '../enums/task-sort-by.enum';

@@ -43,6 +43,12 @@ export class TasksApiService {
     );
   }
 
+  public batchDelete(taskIds: number[]): Observable<ApiResponse<void>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<void>>(`${this.URL}/tasks/batch-delete`, { taskIds }),
+    );
+  }
+
   public update(taskId: number, payload: TaskUpdatePayload): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
       this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, payload),
