@@ -29,9 +29,9 @@ export class ProjectUserRoleService {
     }
 
     const newRole = this.projectUserRoleRepository.create({
-      project: { id: projectId } as any,
-      user: { id: userId } as any,
-      projectRole: { id: role } as any,
+      project: { id: projectId },
+      user: { id: userId },
+      projectRole: { id: role },
     });
 
     return this.projectUserRoleRepository.save(newRole);

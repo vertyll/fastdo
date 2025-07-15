@@ -38,12 +38,11 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     private readonly configService: ConfigService,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  afterInit(_server: SocketServer) {
+  afterInit(_server: SocketServer): void {
     this.logger.log('WebSocket Gateway initialized');
   }
 
-  async handleConnection(client: AuthenticatedSocket) {
+  async handleConnection(client: AuthenticatedSocket): Promise<void> {
     try {
       const token = this.extractTokenFromClient(client);
       const clientIp = client.handshake.headers['x-forwarded-for'] || client.handshake.headers['x-real-ip']
@@ -96,7 +95,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
-  handleDisconnect(client: AuthenticatedSocket) {
+  handleDisconnect(client: AuthenticatedSocket): void {
     if ((client as any).userId) {
       this.socketConnectionService.removeConnection((client as any).userId, client.id);
       this.logger.log(`User ${(client as any).userId} disconnected`);
@@ -203,13 +202,13 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
-  emitToUser(userId: number, event: string, data: any) {
+  emitToUser(userId: number, event: string, data: any): void {
     const room = `user_${userId}`;
     this.server.to(room).emit(event, data);
     this.logger.debug(`Emitted '${event}' to user ${userId}`);
   }
 
-  emitToRoom(room: string, event: string, data: any) {
+  emitToRoom(room: string, event: string, data: any): void {
     this.server.to(room).emit(event, data);
     this.logger.debug(`Emitted '${event}' to room '${room}'`);
   }

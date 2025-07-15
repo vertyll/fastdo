@@ -9,15 +9,14 @@ export interface FileValidationOptions extends ValidationOptions {
 }
 
 export function IsFile(options: FileValidationOptions = {}) {
-  return function(target: object, propertyName: string) {
+  return function(target: object, propertyName: string): void {
     registerDecorator({
       name: 'isFile',
       target: target.constructor,
       propertyName: propertyName,
       options: options,
       validator: {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        validate(value: any, _args: ValidationArguments) {
+        validate(value: any, _args: ValidationArguments): boolean {
           if (value === 'null') return true;
           if (!value) return true;
           if (!value.type || value.type !== 'file') return false;

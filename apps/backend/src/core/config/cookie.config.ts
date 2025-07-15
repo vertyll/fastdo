@@ -6,7 +6,7 @@ import { RefreshTokenCookieConfig, SecurityConfig } from './types/app.config.typ
 export class CookieConfigService {
   constructor(private configService: ConfigService) {}
 
-  private getCookieConfig() {
+  private getCookieConfig(): SecurityConfig {
     return this.configService.getOrThrow<SecurityConfig>('app.security');
   }
 

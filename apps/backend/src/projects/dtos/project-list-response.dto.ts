@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TranslationDto } from 'src/common/dtos/translation.dto';
-import { ProjectRoleEnum } from '../enums/project-role.enum';
 
 export class ProjectListResponseDto {
   @ApiProperty()

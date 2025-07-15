@@ -650,7 +650,7 @@ export class ProjectsService {
     invitationId: number,
     status: ProjectInvitationStatusEnum,
     manager?: EntityManager,
-  ) {
+  ): Promise<void> {
     const repo = manager ? manager.getRepository(Notification) : this.notificationRepository;
     const notifications = await repo.find({ where: { type: NotificationTypeEnum.PROJECT_INVITATION } });
     for (const notification of notifications) {

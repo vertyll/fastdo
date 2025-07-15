@@ -23,6 +23,7 @@ import { TaskPriority } from '../entities/task-priority.entity';
 import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
+import { TaskData } from '../types/tasks.types';
 
 @Injectable()
 export class TasksService implements ITasksService {
@@ -35,7 +36,7 @@ export class TasksService implements ITasksService {
   public async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const userId = this.cls.get('user').userId;
 
-    const taskData: any = {
+    const taskData: TaskData = {
       description: createTaskDto.description,
       additionalDescription: createTaskDto.additionalDescription,
       priceEstimation: createTaskDto.priceEstimation || 0,

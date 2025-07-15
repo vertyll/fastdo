@@ -113,7 +113,7 @@ export interface MailConfig {
   dev: MailDevConfig;
 }
 
-interface FileStorageLocal {
+export interface FileStorageLocal {
   uploadDirPath: string;
 }
 

@@ -7,35 +7,35 @@ export const MULTIPART_JSON_FIELDS = Symbol('multipart:jsonFields');
 export const MULTIPART_BASE_CLASSES = Symbol('multipart:baseClasses');
 
 export function MultipartArray(): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol) => {
+  return (target: object, propertyKey: string | symbol) => {
     const existingFields = Reflect.getMetadata(MULTIPART_ARRAY_FIELDS, target.constructor) || [];
     Reflect.defineMetadata(MULTIPART_ARRAY_FIELDS, [...existingFields, propertyKey], target.constructor);
   };
 }
 
 export function MultipartBoolean(): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol) => {
+  return (target: object, propertyKey: string | symbol) => {
     const existingFields = Reflect.getMetadata(MULTIPART_BOOLEAN_FIELDS, target.constructor) || [];
     Reflect.defineMetadata(MULTIPART_BOOLEAN_FIELDS, [...existingFields, propertyKey], target.constructor);
   };
 }
 
 export function MultipartNumber(): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol) => {
+  return (target: object, propertyKey: string | symbol) => {
     const existingFields = Reflect.getMetadata(MULTIPART_NUMBER_FIELDS, target.constructor) || [];
     Reflect.defineMetadata(MULTIPART_NUMBER_FIELDS, [...existingFields, propertyKey], target.constructor);
   };
 }
 
 export function MultipartJSON(): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol) => {
+  return (target: object, propertyKey: string | symbol) => {
     const existingFields = Reflect.getMetadata(MULTIPART_JSON_FIELDS, target.constructor) || [];
     Reflect.defineMetadata(MULTIPART_JSON_FIELDS, [...existingFields, propertyKey], target.constructor);
   };
 }
 
-export function InheritsMultipartMetadata(baseClass: new() => any): ClassDecorator {
-  return (target: any) => {
+export function InheritsMultipartMetadata(baseClass: new() => object): ClassDecorator {
+  return (target: object) => {
     const baseArrayFields = Reflect.getMetadata(MULTIPART_ARRAY_FIELDS, baseClass) || [];
     const baseBooleanFields = Reflect.getMetadata(MULTIPART_BOOLEAN_FIELDS, baseClass) || [];
     const baseNumberFields = Reflect.getMetadata(MULTIPART_NUMBER_FIELDS, baseClass) || [];

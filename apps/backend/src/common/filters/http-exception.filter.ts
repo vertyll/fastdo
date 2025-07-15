@@ -4,6 +4,20 @@ import { I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { ApiErrorResponse } from '../types/api-responses.interface';
 
+interface ValidationFieldError {
+  field: string;
+  errors: string[];
+}
+
+interface ResponseBody {
+  statusCode: number;
+  timestamp: string;
+  path: string;
+  method: string;
+  message: string;
+  fields?: ValidationFieldError[];
+}
+
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(HttpExceptionFilter.name);
@@ -11,18 +25,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private getI18n(host: ArgumentsHost): I18nContext<I18nTranslations> {
     const i18n = I18nContext.current<I18nTranslations>(host);
     if (!i18n) throw new Error('I18nContext not available');
-
+    
     return i18n;
   }
 
-  public catch(exception: HttpException, host: ArgumentsHost) {
+  public catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
     const status = exception.getStatus();
     const i18n = this.getI18n(host);
 
-    const responseBody: any = {
+    const responseBody: ResponseBody = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
@@ -58,7 +72,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private extractFields(exception: HttpException): any {
+  private extractFields(exception: HttpException): ValidationFieldError[] | null {
     const response = exception.getResponse() as ApiErrorResponse;
     if (typeof response === 'object' && response.message) {
       if (Array.isArray(response.message)) {
@@ -69,7 +83,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
             }
             return null;
           })
-          .filter((msg: any) => msg !== null);
+          .filter((msg: any) => msg !== null) as ValidationFieldError[];
+        
         return fields.length > 0 ? fields : null;
       }
     }

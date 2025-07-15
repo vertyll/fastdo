@@ -2,7 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
 import { ApiWrappedResponseOptions } from '../types/api-responses.interface';
 
-export function ApiWrappedResponse(options: ApiWrappedResponseOptions) {
+export function ApiWrappedResponse(options: ApiWrappedResponseOptions): MethodDecorator {
   let dataSchema: any;
 
   if (options.type) {

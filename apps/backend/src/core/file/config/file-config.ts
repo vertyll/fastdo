@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { FILE_CONSTANTS, StorageType } from '../../config/types/app.config.type';
+import { FILE_CONSTANTS, FileStorageLocal, StorageType } from '../../config/types/app.config.type';
 import { FileConfig } from '../types/file-config.interface';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class FileConfigService {
     return storageType as StorageType || StorageType.LOCAL;
   }
 
-  private getLocalConfig() {
+  private getLocalConfig(): FileStorageLocal {
     const uploadDirPath = this.configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');
     return {
       uploadDirPath,

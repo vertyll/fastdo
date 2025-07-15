@@ -11,7 +11,7 @@ export class EventEmitterService implements IEventEmitterService {
   constructor(private readonly socketConnectionService: SocketConnectionService) {}
 
   // Method to set gateway reference (called from module)
-  public setGateway(gateway: any) {
+  public setGateway(gateway: any): void {
     this.gateway = gateway;
   }
 
