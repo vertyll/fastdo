@@ -295,12 +295,7 @@ import { Project } from './models/Project';
             {{ 'Basic.cancel' | translate }}
           </app-button>
 
-          <ng-container
-            *appHasProjectPermission="{
-              requiredPermissions: [ProjectRolePermissionEnum.EDIT_PROJECT],
-              userPermissions: currentProject?.permissions ?? [],
-            }"
-          >
+          @if (!isEditMode) {
             <app-button
               type="submit"
               [disabled]="projectForm.invalid || isSubmitting"
@@ -308,12 +303,28 @@ import { Project } from './models/Project';
               {{
                 isSubmitting
                   ? ('Basic.saving' | translate)
-                  : isEditMode
-                    ? ('Basic.update' | translate)
-                    : ('Basic.save' | translate)
+                  : ('Basic.save' | translate)
               }}
             </app-button>
-          </ng-container>
+          } @else {
+            <ng-container
+              *appHasProjectPermission="{
+                requiredPermissions: [ProjectRolePermissionEnum.EDIT_PROJECT],
+                userPermissions: currentProject?.permissions ?? [],
+              }"
+            >
+              <app-button
+                type="submit"
+                [disabled]="projectForm.invalid || isSubmitting"
+              >
+                {{
+                  isSubmitting
+                    ? ('Basic.saving' | translate)
+                    : ('Basic.update' | translate)
+                }}
+              </app-button>
+            </ng-container>
+          }
         </div>
 
         @if (fieldErrors['name']) {

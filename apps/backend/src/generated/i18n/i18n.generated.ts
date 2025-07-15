@@ -2,142 +2,142 @@
 
 /* eslint-disable */
 /* prettier-ignore */
-import { Path } from 'nestjs-i18n';
+import { Path } from "nestjs-i18n";
 /* prettier-ignore */
 export type I18nTranslations = {
-  'messages': {
-    'Common': {
-      'success': string;
+    "messages": {
+        "Common": {
+            "success": string;
+        };
+        "Errors": {
+            "unknownError": string;
+            "InternalServerError": string;
+        };
+        "Validation": {
+            "errorOccurred": string;
+            "failed": string;
+            "isEmail": string;
+            "isString": string;
+            "uppercaseLetter": string;
+            "specialCharacter": string;
+            "minLength": string;
+            "isInteger": string;
+            "termsRequired": string;
+            "privacyPolicyRequired": string;
+            "unauthorized": string;
+            "isDuration": string;
+            "mustBePositive": string;
+        };
+        "Auth": {
+            "errors": {
+                "invalidToken": string;
+                "tokenExpired": string;
+                "verifyingTokenFailed": string;
+                "invalidCredentials": string;
+                "userAlreadyExists": string;
+                "roleNotFound": string;
+                "emailNotConfirmed": string;
+                "invalidRefreshToken": string;
+                "unauthorized": string;
+            };
+        };
+        "User": {
+            "errors": {
+                "userNotFound": string;
+                "emailAlreadyExists": string;
+                "invalidPassword": string;
+                "avatarUploadFailed": string;
+                "emailSendFailed": string;
+            };
+        };
+        "File": {
+            "errors": {
+                "fileValidation": string;
+                "fileNotFound": string;
+                "fileNotProvided": string;
+                "fileNotDeleted": string;
+                "fileNotUploaded": string;
+                "fileNotUpdated": string;
+                "invalidStorageType": string;
+                "failedExtractFileNameFromPath": string;
+                "filedUploadFileToLocalStorage": string;
+                "exceededMaxFileSize": string;
+                "fileTypeNotAllowed": string;
+                "failedToProcessFileUpload": string;
+                "formDataError": string;
+                "fileProcessingError": string;
+                "invalidFile": string;
+                "invalidMimeType": string;
+                "fileTooLarge": string;
+            };
+        };
+        "Mail": {
+            "confirmationEmail": {
+                "subject": string;
+            };
+            "emailChangeEmail": {
+                "subject": string;
+            };
+            "resetPasswordEmail": {
+                "subject": string;
+            };
+            "errors": {
+                "missingMailConfiguration": string;
+                "failedToSendEmail": string;
+                "mailDevNotAvailable": string;
+            };
+        };
+        "Roles": {
+            "errors": {
+                "roleNotFound": string;
+            };
+        };
+        "TermsAndPolicies": {
+            "errors": {
+                "termsNotFound": string;
+                "PrivacyPolicyNotFound": string;
+            };
+        };
+        "ProjectUserRole": {
+            "errors": {
+                "roleNotFound": string;
+            };
+        };
+        "Projects": {
+            "errors": {
+                "managerRoleNotFound": string;
+                "inviterNotFound": string;
+                "projectNotFound": string;
+                "updaterNotFound": string;
+                "updaterNotInNewUsersList": string;
+                "cannotRemoveYourselfFromProject": string;
+                "lastManagerCannotBeRemoved": string;
+                "projectNotFoundOrAccessDenied": string;
+                "accessDeniedToEditPublicProject": string;
+                "accessDeniedToEditPrivateProject": string;
+                "invitationNotFoundOrAlreadyHandled": string;
+                "notAllowedToAcceptInvitation": string;
+                "notAllowedToRejectInvitation": string;
+                "accessDeniedToManageProject": string;
+            };
+            "notifications": {
+                "invitationTitle": string;
+                "invitationMessage": string;
+            };
+            "invitation": string;
+        };
+        "Tasks": {
+            "errors": {
+                "taskNotFound": string;
+                "commentNotFound": string;
+                "commentNotYourOwn": string;
+                "accessDeniedToTask": string;
+            };
+            "assigned": string;
+            "statusChanged": string;
+            "commentAdded": string;
+        };
     };
-    'Errors': {
-      'unknownError': string;
-      'InternalServerError': string;
-    };
-    'Validation': {
-      'errorOccurred': string;
-      'failed': string;
-      'isEmail': string;
-      'isString': string;
-      'uppercaseLetter': string;
-      'specialCharacter': string;
-      'minLength': string;
-      'isInteger': string;
-      'termsRequired': string;
-      'privacyPolicyRequired': string;
-      'unauthorized': string;
-      'isDuration': string;
-      'mustBePositive': string;
-    };
-    'Auth': {
-      'errors': {
-        'invalidToken': string;
-        'tokenExpired': string;
-        'verifyingTokenFailed': string;
-        'invalidCredentials': string;
-        'userAlreadyExists': string;
-        'roleNotFound': string;
-        'emailNotConfirmed': string;
-        'invalidRefreshToken': string;
-        'unauthorized': string;
-      };
-    };
-    'User': {
-      'errors': {
-        'userNotFound': string;
-        'emailAlreadyExists': string;
-        'invalidPassword': string;
-        'avatarUploadFailed': string;
-        'emailSendFailed': string;
-      };
-    };
-    'File': {
-      'errors': {
-        'fileValidation': string;
-        'fileNotFound': string;
-        'fileNotProvided': string;
-        'fileNotDeleted': string;
-        'fileNotUploaded': string;
-        'fileNotUpdated': string;
-        'invalidStorageType': string;
-        'failedExtractFileNameFromPath': string;
-        'filedUploadFileToLocalStorage': string;
-        'exceededMaxFileSize': string;
-        'fileTypeNotAllowed': string;
-        'failedToProcessFileUpload': string;
-        'formDataError': string;
-        'fileProcessingError': string;
-        'invalidFile': string;
-        'invalidMimeType': string;
-        'fileTooLarge': string;
-      };
-    };
-    'Mail': {
-      'confirmationEmail': {
-        'subject': string;
-      };
-      'emailChangeEmail': {
-        'subject': string;
-      };
-      'resetPasswordEmail': {
-        'subject': string;
-      };
-      'errors': {
-        'missingMailConfiguration': string;
-        'failedToSendEmail': string;
-        'mailDevNotAvailable': string;
-      };
-    };
-    'Roles': {
-      'errors': {
-        'roleNotFound': string;
-      };
-    };
-    'TermsAndPolicies': {
-      'errors': {
-        'termsNotFound': string;
-        'PrivacyPolicyNotFound': string;
-      };
-    };
-    'ProjectUserRole': {
-      'errors': {
-        'roleNotFound': string;
-      };
-    };
-    'Projects': {
-      'errors': {
-        'managerRoleNotFound': string;
-        'inviterNotFound': string;
-        'projectNotFound': string;
-        'updaterNotFound': string;
-        'updaterNotInNewUsersList': string;
-        'cannotRemoveYourselfFromProject': string;
-        'lastManagerCannotBeRemoved': string;
-        'projectNotFoundOrAccessDenied': string;
-        'accessDeniedToEditPublicProject': string;
-        'accessDeniedToEditPrivateProject': string;
-        'invitationNotFoundOrAlreadyHandled': string;
-        'notAllowedToAcceptInvitation': string;
-        'notAllowedToRejectInvitation': string;
-        'accessDeniedToManageProject': string;
-      };
-      'notifications': {
-        'invitationTitle': string;
-        'invitationMessage': string;
-      };
-      'invitation': string;
-    };
-    'Tasks': {
-      'errors': {
-        'taskNotFound': string;
-        'commentNotFound': string;
-        'commentNotYourOwn': string;
-        'accessDeniedToTask': string;
-      };
-      'assigned': string;
-      'statusChanged': string;
-      'commentAdded': string;
-    };
-  };
 };
 /* prettier-ignore */
 export type I18nPath = Path<I18nTranslations>;
