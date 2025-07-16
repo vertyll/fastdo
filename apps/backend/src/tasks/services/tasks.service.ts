@@ -74,19 +74,7 @@ export class TasksService implements ITasksService {
 
     const savedTask = await this.taskRepository.save(taskData);
 
-    if (createTaskDto.attachments && createTaskDto.attachments.length > 0) {
-      const attachmentPromises = createTaskDto.attachments.map(async (file) => {
-        const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${savedTask.id}` });
-        
-        const taskAttachment = new TaskAttachment();
-        taskAttachment.task = savedTask;
-        taskAttachment.file = { id: uploadedFile.id } as any;
-        
-        return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
-      });
-
-      await Promise.all(attachmentPromises);
-    }
+    await this.processTaskAttachments(savedTask, createTaskDto.attachments);
 
     return savedTask;
   }
@@ -223,19 +211,7 @@ export class TasksService implements ITasksService {
 
     await this.taskRepository.save(task);
 
-    if (updateTaskDto.attachments && updateTaskDto.attachments.length > 0) {
-      const attachmentPromises = updateTaskDto.attachments.map(async (file) => {
-        const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${task.id}` });
-        
-        const taskAttachment = new TaskAttachment();
-        taskAttachment.task = task;
-        taskAttachment.file = { id: uploadedFile.id } as any;
-        
-        return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
-      });
-
-      await Promise.all(attachmentPromises);
-    }
+    await this.processTaskAttachments(task, updateTaskDto.attachments);
 
     const updatedTask = await this.taskRepository.findOneOrFail({
       where: { id },
@@ -332,19 +308,7 @@ export class TasksService implements ITasksService {
 
     const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
 
-    if (createCommentDto.attachments && createCommentDto.attachments.length > 0) {
-      const attachmentPromises = createCommentDto.attachments.map(async (file) => {
-        const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${savedComment.id}` });
-        
-        const commentAttachment = new TaskCommentAttachment();
-        commentAttachment.comment = savedComment;
-        commentAttachment.file = { id: uploadedFile.id } as any;
-        
-        return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
-      });
-
-      await Promise.all(attachmentPromises);
-    }
+    await this.processCommentAttachments(savedComment, taskId, createCommentDto.attachments);
 
     return savedComment;
   }
@@ -391,6 +355,42 @@ export class TasksService implements ITasksService {
     // TODO: Handle attachments if provided in updateCommentDto
 
     return this.taskRepository.manager.save(TaskComment, comment);
+  }
+
+  private async processTaskAttachments(task: Task, attachments?: any[]): Promise<void> {
+    if (!attachments || attachments.length === 0) {
+      return;
+    }
+
+    const attachmentPromises = attachments.map(async (file) => {
+      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${task.id}` });
+      
+      const taskAttachment = new TaskAttachment();
+      taskAttachment.task = task;
+      taskAttachment.file = { id: uploadedFile.id } as any;
+      
+      return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
+    });
+
+    await Promise.all(attachmentPromises);
+  }
+
+  private async processCommentAttachments(comment: TaskComment, taskId: number, attachments?: any[]): Promise<void> {
+    if (!attachments || attachments.length === 0) {
+      return;
+    }
+
+    const attachmentPromises = attachments.map(async (file) => {
+      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${comment.id}` });
+      
+      const commentAttachment = new TaskCommentAttachment();
+      commentAttachment.comment = comment;
+      commentAttachment.file = { id: uploadedFile.id } as any;
+      
+      return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
+    });
+
+    await Promise.all(attachmentPromises);
   }
 
   private validateTaskAccess(task: Task, userId: number): void {
