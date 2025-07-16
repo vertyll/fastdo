@@ -338,7 +338,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     }) as CustomFileStream;
 
     return {
-      toBuffer: async () => {
+      toBuffer: async (): Promise<Buffer> => {
         // Convert stream to buffer when needed
         const chunks: Buffer[] = [];
         
@@ -431,7 +431,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     try {
       const classFields: string[] = Reflect.getMetadata(metadataKey, targetClass) || [];
       fields.push(...classFields);
-    } catch (error) {
+    } catch (_) {
       // Silent error - no metadata is normal
     }
 
@@ -441,7 +441,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
         const baseFields: string[] = Reflect.getMetadata(metadataKey, baseClass) || [];
         fields.push(...baseFields);
       }
-    } catch (error) {
+    } catch (_) {
       // Silent error - no metadata is normal
     }
 
