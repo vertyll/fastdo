@@ -91,6 +91,12 @@ export class TasksApiService {
     );
   }
 
+  public updateWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<Task>> {
+    return this.withLoadingState(
+      this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, formData),
+    );
+  }
+
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {
     this.$idle.set(false);
     this.$error.set(null);

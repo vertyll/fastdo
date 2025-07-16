@@ -480,87 +480,81 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   private createTask(taskData: AddTaskDto): void {
-    // Check if we have files to upload
-    if (this.attachments().length > 0) {
-      // Use FormData for files
-      const formData = new FormData();
-      
-      // Add all form fields
-      Object.keys(taskData).forEach(key => {
-        const value = (taskData as any)[key];
-        if (value !== undefined) {
-          if (Array.isArray(value)) {
-            value.forEach(item => formData.append(key, item.toString()));
-          } else {
-            formData.append(key, value.toString());
+    const formData = new FormData();
+    
+    Object.keys(taskData).forEach(key => {
+      const value = (taskData as any)[key];
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            const jsonValue = JSON.stringify(value);
+            formData.append(key, jsonValue);
           }
+        } else {
+          formData.append(key, value.toString());
         }
+      }
+    });
+
+    this.attachments().forEach(attachment => {
+      formData.append('attachments', attachment.file);
+    });
+
+    const entries: string[] = [];
+    formData.forEach((value, key) => {
+      entries.push(`${key}: ${value}`);
+    });
+
+    this.tasksService.addWithFiles(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.addSuccess'),
+            NotificationTypeEnum.Success,
+          );
+
+          const newTaskId = response?.data?.id;
+          const currentProjectId = this.projectId();
+
+          if (newTaskId) {
+            this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
+          } else {
+            this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+          }
+        },
+        error: error => {
+          this.handleSubmissionError(error);
+        },
+        complete: () => {
+          this.submitting.set(false);
+        },
       });
-
-      // Add attachments
-      this.attachments().forEach(attachment => {
-        formData.append('attachments', attachment.file);
-      });
-
-      this.tasksService.addWithFiles(formData)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: response => {
-            this.notificationService.showNotification(
-              this.translateService.instant('Task.addSuccess'),
-              NotificationTypeEnum.Success,
-            );
-
-            const newTaskId = response?.data?.id;
-            const currentProjectId = this.projectId();
-
-            if (newTaskId) {
-              this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
-            } else {
-              this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
-            }
-          },
-          error: error => {
-            this.handleSubmissionError(error);
-          },
-          complete: () => {
-            this.submitting.set(false);
-          },
-        });
-    } else {
-      // Use regular JSON request
-      this.tasksService.add(taskData)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: response => {
-            this.notificationService.showNotification(
-              this.translateService.instant('Task.addSuccess'),
-              NotificationTypeEnum.Success,
-            );
-
-            const newTaskId = response?.data?.id;
-            const currentProjectId = this.projectId();
-
-            if (newTaskId) {
-              this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
-            } else {
-              this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
-            }
-          },
-          error: error => {
-            this.handleSubmissionError(error);
-          },
-          complete: () => {
-            this.submitting.set(false);
-          },
-        });
-    }
   }
 
   private updateTask(taskId: number, taskData: AddTaskDto): void {
     const { projectId, ...updateData } = taskData;
 
-    this.tasksService.update(taskId, updateData)
+    const formData = new FormData();
+    
+    Object.keys(updateData).forEach(key => {
+      const value = (updateData as any)[key];
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            formData.append(key, JSON.stringify(value));
+          }
+        } else {
+          formData.append(key, value.toString());
+        }
+      }
+    });
+
+    this.attachments().forEach(attachment => {
+      formData.append('attachments', attachment.file);
+    });
+
+    this.tasksService.updateWithFiles(taskId, formData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {

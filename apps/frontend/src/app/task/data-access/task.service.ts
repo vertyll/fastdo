@@ -114,6 +114,14 @@ export class TasksService {
     );
   }
 
+  public updateWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<Task>> {
+    return this.httpService.updateWithFiles(taskId, formData).pipe(
+      tap(response => {
+        this.state.updateTask(response.data);
+      }),
+    );
+  }
+
   public getOne(taskId: number): Observable<ApiResponse<Task>> {
     return this.httpService.getOne(taskId);
   }

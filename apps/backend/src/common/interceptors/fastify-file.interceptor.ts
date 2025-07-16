@@ -369,6 +369,22 @@ export class FastifyFileInterceptor implements NestInterceptor {
     const numberFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_NUMBER_FIELDS);
     const jsonFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_JSON_FIELDS);
 
+    arrayFields.forEach(field => {
+      if (formData[field] !== undefined) {
+        if (typeof formData[field] === 'string') {
+          try {
+            const parsed = JSON.parse(formData[field]);
+            formData[field] = Array.isArray(parsed) ? parsed : [parsed];
+          } catch (error) {
+            console.warn(`Failed to parse JSON for array field ${field}, treating as single value:`, error);
+            formData[field] = [formData[field]];
+          }
+        } else if (!Array.isArray(formData[field])) {
+          formData[field] = [formData[field]];
+        }
+      }
+    });
+
     jsonFields.forEach(field => {
       if (formData[field] !== undefined) {
         if (typeof formData[field] === 'string') {
@@ -379,12 +395,6 @@ export class FastifyFileInterceptor implements NestInterceptor {
             formData[field] = [];
           }
         }
-      }
-    });
-
-    arrayFields.forEach(field => {
-      if (!jsonFields.includes(field) && formData[field] && !Array.isArray(formData[field])) {
-        formData[field] = [formData[field]];
       }
     });
 
