@@ -1,11 +1,11 @@
+import { MultipartFile } from '@fastify/multipart';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsArray, IsNumber, IsOptional, IsString, Max, Min, MinLength } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
-import { MultipartFile } from '@fastify/multipart';
-import { I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { MultipartArray, MultipartNumber } from '../../common/decorators/multipart-transform.decorator';
 import { IsFile } from '../../common/decorators/is-file.decorator';
+import { MultipartArray, MultipartNumber } from '../../common/decorators/multipart-transform.decorator';
+import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 export class UpdateTaskDto {
   @ApiProperty({ required: false, description: 'Task description' })
@@ -133,14 +133,14 @@ export class UpdateTaskDto {
   @IsNumber({}, { each: true })
   assignedUserIds?: number[];
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: 'array',
-    items: { 
-      type: 'string', 
-      format: 'binary' 
+    items: {
+      type: 'string',
+      format: 'binary',
     },
     required: false,
-    description: 'Task attachment files' 
+    description: 'Task attachment files',
   })
   @IsOptional()
   @MultipartArray()

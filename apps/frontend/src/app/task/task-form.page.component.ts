@@ -481,7 +481,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
   private createTask(taskData: AddTaskDto): void {
     const formData = new FormData();
-    
+
     Object.keys(taskData).forEach(key => {
       const value = (taskData as any)[key];
       if (value !== undefined) {
@@ -536,7 +536,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     const { projectId, ...updateData } = taskData;
 
     const formData = new FormData();
-    
+
     Object.keys(updateData).forEach(key => {
       const value = (updateData as any)[key];
       if (value !== undefined) {

@@ -14,14 +14,14 @@ export class CreateTaskCommentDto {
   })
   content: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: 'array',
-    items: { 
-      type: 'string', 
-      format: 'binary' 
+    items: {
+      type: 'string',
+      format: 'binary',
     },
     required: false,
-    description: 'Comment attachment files (max 3 files, 5MB each, 15MB total)' 
+    description: 'Comment attachment files (max 3 files, 5MB each, 15MB total)',
   })
   @IsOptional()
   @MultipartArray()

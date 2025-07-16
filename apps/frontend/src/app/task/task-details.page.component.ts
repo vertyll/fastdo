@@ -3,11 +3,20 @@ import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/co
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroArrowLeft, heroCalendar, heroPaperAirplane, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
+import {
+  heroArrowLeft,
+  heroCalendar,
+  heroDocument,
+  heroPaperAirplane,
+  heroPencil,
+  heroTrash,
+} from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
+import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
+import { ImageComponent } from '../shared/components/organisms/image.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
@@ -25,11 +34,14 @@ import { Task, TaskComment } from './models/Task';
     ReactiveFormsModule,
     FormsModule,
     CustomDatePipe,
+    FileUploadComponent,
+    ImageComponent,
   ],
   providers: [
     provideIcons({
       heroArrowLeft,
       heroCalendar,
+      heroDocument,
       heroPencil,
       heroTrash,
       heroPaperAirplane,
@@ -347,6 +359,37 @@ import { Task, TaskComment } from './models/Task';
               </p>
             </div>
           </div>
+
+          <!-- Task Attachments -->
+          @if (task()?.attachments && task()!.attachments.length > 0) {
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-3">
+                {{ 'Task.attachments' | translate }}
+              </h3>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                @for (attachment of task()!.attachments; track attachment.id) {
+                  <div class="relative">
+                    @if (isImage(attachment.filename || attachment.originalName)) {
+                      <app-image
+                        [initialUrl]="attachment.url || null"
+                        [mode]="'preview'"
+                        [format]="'square'"
+                        [size]="'lg'"
+                        class="w-full h-24 object-cover rounded-md cursor-pointer"
+                      />
+                    } @else {
+                      <div class="flex items-center gap-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md">
+                        <ng-icon name="heroDocument" size="24" class="text-blue-500"></ng-icon>
+                        <span class="text-sm text-text-primary dark:text-dark-text-primary truncate">
+                          {{ attachment.filename || attachment.originalName }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
         </div>
 
         <!-- Comments Section -->
@@ -392,6 +435,23 @@ import { Task, TaskComment } from './models/Task';
                 </div>
               }
             </div>
+
+            <!-- Comment Attachments -->
+            <div class="mb-4">
+              <label
+                class="block text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
+              >
+                {{ 'Task.attachments' | translate }}
+              </label>
+              <app-file-upload
+                [multiple]="true"
+                [maxFiles]="3"
+                [maxSizeBytes]="5242880"
+                accept="image/jpeg,image/png,image/gif,application/pdf,text/plain"
+                (filesChange)="onCommentFilesChange($event)"
+              />
+            </div>
+
             <div class="flex justify-end">
               <button
                 type="submit"
@@ -473,10 +533,36 @@ import { Task, TaskComment } from './models/Task';
                     </div>
                   } @else {
                     <p
-                      class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap"
+                      class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap mb-3"
                     >
                       {{ comment.content }}
                     </p>
+                    
+                    <!-- Comment Attachments -->
+                    @if (comment.attachments && comment.attachments.length > 0) {
+                      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-3">
+                        @for (attachment of comment.attachments; track attachment.id) {
+                          <div class="relative">
+                            @if (isImage(attachment.filename || attachment.originalName)) {
+                              <app-image
+                                [initialUrl]="attachment.url || null"
+                                [mode]="'preview'"
+                                [format]="'square'"
+                                [size]="'md'"
+                                class="w-full h-20 object-cover rounded-md cursor-pointer"
+                              />
+                            } @else {
+                              <div class="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
+                                <ng-icon name="heroDocument" size="20" class="text-blue-500"></ng-icon>
+                                <span class="text-sm text-text-primary dark:text-dark-text-primary truncate">
+                                  {{ attachment.filename || attachment.originalName }}
+                                </span>
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
                   }
                 </div>
               }
@@ -512,6 +598,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   protected readonly task = signal<Task | null>(null);
   protected readonly loading = signal(true);
   protected readonly submittingComment = signal(false);
+  protected readonly commentAttachments = signal<FileUploadItem[]>([]);
 
   protected editingCommentId: number | null = null;
   protected editingCommentContent: string = '';
@@ -646,7 +733,15 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     this.submittingComment.set(true);
     const content = this.commentForm.get('content')?.value;
 
-    this.tasksService.createComment(+this.taskId(), { content })
+    const formData = new FormData();
+    formData.append('content', content);
+
+    const attachments = this.commentAttachments();
+    attachments.forEach(attachment => {
+      formData.append('attachments', attachment.file);
+    });
+
+    this.tasksService.createCommentWithFiles(+this.taskId(), formData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -655,9 +750,10 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
             NotificationTypeEnum.Success,
           );
           this.commentForm.reset();
+          this.commentAttachments.set([]);
           this.loadTask();
         },
-        error: error => {
+        error: (error: any) => {
           console.error('Error adding comment:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Task.commentError'),
@@ -669,6 +765,16 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
           this.submittingComment.set(false);
         },
       });
+  }
+
+  protected onCommentFilesChange(files: FileUploadItem[]): void {
+    this.commentAttachments.set(files);
+  }
+
+  protected isImage(filename: string): boolean {
+    if (!filename) return false;
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    return imageExtensions.some(ext => filename.toLowerCase().endsWith(ext));
   }
 
   protected onEditComment(commentId: number, content: string): void {

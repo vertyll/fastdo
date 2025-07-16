@@ -134,14 +134,14 @@ export class CreateTaskDto {
   @IsNumber({}, { each: true })
   assignedUserIds?: number[];
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: 'array',
-    items: { 
-      type: 'string', 
-      format: 'binary' 
+    items: {
+      type: 'string',
+      format: 'binary',
     },
     required: false,
-    description: 'Task attachment files' 
+    description: 'Task attachment files',
   })
   @IsOptional()
   @MultipartArray()

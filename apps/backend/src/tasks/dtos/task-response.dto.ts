@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TranslationDto } from '../../common/dtos/translation.dto';
+import { File } from '../../core/file/entities/file.entity';
 import { Project } from '../../projects/entities/project.entity';
 import { User } from '../../users/entities/user.entity';
-import { TaskAttachment } from '../entities/task-attachment.entity';
-import { TaskComment } from '../entities/task-comment.entity';
+import { TaskCommentDto } from './task-comment.dto';
 
 export class TaskResponseDto {
   @ApiProperty()
@@ -120,9 +120,9 @@ export class TaskResponseDto {
     translations: TranslationDto[];
   } | null;
 
-  @ApiProperty({ type: () => TaskAttachment, isArray: true })
-  taskAttachments: TaskAttachment[];
+  @ApiProperty({ type: () => File, isArray: true })
+  attachments: File[];
 
-  @ApiProperty({ type: () => TaskComment, isArray: true })
-  comments: TaskComment[];
+  @ApiProperty({ type: () => TaskCommentDto, isArray: true })
+  comments: TaskCommentDto[];
 }

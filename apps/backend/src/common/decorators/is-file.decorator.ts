@@ -19,7 +19,7 @@ export function IsFile(options: FileValidationOptions = {}) {
         validate(value: any, _args: ValidationArguments): boolean {
           if (value === 'null') return true;
           if (!value) return true;
-          
+
           // Handle array of files
           if (Array.isArray(value)) {
             return value.every(file => {
@@ -29,7 +29,7 @@ export function IsFile(options: FileValidationOptions = {}) {
               return !(options.maxSize && file.file.bytesRead > options.maxSize);
             });
           }
-          
+
           // Handle single file
           if (!value.type || value.type !== 'file') return false;
           const file = value as MultipartFile;
@@ -53,7 +53,7 @@ export function IsFile(options: FileValidationOptions = {}) {
               if (options.maxSize && file.file.bytesRead > options.maxSize) return true;
               return false;
             });
-            
+
             if (invalidFile) {
               if (!invalidFile?.type || invalidFile.type !== 'file') {
                 return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidFile')(args);

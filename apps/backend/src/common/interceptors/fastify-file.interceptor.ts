@@ -55,10 +55,10 @@ export class FastifyFileInterceptor implements NestInterceptor {
   constructor(
     private readonly fieldName: string,
     private readonly dtoClass?: new() => any,
-    options: FastifyFileInterceptorOptions = {}
+    options: FastifyFileInterceptorOptions = {},
   ) {
     this.options = { ...this.defaultOptions, ...options };
-    
+
     if (this.options.forceBuffer && this.options.forceStream) {
       throw new Error('Cannot use both forceBuffer and forceStream options simultaneously');
     }
@@ -110,7 +110,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
           // Smart processing: buffer or stream based on intelligent choice
           const processedFile = await this.processFileIntelligently(part, i18n);
-          
+
           // Validate total size
           totalSize += processedFile.fileSize;
           if (totalSize > this.options.maxTotalSize) {
@@ -126,7 +126,9 @@ export class FastifyFileInterceptor implements NestInterceptor {
           files.push(processedFile.multipartFile);
           fileCount++;
 
-          console.log(`FastifyFileInterceptor: processed file ${part.filename}, size: ${processedFile.fileSize} bytes, buffered: ${processedFile.isBuffered}`);
+          console.log(
+            `FastifyFileInterceptor: processed file ${part.filename}, size: ${processedFile.fileSize} bytes, buffered: ${processedFile.isBuffered}`,
+          );
         } else if (part.type === 'field') {
           this.processFormField(formData, part);
         }
@@ -138,8 +140,10 @@ export class FastifyFileInterceptor implements NestInterceptor {
     // Assign files to formData based on multiple flag
     if (files.length > 0) {
       formData[this.fieldName] = this.options.multiple ? files : files[0];
-      
-      console.log(`FastifyFileInterceptor: fieldName=${this.fieldName}, multiple=${this.options.multiple}, filesCount=${files.length}`);
+
+      console.log(
+        `FastifyFileInterceptor: fieldName=${this.fieldName}, multiple=${this.options.multiple}, filesCount=${files.length}`,
+      );
     }
 
     if (this.dtoClass) {
@@ -167,7 +171,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
   ): Promise<ProcessedFile> {
     // Determine processing strategy
     const shouldUseBuffer = this.options.forceBuffer || this.shouldUseBufferStrategy(part);
-    
+
     if (shouldUseBuffer) {
       return this.processFileWithBuffer(part, i18n);
     } else {
@@ -180,20 +184,20 @@ export class FastifyFileInterceptor implements NestInterceptor {
     if (this.options.forceStream) {
       return false;
     }
-    
+
     if (this.options.forceBuffer) {
       return true;
     }
-    
+
     // For small files, use buffer for better performance
     // For large files, use streaming to save memory
-    
+
     // If we can estimate size from headers, use that
     if (part.headers && part.headers['content-length']) {
       const estimatedSize = parseInt(part.headers['content-length'], 10);
       return estimatedSize <= this.options.bufferThreshold;
     }
-    
+
     // Default to streaming for unknown sizes (safer for memory)
     return false;
   }
@@ -208,7 +212,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     try {
       for await (const chunk of part.file) {
         currentSize += chunk.length;
-        
+
         // Early size validation
         if (currentSize > this.options.maxFileSize) {
           throw new BadRequestException({
@@ -219,13 +223,13 @@ export class FastifyFileInterceptor implements NestInterceptor {
             statusCode: 400,
           });
         }
-        
+
         chunks.push(chunk);
       }
 
       const buffer = Buffer.concat(chunks);
       const multipartFile = this.createMultipartFileFromBuffer(part, buffer);
-      
+
       return { multipartFile, fileSize: currentSize, isBuffered: true };
     } catch (error) {
       if (error instanceof BadRequestException) {
@@ -251,7 +255,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     const streamPromise = new Promise<void>((resolve, reject) => {
       part.file.on('data', (chunk: Buffer) => {
         currentSize += chunk.length;
-        
+
         // Real-time size validation during streaming
         if (currentSize > this.options.maxFileSize) {
           const error = new BadRequestException({
@@ -266,7 +270,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
           reject(error);
           return;
         }
-        
+
         // Write to pass-through stream
         if (!passThrough.destroyed) {
           passThrough.write(chunk);
@@ -291,13 +295,13 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
     try {
       await streamPromise;
-      
+
       if (streamError) {
         throw streamError;
       }
 
       const multipartFile = this.createMultipartFileFromStream(part, passThrough, currentSize);
-      
+
       return { multipartFile, fileSize: currentSize, isBuffered: false };
     } catch (error) {
       if (error instanceof BadRequestException) {
@@ -341,12 +345,12 @@ export class FastifyFileInterceptor implements NestInterceptor {
       toBuffer: async (): Promise<Buffer> => {
         // Convert stream to buffer when needed
         const chunks: Buffer[] = [];
-        
+
         return new Promise((resolve, reject) => {
           stream.on('data', (chunk: Buffer) => chunks.push(chunk));
           stream.on('end', () => resolve(Buffer.concat(chunks)));
           stream.on('error', reject);
-          
+
           // If stream is already ended, return empty buffer
           if (stream.readableEnded) {
             resolve(Buffer.alloc(0));

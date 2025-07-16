@@ -1,4 +1,4 @@
-import { Component, computed, input, output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableColumn, TableConfig } from 'src/app/shared/components/organisms/table-component';
 import { TableComponent } from 'src/app/shared/components/organisms/table-component';
@@ -31,13 +31,13 @@ export class TaskTableComponent {
   loading = input(false);
   loadingMore = input(false);
   hasMore = input(true);
-  customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
-  currentSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
+  customTemplates = input<{ [key: string]: TemplateRef<any>; }>({});
+  currentSort = input<{ column: string; direction: 'asc' | 'desc'; } | null>(null);
 
   loadMore = output<void>();
   taskClick = output<Task>();
-  actionClick = output<{ action: string; row: Task }>();
-  sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
+  actionClick = output<{ action: string; row: Task; }>();
+  sortChange = output<{ column: string; direction: 'asc' | 'desc'; }>();
   selectionChange = output<Task[]>();
 
   protected readonly tableConfig = computed<TableConfig>(() => ({
@@ -128,13 +128,13 @@ export class TaskTableComponent {
     this.taskClick.emit(task);
   }
 
-  protected onActionClick(event: { action: string; row: Task }): void {
+  protected onActionClick(event: { action: string; row: Task; }): void {
     this.actionClick.emit(event);
   }
 
   private getRowClassByPriority(task: Task): string {
     if (!task.priority) return '';
-    
+
     switch (task.priority.code) {
       case 'high':
         return 'priority-high';

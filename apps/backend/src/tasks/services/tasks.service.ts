@@ -150,8 +150,11 @@ export class TasksService implements ITasksService {
         'accessRole',
         'accessRole.translations',
         'taskAttachments',
+        'taskAttachments.file',
         'comments',
         'comments.author',
+        'comments.commentAttachments',
+        'comments.commentAttachments.file',
       ],
     });
     this.validateTaskAccess(task, userId);
@@ -228,8 +231,11 @@ export class TasksService implements ITasksService {
         'accessRole',
         'accessRole.translations',
         'taskAttachments',
+        'taskAttachments.file',
         'comments',
         'comments.author',
+        'comments.commentAttachments',
+        'comments.commentAttachments.file',
       ],
     });
     return this.mapTaskToResponseDto(updatedTask);
@@ -252,8 +258,11 @@ export class TasksService implements ITasksService {
         'accessRole',
         'accessRole.translations',
         'taskAttachments',
+        'taskAttachments.file',
         'comments',
         'comments.author',
+        'comments.commentAttachments',
+        'comments.commentAttachments.file',
       ],
     });
     this.validateTaskAccess(task, userId);
@@ -278,8 +287,11 @@ export class TasksService implements ITasksService {
         'accessRole',
         'accessRole.translations',
         'taskAttachments',
+        'taskAttachments.file',
         'comments',
         'comments.author',
+        'comments.commentAttachments',
+        'comments.commentAttachments.file',
       ],
     });
 
@@ -352,9 +364,13 @@ export class TasksService implements ITasksService {
     comment.content = updateCommentDto.content;
     comment.dateModification = new Date();
 
-    // TODO: Handle attachments if provided in updateCommentDto
+    const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
 
-    return this.taskRepository.manager.save(TaskComment, comment);
+    if (updateCommentDto.attachments && updateCommentDto.attachments.length > 0) {
+      await this.processCommentAttachments(savedComment, comment.task.id, updateCommentDto.attachments);
+    }
+
+    return savedComment;
   }
 
   private async processTaskAttachments(task: Task, attachments?: any[]): Promise<void> {
@@ -362,13 +378,13 @@ export class TasksService implements ITasksService {
       return;
     }
 
-    const attachmentPromises = attachments.map(async (file) => {
+    const attachmentPromises = attachments.map(async file => {
       const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${task.id}` });
-      
+
       const taskAttachment = new TaskAttachment();
       taskAttachment.task = task;
       taskAttachment.file = { id: uploadedFile.id } as any;
-      
+
       return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
     });
 
@@ -380,13 +396,13 @@ export class TasksService implements ITasksService {
       return;
     }
 
-    const attachmentPromises = attachments.map(async (file) => {
+    const attachmentPromises = attachments.map(async file => {
       const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${comment.id}` });
-      
+
       const commentAttachment = new TaskCommentAttachment();
       commentAttachment.comment = comment;
       commentAttachment.file = { id: uploadedFile.id } as any;
-      
+
       return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
     });
 
@@ -433,6 +449,23 @@ export class TasksService implements ITasksService {
       ? { ...task.status, translations: mapTranslations(task.status.translations) }
       : null;
 
+    const taskAttachments = Array.isArray(task.taskAttachments)
+      ? task.taskAttachments.map(attachment => attachment.file)
+      : [];
+
+    const comments = Array.isArray(task.comments)
+      ? task.comments.map(comment => ({
+        id: comment.id,
+        content: comment.content,
+        dateCreation: comment.dateCreation,
+        dateModification: comment.dateModification,
+        author: comment.author,
+        attachments: Array.isArray(comment.commentAttachments)
+          ? comment.commentAttachments.map(attachment => attachment.file)
+          : [],
+      }))
+      : [];
+
     return {
       id: task.id,
       description: task.description,
@@ -448,8 +481,8 @@ export class TasksService implements ITasksService {
       priority,
       categories,
       status,
-      taskAttachments: task.taskAttachments,
-      comments: task.comments,
+      attachments: taskAttachments,
+      comments: comments,
     };
   }
 

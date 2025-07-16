@@ -79,6 +79,12 @@ export class TasksApiService {
     );
   }
 
+  public createCommentWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, formData),
+    );
+  }
+
   public deleteComment(commentId: number): Observable<ApiResponse<void>> {
     return this.withLoadingState(
       this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`),

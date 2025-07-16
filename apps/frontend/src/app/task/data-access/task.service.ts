@@ -141,4 +141,8 @@ export class TasksService {
   public updateComment(commentId: number, content: { content: string; }): Observable<ApiResponse<any>> {
     return this.httpService.updateComment(commentId, content);
   }
+
+  public createCommentWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<any>> {
+    return this.httpService.createCommentWithFiles(taskId, formData);
+  }
 }

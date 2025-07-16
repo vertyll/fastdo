@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, input, output, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
-import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { NgIconComponent } from '@ng-icons/core';
+import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonComponent } from '../atoms/button.component';
 
@@ -135,7 +135,7 @@ export class FileUploadComponent {
       newErrors.push(`Maximum ${this.maxFiles()} files allowed`);
     }
 
-    Array.from(selectedFiles).forEach((file) => {
+    Array.from(selectedFiles).forEach(file => {
       // Check file size
       if (this.maxSizeBytes() > 0 && file.size > this.maxSizeBytes()) {
         newErrors.push(`File "${file.name}" exceeds maximum size of ${this.formatFileSize(this.maxSizeBytes())}`);
