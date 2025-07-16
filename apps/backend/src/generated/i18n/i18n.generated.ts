@@ -73,6 +73,10 @@ export type I18nTranslations = {
                 "totalSizeTooLarge": string;
                 "singleFileExpected": string;
                 "multipleFilesExpected": string;
+                "streamProcessingError": string;
+                "bufferProcessingError": string;
+                "fileSizeEstimationError": string;
+                "streamBackpressureError": string;
             };
         };
         "Mail": {

@@ -64,7 +64,11 @@
       "tooManyFiles": "Za dużo plików. Maksymalna dozwolona liczba: {maxFiles}",
       "totalSizeTooLarge": "Całkowity rozmiar plików jest za duży. Maksymalny dozwolony rozmiar: {maxSize}",
       "singleFileExpected": "Oczekiwano pojedynczego pliku, otrzymano {count}",
-      "multipleFilesExpected": "Oczekiwano wielu plików, otrzymano pojedynczy plik"
+      "multipleFilesExpected": "Oczekiwano wielu plików, otrzymano pojedynczy plik",
+      "streamProcessingError": "Błąd przetwarzania pliku w trybie strumieniowym",
+      "bufferProcessingError": "Błąd przetwarzania pliku w trybie buforowanym",
+      "fileSizeEstimationError": "Błąd podczas szacowania rozmiaru pliku",
+      "streamBackpressureError": "Błąd przepływu danych podczas przetwarzania pliku"
     }
   },
   "Mail": {

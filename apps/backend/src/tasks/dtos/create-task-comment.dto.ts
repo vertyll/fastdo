@@ -21,13 +21,13 @@ export class CreateTaskCommentDto {
       format: 'binary' 
     },
     required: false,
-    description: 'Comment attachment files' 
+    description: 'Comment attachment files (max 3 files, 5MB each, 15MB total)' 
   })
   @IsOptional()
   @MultipartArray()
   @IsFile({
     mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
-    maxSize: 10 * 1024 * 1024, // 10MB
+    maxSize: 5 * 1024 * 1024,
   })
   attachments?: MultipartFile[];
 }

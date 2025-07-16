@@ -42,10 +42,11 @@ export class ProjectsController {
 
   @Post()
   @UseInterceptors(new FastifyFileInterceptor('icon', CreateProjectDto, {
-    maxFileSize: 2 * 1024 * 1024, // 2MB
+    maxFileSize: 2 * 1024 * 1024,
     maxFiles: 1,
-    maxTotalSize: 2 * 1024 * 1024, // 2MB total
-    multiple: false // Single file
+    maxTotalSize: 2 * 1024 * 1024,
+    multiple: false,
+    forceBuffer: true,
   }))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a new project' })
@@ -92,7 +93,13 @@ export class ProjectsController {
   @Patch(':id')
   @UseGuards(ProjectRolePermissionsGuard)
   @ProjectRolePermissions(ProjectRolePermissionEnum.EDIT_PROJECT, 'id')
-  @UseInterceptors(new FastifyFileInterceptor('icon', UpdateProjectDto))
+  @UseInterceptors(new FastifyFileInterceptor('icon', UpdateProjectDto, {
+    maxFileSize: 2 * 1024 * 1024,
+    maxFiles: 1,
+    maxTotalSize: 2 * 1024 * 1024,
+    multiple: false,
+    forceBuffer: true,
+  }))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Update a project' })
   @ApiBody({ type: UpdateProjectDto })
