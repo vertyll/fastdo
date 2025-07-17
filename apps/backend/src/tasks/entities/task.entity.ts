@@ -78,7 +78,7 @@ export class Task {
   @ApiProperty({ type: () => ProjectCategory, isArray: true })
   @ManyToMany(() => ProjectCategory, { onDelete: 'CASCADE' })
   @JoinTable({
-    name: 'task_categories',
+    name: 'task_category',
     joinColumn: { name: 'task_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
   })
