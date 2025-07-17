@@ -143,7 +143,7 @@ export class TasksController {
   @UseInterceptors(
     new FastifyFileInterceptor('attachments', CreateTaskCommentDto, {
       maxFileSize: 5 * 1024 * 1024, // 5MB per file for comments
-      maxFiles: 3,
+      maxFiles: 4,
       maxTotalSize: 15 * 1024 * 1024, // 15MB total
       multiple: true, // Multiple files
       bufferThreshold: 1 * 1024 * 1024, // 1MB threshold - komentarze zwykle małe
@@ -178,7 +178,7 @@ export class TasksController {
   @UseInterceptors(
     new FastifyFileInterceptor('attachments', UpdateTaskCommentDto, {
       maxFileSize: 5 * 1024 * 1024, // 5MB per file for comments
-      maxFiles: 3,
+      maxFiles: 4,
       maxTotalSize: 15 * 1024 * 1024, // 15MB total
       multiple: true,
       bufferThreshold: 1 * 1024 * 1024, // 1MB threshold

@@ -255,7 +255,7 @@ interface SelectOption {
                   {{ 'Task.addNewAttachments' | translate }}
                 </h4>
               }
-              <div [class]="getTotalAttachments() > 3 ? 'border-2 border-red-500 rounded-md p-2' : ''">
+              <div [class]="getTotalAttachments() > maxAttachmentsLimit ? 'border-2 border-red-500 rounded-md p-2' : ''">
                 <app-file-upload
                   [multiple]="true"
                   [maxFiles]="getMaxNewFiles()"
@@ -266,11 +266,11 @@ interface SelectOption {
               </div>
               @if (taskId()) {
                 <p class="text-xs text-gray-500 dark:text-gray-400" 
-                   [class]="getTotalAttachments() > 3 ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'">
-                  {{ 'Task.maxAttachmentsNote' | translate: { max: 3, current: getTotalAttachments() } }}
+                   [class]="getTotalAttachments() > maxAttachmentsLimit ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'">
+                  {{ 'Task.maxAttachmentsNote' | translate: { max: maxAttachmentsLimit, current: getTotalAttachments() } }}
                 </p>
               }
-              @if (getTotalAttachments() > 3) {
+              @if (getTotalAttachments() > maxAttachmentsLimit) {
                 <p class="text-xs text-red-500">
                   {{ 'Task.attachmentsLimitExceeded' | translate }}
                 </p>
@@ -297,7 +297,7 @@ interface SelectOption {
 
             <app-button
               type="submit"
-              [disabled]="!taskForm.valid || submitting() || getTotalAttachments() > 3"
+              [disabled]="!taskForm.valid || submitting() || getTotalAttachments() > maxAttachmentsLimit"
             >
               @if (submitting()) {
                 <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
@@ -344,6 +344,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   readonly attachments = signal<FileUploadItem[]>([]);
   readonly existingAttachments = signal<File[]>([]);
   readonly attachmentsToDelete = signal<string[]>([]);
+
+  protected readonly maxAttachmentsLimit = 4;
 
   taskForm: FormGroup = this.fb.group({
     description: ['', [Validators.required]],
@@ -415,11 +417,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
   protected onFilesChange(files: FileUploadItem[]): void {
     const existingCount = this.existingAttachments().length;
-    const maxNew = Math.max(0, 3 - existingCount);
+    const maxNew = Math.max(0, this.maxAttachmentsLimit - existingCount);
 
     if (files.length > maxNew) {
       this.error.set(
-        this.translateService.instant('Task.maxAttachmentsError', { max: 3, current: existingCount + files.length }),
+        this.translateService.instant('Task.maxAttachmentsError', { max: this.maxAttachmentsLimit, current: existingCount + files.length }),
       );
       const trimmedFiles = files.slice(0, maxNew);
       this.attachments.set(trimmedFiles);
@@ -435,7 +437,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.attachmentsToDelete.update(toDelete => [...toDelete, attachment.id]);
 
     const totalAttachments = this.getTotalAttachments();
-    if (totalAttachments <= 3) {
+    if (totalAttachments <= this.maxAttachmentsLimit) {
       this.error.set(null);
     }
   }
@@ -455,7 +457,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected getMaxNewFiles(): number {
-    const maxTotal = 3;
+    const maxTotal = this.maxAttachmentsLimit;
     const existing = this.existingAttachments().length;
     return Math.max(0, maxTotal - existing);
   }
@@ -471,8 +473,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     }
 
     const totalAttachments = this.getTotalAttachments();
-    if (totalAttachments > 3) {
-      this.error.set(this.translateService.instant('Task.maxAttachmentsError', { max: 3 }));
+    if (totalAttachments > this.maxAttachmentsLimit) {
+      this.error.set(this.translateService.instant('Task.maxAttachmentsError', { max: this.maxAttachmentsLimit }));
       return;
     }
 

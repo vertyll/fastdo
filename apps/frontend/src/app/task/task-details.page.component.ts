@@ -6,10 +6,16 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   heroArrowLeft,
   heroCalendar,
+  heroClock,
   heroDocument,
+  heroExclamationTriangle,
+  heroFlag,
+  heroFolder,
   heroPaperAirplane,
   heroPencil,
+  heroTag,
   heroTrash,
+  heroUserGroup,
 } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
@@ -23,8 +29,8 @@ import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
-import { TasksService } from './data-access/task.service';
 import { Task, TaskComment } from './models/Task';
+import { TasksService } from './data-access/task.service';
 
 @Component({
   selector: 'app-task-details',
@@ -44,543 +50,304 @@ import { Task, TaskComment } from './models/Task';
       heroArrowLeft,
       heroCalendar,
       heroDocument,
+      heroPaperAirplane,
       heroPencil,
       heroTrash,
-      heroPaperAirplane,
+      heroClock,
+      heroUserGroup,
+      heroTag,
+      heroFolder,
+      heroExclamationTriangle,
+      heroFlag,
     }),
   ],
   template: `
-    <div class="container mx-auto p-4 max-w-4xl overflow-x-hidden">
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <button
-          (click)="goBack()"
-          class="flex items-center gap-2 text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-200 transition-colors"
-        >
-          <ng-icon name="heroArrowLeft" size="20"></ng-icon>
-          {{ 'Basic.back' | translate }}
-        </button>
-
-        @if (task()) {
-          <div class="flex gap-2">
-            <button
-              (click)="editTask()"
-              class="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-            >
-              <ng-icon name="heroPencil" size="16"></ng-icon>
-              {{ 'Basic.edit' | translate }}
-            </button>
-            <button
-              (click)="deleteTask()"
-              class="flex items-center gap-2 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 transition-colors"
-            >
-              <ng-icon name="heroTrash" size="16"></ng-icon>
-              {{ 'Basic.delete' | translate }}
-            </button>
-          </div>
-        }
-      </div>
-
-      @if (loading()) {
-        <div class="text-center py-8">
-          {{ 'Basic.loading' | translate }}
-        </div>
-      } @else if (task()) {
-        <!-- Task Details -->
-        <div
-          class="bg-white dark:bg-dark-surface-primary rounded-lg shadow-sm border border-border-primary dark:border-dark-border-primary p-6 mb-6"
-        >
-          <h1
-            class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
+    <div class="bg-neutral-50 dark:bg-neutral-900 min-h-screen">
+      <div class="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+        <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <button
+            (click)="goBack()"
+            class="flex items-center gap-2 text-text-secondary dark:text-dark-text-secondary hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors duration-200"
           >
-            {{ 'Task.details' | translate }}
-          </h1>
+            <ng-icon name="heroArrowLeft" size="20"></ng-icon>
+            <span>{{ 'Basic.back' | translate }}</span>
+          </button>
 
-          <!-- Main Description -->
-          <div class="mb-6">
-            <h3
-              class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2"
-            >
-              {{ 'Task.description' | translate }}
-            </h3>
-            <p
-              class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap"
-            >
-              {{ task()!.description }}
-            </p>
-          </div>
-
-          <!-- Additional Description -->
-          @if (task()!.additionalDescription) {
-            <div class="mb-6">
-              <h3
-                class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2"
+          @if (task()) {
+            <div class="flex items-center gap-2">
+              <button
+                (click)="editTask()"
+                class="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 transition-colors duration-200 shadow-sm"
               >
-                {{ 'Task.additionalDescription' | translate }}
-              </h3>
-              <p
-                class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap"
+                <ng-icon name="heroPencil" size="16"></ng-icon>
+                <span>{{ 'Basic.edit' | translate }}</span>
+              </button>
+              <button
+                (click)="deleteTask()"
+                class="flex items-center gap-2 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-danger-500 transition-colors duration-200 shadow-sm"
               >
-                {{ task()!.additionalDescription }}
-              </p>
+                <ng-icon name="heroTrash" size="16"></ng-icon>
+                <span>{{ 'Basic.delete' | translate }}</span>
+              </button>
             </div>
           }
+        </header>
 
-          <!-- Task Info Grid -->
-          <div
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6"
-          >
-            <!-- Price Estimation -->
-            <div
-              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.priceEstimation' | translate }}
-              </h4>
-              <p
-                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-              >
-                {{ formatHours(task()!.priceEstimation) }}
-              </p>
-            </div>
-
-            <!-- Worked Time -->
-            <div
-              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.workedTime' | translate }}
-              </h4>
-              <p
-                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-              >
-                {{ formatHours(task()!.workedTime) }}
-              </p>
-            </div>
-
-            <!-- Access Role -->
-            <div
-              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.accessRole' | translate }}
-              </h4>
-              <p
-                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-              >
-                {{ task()!.accessRole ? getTranslatedName(task()!.accessRole) : ('Task.noAccessRoleSet' | translate) }}
-              </p>
-            </div>
-
-            <!-- Priority -->
-            @if (task()!.priority) {
-              <div
-                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-              >
-                <h4
-                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-                >
-                  {{ 'Task.priority' | translate }}
-                </h4>
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-4 h-4 rounded-full"
-                    [style.background-color]="task()!.priority.color"
-                  ></div>
-                  <p
-                    class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-                  >
-                    {{ getTranslatedName(task()!.priority) }}
-                  </p>
-                </div>
-              </div>
-            }
-
-            <!-- Project -->
-            @if (task()?.project) {
-              <div
-                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-              >
-                <h4
-                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-                >
-                  {{ 'Task.project' | translate }}
-                </h4>
-                <p
-                  class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-                >
-                  {{ task()?.project?.name }}
-                </p>
-              </div>
-            }
-
-            <!-- Categories -->
-            @if (task()?.categories && task()!.categories.length > 0) {
-              <div
-                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-              >
-                <h4
-                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-                >
-                  {{ 'Task.categories' | translate }}
-                </h4>
-                <div class="flex flex-wrap gap-2">
-                  @for (category of task()!.categories; track category.id) {
-                    <div
-                      class="flex items-center gap-2 bg-white dark:bg-dark-surface-primary rounded-full px-3 py-1 border border-border-primary dark:border-dark-border-primary"
-                    >
-                      <div
-                        class="w-3 h-3 rounded-full"
-                        [style.background-color]="category.color"
-                      ></div>
-                      <span
-                        class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                      >
-                        {{ getTranslatedName(category) }}
-                      </span>
-                    </div>
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- Status -->
-            @if (task()?.status) {
-              <div
-                class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-              >
-                <h4
-                  class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-                >
-                  {{ 'Task.status' | translate }}
-                </h4>
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-4 h-4 rounded-full"
-                    [style.background-color]="task()?.status?.color"
-                  ></div>
-                  <p
-                    class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-                  >
-                    {{ getTranslatedName(task()?.status) }}
-                  </p>
-                </div>
-              </div>
-            }
+        @if (loading()) {
+          <div class="flex justify-center items-center py-20">
+            <p class="text-text-muted dark:text-dark-text-muted text-lg">{{ 'Basic.loading' | translate }}</p>
           </div>
+        } 
+        @else if (task()) {
+          <main class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 animate-fade-in">
+            <div class="lg:col-span-2 space-y-6">
+              
+              <div class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6">
+                <h1 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4">
+                  {{ task()!.description }}
+                </h1>
 
-          <!-- Users -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Assigned Users -->
-            <div
-              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.assignedUsers' | translate }}
-              </h4>
-              @if (task()!.assignedUsers && task()!.assignedUsers.length > 0) {
-                <div class="space-y-2">
-                  @for (user of task()!.assignedUsers; track user.id) {
-                    <div
-                      class="flex items-center gap-2 bg-white dark:bg-dark-surface-primary rounded-md px-3 py-2 border border-border-primary dark:border-dark-border-primary"
-                    >
-                      <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
-                      <span
-                        class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                      >
-                        {{ user.email }}
-                      </span>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p
-                  class="text-sm text-text-muted dark:text-dark-text-muted italic"
-                >
-                  {{ 'Task.noAssignedUsers' | translate }}
-                </p>
-              }
-            </div>
+                @if (task()!.additionalDescription) {
+                  <div>
+                    <h2 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">{{ 'Task.additionalDescription' | translate }}</h2>
+                    <p class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap leading-relaxed">{{ task()!.additionalDescription }}</p>
+                  </div>
+                }
+              </div>
 
-            <!-- Created By -->
-            <div
-              class="bg-surface-secondary dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.createdBy' | translate }}
-              </h4>
-              <p
-                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-              >
-                {{ task()!.createdBy.email }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Dates -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Created Date -->
-            <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.created' | translate }}
-              </h4>
-              <p
-                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-              >
-                {{ task()!.dateCreation | customDate:'dd.MM.yyyy HH:mm:ss' }}
-              </p>
-            </div>
-
-            <!-- Modified Date -->
-            <div
-              class="bg-gray-50 dark:bg-dark-surface-secondary rounded-lg p-4"
-            >
-              <h4
-                class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.modified' | translate }}
-              </h4>
-              <p
-                class="text-lg font-semibold text-text-primary dark:text-dark-text-primary"
-              >
-                {{ task()!.dateModification | customDate:'dd.MM.yyyy HH:mm:ss' }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Task Attachments -->
-          @if (task()?.attachments && task()!.attachments.length > 0) {
-            <div class="mb-6 overflow-x-hidden">
-              <h3 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-3">
-                {{ 'Task.attachments' | translate }}
-              </h3>
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                @for (attachment of task()!.attachments; track attachment.id) {
-                  <div class="relative overflow-hidden rounded-md w-full">
-                    @if (isImage(attachment.filename || attachment.originalName)) {
-                      <div class="w-full h-24 overflow-hidden rounded-md">
-                        <app-image
-                          [initialUrl]="attachment.url || null"
-                          [mode]="'preview'"
-                          [format]="'square'"
-                          [size]="'lg'"
-                          class="w-full h-full object-cover cursor-pointer"
-                          style="max-width: 100%; box-sizing: border-box;"
-                        />
-                      </div>
-                    } @else {
-                      <div class="flex items-center gap-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md h-24">
-                        <ng-icon name="heroDocument" size="24" class="text-blue-500 flex-shrink-0"></ng-icon>
-                        <span class="text-sm text-text-primary dark:text-dark-text-primary truncate">
-                          {{ attachment.filename || attachment.originalName }}
-                        </span>
+              @if (task()?.attachments && task()!.attachments.length > 0) {
+                <div class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6">
+                  <h3 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4">{{ 'Task.attachments' | translate }}</h3>
+                  <div class="flex flex-wrap justify-center items-center -m-2">
+                    @for (attachment of task()!.attachments; track attachment.id) {
+                      <div class="w-1/2 md:w-1/4 p-2 flex justify-center">
+                        <div class="group relative overflow-hidden rounded-lg border border-border-primary dark:border-dark-border-primary transition-shadow duration-200 hover:shadow-md">
+                          @if (isImage(attachment.filename || attachment.originalName)) {
+                            <div class="w-full h-32 flex items-center justify-center">
+                              <app-image [initialUrl]="attachment.url || null" mode="preview" format="square" size="lg" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105" />
+                            </div>
+                          } @else {
+                            <a [href]="attachment.url" target="_blank" class="flex flex-col items-center justify-center gap-2 p-3 bg-neutral-100 dark:bg-neutral-800 h-32 text-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200">
+                              <ng-icon name="heroDocument" size="32" class="text-primary-500"></ng-icon>
+                              <span class="text-xs text-text-secondary dark:text-dark-text-secondary break-all">{{ attachment.filename || attachment.originalName }}</span>
+                            </a>
+                          }
+                        </div>
                       </div>
                     }
+                  </div>
+                </div>
+              }
+
+              <div class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6">
+                <h2 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
+                  {{ 'Task.comments' | translate }}
+                  @if (task()!.comments && task()!.comments.length > 0) {
+                    <span class="ml-2 text-sm font-medium bg-neutral-200 dark:bg-neutral-700 text-text-secondary dark:text-dark-text-secondary rounded-full px-2 py-0.5">{{ task()!.comments.length }}</span>
+                  }
+                </h2>
+
+                <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="mb-8">
+                  <div class="mb-3">
+                    <textarea formControlName="content" rows="4" class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary resize-y" [placeholder]="'Task.commentPlaceholder' | translate"></textarea>
+                    <app-error-message [input]="commentForm.get('content')" />
+                  </div>
+                  <div class="mb-4">
+                    <app-file-upload [multiple]="true" [maxFiles]="maxAttachmentsLimit" [maxSizeBytes]="5242880" accept="image/jpeg,image/png,image/gif,application/pdf,text/plain" (filesChange)="onCommentFilesChange($event)" />
+                  </div>
+                  <div class="flex justify-end">
+                    <button type="submit" [disabled]="commentForm.invalid || submittingComment()" class="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
+                      <ng-icon name="heroPaperAirplane" size="16"></ng-icon>
+                      <span>
+                        @if (submittingComment()) { {{ 'Basic.submitting' | translate }} } 
+                        @else { {{ 'Task.addComment' | translate }} }
+                      </span>
+                    </button>
+                  </div>
+                </form>
+
+                @if (task()!.comments && task()!.comments.length > 0) {
+                  <div class="space-y-6">
+                    @for (comment of task()!.comments; track comment.id) {
+                      <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex-shrink-0 flex items-center justify-center font-bold text-primary-600">
+                          {{ comment.author.email.charAt(0).toUpperCase() }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          @if (editingCommentId === comment.id) {
+                            <div class="space-y-2">
+                               <textarea [(ngModel)]="editingCommentContent" rows="3" class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary"></textarea>
+                               <div class="flex gap-2">
+                                <button type="button" (click)="onSaveEditComment()" class="px-4 py-1.5 bg-info-600 text-white rounded-md hover:bg-info-700 text-sm font-semibold transition-colors">
+                                  {{ 'Task.saveComment' | translate }}
+                                </button>
+                                <button type="button" (click)="onCancelEditComment()" class="px-4 py-1.5 bg-neutral-500 text-white rounded-md hover:bg-neutral-600 text-sm font-semibold transition-colors">
+                                  {{ 'Basic.cancel' | translate }}
+                                </button>
+                               </div>
+                            </div>
+                          } @else {
+                            <div class="group">
+                                <div class="flex justify-between items-center mb-1">
+                                  <span class="font-semibold text-text-primary dark:text-dark-text-primary">{{ comment.author.email }}</span>
+                                  <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span class="text-xs text-text-muted dark:text-dark-text-muted mr-2">{{ comment.dateCreation | customDate:'dd.MM.yyyy HH:mm' }}</span>
+                                    @if (canDeleteComment(comment)) {
+                                      <button type="button" (click)="onEditComment(comment.id, comment.content)" class="text-info-600 hover:text-info-800 p-1 rounded-full hover:bg-info-100 dark:hover:bg-info-900/50" [title]="'Task.editComment' | translate">
+                                          <ng-icon name="heroPencil" size="16"></ng-icon>
+                                      </button>
+                                      <button type="button" (click)="onDeleteComment(comment.id)" class="text-danger-600 hover:text-danger-800 p-1 rounded-full hover:bg-danger-100 dark:hover:bg-danger-900/50" [title]="'Task.deleteComment' | translate">
+                                          <ng-icon name="heroTrash" size="16"></ng-icon>
+                                      </button>
+                                    }
+                                  </div>
+                                </div>
+                                <p class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap break-words">{{ comment.content }}</p>
+
+                                @if (comment.attachments && comment.attachments.length > 0) {
+                                  <div class="flex flex-wrap justify-start -m-1 mt-2">
+                                    @for (attachment of comment.attachments; track attachment.id) {
+                                      <div class="w-1/2 sm:w-1/3 md:w-1/4 p-1">
+                                        <div class="relative overflow-hidden rounded-md w-full">
+                                          @if (isImage(attachment.filename || attachment.originalName)) {
+                                            <div class="w-full overflow-hidden rounded-md">
+                                              <app-image [initialUrl]="attachment.url || null" mode="preview" format="square" size="md" class="w-full h-full object-cover cursor-pointer" />
+                                            </div>
+                                          } @else {
+                                            <a [href]="attachment.url" target="_blank" class="flex items-center gap-2 p-2 bg-neutral-100 dark:bg-neutral-800 rounded-md h-20 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200">
+                                              <ng-icon name="heroDocument" size="20" class="text-blue-500 flex-shrink-0"></ng-icon>
+                                              <span class="text-xs text-text-primary dark:text-dark-text-primary truncate">{{ attachment.filename || attachment.originalName }}</span>
+                                            </a>
+                                          }
+                                        </div>
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="text-center py-8 text-text-muted dark:text-dark-text-muted border-2 border-dashed border-border-primary dark:border-dark-border-primary rounded-lg">
+                    {{ 'Task.noComments' | translate }}
                   </div>
                 }
               </div>
             </div>
-          }
-        </div>
 
-        <!-- Comments Section -->
-        <div
-          class="bg-white dark:bg-dark-surface-primary rounded-lg shadow-sm border border-border-primary dark:border-dark-border-primary p-6"
-        >
-          <h2
-            class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
-          >
-            {{ 'Task.comments' | translate }}
-            @if (task()!.comments && task()!.comments.length > 0) {
-              <span
-                class="text-sm font-normal text-text-muted dark:text-dark-text-muted"
-                >({{ task()!.comments.length }})</span
-              >
-            }
-          </h2>
-
-          <!-- Add Comment Form -->
-          <form
-            [formGroup]="commentForm"
-            (ngSubmit)="onSubmitComment()"
-            class="mb-6"
-          >
-            <div class="mb-4">
-              <label
-                class="block text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.addComment' | translate }}
-              </label>
-              <textarea
-                formControlName="content"
-                rows="3"
-                class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary resize-none"
-                [placeholder]="'Task.commentPlaceholder' | translate"
-              ></textarea>
-              <app-error-message [input]="commentForm.get('content')" />
-            </div>
-
-            <!-- Comment Attachments -->
-            <div class="mb-4">
-              <label
-                class="block text-sm font-medium text-text-secondary dark:text-dark-text-secondary mb-2"
-              >
-                {{ 'Task.attachments' | translate }}
-              </label>
-              <app-file-upload
-                [multiple]="true"
-                [maxFiles]="3"
-                [maxSizeBytes]="5242880"
-                accept="image/jpeg,image/png,image/gif,application/pdf,text/plain"
-                (filesChange)="onCommentFilesChange($event)"
-              />
-            </div>
-
-            <div class="flex justify-end">
-              <button
-                type="submit"
-                [disabled]="commentForm.invalid || submittingComment()"
-                class="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ng-icon name="heroPaperAirplane" size="16"></ng-icon>
-                @if (submittingComment()) {
-                  {{ 'Basic.submitting' | translate }}
-                } @else {
-                  {{ 'Task.addComment' | translate }}
+            <aside class="lg:col-span-1 space-y-6 mt-6 lg:mt-0">
+              <div class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6 space-y-6">
+                
+                @if (task()?.status) {
+                  <div class="flex items-start gap-4">
+                    <ng-icon name="heroExclamationTriangle" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.status' | translate }}</h4>
+                      <div class="flex items-center gap-2 mt-1">
+                        <div class="w-3 h-3 rounded-full" [style.background-color]="task()?.status?.color"></div>
+                        <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">{{ getTranslatedName(task()?.status) }}</p>
+                      </div>
+                    </div>
+                  </div>
                 }
-              </button>
-            </div>
-          </form>
 
-          <!-- Existing Comments -->
-          @if (task()!.comments && task()!.comments.length > 0) {
-            <div class="space-y-4">
-              @for (comment of task()!.comments; track comment.id) {
-                <div
-                  class="border-b border-border-primary dark:border-dark-border-primary last:border-b-0 pb-4 last:pb-0"
-                >
-                  <div class="flex justify-between items-start mb-2">
-                    <span
-                      class="font-medium text-text-secondary dark:text-dark-text-secondary"
-                    >
-                      {{ comment.author.email }}
-                    </span>
-                    <div class="flex items-center gap-2">
-                      <span
-                        class="text-sm text-text-muted dark:text-dark-text-muted"
-                      >
-                        {{ comment.dateCreation | customDate:'dd.MM.yyyy HH:mm:ss' }}
-                      </span>
-                      @if (canDeleteComment(comment)) {
-                        <button
-                          type="button"
-                          (click)="onEditComment(comment.id, comment.content)"
-                          class="text-info-600 hover:text-info-800 text-sm p-1 rounded hover:bg-info-50 dark:hover:bg-info-900"
-                          [title]="'Task.editComment' | translate"
-                        >
-                          <ng-icon name="heroPencil" size="16"></ng-icon>
-                        </button>
-                        <button
-                          type="button"
-                          (click)="onDeleteComment(comment.id)"
-                          class="text-danger-600 hover:text-danger-800 text-sm p-1 rounded hover:bg-danger-50 dark:hover:bg-danger-900"
-                          [title]="'Task.deleteComment' | translate"
-                        >
-                          <ng-icon name="heroTrash" size="16"></ng-icon>
-                        </button>
+                @if (task()!.priority) {
+                  <div class="flex items-start gap-4">
+                    <ng-icon name="heroFlag" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.priority' | translate }}</h4>
+                      <div class="flex items-center gap-2 mt-1">
+                        <div class="w-3 h-3 rounded-full" [style.background-color]="task()!.priority.color"></div>
+                        <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">{{ getTranslatedName(task()!.priority) }}</p>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                @if (task()?.project) {
+                  <div class="flex items-start gap-4">
+                    <ng-icon name="heroFolder" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.project' | translate }}</h4>
+                      <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1 break-words">{{ task()?.project?.name }}</p>
+                    </div>
+                  </div>
+                }
+
+                <div class="flex items-start gap-4">
+                  <ng-icon name="heroClock" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.timeTracking' | translate }}</h4>
+                    <div class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1">
+                      <span [title]="'Task.workedTime' | translate">{{ formatHours(task()!.workedTime) }}</span>
+                      <span class="mx-1 text-text-muted dark:text-dark-text-muted font-normal">/</span>
+                      <span [title]="'Task.priceEstimation' | translate">{{ formatHours(task()!.priceEstimation) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                  <ng-icon name="heroCalendar" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.dates' | translate }}</h4>
+                    <div class="text-sm text-text-primary dark:text-dark-text-primary mt-1 space-y-1">
+                      <p><span class="font-semibold">{{ 'Task.created' | translate }}:</span> {{ task()!.dateCreation | customDate:'dd.MM.yyyy' }}</p>
+                      <p><span class="font-semibold">{{ 'Task.modified' | translate }}:</span> {{ task()!.dateModification | customDate:'dd.MM.yyyy' }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                  <ng-icon name="heroUserGroup" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.people' | translate }}</h4>
+                    <div class="mt-2 space-y-2 text-sm">
+                      <p class="font-semibold text-text-primary dark:text-dark-text-primary break-words">{{ 'Task.createdBy' | translate }}: <span class="font-normal">{{ task()!.createdBy.email }}</span></p>
+                      
+                      <h5 class="font-semibold text-text-primary dark:text-dark-text-primary pt-1">{{ 'Task.assignedUsers' | translate }}:</h5>
+                      @if (task()!.assignedUsers && task()!.assignedUsers.length > 0) {
+                        <div class="flex flex-wrap gap-2">
+                          @for (user of task()!.assignedUsers; track user.id) {
+                            <span class="bg-primary-100 text-primary-800 dark:bg-primary-900/50 dark:text-primary-300 px-2 py-1 rounded-full text-xs font-medium">{{ user.email }}</span>
+                          }
+                        </div>
+                      } @else {
+                        <p class="text-xs text-text-muted dark:text-dark-text-muted italic">{{ 'Task.noAssignedUsers' | translate }}</p>
                       }
                     </div>
                   </div>
-                  @if (editingCommentId === comment.id) {
-                    <div class="space-y-2">
-                      <textarea
-                        [(ngModel)]="editingCommentContent"
-                        rows="3"
-                        class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary"
-                      ></textarea>
-                      <div class="flex gap-2">
-                        <button
-                          type="button"
-                          (click)="onSaveEditComment()"
-                          class="px-3 py-1 bg-info-600 text-white rounded hover:bg-info-700 text-sm"
-                        >
-                          {{ 'Task.saveComment' | translate }}
-                        </button>
-                        <button
-                          type="button"
-                          (click)="onCancelEditComment()"
-                          class="px-3 py-1 bg-neutral-500 text-white rounded hover:bg-neutral-600 text-sm"
-                        >
-                          {{ 'Basic.cancel' | translate }}
-                        </button>
-                      </div>
-                    </div>
-                  } @else {
-                    <p
-                      class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap mb-3"
-                    >
-                      {{ comment.content }}
-                    </p>
-                    
-                    <!-- Comment Attachments -->
-                    @if (comment.attachments && comment.attachments.length > 0) {
-                      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-3">
-                        @for (attachment of comment.attachments; track attachment.id) {
-                          <div class="relative overflow-hidden rounded-md w-full">
-                            @if (isImage(attachment.filename || attachment.originalName)) {
-                              <div class="w-full h-20 overflow-hidden rounded-md">
-                                <app-image
-                                  [initialUrl]="attachment.url || null"
-                                  [mode]="'preview'"
-                                  [format]="'square'"
-                                  [size]="'md'"
-                                  class="w-full h-full object-cover cursor-pointer"
-                                  style="max-width: 100%; box-sizing: border-box;"
-                                />
-                              </div>
-                            } @else {
-                              <div class="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md h-20">
-                                <ng-icon name="heroDocument" size="20" class="text-blue-500 flex-shrink-0"></ng-icon>
-                                <span class="text-sm text-text-primary dark:text-dark-text-primary truncate">
-                                  {{ attachment.filename || attachment.originalName }}
-                                </span>
-                              </div>
-                            }
+                </div>
+                
+                @if (task()?.categories && task()!.categories.length > 0) {
+                  <div class="flex items-start gap-4">
+                    <ng-icon name="heroTag" size="20" class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"></ng-icon>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">{{ 'Task.categories' | translate }}</h4>
+                      <div class="flex flex-wrap gap-2 mt-2">
+                        @for (category of task()!.categories; track category.id) {
+                          <div class="flex items-center gap-2 rounded-full px-2.5 py-1" [style.background-color]="category.color + '20'">
+                            <div class="w-2.5 h-2.5 rounded-full" [style.background-color]="category.color"></div>
+                            <span class="text-xs font-semibold" [style.color]="category.color">{{ getTranslatedName(category) }}</span>
                           </div>
                         }
                       </div>
-                    }
-                  }
-                </div>
-              }
-            </div>
-          } @else {
-            <div
-              class="text-center py-4 text-text-muted dark:text-dark-text-muted"
-            >
-              {{ 'Task.noComments' | translate }}
-            </div>
-          }
-        </div>
-      } @else {
-        <div class="text-center py-8 text-text-muted dark:text-dark-text-muted">
-          {{ 'Task.notFound' | translate }}
-        </div>
-      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </aside>
+          </main>
+        } 
+        @else {
+          <div class="text-center py-20 bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft">
+            <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">{{ 'Task.notFound' | translate }}</h2>
+            <p class="text-text-muted dark:text-dark-text-muted mt-2">{{ 'Task.notFoundMessage' | translate }}</p>
+          </div>
+        }
+      </div>
     </div>
   `,
 })
@@ -600,6 +367,8 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   protected readonly loading = signal(true);
   protected readonly submittingComment = signal(false);
   protected readonly commentAttachments = signal<FileUploadItem[]>([]);
+
+  protected readonly maxAttachmentsLimit = 4;
 
   protected editingCommentId: number | null = null;
   protected editingCommentContent: string = '';
