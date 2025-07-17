@@ -166,7 +166,7 @@ import { Task, TaskComment } from './models/Task';
                                 mode="preview"
                                 format="square"
                                 size="lg"
-                                class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                                class="w-full h-full object-cover cursor-pointer"
                               />
                             </div>
                           } @else {
