@@ -81,7 +81,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Preview Modal -->
       @if (showPreviewModal()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-spacing-4">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1111] p-spacing-4">
           <div class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-spacing-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
