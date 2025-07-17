@@ -214,6 +214,10 @@ export class TasksService implements ITasksService {
 
     await this.taskRepository.save(task);
 
+    if (updateTaskDto.attachmentsToDelete && updateTaskDto.attachmentsToDelete.length > 0) {
+      await this.processTaskAttachmentDeletion(task, updateTaskDto.attachmentsToDelete);
+    }
+
     await this.processTaskAttachments(task, updateTaskDto.attachments);
 
     const updatedTask = await this.taskRepository.findOneOrFail({
@@ -389,6 +393,27 @@ export class TasksService implements ITasksService {
     });
 
     await Promise.all(attachmentPromises);
+  }
+
+  private async processTaskAttachmentDeletion(task: Task, attachmentIds: string[]): Promise<void> {
+    if (!attachmentIds || attachmentIds.length === 0) {
+      return;
+    }
+
+    const attachments = await this.taskRepository.manager.find(TaskAttachment, {
+      where: {
+        task: { id: task.id },
+        file: { id: In(attachmentIds) },
+      },
+      relations: ['file'],
+    });
+
+    const deletePromises = attachments.map(async attachment => {
+      await this.fileFacade.delete(attachment.file.id);
+      await this.taskRepository.manager.remove(TaskAttachment, attachment);
+    });
+
+    await Promise.all(deletePromises);
   }
 
   private async processCommentAttachments(comment: TaskComment, taskId: number, attachments?: any[]): Promise<void> {

@@ -31,7 +31,10 @@
     "selectFiles": "Wybierz pliki",
     "selectedFiles": "Wybrane pliki",
     "maxFiles": "Maksymalnie {{count}} plików",
-    "maxFileSize": "Maksymalny rozmiar pliku: {{size}}"
+    "maxFileSize": "Maksymalny rozmiar pliku: {{size}}",
+    "maxFilesExceeded": "Maksymalnie {{count}} plików dozwolonych",
+    "fileSizeExceeded": "Plik \"{{name}}\" przekracza maksymalny rozmiar {{size}}",
+    "fileDuplicate": "Plik \"{{name}}\" jest już wybrany"
   },
   "Filters": {
     "search": "Szukaj",
@@ -248,7 +251,12 @@
     "commentUpdateSuccess": "Komentarz został zaktualizowany",
     "commentUpdateError": "Błąd podczas aktualizacji komentarza",
     "noAccessRoleSet": "Brak",
-    "attachments": "Załączniki"
+    "attachments": "Załączniki",
+    "existingAttachments": "Istniejące załączniki",
+    "addNewAttachments": "Dodaj nowe załączniki",
+    "maxAttachmentsNote": "Maksymalnie {{max}} załączników dozwolonych. Obecnie: {{current}}",
+    "maxAttachmentsError": "Przekroczono limit {{max}} załączników",
+    "attachmentsLimitExceeded": "Usuń niektóre załączniki, aby móc zapisać zadanie"
   },
   "CookiesBanner": {
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."

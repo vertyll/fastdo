@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, input, output, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, input, output, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { NgIconComponent } from '@ng-icons/core';
 import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../atoms/button.component';
+import { ErrorMessageComponent } from '../atoms/error.message.component';
 
 export interface FileUploadItem {
   file: File;
@@ -19,6 +20,7 @@ export interface FileUploadItem {
     NgIconComponent,
     TranslateModule,
     ButtonComponent,
+    ErrorMessageComponent,
   ],
   viewProviders: [provideIcons({ heroDocument, heroTrash, heroXMark })],
   template: `
@@ -87,9 +89,7 @@ export interface FileUploadItem {
       @if (errors().length > 0) {
         <div class="space-y-1">
           @for (error of errors(); track $index) {
-            <div class="text-sm text-red-600 dark:text-red-400">
-              {{ error }}
-            </div>
+            <app-error-message [customMessage]="error" />
           }
         </div>
       }
@@ -104,6 +104,8 @@ export interface FileUploadItem {
   `,
 })
 export class FileUploadComponent {
+  private readonly translate = inject(TranslateService);
+
   @ViewChild('fileInput', { static: true })
   fileInput!: ElementRef<HTMLInputElement>;
 
@@ -130,21 +132,21 @@ export class FileUploadComponent {
     const newErrors: string[] = [];
     const validFiles: FileUploadItem[] = [];
 
-    // Check file count limit
     if (this.maxFiles() > 0 && this.files().length + selectedFiles.length > this.maxFiles()) {
-      newErrors.push(`Maximum ${this.maxFiles()} files allowed`);
+      newErrors.push(this.translate.instant('Basic.maxFilesExceeded', { count: this.maxFiles() }));
     }
 
     Array.from(selectedFiles).forEach(file => {
-      // Check file size
       if (this.maxSizeBytes() > 0 && file.size > this.maxSizeBytes()) {
-        newErrors.push(`File "${file.name}" exceeds maximum size of ${this.formatFileSize(this.maxSizeBytes())}`);
+        newErrors.push(this.translate.instant('Basic.fileSizeExceeded', {
+          name: file.name,
+          size: this.formatFileSize(this.maxSizeBytes()),
+        }));
         return;
       }
 
-      // Check for duplicates
       if (this.files().some(f => f.file.name === file.name && f.file.size === file.size)) {
-        newErrors.push(`File "${file.name}" is already selected`);
+        newErrors.push(this.translate.instant('Basic.fileDuplicate', { name: file.name }));
         return;
       }
 

@@ -15,6 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { jwtDecode } from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
+import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
@@ -36,6 +37,7 @@ import { Task, TaskComment } from './models/Task';
     CustomDatePipe,
     FileUploadComponent,
     ImageComponent,
+    ErrorMessageComponent,
   ],
   providers: [
     provideIcons({
@@ -48,7 +50,7 @@ import { Task, TaskComment } from './models/Task';
     }),
   ],
   template: `
-    <div class="container mx-auto p-4 max-w-4xl">
+    <div class="container mx-auto p-4 max-w-4xl overflow-x-hidden">
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <button
@@ -362,24 +364,27 @@ import { Task, TaskComment } from './models/Task';
 
           <!-- Task Attachments -->
           @if (task()?.attachments && task()!.attachments.length > 0) {
-            <div class="mb-6">
+            <div class="mb-6 overflow-x-hidden">
               <h3 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-3">
                 {{ 'Task.attachments' | translate }}
               </h3>
               <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 @for (attachment of task()!.attachments; track attachment.id) {
-                  <div class="relative">
+                  <div class="relative overflow-hidden rounded-md w-full">
                     @if (isImage(attachment.filename || attachment.originalName)) {
-                      <app-image
-                        [initialUrl]="attachment.url || null"
-                        [mode]="'preview'"
-                        [format]="'square'"
-                        [size]="'lg'"
-                        class="w-full h-24 object-cover rounded-md cursor-pointer"
-                      />
+                      <div class="w-full h-24 overflow-hidden rounded-md">
+                        <app-image
+                          [initialUrl]="attachment.url || null"
+                          [mode]="'preview'"
+                          [format]="'square'"
+                          [size]="'lg'"
+                          class="w-full h-full object-cover cursor-pointer"
+                          style="max-width: 100%; box-sizing: border-box;"
+                        />
+                      </div>
                     } @else {
-                      <div class="flex items-center gap-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md">
-                        <ng-icon name="heroDocument" size="24" class="text-blue-500"></ng-icon>
+                      <div class="flex items-center gap-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md h-24">
+                        <ng-icon name="heroDocument" size="24" class="text-blue-500 flex-shrink-0"></ng-icon>
                         <span class="text-sm text-text-primary dark:text-dark-text-primary truncate">
                           {{ attachment.filename || attachment.originalName }}
                         </span>
@@ -426,14 +431,7 @@ import { Task, TaskComment } from './models/Task';
                 class="w-full px-3 py-2 border border-border-primary dark:border-dark-border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-surface-secondary dark:text-dark-text-primary resize-none"
                 [placeholder]="'Task.commentPlaceholder' | translate"
               ></textarea>
-              @if (
-                commentForm.get('content')?.invalid &&
-                commentForm.get('content')?.touched
-              ) {
-                <div class="text-red-500 text-sm mt-1">
-                  {{ 'Task.commentRequired' | translate }}
-                </div>
-              }
+              <app-error-message [input]="commentForm.get('content')" />
             </div>
 
             <!-- Comment Attachments -->
@@ -542,18 +540,21 @@ import { Task, TaskComment } from './models/Task';
                     @if (comment.attachments && comment.attachments.length > 0) {
                       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-3">
                         @for (attachment of comment.attachments; track attachment.id) {
-                          <div class="relative">
+                          <div class="relative overflow-hidden rounded-md w-full">
                             @if (isImage(attachment.filename || attachment.originalName)) {
-                              <app-image
-                                [initialUrl]="attachment.url || null"
-                                [mode]="'preview'"
-                                [format]="'square'"
-                                [size]="'md'"
-                                class="w-full h-20 object-cover rounded-md cursor-pointer"
-                              />
+                              <div class="w-full h-20 overflow-hidden rounded-md">
+                                <app-image
+                                  [initialUrl]="attachment.url || null"
+                                  [mode]="'preview'"
+                                  [format]="'square'"
+                                  [size]="'md'"
+                                  class="w-full h-full object-cover cursor-pointer"
+                                  style="max-width: 100%; box-sizing: border-box;"
+                                />
+                              </div>
                             } @else {
-                              <div class="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
-                                <ng-icon name="heroDocument" size="20" class="text-blue-500"></ng-icon>
+                              <div class="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md h-20">
+                                <ng-icon name="heroDocument" size="20" class="text-blue-500 flex-shrink-0"></ng-icon>
                                 <span class="text-sm text-text-primary dark:text-dark-text-primary truncate">
                                   {{ attachment.filename || attachment.originalName }}
                                 </span>

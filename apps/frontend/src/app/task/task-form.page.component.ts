@@ -3,19 +3,24 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroDocument, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
+import { File } from '../core/models/File';
 import { ProjectCategoryService } from '../project/data-access/project-category.service';
 import { ProjectRoleService } from '../project/data-access/project-role.service';
 import { ProjectStatusService } from '../project/data-access/project-status.service';
 import { ProjectsApiService } from '../project/data-access/project.api.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
-import { TextareaComponent } from '../shared/components/atoms/textarea-component';
+import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
+import { TextareaComponent } from '../shared/components/atoms/textarea.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { EditableMultiSelectComponent } from '../shared/components/molecules/editable-multi-select.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
+import { ImageComponent } from '../shared/components/organisms/image.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { NotificationService } from '../shared/services/notification.service';
 import { TaskPriorityService } from './data-access/task-priority.service';
@@ -41,6 +46,15 @@ interface SelectOption {
     InputFieldComponent,
     SelectFieldComponent,
     FileUploadComponent,
+    ImageComponent,
+    ErrorMessageComponent,
+    NgIcon,
+  ],
+  providers: [
+    provideIcons({
+      heroTrash,
+      heroDocument,
+    }),
   ],
   template: `
     <div class="max-w-4xl mx-auto p-6">
@@ -69,13 +83,7 @@ interface SelectOption {
               {{ 'Task.taskDescription' | translate }} *
             </label>
 
-            @if (fieldErrors['description']) {
-              <div class="mt-1">
-                @for (err of fieldErrors['description']; track err) {
-                  <div class="text-danger-600 text-xs">{{ err }}</div>
-                }
-              </div>
-            }
+            <app-error-message [input]="descriptionControl" />
           </div>
 
           <div class="relative">
@@ -89,13 +97,7 @@ interface SelectOption {
               {{ 'Task.additionalDescription' | translate }}
             </label>
 
-            @if (fieldErrors['additionalDescription']) {
-              <div class="mt-1">
-                @for (err of fieldErrors['additionalDescription']; track err) {
-                  <div class="text-danger-600 text-xs">{{ err }}</div>
-                }
-              </div>
-            }
+            <app-error-message [input]="additionalDescriptionControl" />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -105,6 +107,9 @@ interface SelectOption {
               [label]="'Task.priceEstimation' | translate"
               type="number"
             />
+            @if (fieldErrors['priceEstimation']) {
+              <app-error-message [customMessage]="fieldErrors['priceEstimation'].join(', ')" />
+            }
 
             <app-input-field
               [control]="workedTimeControl"
@@ -112,6 +117,9 @@ interface SelectOption {
               [label]="'Task.workedTime' | translate"
               type="number"
             />
+            @if (fieldErrors['workedTime']) {
+              <app-error-message [customMessage]="fieldErrors['workedTime'].join(', ')" />
+            }
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -122,6 +130,9 @@ interface SelectOption {
               [placeholder]="'Task.selectPriority' | translate"
               [options]="priorityOptions"
             />
+            @if (fieldErrors['priorityId']) {
+              <app-error-message [customMessage]="fieldErrors['priorityId'].join(', ')" />
+            }
 
             @if (projectId()) {
                 <app-editable-multi-select
@@ -131,6 +142,9 @@ interface SelectOption {
                   [placeholder]="'Task.categories' | translate"
                   formControlName="categoryIds"
                 ></app-editable-multi-select>
+                @if (fieldErrors['categoryIds']) {
+                  <app-error-message [customMessage]="fieldErrors['categoryIds'].join(', ')" />
+                }
 
               @if (projectUsers().length > 0) {
                   <app-editable-multi-select
@@ -140,6 +154,9 @@ interface SelectOption {
                     [placeholder]="'Task.assignedUsers' | translate"
                     formControlName="assignedUserIds"
                   ></app-editable-multi-select>
+                  @if (fieldErrors['assignedUserIds']) {
+                    <app-error-message [customMessage]="fieldErrors['assignedUserIds'].join(', ')" />
+                  }
               } @else {
                 <p class="text-sm text-text-muted dark:text-dark-text-muted italic">
                   {{ 'Task.noProjectUsers' | translate }}
@@ -153,6 +170,9 @@ interface SelectOption {
                 [placeholder]="'Task.selectStatus' | translate"
                 [options]="statusOptions"
               />
+              @if (fieldErrors['statusId']) {
+                <app-error-message [customMessage]="fieldErrors['statusId'].join(', ')" />
+              }
             }
           </div>
 
@@ -164,6 +184,9 @@ interface SelectOption {
               [placeholder]="'Task.selectAccessRole' | translate"
               [options]="accessRoleOptions"
             />
+            @if (fieldErrors['accessRole']) {
+              <app-error-message [customMessage]="fieldErrors['accessRole'].join(', ')" />
+            }
           </div>
 
           <!-- File Attachments -->
@@ -171,13 +194,91 @@ interface SelectOption {
             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
               {{ 'Task.attachments' | translate }}
             </h3>
-            <app-file-upload
-              [multiple]="true"
-              [maxFiles]="5"
-              [maxSizeBytes]="10485760"
-              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
-              (filesChange)="onFilesChange($event)"
-            />
+            
+            <!-- Existing Attachments -->
+            @if (existingAttachments().length > 0) {
+  <div class="space-y-2">
+    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+      {{ 'Task.existingAttachments' | translate }}
+    </h4>
+    <div class="flex flex-col gap-3">
+      @for (attachment of existingAttachments(); track attachment.id) {
+        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <!-- Ikona/Zdjęcie -->
+            <div class="flex-shrink-0">
+              @if (isImage(attachment.filename)) {
+                <app-image
+                  [initialUrl]="attachment.url || null"
+                  [mode]="'preview'"
+                  [format]="'square'"
+                  [size]="'sm'"
+                  class="w-10 h-10 object-cover rounded-md cursor-pointer"
+                />
+              } @else {
+                <ng-icon name="heroDocument" size="20" class="text-blue-500"></ng-icon>
+              }
+            </div>
+            
+            <!-- Tekst -->
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                {{ attachment.originalName }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ formatFileSize(attachment.size) }}
+              </p>
+            </div>
+          </div>
+          
+          <!-- Przycisk usuń -->
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              (click)="removeExistingAttachment(attachment)"
+              class="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+              [title]="'Basic.delete' | translate"
+            >
+              <ng-icon name="heroTrash" size="16"></ng-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
+            
+            <!-- New Attachments Upload -->
+            <div class="space-y-2">
+              @if (taskId()) {
+                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ 'Task.addNewAttachments' | translate }}
+                </h4>
+              }
+              <div [class]="getTotalAttachments() > 3 ? 'border-2 border-red-500 rounded-md p-2' : ''">
+                <app-file-upload
+                  [multiple]="true"
+                  [maxFiles]="getMaxNewFiles()"
+                  [maxSizeBytes]="10485760"
+                  accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+                  (filesChange)="onFilesChange($event)"
+                />
+              </div>
+              @if (taskId()) {
+                <p class="text-xs text-gray-500 dark:text-gray-400" 
+                   [class]="getTotalAttachments() > 3 ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'">
+                  {{ 'Task.maxAttachmentsNote' | translate: { max: 3, current: getTotalAttachments() } }}
+                </p>
+              }
+              @if (getTotalAttachments() > 3) {
+                <p class="text-xs text-red-500">
+                  {{ 'Task.attachmentsLimitExceeded' | translate }}
+                </p>
+              }
+              @if (fieldErrors['attachments']) {
+                <app-error-message [customMessage]="fieldErrors['attachments'].join(', ')" />
+              }
+            </div>
           </div>
 
           @if (error()) {
@@ -196,7 +297,7 @@ interface SelectOption {
 
             <app-button
               type="submit"
-              [disabled]="!taskForm.valid || submitting()"
+              [disabled]="!taskForm.valid || submitting() || getTotalAttachments() > 3"
             >
               @if (submitting()) {
                 <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
@@ -241,6 +342,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   readonly accessRoles = signal<SelectOption[]>([]);
   readonly projectUsers = signal<SelectOption[]>([]);
   readonly attachments = signal<FileUploadItem[]>([]);
+  readonly existingAttachments = signal<File[]>([]);
+  readonly attachmentsToDelete = signal<string[]>([]);
 
   taskForm: FormGroup = this.fb.group({
     description: ['', [Validators.required]],
@@ -311,12 +414,65 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected onFilesChange(files: FileUploadItem[]): void {
+    const existingCount = this.existingAttachments().length;
+    const maxNew = Math.max(0, 3 - existingCount);
+
+    if (files.length > maxNew) {
+      this.error.set(
+        this.translateService.instant('Task.maxAttachmentsError', { max: 3, current: existingCount + files.length }),
+      );
+      const trimmedFiles = files.slice(0, maxNew);
+      this.attachments.set(trimmedFiles);
+      return;
+    }
+
     this.attachments.set(files);
+    this.error.set(null);
+  }
+
+  protected removeExistingAttachment(attachment: File): void {
+    this.existingAttachments.update(attachments => attachments.filter(a => a.id !== attachment.id));
+    this.attachmentsToDelete.update(toDelete => [...toDelete, attachment.id]);
+
+    const totalAttachments = this.getTotalAttachments();
+    if (totalAttachments <= 3) {
+      this.error.set(null);
+    }
+  }
+
+  protected isImage(filename: string): boolean {
+    if (!filename) return false;
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    return imageExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+  }
+
+  protected formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  protected getMaxNewFiles(): number {
+    const maxTotal = 3;
+    const existing = this.existingAttachments().length;
+    return Math.max(0, maxTotal - existing);
+  }
+
+  protected getTotalAttachments(): number {
+    return this.existingAttachments().length + this.attachments().length;
   }
 
   protected onSubmit(): void {
     if (!this.taskForm.valid) {
       this.taskForm.markAllAsTouched();
+      return;
+    }
+
+    const totalAttachments = this.getTotalAttachments();
+    if (totalAttachments > 3) {
+      this.error.set(this.translateService.instant('Task.maxAttachmentsError', { max: 3 }));
       return;
     }
 
@@ -469,6 +625,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             categoryIds: data.categories?.map((c: any) => c.id) || [],
             assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
           });
+
+          if (data.attachments && data.attachments.length > 0) {
+            this.existingAttachments.set(data.attachments);
+          }
+
           this.loading.set(false);
         },
         error: error => {
@@ -553,6 +714,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.attachments().forEach(attachment => {
       formData.append('attachments', attachment.file);
     });
+
+    const attachmentsToDelete = this.attachmentsToDelete();
+    if (attachmentsToDelete.length > 0) {
+      formData.append('attachmentsToDelete', JSON.stringify(attachmentsToDelete));
+    }
 
     this.tasksService.updateWithFiles(taskId, formData)
       .pipe(takeUntil(this.destroy$))

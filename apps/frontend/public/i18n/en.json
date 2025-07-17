@@ -31,7 +31,10 @@
     "selectFiles": "Select Files",
     "selectedFiles": "Selected Files",
     "maxFiles": "Max {{count}} files",
-    "maxFileSize": "Max file size: {{size}}"
+    "maxFileSize": "Max file size: {{size}}",
+    "maxFilesExceeded": "Maximum {{count}} files allowed",
+    "fileSizeExceeded": "File \"{{name}}\" exceeds maximum size of {{size}}",
+    "fileDuplicate": "File \"{{name}}\" is already selected"
   },
   "Filters": {
     "search": "Search",
@@ -53,7 +56,8 @@
     "priorities": "Priorities",
     "statuses": "Statuses",
     "categories": "Categories",
-    "accessRoles": "Access roles"
+    "accessRoles": "Access roles",
+    "assignedUsers": "Assigned users"
   },
   "Auth": {
     "login": "Login",
@@ -156,7 +160,10 @@
     "image": "Image",
     "dateCreation": "Creation date",
     "dateModification": "Modification date",
-    "projectUserRole": "Project user role"
+    "projectUserRole": "Project user role",
+    "id": "ID",
+    "status": "Status",
+    "noStatus": "No status"
   },
   "ProjectRole": {
     "manager": "Manager",
@@ -164,6 +171,7 @@
     "member": "Member"
   },
   "Task": {
+    "id": "ID",
     "created": "Created",
     "modified": "Updated",
     "todo": "To do",
@@ -243,7 +251,12 @@
     "commentUpdateSuccess": "Comment updated",
     "commentUpdateError": "Error updating comment",
     "noAccessRoleSet": "No access role set",
-    "attachments": "Attachments"
+    "attachments": "Attachments",
+    "existingAttachments": "Existing attachments",
+    "addNewAttachments": "Add new attachments",
+    "maxAttachmentsNote": "Maximum {{max}} attachments allowed. Current: {{current}}",
+    "maxAttachmentsError": "Maximum {{max}} attachments limit exceeded",
+    "attachmentsLimitExceeded": "Remove some attachments to save the task"
   },
   "CookiesBanner": {
     "text": "This site uses cookies to improve your experience. By using our site, you agree to our use of cookies."

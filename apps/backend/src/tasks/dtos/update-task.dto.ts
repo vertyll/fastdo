@@ -149,4 +149,25 @@ export class UpdateTaskDto {
     maxSize: 10 * 1024 * 1024, // 10MB
   })
   attachments?: MultipartFile[];
+
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+    required: false,
+    description: 'Array of attachment IDs to delete',
+  })
+  @IsOptional()
+  @MultipartArray()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+    return Array.isArray(value) ? value : [];
+  })
+  @IsArray()
+  @IsString({ each: true })
+  attachmentsToDelete?: string[];
 }

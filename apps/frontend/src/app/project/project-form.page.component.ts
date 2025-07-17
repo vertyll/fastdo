@@ -8,7 +8,7 @@ import { AuthService } from '../auth/data-access/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
-import { TextareaComponent } from '../shared/components/atoms/textarea-component';
+import { TextareaComponent } from '../shared/components/atoms/textarea.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';

@@ -24,7 +24,7 @@ import { AppConfigStateService } from '../config/config.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { TableColumn, TableComponent, TableConfig } from '../shared/components/organisms/table-component';
+import { TableColumn, TableComponent, TableConfig } from '../shared/components/organisms/table.component';
 import { TasksListFiltersConfig } from '../shared/types/filter.type';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { GetAllTasksSearchParams } from '../shared/types/task.type';

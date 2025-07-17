@@ -7,7 +7,7 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { TableComponent, TableConfig, TableRow } from '../shared/components/organisms/table-component';
+import { TableComponent, TableConfig, TableRow } from '../shared/components/organisms/table.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';

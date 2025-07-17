@@ -14,7 +14,7 @@ import { ErrorMessageComponent } from '../atoms/error.message.component';
 import { InputComponent } from '../atoms/input.component';
 import { LabelComponent } from '../atoms/label.component';
 import { SpinnerComponent } from '../atoms/spinner.component';
-import { TextareaComponent } from '../atoms/textarea-component';
+import { TextareaComponent } from '../atoms/textarea.component';
 import { SelectFieldComponent } from '../molecules/select-field.component';
 
 @Component({
