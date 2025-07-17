@@ -4,10 +4,9 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroDocument, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroArrowLeft, heroDocument, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { File } from '../core/models/File';
 import { ProjectCategoryService } from '../project/data-access/project-category.service';
 import { ProjectRoleService } from '../project/data-access/project-role.service';
 import { ProjectStatusService } from '../project/data-access/project-status.service';
@@ -54,6 +53,7 @@ interface SelectOption {
     provideIcons({
       heroTrash,
       heroDocument,
+      heroArrowLeft,
     }),
   ],
   template: `
@@ -68,7 +68,9 @@ interface SelectOption {
 
       @if (loading()) {
         <div class="flex justify-center items-center min-h-32">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+          <div
+            class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"
+          ></div>
         </div>
       } @else {
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6">
@@ -79,7 +81,10 @@ interface SelectOption {
               [placeholder]="'Task.taskDescriptionPlaceholder' | translate"
               [rows]="3"
             />
-            <label for="description" class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1">
+            <label
+              for="description"
+              class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1"
+            >
               {{ 'Task.taskDescription' | translate }} *
             </label>
 
@@ -90,10 +95,15 @@ interface SelectOption {
             <app-textarea
               id="additionalDescription"
               [control]="additionalDescriptionControl"
-              [placeholder]="'Task.additionalDescriptionPlaceholder' | translate"
+              [placeholder]="
+                'Task.additionalDescriptionPlaceholder' | translate
+              "
               [rows]="3"
             />
-            <label for="additionalDescription" class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1">
+            <label
+              for="additionalDescription"
+              class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1"
+            >
               {{ 'Task.additionalDescription' | translate }}
             </label>
 
@@ -108,7 +118,9 @@ interface SelectOption {
               type="number"
             />
             @if (fieldErrors['priceEstimation']) {
-              <app-error-message [customMessage]="fieldErrors['priceEstimation'].join(', ')" />
+              <app-error-message
+                [customMessage]="fieldErrors['priceEstimation'].join(', ')"
+              />
             }
 
             <app-input-field
@@ -118,7 +130,9 @@ interface SelectOption {
               type="number"
             />
             @if (fieldErrors['workedTime']) {
-              <app-error-message [customMessage]="fieldErrors['workedTime'].join(', ')" />
+              <app-error-message
+                [customMessage]="fieldErrors['workedTime'].join(', ')"
+              />
             }
           </div>
 
@@ -131,34 +145,42 @@ interface SelectOption {
               [options]="priorityOptions"
             />
             @if (fieldErrors['priorityId']) {
-              <app-error-message [customMessage]="fieldErrors['priorityId'].join(', ')" />
+              <app-error-message
+                [customMessage]="fieldErrors['priorityId'].join(', ')"
+              />
             }
 
             @if (projectId()) {
-                <app-editable-multi-select
-                  [dataArray]="categories()"
-                  [maxSelectedItems]="10"
-                  [id]="'categories'"
-                  [placeholder]="'Task.categories' | translate"
-                  formControlName="categoryIds"
-                ></app-editable-multi-select>
-                @if (fieldErrors['categoryIds']) {
-                  <app-error-message [customMessage]="fieldErrors['categoryIds'].join(', ')" />
-                }
+              <app-editable-multi-select
+                [dataArray]="categories()"
+                [maxSelectedItems]="10"
+                [id]="'categories'"
+                [placeholder]="'Task.categories' | translate"
+                formControlName="categoryIds"
+              ></app-editable-multi-select>
+              @if (fieldErrors['categoryIds']) {
+                <app-error-message
+                  [customMessage]="fieldErrors['categoryIds'].join(', ')"
+                />
+              }
 
               @if (projectUsers().length > 0) {
-                  <app-editable-multi-select
-                    [dataArray]="projectUsers()"
-                    [maxSelectedItems]="20"
-                    [id]="'assignedUsers'"
-                    [placeholder]="'Task.assignedUsers' | translate"
-                    formControlName="assignedUserIds"
-                  ></app-editable-multi-select>
-                  @if (fieldErrors['assignedUserIds']) {
-                    <app-error-message [customMessage]="fieldErrors['assignedUserIds'].join(', ')" />
-                  }
+                <app-editable-multi-select
+                  [dataArray]="projectUsers()"
+                  [maxSelectedItems]="20"
+                  [id]="'assignedUsers'"
+                  [placeholder]="'Task.assignedUsers' | translate"
+                  formControlName="assignedUserIds"
+                ></app-editable-multi-select>
+                @if (fieldErrors['assignedUserIds']) {
+                  <app-error-message
+                    [customMessage]="fieldErrors['assignedUserIds'].join(', ')"
+                  />
+                }
               } @else {
-                <p class="text-sm text-text-muted dark:text-dark-text-muted italic">
+                <p
+                  class="text-sm text-text-muted dark:text-dark-text-muted italic"
+                >
                   {{ 'Task.noProjectUsers' | translate }}
                 </p>
               }
@@ -171,7 +193,9 @@ interface SelectOption {
                 [options]="statusOptions"
               />
               @if (fieldErrors['statusId']) {
-                <app-error-message [customMessage]="fieldErrors['statusId'].join(', ')" />
+                <app-error-message
+                  [customMessage]="fieldErrors['statusId'].join(', ')"
+                />
               }
             }
           </div>
@@ -185,7 +209,9 @@ interface SelectOption {
               [options]="accessRoleOptions"
             />
             @if (fieldErrors['accessRole']) {
-              <app-error-message [customMessage]="fieldErrors['accessRole'].join(', ')" />
+              <app-error-message
+                [customMessage]="fieldErrors['accessRole'].join(', ')"
+              />
             }
           </div>
 
@@ -194,68 +220,94 @@ interface SelectOption {
             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
               {{ 'Task.attachments' | translate }}
             </h3>
-            
+
             <!-- Existing Attachments -->
             @if (existingAttachments().length > 0) {
-  <div class="space-y-2">
-    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
-      {{ 'Task.existingAttachments' | translate }}
-    </h4>
-    <div class="flex flex-col gap-3">
-      @for (attachment of existingAttachments(); track attachment.id) {
-        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div class="flex items-center gap-3 flex-1 min-w-0">
-            <!-- Ikona/Zdjęcie -->
-            <div class="flex-shrink-0">
-              @if (isImage(attachment.filename)) {
-                <app-image
-                  [initialUrl]="attachment.url || null"
-                  [mode]="'preview'"
-                  [format]="'square'"
-                  [size]="'sm'"
-                  class="w-10 h-10 object-cover rounded-md cursor-pointer"
-                />
-              } @else {
-                <ng-icon name="heroDocument" size="20" class="text-blue-500"></ng-icon>
-              }
-            </div>
-            
-            <!-- Tekst -->
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                {{ attachment.originalName }}
-              </p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ formatFileSize(attachment.size) }}
-              </p>
-            </div>
-          </div>
-          
-          <!-- Przycisk usuń -->
-          <div class="flex items-center gap-2">
-            <button
-              type="button"
-              (click)="removeExistingAttachment(attachment)"
-              class="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
-              [title]="'Basic.delete' | translate"
-            >
-              <ng-icon name="heroTrash" size="16"></ng-icon>
-            </button>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-}
-            
+              <div class="space-y-2">
+                <h4
+                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  {{ 'Task.existingAttachments' | translate }}
+                </h4>
+                <div class="flex flex-col gap-3">
+                  @for (
+                    attachment of existingAttachments();
+                    track attachment.id
+                  ) {
+                    <div
+                      class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-opacity duration-200"
+                      [class.opacity-50]="attachment._markedForDelete"
+                    >
+                      <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <!-- Icon/Image -->
+                        <div class="flex-shrink-0">
+                          @if (isImage(attachment.filename)) {
+                            <app-image
+                              [initialUrl]="attachment.url || null"
+                              [mode]="'preview'"
+                              [format]="'square'"
+                              [size]="'sm'"
+                              class="w-10 h-10 object-cover rounded-md cursor-pointer"
+                            />
+                          } @else {
+                            <ng-icon
+                              name="heroDocument"
+                              size="20"
+                              class="text-blue-500"
+                            ></ng-icon>
+                          }
+                        </div>
+
+                        <!-- Tekst -->
+                        <div class="min-w-0 flex-1">
+                          <p
+                            class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate"
+                          >
+                            {{ attachment.originalName }}
+                          </p>
+                          <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ formatFileSize(attachment.size) }}
+                          </p>
+                        </div>
+                      </div>
+
+                      <!-- Delete/Undo Button -->
+                      <div class="flex items-center gap-2">
+                        <button
+                          type="button"
+                          (click)="removeExistingAttachment(attachment)"
+                          class="p-1 rounded-md outline-none border-none"
+                          [ngClass]="attachment._markedForDelete
+                            ? 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100'
+                            : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'"
+                          [title]="attachment._markedForDelete ? ('Basic.undo' | translate) : ('Basic.delete' | translate)"
+                        >
+                          <ng-icon *ngIf="!attachment._markedForDelete" name="heroTrash" size="16"></ng-icon>
+                          <ng-icon *ngIf="attachment._markedForDelete" name="heroArrowLeft" size="16"></ng-icon>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
             <!-- New Attachments Upload -->
             <div class="space-y-2">
               @if (taskId()) {
-                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h4
+                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   {{ 'Task.addNewAttachments' | translate }}
                 </h4>
               }
-              <div [class]="getTotalAttachments() > maxAttachmentsLimit ? 'border-2 border-red-500 rounded-md p-2' : ''">
+              <div
+                [class]="
+                  getTotalAttachments() > maxAttachmentsLimit
+                    ? 'border-2 border-red-500 rounded-md p-2'
+                    : ''
+                "
+              >
                 <app-file-upload
                   [multiple]="true"
                   [maxFiles]="getMaxNewFiles()"
@@ -265,9 +317,22 @@ interface SelectOption {
                 />
               </div>
               @if (taskId()) {
-                <p class="text-xs text-gray-500 dark:text-gray-400" 
-                   [class]="getTotalAttachments() > maxAttachmentsLimit ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'">
-                  {{ 'Task.maxAttachmentsNote' | translate: { max: maxAttachmentsLimit, current: getTotalAttachments() } }}
+                <p
+                  class="text-xs text-gray-500 dark:text-gray-400"
+                  [class]="
+                    getTotalAttachments() > maxAttachmentsLimit
+                      ? 'text-red-500'
+                      : 'text-gray-500 dark:text-gray-400'
+                  "
+                >
+                  {{
+                    'Task.maxAttachmentsNote'
+                      | translate
+                        : {
+                            max: maxAttachmentsLimit,
+                            current: getTotalAttachments(),
+                          }
+                  }}
                 </p>
               }
               @if (getTotalAttachments() > maxAttachmentsLimit) {
@@ -276,7 +341,9 @@ interface SelectOption {
                 </p>
               }
               @if (fieldErrors['attachments']) {
-                <app-error-message [customMessage]="fieldErrors['attachments'].join(', ')" />
+                <app-error-message
+                  [customMessage]="fieldErrors['attachments'].join(', ')"
+                />
               }
             </div>
           </div>
@@ -288,19 +355,22 @@ interface SelectOption {
           }
 
           <div class="flex justify-between items-center pt-6">
-            <app-button
-              type="button"
-              (click)="onCancel()"
-            >
+            <app-button type="button" (click)="onCancel()">
               {{ 'Basic.cancel' | translate }}
             </app-button>
 
             <app-button
               type="submit"
-              [disabled]="!taskForm.valid || submitting() || getTotalAttachments() > maxAttachmentsLimit"
+              [disabled]="
+                !taskForm.valid ||
+                submitting() ||
+                getTotalAttachments() > maxAttachmentsLimit
+              "
             >
               @if (submitting()) {
-                <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                <span
+                  class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"
+                ></span>
               }
               {{ 'Basic.save' | translate }}
             </app-button>
@@ -342,7 +412,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   readonly accessRoles = signal<SelectOption[]>([]);
   readonly projectUsers = signal<SelectOption[]>([]);
   readonly attachments = signal<FileUploadItem[]>([]);
-  readonly existingAttachments = signal<File[]>([]);
+  readonly existingAttachments = signal<any[]>([]);
   readonly attachmentsToDelete = signal<string[]>([]);
 
   protected readonly maxAttachmentsLimit = 4;
@@ -421,7 +491,10 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     if (files.length > maxNew) {
       this.error.set(
-        this.translateService.instant('Task.maxAttachmentsError', { max: this.maxAttachmentsLimit, current: existingCount + files.length }),
+        this.translateService.instant('Task.maxAttachmentsError', {
+          max: this.maxAttachmentsLimit,
+          current: existingCount + files.length,
+        }),
       );
       const trimmedFiles = files.slice(0, maxNew);
       this.attachments.set(trimmedFiles);
@@ -432,9 +505,18 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.error.set(null);
   }
 
-  protected removeExistingAttachment(attachment: File): void {
-    this.existingAttachments.update(attachments => attachments.filter(a => a.id !== attachment.id));
-    this.attachmentsToDelete.update(toDelete => [...toDelete, attachment.id]);
+  protected removeExistingAttachment(attachment: any): void {
+    if (!attachment._markedForDelete) {
+      attachment._markedForDelete = true;
+      this.attachmentsToDelete.update(toDelete => [
+        ...toDelete,
+        attachment.id,
+      ]);
+    } else {
+      attachment._markedForDelete = false;
+      this.attachmentsToDelete.update(toDelete => toDelete.filter(id => id !== attachment.id));
+    }
+    this.existingAttachments.set([...this.existingAttachments()]);
 
     const totalAttachments = this.getTotalAttachments();
     if (totalAttachments <= this.maxAttachmentsLimit) {
@@ -474,7 +556,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     const totalAttachments = this.getTotalAttachments();
     if (totalAttachments > this.maxAttachmentsLimit) {
-      this.error.set(this.translateService.instant('Task.maxAttachmentsError', { max: this.maxAttachmentsLimit }));
+      this.error.set(
+        this.translateService.instant('Task.maxAttachmentsError', {
+          max: this.maxAttachmentsLimit,
+        }),
+      );
       return;
     }
 
@@ -499,7 +585,9 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       workedTime: formValue.workedTime || undefined,
       accessRoleId: formValue.accessRole || undefined,
       priorityId: formValue.priorityId || undefined,
-      categoryIds: formValue.categoryIds && formValue.categoryIds.length > 0 ? formValue.categoryIds : undefined,
+      categoryIds: formValue.categoryIds && formValue.categoryIds.length > 0
+        ? formValue.categoryIds
+        : undefined,
       statusId: formValue.statusId || undefined,
       assignedUserIds: formValue.assignedUserIds && formValue.assignedUserIds.length > 0
         ? formValue.assignedUserIds
@@ -534,7 +622,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private loadOptions(): void {
     const currentProjectId = this.projectId();
 
-    this.taskPriorityService.getAll()
+    this.taskPriorityService
+      .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: prioritiesRes => {
@@ -547,7 +636,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.projectRoleService.getAll()
+    this.projectRoleService
+      .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: accessRolesRes => {
@@ -561,7 +651,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
 
     if (currentProjectId) {
-      this.projectCategoryService.getByProjectId(+currentProjectId)
+      this.projectCategoryService
+        .getByProjectId(+currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: categoriesRes => {
@@ -574,7 +665,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           },
         });
 
-      this.projectStatusService.getByProjectId(+currentProjectId)
+      this.projectStatusService
+        .getByProjectId(+currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: statusesRes => {
@@ -587,7 +679,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           },
         });
 
-      this.projectsApiService.getProjectUsers(+currentProjectId)
+      this.projectsApiService
+        .getProjectUsers(+currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: usersRes => {
@@ -611,7 +704,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   private loadTaskData(taskId: number): void {
-    this.tasksService.getOne(taskId)
+    this.tasksService
+      .getOne(taskId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
@@ -668,7 +762,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       entries.push(`${key}: ${value}`);
     });
 
-    this.tasksService.addWithFiles(formData)
+    this.tasksService
+      .addWithFiles(formData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
@@ -681,9 +776,13 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const currentProjectId = this.projectId();
 
           if (newTaskId) {
-            this.router.navigate(['/projects', currentProjectId, 'tasks', newTaskId]).then();
+            this.router
+              .navigate(['/projects', currentProjectId, 'tasks', newTaskId])
+              .then();
           } else {
-            this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+            this.router
+              .navigate(['/projects', currentProjectId, 'tasks'])
+              .then();
           }
         },
         error: error => {
@@ -719,10 +818,14 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     const attachmentsToDelete = this.attachmentsToDelete();
     if (attachmentsToDelete.length > 0) {
-      formData.append('attachmentsToDelete', JSON.stringify(attachmentsToDelete));
+      formData.append(
+        'attachmentsToDelete',
+        JSON.stringify(attachmentsToDelete),
+      );
     }
 
-    this.tasksService.updateWithFiles(taskId, formData)
+    this.tasksService
+      .updateWithFiles(taskId, formData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
@@ -736,7 +839,15 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const taskIdToUse = updatedTask?.id || taskId;
 
           if (projectIdToUse && taskIdToUse) {
-            this.router.navigate(['/projects', projectIdToUse, 'tasks', 'details', taskIdToUse]).then();
+            this.router
+              .navigate([
+                '/projects',
+                projectIdToUse,
+                'tasks',
+                'details',
+                taskIdToUse,
+              ])
+              .then();
           } else {
             this.router.navigate(['/projects']).then();
           }
@@ -753,7 +864,9 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private handleSubmissionError(error: any): void {
     const messages = error?.error?.errors?.message ?? [];
     if (Array.isArray(messages) && messages.length > 0) {
-      Object.keys(this.fieldErrors).forEach(key => delete this.fieldErrors[key]);
+      Object.keys(this.fieldErrors).forEach(
+        key => delete this.fieldErrors[key],
+      );
       messages.forEach((errObj: any) => {
         if (errObj.field && Array.isArray(errObj.errors)) {
           this.fieldErrors[errObj.field] = errObj.errors;
@@ -778,32 +891,44 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private updateOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
 
-    this.priorities.set((this.prioritiesRaw() || []).map((item: any) => ({
-      id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
-        || item.translations?.[0]?.name
-        || item.name || '',
-    })));
+    this.priorities.set(
+      (this.prioritiesRaw() || []).map((item: any) => ({
+        id: item.id,
+        name: item.translations?.find((t: any) => t.lang === lang)?.name
+          || item.translations?.[0]?.name
+          || item.name
+          || '',
+      })),
+    );
 
-    this.categories.set((this.categoriesRaw() || []).map((item: any) => ({
-      id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
-        || item.translations?.[0]?.name
-        || item.name || '',
-    })));
+    this.categories.set(
+      (this.categoriesRaw() || []).map((item: any) => ({
+        id: item.id,
+        name: item.translations?.find((t: any) => t.lang === lang)?.name
+          || item.translations?.[0]?.name
+          || item.name
+          || '',
+      })),
+    );
 
-    this.statuses.set((this.statusesRaw() || []).map((item: any) => ({
-      id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
-        || item.translations?.[0]?.name
-        || item.name || '',
-    })));
+    this.statuses.set(
+      (this.statusesRaw() || []).map((item: any) => ({
+        id: item.id,
+        name: item.translations?.find((t: any) => t.lang === lang)?.name
+          || item.translations?.[0]?.name
+          || item.name
+          || '',
+      })),
+    );
 
-    this.accessRoles.set((this.accessRolesRaw() || []).map((item: any) => ({
-      id: item.id,
-      name: (item.translations?.find((t: any) => t.lang === lang)?.name)
-        || item.translations?.[0]?.name
-        || item.name || '',
-    })));
+    this.accessRoles.set(
+      (this.accessRolesRaw() || []).map((item: any) => ({
+        id: item.id,
+        name: item.translations?.find((t: any) => t.lang === lang)?.name
+          || item.translations?.[0]?.name
+          || item.name
+          || '',
+      })),
+    );
   }
 }

@@ -246,6 +246,7 @@
     "saveComment": "Zapisz komentarz",
     "editComment": "Edytuj komentarz",
     "deleteComment": "Usuń komentarz",
+    "deleteCommentConfirm": "Czy na pewno chcesz usunąć ten komentarz?",
     "commentDeleteSuccess": "Komentarz został usunięty",
     "commentDeleteError": "Błąd podczas usuwania komentarza",
     "commentUpdateSuccess": "Komentarz został zaktualizowany",
@@ -256,7 +257,10 @@
     "addNewAttachments": "Dodaj nowe załączniki",
     "maxAttachmentsNote": "Maksymalnie {{max}} załączników dozwolonych. Obecnie: {{current}}",
     "maxAttachmentsError": "Przekroczono limit {{max}} załączników",
-    "attachmentsLimitExceeded": "Usuń niektóre załączniki, aby móc zapisać zadanie"
+    "attachmentsLimitExceeded": "Usuń niektóre załączniki, aby móc zapisać zadanie",
+    "timeTracking": "Śledzenie czasu",
+    "dates": "Daty",
+    "people": "Osoby"
   },
   "CookiesBanner": {
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."

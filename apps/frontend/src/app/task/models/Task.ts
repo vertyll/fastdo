@@ -44,6 +44,7 @@ export type TaskComment = {
   id: number;
   content: string;
   dateCreation: string;
+  dateModification: string;
   author: TaskUser;
   attachments: File[];
 };

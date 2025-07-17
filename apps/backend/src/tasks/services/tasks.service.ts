@@ -38,47 +38,6 @@ export class TasksService implements ITasksService {
     private readonly fileFacade: FileFacade,
   ) {}
 
-  public async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const userId = this.cls.get('user').userId;
-
-    const taskData: TaskData = {
-      description: createTaskDto.description,
-      additionalDescription: createTaskDto.additionalDescription,
-      priceEstimation: createTaskDto.priceEstimation || 0,
-      workedTime: createTaskDto.workedTime || 0,
-      createdBy: { id: userId } as User,
-      project: { id: createTaskDto.projectId } as Project,
-    };
-
-    if (createTaskDto.accessRoleId) {
-      taskData.accessRole = { id: createTaskDto.accessRoleId } as ProjectRole;
-    }
-
-    if (createTaskDto.assignedUserIds && createTaskDto.assignedUserIds.length > 0) {
-      taskData.assignedUsers = createTaskDto.assignedUserIds.map(id => ({ id } as User));
-    } else {
-      taskData.assignedUsers = [{ id: userId } as User];
-    }
-
-    if (createTaskDto.categoryIds && createTaskDto.categoryIds.length > 0) {
-      taskData.categories = createTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
-    }
-
-    if (createTaskDto.statusId) {
-      taskData.status = { id: createTaskDto.statusId } as ProjectStatus;
-    }
-
-    if (createTaskDto.priorityId) {
-      taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
-    }
-
-    const savedTask = await this.taskRepository.save(taskData);
-
-    await this.processTaskAttachments(savedTask, createTaskDto.attachments);
-
-    return savedTask;
-  }
-
   public async findAll(params: GetAllTasksSearchParamsDto): Promise<ApiPaginatedResponse<TaskResponseDto>> {
     const page = Number(params.page) || 0;
     const pageSize = Number(params.pageSize) || 10;
@@ -159,6 +118,47 @@ export class TasksService implements ITasksService {
     });
     this.validateTaskAccess(task, userId);
     return this.mapTaskToResponseDto(task);
+  }
+
+  public async create(createTaskDto: CreateTaskDto): Promise<Task> {
+    const userId = this.cls.get('user').userId;
+
+    const taskData: TaskData = {
+      description: createTaskDto.description,
+      additionalDescription: createTaskDto.additionalDescription,
+      priceEstimation: createTaskDto.priceEstimation || 0,
+      workedTime: createTaskDto.workedTime || 0,
+      createdBy: { id: userId } as User,
+      project: { id: createTaskDto.projectId } as Project,
+    };
+
+    if (createTaskDto.accessRoleId) {
+      taskData.accessRole = { id: createTaskDto.accessRoleId } as ProjectRole;
+    }
+
+    if (createTaskDto.assignedUserIds && createTaskDto.assignedUserIds.length > 0) {
+      taskData.assignedUsers = createTaskDto.assignedUserIds.map(id => ({ id } as User));
+    } else {
+      taskData.assignedUsers = [{ id: userId } as User];
+    }
+
+    if (createTaskDto.categoryIds && createTaskDto.categoryIds.length > 0) {
+      taskData.categories = createTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
+    }
+
+    if (createTaskDto.statusId) {
+      taskData.status = { id: createTaskDto.statusId } as ProjectStatus;
+    }
+
+    if (createTaskDto.priorityId) {
+      taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
+    }
+
+    const savedTask = await this.taskRepository.save(taskData);
+
+    await this.processTaskAttachments(savedTask, createTaskDto.attachments);
+
+    return savedTask;
   }
 
   public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
@@ -324,7 +324,7 @@ export class TasksService implements ITasksService {
 
     const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
 
-    await this.processCommentAttachments(savedComment, taskId, createCommentDto.attachments);
+    await this.processTaskCommentAttachments(savedComment, taskId, createCommentDto.attachments);
 
     return savedComment;
   }
@@ -354,7 +354,7 @@ export class TasksService implements ITasksService {
 
     const comment = await this.taskRepository.manager.findOne(TaskComment, {
       where: { id: commentId },
-      relations: ['author', 'task'],
+      relations: ['author', 'task', 'commentAttachments', 'commentAttachments.file'],
     });
 
     if (!comment) {
@@ -368,10 +368,15 @@ export class TasksService implements ITasksService {
     comment.content = updateCommentDto.content;
     comment.dateModification = new Date();
 
+    const attachmentsToDelete = updateCommentDto.attachmentsToDelete ?? [];
+    if (attachmentsToDelete.length > 0) {
+      await this.processTaskCommentAttachmentDeletion(comment, attachmentsToDelete);
+    }
+
     const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
 
     if (updateCommentDto.attachments && updateCommentDto.attachments.length > 0) {
-      await this.processCommentAttachments(savedComment, comment.task.id, updateCommentDto.attachments);
+      await this.processTaskCommentAttachments(savedComment, comment.task.id, updateCommentDto.attachments);
     }
 
     return savedComment;
@@ -390,6 +395,28 @@ export class TasksService implements ITasksService {
       taskAttachment.file = { id: uploadedFile.id } as any;
 
       return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
+    });
+
+    await Promise.all(attachmentPromises);
+  }
+
+  private async processTaskCommentAttachments(
+    taskComment: TaskComment,
+    taskId: number,
+    attachments?: any[],
+  ): Promise<void> {
+    if (!attachments || attachments.length === 0) {
+      return;
+    }
+
+    const attachmentPromises = attachments.map(async file => {
+      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${taskComment.id}` });
+
+      const commentAttachment = new TaskCommentAttachment();
+      commentAttachment.comment = taskComment;
+      commentAttachment.file = { id: uploadedFile.id } as any;
+
+      return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
     });
 
     await Promise.all(attachmentPromises);
@@ -416,22 +443,25 @@ export class TasksService implements ITasksService {
     await Promise.all(deletePromises);
   }
 
-  private async processCommentAttachments(comment: TaskComment, taskId: number, attachments?: any[]): Promise<void> {
-    if (!attachments || attachments.length === 0) {
+  private async processTaskCommentAttachmentDeletion(taskComment: TaskComment, attachmentIds: string[]): Promise<void> {
+    if (!attachmentIds || attachmentIds.length === 0) {
       return;
     }
 
-    const attachmentPromises = attachments.map(async file => {
-      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${comment.id}` });
-
-      const commentAttachment = new TaskCommentAttachment();
-      commentAttachment.comment = comment;
-      commentAttachment.file = { id: uploadedFile.id } as any;
-
-      return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
+    const attachments = await this.taskRepository.manager.find(TaskCommentAttachment, {
+      where: {
+        comment: { id: taskComment.id },
+        file: { id: In(attachmentIds) },
+      },
+      relations: ['file'],
     });
 
-    await Promise.all(attachmentPromises);
+    const deletePromises = attachments.map(async attachment => {
+      await this.fileFacade.delete(attachment.file.id);
+      await this.taskRepository.manager.remove(TaskCommentAttachment, attachment);
+    });
+
+    await Promise.all(deletePromises);
   }
 
   private validateTaskAccess(task: Task, userId: number): void {

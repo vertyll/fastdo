@@ -97,6 +97,12 @@ export class TasksApiService {
     );
   }
 
+  public updateCommentWithFiles(commentId: number, formData: FormData): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, formData),
+    );
+  }
+
   public updateWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
       this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, formData),
