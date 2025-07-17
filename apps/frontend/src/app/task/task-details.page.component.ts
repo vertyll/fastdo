@@ -992,7 +992,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       .filter(a => a._markedForDelete)
       .map(a => a.id);
     if (deletedIds.length > 0) {
-      deletedIds.forEach(id => formData.append('attachmentsToDelete', id));
+      formData.append('attachmentsToDelete', JSON.stringify(deletedIds));
     }
 
     this.tasksService

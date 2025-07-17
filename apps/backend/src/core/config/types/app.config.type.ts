@@ -24,10 +24,13 @@ export const FILE_CONSTANTS = {
   UPLOAD_DIR_PATH: './uploads',
 };
 
+export type DatabaseLoggerType = 'advanced-console' | 'simple-console' | 'formatted-console' | 'file' | 'debug';
+
 export type DatabaseConfig = PostgresConnectionOptions & {
   autoLoadEntities?: boolean;
   retryAttempts?: number;
   retryDelay?: number;
+  logger?: DatabaseLoggerType;
 };
 
 interface JwtTokenConfig {
