@@ -117,7 +117,7 @@ describe('TasksController', () => {
         sort: undefined,
       };
 
-      const result: ApiPaginatedResponse<Task> = {
+      const result: ApiPaginatedResponse<any> = {
         items: [
           {
             id: 1,
@@ -136,7 +136,8 @@ describe('TasksController', () => {
             status: null,
             taskAttachments: [],
             comments: [],
-          } as Task,
+            attachments: [],
+          },
         ],
         pagination: {
           total: 1,
@@ -190,7 +191,7 @@ describe('TasksController', () => {
         sort: undefined,
       };
 
-      const result: ApiPaginatedResponse<Task> = {
+      const result: ApiPaginatedResponse<any> = {
         items: [
           {
             id: 1,
@@ -209,7 +210,8 @@ describe('TasksController', () => {
             status: null,
             taskAttachments: [],
             comments: [],
-          } as Task,
+            attachments: [],
+          },
         ],
         pagination: {
           total: 1,
@@ -298,6 +300,7 @@ describe('TasksController', () => {
         status: null,
         taskAttachments: [],
         comments: [],
+        attachments: [],
       };
 
       mockTasksService.findOne.mockResolvedValue(result);
@@ -381,6 +384,7 @@ describe('TasksController', () => {
         status: null,
         taskAttachments: [],
         comments: [],
+        attachments: [],
       };
 
       mockTasksService.update.mockResolvedValue(result);

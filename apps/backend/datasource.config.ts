@@ -14,7 +14,8 @@ const allowedLoggers = [
 ] as const;
 
 const envLogger = process.env.DATABASE_LOGGER;
-const logger = (allowedLoggers.includes(envLogger as any) ? envLogger : 'advanced-console') as typeof allowedLoggers[number];
+const logger =
+  (allowedLoggers.includes(envLogger as any) ? envLogger : 'advanced-console') as typeof allowedLoggers[number];
 
 const dataSourceOptions: PostgresConnectionOptions = {
   type: 'postgres',
