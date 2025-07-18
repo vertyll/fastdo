@@ -1,50 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <meta charset="utf-8">
-    <title>Confirm your email</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Potwierdź swój adres e-mail</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Inter', Arial, sans-serif;
             margin: 0;
             padding: 0;
-        }
-        .container {
             width: 100%;
+            background-color: #f4f5f7;
+        }
+        .email-container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 40px auto;
             background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-        h1 {
-            color: #333333;
-        }
-        p {
-            color: #666666;
-        }
-        a {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 20px;
-            color: #ffffff;
+        .header {
             background-color: #f97316;
-            text-decoration: none;
-            border-radius: 5px;
+            color: #ffffff;
+            padding: 24px;
+            text-align: center;
         }
-        a:hover {
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 32px;
+            line-height: 1.6;
+            color: #333d4c;
+        }
+        .content h2 {
+            font-size: 20px;
+            color: #1a202c;
+            margin-top: 0;
+        }
+        .content p {
+            font-size: 16px;
+            margin: 16px 0;
+        }
+        .button-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #f97316;
+            color: #ffffff;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
             background-color: #ea580c;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Welcome!</h1>
-    <p>Thank you for registering with us. Please confirm your email by clicking the link below:</p>
-    <a href="{{confirmationUrl}}">Confirm Email</a>
-    <p>If you did not create an account, no further action is required.</p>
-    <p>Best regards,<br>The Team</p>
-</div>
+    <div class="email-container">
+        <div class="header">
+            <h1>Witaj w FastDo</h1>
+        </div>
+        <div class="content">
+            <h2>Dziękujemy za rejestrację!</h2>
+            <p>Aby dokończyć proces, kliknij poniższy przycisk i potwierdź swój adres e-mail.</p>
+            <div class="button-container">
+                <a href="{{confirmationUrl}}" class="button">Potwierdź E-mail</a>
+            </div>
+            <p>Jeśli nie zakładałeś/aś u nas konta, zignoruj tę wiadomość.</p>
+        </div>
+        <div class="footer">
+            <p>Z pozdrowieniami, Zespół FastDo</p>
+        </div>
+    </div>
 </body>
 </html>

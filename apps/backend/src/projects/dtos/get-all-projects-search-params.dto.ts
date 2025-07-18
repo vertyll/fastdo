@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayTransform } from 'src/common/decorators/array-transform.decorator';
 
-export class GetAllProjectsSearchParams {
+export class GetAllProjectsSearchParamsDto {
   @ApiProperty({ required: false, description: 'Search query' })
   @IsOptional()
   @IsString()
@@ -59,11 +60,14 @@ export class GetAllProjectsSearchParams {
   @IsString()
   updatedTo?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by project type IDs (multiselect)',
+  })
   @IsOptional()
-  @IsString()
-  @IsIn(['active', 'inactive'])
-  status?: 'active' | 'inactive';
+  @ArrayTransform()
+  typeIds?: number[];
 
   @ApiProperty({ required: false })
   @IsOptional()

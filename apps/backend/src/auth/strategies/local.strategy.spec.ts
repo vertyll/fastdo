@@ -2,7 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { User } from '../../users/entities/user.entity';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { LocalStrategy } from './local.strategy';
 
 describe('LocalStrategy', () => {
@@ -29,8 +29,8 @@ describe('LocalStrategy', () => {
     emailChangeTokenExpiry: null,
     pendingEmail: null,
     refreshTokens: [],
-    projectUsers: [],
     emailHistories: [],
+    projectUserRoles: [],
   };
 
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { ToastPositionEnum } from '../enums/toast.enum';
+import { ToastPositionEnum } from '../enums/toast-position.enum';
 import { ToastObject } from '../types/components.type';
 
 @Injectable({

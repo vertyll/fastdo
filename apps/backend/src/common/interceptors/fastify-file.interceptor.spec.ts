@@ -13,7 +13,7 @@ describe('FastifyFileInterceptor', () => {
 
   beforeEach(() => {
     mockI18n = {
-      t: jest.fn().mockReturnValue('translated message'),
+      t: jest.fn((_key, _args) => 'translated message'),
     } as any;
 
     mockGetRequest = jest.fn();
@@ -29,7 +29,6 @@ describe('FastifyFileInterceptor', () => {
     };
 
     jest.spyOn(I18nContext, 'current').mockReturnValue(mockI18n);
-
     interceptor = new FastifyFileInterceptor('testFile');
   });
 
@@ -48,7 +47,7 @@ describe('FastifyFileInterceptor', () => {
   it('should throw BadRequestException when file processing fails', async () => {
     const mockRequest = {
       parts: jest.fn().mockImplementation(() => {
-        throw { code: 'FST_REQ_FILE_TOO_LARGE', part: { file: { bytesRead: 5242880 }, fieldname: 'testFile' } };
+        throw { code: 'FST_REQ_FILE_TOO_LARGE', part: { file: { bytesRead: 10485760 }, fieldname: 'testFile' } };
       }),
     } as unknown as FastifyRequest;
 
@@ -58,18 +57,18 @@ describe('FastifyFileInterceptor', () => {
       .rejects
       .toThrow(BadRequestException);
 
-    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileTooLarge', { args: { maxSize: '5.00MB' } });
+    expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileTooLarge', { args: { maxSize: '10.00MB' } });
   });
 
   it('should process form data and call next handler', async () => {
     const mockFile = {
       type: 'file',
       fieldname: 'testFile',
-      file: {
-        [Symbol.asyncIterator]: jest.fn().mockReturnValue({
-          next: jest.fn().mockResolvedValue({ done: true }),
-        }),
-      },
+      filename: 'test.txt',
+      encoding: '7bit',
+      mimetype: 'text/plain',
+      file: (async function*() {})(),
+      headers: { 'content-length': '0' },
     };
 
     const mockRequest = {
@@ -99,6 +98,59 @@ describe('FastifyFileInterceptor', () => {
       .rejects
       .toThrow(BadRequestException);
 
+    expect(mockI18n.t).not.toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
+  });
+
+  it('should handle generic errors without specific error codes', async () => {
+    const mockRequest = {
+      parts: jest.fn().mockReturnValue((async function*() {
+        const error = new Error('Generic processing error');
+        throw error;
+      })()),
+    } as unknown as FastifyRequest;
+
+    mockGetRequest.mockReturnValue(mockRequest);
+
+    await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
+      .rejects
+      .toThrow(BadRequestException);
+
+    expect(mockI18n.t).not.toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
+  });
+
+  it('should use translation for errors without message', async () => {
+    const mockRequest = {
+      parts: jest.fn().mockReturnValue((async function*() {
+        const error = new Error('');
+        error.message = '';
+        throw error;
+      })()),
+    } as unknown as FastifyRequest;
+
+    mockGetRequest.mockReturnValue(mockRequest);
+
+    await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
+      .rejects
+      .toThrow(BadRequestException);
+
     expect(mockI18n.t).toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
+  });
+
+  it('should handle errors that are already BadRequestException', async () => {
+    const originalError = new BadRequestException('Already a BadRequestException');
+
+    const mockRequest = {
+      parts: jest.fn().mockReturnValue((async function*() {
+        throw originalError;
+      })()),
+    } as unknown as FastifyRequest;
+
+    mockGetRequest.mockReturnValue(mockRequest);
+
+    await expect(interceptor.intercept(mockExecutionContext, mockCallHandler))
+      .rejects
+      .toThrow(originalError);
+
+    expect(mockI18n.t).not.toHaveBeenCalledWith('messages.File.errors.fileProcessingError');
   });
 });

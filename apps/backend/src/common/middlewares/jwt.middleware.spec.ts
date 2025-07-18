@@ -100,7 +100,7 @@ describe('JwtMiddleware', () => {
 
   it('should log translated error when verifying token fails', () => {
     const req = mockRequest('Bearer invalidtoken');
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
     jwtService.verify.mockImplementation(() => {
       throw new Error('Verification failed');
     });

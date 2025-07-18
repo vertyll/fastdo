@@ -57,11 +57,10 @@ describe('IsFile Decorator', () => {
     const decoratorCall = (registerDecorator as jest.Mock).mock.calls[0][0];
     const validate = decoratorCall.validator.validate;
 
-    // Testowanie walidacji
-    expect(validate(null)).toBe(true); // Brak pliku
-    expect(validate({ type: 'text' })).toBe(false); // Nieprawidłowy typ
-    expect(validate({ type: 'file', mimetype: 'image/jpeg', file: { bytesRead: 500 } })).toBe(true); // Poprawny plik
-    expect(validate({ type: 'file', mimetype: 'image/gif', file: { bytesRead: 500 } })).toBe(false); // Nieprawidłowy MIME
-    expect(validate({ type: 'file', mimetype: 'image/jpeg', file: { bytesRead: 1024 * 1024 + 1 } })).toBe(false); // Przekroczony rozmiar
+    expect(validate(null)).toBe(true);
+    expect(validate({ type: 'text' })).toBe(false);
+    expect(validate({ type: 'file', mimetype: 'image/jpeg', file: { bytesRead: 500 } })).toBe(true);
+    expect(validate({ type: 'file', mimetype: 'image/gif', file: { bytesRead: 500 } })).toBe(false);
+    expect(validate({ type: 'file', mimetype: 'image/jpeg', file: { bytesRead: 1024 * 1024 + 1 } })).toBe(false);
   });
 });

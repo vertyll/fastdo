@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { EMPTY, Observable, catchError, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
@@ -18,7 +18,7 @@ export class TasksApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getAll(searchParams?: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+  public getAll(searchParams: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
     return this.withLoadingState(
       this.http.get<ApiResponse<ApiPaginatedResponse<Task>>>(`${this.URL}/tasks`, {
         params: searchParams,
@@ -43,6 +43,12 @@ export class TasksApiService {
     );
   }
 
+  public batchDelete(taskIds: number[]): Observable<ApiResponse<void>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<void>>(`${this.URL}/tasks/batch-delete`, { taskIds }),
+    );
+  }
+
   public update(taskId: number, payload: TaskUpdatePayload): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
       this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, payload),
@@ -55,6 +61,54 @@ export class TasksApiService {
     );
   }
 
+  public addWithFiles(formData: FormData): Observable<ApiResponse<Task>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, formData),
+    );
+  }
+
+  public getOne(taskId: number): Observable<ApiResponse<Task>> {
+    return this.withLoadingState(
+      this.http.get<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`),
+    );
+  }
+
+  public createComment(taskId: number, content: { content: string; }): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, content),
+    );
+  }
+
+  public createCommentWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, formData),
+    );
+  }
+
+  public deleteComment(commentId: number): Observable<ApiResponse<void>> {
+    return this.withLoadingState(
+      this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`),
+    );
+  }
+
+  public updateComment(commentId: number, content: { content: string; }): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, content),
+    );
+  }
+
+  public updateCommentWithFiles(commentId: number, formData: FormData): Observable<ApiResponse<any>> {
+    return this.withLoadingState(
+      this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, formData),
+    );
+  }
+
+  public updateWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<Task>> {
+    return this.withLoadingState(
+      this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, formData),
+    );
+  }
+
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {
     this.$idle.set(false);
     this.$error.set(null);
@@ -64,7 +118,7 @@ export class TasksApiService {
       catchError((e: HttpErrorResponse) => {
         this.$error.set({ message: e.message, status: e.status });
         this.$loading.set(false);
-        return EMPTY;
+        return throwError(() => e);
       }),
       tap(() => {
         this.$loading.set(false);

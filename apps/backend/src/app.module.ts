@@ -7,6 +7,8 @@ import { DatabaseModule } from './core/database/database.module';
 import { FileModule } from './core/file/file.module';
 import { LanguageModule } from './core/language/language.module';
 import { MailModule } from './core/mail/mail.module';
+import { EventsModule } from './events/events.module';
+import { NotificationModule } from './notifications/notification.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RolesModule } from './roles/roles.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -26,6 +28,8 @@ import { UsersModule } from './users/users.module';
     RolesModule,
     MailModule,
     TermsAndPoliciesModule,
+    NotificationModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

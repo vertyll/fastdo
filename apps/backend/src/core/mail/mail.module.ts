@@ -24,7 +24,7 @@ import { IMailTransportToken } from './tokens/mail-transport.token';
         configService: ConfigService,
         mailConfigService: MailConfigService,
         i18n: I18nService<I18nTranslations>,
-      ) => {
+      ): DevTransport | NodemailerTransport => {
         const environment = configService.get<string>('app.environment');
         const mailLogger = new Logger('MailService');
 

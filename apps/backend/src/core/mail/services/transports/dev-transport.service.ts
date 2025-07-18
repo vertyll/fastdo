@@ -46,7 +46,7 @@ export class DevTransport implements IMailTransport {
     }
   }
 
-  private async initializeTransporter() {
+  private async initializeTransporter(): Promise<void> {
     const config = this.mailConfig.getDevConfig();
     this.transporter = nodemailer.createTransport({
       host: config.host,

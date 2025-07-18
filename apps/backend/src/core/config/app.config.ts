@@ -1,6 +1,13 @@
 import { registerAs } from '@nestjs/config';
 import * as process from 'node:process';
-import { AppConfig, DatabaseType, Environment, FILE_CONSTANTS, StorageType } from './types/app.config.type';
+import {
+  AppConfig,
+  DatabaseLoggerType,
+  DatabaseType,
+  Environment,
+  FILE_CONSTANTS,
+  StorageType,
+} from './types/app.config.type';
 
 export default registerAs('app', (): AppConfig => ({
   environment: (process.env.NODE_ENV as Environment) || Environment.DEVELOPMENT,
@@ -26,6 +33,8 @@ export default registerAs('app', (): AppConfig => ({
     ssl: process.env.DATABASE_SSL === 'true' || false,
     retryAttempts: parseInt(process.env.DATABASE_RETRY_ATTEMPTS || '10'),
     retryDelay: parseInt(process.env.DATABASE_RETRY_DELAY || '3000'),
+    logging: process.env.DATABASE_LOGGING === 'true' || false,
+    logger: (process.env.DATABASE_LOGGER as DatabaseLoggerType) || 'advanced-console',
   },
   api: {
     keys: {
@@ -110,6 +119,13 @@ export default registerAs('app', (): AppConfig => ({
     validation: {
       maxSize: parseInt(process.env.MAX_FILE_SIZE || '') || FILE_CONSTANTS.MAX_FILE_SIZE,
       allowedMimeTypes: process.env.ALLOWED_MIME_TYPES?.split(',') || FILE_CONSTANTS.ALLOWED_MIME_TYPES,
+    },
+  },
+  websocket: {
+    cors: {
+      origin: process.env.WEBSOCKET_CORS_ORIGIN || 'http://localhost:4200',
+      methods: process.env.WEBSOCKET_METHODS?.split(',') || ['GET', 'POST'],
+      transports: process.env.WEBSOCKET_TRANSPORTS?.split(',') || ['websocket', 'polling'],
     },
   },
 }));

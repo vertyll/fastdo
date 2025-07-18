@@ -60,7 +60,15 @@
       "fileProcessingError": "File processing error",
       "invalidFile": "Invalid file",
       "invalidMimeType": "Invalid file type. Allowed types: {allowed}",
-      "fileTooLarge": "File is too large. Maximum size is {maxSize}"
+      "fileTooLarge": "File is too large. Maximum size is {maxSize}",
+      "tooManyFiles": "Too many files. Maximum allowed: {maxFiles}",
+      "totalSizeTooLarge": "Total file size is too large. Maximum allowed: {maxSize}",
+      "singleFileExpected": "Expected single file, received {count}",
+      "multipleFilesExpected": "Expected multiple files, received single file",
+      "streamProcessingError": "Error processing file in streaming mode",
+      "bufferProcessingError": "Error processing file in buffered mode",
+      "fileSizeEstimationError": "Error estimating file size",
+      "streamBackpressureError": "Data flow error during file processing"
     }
   },
   "Mail": {
@@ -81,7 +89,7 @@
   },
   "Roles": {
     "errors": {
-      "roleNotFound": "Role {roleName} not found"
+      "roleNotFound": "Role {roleCode} not found"
     }
   },
   "TermsAndPolicies": {
@@ -89,5 +97,44 @@
       "termsNotFound": "Terms not found",
       "PrivacyPolicyNotFound": "Privacy policy not found"
     }
+  },
+  "ProjectUserRole": {
+    "errors": {
+      "roleNotFound": "Project user role not found"
+    }
+  },
+  "Projects": {
+    "errors": {
+      "managerRoleNotFound": "Rola menedżera projektu nie została znaleziona",
+      "inviterNotFound": "Inviter not found",
+      "projectNotFound": "Project not found",
+      "updaterNotFound": "Updater not found",
+      "updaterNotInNewUsersList": "Updater not found in new users list",
+      "cannotRemoveYourselfFromProject": "You cannot remove yourself from the project",
+      "lastManagerCannotBeRemoved": "The last manager of the project cannot be removed",
+      "projectNotFoundOrAccessDenied": "Project not found or access denied",
+      "accessDeniedToEditPublicProject": "Access denied to edit public project",
+      "accessDeniedToEditPrivateProject": "Access denied to edit private project",
+      "invitationNotFoundOrAlreadyHandled": "Invitation not found or already handled",
+      "notAllowedToAcceptInvitation": "You are not allowed to accept this invitation",
+      "notAllowedToRejectInvitation": "You are not allowed to reject this invitation",
+      "accessDeniedToManageProject": "Access denied to manage project"
+    },
+    "notifications": {
+      "invitationTitle": "Project invitation",
+      "invitationMessage": "{inviterEmail} invited you to the project {projectName}"
+    },
+    "invitation": "You have been invited to the project {projectName}"
+  },
+  "Tasks": {
+    "errors": {
+      "taskNotFound": "Task not found",
+      "commentNotFound": "Comment not found",
+      "commentNotYourOwn": "You can only edit your own comments",
+      "accessDeniedToTask": "Access denied to task"
+    },
+    "assigned": "You have been assigned to a task {title}",
+    "statusChanged": "Task {title} status changed to {status}",
+    "commentAdded": "Comment added to task {title}"
   }
 }

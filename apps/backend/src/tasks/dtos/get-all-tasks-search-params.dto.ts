@@ -1,35 +1,70 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayTransform } from 'src/common/decorators/array-transform.decorator';
+import { OrderByEnum } from '../../common/enums/order-by.enum';
+import { TaskSortByEnum } from '../enums/task-sort-by.enum';
 
-export class GetAllTasksSearchParams {
+export class GetAllTasksSearchParamsDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   q?: string;
 
-  @ApiProperty({ required: false, enum: ['dateCreation', 'dateModification', 'name'] })
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by task priority IDs (multiselect)',
+  })
   @IsOptional()
-  @IsString()
-  @IsIn(['dateCreation', 'dateModification', 'name'])
-  sortBy?: string;
+  @ArrayTransform()
+  priorityIds: number[];
 
-  @ApiProperty({ required: false, enum: ['asc', 'desc'] })
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by task category IDs (multiselect)',
+  })
   @IsOptional()
-  @IsString()
-  @IsIn(['asc', 'desc'])
-  orderBy?: 'asc' | 'desc';
+  @ArrayTransform()
+  categoryIds: number[];
 
-  @ApiProperty({ required: false, enum: ['true', 'false', ''] })
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by task status IDs (multiselect)',
+  })
   @IsOptional()
-  @IsString()
-  @IsIn(['true', 'false', ''])
-  is_done?: 'true' | 'false' | '';
+  @ArrayTransform()
+  statusIds: number[];
 
-  @ApiProperty({ required: false, enum: ['true', ''] })
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'Filter by assigned user IDs (multiselect)',
+  })
+  @IsOptional()
+  @ArrayTransform()
+  assignedUserIds: number[];
+
+  @ApiProperty({
+    required: false,
+    enum: TaskSortByEnum,
+    enumName: 'TaskSortByEnum',
+  })
   @IsOptional()
   @IsString()
-  @IsIn(['true', ''])
-  is_urgent?: 'true' | '';
+  @IsIn(Object.values(TaskSortByEnum))
+  sortBy?: TaskSortByEnum;
+
+  @ApiProperty({
+    required: false,
+    enum: OrderByEnum,
+    enumName: 'OrderByEnum',
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.values(OrderByEnum))
+  orderBy?: OrderByEnum;
 
   @ApiProperty({
     required: false,

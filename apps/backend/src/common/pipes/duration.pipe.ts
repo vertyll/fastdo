@@ -4,7 +4,6 @@ import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 
 @Injectable()
 export class DurationPipe implements PipeTransform {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(value: string, _metadata: ArgumentMetadata): number | null {
     const i18n = I18nContext.current<I18nTranslations>();
     if (!i18n) throw new Error('I18nContext not available');

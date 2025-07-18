@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
@@ -9,6 +9,7 @@ import { PasswordValidator } from '../auth/validators/password.validator';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
+import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
@@ -22,7 +23,7 @@ import { UserStateService } from './data-access/user.state.service';
     ReactiveFormsModule,
     SpinnerComponent,
     ErrorMessageComponent,
-    DatePipe,
+    CustomDatePipe,
     CommonModule,
     ImageComponent,
   ],
@@ -65,7 +66,7 @@ import { UserStateService } from './data-access/user.state.service';
                     </div>
                     <div class="text-sm text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Profile.memberSince' | translate }}
-                      {{ user().dateCreation | date:'mediumDate' }}
+                      {{ user().dateCreation | customDate }}
                     </div>
                   </div>
                 </div>
@@ -76,7 +77,7 @@ import { UserStateService } from './data-access/user.state.service';
                   <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Basic.edit' | translate }}
                   </h2>
-                  <div class="flex space-x-spacing-4">
+                  <div class="flex justify-end space-x-spacing-4">
                     <button
                       type="button"
                       class="px-spacing-4 py-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
@@ -102,6 +103,7 @@ import { UserStateService } from './data-access/user.state.service';
                     format="circle"
                     (imageSaved)="onImageSaved($event)"
                     (croppingChange)="onCroppingChange($event)"
+                    (imageRemoved)="onImageRemoved()"
                   />
                 </div>
 
@@ -215,6 +217,7 @@ export class UserProfileComponent implements OnInit {
   protected readonly user = computed(() => this.stateService.user());
   protected isEditing = false;
   protected selectedFile: File | null = null;
+  protected avatarRemoved: boolean = false;
   protected profileForm: FormGroup;
 
   protected passwordErrors: string[] = [];
@@ -256,10 +259,16 @@ export class UserProfileComponent implements OnInit {
 
   protected onImageSaved(event: { file: File; preview: string | null; }): void {
     this.selectedFile = event.file;
+    this.avatarRemoved = false;
   }
 
   protected onCroppingChange(isCropping: boolean): void {
     this.isCropping = isCropping;
+  }
+
+  protected onImageRemoved(): void {
+    this.selectedFile = null;
+    this.avatarRemoved = true;
   }
 
   protected onSubmit(): void {
@@ -285,8 +294,12 @@ export class UserProfileComponent implements OnInit {
         hasChanges = true;
       }
 
+      const hadAvatar = !!this.user()?.avatar;
       if (this.selectedFile) {
         formData.append('avatar', this.selectedFile);
+        hasChanges = true;
+      } else if (hadAvatar && this.avatarRemoved) {
+        formData.append('avatar', 'null');
         hasChanges = true;
       }
 

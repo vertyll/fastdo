@@ -60,7 +60,15 @@
       "fileProcessingError": "Błąd przetwarzania pliku",
       "invalidFile": "Nieprawidłowy plik",
       "invalidMimeType": "Niedozwolony typ pliku. Dozwolone typy: {allowed}",
-      "fileTooLarge": "Plik jest za duży. Maksymalny rozmiar to {maxSize}"
+      "fileTooLarge": "Plik jest za duży. Maksymalny rozmiar to {maxSize}",
+      "tooManyFiles": "Za dużo plików. Maksymalna dozwolona liczba: {maxFiles}",
+      "totalSizeTooLarge": "Całkowity rozmiar plików jest za duży. Maksymalny dozwolony rozmiar: {maxSize}",
+      "singleFileExpected": "Oczekiwano pojedynczego pliku, otrzymano {count}",
+      "multipleFilesExpected": "Oczekiwano wielu plików, otrzymano pojedynczy plik",
+      "streamProcessingError": "Błąd przetwarzania pliku w trybie strumieniowym",
+      "bufferProcessingError": "Błąd przetwarzania pliku w trybie buforowanym",
+      "fileSizeEstimationError": "Błąd podczas szacowania rozmiaru pliku",
+      "streamBackpressureError": "Błąd przepływu danych podczas przetwarzania pliku"
     }
   },
   "Mail": {
@@ -81,7 +89,7 @@
   },
   "Roles": {
     "errors": {
-      "roleNotFound": "Rola {roleName} nie istnieje"
+      "roleNotFound": "Rola {roleCode} nie istnieje"
     }
   },
   "TermsAndPolicies": {
@@ -89,5 +97,44 @@
       "termsNotFound": "Warunki nie zostały znalezione",
       "PrivacyPolicyNotFound": "Polityka prywatności nie została znaleziona"
     }
+  },
+  "ProjectUserRole": {
+    "errors": {
+      "roleNotFound": "Project user role not found"
+    }
+  },
+  "Projects": {
+    "errors": {
+      "managerRoleNotFound": "Rola menedżera projektu nie została znaleziona",
+      "inviterNotFound": "Zapraszający nie został znaleziony",
+      "projectNotFound": "Projekt nie został znaleziony",
+      "updaterNotFound": "Aktualizujący nie został znaleziony",
+      "updaterNotInNewUsersList": "Aktualizujący nie znajduje się na liście nowych użytkowników",
+      "cannotRemoveYourselfFromProject": "Nie możesz usunąć siebie z projektu",
+      "lastManagerCannotBeRemoved": "Nie można usunąć ostatniego menedżera projektu",
+      "projectNotFoundOrAccessDenied": "Projekt nie został znaleziony lub odmowa dostępu",
+      "accessDeniedToEditPublicProject": "Brak dostępu do edycji publicznego projektu",
+      "accessDeniedToEditPrivateProject": "Brak dostępu do edycji prywatnego projektu",
+      "invitationNotFoundOrAlreadyHandled": "Zaproszenie nie zostało znalezione lub już zostało obsłużone",
+      "notAllowedToAcceptInvitation": "Nie masz uprawnień do zaakceptowania tego zaproszenia",
+      "notAllowedToRejectInvitation": "Nie masz uprawnień do odrzucenia tego zaproszenia",
+      "accessDeniedToManageProject": "Brak dostępu do zarządzania projektem"
+    },
+    "notifications": {
+      "invitationTitle": "Zaproszenie do projektu",
+      "invitationMessage": "{inviterEmail} zaprosił Cię do projektu {projectName}"
+    },
+    "invitation": "Zostałeś zaproszony do projektu {projectName}"
+  },
+  "Tasks": {
+    "errors": {
+      "taskNotFound": "Zadanie nie zostało znalezione",
+      "commentNotFound": "Komentarz nie został znaleziony",
+      "commentNotYourOwn": "Możesz edytować tylko swoje własne komentarze",
+      "accessDeniedToTask": "Brak dostępu do zadania"
+    },
+    "assigned": "Zostałeś przypisany do zadania {title}",
+    "statusChanged": "Zmieniono status zadania {title} na {status}",
+    "commentAdded": "Dodano komentarz do zadania {title}"
   }
 }

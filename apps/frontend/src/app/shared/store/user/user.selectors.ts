@@ -1,4 +1,4 @@
-import { Selector, createSelector } from '@ngxs/store';
+import { Selector } from '@ngxs/store';
 import { User } from '../../../user/models/User';
 import { UserStateModel } from '../../types/user.type';
 import { UserState } from './user.state';

@@ -22,7 +22,9 @@
     "**/node_modules",
     "**/*-lock.json",
     "dist",
-    "coverage"
+    "coverage",
+    "src/metadata.ts",
+    "src/generated"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.91.6.wasm",

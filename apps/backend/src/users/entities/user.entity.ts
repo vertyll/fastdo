@@ -3,7 +3,7 @@ import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 import { File } from '../../core/file/entities/file.entity';
-import { ProjectUser } from '../../projects/entities/project-user.entity';
+import { ProjectUserRole } from '../../projects/entities/project-user-role.entity';
 import { UserEmailHistory } from './user-email-history.entity';
 import { UserRole } from './user-role.entity';
 
@@ -83,8 +83,8 @@ export class User {
   @Exclude()
   emailChangeTokenExpiry: Date | null;
 
-  @OneToMany(() => ProjectUser, projectUser => projectUser.project)
-  projectUsers: Relation<ProjectUser[]>;
+  @OneToMany(() => ProjectUserRole, projectUserRole => projectUserRole.user)
+  projectUserRoles: Relation<ProjectUserRole[]>;
 
   @OneToMany(() => UserEmailHistory, userEmailHistory => userEmailHistory.user)
   emailHistories: Relation<UserEmailHistory[]>;

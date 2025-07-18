@@ -29,7 +29,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyE
 
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        request => request?.cookies?.refresh_token,
+        (request): string | null => request?.cookies?.refresh_token,
       ]),
       ignoreExpiration: false,
       secretOrKey: refreshTokenSecret,

@@ -40,8 +40,21 @@ export class ProjectsService {
     );
   }
 
-  public add(name: string): Observable<ApiResponse<Project>> {
-    return this.httpService.add(name).pipe(
+  public updateFull(
+    projectId: number,
+    formData: FormData,
+  ): Observable<ApiResponse<Project>> {
+    return this.httpService.updateFull(projectId, formData).pipe(
+      tap(response => {
+        this.state.updateProject(response.data);
+      }),
+    );
+  }
+
+  public add(
+    formData: FormData,
+  ): Observable<ApiResponse<Project>> {
+    return this.httpService.add(formData).pipe(
       tap(response => {
         this.state.addProject(response.data);
       }),
@@ -50,5 +63,9 @@ export class ProjectsService {
 
   public getProjectById(projectId: number): Observable<ApiResponse<Project>> {
     return this.httpService.getById(projectId);
+  }
+
+  public getProjectByIdWithDetails(projectId: number, lang?: string): Observable<ApiResponse<Project>> {
+    return this.httpService.getByIdWithDetails(projectId, lang);
   }
 }

@@ -69,6 +69,14 @@ export type I18nTranslations = {
                 "invalidFile": string;
                 "invalidMimeType": string;
                 "fileTooLarge": string;
+                "tooManyFiles": string;
+                "totalSizeTooLarge": string;
+                "singleFileExpected": string;
+                "multipleFilesExpected": string;
+                "streamProcessingError": string;
+                "bufferProcessingError": string;
+                "fileSizeEstimationError": string;
+                "streamBackpressureError": string;
             };
         };
         "Mail": {
@@ -97,6 +105,45 @@ export type I18nTranslations = {
                 "termsNotFound": string;
                 "PrivacyPolicyNotFound": string;
             };
+        };
+        "ProjectUserRole": {
+            "errors": {
+                "roleNotFound": string;
+            };
+        };
+        "Projects": {
+            "errors": {
+                "managerRoleNotFound": string;
+                "inviterNotFound": string;
+                "projectNotFound": string;
+                "updaterNotFound": string;
+                "updaterNotInNewUsersList": string;
+                "cannotRemoveYourselfFromProject": string;
+                "lastManagerCannotBeRemoved": string;
+                "projectNotFoundOrAccessDenied": string;
+                "accessDeniedToEditPublicProject": string;
+                "accessDeniedToEditPrivateProject": string;
+                "invitationNotFoundOrAlreadyHandled": string;
+                "notAllowedToAcceptInvitation": string;
+                "notAllowedToRejectInvitation": string;
+                "accessDeniedToManageProject": string;
+            };
+            "notifications": {
+                "invitationTitle": string;
+                "invitationMessage": string;
+            };
+            "invitation": string;
+        };
+        "Tasks": {
+            "errors": {
+                "taskNotFound": string;
+                "commentNotFound": string;
+                "commentNotYourOwn": string;
+                "accessDeniedToTask": string;
+            };
+            "assigned": string;
+            "statusChanged": string;
+            "commentAdded": string;
         };
     };
 };

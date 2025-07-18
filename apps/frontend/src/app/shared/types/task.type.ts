@@ -4,17 +4,25 @@
 export type TasksListViewMode = 'kanban' | 'list';
 
 export type TaskUpdatePayload = {
-  isDone?: boolean;
-  name?: string;
-  isUrgent?: boolean;
+  description?: string;
+  additionalDescription?: string;
+  priceEstimation?: number;
+  workedTime?: number;
+  accessRoleId?: number;
+  assignedUserId?: number;
+  priorityId?: number;
+  categoryId?: number;
+  statusId?: number;
 };
 
 export type GetAllTasksSearchParams = {
   q: string;
-  sortBy: 'dateCreation';
+  sortBy: 'dateCreation' | 'dateModification' | 'description' | 'id';
   orderBy: 'desc' | 'asc';
-  is_done?: 'true' | 'false' | '';
-  is_urgent?: 'true' | '';
+  priorityIds?: number[];
+  categoryIds?: number[];
+  statusIds?: number[];
+  assignedUserIds?: number[];
   createdFrom?: string;
   createdTo?: string;
   updatedFrom?: string;

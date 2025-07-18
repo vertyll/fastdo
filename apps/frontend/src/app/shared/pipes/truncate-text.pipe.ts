@@ -3,21 +3,26 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'truncateText',
   standalone: true,
-  pure: true,
 })
 export class TruncateTextPipe implements PipeTransform {
-  public transform(
-    value: string | undefined,
-    maxLength: number = 150,
-    isExpanded: boolean = false,
-    suffix: string = ' [...]',
-  ): string {
+  transform(value: string, limit: number = 50, isExpanded: boolean = false, suffix: string = '...'): string {
     if (!value) return '';
 
-    if (value.length <= maxLength || isExpanded) {
+    if (isExpanded) {
       return value;
     }
 
-    return value.slice(0, maxLength) + suffix;
+    if (value.length <= limit) {
+      return value;
+    }
+
+    const truncated = value.substring(0, limit);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+    if (lastSpaceIndex > limit * 0.8) {
+      return truncated.substring(0, lastSpaceIndex) + suffix;
+    }
+
+    return truncated + suffix;
   }
 }

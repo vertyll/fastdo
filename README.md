@@ -32,6 +32,7 @@ A web application for managing projects and tasks for specific projects. The app
 - the application includes an email sending mechanism, separate for dev and prod (strategy pattern)
 - the application includes a file handling mechanism (strategy pattern)
 - the application includes a recurring task handling mechanism (cron)
+- the application uses WebSockets for real-time notifications
 - the application has separate environments for dev and prod
 - the application has a separate configuration file
 - the application includes RBAC (Role Based Access Control)

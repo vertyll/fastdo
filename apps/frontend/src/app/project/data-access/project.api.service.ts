@@ -1,9 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { EMPTY, Observable, catchError, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
+import { User } from '../../shared/types/entities.type';
 import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
 import { Project } from '../models/Project';
 
@@ -37,15 +38,54 @@ export class ProjectsApiService {
     );
   }
 
-  public add(name: string): Observable<ApiResponse<Project>> {
+  public updateFull(
+    projectId: number,
+    formData: FormData,
+  ): Observable<ApiResponse<Project>> {
     return this.withLoadingState(
-      this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, { name }),
+      this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, formData),
+    );
+  }
+
+  public add(
+    formData: FormData,
+  ): Observable<ApiResponse<Project>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, formData),
     );
   }
 
   public getById(projectId: number): Observable<ApiResponse<Project>> {
     return this.withLoadingState(
       this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`),
+    );
+  }
+
+  public getByIdWithDetails(projectId: number, lang?: string): Observable<ApiResponse<Project>> {
+    const params: { [key: string]: string; } = {};
+    if (lang) {
+      params['lang'] = lang;
+    }
+    return this.withLoadingState(
+      this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}/details`, { params }),
+    );
+  }
+
+  public getProjectUsers(projectId: number): Observable<ApiResponse<User[]>> {
+    return this.withLoadingState(
+      this.http.get<ApiResponse<User[]>>(`${this.URL}/projects/${projectId}/users`),
+    );
+  }
+
+  public acceptInvitation(body: { invitationId: number; }) {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/accept`, body),
+    );
+  }
+
+  public rejectInvitation(body: { invitationId: number; }) {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/reject`, body),
     );
   }
 
@@ -58,7 +98,7 @@ export class ProjectsApiService {
       catchError((e: HttpErrorResponse) => {
         this.$error.set({ message: e.message, status: e.status });
         this.$loading.set(false);
-        return EMPTY;
+        return throwError(() => e);
       }),
       tap(() => {
         this.$loading.set(false);

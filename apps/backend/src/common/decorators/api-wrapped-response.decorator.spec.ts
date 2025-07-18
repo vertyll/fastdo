@@ -63,6 +63,7 @@ describe('ApiWrappedResponse', () => {
                   page: { type: 'number' },
                   pageSize: { type: 'number' },
                   totalPages: { type: 'number' },
+                  hasMore: { type: 'boolean' },
                 },
               },
             },

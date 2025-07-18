@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
-import { FilterTypeEnum } from '../../enums/filter.enum';
+import { FilterTypeEnum } from '../../enums/filter-type.enum';
 import { FiltersService } from '../../services/filter.service';
 import { PlatformService } from '../../services/platform.service';
 import { ClearFilter, ClearPartial, SavePartial } from '../../store/filter/filter.actions';
@@ -81,7 +81,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                     [formControlName]="filter.formControlName"
                     [id]="filter.formControlName"
                     [dataArray]="filter.multiselectOptions || []"
-                    [maxSelectedItems]="filter.maxSelectedItems || 1"
+                    [maxSelectedItems]="filter.maxSelectedItems !== undefined ? filter.maxSelectedItems : undefined"
                     [minTermLength]="filter.minTermLength || 1"
                     [allowAddTag]="filter.allowAddTag || false"
                     (onSearch)="onFilterSearch($event, filter)"
@@ -142,7 +142,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                       [formControlName]="filter.formControlName"
                       [id]="filter.formControlName"
                       [dataArray]="filter.multiselectOptions || []"
-                      [maxSelectedItems]="filter.maxSelectedItems || 1"
+                      [maxSelectedItems]="filter.maxSelectedItems !== undefined ? filter.maxSelectedItems : undefined"
                       [minTermLength]="filter.minTermLength || 1"
                       [allowAddTag]="filter.allowAddTag || false"
                       (onSearch)="onFilterSearch($event, filter)"
@@ -174,7 +174,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
             @for (filter of filledFilters(); track $index) {
               <span class="mr-spacing-2">
-                {{ translateService.instant('Filters.' + filter.id) }}: ({{
+                {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{
                   filter.value
                 }})
               </span>
@@ -235,6 +235,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private readonly cdr = inject(ChangeDetectorRef);
 
   protected readonly FilterType = FilterTypeEnum;
+
+  public getLabelKeyForFilter(formControlName: string): string {
+    const filter = this.filters().find(f => f.formControlName === formControlName);
+    return filter?.labelKey ?? formControlName;
+  }
 
   constructor() {
     effect(() => {

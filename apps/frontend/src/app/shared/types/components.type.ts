@@ -1,4 +1,4 @@
-import { ToastPositionEnum } from '../enums/toast.enum';
+import { ToastPositionEnum } from '../enums/toast-position.enum';
 
 /*
  * Type

@@ -5,6 +5,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   heroBars4,
+  heroBell,
   heroChevronDown,
   heroChevronUp,
   heroClipboardDocumentList,
@@ -18,13 +19,23 @@ import { filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { NotificationStateService } from '../../services/notification-state.service';
 import { NavModule, NavSection } from '../../types/config.type';
 import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 import { ToastComponent } from '../atoms/toast.component';
+import { NotificationDropdownComponent } from './notification-dropdown.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [NgIconComponent, TranslateModule, CommonModule, RouterOutlet, ThemeSwitcherComponent, ToastComponent],
+  imports: [
+    NgIconComponent,
+    TranslateModule,
+    CommonModule,
+    RouterOutlet,
+    ThemeSwitcherComponent,
+    ToastComponent,
+    NotificationDropdownComponent,
+  ],
   viewProviders: [
     provideIcons({
       heroClipboardDocumentList,
@@ -35,6 +46,7 @@ import { ToastComponent } from '../atoms/toast.component';
       heroBars4,
       heroChevronDown,
       heroChevronUp,
+      heroBell,
     }),
   ],
   animations: [
@@ -93,7 +105,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .module-item {
-      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary;
+      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
     }
 
     .module-item.active {
@@ -109,7 +121,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .login-button {
-      @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-neutral-700;
+      @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-dark-surface-secondary;
     }
 
     .register-button {
@@ -117,11 +129,11 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .logout-button {
-      @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
+      @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
     }
 
     .menu-button {
-      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
+      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
     }
 
     .menu-button.active {
@@ -137,14 +149,14 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-menu-content {
-      @apply absolute w-48 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      @apply absolute w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       position: absolute;
       top: 3.5rem;
       left: 4rem;
     }
 
     .mobile-menu-content.language-menu {
-      @apply absolute w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      @apply absolute w-24 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       position: absolute;
       top: 3rem;
       right: 0.5rem;
@@ -153,7 +165,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 text-sm cursor-pointer;
+      @apply flex items-center space-x-2 px-3 py-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 text-sm cursor-pointer;
     }
 
     .mobile-module-item.active {
@@ -161,7 +173,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .side-nav {
-      @apply hidden md:block w-24 bg-background-primary dark:bg-dark-background-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      @apply hidden md:block w-24 bg-surface-primary dark:bg-dark-surface-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
     }
 
     .side-nav-content {
@@ -173,7 +185,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-section-item {
-      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 dark:text-dark-text-primary;
+      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
     }
 
     .mobile-section-item.active {
@@ -189,11 +201,11 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .show-more-button {
-      @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200;
+      @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200;
     }
 
     .section-item {
-      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 dark:text-dark-text-primary transition-colors duration-200;
+      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary dark:text-dark-text-primary transition-colors duration-200;
     }
 
     .section-item.active {
@@ -233,11 +245,11 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .language-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
     }
 
     .profile-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
     }
 
     .language-dropdown {
@@ -249,7 +261,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .language-option {
-      @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer w-full text-left transition-colors duration-200;
+      @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
     }
 
     .language-option.active {
@@ -261,7 +273,7 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .hamburger-line {
-      @apply w-6 h-0.5 bg-neutral-600 dark:bg-neutral-300 transition-all duration-300;
+      @apply w-6 h-0.5 bg-text-secondary dark:bg-dark-text-secondary transition-all duration-300;
     }
 
     .hamburger-line:not(:last-child) {
@@ -285,7 +297,24 @@ import { ToastComponent } from '../atoms/toast.component';
     }
 
     .mobile-nav-item {
-      @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 py-2;
+      @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 py-2;
+    }
+
+    @media (max-width: 768px) {
+      .relative.flex.flex-row {
+        align-items: center;
+        gap: 0;
+      }
+      
+      app-notification-dropdown button,
+      app-theme-switcher button {
+        padding: 0.5rem;
+        height: 2.5rem;
+        width: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
   `],
   template: `
@@ -392,6 +421,7 @@ import { ToastComponent } from '../atoms/toast.component';
                 </div>
               }
             </div>
+            <app-notification-dropdown [isMobileContext]="false" [isMobileMenuOpen]="false" />
             <app-theme-switcher />
             <div class="relative">
               <button class="language-button" (click)="toggleLanguageDropdown($event)">
@@ -419,7 +449,8 @@ import { ToastComponent } from '../atoms/toast.component';
               <span>Menu</span>
               <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
             </button>
-            <div class="relative flex flex-row">
+            <div class="relative flex flex-row items-center space-x-1">
+              <app-notification-dropdown [isMobileContext]="true" [isMobileMenuOpen]="mobileMenuOpen" />
               <app-theme-switcher />
               <button class="menu-button" (click)="toggleLanguageDropdown($event)">
                 <span>{{ getCurrentLanguage() }}</span>
@@ -473,6 +504,19 @@ import { ToastComponent } from '../atoms/toast.component';
               <button (click)="navigateToProfileAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
                 {{ 'Navbar.profile' | translate }}
               </button>
+              <button (click)="navigateToNotificationSettingsAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
+                <div class="flex items-center justify-between w-full">
+                  <div class="flex items-center space-x-2">
+                    <ng-icon name="heroBell" size="16"></ng-icon>
+                    <span>{{ 'Notifications.title' | translate }}</span>
+                  </div>
+                  @if(unreadNotificationCount() > 0) {
+                  <span *ngIf="unreadNotificationCount() > 0" class="counter-badge">
+                    {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
+                  </span>
+                  }
+                </div>
+              </button>
               <button (click)="logout()" class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left">
                 {{ 'Basic.logout' | translate }}
               </button>
@@ -491,12 +535,6 @@ import { ToastComponent } from '../atoms/toast.component';
             >
               <div class="relative">
                 <ng-icon [name]="section.icon" size="24" class="section-icon"></ng-icon>
-                @if (section.id === 'urgent' && urgentCount() > 0) {
-                  <span class="counter-badge">{{ urgentCount() }}</span>
-                }
-                @if (section.id === 'projects' && projectCount() > 0) {
-                  <span class="counter-badge">{{ projectCount() }}</span>
-                }
               </div>
               <span class="section-title">{{ section.title | translate }}</span>
             </div>
@@ -513,12 +551,6 @@ import { ToastComponent } from '../atoms/toast.component';
           >
             <div class="relative flex items-center">
               <ng-icon [name]="section.icon" size="20" class="mobile-section-icon"></ng-icon>
-              @if (section.id === 'urgent' && urgentCount() > 0) {
-                <span class="counter-badge">{{ urgentCount() }}</span>
-              }
-              @if (section.id === 'projects' && projectCount() > 0) {
-                <span class="counter-badge">{{ projectCount() }}</span>
-              }
             </div>
             <span class="mobile-section-text">{{ section.title | translate }}</span>
           </div>
@@ -543,14 +575,13 @@ import { ToastComponent } from '../atoms/toast.component';
   `,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  readonly urgentCount = input<number>(0);
-  readonly projectCount = input<number>(0);
   readonly visibleItemsCount = input<number>(2);
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly notificationStateService = inject(NotificationStateService);
 
   private readonly defaultModules: NavModule[] = configNavModules;
 
@@ -559,13 +590,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly visibleSections = signal<NavSection[]>([]);
   protected readonly currentModule = signal<string>('');
   protected readonly currentSection = signal<string>('');
+  protected readonly unreadNotificationCount = this.notificationStateService.unreadCount;
 
   protected menuOpen: boolean = false;
   protected mobileMenuOpen: boolean = false;
   protected showAllSections: boolean = false;
   protected languageDropdownOpen: boolean = false;
-  protected readonly languages: string[] = ['pl', 'en'];
   protected profileDropdownOpen: boolean = false;
+  protected readonly languages: string[] = ['pl', 'en'];
 
   constructor() {
     this.router.events.pipe(
@@ -577,6 +609,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     setTimeout(() => this.initializeNavigation(), 0);
+    this.notificationStateService.refreshNotifications();
   }
 
   ngOnDestroy(): void {
@@ -672,6 +705,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected navigateToProfileAndCloseMenu(): void {
     this.router.navigate(['/user-profile']).then();
+    this.closeMenu();
+  }
+
+  protected navigateToNotificationSettingsAndCloseMenu(): void {
+    this.router.navigate(['/notification-settings']).then();
     this.closeMenu();
   }
 

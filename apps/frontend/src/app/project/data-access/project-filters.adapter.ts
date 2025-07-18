@@ -8,6 +8,7 @@ export function getAllProjectsSearchParams(
     q: params.q || '',
     sortBy: params.sortBy || 'dateCreation',
     orderBy: params.orderBy || 'desc',
+    typeIds: params.typeIds || [],
     createdFrom: params.createdFrom || '',
     createdTo: params.createdTo || '',
     updatedFrom: params.updatedFrom || '',

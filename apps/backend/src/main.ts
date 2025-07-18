@@ -14,26 +14,41 @@ import { AppModule } from './app.module';
 import { AccessTokenDto } from './auth/dtos/access-token.dto';
 import { LoginResponseDto } from './auth/dtos/login-response.dto';
 import { RefreshToken } from './auth/entities/refresh-token.entity';
+import { TranslationDto } from './common/dtos/translation.dto';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
 import { HelmetCrossOriginResourcePolicy, OpenApiConfig } from './core/config/types/app.config.type';
 import { FileMetadataDto } from './core/file/dtos/file-metadata.dto';
 import { File } from './core/file/entities/file.entity';
-import { ProjectUser } from './projects/entities/project-user.entity';
+import { NotificationSettings } from './notifications/entities/notification-settings.entity';
+import { Notification } from './notifications/entities/notification.entity';
+import { ProjectCategoryResponseDto } from './projects/dtos/project-category-response.dto';
+import { ProjectRoleResponseDto } from './projects/dtos/project-role-response.dto';
+import { ProjectRoleDto } from './projects/dtos/project-role.dto';
+import { ProjectStatusResponseDto } from './projects/dtos/project-status-response.dto';
+import { ProjectTypeResponseDto } from './projects/dtos/project-type-response.dto';
+import { ProjectTypeDto } from './projects/dtos/project-type.dto';
 import { Project } from './projects/entities/project.entity';
 import { Role } from './roles/entities/role.entity';
-import { Priority } from './tasks/entities/priority.entity';
+import { TaskPriorityResponseDto } from './tasks/dtos/task-priority-response.dto';
+import { TaskResponseDto } from './tasks/dtos/task-response.dto';
+import { TaskPriority } from './tasks/entities/task-priority.entity';
 import { Task } from './tasks/entities/task.entity';
+import { PrivacyPolicyDto } from './terms-and-policies/dtos/privacy-policy.dto';
+import { TermsDto } from './terms-and-policies/dtos/terms.dto';
 import { PrivacyPolicySectionTranslation } from './terms-and-policies/entities/privacy-policy-section-translation.entity';
 import { PrivacyPolicySection } from './terms-and-policies/entities/privacy-policy-section.entity';
 import { PrivacyPolicy } from './terms-and-policies/entities/privacy-policy.entity';
 import { TermsSectionTranslation } from './terms-and-policies/entities/terms-section-translation.entity';
 import { TermsSection } from './terms-and-policies/entities/terms-section.entity';
 import { Terms } from './terms-and-policies/entities/terms.entity';
+import { UserDto } from './users/dtos/user.dto';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
+import { ProjectListResponseDto } from './projects/dtos/project-list-response.dto';
+import { ProjectDetailsResponseDto } from './projects/dtos/project-details-response.dto';
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -143,8 +158,7 @@ async function bootstrap(): Promise<void> {
     extraModels: [
       Task,
       Project,
-      ProjectUser,
-      Priority,
+      TaskPriority,
       User,
       Role,
       UserRole,
@@ -160,6 +174,22 @@ async function bootstrap(): Promise<void> {
       UserEmailHistory,
       RefreshToken,
       AccessTokenDto,
+      UserDto,
+      ProjectRoleDto,
+      ProjectTypeDto,
+      PrivacyPolicyDto,
+      NotificationSettings,
+      TermsDto,
+      Notification,
+      TaskPriorityResponseDto,
+      ProjectRoleResponseDto,
+      ProjectStatusResponseDto,
+      ProjectTypeResponseDto,
+      ProjectCategoryResponseDto,
+      TranslationDto,
+      TaskResponseDto,
+      ProjectListResponseDto,
+      ProjectDetailsResponseDto,
     ],
   });
   SwaggerModule.setup(openApiConfig.path, app, document);

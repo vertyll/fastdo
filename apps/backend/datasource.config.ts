@@ -5,6 +5,18 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 
 config();
 
+const allowedLoggers = [
+  'advanced-console',
+  'simple-console',
+  'formatted-console',
+  'file',
+  'debug',
+] as const;
+
+const envLogger = process.env.DATABASE_LOGGER;
+const logger =
+  (allowedLoggers.includes(envLogger as any) ? envLogger : 'advanced-console') as typeof allowedLoggers[number];
+
 const dataSourceOptions: PostgresConnectionOptions = {
   type: 'postgres',
   host: process.env.DATABASE_HOST || 'localhost',
@@ -17,8 +29,8 @@ const dataSourceOptions: PostgresConnectionOptions = {
   migrationsTableName: process.env.DATABASE_MIGRATIONS_TABLE_NAME || 'migrations',
   ssl: process.env.DATABASE_SSL === 'true',
   namingStrategy: new SnakeNamingStrategy(),
-  logging: process.env.NODE_ENV === 'development',
-  logger: process.env.NODE_ENV === 'development' ? 'advanced-console' : undefined,
+  logging: process.env.DATABASE_LOGGING === 'true',
+  logger,
 };
 
 export default new DataSource(dataSourceOptions);

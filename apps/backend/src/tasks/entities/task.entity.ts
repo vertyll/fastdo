@@ -1,8 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ProjectCategory } from '../../projects/entities/project-category.entity';
+import { ProjectRole } from '../../projects/entities/project-role.entity';
+import { ProjectStatus } from '../../projects/entities/project-status.entity';
 import { Project } from '../../projects/entities/project.entity';
 import { User } from '../../users/entities/user.entity';
-import { Priority } from './priority.entity';
+import { TaskAttachment } from './task-attachment.entity';
+import { TaskComment } from './task-comment.entity';
+import { TaskPriority } from './task-priority.entity';
 
 @Entity('task')
 export class Task {
@@ -11,42 +27,72 @@ export class Task {
   id: number;
 
   @ApiProperty()
-  @Column()
-  name: string;
+  @Column({ type: 'text' })
+  description: string;
 
   @ApiProperty()
-  @Column({ default: false })
-  isDone: boolean;
+  @Column({ type: 'text', nullable: true })
+  additionalDescription?: string;
+
+  @ApiProperty({ description: 'Price estimation in hours (0-100, where 100 = 1 hour)' })
+  @Column({ type: 'int', default: 0 })
+  priceEstimation: number;
+
+  @ApiProperty({ description: 'Worked time in hours (0-100, where 100 = 1 hour)' })
+  @Column({ type: 'int', default: 0 })
+  workedTime: number;
+
+  @ApiProperty({ type: () => ProjectRole })
+  @ManyToOne(() => ProjectRole, { nullable: true })
+  accessRole?: Relation<ProjectRole>;
 
   @ApiProperty()
-  @Column({ default: false })
-  isUrgent: boolean;
-
-  @ApiProperty()
-  @Column({ nullable: true })
-  projectId: number | null;
-
-  @ApiProperty()
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   dateCreation: Date;
 
   @ApiProperty()
-  @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  @UpdateDateColumn()
+  dateModification: Date;
 
   @ApiProperty({ type: () => Project })
-  @ManyToOne(() => Project, project => project.tasks, { nullable: true })
-  project: Relation<Project> | null;
+  @ManyToOne(() => Project, project => project.tasks, { onDelete: 'CASCADE' })
+  project: Relation<Project>;
 
-  @ApiProperty({ type: () => Priority })
-  @ManyToOne(() => Priority, priority => priority.id, { nullable: true })
-  priority: Relation<Priority> | null;
+  @ApiProperty({ type: () => User, isArray: true })
+  @ManyToMany(() => User, { onDelete: 'CASCADE' })
+  @JoinTable({
+    name: 'task_assigned_user',
+    joinColumn: { name: 'task_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  assignedUsers: Relation<User[]>;
 
   @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, user => user.id, { nullable: true })
-  user: Relation<User> | null;
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  createdBy: Relation<User>;
 
-  @ApiProperty()
-  @Column({ default: false })
-  isPrivate: boolean;
+  @ApiProperty({ type: () => TaskPriority })
+  @ManyToOne(() => TaskPriority, priority => priority.id, { onDelete: 'SET NULL' })
+  priority: Relation<TaskPriority>;
+
+  @ApiProperty({ type: () => ProjectCategory, isArray: true })
+  @ManyToMany(() => ProjectCategory, { onDelete: 'CASCADE' })
+  @JoinTable({
+    name: 'task_category',
+    joinColumn: { name: 'task_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
+  })
+  categories: Relation<ProjectCategory[]>;
+
+  @ApiProperty({ type: () => ProjectStatus, required: false })
+  @ManyToOne(() => ProjectStatus, status => status.id, { nullable: true, onDelete: 'SET NULL' })
+  status: Relation<ProjectStatus> | null;
+
+  @ApiProperty({ type: () => TaskAttachment, isArray: true })
+  @OneToMany(() => TaskAttachment, attachment => attachment.task, { cascade: true })
+  taskAttachments: Relation<TaskAttachment[]>;
+
+  @ApiProperty({ type: () => TaskComment, isArray: true })
+  @OneToMany(() => TaskComment, comment => comment.task, { cascade: true })
+  comments: Relation<TaskComment[]>;
 }

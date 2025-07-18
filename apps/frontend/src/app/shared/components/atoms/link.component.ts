@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LinkTypeEnum } from '../../enums/link.enum';
+import { LinkTypeEnum } from '../../enums/link-type.enum';
 
 @Component({
   selector: 'app-link',
