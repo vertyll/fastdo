@@ -117,11 +117,9 @@ export interface TableConfig {
         <div class="loading-spinner"></div>
         <span>{{ 'Basic.loading' | translate }}</span>
       </div>
-    }
-    
-    @else if (!data().length) {
+    } @else if (!data().length) {
       <div class="state-overlay">
-        <p class="text-lg">
+        <p>
           {{ noResultsMessage() | translate }}
         </p>
       </div>
@@ -303,10 +301,7 @@ export interface TableConfig {
         align-items: center;
         justify-content: center;
         padding: 2rem;
-        border-radius: 0.5rem;
-        background-color: #f9fafb;
-        border: 1px solid #e5e7eb;
-        height: 70px;
+        min-height: 70px;
         color: #6b7280;
       }
 
@@ -1047,9 +1042,11 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
     if (this.height()) {
       return { height: this.height()! };
     }
-    if (this.config().infiniteScroll) {
-      return { height: '600px' };
+
+    if (this.config().infiniteScroll && this.data().length > 0) {
+      return { 'max-height': '600px' };
     }
+
     return {};
   }
 
