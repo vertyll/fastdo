@@ -129,27 +129,25 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
       </div>
     </ng-template>
 
-    @switch (tasksStateService.state()) {
-      @case (listStateValue.SUCCESS) {
-        <app-table
-          [data]="tasksStateService.tasks()"
-          [config]="tableConfig()"
-          [loading]="tasksStateService.state() === listStateValue.LOADING"
-          [customTemplates]="customTemplates()"
-          [initialSort]="currentSort()"
-          (loadMore)="handleLoadMore()"
-          (rowClick)="handleTaskClick($event)"
-          (actionClick)="handleActionClick($event)"
-          (sortChange)="handleSortChange($event)"
-          (selectionChange)="handleSelectionChange($event)"
-        />
-      }
-      @case (listStateValue.ERROR) {
-        <app-error-message [customMessage]="tasksStateService.error()?.message"/>
-      }
-      @case (listStateValue.LOADING) {
-        <p class="text-text-secondary dark:text-dark-text-primary">{{ 'Basic.loading' | translate }}</p>
-      }
+    @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
+      <app-error-message [customMessage]="tasksStateService.error()?.message" />
+    } @else {
+      <app-table
+        [data]="tasksStateService.tasks()"
+        [config]="tableConfig()"
+        [loading]="tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0"
+        [customTemplates]="customTemplates()"
+        [initialSort]="currentSort()"
+        (loadMore)="handleLoadMore()"
+        (rowClick)="handleTaskClick($event)"
+        (actionClick)="handleActionClick($event)"
+        (sortChange)="handleSortChange($event)"
+        (selectionChange)="handleSelectionChange($event)"
+      />
+    }
+
+    @if (tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0) {
+      <p class="mt-4 text-center text-gray-500">{{ 'Basic.loading' | translate }}</p>
     }
   `,
 })
