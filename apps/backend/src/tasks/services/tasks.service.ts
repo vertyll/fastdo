@@ -11,7 +11,7 @@ import { Project } from 'src/projects/entities/project.entity';
 import { ProjectRolePermissionEnum } from 'src/projects/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from 'src/projects/enums/project-role.enum';
 import { User } from 'src/users/entities/user.entity';
-import { In } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { TranslationDto } from '../../common/dtos/translation.dto';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
@@ -28,14 +28,21 @@ import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
 import { TaskData } from '../types/tasks.types';
+import { TaskAttachmentRepository } from '../repositories/task-attachment.repository';
+import { TaskCommentAttachmentRepository } from '../repositories/task-comment-attachment.repository';
+import { TaskCommentRepository } from '../repositories/task-comment.repository';
 
 @Injectable()
 export class TasksService implements ITasksService {
   constructor(
     private readonly taskRepository: TaskRepository,
+    private readonly taskCommentRepository: TaskCommentRepository,
+    private readonly taskAttachmentRepository: TaskAttachmentRepository,
+    private readonly taskCommentAttachmentRepository: TaskCommentAttachmentRepository,
     private readonly cls: ClsService<CustomClsStore>,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly fileFacade: FileFacade,
+    private readonly dataSource: DataSource,
   ) {}
 
   public async findAll(params: GetAllTasksSearchParamsDto): Promise<ApiPaginatedResponse<TaskResponseDto>> {
