@@ -11,7 +11,7 @@ import { Project } from 'src/projects/entities/project.entity';
 import { ProjectRolePermissionEnum } from 'src/projects/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from 'src/projects/enums/project-role.enum';
 import { User } from 'src/users/entities/user.entity';
-import { DataSource, In } from 'typeorm';
+import { DataSource, EntityManager, In } from 'typeorm';
 import { TranslationDto } from '../../common/dtos/translation.dto';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import { CreateTaskCommentDto } from '../dtos/create-task-comment.dto';
@@ -28,17 +28,11 @@ import { Task } from '../entities/task.entity';
 import { ITasksService } from '../interfaces/tasks-service.interface';
 import { TaskRepository } from '../repositories/task.repository';
 import { TaskData } from '../types/tasks.types';
-import { TaskAttachmentRepository } from '../repositories/task-attachment.repository';
-import { TaskCommentAttachmentRepository } from '../repositories/task-comment-attachment.repository';
-import { TaskCommentRepository } from '../repositories/task-comment.repository';
 
 @Injectable()
 export class TasksService implements ITasksService {
   constructor(
     private readonly taskRepository: TaskRepository,
-    private readonly taskCommentRepository: TaskCommentRepository,
-    private readonly taskAttachmentRepository: TaskAttachmentRepository,
-    private readonly taskCommentAttachmentRepository: TaskCommentAttachmentRepository,
     private readonly cls: ClsService<CustomClsStore>,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly fileFacade: FileFacade,
@@ -128,347 +122,46 @@ export class TasksService implements ITasksService {
   }
 
   public async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const userId = this.cls.get('user').userId;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const taskData: TaskData = {
-      description: createTaskDto.description,
-      additionalDescription: createTaskDto.additionalDescription,
-      priceEstimation: createTaskDto.priceEstimation || 0,
-      workedTime: createTaskDto.workedTime || 0,
-      createdBy: { id: userId } as User,
-      project: { id: createTaskDto.projectId } as Project,
-    };
+    try {
+      const userId = this.cls.get('user').userId;
+      const taskData: TaskData = {
+        description: createTaskDto.description,
+        additionalDescription: createTaskDto.additionalDescription,
+        priceEstimation: createTaskDto.priceEstimation || 0,
+        workedTime: createTaskDto.workedTime || 0,
+        createdBy: { id: userId } as User,
+        project: { id: createTaskDto.projectId } as Project,
+      };
 
-    if (createTaskDto.accessRoleId) {
-      taskData.accessRole = { id: createTaskDto.accessRoleId } as ProjectRole;
+      if (createTaskDto.accessRoleId) taskData.accessRole = { id: createTaskDto.accessRoleId } as ProjectRole;
+      if (createTaskDto.assignedUserIds && createTaskDto.assignedUserIds?.length > 0) {
+        taskData.assignedUsers = createTaskDto.assignedUserIds.map(id => ({ id } as User));
+      } else {
+        taskData.assignedUsers = [{ id: userId } as User];
+      }
+      if (createTaskDto.categoryIds && createTaskDto.categoryIds?.length > 0) {
+        taskData.categories = createTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
+      }
+      if (createTaskDto.statusId) taskData.status = { id: createTaskDto.statusId } as ProjectStatus;
+      if (createTaskDto.priorityId) taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
+
+      const transactionalTaskRepository = queryRunner.manager.getRepository(Task);
+      const savedTask = await transactionalTaskRepository.save(taskData);
+
+      await this.processTaskAttachments(savedTask, createTaskDto.attachments, queryRunner.manager);
+
+      await queryRunner.commitTransaction();
+      return savedTask;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    if (createTaskDto.assignedUserIds && createTaskDto.assignedUserIds.length > 0) {
-      taskData.assignedUsers = createTaskDto.assignedUserIds.map(id => ({ id } as User));
-    } else {
-      taskData.assignedUsers = [{ id: userId } as User];
-    }
-
-    if (createTaskDto.categoryIds && createTaskDto.categoryIds.length > 0) {
-      taskData.categories = createTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
-    }
-
-    if (createTaskDto.statusId) {
-      taskData.status = { id: createTaskDto.statusId } as ProjectStatus;
-    }
-
-    if (createTaskDto.priorityId) {
-      taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
-    }
-
-    const savedTask = await this.taskRepository.save(taskData);
-
-    await this.processTaskAttachments(savedTask, createTaskDto.attachments);
-
-    return savedTask;
-  }
-
-  public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
-    const userId = this.cls.get('user').userId;
-    const task = await this.taskRepository.findOneOrFail({
-      where: { id },
-      relations: [
-        'project',
-        'assignedUsers',
-        'createdBy',
-        'priority',
-        'priority.translations',
-        'categories',
-        'categories.translations',
-        'status',
-        'status.translations',
-        'accessRole',
-        'accessRole.translations',
-        'taskAttachments',
-        'comments',
-        'comments.author',
-      ],
-    });
-    this.validateTaskAccess(task, userId);
-
-    if (updateTaskDto.description !== undefined) task.description = updateTaskDto.description;
-    if (updateTaskDto.additionalDescription !== undefined) {
-      task.additionalDescription = updateTaskDto.additionalDescription;
-    }
-    if (updateTaskDto.priceEstimation !== undefined) task.priceEstimation = updateTaskDto.priceEstimation;
-    if (updateTaskDto.workedTime !== undefined) task.workedTime = updateTaskDto.workedTime;
-    if (updateTaskDto.accessRoleId !== undefined) {
-      task.accessRole = updateTaskDto.accessRoleId ? { id: updateTaskDto.accessRoleId } as ProjectRole : undefined;
-    }
-
-    if (updateTaskDto.assignedUserIds !== undefined) {
-      task.assignedUsers = updateTaskDto.assignedUserIds.map(id => ({ id } as User));
-    }
-
-    if (updateTaskDto.categoryIds !== undefined) {
-      task.categories = updateTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
-    }
-
-    if (updateTaskDto.statusId !== undefined) {
-      task.status = updateTaskDto.statusId ? { id: updateTaskDto.statusId } as ProjectStatus : null;
-    }
-
-    if (updateTaskDto.priorityId !== undefined) {
-      task.priority = { id: updateTaskDto.priorityId } as TaskPriority;
-    }
-
-    task.dateModification = new Date();
-
-    await this.taskRepository.save(task);
-
-    if (updateTaskDto.attachmentsToDelete && updateTaskDto.attachmentsToDelete.length > 0) {
-      await this.processTaskAttachmentDeletion(task, updateTaskDto.attachmentsToDelete);
-    }
-
-    await this.processTaskAttachments(task, updateTaskDto.attachments);
-
-    const updatedTask = await this.taskRepository.findOneOrFail({
-      where: { id },
-      relations: [
-        'project',
-        'assignedUsers',
-        'createdBy',
-        'priority',
-        'priority.translations',
-        'categories',
-        'categories.translations',
-        'status',
-        'status.translations',
-        'accessRole',
-        'accessRole.translations',
-        'taskAttachments',
-        'taskAttachments.file',
-        'comments',
-        'comments.author',
-        'comments.commentAttachments',
-        'comments.commentAttachments.file',
-      ],
-    });
-    return this.mapTaskToResponseDto(updatedTask);
-  }
-
-  public async remove(id: number): Promise<void> {
-    const userId = this.cls.get('user').userId;
-    const task = await this.taskRepository.findOneOrFail({
-      where: { id },
-      relations: [
-        'project',
-        'assignedUsers',
-        'createdBy',
-        'priority',
-        'priority.translations',
-        'categories',
-        'categories.translations',
-        'status',
-        'status.translations',
-        'accessRole',
-        'accessRole.translations',
-        'taskAttachments',
-        'taskAttachments.file',
-        'comments',
-        'comments.author',
-        'comments.commentAttachments',
-        'comments.commentAttachments.file',
-      ],
-    });
-    this.validateTaskAccess(task, userId);
-    await this.taskRepository.remove(task);
-  }
-
-  public async batchDelete(taskIds: number[]): Promise<void> {
-    const userId = this.cls.get('user').userId;
-
-    const tasks = await this.taskRepository.find({
-      where: { id: In(taskIds) },
-      relations: [
-        'project',
-        'assignedUsers',
-        'createdBy',
-        'priority',
-        'priority.translations',
-        'categories',
-        'categories.translations',
-        'status',
-        'status.translations',
-        'accessRole',
-        'accessRole.translations',
-        'taskAttachments',
-        'taskAttachments.file',
-        'comments',
-        'comments.author',
-        'comments.commentAttachments',
-        'comments.commentAttachments.file',
-      ],
-    });
-
-    if (tasks.length !== taskIds.length) {
-      throw new Error('Some tasks not found');
-    }
-
-    tasks.forEach(task => {
-      this.validateTaskAccess(task, userId);
-    });
-
-    await this.taskRepository.remove(tasks);
-  }
-
-  public async removeByProjectId(projectId: number): Promise<void> {
-    await this.taskRepository.delete({ project: { id: projectId } });
-  }
-
-  public async createComment(taskId: number, createCommentDto: CreateTaskCommentDto): Promise<TaskComment> {
-    const userId = this.cls.get('user').userId;
-
-    const comment = new TaskComment();
-    comment.content = createCommentDto.content;
-    comment.task = { id: taskId } as Task;
-    comment.author = { id: userId } as User;
-
-    const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
-
-    await this.processTaskCommentAttachments(savedComment, taskId, createCommentDto.attachments);
-
-    return savedComment;
-  }
-
-  public async removeComment(commentId: number): Promise<void> {
-    const userId = this.cls.get('user').userId;
-
-    const comment = await this.taskRepository.manager.findOne(TaskComment, {
-      where: { id: commentId },
-      relations: ['author', 'task'],
-    });
-
-    if (!comment) {
-      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
-    }
-
-    // TODO: In the future, project owners/admins could also delete comments
-    if (comment.author.id !== userId) {
-      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
-    }
-
-    await this.taskRepository.manager.delete(TaskComment, commentId);
-  }
-
-  public async updateComment(commentId: number, updateCommentDto: UpdateTaskCommentDto): Promise<TaskComment> {
-    const userId = this.cls.get('user').userId;
-
-    const comment = await this.taskRepository.manager.findOne(TaskComment, {
-      where: { id: commentId },
-      relations: ['author', 'task', 'commentAttachments', 'commentAttachments.file'],
-    });
-
-    if (!comment) {
-      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
-    }
-
-    if (comment.author.id !== userId) {
-      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
-    }
-
-    comment.content = updateCommentDto.content;
-    comment.dateModification = new Date();
-
-    const attachmentsToDelete = updateCommentDto.attachmentsToDelete ?? [];
-    if (attachmentsToDelete.length > 0) {
-      await this.processTaskCommentAttachmentDeletion(comment, attachmentsToDelete);
-    }
-
-    const savedComment = await this.taskRepository.manager.save(TaskComment, comment);
-
-    if (updateCommentDto.attachments && updateCommentDto.attachments.length > 0) {
-      await this.processTaskCommentAttachments(savedComment, comment.task.id, updateCommentDto.attachments);
-    }
-
-    return savedComment;
-  }
-
-  private async processTaskAttachments(task: Task, attachments?: any[]): Promise<void> {
-    if (!attachments || attachments.length === 0) {
-      return;
-    }
-
-    const attachmentPromises = attachments.map(async file => {
-      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${task.id}` });
-
-      const taskAttachment = new TaskAttachment();
-      taskAttachment.task = task;
-      taskAttachment.file = { id: uploadedFile.id } as any;
-
-      return this.taskRepository.manager.save(TaskAttachment, taskAttachment);
-    });
-
-    await Promise.all(attachmentPromises);
-  }
-
-  private async processTaskCommentAttachments(
-    taskComment: TaskComment,
-    taskId: number,
-    attachments?: any[],
-  ): Promise<void> {
-    if (!attachments || attachments.length === 0) {
-      return;
-    }
-
-    const attachmentPromises = attachments.map(async file => {
-      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${taskComment.id}` });
-
-      const commentAttachment = new TaskCommentAttachment();
-      commentAttachment.comment = taskComment;
-      commentAttachment.file = { id: uploadedFile.id } as any;
-
-      return this.taskRepository.manager.save(TaskCommentAttachment, commentAttachment);
-    });
-
-    await Promise.all(attachmentPromises);
-  }
-
-  private async processTaskAttachmentDeletion(task: Task, attachmentIds: string[]): Promise<void> {
-    if (!attachmentIds || attachmentIds.length === 0) {
-      return;
-    }
-
-    const attachments = await this.taskRepository.manager.find(TaskAttachment, {
-      where: {
-        task: { id: task.id },
-        file: { id: In(attachmentIds) },
-      },
-      relations: ['file'],
-    });
-
-    const deletePromises = attachments.map(async attachment => {
-      await this.fileFacade.delete(attachment.file.id);
-      await this.taskRepository.manager.remove(TaskAttachment, attachment);
-    });
-
-    await Promise.all(deletePromises);
-  }
-
-  private async processTaskCommentAttachmentDeletion(taskComment: TaskComment, attachmentIds: string[]): Promise<void> {
-    if (!attachmentIds || attachmentIds.length === 0) {
-      return;
-    }
-
-    const attachments = await this.taskRepository.manager.find(TaskCommentAttachment, {
-      where: {
-        comment: { id: taskComment.id },
-        file: { id: In(attachmentIds) },
-      },
-      relations: ['file'],
-    });
-
-    const deletePromises = attachments.map(async attachment => {
-      await this.fileFacade.delete(attachment.file.id);
-      await this.taskRepository.manager.remove(TaskCommentAttachment, attachment);
-    });
-
-    await Promise.all(deletePromises);
   }
 
   private validateTaskAccess(task: Task, userId: number): void {
@@ -494,6 +187,363 @@ export class TasksService implements ITasksService {
         throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
       }
     }
+  }
+
+  public async update(id: number, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalTaskRepository = queryRunner.manager.getRepository(Task);
+      const userId = this.cls.get('user').userId;
+
+      const task = await transactionalTaskRepository.findOneOrFail({
+        where: { id },
+        relations: [
+          'project',
+          'assignedUsers',
+          'createdBy',
+          'accessRole',
+          'taskAttachments',
+          'taskAttachments.file',
+        ],
+      });
+
+      this.validateTaskAccess(task, userId);
+
+      Object.assign(task, {
+        description: updateTaskDto.description ?? task.description,
+        additionalDescription: updateTaskDto.additionalDescription ?? task.additionalDescription,
+        priceEstimation: updateTaskDto.priceEstimation ?? task.priceEstimation,
+        workedTime: updateTaskDto.workedTime ?? task.workedTime,
+        dateModification: new Date(),
+      });
+
+      if (updateTaskDto.accessRoleId !== undefined) {
+        task.accessRole = updateTaskDto.accessRoleId ? ({ id: updateTaskDto.accessRoleId } as ProjectRole) : undefined;
+      }
+      if (updateTaskDto.assignedUserIds !== undefined) {
+        task.assignedUsers = updateTaskDto.assignedUserIds.map(id => ({ id } as User));
+      }
+      if (updateTaskDto.categoryIds !== undefined) {
+        task.categories = updateTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
+      }
+      if (updateTaskDto.statusId !== undefined) {
+        task.status = updateTaskDto.statusId ? ({ id: updateTaskDto.statusId } as ProjectStatus) : null;
+      }
+      if (updateTaskDto.priorityId !== undefined) {
+        task.priority = { id: updateTaskDto.priorityId } as TaskPriority;
+      }
+
+      if (updateTaskDto.attachmentsToDelete && updateTaskDto.attachmentsToDelete?.length > 0) {
+        const idsToDelete = updateTaskDto.attachmentsToDelete;
+        await this.processTaskAttachmentDeletion(task, idsToDelete, queryRunner.manager);
+        if (task.taskAttachments) {
+          task.taskAttachments = task.taskAttachments.filter(
+            attachment => !idsToDelete.includes(attachment.file.id),
+          );
+        }
+      }
+
+      await transactionalTaskRepository.save(task);
+
+      await this.processTaskAttachments(task, updateTaskDto.attachments, queryRunner.manager);
+
+      const updatedTask = await transactionalTaskRepository.findOneOrFail({
+        where: { id },
+        relations: [
+          'project',
+          'assignedUsers',
+          'createdBy',
+          'priority',
+          'priority.translations',
+          'categories',
+          'categories.translations',
+          'status',
+          'status.translations',
+          'accessRole',
+          'accessRole.translations',
+          'taskAttachments',
+          'taskAttachments.file',
+          'comments',
+          'comments.author',
+          'comments.commentAttachments',
+          'comments.commentAttachments.file',
+        ],
+      });
+
+      await queryRunner.commitTransaction();
+      return this.mapTaskToResponseDto(updatedTask);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async remove(id: number): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalTaskRepository = queryRunner.manager.getRepository(Task);
+      const userId = this.cls.get('user').userId;
+      const task = await transactionalTaskRepository.findOneOrFail({
+        where: { id },
+        relations: ['project', 'createdBy', 'assignedUsers', 'accessRole'],
+      });
+      this.validateTaskAccess(task, userId);
+
+      // TODO: delete attachments from disk
+      await transactionalTaskRepository.remove(task);
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async batchDelete(taskIds: number[]): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalTaskRepository = queryRunner.manager.getRepository(Task);
+      const userId = this.cls.get('user').userId;
+
+      const tasks = await transactionalTaskRepository.find({
+        where: { id: In(taskIds) },
+        relations: ['project', 'createdBy', 'assignedUsers', 'accessRole'],
+      });
+
+      if (tasks.length !== taskIds.length) {
+        throw new Error('Some tasks not found');
+      }
+      tasks.forEach(task => this.validateTaskAccess(task, userId));
+
+      await transactionalTaskRepository.remove(tasks);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async removeByProjectId(projectId: number): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalTaskRepository = queryRunner.manager.getRepository(Task);
+      await transactionalTaskRepository.delete({ project: { id: projectId } });
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async createComment(taskId: number, createCommentDto: CreateTaskCommentDto): Promise<TaskComment> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalCommentRepo = queryRunner.manager.getRepository(TaskComment);
+      const userId = this.cls.get('user').userId;
+
+      const comment = new TaskComment();
+      comment.content = createCommentDto.content;
+      comment.task = { id: taskId } as Task;
+      comment.author = { id: userId } as User;
+
+      const savedComment = await transactionalCommentRepo.save(comment);
+
+      await this.processTaskCommentAttachments(savedComment, taskId, createCommentDto.attachments, queryRunner.manager);
+
+      await queryRunner.commitTransaction();
+      return savedComment;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async removeComment(commentId: number): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalCommentRepo = queryRunner.manager.getRepository(TaskComment);
+      const userId = this.cls.get('user').userId;
+
+      const comment = await transactionalCommentRepo.findOne({
+        where: { id: commentId },
+        relations: ['author', 'task'],
+      });
+      if (!comment) throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
+      if (comment.author.id !== userId) throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
+
+      // TODO: delete attachments from disk
+      await transactionalCommentRepo.delete(commentId);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async updateComment(commentId: number, updateCommentDto: UpdateTaskCommentDto): Promise<TaskComment> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionalCommentRepo = queryRunner.manager.getRepository(TaskComment);
+      const userId = this.cls.get('user').userId;
+
+      const comment = await transactionalCommentRepo.findOneOrFail({
+        where: { id: commentId },
+        relations: ['author', 'task', 'commentAttachments', 'commentAttachments.file'],
+      });
+      if (comment.author.id !== userId) {
+        throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
+      }
+
+      comment.content = updateCommentDto.content;
+      comment.dateModification = new Date();
+
+      if (updateCommentDto.attachmentsToDelete && updateCommentDto.attachmentsToDelete?.length > 0) {
+        const idsToDelete = updateCommentDto.attachmentsToDelete;
+        await this.processTaskCommentAttachmentDeletion(comment, idsToDelete, queryRunner.manager);
+        if (comment.commentAttachments) {
+          comment.commentAttachments = comment.commentAttachments.filter(
+            attachment => !idsToDelete.includes(attachment.file.id),
+          );
+        }
+      }
+
+      await transactionalCommentRepo.save(comment);
+
+      if (updateCommentDto.attachments && updateCommentDto.attachments.length > 0) {
+        await this.processTaskCommentAttachments(
+          comment,
+          comment.task.id,
+          updateCommentDto.attachments,
+          queryRunner.manager,
+        );
+      }
+
+      const updatedComment = await transactionalCommentRepo.findOneOrFail({
+        where: { id: commentId },
+        relations: ['author', 'task', 'commentAttachments', 'commentAttachments.file'],
+      });
+
+      await queryRunner.commitTransaction();
+
+      return updatedComment;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  private async processTaskAttachments(
+    task: Task,
+    attachments: any[] | undefined,
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!attachments || attachments.length === 0) return;
+
+    const attachmentRepo = manager.getRepository(TaskAttachment);
+
+    const attachmentPromises = attachments.map(async file => {
+      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${task.id}` });
+      const taskAttachment = new TaskAttachment();
+      taskAttachment.task = task;
+      taskAttachment.file = { id: uploadedFile.id } as any;
+      return attachmentRepo.save(taskAttachment);
+    });
+    await Promise.all(attachmentPromises);
+  }
+
+  private async processTaskCommentAttachments(
+    taskComment: TaskComment,
+    taskId: number,
+    attachments: any[] | undefined,
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!attachments || attachments.length === 0) return;
+
+    const commentAttachmentRepo = manager.getRepository(TaskCommentAttachment);
+
+    const attachmentPromises = attachments.map(async file => {
+      const uploadedFile = await this.fileFacade.upload(file, { path: `tasks/${taskId}/comments/${taskComment.id}` });
+      const commentAttachment = new TaskCommentAttachment();
+      commentAttachment.comment = taskComment;
+      commentAttachment.file = { id: uploadedFile.id } as any;
+      return commentAttachmentRepo.save(commentAttachment);
+    });
+    await Promise.all(attachmentPromises);
+  }
+
+  private async processTaskAttachmentDeletion(
+    task: Task,
+    attachmentIds: string[],
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!attachmentIds || attachmentIds.length === 0) return;
+
+    const attachmentRepo = manager.getRepository(TaskAttachment);
+    const attachments = await attachmentRepo.find({
+      where: { task: { id: task.id }, file: { id: In(attachmentIds) } },
+      relations: ['file'],
+    });
+
+    const deletePromises = attachments.map(async attachment => {
+      await this.fileFacade.delete(attachment.file.id);
+      await attachmentRepo.remove(attachment);
+    });
+    await Promise.all(deletePromises);
+  }
+
+  private async processTaskCommentAttachmentDeletion(
+    taskComment: TaskComment,
+    attachmentIds: string[],
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!attachmentIds || attachmentIds.length === 0) return;
+
+    const commentAttachmentRepo = manager.getRepository(TaskCommentAttachment);
+    const attachments = await commentAttachmentRepo.find({
+      where: { comment: { id: taskComment.id }, file: { id: In(attachmentIds) } },
+      relations: ['file'],
+    });
+
+    const deletePromises = attachments.map(async attachment => {
+      await this.fileFacade.delete(attachment.file.id);
+      await commentAttachmentRepo.remove(attachment);
+    });
+    await Promise.all(deletePromises);
   }
 
   private mapTaskToResponseDto(task: Task): TaskResponseDto {

@@ -10,6 +10,9 @@ import { TaskComment } from './entities/task-comment.entity';
 import { TaskPriorityTranslation } from './entities/task-priority-translation.entity';
 import { TaskPriority } from './entities/task-priority.entity';
 import { Task } from './entities/task.entity';
+import { TaskAttachmentRepository } from './repositories/task-attachment.repository';
+import { TaskCommentAttachmentRepository } from './repositories/task-comment-attachment.repository';
+import { TaskCommentRepository } from './repositories/task-comment.repository';
 import { TaskPriorityRepository } from './repositories/task-priority.repository';
 import { TaskRepository } from './repositories/task.repository';
 import { TaskPriorityService } from './services/task-priority.service';
@@ -34,6 +37,9 @@ import { ITasksServiceToken } from './tokens/tasks-service.token';
     TasksService,
     TaskPriorityService,
     TaskRepository,
+    TaskCommentRepository,
+    TaskAttachmentRepository,
+    TaskCommentAttachmentRepository,
     TaskPriorityRepository,
     {
       provide: ITasksServiceToken,
