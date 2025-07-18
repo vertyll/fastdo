@@ -47,6 +47,8 @@ import { UserDto } from './users/dtos/user.dto';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
+import { ProjectListResponseDto } from './projects/dtos/project-list-response.dto';
+import { ProjectDetailsResponseDto } from './projects/dtos/project-details-response.dto';
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
@@ -186,6 +188,8 @@ async function bootstrap(): Promise<void> {
       ProjectCategoryResponseDto,
       TranslationDto,
       TaskResponseDto,
+      ProjectListResponseDto,
+      ProjectDetailsResponseDto,
     ],
   });
   SwaggerModule.setup(openApiConfig.path, app, document);
