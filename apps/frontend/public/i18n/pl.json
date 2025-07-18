@@ -34,7 +34,8 @@
     "maxFileSize": "Maksymalny rozmiar pliku: {{size}}",
     "maxFilesExceeded": "Maksymalnie {{count}} plików dozwolonych",
     "fileSizeExceeded": "Plik \"{{name}}\" przekracza maksymalny rozmiar {{size}}",
-    "fileDuplicate": "Plik \"{{name}}\" jest już wybrany"
+    "fileDuplicate": "Plik \"{{name}}\" jest już wybrany",
+    "noResults": "Brak wyników"
   },
   "Filters": {
     "search": "Szukaj",
@@ -260,7 +261,8 @@
     "attachmentsLimitExceeded": "Usuń niektóre załączniki, aby móc zapisać zadanie",
     "timeTracking": "Śledzenie czasu",
     "dates": "Daty",
-    "people": "Osoby"
+    "people": "Osoby",
+    "deleteTitle": "Usuń zadanie"
   },
   "CookiesBanner": {
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."

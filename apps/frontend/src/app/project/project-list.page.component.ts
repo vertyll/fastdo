@@ -194,8 +194,12 @@ export class ProjectListPageComponent implements OnInit {
         label: 'Basic.view',
         icon: 'heroEye',
         color: 'primary',
-        visible: (row: any) => row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS),
-        disabled: (row: any) => !(row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
+        visible: (row: any) =>
+          (row.isPublic === true)
+          || (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
+        disabled: (row: any) =>
+          !((row.isPublic === true)
+            || (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS))),
       },
       {
         key: 'edit',

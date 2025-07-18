@@ -5,7 +5,7 @@ import { ProjectRolePermissionEnum } from 'src/app/shared/enums/project-role-per
 import { ProjectsService } from '../../project/data-access/project.service';
 
 @Injectable({ providedIn: 'root' })
-export class ProjectPermissionGuard implements CanActivate {
+export class ProjectRolePermissionGuard implements CanActivate {
   constructor(
     private readonly projectsService: ProjectsService,
     private readonly router: Router,
@@ -20,7 +20,11 @@ export class ProjectPermissionGuard implements CanActivate {
     return this.projectsService.getProjectByIdWithDetails(projectId).pipe(
       map(response => {
         const permissions = response.data?.permissions ?? [];
-        if (permissions.includes(requiredPermission)) {
+        const isPublic = response.data?.isPublic;
+        if (
+          (permissions.includes(requiredPermission))
+          || (isPublic && requiredPermission === ProjectRolePermissionEnum.SHOW_TASKS)
+        ) {
           return true;
         }
         return this.router.createUrlTree(['/projects']);

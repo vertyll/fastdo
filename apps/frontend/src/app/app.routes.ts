@@ -4,7 +4,7 @@ import { LoginComponent } from './auth/login.component';
 import { RegisterComponent } from './auth/register.component';
 import { ResetPasswordComponent } from './auth/reset-password.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { ProjectPermissionGuard } from './core/guards/project-permission.guard';
+import { ProjectRolePermissionGuard } from './core/guards/project-role-permission.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
 import { ProjectFormPageComponent } from './project/project-form.page.component';
@@ -78,14 +78,14 @@ export const routes: Routes = [
         path: 'edit/:id',
         component: ProjectFormPageComponent,
         title: 'Edytuj projekt',
-        canActivate: [ProjectPermissionGuard],
+        canActivate: [ProjectRolePermissionGuard],
         data: { requiredPermission: ProjectRolePermissionEnum.EDIT_PROJECT },
       },
       {
         path: ':id/tasks',
         component: TaskListPageComponent,
         title: 'Zadania projektu',
-        canActivate: [ProjectPermissionGuard],
+        canActivate: [ProjectRolePermissionGuard],
         data: { requiredPermission: ProjectRolePermissionEnum.SHOW_TASKS },
       },
       {

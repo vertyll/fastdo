@@ -775,11 +775,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const newTaskId = response?.data?.id;
           const currentProjectId = this.projectId();
 
-          if (newTaskId) {
+          if (newTaskId && currentProjectId) {
             this.router
-              .navigate(['/projects', currentProjectId, 'tasks', newTaskId])
+              .navigate(['/projects', currentProjectId, 'tasks', 'details', newTaskId])
               .then();
-          } else {
+          } else if (currentProjectId) {
             this.router
               .navigate(['/projects', currentProjectId, 'tasks'])
               .then();

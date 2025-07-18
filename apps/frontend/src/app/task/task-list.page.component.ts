@@ -206,6 +206,18 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         icon: 'heroEye',
         color: 'primary',
       },
+      {
+        key: 'edit',
+        label: 'Basic.edit',
+        icon: 'heroPencil',
+        color: 'secondary',
+      },
+      {
+        key: 'delete',
+        label: 'Basic.delete',
+        icon: 'heroTrash',
+        color: 'danger',
+      },
     ],
     selectable: true,
     sortable: true,
@@ -472,14 +484,30 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]);
         break;
       case 'delete':
-        if (confirm(this.translateService.instant('Task.deleteConfirm'))) {
-          this.tasksService.delete(event.row.id).subscribe(() => {
-            this.notificationService.showNotification(
-              this.translateService.instant('Task.deleteSuccess'),
-              NotificationTypeEnum.Success,
-            );
-          });
-        }
+        this.modalService.present({
+          title: this.translateService.instant('Task.deleteTitle'),
+          message: this.translateService.instant('Task.deleteConfirm'),
+          buttons: [
+            {
+              text: this.translateService.instant('Basic.cancel'),
+              role: ButtonRoleEnum.Cancel,
+              handler: () => true,
+            },
+            {
+              text: this.translateService.instant('Basic.delete'),
+              role: ButtonRoleEnum.Reject,
+              handler: () => {
+                this.tasksService.delete(event.row.id).subscribe(() => {
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Task.deleteSuccess'),
+                    NotificationTypeEnum.Success,
+                  );
+                });
+                return true;
+              },
+            },
+          ],
+        });
         break;
     }
   }
