@@ -126,9 +126,9 @@ export class FastifyFileInterceptor implements NestInterceptor {
           files.push(processedFile.multipartFile);
           fileCount++;
 
-          console.log(
-            `FastifyFileInterceptor: processed file ${part.filename}, size: ${processedFile.fileSize} bytes, buffered: ${processedFile.isBuffered}`,
-          );
+          // console.log(
+          //   `FastifyFileInterceptor: processed file ${part.filename}, size: ${processedFile.fileSize} bytes, buffered: ${processedFile.isBuffered}`,
+          // );
         } else if (part.type === 'field') {
           this.processFormField(formData, part);
         }
@@ -141,9 +141,9 @@ export class FastifyFileInterceptor implements NestInterceptor {
     if (files.length > 0) {
       formData[this.fieldName] = this.options.multiple ? files : files[0];
 
-      console.log(
-        `FastifyFileInterceptor: fieldName=${this.fieldName}, multiple=${this.options.multiple}, filesCount=${files.length}`,
-      );
+      // console.log(
+      //   `FastifyFileInterceptor: fieldName=${this.fieldName}, multiple=${this.options.multiple}, filesCount=${files.length}`,
+      // );
     }
 
     if (this.dtoClass) {

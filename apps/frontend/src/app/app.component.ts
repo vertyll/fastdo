@@ -49,7 +49,7 @@ export class AppComponent implements OnDestroy {
       this.localStorageService.set('selected_language', matchedLang);
     }
 
-    console.log('NotificationWebSocketService initialized');
+    // console.log('NotificationWebSocketService initialized');
   }
 
   ngOnDestroy(): void {

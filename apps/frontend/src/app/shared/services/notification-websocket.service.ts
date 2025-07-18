@@ -29,13 +29,13 @@ export class NotificationWebSocketService {
       const isLoggedIn = this.authStateService.isLoggedIn();
       const token = this.authStateService.getToken();
 
-      console.log('WebSocket auth effect:', { isLoggedIn, hasToken: !!token });
+      // console.log('WebSocket auth effect:', { isLoggedIn, hasToken: !!token });
 
       if (isLoggedIn && token) {
-        console.log('Attempting WebSocket connection...');
+        // console.log('Attempting WebSocket connection...');
         this.connect();
       } else {
-        console.log('Disconnecting WebSocket - no auth');
+        // console.log('Disconnecting WebSocket - no auth');
         this.disconnect();
       }
     });
@@ -47,7 +47,7 @@ export class NotificationWebSocketService {
       if (isLoggedIn && token && this.socket?.connected) {
         const currentSocketToken = (this.socket as any)._currentToken;
         if (currentSocketToken && currentSocketToken !== token) {
-          console.log('Token refreshed, reconnecting WebSocket...');
+          // console.log('Token refreshed, reconnecting WebSocket...');
           this.reconnectWithNewToken();
         }
       }
@@ -56,19 +56,19 @@ export class NotificationWebSocketService {
 
   public connect(): void {
     if (this.socket?.connected) {
-      console.log('WebSocket already connected');
+      // console.log('WebSocket already connected');
       return;
     }
 
     const token = this.authStateService.getToken();
-    console.log('WebSocket connect - token available:', !!token);
+    // console.log('WebSocket connect - token available:', !!token);
 
     if (!token) {
-      console.warn('No access token available for WebSocket connection');
+      // console.warn('No access token available for WebSocket connection');
       return;
     }
 
-    console.log('Creating WebSocket connection with token...');
+    // console.log('Creating WebSocket connection with token...');
     this.connectionStatus.set('connecting');
 
     this.socket = io(`${environment.backendUrl}/notifications`, {
@@ -159,14 +159,14 @@ export class NotificationWebSocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('WebSocket connected');
+      // console.log('WebSocket connected');
       this.connectionStatus.set('connected');
       this.connectionSubject.next(true);
       this.emitWebSocketEvent('websocket-connected');
     });
 
     this.socket.on('disconnect', reason => {
-      console.log('WebSocket disconnected:', reason);
+      // console.log('WebSocket disconnected:', reason);
       this.connectionStatus.set('disconnected');
       this.connectionSubject.next(false);
       this.emitWebSocketEvent('websocket-disconnected');
@@ -200,18 +200,18 @@ export class NotificationWebSocketService {
     });
 
     this.socket.on('token_expired', () => {
-      console.log('WebSocket token expired, refreshing...');
+      // console.log('WebSocket token expired, refreshing...');
       this.handleAuthError();
     });
 
     this.socket.on('token_warning', data => {
-      console.log('WebSocket token will expire soon:', data);
+      // console.log('WebSocket token will expire soon:', data);
       this.handleAuthError();
     });
 
     this.socket.on('update_auth_response', data => {
       if (data.success) {
-        console.log('WebSocket auth updated successfully');
+        // console.log('WebSocket auth updated successfully');
       } else {
         console.warn('WebSocket auth update failed:', data.message);
         this.handleAuthError();
@@ -219,23 +219,23 @@ export class NotificationWebSocketService {
     });
 
     this.socket.on('notification.created', data => {
-      console.log('New notification received:', data);
+      // console.log('New notification received:', data);
       this.emitWebSocketEvent('notification-refresh');
     });
 
     this.socket.on('notification.read', data => {
-      console.log('Notification marked as read:', data);
+      // console.log('Notification marked as read:', data);
       this.emitWebSocketEvent('notification-refresh');
     });
 
     this.socket.on('notification.updated', data => {
-      console.log('Notification updated:', data);
+      // console.log('Notification updated:', data);
       this.emitWebSocketEvent('notification-refresh');
     });
   }
 
   private reconnectWithNewToken(): void {
-    console.log('Reconnecting WebSocket with new token...');
+    // console.log('Reconnecting WebSocket with new token...');
     this.disconnect();
     setTimeout(() => {
       this.connect();
@@ -243,7 +243,7 @@ export class NotificationWebSocketService {
   }
 
   private handleAuthError(): void {
-    console.log('WebSocket auth error, attempting token refresh...');
+    // console.log('WebSocket auth error, attempting token refresh...');
 
     // Try to refresh token through AuthService
     if (this.authService.isTokenValid()) {
@@ -253,7 +253,7 @@ export class NotificationWebSocketService {
       // Token might be expired, trigger refresh
       this.authService.refreshToken().subscribe({
         next: () => {
-          console.log('Token refreshed successfully, reconnecting WebSocket...');
+          // console.log('Token refreshed successfully, reconnecting WebSocket...');
           setTimeout(() => this.reconnectWithNewToken(), 500);
         },
         error: err => {
