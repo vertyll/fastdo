@@ -680,17 +680,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected selectModule(module: NavModule): void {
-    if (module.id !== this.currentModule()) {
-      this.currentModule.set(module.id);
-      this.sections.set(module.sections);
-      this.showAllSections = false;
-      this.updateVisibleSections();
+    this.currentModule.set(module.id);
+    this.sections.set(module.sections);
+    this.showAllSections = false;
+    this.updateVisibleSections();
 
-      const defaultSection = module.sections[0];
-      this.currentSection.set(defaultSection.id);
+    const defaultSection = module.sections[0];
+    this.currentSection.set(defaultSection.id);
 
-      this.router.navigate([module.route]).then();
-    }
+    this.router.navigate([module.route]).then();
   }
 
   protected selectSection(section: NavSection): void {
