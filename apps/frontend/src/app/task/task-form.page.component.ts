@@ -722,6 +722,19 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
           });
 
+          const assignedUsers = data.assignedUsers || [];
+          const currentProjectUsers = this.projectUsers();
+          const missingUsers = assignedUsers.filter(
+            (u: any) => !currentProjectUsers.some((pu: any) => pu.id === u.id)
+          ).map((u: any) => ({
+            id: u.id,
+            name: u.email || u.name || String(u.id),
+            ...u
+          }));
+          if (missingUsers.length > 0) {
+            this.projectUsers.set([...currentProjectUsers, ...missingUsers]);
+          }
+
           if (data.attachments && data.attachments.length > 0) {
             this.existingAttachments.set(data.attachments);
           }
