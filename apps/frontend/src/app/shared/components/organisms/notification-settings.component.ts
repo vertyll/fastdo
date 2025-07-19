@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, finalize, of, takeUntil } from 'rxjs';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
@@ -8,6 +8,7 @@ import { NotificationService } from '../../services/notification.service';
 import { UpdateNotificationSettingsDto } from '../../types/notification.type';
 import { ButtonComponent } from '../atoms/button.component';
 import { TitleComponent } from '../atoms/title.component';
+import { CheckboxComponent } from '../atoms/checkbox.component';
 
 @Component({
   selector: 'app-notification-settings',
@@ -17,6 +18,7 @@ import { TitleComponent } from '../atoms/title.component';
     TranslateModule,
     TitleComponent,
     ButtonComponent,
+    CheckboxComponent,
   ],
   template: `
     <div class="max-w-2xl mx-auto p-6">
@@ -31,10 +33,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.appNotifications' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="appNotifications"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('appNotifications')"
+              [id]="'appNotifications'"
             />
           </div>
 
@@ -45,10 +46,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.emailNotifications' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="emailNotifications"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('emailNotifications')"
+              [id]="'emailNotifications'"
             />
           </div>
 
@@ -59,10 +59,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.projectInvitations' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="projectInvitations"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('projectInvitations')"
+              [id]="'projectInvitations'"
             />
           </div>
 
@@ -73,10 +72,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.taskAssignments' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="taskAssignments"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('taskAssignments')"
+              [id]="'taskAssignments'"
             />
           </div>
 
@@ -87,10 +85,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.taskComments' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="taskComments"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('taskComments')"
+              [id]="'taskComments'"
             />
           </div>
 
@@ -101,10 +98,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.taskStatusChanges' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="taskStatusChanges"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('taskStatusChanges')"
+              [id]="'taskStatusChanges'"
             />
           </div>
 
@@ -115,10 +111,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.projectUpdates' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="projectUpdates"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('projectUpdates')"
+              [id]="'projectUpdates'"
             />
           </div>
 
@@ -129,10 +124,9 @@ import { TitleComponent } from '../atoms/title.component';
                 {{ 'Notifications.systemNotifications' | translate }}
               </label>
             </div>
-            <input
-              type="checkbox"
-              formControlName="systemNotifications"
-              class="h-4 w-4 text-primary-600 rounded border-border-primary focus:ring-primary-500"
+            <app-checkbox
+              [control]="getControl('systemNotifications')"
+              [id]="'systemNotifications'"
             />
           </div>
         </div>
@@ -168,6 +162,10 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  protected getControl(name: string): FormControl {
+    return this.settingsForm.get(name) as FormControl;
   }
 
   protected onSubmit(): void {
