@@ -83,14 +83,14 @@ import { Task, TaskComment } from './models/Task';
             <div class="flex items-center gap-2">
               <button
                 (click)="editTask()"
-                class="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 transition-colors duration-200 shadow-sm"
+                class="flex items-center gap-2 px-4 py-2 bg-primary-500 dark:bg-primary-600 text-white rounded-md hover:bg-primary-600 dark:hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 transition-colors duration-200 shadow-sm"
               >
                 <ng-icon name="heroPencil" size="16"></ng-icon>
                 <span>{{ 'Basic.edit' | translate }}</span>
               </button>
               <button
                 (click)="deleteTask()"
-                class="flex items-center gap-2 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-danger-500 transition-colors duration-200 shadow-sm"
+                class="flex items-center gap-2 px-4 py-2 bg-danger-500 dark:bg-danger-600 text-white rounded-md hover:bg-danger-600 dark:hover:bg-danger-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-danger-500 transition-colors duration-200 shadow-sm"
               >
                 <ng-icon name="heroTrash" size="16"></ng-icon>
                 <span>{{ 'Basic.delete' | translate }}</span>

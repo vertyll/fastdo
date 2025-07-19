@@ -86,7 +86,7 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
           <app-button 
             (click)="handleBatchDelete()"
             [disabled]="selectedTasks().length === 0"
-            cssClass="bg-red-500 hover:bg-red-600 text-white"
+            cssClass="bg-danger-500 dark:bg-danger-600 hover:bg-danger-600 dark:hover:bg-danger-700 text-white"
           >
             {{ 'Task.deleteSelected' | translate }} ({{ selectedTasks().length }})
           </app-button>
