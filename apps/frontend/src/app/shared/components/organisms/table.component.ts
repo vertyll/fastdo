@@ -419,10 +419,15 @@ export interface TableConfig {
         vertical-align: bottom;
       }
 
-      .select-column,
+      :host .select-column,
       .select-cell {
         text-align: center;
         vertical-align: middle;
+        width: 3.5rem;
+        min-width: 3.5rem;
+        max-width: 3.5rem;
+        padding-left: 0;
+        padding-right: 0;
       }
 
       ::ng-deep

@@ -145,7 +145,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     }
 
     .mobile-menu-overlay {
-      @apply absolute inset-0 bg-black/30;
+      @apply fixed inset-0 bg-black/30;
     }
 
     .mobile-menu-content {

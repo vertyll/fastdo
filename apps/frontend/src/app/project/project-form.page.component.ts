@@ -243,8 +243,7 @@ import { Project } from './models/Project';
               track $index
             ) {
               <div
-                class="flex items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary"
-                [formGroupName]="$index"
+                class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary"                [formGroupName]="$index"
               >
                 <div class="flex-1">
                   <app-input-field
@@ -254,7 +253,7 @@ import { Project } from './models/Project';
                     type="email"
                   />
                 </div>
-                <div class="w-48">
+                <div class="w-full sm:w-48">
                   <app-select-field
                     [control]="getUserRoleControl($index)"
                     [id]="'user-role-' + $index"
