@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -378,7 +378,7 @@ import { Project } from './models/Project';
     </div>
   `,
 })
-export class ProjectFormPageComponent implements OnInit, OnDestroy {
+export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -425,6 +425,16 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  ngAfterViewInit(): void {
+    this.usersWithRolesFormArray.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.fieldErrors['usersWithRoles']) {
+          this.fieldErrors['usersWithRoles'] = [];
+        }
+      });
   }
 
   private checkEditMode(): void {
@@ -835,6 +845,30 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
       formData.append('icon', 'null');
     }
 
+    const handleError = (error: any, isUpdate: boolean) => {
+      this.isSubmitting = false;
+      if (
+        error?.error?.errors?.message &&
+        Array.isArray(error.error.errors.message)
+      ) {
+        this.fieldErrors = {};
+        error.error.errors.message.forEach((errObj: any) => {
+          if (errObj.field && Array.isArray(errObj.errors)) {
+            this.fieldErrors[errObj.field] = errObj.errors;
+          }
+        });
+      } else {
+        const errorMessage = error.error?.message || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
+        if (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('user') && errorMessage.toLowerCase().includes('not found')) {
+          this.fieldErrors['usersWithRoles'] = [errorMessage];
+        }
+        this.notificationService.showNotification(
+          errorMessage,
+          NotificationTypeEnum.Error,
+        );
+      }
+    };
+
     if (this.isEditMode && this.projectId) {
       this.projectsService
         .updateFull(this.projectId, formData)
@@ -849,27 +883,9 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
               NotificationTypeEnum.Success,
             );
             this.router.navigate(['/projects']).then();
+            this.isSubmitting = false;
           },
-          error: error => {
-            if (
-              error?.error?.errors?.message
-              && Array.isArray(error.error.errors.message)
-            ) {
-              this.fieldErrors = {};
-              error.error.errors.message.forEach((errObj: any) => {
-                if (errObj.field && Array.isArray(errObj.errors)) {
-                  this.fieldErrors[errObj.field] = errObj.errors;
-                }
-              });
-            } else {
-              const errorMessage = error.error?.message
-                || this.translateService.instant('Project.updateError');
-              this.notificationService.showNotification(
-                errorMessage,
-                NotificationTypeEnum.Error,
-              );
-            }
-          },
+          error: error => handleError(error, true),
           complete: () => {
             this.isSubmitting = false;
           },
@@ -887,27 +903,9 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy {
               NotificationTypeEnum.Success,
             );
             this.router.navigate(['/projects']).then();
+            this.isSubmitting = false;
           },
-          error: error => {
-            if (
-              error?.error?.errors?.message
-              && Array.isArray(error.error.errors.message)
-            ) {
-              this.fieldErrors = {};
-              error.error.errors.message.forEach((errObj: any) => {
-                if (errObj.field && Array.isArray(errObj.errors)) {
-                  this.fieldErrors[errObj.field] = errObj.errors;
-                }
-              });
-            } else {
-              const errorMessage = error.error?.message
-                || this.translateService.instant('Project.addError');
-              this.notificationService.showNotification(
-                errorMessage,
-                NotificationTypeEnum.Error,
-              );
-            }
-          },
+          error: error => handleError(error, false),
           complete: () => {
             this.isSubmitting = false;
           },
