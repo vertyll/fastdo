@@ -106,32 +106,32 @@ export interface TableConfig {
     }),
   ],
   template: `
-     <div
-    class="table-container"
-    [class.mobile-view]="isMobile()"
-    [class.dark]="isDarkMode()"
-    [ngStyle]="getTableContainerStyle()"
-  >
-    @if (loading() && !data().length) {
+    <div
+      class="table-container"
+      [class.mobile-view]="isMobile()"
+      [class.dark]="isDarkMode()"
+      [ngStyle]="getTableContainerStyle()"
+    >
+      @if (loading() && !data().length) {
       <div class="state-overlay">
         <div class="loading-spinner"></div>
         <span>{{ 'Basic.loading' | translate }}</span>
       </div>
-    } @else if (!data().length) {
+      } @else if (!data().length) {
       <div class="state-overlay">
         <p>
           {{ noResultsMessage() | translate }}
         </p>
       </div>
-    }
+      }
 
-    <table
-      mat-table
-      [dataSource]="data()"
-      class="mat-elevation-z1 responsive-table"
-      [class.invisible]="!data().length"
-    >
-      @if (config().selectable) {
+      <table
+        mat-table
+        [dataSource]="data()"
+        class="mat-elevation-z1 responsive-table"
+        [class.invisible]="!data().length"
+      >
+        @if (config().selectable) {
         <ng-container matColumnDef="select">
           <th mat-header-cell *matHeaderCellDef class="select-column">
             <mat-checkbox
@@ -150,7 +150,7 @@ export interface TableConfig {
             ></mat-checkbox>
           </td>
         </ng-container>
-      } @for (column of config().columns; track column.key) {
+        } @for (column of config().columns; track column.key) {
         <ng-container [matColumnDef]="column.key">
           <th
             mat-header-cell
@@ -160,21 +160,20 @@ export interface TableConfig {
           >
             {{ column.label | translate }}
             @if (column.sortable && config().sortable) {
-              <button
-                (click)="sort(column.key)"
-                class="sort-button"
-                [attr.aria-label]="'Sort by ' + (column.label | translate)"
-              >
-                @if (currentSort?.column === column.key) { 
-                  @if (currentSort?.direction === 'asc') {
-                    <ng-icon name="heroArrowUp" size="12"></ng-icon>
-                  } @else {
-                    <ng-icon name="heroArrowDown" size="12"></ng-icon>
-                  } 
-                } @else {
-                  <ng-icon name="heroArrowsUpDown" size="12"></ng-icon>
-                }
-              </button>
+            <button
+              (click)="sort(column.key)"
+              class="sort-button"
+              [attr.aria-label]="'Sort by ' + (column.label | translate)"
+            >
+              @if (currentSort?.column === column.key) { @if
+              (currentSort?.direction === 'asc') {
+              <ng-icon name="heroArrowUp" size="12"></ng-icon>
+              } @else {
+              <ng-icon name="heroArrowDown" size="12"></ng-icon>
+              } } @else {
+              <ng-icon name="heroArrowsUpDown" size="12"></ng-icon>
+              }
+            </button>
             }
           </th>
           <td
@@ -183,105 +182,122 @@ export interface TableConfig {
             [class]="getCellClass(column)"
             [attr.data-column]="column.key"
           >
-            @switch (column.type) { 
-              @case ('text') { 
-                @if (column.truncate || column.autoTruncate) {
-                  <div
-                    class="text-cell"
-                    [class.expandable]="shouldShowExpandButton(row, column.key, column)"
-                  >
-                    <div
-                      class="text-content"
-                      [class.expanded]="isTextExpanded(row, column.key)"
-                      [class.truncated]="!isTextExpanded(row, column.key) && shouldShowExpandButton(row, column.key, column)"
-                      [style.--max-lines]="getMaxLines(column)"
-                      [title]="getValue(row, column.key)"
-                    >
-                      {{ getValue(row, column.key) || '-' }}
-                    </div>
-                    @if (shouldShowExpandButton(row, column.key, column)) {
-                      <span
-                        (click)="toggleTextExpansion(row, column.key, $event)"
-                        class="expand-link"
-                        [attr.aria-label]="isTextExpanded(row, column.key) ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate)"
-                      >
-                        {{ isTextExpanded(row, column.key) ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate) }}
-                      </span>
-                    }
-                  </div>
-                } @else {
-                  <span class="simple-text">{{ getValue(row, column.key) || '-' }}</span>
-                } 
-              } 
-              @case ('boolean') {
-                <span class="boolean-cell">{{ getValue(row, column.key) ? ('Basic.yes' | translate) : ('Basic.no' | translate) }}</span>
-              } 
-              @case ('date') {
-                <span class="date-cell">{{ getValue(row, column.key) | customDate }}</span>
-              } 
-              @case ('image') {
-                <div class="image-cell">
-                  <app-image
-                    [initialUrl]="getValue(row, column.key)"
-                    format="square"
-                    size="sm"
-                    mode="preview"
-                    (click)="$event.stopPropagation(); projectImageClick.emit(row)"
-                  />
-                </div>
-              } 
-              @case ('custom') {
-                <div class="custom-cell">
-                  <ng-container
-                    *ngTemplateOutlet="getCustomTemplate(column.customTemplate); context: { $implicit: row, column: column }"
-                  ></ng-container>
-                </div>
-              } 
-            }
+            @switch (column.type) { @case ('text') { @if (column.truncate ||
+            column.autoTruncate) {
+            <div
+              class="text-cell"
+              [class.expandable]="
+                shouldShowExpandButton(row, column.key, column)
+              "
+            >
+              <div
+                class="text-content"
+                [class.expanded]="isTextExpanded(row, column.key)"
+                [class.truncated]="
+                  !isTextExpanded(row, column.key) &&
+                  shouldShowExpandButton(row, column.key, column)
+                "
+                [style.--max-lines]="getMaxLines(column)"
+                [title]="getValue(row, column.key)"
+              >
+                {{ getValue(row, column.key) || '-' }}
+              </div>
+              @if (shouldShowExpandButton(row, column.key, column)) {
+              <span
+                (click)="toggleTextExpansion(row, column.key, $event)"
+                class="expand-link"
+                [attr.aria-label]="
+                  isTextExpanded(row, column.key)
+                    ? ('Basic.showLess' | translate)
+                    : ('Basic.showMore' | translate)
+                "
+              >
+                {{
+                  isTextExpanded(row, column.key)
+                    ? ('Basic.showLess' | translate)
+                    : ('Basic.showMore' | translate)
+                }}
+              </span>
+              }
+            </div>
+            } @else {
+            <span class="simple-text">{{
+              getValue(row, column.key) || '-'
+            }}</span>
+            } } @case ('boolean') {
+            <span class="boolean-cell">{{
+              getValue(row, column.key)
+                ? ('Basic.yes' | translate)
+                : ('Basic.no' | translate)
+            }}</span>
+            } @case ('date') {
+            <span class="date-cell">{{
+              getValue(row, column.key) | customDate
+            }}</span>
+            } @case ('image') {
+            <div class="image-cell">
+              <app-image
+                [initialUrl]="getValue(row, column.key)"
+                format="square"
+                size="sm"
+                mode="preview"
+                (click)="$event.stopPropagation(); projectImageClick.emit(row)"
+              />
+            </div>
+            } @case ('custom') {
+            <div class="custom-cell">
+              <ng-container
+                *ngTemplateOutlet="
+                  getCustomTemplate(column.customTemplate);
+                  context: { $implicit: row, column: column }
+                "
+              ></ng-container>
+            </div>
+            } }
           </td>
         </ng-container>
-      } @if (config().actions?.length) {
+        } @if (config().actions?.length) {
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="actions-header">
             {{ 'Basic.actions' | translate }}
           </th>
           <td mat-cell *matCellDef="let row" class="actions-cell">
             <div class="actions-container">
-              @for (action of config().actions; track action.key) { 
-                @if (isActionVisible(action, row)) {
-                  <button
-                    [disabled]="isActionDisabled(action, row)"
-                    (click)="$event.stopPropagation(); executeAction(action.key, row)"
-                    [class]="getActionButtonClass(action)"
-                    [attr.aria-label]="action.label | translate"
-                  >
-                    @if (action.icon) {
-                      <ng-icon [name]="action.icon" size="1.125rem" />
-                    } @else {
-                      <span>{{ action.label | translate }}</span>
-                    }
-                  </button>
-                } 
-              }
+              @for (action of config().actions; track action.key) { @if
+              (isActionVisible(action, row)) {
+              <button
+                [disabled]="isActionDisabled(action, row)"
+                (click)="
+                  $event.stopPropagation(); executeAction(action.key, row)
+                "
+                [class]="getActionButtonClass(action)"
+                [attr.aria-label]="action.label | translate"
+              >
+                @if (action.icon) {
+                <ng-icon [name]="action.icon" size="1.125rem" />
+                } @else {
+                <span>{{ action.label | translate }}</span>
+                }
+              </button>
+              } }
             </div>
           </td>
         </ng-container>
-      }
+        }
 
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns; sticky: true"
-      ></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        [class]="getRowClass(row)"
-        (click)="onRowClick(row)"
-      ></tr>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          [class]="getRowClass(row)"
+          (click)="onRowClick(row)"
+        ></tr>
+      </table>
 
-    </table>
-
-    @if (config().infiniteScroll && config().loadingMore) {
+      @if (config().infiniteScroll && config().loadingMore) {
       <div class="loading-more-overlay">
         <div class="loading-more-content">
           <div class="loading-more-spinner"></div>
@@ -290,11 +306,16 @@ export interface TableConfig {
           }}</span>
         </div>
       </div>
-    }
-  </div>
+      }
+    </div>
   `,
   styles: [
     `
+      .mat-mdc-header-cell.mat-mdc-table-sticky,
+      .mat-mdc-header-row.mat-mdc-table-sticky {
+        z-index: 10 !important;
+      }
+
       .state-overlay {
         display: flex;
         flex-direction: column;
@@ -954,20 +975,22 @@ export interface TableConfig {
     `,
   ],
 })
-export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
+export class TableComponent
+  implements AfterViewInit, AfterViewChecked, OnDestroy
+{
   data = input.required<TableRow[]>();
   config = input.required<TableConfig>();
   loading = input(false);
-  customTemplates = input<{ [key: string]: TemplateRef<any>; }>({});
-  initialSort = input<{ column: string; direction: 'asc' | 'desc'; } | null>(
-    null,
+  customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
+  initialSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(
+    null
   );
   height = input<string | null>(null);
   noResultsMessage = input<string>('Basic.noResults');
 
   selectionChange = output<any[]>();
-  actionClick = output<{ action: string; row: any; }>();
-  sortChange = output<{ column: string; direction: 'asc' | 'desc'; }>();
+  actionClick = output<{ action: string; row: any }>();
+  sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
   rowClick = output<any>();
   projectImageClick = output<any>();
   loadMore = output<void>();
@@ -978,13 +1001,14 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
   private readonly themeService = inject(ThemeService);
   private readonly platformService = inject(PlatformService);
   protected readonly isDarkMode = computed(
-    () => this.themeService.currentTheme === 'dark',
+    () => this.themeService.currentTheme === 'dark'
   );
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
   private selection: any[] = [];
   private expandedTexts: Map<string, boolean> = new Map();
-  protected currentSort: { column: string; direction: 'asc' | 'desc'; } | null = null;
+  protected currentSort: { column: string; direction: 'asc' | 'desc' } | null =
+    null;
   private intersectionObserver?: IntersectionObserver;
   private previousDataLength = 0;
   private shouldPreserveScroll = false;
@@ -997,8 +1021,8 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
 
         // If we have more data than before and we're loading more, preserve scroll
         if (
-          currentDataLength > this.previousDataLength
-          && this.config().loadingMore
+          currentDataLength > this.previousDataLength &&
+          this.config().loadingMore
         ) {
           this.shouldPreserveScroll = true;
         }
@@ -1038,7 +1062,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
     }
   }
 
-  protected getTableContainerStyle(): { [key: string]: string; } {
+  protected getTableContainerStyle(): { [key: string]: string } {
     if (this.height()) {
       return { height: this.height()! };
     }
@@ -1051,7 +1075,8 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
   }
 
   private preserveScrollPosition() {
-    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    const tableContainer =
+      this.elementRef.nativeElement.querySelector('.table-container');
     if (tableContainer) {
       // Keep the scroll position slightly adjusted to account for new content
       const currentScrollTop = tableContainer.scrollTop;
@@ -1072,7 +1097,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
     // Re-observe the new last row
     setTimeout(() => {
       const lastRow = this.elementRef.nativeElement.querySelector(
-        '.mat-mdc-row:last-child',
+        '.mat-mdc-row:last-child'
       );
       if (lastRow) {
         this.intersectionObserver?.observe(lastRow);
@@ -1082,17 +1107,18 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
 
   private initializeInfiniteScroll() {
     if (
-      !this.config().infiniteScroll
-      || typeof IntersectionObserver === 'undefined'
+      !this.config().infiniteScroll ||
+      typeof IntersectionObserver === 'undefined'
     ) {
       return;
     }
 
-    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    const tableContainer =
+      this.elementRef.nativeElement.querySelector('.table-container');
     if (!tableContainer) return;
 
     this.intersectionObserver = new IntersectionObserver(
-      entries => {
+      (entries) => {
         const target = entries[0];
         if (target.isIntersecting && !this.config().loadingMore) {
           this.loadMore.emit();
@@ -1102,13 +1128,13 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
         threshold: 0.1,
         rootMargin: '50px',
         root: tableContainer, // Use table container as root instead of viewport
-      },
+      }
     );
 
     // Observe the last row when it exists
     setTimeout(() => {
       const lastRow = this.elementRef.nativeElement.querySelector(
-        '.mat-mdc-row:last-child',
+        '.mat-mdc-row:last-child'
       );
       if (lastRow) {
         this.intersectionObserver?.observe(lastRow);
@@ -1122,7 +1148,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
       columns.push('select');
     }
 
-    const visibleColumns = this.config().columns.filter(col => {
+    const visibleColumns = this.config().columns.filter((col) => {
       if (col.hideOn === 'mobile' && this.isMobile()) {
         return false;
       }
@@ -1172,7 +1198,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
   protected toggleTextExpansion(
     row: any,
     columnKey: string,
-    event?: Event,
+    event?: Event
   ): void {
     if (event) {
       event.stopPropagation();
@@ -1187,7 +1213,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
   protected shouldShowExpandButton(
     row: any,
     columnKey: string,
-    column: TableColumn,
+    column: TableColumn
   ): boolean {
     const text = this.getValue(row, columnKey);
     if (!text) return false;
@@ -1261,7 +1287,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
 
   protected toggleSelection(row: any) {
     const idx = this.selection.findIndex(
-      item => this.getRowId(item) === this.getRowId(row),
+      (item) => this.getRowId(item) === this.getRowId(row)
     );
     if (idx > -1) {
       this.selection.splice(idx, 1);
@@ -1325,7 +1351,7 @@ export class TableComponent implements AfterViewInit, AfterViewChecked, OnDestro
 
   public isSelected(row: any): boolean {
     return this.selection.some(
-      item => this.getRowId(item) === this.getRowId(row),
+      (item) => this.getRowId(item) === this.getRowId(row)
     );
   }
 
