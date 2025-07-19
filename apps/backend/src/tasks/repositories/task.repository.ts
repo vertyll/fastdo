@@ -74,22 +74,41 @@ export class TaskRepository extends Repository<Task> {
       query.leftJoin('project_user_role', 'pur', 'pur.project_id = project.id AND pur.user_id = :userId', { userId });
     }
 
+    // Główna logika: jeśli projekt jest publiczny i user nie ma roli, pobierz tylko zadania z accessRole IS NULL
     if (projectId && userId) {
       query.where(
         `project.id = :projectId AND (
-        pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
-        OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
-        OR task.createdBy.id = :userId
-      )`,
+          (
+            project.isPublic = true
+            AND NOT EXISTS (
+              SELECT 1 FROM project_user_role pur2 WHERE pur2.project_id = project.id AND pur2.user_id = :userId
+            )
+            AND task.access_role_id IS NULL
+          )
+          OR (
+            pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
+            OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
+            OR task.createdBy.id = :userId
+          )
+        )`,
         { projectId, userId },
       );
     } else if (userId) {
       query.where(
         `(
-        pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
-        OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
-        OR task.createdBy.id = :userId
-      )`,
+          (
+            project.isPublic = true
+            AND NOT EXISTS (
+              SELECT 1 FROM project_user_role pur2 WHERE pur2.project_id = project.id AND pur2.user_id = :userId
+            )
+            AND task.access_role_id IS NULL
+          )
+          OR (
+            pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
+            OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
+            OR task.createdBy.id = :userId
+          )
+        )`,
         { userId },
       );
     } else if (projectId) {
