@@ -295,7 +295,7 @@ export interface TableConfig {
         ></tr>
       </table>
 
-      @if (config().infiniteScroll && config().loadingMore) {
+      @if (config().infiniteScroll && config().loadingMore && data().length > 0) {
       <div class="loading-more-overlay">
         <div class="loading-more-content">
           <div class="loading-more-spinner"></div>
