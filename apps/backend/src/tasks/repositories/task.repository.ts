@@ -74,7 +74,6 @@ export class TaskRepository extends Repository<Task> {
       query.leftJoin('project_user_role', 'pur', 'pur.project_id = project.id AND pur.user_id = :userId', { userId });
     }
 
-    // Główna logika: jeśli projekt jest publiczny i user nie ma roli, pobierz tylko zadania z accessRole IS NULL
     if (projectId && userId) {
       query.where(
         `project.id = :projectId AND (
@@ -86,9 +85,22 @@ export class TaskRepository extends Repository<Task> {
             AND task.access_role_id IS NULL
           )
           OR (
+            project.isPublic = false
+            AND pur.user_id = :userId
+            AND task.access_role_id IS NULL
+          )
+          OR (
             pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
             OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
             OR task.createdBy.id = :userId
+          )
+          OR (
+            pur.project_role_id = (SELECT id FROM project_role WHERE code = 'client')
+            AND (
+              task.access_role_id IS NULL
+              OR task.access_role_id = (SELECT id FROM project_role WHERE code = 'client')
+              OR task.access_role_id = (SELECT id FROM project_role WHERE code = 'member')
+            )
           )
         )`,
         { projectId, userId },
@@ -104,9 +116,22 @@ export class TaskRepository extends Repository<Task> {
             AND task.access_role_id IS NULL
           )
           OR (
+            project.isPublic = false
+            AND pur.user_id = :userId
+            AND task.access_role_id IS NULL
+          )
+          OR (
             pur.project_role_id = (SELECT id FROM project_role WHERE code = 'manager')
             OR (task.access_role_id IS NOT NULL AND pur.project_role_id = task.access_role_id)
             OR task.createdBy.id = :userId
+          )
+          OR (
+            pur.project_role_id = (SELECT id FROM project_role WHERE code = 'client')
+            AND (
+              task.access_role_id IS NULL
+              OR task.access_role_id = (SELECT id FROM project_role WHERE code = 'client')
+              OR task.access_role_id = (SELECT id FROM project_role WHERE code = 'member')
+            )
           )
         )`,
         { userId },

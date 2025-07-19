@@ -12,6 +12,8 @@ import {
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroInformationCircle } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, distinctUntilChanged, map, switchMap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -33,8 +35,6 @@ import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { Task } from './models/Task';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroInformationCircle } from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-task-list-page',

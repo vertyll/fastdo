@@ -165,27 +165,48 @@ export class TasksService implements ITasksService {
   }
 
   private validateTaskAccess(task: Task, userId: number): void {
-    if (task.accessRole && task.project && Array.isArray(task.project.projectUserRoles)) {
+    if (task.project && Array.isArray(task.project.projectUserRoles)) {
       const isCreator = task.createdBy && task.createdBy.id === userId;
       const isAssigned = Array.isArray(task.assignedUsers) && task.assignedUsers.some(u => u.id === userId);
-      const hasRole = task.project.projectUserRoles.some(
-        ur =>
-          ur.user && ur.user.id === userId && ur.projectRole && task.accessRole?.id !== undefined
-          && ur.projectRole.id === task.accessRole.id,
-      );
-      const isManager = task.project.projectUserRoles.some(
-        ur => ur.user && ur.user.id === userId && ur.projectRole && ur.projectRole.code === ProjectRoleEnum.MANAGER,
-      );
-
+      const userRole = task.project.projectUserRoles.find(ur => ur.user && ur.user.id === userId)?.projectRole;
+      const isManager = userRole && userRole.code === ProjectRoleEnum.MANAGER;
+      const isClient = userRole && userRole.code === ProjectRoleEnum.CLIENT;
+      const isMember = userRole && userRole.code === ProjectRoleEnum.MEMBER;
+      const hasRole = userRole && task.accessRole && userRole.id === task.accessRole.id;
       const hasManageTasksPermission = task.project.projectUserRoles.some(
         ur =>
           ur.user && ur.user.id === userId && Array.isArray(ur.projectRole.permissions)
           && ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
       );
 
-      if (!(isCreator || isAssigned || hasRole || isManager || hasManageTasksPermission)) {
-        throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
+      // Manager sees everything
+      if (isManager || hasManageTasksPermission) return;
+      // Task creator sees everything
+      if (isCreator || isAssigned) return;
+      // If role is assigned, user can see tasks with that role
+      if (hasRole) return;
+      // Client sees tasks with accessRole null, client, member
+      if (isClient) {
+        if (
+          !task.accessRole
+          || (task.accessRole.code === ProjectRoleEnum.CLIENT)
+          || (task.accessRole.code === ProjectRoleEnum.MEMBER)
+        ) {
+          return;
+        }
       }
+      // Team member sees tasks with accessRole null, member
+      if (isMember) {
+        if (!task.accessRole || task.accessRole.code === ProjectRoleEnum.MEMBER) {
+          return;
+        }
+      }
+      // User without role in public project sees only tasks with accessRole null
+      const hasNoRole = !userRole;
+      if (hasNoRole && task.project.isPublic && !task.accessRole) {
+        return;
+      }
+      throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
     }
   }
 

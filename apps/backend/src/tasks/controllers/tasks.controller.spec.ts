@@ -73,10 +73,10 @@ describe('TasksController', () => {
       const createdTask: Task = {
         id: 1,
         description: taskDto.description,
-        additionalDescription: undefined,
+        additionalDescription: null,
         priceEstimation: 0,
         workedTime: 0,
-        accessRole: undefined,
+        accessRole: null,
         dateCreation: new Date(),
         dateModification: new Date(),
         project: mockProject,
@@ -272,7 +272,7 @@ describe('TasksController', () => {
       const result = {
         id: 1,
         description: 'Single Task Description',
-        additionalDescription: undefined,
+        additionalDescription: null,
         priceEstimation: 0,
         workedTime: 0,
         accessRole: {
@@ -310,7 +310,11 @@ describe('TasksController', () => {
 
   describe('update', () => {
     it('should update a task', async () => {
-      const updateDto: UpdateTaskDto = { description: 'Updated Task Description' };
+      const updateDto: UpdateTaskDto = {
+        description: 'Updated Task Description',
+        statusId: null,
+        accessRoleId: null,
+      };
       const mockUser: User = {
         id: 1,
         email: 'user@example.com',
@@ -356,7 +360,7 @@ describe('TasksController', () => {
       const result = {
         id: 1,
         description: updateDto.description!,
-        additionalDescription: undefined,
+        additionalDescription: null,
         priceEstimation: 0,
         workedTime: 0,
         accessRole: {
