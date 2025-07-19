@@ -224,7 +224,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   public readonly filledFilters = signal<FilterValue[]>([]);
   public readonly showAllFilters = signal<boolean>(false);
-  
+
   protected readonly mobileFilterToggleHidden = signal<boolean>(false);
   protected readonly translateService = inject(TranslateService);
   private readonly store = inject(Store);

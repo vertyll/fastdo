@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, finalize, of, takeUntil } from 'rxjs';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
@@ -7,8 +7,8 @@ import { NotificationStateService } from '../../services/notification-state.serv
 import { NotificationService } from '../../services/notification.service';
 import { UpdateNotificationSettingsDto } from '../../types/notification.type';
 import { ButtonComponent } from '../atoms/button.component';
-import { TitleComponent } from '../atoms/title.component';
 import { CheckboxComponent } from '../atoms/checkbox.component';
+import { TitleComponent } from '../atoms/title.component';
 
 @Component({
   selector: 'app-notification-settings',

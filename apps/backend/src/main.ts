@@ -24,6 +24,8 @@ import { File } from './core/file/entities/file.entity';
 import { NotificationSettings } from './notifications/entities/notification-settings.entity';
 import { Notification } from './notifications/entities/notification.entity';
 import { ProjectCategoryResponseDto } from './projects/dtos/project-category-response.dto';
+import { ProjectDetailsResponseDto } from './projects/dtos/project-details-response.dto';
+import { ProjectListResponseDto } from './projects/dtos/project-list-response.dto';
 import { ProjectRoleResponseDto } from './projects/dtos/project-role-response.dto';
 import { ProjectRoleDto } from './projects/dtos/project-role.dto';
 import { ProjectStatusResponseDto } from './projects/dtos/project-status-response.dto';
@@ -47,8 +49,6 @@ import { UserDto } from './users/dtos/user.dto';
 import { UserEmailHistory } from './users/entities/user-email-history.entity';
 import { UserRole } from './users/entities/user-role.entity';
 import { User } from './users/entities/user.entity';
-import { ProjectListResponseDto } from './projects/dtos/project-list-response.dto';
-import { ProjectDetailsResponseDto } from './projects/dtos/project-details-response.dto';
 
 async function bootstrap(): Promise<void> {
   const app: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(

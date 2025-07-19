@@ -848,8 +848,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     const handleError = (error: any, isUpdate: boolean) => {
       this.isSubmitting = false;
       if (
-        error?.error?.errors?.message &&
-        Array.isArray(error.error.errors.message)
+        error?.error?.errors?.message
+        && Array.isArray(error.error.errors.message)
       ) {
         this.fieldErrors = {};
         error.error.errors.message.forEach((errObj: any) => {
@@ -858,8 +858,12 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
           }
         });
       } else {
-        const errorMessage = error.error?.message || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
-        if (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('user') && errorMessage.toLowerCase().includes('not found')) {
+        const errorMessage = error.error?.message
+          || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
+        if (
+          typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('user')
+          && errorMessage.toLowerCase().includes('not found')
+        ) {
           this.fieldErrors['usersWithRoles'] = [errorMessage];
         }
         this.notificationService.showNotification(

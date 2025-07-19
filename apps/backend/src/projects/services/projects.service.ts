@@ -659,7 +659,9 @@ export class ProjectsService {
       }
     }
     if (notExistingUsers.length > 0) {
-      throw new Error(this.i18n.t('messages.Projects.errors.usersNotFound', { args: { emails: notExistingUsers.join(', ') } }));
+      throw new Error(
+        this.i18n.t('messages.Projects.errors.usersNotFound', { args: { emails: notExistingUsers.join(', ') } }),
+      );
     }
   }
 
