@@ -33,7 +33,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
     <div>
       <form [formGroup]="form" class="space-y-spacing-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-spacing-4">
-          @for (filter of filters().slice(0, 4); track $index) {
+          @for (filter of filters().slice(0, mobileFilterToggleHidden() ? 2 : 4); track $index) {
             <div>
               @switch (filter.type) {
                 @case (FilterType.Text) {
@@ -224,8 +224,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   public readonly filledFilters = signal<FilterValue[]>([]);
   public readonly showAllFilters = signal<boolean>(false);
-  private readonly mobileFilterToggleHidden = signal<boolean>(false);
-
+  
+  protected readonly mobileFilterToggleHidden = signal<boolean>(false);
   protected readonly translateService = inject(TranslateService);
   private readonly store = inject(Store);
   private readonly router = inject(Router);
