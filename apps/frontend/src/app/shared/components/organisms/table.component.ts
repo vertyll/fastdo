@@ -106,30 +106,28 @@ export interface TableConfig {
     }),
   ],
   template: `
+    @if (loading() && !data().length) {
+    <div class="state-overlay">
+      <div class="loading-spinner"></div>
+      <span>{{ 'Basic.loading' | translate }}</span>
+    </div>
+  } @else if (!data().length) {
+    <div class="state-overlay no-data-state">
+      <p>
+        {{ noResultsMessage() | translate }}
+      </p>
+    </div>
+  } @else {
     <div
       class="table-container"
       [class.mobile-view]="isMobile()"
       [class.dark]="isDarkMode()"
       [ngStyle]="getTableContainerStyle()"
     >
-      @if (loading() && !data().length) {
-      <div class="state-overlay">
-        <div class="loading-spinner"></div>
-        <span>{{ 'Basic.loading' | translate }}</span>
-      </div>
-      } @else if (!data().length) {
-      <div class="state-overlay">
-        <p>
-          {{ noResultsMessage() | translate }}
-        </p>
-      </div>
-      }
-
       <table
         mat-table
         [dataSource]="data()"
         class="mat-elevation-z1 responsive-table"
-        [class.invisible]="!data().length"
       >
         @if (config().selectable) {
         <ng-container matColumnDef="select">
@@ -308,6 +306,7 @@ export interface TableConfig {
       </div>
       }
     </div>
+  }
   `,
   styles: [
     `
@@ -330,6 +329,11 @@ export interface TableConfig {
         background-color: #374151;
         border-color: #4b5563;
         color: #d1d5db;
+      }
+
+      .no-data-state {
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
 
       .loading-spinner {
@@ -975,22 +979,20 @@ export interface TableConfig {
     `,
   ],
 })
-export class TableComponent
-  implements AfterViewInit, AfterViewChecked, OnDestroy
-{
+export class TableComponent implements AfterViewChecked, OnDestroy {
   data = input.required<TableRow[]>();
   config = input.required<TableConfig>();
   loading = input(false);
-  customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
-  initialSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(
-    null
+  customTemplates = input<{ [key: string]: TemplateRef<any>; }>({});
+  initialSort = input<{ column: string; direction: 'asc' | 'desc'; } | null>(
+    null,
   );
   height = input<string | null>(null);
   noResultsMessage = input<string>('Basic.noResults');
 
   selectionChange = output<any[]>();
-  actionClick = output<{ action: string; row: any }>();
-  sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
+  actionClick = output<{ action: string; row: any; }>();
+  sortChange = output<{ column: string; direction: 'asc' | 'desc'; }>();
   rowClick = output<any>();
   projectImageClick = output<any>();
   loadMore = output<void>();
@@ -1001,48 +1003,47 @@ export class TableComponent
   private readonly themeService = inject(ThemeService);
   private readonly platformService = inject(PlatformService);
   protected readonly isDarkMode = computed(
-    () => this.themeService.currentTheme === 'dark'
+    () => this.themeService.currentTheme === 'dark',
   );
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
   private selection: any[] = [];
   private expandedTexts: Map<string, boolean> = new Map();
-  protected currentSort: { column: string; direction: 'asc' | 'desc' } | null =
-    null;
+  protected currentSort: { column: string; direction: 'asc' | 'desc'; } | null = null;
   private intersectionObserver?: IntersectionObserver;
   private previousDataLength = 0;
   private shouldPreserveScroll = false;
 
   constructor(private elementRef: ElementRef) {
-    // Update infinite scroll observer when data changes
     effect(() => {
-      if (this.data()) {
-        const currentDataLength = this.data().length;
+      const currentData = this.data();
+      const config = this.config();
+      const currentDataLength = currentData.length;
 
-        // If we have more data than before and we're loading more, preserve scroll
-        if (
-          currentDataLength > this.previousDataLength &&
-          this.config().loadingMore
-        ) {
-          this.shouldPreserveScroll = true;
-        }
-
-        this.updateInfiniteScrollObserver();
-        this.previousDataLength = currentDataLength;
+      if (
+        currentDataLength > this.previousDataLength
+        && config.loadingMore
+      ) {
+        this.shouldPreserveScroll = true;
       }
+
+      if (config.infiniteScroll) {
+        if (currentDataLength > 0 && !this.intersectionObserver) {
+          setTimeout(() => this.initializeInfiniteScroll(), 0);
+        } else if (this.intersectionObserver) {
+          this.updateInfiniteScrollObserver();
+        }
+      }
+
+      this.previousDataLength = currentDataLength;
     });
 
-    // Set initial sort when it changes
     effect(() => {
       const initialSort = this.initialSort();
       if (initialSort) {
         this.currentSort = initialSort;
       }
     });
-  }
-
-  ngAfterViewInit() {
-    this.initializeInfiniteScroll();
   }
 
   ngAfterViewChecked() {
@@ -1062,7 +1063,7 @@ export class TableComponent
     }
   }
 
-  protected getTableContainerStyle(): { [key: string]: string } {
+  protected getTableContainerStyle(): { [key: string]: string; } {
     if (this.height()) {
       return { height: this.height()! };
     }
@@ -1075,8 +1076,7 @@ export class TableComponent
   }
 
   private preserveScrollPosition() {
-    const tableContainer =
-      this.elementRef.nativeElement.querySelector('.table-container');
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
     if (tableContainer) {
       // Keep the scroll position slightly adjusted to account for new content
       const currentScrollTop = tableContainer.scrollTop;
@@ -1097,7 +1097,7 @@ export class TableComponent
     // Re-observe the new last row
     setTimeout(() => {
       const lastRow = this.elementRef.nativeElement.querySelector(
-        '.mat-mdc-row:last-child'
+        '.mat-mdc-row:last-child',
       );
       if (lastRow) {
         this.intersectionObserver?.observe(lastRow);
@@ -1107,18 +1107,17 @@ export class TableComponent
 
   private initializeInfiniteScroll() {
     if (
-      !this.config().infiniteScroll ||
-      typeof IntersectionObserver === 'undefined'
+      !this.config().infiniteScroll
+      || typeof IntersectionObserver === 'undefined'
     ) {
       return;
     }
 
-    const tableContainer =
-      this.elementRef.nativeElement.querySelector('.table-container');
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
     if (!tableContainer) return;
 
     this.intersectionObserver = new IntersectionObserver(
-      (entries) => {
+      entries => {
         const target = entries[0];
         if (target.isIntersecting && !this.config().loadingMore) {
           this.loadMore.emit();
@@ -1128,13 +1127,13 @@ export class TableComponent
         threshold: 0.1,
         rootMargin: '50px',
         root: tableContainer, // Use table container as root instead of viewport
-      }
+      },
     );
 
     // Observe the last row when it exists
     setTimeout(() => {
       const lastRow = this.elementRef.nativeElement.querySelector(
-        '.mat-mdc-row:last-child'
+        '.mat-mdc-row:last-child',
       );
       if (lastRow) {
         this.intersectionObserver?.observe(lastRow);
@@ -1148,7 +1147,7 @@ export class TableComponent
       columns.push('select');
     }
 
-    const visibleColumns = this.config().columns.filter((col) => {
+    const visibleColumns = this.config().columns.filter(col => {
       if (col.hideOn === 'mobile' && this.isMobile()) {
         return false;
       }
@@ -1198,7 +1197,7 @@ export class TableComponent
   protected toggleTextExpansion(
     row: any,
     columnKey: string,
-    event?: Event
+    event?: Event,
   ): void {
     if (event) {
       event.stopPropagation();
@@ -1213,7 +1212,7 @@ export class TableComponent
   protected shouldShowExpandButton(
     row: any,
     columnKey: string,
-    column: TableColumn
+    column: TableColumn,
   ): boolean {
     const text = this.getValue(row, columnKey);
     if (!text) return false;
@@ -1287,7 +1286,7 @@ export class TableComponent
 
   protected toggleSelection(row: any) {
     const idx = this.selection.findIndex(
-      (item) => this.getRowId(item) === this.getRowId(row)
+      item => this.getRowId(item) === this.getRowId(row),
     );
     if (idx > -1) {
       this.selection.splice(idx, 1);
@@ -1351,7 +1350,7 @@ export class TableComponent
 
   public isSelected(row: any): boolean {
     return this.selection.some(
-      (item) => this.getRowId(item) === this.getRowId(row)
+      item => this.getRowId(item) === this.getRowId(row),
     );
   }
 
