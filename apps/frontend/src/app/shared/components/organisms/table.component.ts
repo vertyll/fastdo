@@ -371,13 +371,14 @@ export interface TableConfig {
         min-width: 8rem;
       }
 
-      .mat-mdc-header-cell {
+      :host .mat-mdc-header-cell {
         font-weight: 600;
         color: #374151;
         border-bottom: 1px solid #e5e7eb;
         padding: 0.75rem 1rem;
         text-align: left;
         z-index: 1;
+        background-color: #f3f4f6;
       }
 
       .header-center {
@@ -727,10 +728,10 @@ export interface TableConfig {
         }
       }
 
-      .dark .mat-mdc-header-cell {
+      :host .dark .mat-mdc-header-cell {
         color: #d1d5db;
         border-bottom-color: #4b5563;
-        background-color: #374151;
+        background-color: #4b5563;
         z-index: 1;
       }
 
