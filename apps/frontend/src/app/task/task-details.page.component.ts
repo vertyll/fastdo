@@ -127,7 +127,7 @@ import { Task, TaskComment } from './models/Task';
                       {{ 'Task.additionalDescription' | translate }}
                     </h2>
                     <p
-                      class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap leading-relaxed"
+                      class="text-text-primary dark:text-dark-text-primary leading-relaxed"
                     >
                       {{ task()!.additionalDescription }}
                     </p>
@@ -237,7 +237,7 @@ import { Task, TaskComment } from './models/Task';
                     <button
                       type="submit"
                       [disabled]="commentForm.invalid || submittingComment()"
-                      class="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                      class="flex items-center gap-2 px-6 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                     >
                       <ng-icon name="heroPaperAirplane" size="16"></ng-icon>
                       <span>
@@ -255,11 +255,6 @@ import { Task, TaskComment } from './models/Task';
                   <div class="space-y-6">
                     @for (comment of task()!.comments; track comment.id) {
                       <div class="flex gap-4">
-                        <div
-                          class="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex-shrink-0 flex items-center justify-center font-bold text-primary-600"
-                        >
-                          {{ comment.author.email.charAt(0).toUpperCase() }}
-                        </div>
                         <div class="flex-1 min-w-0">
                           @if (editingCommentId === comment.id) {
                             <div class="space-y-2">
@@ -354,48 +349,19 @@ import { Task, TaskComment } from './models/Task';
                             </div>
                           } @else {
                             <div class="group">
-                              <div
-                                class="flex justify-between items-center mb-1"
-                              >
-                                <span
-                                  class="font-semibold text-text-primary dark:text-dark-text-primary"
-                                  >{{ comment.author.email }}</span
-                                >
-                                <div
-                                  class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <span
-                                    class="text-xs text-text-muted dark:text-dark-text-muted mr-2"
-                                    >{{ 'Task.dateCreation' | translate }}:
-                                    {{
-                                      comment.dateCreation
-                                        | customDate: 'dd.MM.yyyy HH:mm'
-                                    }}</span
-                                  >
-                                  <span
-                                    class="text-xs text-text-muted dark:text-dark-text-muted ml-1"
-                                    >{{ 'Task.dateModification' | translate }}:
-                                    {{
-                                      (comment.dateModification
-                                        | customDate: 'dd.MM.yyyy HH:mm') || '-'
-                                    }}</span
-                                  >
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="font-semibold text-text-primary dark:text-dark-text-primary">
+                                  {{ comment.author.email }}
+                                </span>
+                                <div class="flex items-center gap-1">
                                   @if (canDeleteComment(comment)) {
                                     <button
                                       type="button"
-                                      (click)="
-                                        onEditComment(
-                                          comment.id,
-                                          comment.content
-                                        )
-                                      "
+                                      (click)="onEditComment(comment.id, comment.content)"
                                       class="text-info-600 hover:text-info-800 p-1 rounded-full hover:bg-info-100 dark:hover:bg-info-900/50"
                                       [title]="'Task.editComment' | translate"
                                     >
-                                      <ng-icon
-                                        name="heroPencil"
-                                        size="16"
-                                      ></ng-icon>
+                                      <ng-icon name="heroPencil" size="16"></ng-icon>
                                     </button>
                                     <button
                                       type="button"
@@ -403,16 +369,23 @@ import { Task, TaskComment } from './models/Task';
                                       class="text-danger-600 hover:text-danger-800 p-1 rounded-full hover:bg-danger-100 dark:hover:bg-danger-900/50"
                                       [title]="'Task.deleteComment' | translate"
                                     >
-                                      <ng-icon
-                                        name="heroTrash"
-                                        size="16"
-                                      ></ng-icon>
+                                      <ng-icon name="heroTrash" size="16"></ng-icon>
                                     </button>
                                   }
                                 </div>
                               </div>
+                              <div class="flex flex-wrap gap-2 mt-1">
+                                <span class="text-xs text-text-muted dark:text-dark-text-muted">
+                                  {{ 'Task.dateCreation' | translate }}:
+                                  {{ comment.dateCreation | customDate: 'dd.MM.yyyy HH:mm' }}
+                                </span>
+                                <span class="text-xs text-text-muted dark:text-dark-text-muted">
+                                  {{ 'Task.dateModification' | translate }}:
+                                  {{ (comment.dateModification | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
+                                </span>
+                              </div>
                               <p
-                                class="text-text-primary dark:text-dark-text-primary whitespace-pre-wrap break-words"
+                                class="text-text-primary dark:text-dark-text-primary break-words"
                               >
                                 {{ comment.content }}
                               </p>

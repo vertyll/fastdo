@@ -76,20 +76,6 @@ import { LabelComponent } from '../atoms/label.component';
       height: 100%;
     }
 
-    /* Responsive styles */
-    @media (max-width: 640px) {
-      .ng-select .ng-select-container {
-        min-height: 3.5rem;
-        height: 3.5rem;
-      }
-      .ng-select .ng-input {
-        min-height: 3.5rem;
-        padding-left: 0.5rem;
-        padding-right: 2.5rem;
-        font-size: 0.8125rem;
-      }
-    }
-
     :host-context(.dark) .ng-select .ng-input {
       color: rgb(249 250 251);
     }
