@@ -165,7 +165,8 @@
     "projectUserRole": "Rola w projekcie",
     "id": "ID",
     "status": "Status",
-    "noStatus": "Brak statusu"
+    "noStatus": "Brak statusu",
+    "tasksVisibilityInfo": "W publicznym projekcie domyślnie użytkownik widzi wszystkie zadania, które nie mają przypisanej konkretnej roli. Twórca publicznego projektu może nadawać użytkownikom role, w tym rolę managera. Manager widzi wszystkie zadania. Twórca zadania widzi swoje zadanie. Jeżeli mamy rolę klienta albo członka zespołu, to zadanie widzi twórca zadania, klient lub członek zespołu oraz managerowie."
   },
   "ProjectRole": {
     "manager": "Menedżer",

@@ -165,7 +165,8 @@
     "projectUserRole": "Project user role",
     "id": "ID",
     "status": "Status",
-    "noStatus": "No status"
+    "noStatus": "No status",
+    "tasksVisibilityInfo": "In a public project, by default, a user can see all tasks that do not have a specific role assigned. The creator of a public project can assign roles to users, including the manager role. The manager can see all tasks. The creator of a task can always see their own task. If a user has the client or team member role, the task is visible to the task creator, the client or team member, and all managers."
   },
   "ProjectRole": {
     "manager": "Manager",

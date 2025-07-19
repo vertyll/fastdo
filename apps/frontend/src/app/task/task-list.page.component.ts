@@ -33,6 +33,8 @@ import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { Task } from './models/Task';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroInformationCircle } from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-task-list-page',
@@ -44,6 +46,10 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
     TitleComponent,
     MatTooltipModule,
     ErrorMessageComponent,
+    NgIconComponent,
+  ],
+  viewProviders: [
+    provideIcons({ heroInformationCircle }),
   ],
   template: `
     <div class="flex flex-col gap-4">
@@ -61,10 +67,21 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
           : {{ projectName() }}
         </app-title>
       }
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-center">
         <app-button (click)="navigateToAddTask()">
           {{ 'Task.addTask' | translate }}
         </app-button>
+          @if (projectIsPublic()) {
+            <button mat-icon-button [matTooltip]="publicProjectTooltipText" matTooltipPosition="above" class="flex items-center justify-center">
+              <span class="flex items-center justify-center w-[35px] h-[35px]">
+                <ng-icon 
+                  [size]="'30'"
+                  name="heroInformationCircle" 
+                  class="text-blue-500" 
+                />
+              </span>
+            </button>
+          }
         @if (selectedTasks().length > 0) {
           <app-button 
             (click)="handleBatchDelete()"
@@ -176,6 +193,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   protected projectId = signal<string | null>(null);
   protected projectName = signal<string>('');
+  protected projectIsPublic = signal<boolean>(false);
   protected selectedTasks = signal<Task[]>([]);
   protected customTemplates = signal<{ [key: string]: TemplateRef<any>; }>({});
   protected currentSearchParams = signal<GetAllTasksSearchParams>({
@@ -249,6 +267,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
 
     this.customTemplates.set(templates);
+  }
+
+  protected get publicProjectTooltipText(): string {
+    return this.translateService.instant('Project.tasksVisibilityInfo');
   }
 
   private getTableColumns(): TableColumn[] {
@@ -393,6 +415,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private loadProjectName(projectId: string): void {
     this.projectsService.getProjectById(+projectId).subscribe(project => {
       this.projectName.set(project.data.name);
+      this.projectIsPublic.set(!!project.data.isPublic);
     });
   }
 
