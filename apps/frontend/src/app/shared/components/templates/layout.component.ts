@@ -1,6 +1,7 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { RoleService } from 'src/app/role/data-access/role.service';
 import { CookieBannerComponent } from '../molecules/cookie-banner.component';
@@ -40,11 +41,14 @@ import { NavbarComponent } from '../organisms/navbar.component';
     </div>
   `,
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, OnDestroy {
   protected readonly authService = inject(AuthService);
   protected readonly translateService = inject(TranslateService);
   protected readonly roleService = inject(RoleService);
   protected readonly router = inject(Router);
+
+  private rolesSubscription: Subscription | undefined;
+  private timeIntervalId: number | undefined;
 
   protected isLoggedIn = this.authService.isLoggedIn;
   protected userRoles = this.authService.userRoles;
@@ -75,12 +79,21 @@ export class LayoutComponent implements OnInit {
 
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
-    setInterval(() => this.updateTime(), 1000);
+
+    this.timeIntervalId = window.setInterval(() => this.updateTime(), 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.rolesSubscription?.unsubscribe();
+
+    if (this.timeIntervalId) {
+      clearInterval(this.timeIntervalId);
+    }
   }
 
   private loadRoles(): void {
     const currentLang = this.translateService.currentLang || 'en';
-    this.roleService.getAllRoles(currentLang).subscribe({
+    this.rolesSubscription = this.roleService.getAllRoles(currentLang).subscribe({
       error: error => {
         console.warn('Failed to load roles:', error);
       },

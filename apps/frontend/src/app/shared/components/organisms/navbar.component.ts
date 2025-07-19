@@ -15,7 +15,7 @@ import {
   heroUserCircle,
 } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
@@ -583,6 +583,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly notificationStateService = inject(NotificationStateService);
 
+  private routerSubscription: Subscription;
+
   private readonly defaultModules: NavModule[] = configNavModules;
 
   protected readonly modules = signal<NavModule[]>(this.defaultModules);
@@ -600,20 +602,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly languages: string[] = ['pl', 'en'];
 
   constructor() {
-    this.router.events.pipe(
+    this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
     ).subscribe(() => {
-      setTimeout(() => this.initializeNavigation(), 0);
+      this.initializeNavigation();
     });
   }
 
   ngOnInit(): void {
-    setTimeout(() => this.initializeNavigation(), 0);
+    this.initializeNavigation();
     this.notificationStateService.refreshNotifications();
+
+    document.addEventListener('click', this.handleOutsideClick);
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('click', this.closeLanguageDropdown);
+    this.routerSubscription?.unsubscribe();
     document.removeEventListener('click', this.handleOutsideClick);
   }
 
@@ -631,11 +635,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected toggleLanguageDropdown(event: Event): void {
     event.stopPropagation();
     this.languageDropdownOpen = !this.languageDropdownOpen;
-    if (this.languageDropdownOpen) {
-      setTimeout(() => {
-        document.addEventListener('click', this.closeLanguageDropdown);
-      });
-    }
+    if (this.languageDropdownOpen) this.profileDropdownOpen = false;
   }
 
   protected closeLanguageDropdown = (): void => {
@@ -646,11 +646,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected toggleProfileDropdown(event: Event): void {
     event.stopPropagation();
     this.profileDropdownOpen = !this.profileDropdownOpen;
-    if (this.profileDropdownOpen) {
-      setTimeout(() => {
-        document.addEventListener('click', this.closeProfileDropdown);
-      });
-    }
+    if (this.profileDropdownOpen) this.languageDropdownOpen = false;
   }
 
   protected closeProfileDropdown = (): void => {
@@ -662,7 +658,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.translateService.use(lang);
     this.localStorageService.set('selected_language', lang);
     this.languageDropdownOpen = false;
-    document.removeEventListener('click', this.closeLanguageDropdown);
+    this.languageDropdownOpen = false;
   }
 
   protected updateVisibleSections(): void {
@@ -778,8 +774,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   private handleOutsideClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (!target.closest('.hamburger-icon') && !target.closest('.mobile-nav-menu')) {
-      this.mobileMenuOpen = false;
+
+    if (this.languageDropdownOpen && !target.closest('.language-button')) {
+      this.languageDropdownOpen = false;
+    }
+
+    if (this.profileDropdownOpen && !target.closest('.profile-button')) {
+      this.profileDropdownOpen = false;
     }
   };
 }

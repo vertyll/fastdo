@@ -8,13 +8,16 @@ import { TranslateModule } from '@ngx-translate/core';
   styles: [
     `
       footer {
-        @apply bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-spacing-4 text-center;
+        @apply bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-spacing-4 text-center text-sm;
       }
+
+      a {
+        @apply transition-colors duration-300 hover:text-primary-500 dark:hover:text-dark-link-primary;      }
     `,
   ],
   template: `
-    <footer>&copy;
-      {{ currentYear }} {{ 'Footer.text' | translate }}
+    <footer>
+      &copy; {{ currentYear }} {{ 'Footer.text' | translate }}
       |
       <a [routerLink]="['/terms']">
         {{ 'Footer.terms' | translate }}
