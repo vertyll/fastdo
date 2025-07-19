@@ -5,6 +5,7 @@ import { RegisterComponent } from './auth/register.component';
 import { ResetPasswordComponent } from './auth/reset-password.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { ProjectRolePermissionGuard } from './core/guards/project-role-permission.guard';
+import { GuestGuard } from './core/guards/guest.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
 import { ProjectFormPageComponent } from './project/project-form.page.component';
@@ -29,11 +30,13 @@ export const routes: Routes = [
     path: 'login',
     title: 'Logowanie',
     component: LoginComponent,
+    canActivate: [GuestGuard],
   },
   {
     path: 'register',
     title: 'Rejestracja',
     component: RegisterComponent,
+    canActivate: [GuestGuard],
   },
   {
     path: 'forgot-password',
