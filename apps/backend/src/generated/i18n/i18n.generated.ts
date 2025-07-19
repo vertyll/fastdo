@@ -127,6 +127,7 @@ export type I18nTranslations = {
                 "notAllowedToAcceptInvitation": string;
                 "notAllowedToRejectInvitation": string;
                 "accessDeniedToManageProject": string;
+                "usersNotFound": string;
             };
             "notifications": {
                 "invitationTitle": string;

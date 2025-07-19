@@ -138,8 +138,10 @@ export class ProjectsService {
       }
 
       if (usersWithRoles && usersWithRoles.length > 0) {
+        await this.validateUsersExist(usersWithRoles.map(u => u.email));
         await this.inviteUsersToProjectWithRoles(queryRunner, newProject.id, usersWithRoles, userId);
       } else if (userEmails && userEmails.length > 0) {
+        await this.validateUsersExist(userEmails);
         await this.inviteUsersToProject(queryRunner, newProject.id, userEmails, userId);
       }
 
@@ -225,9 +227,11 @@ export class ProjectsService {
         await this.createStatusesInTransaction(queryRunner, id, statuses);
       }
 
-      if (usersWithRoles && usersWithRoles.length >= 0) {
+      if (usersWithRoles && usersWithRoles.length > 0) {
+        await this.validateUsersExist(usersWithRoles.map(u => u.email));
         await this.updateProjectUsersWithRoles(queryRunner, id, usersWithRoles, userId);
       } else if (userEmails && userEmails.length > 0) {
+        await this.validateUsersExist(userEmails);
         await this.inviteUsersToProject(queryRunner, id, userEmails, userId);
       }
 
@@ -644,6 +648,19 @@ export class ProjectsService {
     await this.projectInvitationRepository.save(invitation);
 
     await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.REJECTED);
+  }
+
+  private async validateUsersExist(emails: string[]): Promise<void> {
+    const notExistingUsers: string[] = [];
+    for (const email of emails) {
+      const isUserExisting = await this.usersService.findByEmail(email);
+      if (!isUserExisting) {
+        notExistingUsers.push(email);
+      }
+    }
+    if (notExistingUsers.length > 0) {
+      throw new Error(this.i18n.t('messages.Projects.errors.usersNotFound', { args: { emails: notExistingUsers.join(', ') } }));
+    }
   }
 
   private async updateInvitationNotificationsStatus(

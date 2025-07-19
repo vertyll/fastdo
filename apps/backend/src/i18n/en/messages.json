@@ -118,7 +118,8 @@
       "invitationNotFoundOrAlreadyHandled": "Invitation not found or already handled",
       "notAllowedToAcceptInvitation": "You are not allowed to accept this invitation",
       "notAllowedToRejectInvitation": "You are not allowed to reject this invitation",
-      "accessDeniedToManageProject": "Access denied to manage project"
+      "accessDeniedToManageProject": "Access denied to manage project",
+      "usersNotFound": "Users not found: {emails}"
     },
     "notifications": {
       "invitationTitle": "Project invitation",

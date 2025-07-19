@@ -118,7 +118,8 @@
       "invitationNotFoundOrAlreadyHandled": "Zaproszenie nie zostało znalezione lub już zostało obsłużone",
       "notAllowedToAcceptInvitation": "Nie masz uprawnień do zaakceptowania tego zaproszenia",
       "notAllowedToRejectInvitation": "Nie masz uprawnień do odrzucenia tego zaproszenia",
-      "accessDeniedToManageProject": "Brak dostępu do zarządzania projektem"
+      "accessDeniedToManageProject": "Brak dostępu do zarządzania projektem",
+      "usersNotFound": "Użytkownicy nie zostali znalezieni: {emails}"
     },
     "notifications": {
       "invitationTitle": "Zaproszenie do projektu",
