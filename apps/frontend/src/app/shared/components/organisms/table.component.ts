@@ -376,7 +376,6 @@ export interface TableConfig {
         color: #374151;
         border-bottom: 1px solid #e5e7eb;
         padding: 0.75rem 1rem;
-        text-align: left;
         z-index: 1;
         background-color: #f3f4f6;
       }
