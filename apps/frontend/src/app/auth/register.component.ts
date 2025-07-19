@@ -1,11 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { LabelComponent } from '../shared/components/atoms/label.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
+import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
 import { LinkTypeEnum } from '../shared/enums/link-type.enum';
 import { ToastPositionEnum } from '../shared/enums/toast-position.enum';
 import { ToastService } from '../shared/services/toast.service';
@@ -23,6 +24,7 @@ import { PasswordValidator } from './validators/password.validator';
     TitleComponent,
     LabelComponent,
     RouterLink,
+    CheckboxComponent,
   ],
   template: `
    <div
@@ -59,12 +61,10 @@ import { PasswordValidator } from './validators/password.validator';
        />
 
        <div class="mb-spacing-1">
-         <div class="flex items-center">
-           <input
-             id="terms"
-             type="checkbox"
-             formControlName="termsAccepted"
-             class="mr-spacing-2"
+         <div class="flex items-center gap-2">
+           <app-checkbox
+             [control]="getControl('termsAccepted')"
+             [id]="'terms'"
            />
            <app-label forId="terms" [required]="true">
              {{ 'Auth.acceptTerms' | translate }}
@@ -84,12 +84,10 @@ import { PasswordValidator } from './validators/password.validator';
        </div>
 
        <div class="mb-spacing-4">
-         <div class="flex items-center">
-           <input
-             id="privacy"
-             type="checkbox"
-             formControlName="privacyPolicyAccepted"
-             class="mr-spacing-2"
+         <div class="flex items-center gap-2">
+           <app-checkbox
+             [control]="getControl('privacyPolicyAccepted')"
+             [id]="'privacy'"
            />
            <app-label forId="privacy" [required]="true">
              {{ 'Auth.acceptPrivacyPolicy' | translate }}
@@ -184,6 +182,10 @@ export class RegisterComponent implements OnInit {
       this.termsErrors = this.getTermsErrors();
       this.privacyPolicyErrors = this.getPrivacyPolicyErrors();
     });
+  }
+
+  protected getControl(name: string): FormControl {
+    return this.registerForm.get(name) as FormControl;
   }
 
   protected onSubmit(): void {
