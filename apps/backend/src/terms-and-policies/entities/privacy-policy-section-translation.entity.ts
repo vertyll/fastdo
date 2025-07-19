@@ -14,12 +14,12 @@ export class PrivacyPolicySectionTranslation {
   title: string;
 
   @ApiProperty()
-  @Column('text', { nullable: true })
-  content: string;
+  @Column({ type: 'text', nullable: true })
+  content: string | null;
 
   @ApiProperty()
-  @Column('simple-array', { nullable: true })
-  items: string[];
+  @Column({ type: 'simple-array', nullable: true })
+  items: string[] | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, { eager: true })

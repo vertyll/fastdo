@@ -15,6 +15,7 @@ export class TaskPriorityService {
     });
     return priorities.map(priority => ({
       id: priority.id,
+      code: priority.code,
       translations: (priority.translations || []).map(t => ({
         lang: t.language?.code,
         name: t.name,

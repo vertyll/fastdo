@@ -8,5 +8,5 @@ export class TranslationDto {
   name: string;
 
   @ApiProperty({ required: false, nullable: true })
-  description?: string;
+  description?: string | null;
 }

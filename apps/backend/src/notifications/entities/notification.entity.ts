@@ -30,7 +30,7 @@ export class Notification {
 
   @ApiProperty()
   @Column({ type: 'json', nullable: true })
-  data?: any;
+  data: any | null;
 
   @ApiProperty()
   @CreateDateColumn()

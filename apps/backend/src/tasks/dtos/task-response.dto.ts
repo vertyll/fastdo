@@ -13,7 +13,7 @@ export class TaskResponseDto {
   description: string;
 
   @ApiProperty()
-  additionalDescription?: string;
+  additionalDescription: string | null;
 
   @ApiProperty({ description: 'Price estimation in hours (0-100, where 100 = 1 hour)' })
   priceEstimation: number;

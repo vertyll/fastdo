@@ -53,18 +53,19 @@ export class UpdateTaskDto {
   @IsNumber({}, { each: true })
   categoryIds?: number[];
 
-  @ApiProperty({ required: false, description: 'Status ID from project (if task belongs to project)' })
+  @ApiProperty({ required: false, description: 'Status ID from project (if task belongs to project)', nullable: true })
   @IsOptional()
   @MultipartNumber()
   @Transform(({ value }) => {
-    if (typeof value === 'string' && value !== '') {
+    if (value === null || value === 'null' || value === '') return null;
+    if (typeof value === 'string') {
       const num = Number(value);
-      return isNaN(num) ? undefined : num;
+      return isNaN(num) ? null : num;
     }
     return value;
   })
-  @IsNumber()
-  statusId?: number;
+  @IsNumber({ allowNaN: false }, { each: false })
+  statusId: number | null;
 
   @ApiProperty({
     required: false,
@@ -101,18 +102,19 @@ export class UpdateTaskDto {
   @Max(10000)
   workedTime?: number;
 
-  @ApiProperty({ required: false, description: 'Required role ID to access this task' })
+  @ApiProperty({ required: false, description: 'Required role ID to access this task', nullable: true })
   @IsOptional()
   @MultipartNumber()
   @Transform(({ value }) => {
-    if (typeof value === 'string' && value !== '') {
+    if (value === null || value === 'null' || value === '') return null;
+    if (typeof value === 'string') {
       const num = Number(value);
-      return isNaN(num) ? undefined : num;
+      return isNaN(num) ? null : num;
     }
     return value;
   })
-  @IsNumber()
-  accessRoleId?: number;
+  @IsNumber({ allowNaN: false }, { each: false })
+  accessRoleId: number | null;
 
   @ApiProperty({ required: false, description: 'Array of user IDs to assign task to', type: [Number] })
   @IsOptional()

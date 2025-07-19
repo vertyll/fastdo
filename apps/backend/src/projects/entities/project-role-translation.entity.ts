@@ -14,8 +14,8 @@ export class ProjectRoleTranslation {
   name: string;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  description?: string;
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

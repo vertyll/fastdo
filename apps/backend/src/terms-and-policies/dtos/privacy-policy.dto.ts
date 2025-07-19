@@ -5,10 +5,10 @@ export class PrivacyPolicySectionTranslationDto {
   id: number;
   @ApiProperty()
   title: string;
-  @ApiProperty()
-  content: string;
-  @ApiProperty()
-  items: string[];
+  @ApiProperty({ nullable: true })
+  content: string | null;
+  @ApiProperty({ nullable: true })
+  items: string[] | null;
   @ApiProperty()
   language: { id: number; code: string; name: string; };
 }

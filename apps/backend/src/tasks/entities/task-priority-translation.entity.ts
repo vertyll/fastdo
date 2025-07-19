@@ -23,7 +23,7 @@ export class TaskPriorityTranslation {
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  description?: string;
+  description: string | null;
 
   @ApiProperty()
   @CreateDateColumn()

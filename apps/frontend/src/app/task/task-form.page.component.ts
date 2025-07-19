@@ -21,6 +21,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { NotificationService } from '../shared/services/notification.service';
 import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
@@ -141,7 +142,6 @@ interface SelectOption {
               [control]="priorityIdControl"
               id="priorityId"
               [label]="'Task.priority' | translate"
-              [placeholder]="'Task.selectPriority' | translate"
               [options]="priorityOptions"
             />
             @if (fieldErrors['priorityId']) {
@@ -189,7 +189,6 @@ interface SelectOption {
                 [control]="statusIdControl"
                 id="statusId"
                 [label]="'Task.status' | translate"
-                [placeholder]="'Task.selectStatus' | translate"
                 [options]="statusOptions"
               />
               @if (fieldErrors['statusId']) {
@@ -205,7 +204,6 @@ interface SelectOption {
               [control]="accessRoleControl"
               id="accessRole"
               [label]="'Task.accessRole' | translate"
-              [placeholder]="'Task.selectAccessRole' | translate"
               [options]="accessRoleOptions"
             />
             @if (fieldErrors['accessRole']) {
@@ -455,15 +453,43 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   get priorityOptions() {
-    return this.priorities().map(p => ({ value: p.id, label: p.name }));
+    // Zawsze pokazuj tylko istniejące priorytety, tłumaczenie niezależne od języka
+    return this.prioritiesRaw().map((item: any) => {
+      // Szukaj tłumaczenia po kodzie enuma
+      let label = '';
+      if (item.code === TaskPriorityEnum.LOW || item.value === TaskPriorityEnum.LOW) {
+        label = 'Niski';
+      } else if (item.code === TaskPriorityEnum.MEDIUM || item.value === TaskPriorityEnum.MEDIUM) {
+        label = 'Średni';
+      } else if (item.code === TaskPriorityEnum.HIGH || item.value === TaskPriorityEnum.HIGH) {
+        label = 'Wysoki';
+      } else {
+        // fallback na tłumaczenie PL lub EN lub cokolwiek jest
+        label = item.translations?.find((t: any) => t.lang === 'pl')?.name
+          || item.translations?.find((t: any) => t.lang === 'en')?.name
+          || item.name
+          || '';
+      }
+      return { value: item.id, label };
+    });
   }
 
   get statusOptions() {
-    return this.statuses().map(s => ({ value: s.id, label: s.name }));
+    // Zwracaj tylko istniejące statusy
+    // Dodaj opcję 'Brak' na początek
+    return [
+      { value: null, label: this.translateService.instant('Basic.none') },
+      ...this.statuses().map(s => ({ value: s.id, label: s.name })),
+    ];
   }
 
   get accessRoleOptions() {
-    return this.accessRoles().map(r => ({ value: r.id, label: r.name }));
+    // Zwracaj tylko istniejące role
+    // Dodaj opcję 'Brak' na początek
+    return [
+      { value: null, label: this.translateService.instant('Basic.none') },
+      ...this.accessRoles().map(r => ({ value: r.id, label: r.name })),
+    ];
   }
 
   ngOnInit(): void {
@@ -474,6 +500,18 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     if (projectIdParam) {
       this.taskForm.patchValue({ projectId: +projectIdParam });
+    }
+
+    // Domyślnie accessRole na null (Brak)
+    this.taskForm.patchValue({ accessRole: null });
+    // Domyślnie status na null (Brak)
+    this.taskForm.patchValue({ statusId: null });
+    // Domyślnie priorytet na "Średni" (code === 'medium') jeśli istnieje, w przeciwnym razie null
+    const mediumPriority = this.prioritiesRaw().find((p: any) => p.code === TaskPriorityEnum.MEDIUM);
+    if (mediumPriority) {
+      this.taskForm.patchValue({ priorityId: mediumPriority.id });
+    } else {
+      this.taskForm.patchValue({ priorityId: null });
     }
 
     this.loadOptions();
@@ -629,6 +667,16 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         next: prioritiesRes => {
           this.prioritiesRaw.set(prioritiesRes.data || []);
           this.updateOptionsForCurrentLang();
+          // Ustaw domyślnie na TaskPriorityEnum.MEDIUM jeśli nie jest ustawiony
+          const currentPriority = this.taskForm.get('priorityId')?.value;
+          if (currentPriority == null) {
+            const mediumPriorityRaw = (prioritiesRes.data || []).find((item: any) =>
+              item.code === TaskPriorityEnum.MEDIUM
+            );
+            if (mediumPriorityRaw) {
+              this.taskForm.patchValue({ priorityId: mediumPriorityRaw.id });
+            }
+          }
         },
         error: error => {
           console.error('Error loading priorities:', error);
@@ -710,13 +758,21 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: response => {
           const data = response.data;
+          let priorityId = data.priority?.id ?? null;
+          // Jeśli nie ma priorytetu, ustaw na 'Średni' jeśli istnieje
+          if (!data.priority) {
+            const mediumPriority = this.prioritiesRaw().find((p: any) => p.code === TaskPriorityEnum.MEDIUM);
+            if (mediumPriority) {
+              priorityId = mediumPriority.id;
+            }
+          }
           this.taskForm.patchValue({
             description: data.description,
             additionalDescription: data.additionalDescription || '',
             priceEstimation: data.priceEstimation || 0,
             workedTime: data.workedTime || 0,
             accessRole: data.accessRole?.id || null,
-            priorityId: data.priority?.id || null,
+            priorityId,
             statusId: data.status?.id || null,
             categoryIds: data.categories?.map((c: any) => c.id) || [],
             assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
@@ -725,11 +781,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const assignedUsers = data.assignedUsers || [];
           const currentProjectUsers = this.projectUsers();
           const missingUsers = assignedUsers.filter(
-            (u: any) => !currentProjectUsers.some((pu: any) => pu.id === u.id)
+            (u: any) => !currentProjectUsers.some((pu: any) => pu.id === u.id),
           ).map((u: any) => ({
             id: u.id,
             name: u.email || u.name || String(u.id),
-            ...u
+            ...u,
           }));
           if (missingUsers.length > 0) {
             this.projectUsers.set([...currentProjectUsers, ...missingUsers]);

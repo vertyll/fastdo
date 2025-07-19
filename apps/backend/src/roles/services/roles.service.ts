@@ -52,7 +52,7 @@ export class RolesService {
         id: role.id,
         code: role.code,
         name: translation?.name || role.code,
-        description: translation?.description,
+        description: translation?.description ?? null,
       };
     });
   }

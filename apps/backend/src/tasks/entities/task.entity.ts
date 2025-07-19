@@ -32,7 +32,7 @@ export class Task {
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  additionalDescription?: string;
+  additionalDescription: string | null;
 
   @ApiProperty({ description: 'Price estimation in hours (0-100, where 100 = 1 hour)' })
   @Column({ type: 'int', default: 0 })
@@ -44,7 +44,7 @@ export class Task {
 
   @ApiProperty({ type: () => ProjectRole })
   @ManyToOne(() => ProjectRole, { nullable: true })
-  accessRole?: Relation<ProjectRole>;
+  accessRole: Relation<ProjectRole> | null;
 
   @ApiProperty()
   @CreateDateColumn()

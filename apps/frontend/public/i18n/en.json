@@ -35,7 +35,8 @@
     "maxFilesExceeded": "Maximum {{count}} files allowed",
     "fileSizeExceeded": "File \"{{name}}\" exceeds maximum size of {{size}}",
     "fileDuplicate": "File \"{{name}}\" is already selected",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "none": "None"
   },
   "Filters": {
     "search": "Search",

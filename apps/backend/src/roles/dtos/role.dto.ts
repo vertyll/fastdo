@@ -10,6 +10,6 @@ export class RoleDto {
   @ApiProperty()
   name: string;
 
-  @ApiProperty({ required: false })
-  description?: string;
+  @ApiProperty({ required: false, nullable: true })
+  description: string | null;
 }

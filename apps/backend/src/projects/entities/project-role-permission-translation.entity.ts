@@ -14,8 +14,8 @@ export class ProjectRolePermissionTranslation {
   name: string;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  description?: string;
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -23,7 +23,7 @@ export class ProjectRolePermissionTranslation {
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date;
+  dateModification: Date | null;
 
   @ManyToOne(() => ProjectRolePermission, permission => permission.translations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_role_permission_id' })

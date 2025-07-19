@@ -15,7 +15,7 @@ export class TaskStatusTranslation {
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  description?: string;
+  description: string | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE', eager: true })

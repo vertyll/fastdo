@@ -35,7 +35,8 @@
     "maxFilesExceeded": "Maksymalnie {{count}} plików dozwolonych",
     "fileSizeExceeded": "Plik \"{{name}}\" przekracza maksymalny rozmiar {{size}}",
     "fileDuplicate": "Plik \"{{name}}\" jest już wybrany",
-    "noResults": "Brak wyników"
+    "noResults": "Brak wyników",
+    "none": "Brak"
   },
   "Filters": {
     "search": "Szukaj",

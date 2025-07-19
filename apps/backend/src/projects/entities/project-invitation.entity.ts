@@ -37,7 +37,7 @@ export class ProjectInvitation {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  role: Relation<ProjectRole>;
+  role: Relation<ProjectRole> | null;
 
   @ApiProperty({ enum: ProjectInvitationStatusEnum })
   @Column({

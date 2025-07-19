@@ -15,7 +15,7 @@ export class RoleTranslation {
 
   @ApiProperty()
   @Column('text', { nullable: true })
-  description: string;
+  description: string | null;
 
   @ApiProperty()
   @Column()

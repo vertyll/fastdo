@@ -25,7 +25,7 @@ export class ProjectRole {
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date;
+  dateModification: Date | null;
 
   @OneToMany(() => ProjectRoleTranslation, translation => translation.projectRole, { cascade: true })
   translations: Relation<ProjectRoleTranslation[]>;

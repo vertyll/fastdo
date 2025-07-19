@@ -221,7 +221,11 @@ export class TasksService implements ITasksService {
       });
 
       if (updateTaskDto.accessRoleId !== undefined) {
-        task.accessRole = updateTaskDto.accessRoleId ? ({ id: updateTaskDto.accessRoleId } as ProjectRole) : undefined;
+        if (updateTaskDto.accessRoleId === null) {
+          task.accessRole = null;
+        } else if (updateTaskDto.accessRoleId) {
+          task.accessRole = { id: updateTaskDto.accessRoleId } as ProjectRole;
+        }
       }
       if (updateTaskDto.assignedUserIds !== undefined) {
         task.assignedUsers = updateTaskDto.assignedUserIds.map(id => ({ id } as User));
