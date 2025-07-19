@@ -55,6 +55,7 @@ import { ProjectNameValidator } from './validators/project-name.validator';
               [data]="tableRows"
               [config]="tableConfig"
               [customTemplates]="customTemplates"
+              [loading]="projectsStateService.state() === listStateValue.LOADING"
               (selectionChange)="onSelectionChange($event)"
               (actionClick)="onActionClick($event)"
               (rowClick)="onRowClick($event)"
@@ -72,11 +73,6 @@ import { ProjectNameValidator } from './validators/project-name.validator';
           <app-error-message
             [customMessage]="projectsStateService.error()?.message"
           />
-        }
-        @case (listStateValue.LOADING) {
-          <p class="text-text-secondary-light dark:text-text-primary-dark">
-            {{ 'Basic.loading' | translate }}
-          </p>
         }
       }
     </div>

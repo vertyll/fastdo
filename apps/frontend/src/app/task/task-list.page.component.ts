@@ -162,10 +162,6 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
         (selectionChange)="handleSelectionChange($event)"
       />
     }
-
-    @if (tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0) {
-      <p class="mt-4 text-center text-gray-500">{{ 'Basic.loading' | translate }}</p>
-    }
   `,
 })
 export class TaskListPageComponent implements OnInit, AfterViewInit {
