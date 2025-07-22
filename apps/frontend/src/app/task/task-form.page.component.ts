@@ -602,13 +602,9 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       workedTime: formValue.workedTime || undefined,
       accessRoleId: formValue.accessRole || undefined,
       priorityId: formValue.priorityId || undefined,
-      categoryIds: formValue.categoryIds && formValue.categoryIds.length > 0
-        ? formValue.categoryIds
-        : undefined,
+      categoryIds: Array.isArray(formValue.categoryIds) ? formValue.categoryIds : [],
       statusId: formValue.statusId || undefined,
-      assignedUserIds: formValue.assignedUserIds && formValue.assignedUserIds.length > 0
-        ? formValue.assignedUserIds
-        : undefined,
+      assignedUserIds: Array.isArray(formValue.assignedUserIds) ? formValue.assignedUserIds : [],
       projectId: +currentProjectId,
     };
 
@@ -789,10 +785,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       const value = (taskData as any)[key];
       if (value !== undefined) {
         if (Array.isArray(value)) {
-          if (value.length > 0) {
-            const jsonValue = JSON.stringify(value);
-            formData.append(key, jsonValue);
-          }
+          const jsonValue = JSON.stringify(value);
+          formData.append(key, jsonValue);
         } else {
           formData.append(key, value.toString());
         }
@@ -849,9 +843,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       const value = (updateData as any)[key];
       if (value !== undefined) {
         if (Array.isArray(value)) {
-          if (value.length > 0) {
-            formData.append(key, JSON.stringify(value));
-          }
+          const jsonValue = JSON.stringify(value);
+          formData.append(key, jsonValue);
         } else {
           formData.append(key, value.toString());
         }
