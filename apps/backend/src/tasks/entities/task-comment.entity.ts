@@ -7,7 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { TaskCommentAttachment } from './task-comment-attachment.entity';
@@ -28,8 +27,8 @@ export class TaskComment {
   dateCreation: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
-  dateModification: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Task })
   @ManyToOne(() => Task, task => task.comments, { onDelete: 'CASCADE' })

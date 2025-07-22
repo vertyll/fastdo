@@ -6,7 +6,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  UpdateDateColumn,
 } from 'typeorm';
 import { TaskPriorityEnum } from '../enums/task-priority.enum';
 import { TaskPriorityTranslation } from './task-priority-translation.entity';
@@ -34,8 +33,8 @@ export class TaskPriority {
   dateCreation: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
-  dateModification: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => TaskPriorityTranslation, isArray: true })
   @OneToMany(() => TaskPriorityTranslation, translation => translation.priority, {

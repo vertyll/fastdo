@@ -43,11 +43,11 @@ export class TaskResponseDto {
     translations: TranslationDto[];
   };
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Date })
   dateCreation: Date;
 
-  @ApiProperty()
-  dateModification: Date;
+  @ApiProperty({ type: () => Date, nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Project })
   project: Project;

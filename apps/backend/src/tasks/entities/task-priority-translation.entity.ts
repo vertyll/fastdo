@@ -6,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
 import { TaskPriority } from './task-priority.entity';
@@ -30,8 +29,8 @@ export class TaskPriorityTranslation {
   dateCreation: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
-  dateModification: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE', eager: true })

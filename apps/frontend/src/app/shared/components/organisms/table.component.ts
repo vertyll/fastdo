@@ -230,7 +230,7 @@ export interface TableConfig {
             }}</span>
             } @case ('date') {
             <span class="date-cell">{{
-              getValue(row, column.key) | customDate
+              (getValue(row, column.key) | customDate) || '-'
             }}</span>
             } @case ('image') {
             <div class="image-cell">

@@ -9,11 +9,11 @@ export class TaskCommentDto {
   @ApiProperty()
   content: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Date })
   dateCreation: Date;
 
-  @ApiProperty()
-  dateModification: Date;
+  @ApiProperty({ type: () => Date, nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => User })
   author: User;

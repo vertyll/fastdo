@@ -9,7 +9,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  UpdateDateColumn,
 } from 'typeorm';
 import { ProjectCategory } from '../../projects/entities/project-category.entity';
 import { ProjectRole } from '../../projects/entities/project-role.entity';
@@ -51,8 +50,8 @@ export class Task {
   dateCreation: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
-  dateModification: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Project })
   @ManyToOne(() => Project, project => project.tasks, { onDelete: 'CASCADE' })
