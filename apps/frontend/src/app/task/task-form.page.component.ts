@@ -453,30 +453,13 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   get priorityOptions() {
-    // Zawsze pokazuj tylko istniejące priorytety, tłumaczenie niezależne od języka
-    return this.prioritiesRaw().map((item: any) => {
-      // Szukaj tłumaczenia po kodzie enuma
-      let label = '';
-      if (item.code === TaskPriorityEnum.LOW || item.value === TaskPriorityEnum.LOW) {
-        label = 'Niski';
-      } else if (item.code === TaskPriorityEnum.MEDIUM || item.value === TaskPriorityEnum.MEDIUM) {
-        label = 'Średni';
-      } else if (item.code === TaskPriorityEnum.HIGH || item.value === TaskPriorityEnum.HIGH) {
-        label = 'Wysoki';
-      } else {
-        // fallback na tłumaczenie PL lub EN lub cokolwiek jest
-        label = item.translations?.find((t: any) => t.lang === 'pl')?.name
-          || item.translations?.find((t: any) => t.lang === 'en')?.name
-          || item.name
-          || '';
-      }
-      return { value: item.id, label };
-    });
-  }
+  return this.priorities().map((item: any) => ({
+    value: item.id,
+    label: item.name,
+  }));
+}
 
   get statusOptions() {
-    // Zwracaj tylko istniejące statusy
-    // Dodaj opcję 'Brak' na początek
     return [
       { value: null, label: this.translateService.instant('Basic.none') },
       ...this.statuses().map(s => ({ value: s.id, label: s.name })),
@@ -484,8 +467,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   get accessRoleOptions() {
-    // Zwracaj tylko istniejące role
-    // Dodaj opcję 'Brak' na początek
     return [
       { value: null, label: this.translateService.instant('Basic.none') },
       ...this.accessRoles().map(r => ({ value: r.id, label: r.name })),
@@ -502,11 +483,9 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       this.taskForm.patchValue({ projectId: +projectIdParam });
     }
 
-    // Domyślnie accessRole na null (Brak)
     this.taskForm.patchValue({ accessRole: null });
-    // Domyślnie status na null (Brak)
     this.taskForm.patchValue({ statusId: null });
-    // Domyślnie priorytet na "Średni" (code === 'medium') jeśli istnieje, w przeciwnym razie null
+
     const mediumPriority = this.prioritiesRaw().find((p: any) => p.code === TaskPriorityEnum.MEDIUM);
     if (mediumPriority) {
       this.taskForm.patchValue({ priorityId: mediumPriority.id });
@@ -667,7 +646,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         next: prioritiesRes => {
           this.prioritiesRaw.set(prioritiesRes.data || []);
           this.updateOptionsForCurrentLang();
-          // Ustaw domyślnie na TaskPriorityEnum.MEDIUM jeśli nie jest ustawiony
           const currentPriority = this.taskForm.get('priorityId')?.value;
           if (currentPriority == null) {
             const mediumPriorityRaw = (prioritiesRes.data || []).find((item: any) =>
@@ -759,7 +737,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         next: response => {
           const data = response.data;
           let priorityId = data.priority?.id ?? null;
-          // Jeśli nie ma priorytetu, ustaw na 'Średni' jeśli istnieje
           if (!data.priority) {
             const mediumPriority = this.prioritiesRaw().find((p: any) => p.code === TaskPriorityEnum.MEDIUM);
             if (mediumPriority) {
