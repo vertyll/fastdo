@@ -436,7 +436,7 @@ export interface TableConfig {
           :indeterminate
         ):not([data-indeterminate='true'])
         ~ .mdc-checkbox__background {
-        border-color: #f97316;
+        border-color: #f97316; /* primary-500 */
       }
 
       ::ng-deep
@@ -451,8 +451,8 @@ export interface TableConfig {
         .mat-mdc-checkbox
         .mdc-checkbox__native-control[data-indeterminate='true']:enabled
         ~ .mdc-checkbox__background {
-        background-color: #f97316;
-        border-color: #f97316;
+        background-color: #f97316; /* primary-500 */
+        border-color: #f97316; /* primary-500 */
       }
 
       ::ng-deep
@@ -461,7 +461,7 @@ export interface TableConfig {
           :indeterminate
         ):not([data-indeterminate='true'])
         ~ .mdc-checkbox__background {
-        border-color: #ea580c;
+        border-color: #ea580c; /* primary-600 */
       }
 
       ::ng-deep
@@ -476,8 +476,8 @@ export interface TableConfig {
         .mat-mdc-checkbox:hover
         .mdc-checkbox__native-control[data-indeterminate='true']:enabled
         ~ .mdc-checkbox__background {
-        background-color: #ea580c;
-        border-color: #ea580c;
+        background-color: #ea580c; /* primary-600 */
+        border-color: #ea580c; /* primary-600 */
       }
 
       ::ng-deep .mat-mdc-checkbox .mdc-checkbox__ripple {
@@ -785,7 +785,7 @@ export interface TableConfig {
           :indeterminate
         ):not([data-indeterminate='true'])
         ~ .mdc-checkbox__background {
-        border-color: #fdba74;
+        border-color: #ea580c; /* primary-600 */
       }
 
       .dark
@@ -803,8 +803,8 @@ export interface TableConfig {
         .mat-mdc-checkbox
         .mdc-checkbox__native-control[data-indeterminate='true']:enabled
         ~ .mdc-checkbox__background {
-        background-color: #fdba74;
-        border-color: #fdba74;
+        background-color: #ea580c; /* primary-600 */
+        border-color: #ea580c; /* primary-600 */
       }
 
       .dark
@@ -814,7 +814,7 @@ export interface TableConfig {
           :indeterminate
         ):not([data-indeterminate='true'])
         ~ .mdc-checkbox__background {
-        border-color: #fed7aa;
+        border-color: #c2410c; /* primary-700 */
       }
 
       .dark
@@ -832,8 +832,8 @@ export interface TableConfig {
         .mat-mdc-checkbox:hover
         .mdc-checkbox__native-control[data-indeterminate='true']:enabled
         ~ .mdc-checkbox__background {
-        background-color: #fed7aa;
-        border-color: #fed7aa;
+        background-color: #c2410c; /* primary-700 */
+        border-color: #c2410c; /* primary-700 */
       }
 
       .dark .action-primary {
