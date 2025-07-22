@@ -602,7 +602,7 @@ import { Task, TaskComment } from './models/Task';
                           >{{ 'Task.modified' | translate }}:</span
                         >
                         {{
-                          task()!.dateModification | customDate: 'dd.MM.yyyy'
+                          (task()!.dateModification | customDate: 'dd.MM.yyyy') || '-'
                         }}
                       </p>
                     </div>
