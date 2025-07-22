@@ -66,7 +66,6 @@ export class RoleSeeder implements ISeeder {
             code: roleData.code,
             isActive: true,
             dateCreation: new Date(),
-            dateModification: new Date(),
           });
           await this.roleRepository.save(role);
           this.baseSeeder.getLogger().log(`Created role: ${roleData.code}`);
@@ -87,7 +86,6 @@ export class RoleSeeder implements ISeeder {
                 name: translationData.name,
                 description: translationData.description,
                 dateCreation: new Date(),
-                dateModification: new Date(),
                 role: role,
                 language: language,
               });

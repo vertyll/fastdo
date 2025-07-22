@@ -22,8 +22,8 @@ export class RoleTranslation {
   dateCreation: Date;
 
   @ApiProperty()
-  @Column()
-  dateModification: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, { eager: true })

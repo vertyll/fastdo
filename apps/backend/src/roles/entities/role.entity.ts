@@ -23,8 +23,8 @@ export class Role {
   dateCreation: Date;
 
   @ApiProperty()
-  @Column()
-  dateModification: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  dateModification: Date | null;
 
   @ApiProperty({ type: () => UserRole })
   @OneToMany(() => UserRole, userRole => userRole.role)
