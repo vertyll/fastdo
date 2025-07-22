@@ -453,11 +453,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   get priorityOptions() {
-  return this.priorities().map((item: any) => ({
-    value: item.id,
-    label: item.name,
-  }));
-}
+    return this.priorities().map((item: any) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  }
 
   get statusOptions() {
     return [
