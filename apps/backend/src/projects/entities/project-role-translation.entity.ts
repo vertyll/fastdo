@@ -23,7 +23,7 @@ export class ProjectRoleTranslation {
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date;
+  dateModification: Date | null;
 
   @ManyToOne(() => ProjectRole, projectRole => projectRole.translations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_role_id' })
