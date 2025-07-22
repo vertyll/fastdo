@@ -245,7 +245,6 @@
     "notFound": "Zadanie nie zostało znalezione",
     "loadError": "Błąd podczas ładowania zadania",
     "isCompleted": "Czy zrobione?",
-    "isUrgent": "Czy pilne?",
     "saveComment": "Zapisz komentarz",
     "editComment": "Edytuj komentarz",
     "deleteComment": "Usuń komentarz",

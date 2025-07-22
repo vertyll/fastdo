@@ -53,20 +53,10 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
   ],
   template: `
     <div class="flex flex-col gap-4">
-      @if (!projectName()) {
-        <app-title>
-          @if (isUrgent()) {
-            {{ 'Task.urgentTasks' | translate }}
-          } @else {
-            {{ 'Task.title' | translate }}
-          }
-        </app-title>
-      } @else {
         <app-title>
           {{ 'Task.taskForProject' | translate }}
           : {{ projectName() }}
-        </app-title>
-      }
+      </app-title>
       <div class="flex gap-2 items-center">
         <app-button (click)="navigateToAddTask()">
           {{ 'Task.addTask' | translate }}
@@ -165,8 +155,6 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
   `,
 })
 export class TaskListPageComponent implements OnInit, AfterViewInit {
-  readonly isUrgent = input<boolean, unknown>(undefined, { transform: booleanAttribute });
-
   @ViewChild('statusTemplate', { static: false })
   statusTemplate!: TemplateRef<any>;
   @ViewChild('categoriesTemplate', { static: false })

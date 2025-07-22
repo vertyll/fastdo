@@ -205,7 +205,6 @@
     "addTask": "Add task",
     "taskName": "Task name",
     "isCompleted": "Is completed?",
-    "isUrgent": "Is urgent?",
     "addTaskToProject": "Add task to project",
     "editTask": "Edit task",
     "taskDescription": "Task description",
