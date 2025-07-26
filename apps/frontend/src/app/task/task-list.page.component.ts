@@ -1,15 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  booleanAttribute,
-  computed,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild, computed, inject, signal } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -22,7 +11,6 @@ import { ButtonRoleEnum } from 'src/app/shared/enums/modal.enum';
 import { NotificationTypeEnum } from 'src/app/shared/enums/notification.enum';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { AppConfigStateService } from '../config/config.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
@@ -64,16 +52,16 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
           @if (projectIsPublic()) {
             <button mat-icon-button [matTooltip]="publicProjectTooltipText" matTooltipPosition="above" class="flex items-center justify-center">
               <span class="flex items-center justify-center w-[35px] h-[35px]">
-                <ng-icon 
+                <ng-icon
                   [size]="'30'"
-                  name="heroInformationCircle" 
-                  class="text-blue-500" 
+                  name="heroInformationCircle"
+                  class="text-blue-500"
                 />
               </span>
             </button>
           }
         @if (selectedTasks().length > 0) {
-          <app-button 
+          <app-button
             (click)="handleBatchDelete()"
             [disabled]="selectedTasks().length === 0"
             cssClass="bg-danger-500 dark:bg-danger-600 hover:bg-danger-600 dark:hover:bg-danger-700 text-white"
@@ -172,7 +160,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private readonly projectsService = inject(ProjectsService);
   private readonly translateService = inject(TranslateService);
 
-  protected readonly configStateService = inject(AppConfigStateService);
   protected readonly tasksStateService = inject(TasksStateService);
 
   protected projectId = signal<string | null>(null);
@@ -342,14 +329,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  protected getHelpText(): string {
-    return [
-      this.translateService.instant('Task.changeNameDoc'),
-      this.translateService.instant('Task.changeNameWithoutSaveDoc'),
-      this.translateService.instant('Task.changeStatusDoc'),
-    ].join('\n');
-  }
-
   protected handleFiltersChange(filters: TasksListFiltersConfig): void {
     const searchParams = getAllTasksSearchParams({
       ...filters,
@@ -399,7 +378,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private loadProjectName(projectId: string): void {
     this.projectsService.getProjectById(+projectId).subscribe(project => {
       this.projectName.set(project.data.name);
-      this.projectIsPublic.set(!!project.data.isPublic);
+      this.projectIsPublic.set(project.data.isPublic);
     });
   }
 
@@ -475,7 +454,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected handleTaskClick(task: any): void {
     const projectId = this.projectId();
     if (projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks', 'details', task.id]);
+      this.router.navigate(['/projects', projectId, 'tasks', 'details', task.id]).then();
     }
   }
 
@@ -485,10 +464,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
     switch (event.action) {
       case 'view':
-        this.router.navigate(['/projects', projectId, 'tasks', 'details', event.row.id]);
+        this.router.navigate(['/projects', projectId, 'tasks', 'details', event.row.id]).then();
         break;
       case 'edit':
-        this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]);
+        this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]).then();
         break;
       case 'delete':
         this.modalService.present({

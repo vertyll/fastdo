@@ -11,6 +11,9 @@ export interface FileUploadItem {
   file: File;
   preview: string;
   id?: string;
+  originalName?: string;
+  filename?: string;
+  _markedForDelete?: boolean;
 }
 
 @Component({

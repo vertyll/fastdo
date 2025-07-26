@@ -280,8 +280,13 @@ interface SelectOption {
                             : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'"
                           [title]="attachment._markedForDelete ? ('Basic.undo' | translate) : ('Basic.delete' | translate)"
                         >
-                          <ng-icon *ngIf="!attachment._markedForDelete" name="heroTrash" size="16"></ng-icon>
-                          <ng-icon *ngIf="attachment._markedForDelete" name="heroArrowLeft" size="16"></ng-icon>
+                          @if(!attachment._markedForDelete) {
+                            <ng-icon name="heroTrash" size="16"></ng-icon>
+                          }
+
+                          @if (attachment._markedForDelete) {
+                            <ng-icon name="heroArrowLeft" size="16"></ng-icon>
+                          }
                         </button>
                       </div>
                     </div>

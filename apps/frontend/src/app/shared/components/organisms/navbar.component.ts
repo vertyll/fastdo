@@ -305,7 +305,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
         align-items: center;
         gap: 0;
       }
-      
+
       app-notification-dropdown button,
       app-theme-switcher button {
         padding: 0.5rem;
@@ -511,7 +511,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                     <span>{{ 'Notifications.title' | translate }}</span>
                   </div>
                   @if(unreadNotificationCount() > 0) {
-                  <span *ngIf="unreadNotificationCount() > 0" class="counter-badge">
+                  <span class="counter-badge">
                     {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
                   </span>
                   }

@@ -17,7 +17,6 @@ export class ProjectsStateService {
   });
 
   public projects = computed(() => this.projectsSignal());
-  public projectCount = computed(() => this.projectsSignal().length);
   public state = computed(() =>
     this.apiService.$idle()
       ? LOADING_STATE_VALUE.IDLE

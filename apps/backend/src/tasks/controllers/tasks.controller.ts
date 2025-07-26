@@ -44,20 +44,6 @@ export class TasksController {
     return this.tasksService.create(createTaskDto);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all tasks' })
-  @ApiWrappedResponse({
-    status: 200,
-    description: 'Return all tasks.',
-    type: TaskResponseDto,
-    isPaginated: true,
-  })
-  public findAll(
-    @Query() query: GetAllTasksSearchParamsDto,
-  ): Promise<ApiPaginatedResponse<TaskResponseDto>> {
-    return this.tasksService.findAll(query);
-  }
-
   @Get('project/:projectId')
   @ApiOperation({ summary: 'Get all tasks for a specific project' })
   @ApiWrappedResponse({

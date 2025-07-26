@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild, computed, input, output } from '@angular/core';
+import { Component, TemplateRef, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableColumn, TableConfig } from 'src/app/shared/components/organisms/table.component';
 import { TableComponent } from 'src/app/shared/components/organisms/table.component';

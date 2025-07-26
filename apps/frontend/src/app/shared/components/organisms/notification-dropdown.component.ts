@@ -101,15 +101,15 @@ import { NotificationDto } from '../../types/notification.type';
                             {{ getTranslation(notification).message }}
                           </p>
                           @if (
-  notification.type === 'project_invitation' &&
-  notification.data?.invitationId &&
-  (
-    notification.status === NotificationStatusEnum.UNREAD ||
-    notification.status === NotificationStatusEnum.READ
-  ) &&
-  notification.data?.invitationStatus === 'pending' &&
-  notification.isLatestPendingInvitation
-) {
+                            notification.type === 'project_invitation' &&
+                            notification.data?.invitationId &&
+                            (
+                                notification.status === NotificationStatusEnum.UNREAD ||
+                                notification.status === NotificationStatusEnum.READ
+                            ) &&
+                            notification.data?.invitationStatus === 'pending' &&
+                            notification.isLatestPendingInvitation
+                          ) {
                             <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
                               <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
                                 {{ 'ProjectInvitation.projectInfo' | translate }}
@@ -121,20 +121,22 @@ import { NotificationDto } from '../../types/notification.type';
                                   [disabled]="invitationLoading === notification.data.invitationId"
                                   (click)="$event.stopPropagation(); acceptInvitation(notification.data.invitationId, notification)"
                                 >
-                                  <ng-container *ngIf="invitationLoading === notification.data.invitationId; else acceptText">
+                                  @if(invitationLoading === notification.data.invitationId) {
                                     <span class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"></span>
-                                  </ng-container>
-                                  <ng-template #acceptText>{{ 'Basic.accept' | translate }}</ng-template>
+                                  } @else {
+                                    {{ 'Basic.accept' | translate }}
+                                  }
                                 </button>
                                 <button
                                   class="px-3 py-1 rounded-md text-xs font-semibold bg-danger-500 hover:bg-danger-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-danger-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
                                   [disabled]="invitationLoading === notification.data.invitationId"
                                   (click)="$event.stopPropagation(); rejectInvitation(notification.data.invitationId, notification)"
                                 >
-                                  <ng-container *ngIf="invitationLoading === notification.data.invitationId; else rejectText">
+                                  @if (invitationLoading === notification.data.invitationId) {
                                     <span class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"></span>
-                                  </ng-container>
-                                  <ng-template #rejectText>{{ 'Basic.delete' | translate }}</ng-template>
+                                  } @else {
+                                    {{ 'Basic.delete' | translate }}
+                                  }
                                 </button>
                               </div>
                             </div>
@@ -248,18 +250,20 @@ import { NotificationDto } from '../../types/notification.type';
                               <button class="px-3 py-1 rounded-md text-xs font-semibold bg-primary-500 hover:bg-primary-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
                                 [disabled]="invitationLoading === notification.data.invitationId"
                                 (click)="$event.stopPropagation(); acceptInvitation(notification.data.invitationId, notification)">
-                                <ng-container *ngIf="invitationLoading === notification.data.invitationId; else acceptTextMobile">
+                                @if (invitationLoading === notification.data.invitationId) {
                                   <span class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"></span>
-                                </ng-container>
-                                <ng-template #acceptTextMobile>{{ 'Basic.accept' | translate }}</ng-template>
+                                } @else {
+                                  {{ 'Basic.accept' | translate }}
+                                }
                               </button>
                               <button class="px-3 py-1 rounded-md text-xs font-semibold bg-danger-500 hover:bg-danger-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-danger-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
                                 [disabled]="invitationLoading === notification.data.invitationId"
                                 (click)="$event.stopPropagation(); rejectInvitation(notification.data.invitationId, notification)">
-                                <ng-container *ngIf="invitationLoading === notification.data.invitationId; else rejectTextMobile">
+                                @if(invitationLoading === notification.data.invitationId) {
                                   <span class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"></span>
-                                </ng-container>
-                                <ng-template #rejectTextMobile>{{ 'Basic.delete' | translate }}</ng-template>
+                                } @else {
+                                  {{ 'Basic.delete' | translate }}
+                                }
                               </button>
                             </div>
                           </div>

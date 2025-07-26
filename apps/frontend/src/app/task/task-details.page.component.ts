@@ -280,11 +280,7 @@ import { Task, TaskComment } from './models/Task';
                                 />
                               </div>
                               <div class="flex flex-wrap gap-2 mb-2">
-                                <ng-container
-                                  *ngFor="
-                                    let att of editingCommentExistingAttachments
-                                  "
-                                >
+                                @for (att of editingCommentAttachments; track att.id) {
                                   <div
                                     class="relative flex items-center border border-border-primary dark:border-dark-border-primary rounded-lg px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 shadow-sm transition-all duration-200 group w-full mb-2"
                                     [class.opacity-50]="att._markedForDelete"
@@ -310,21 +306,24 @@ import { Task, TaskComment } from './models/Task';
                                           : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
                                       "
                                     >
-                                      <ng-icon
-                                        *ngIf="!att._markedForDelete"
-                                        name="heroTrash"
-                                        size="16"
-                                        class="align-middle"
-                                      ></ng-icon>
-                                      <ng-icon
-                                        *ngIf="att._markedForDelete"
-                                        name="heroArrowLeft"
-                                        size="16"
-                                        class="align-middle"
-                                      ></ng-icon>
+                                      @if (att._markedForDelete) {
+                                        <ng-icon
+                                            name="heroTrash"
+                                            size="16"
+                                            class="align-middle"
+                                        ></ng-icon>
+                                      }
+
+                                      @if (!att._markedForDelete) {
+                                        <ng-icon
+                                            name="heroArrowLeft"
+                                            size="16"
+                                            class="align-middle"
+                                        ></ng-icon>
+                                      }
                                     </button>
                                   </div>
-                                </ng-container>
+                                }
                               </div>
                               <div class="flex gap-2">
                                 <app-button

@@ -4,8 +4,7 @@ import { Observable, catchError, tap, throwError } from 'rxjs';
 import { FetchingError } from 'src/app/shared/types/list-state.type';
 import { environment } from 'src/environments/environment';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
-import { GetAllTasksSearchParams, TaskUpdatePayload } from '../../shared/types/task.type';
-import { AddTaskDto } from '../dtos/add-task.dto';
+import { GetAllTasksSearchParams } from '../../shared/types/task.type';
 import { Task } from '../models/Task';
 
 @Injectable({
@@ -17,14 +16,6 @@ export class TasksApiService {
   readonly $idle = signal(true);
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
-
-  public getAll(searchParams: GetAllTasksSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<ApiPaginatedResponse<Task>>>(`${this.URL}/tasks`, {
-        params: searchParams,
-      }),
-    );
-  }
 
   public getAllByProjectId(
     projectId: string,
@@ -49,18 +40,6 @@ export class TasksApiService {
     );
   }
 
-  public update(taskId: number, payload: TaskUpdatePayload): Observable<ApiResponse<Task>> {
-    return this.withLoadingState(
-      this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, payload),
-    );
-  }
-
-  public add(data: AddTaskDto): Observable<ApiResponse<Task>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, data),
-    );
-  }
-
   public addWithFiles(formData: FormData): Observable<ApiResponse<Task>> {
     return this.withLoadingState(
       this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, formData),
@@ -73,12 +52,6 @@ export class TasksApiService {
     );
   }
 
-  public createComment(taskId: number, content: { content: string; }): Observable<ApiResponse<any>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, content),
-    );
-  }
-
   public createCommentWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<any>> {
     return this.withLoadingState(
       this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, formData),
@@ -88,12 +61,6 @@ export class TasksApiService {
   public deleteComment(commentId: number): Observable<ApiResponse<void>> {
     return this.withLoadingState(
       this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`),
-    );
-  }
-
-  public updateComment(commentId: number, content: { content: string; }): Observable<ApiResponse<any>> {
-    return this.withLoadingState(
-      this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, content),
     );
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
@@ -22,7 +22,6 @@ import { getAllProjectsSearchParams } from './data-access/project-filters.adapte
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
-import { ProjectNameValidator } from './validators/project-name.validator';
 
 @Component({
   selector: 'app-project-list-page',
@@ -95,12 +94,11 @@ import { ProjectNameValidator } from './validators/project-name.validator';
     }),
   ],
 })
-export class ProjectListPageComponent implements OnInit {
+export class ProjectListPageComponent implements OnInit, AfterViewInit {
   private readonly projectsService = inject(ProjectsService);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
-  private readonly projectNameValidator = inject(ProjectNameValidator);
   private readonly modalService = inject(ModalService);
   protected readonly projectsStateService = inject(ProjectsStateService);
 
@@ -112,7 +110,6 @@ export class ProjectListPageComponent implements OnInit {
 
   protected tableRows: TableRow[] = [];
   private rawProjects: any[] = [];
-  private selectedProjects: number[] = [];
 
   protected tableConfig: TableConfig = {
     columns: [
@@ -275,8 +272,7 @@ export class ProjectListPageComponent implements OnInit {
     this.getAllProjects(searchParams);
   }
 
-  protected onSelectionChange(selected: any[]): void {
-    this.selectedProjects = selected.map(item => item.id);
+  protected onSelectionChange(_selected: any[]): void {
     // TODO: Handle selection change logic
   }
 
@@ -285,54 +281,26 @@ export class ProjectListPageComponent implements OnInit {
 
     switch (action) {
       case 'view':
-        this.navigateToProjectTasks(row.id);
+        this.navigateToProjectTasks(row.id).then();
         break;
       case 'edit':
-        this.navigateToEditProject(row.id);
+        this.navigateToEditProject(row.id).then();
         break;
       case 'delete':
         this.deleteProject(row.id);
         break;
       case 'tasks':
-        this.navigateToProjectTasks(row.id);
+        this.navigateToProjectTasks(row.id).then();
         break;
     }
   }
 
   protected onRowClick(row: any): void {
-    this.navigateToProjectTasks(row.id);
+    this.navigateToProjectTasks(row.id).then();
   }
 
-  protected onSortChange(event: { column: string; direction: 'asc' | 'desc'; }): void {
+  protected onSortChange(_event: { column: string; direction: 'asc' | 'desc'; }): void {
     // TODO: Implement sorting logic
-  }
-
-  protected updateProjectName(id: number, newName: string): void {
-    if (!this.handleProjectNameValidation(newName)) {
-      return;
-    }
-
-    this.projectsService.update(id, newName).subscribe({
-      error: err => {
-        if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationTypeEnum.Error,
-          );
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Project.updateError'),
-            NotificationTypeEnum.Error,
-          );
-        }
-      },
-      complete: () => {
-        this.notificationService.showNotification(
-          this.translateService.instant('Project.updateSuccess'),
-          NotificationTypeEnum.Success,
-        );
-      },
-    });
   }
 
   protected deleteProject(id: number): void {
@@ -424,17 +392,5 @@ export class ProjectListPageComponent implements OnInit {
         }
       },
     });
-  }
-
-  private handleProjectNameValidation(name: string): boolean {
-    const validation = this.projectNameValidator.validateProjectName(name);
-    if (!validation.isValid) {
-      this.notificationService.showNotification(
-        validation.error!,
-        NotificationTypeEnum.Error,
-      );
-      return false;
-    }
-    return true;
   }
 }

@@ -1,8 +1,7 @@
-import { TasksListViewMode } from './task.type';
-
 /*
  * Interface
  */
+
 export interface NavModule {
   id: string;
   title: string;
@@ -17,10 +16,3 @@ export interface NavSection {
   icon: string;
   route: string;
 }
-
-/*
- * Type
- */
-export type AppConfigState = {
-  tasksListView: TasksListViewMode;
-};

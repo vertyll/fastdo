@@ -48,7 +48,7 @@ import { LabelComponent } from '../atoms/label.component';
       box-sizing: border-box;
       min-height: 3rem;
     }
-    
+
     .ng-select .ng-select-container {
       display: flex;
       align-items: center;
@@ -291,10 +291,7 @@ import { LabelComponent } from '../atoms/label.component';
 
     @media (max-width: 640px) {
       .ng-value-container {
-        padding-left: 0.5rem;
-        padding-right: 2.5rem;
-        padding-top: 0;
-        padding-bottom: 0;
+        padding: 0 2.5rem 0 0.5rem;
         min-height: 3.5rem;
         gap: 0.125rem;
       }
@@ -303,10 +300,7 @@ import { LabelComponent } from '../atoms/label.component';
     .ng-value {
       background: linear-gradient(135deg, rgb(254 215 170), rgb(253 186 116));
       color: rgb(154 52 18);
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-      padding-top: 0.15rem;
-      padding-bottom: 0.15rem;
+      padding: 0.15rem 0.5rem;
       border-radius: 0.375rem;
       font-size: 0.75rem;
       font-weight: 500;
@@ -324,10 +318,7 @@ import { LabelComponent } from '../atoms/label.component';
     @media (max-width: 640px) {
       .ng-value {
         font-size: 0.6875rem;
-        padding-left: 0.25rem;
-        padding-right: 0.25rem;
-        padding-top: 0.125rem;
-        padding-bottom: 0.125rem;
+        padding: 0.125rem 0.25rem;
         max-height: 1.5rem;
         border-radius: 0.25rem;
       }
@@ -336,10 +327,7 @@ import { LabelComponent } from '../atoms/label.component';
     @media (max-width: 480px) {
       .ng-value {
         font-size: 0.625rem;
-        padding-left: 0.25rem;
-        padding-right: 0.25rem;
-        padding-top: 0.125rem;
-        padding-bottom: 0.125rem;
+        padding: 0.125rem 0.25rem;
         max-height: 1.25rem;
         gap: 0.125rem;
       }
@@ -358,10 +346,10 @@ import { LabelComponent } from '../atoms/label.component';
       font-weight: bold;
       color: rgb(249 115 22);
       transition: color 0.2s ease;
-      width: 18px ;
-      height: 18px ;
+      width: 18px;
+      height: 18px;
       min-width: 18px;
-      min-height: 18px ;
+      min-height: 18px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.3);
       margin-left: 0.25rem;
