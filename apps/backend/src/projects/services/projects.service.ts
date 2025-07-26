@@ -4,8 +4,8 @@ import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { NotificationTypeEnum } from 'src/notifications/enums/notification-type.enum';
-import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
-import { INotificationServiceToken } from 'src/notifications/tokens/notification-service.token';
+import { INotificationsService } from 'src/notifications/interfaces/notifications-service.interface';
+import { INotificationsServiceToken } from 'src/notifications/tokens/notifications-service.token';
 import { UserDto } from 'src/users/dtos/user.dto';
 import { DataSource, EntityManager, In, QueryRunner, Repository } from 'typeorm';
 import { TranslationDto } from '../../common/dtos/translation.dto';
@@ -35,7 +35,7 @@ import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
 import { ProjectUserRoleRepository } from '../repositories/project-user-role.repository';
 import { ProjectRepository } from '../repositories/project.repository';
-import { ProjectRoleService } from './project-role.service';
+import { ProjectRolesService } from './project-roles.service';
 
 @Injectable()
 export class ProjectsService {
@@ -44,12 +44,12 @@ export class ProjectsService {
     private readonly dataSource: DataSource,
     private readonly cls: ClsService<CustomClsStore>,
     private readonly fileFacade: FileFacade,
-    private readonly projectRoleService: ProjectRoleService,
+    private readonly projectRoleService: ProjectRolesService,
     private readonly projectInvitationRepository: ProjectInvitationRepository,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly projectUserRoleRepository: ProjectUserRoleRepository,
     @InjectRepository(Notification) private readonly notificationRepository: Repository<Notification>,
-    @Inject(INotificationServiceToken) private readonly notificationService: INotificationService,
+    @Inject(INotificationsServiceToken) private readonly notificationService: INotificationsService,
     @Inject(IUsersServiceToken) private readonly usersService: IUsersService,
   ) {}
 

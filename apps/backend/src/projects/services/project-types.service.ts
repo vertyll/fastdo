@@ -3,7 +3,7 @@ import { ProjectTypeResponseDto } from '../dtos/project-type-response.dto';
 import { ProjectTypeRepository } from '../repositories/project-type.repository';
 
 @Injectable()
-export class ProjectTypeService {
+export class ProjectTypesService {
   constructor(
     private readonly projectTypeRepository: ProjectTypeRepository,
   ) {}

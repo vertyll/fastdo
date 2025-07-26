@@ -7,13 +7,13 @@ import { CreateNotificationDto } from '../dtos/create-notification.dto';
 import { UpdateNotificationSettingsDto } from '../dtos/update-notification-settings.dto';
 import { NotificationSettings } from '../entities/notification-settings.entity';
 import { Notification } from '../entities/notification.entity';
-import { NotificationService } from '../services/notification.service';
+import { NotificationsService } from '../services/notifications.service';
 
 @ApiTags('notifications')
 @Controller('notifications')
-export class NotificationController {
+export class NotificationsController {
   constructor(
-    private readonly notificationService: NotificationService,
+    private readonly notificationService: NotificationsService,
     private readonly cls: ClsService<CustomClsStore>,
   ) {}
 

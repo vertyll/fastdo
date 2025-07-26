@@ -5,7 +5,7 @@ import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectRoleRepository } from '../repositories/project-role.repository';
 
 @Injectable()
-export class ProjectRoleService {
+export class ProjectRolesService {
   constructor(
     private readonly projectRoleRepository: ProjectRoleRepository,
   ) {}

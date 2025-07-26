@@ -3,12 +3,12 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { AssignProjectRoleDto, UpdateProjectRoleDto } from '../dtos/project-user-role.dto';
 import { ProjectUserRole } from '../entities/project-user-role.entity';
-import { ProjectUserRoleService } from '../services/project-user-role.service';
+import { ProjectUserRolesService } from '../services/project-user-roles.service';
 
 @ApiTags('project-user-roles')
 @Controller('project-user-roles')
-export class ProjectUserRoleController {
-  constructor(private readonly projectUserRoleService: ProjectUserRoleService) {}
+export class ProjectUserRolesController {
+  constructor(private readonly projectUserRoleService: ProjectUserRolesService) {}
 
   @Post()
   @ApiOperation({ summary: 'Assign a role to user in project' })

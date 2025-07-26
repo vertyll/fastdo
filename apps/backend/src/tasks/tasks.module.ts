@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileModule } from 'src/core/file/file.module';
 import { Language } from 'src/core/language/entities/language.entity';
-import { TaskPriorityController } from './controllers/task-priority.controller';
+import { TaskPrioritiesController } from './controllers/task-priorities.controller';
 import { TasksController } from './controllers/tasks.controller';
 import { TaskAttachment } from './entities/task-attachment.entity';
 import { TaskCommentAttachment } from './entities/task-comment-attachment.entity';
@@ -15,7 +15,7 @@ import { TaskCommentAttachmentRepository } from './repositories/task-comment-att
 import { TaskCommentRepository } from './repositories/task-comment.repository';
 import { TaskPriorityRepository } from './repositories/task-priority.repository';
 import { TaskRepository } from './repositories/task.repository';
-import { TaskPriorityService } from './services/task-priority.service';
+import { TaskPrioritiesService } from './services/task-priorities.service';
 import { TasksService } from './services/tasks.service';
 import { ITasksServiceToken } from './tokens/tasks-service.token';
 
@@ -32,10 +32,10 @@ import { ITasksServiceToken } from './tokens/tasks-service.token';
     ]),
     FileModule,
   ],
-  controllers: [TasksController, TaskPriorityController],
+  controllers: [TasksController, TaskPrioritiesController],
   providers: [
     TasksService,
-    TaskPriorityService,
+    TaskPrioritiesService,
     TaskRepository,
     TaskCommentRepository,
     TaskAttachmentRepository,

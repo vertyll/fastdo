@@ -6,13 +6,13 @@ import { CreateProjectCategoryDto } from '../dtos/create-project-category.dto';
 import { ProjectCategoryResponseDto } from '../dtos/project-category-response.dto';
 import { UpdateProjectCategoryDto } from '../dtos/update-project-category.dto';
 import { ProjectCategory } from '../entities/project-category.entity';
-import { ProjectCategoryService } from '../services/project-category.service';
+import { ProjectCategoriesService } from '../services/project-categories.service';
 
 @ApiTags('project-categories')
 @Controller('projects/:projectId/categories')
-export class ProjectCategoryController {
+export class ProjectCategoriesController {
   constructor(
-    private readonly projectCategoryService: ProjectCategoryService,
+    private readonly projectCategoryService: ProjectCategoriesService,
   ) {}
 
   @Get()

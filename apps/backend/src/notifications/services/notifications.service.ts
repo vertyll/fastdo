@@ -15,10 +15,10 @@ import { NotificationTranslation } from '../entities/notification-translation.en
 import { Notification } from '../entities/notification.entity';
 import { NotificationStatusEnum } from '../enums/notification-status.enum';
 import { NotificationTypeEnum } from '../enums/notification-type.enum';
-import { INotificationService } from '../interfaces/notification-service.interface';
+import { INotificationsService } from '../interfaces/notifications-service.interface';
 
 @Injectable()
-export class NotificationService implements INotificationService {
+export class NotificationsService implements INotificationsService {
   constructor(
     @InjectRepository(Notification) private readonly notificationRepository: Repository<Notification>,
     @InjectRepository(NotificationSettings) private readonly settingsRepository: Repository<NotificationSettings>,

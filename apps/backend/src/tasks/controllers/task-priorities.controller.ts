@@ -2,12 +2,12 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { TaskPriorityResponseDto } from '../dtos/task-priority-response.dto';
-import { TaskPriorityService } from '../services/task-priority.service';
+import { TaskPrioritiesService } from '../services/task-priorities.service';
 
 @Controller('task-priorities')
 @ApiTags('task-priorities')
-export class TaskPriorityController {
-  constructor(private readonly taskPriorityService: TaskPriorityService) {}
+export class TaskPrioritiesController {
+  constructor(private readonly taskPriorityService: TaskPrioritiesService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all task priorities' })

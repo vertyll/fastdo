@@ -3,7 +3,7 @@ import { UpdateNotificationSettingsDto } from '../dtos/update-notification-setti
 import { NotificationSettings } from '../entities/notification-settings.entity';
 import { Notification } from '../entities/notification.entity';
 
-export interface INotificationService {
+export interface INotificationsService {
   createNotification(createNotificationDto: CreateNotificationDto): Promise<Notification | null>;
   getUserNotifications(userId: number, limit?: number): Promise<Notification[]>;
   getUnreadCount(userId: number): Promise<number>;

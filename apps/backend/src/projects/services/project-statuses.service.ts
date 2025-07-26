@@ -10,7 +10,7 @@ import { ProjectStatus } from '../entities/project-status.entity';
 import { ProjectStatusRepository } from '../repositories/project-status.repository';
 
 @Injectable()
-export class ProjectStatusService {
+export class ProjectStatusesService {
   constructor(
     private readonly projectStatusRepository: ProjectStatusRepository,
     @InjectRepository(ProjectStatusTranslation) private readonly translationRepository: Repository<

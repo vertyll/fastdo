@@ -5,10 +5,10 @@ import { AssignProjectRoleDto, UpdateProjectRoleDto } from '../dtos/project-user
 import { ProjectUserRole } from '../entities/project-user-role.entity';
 import { ProjectRoleEnum } from '../enums/project-role.enum';
 import { ProjectUserRoleRepository } from '../repositories/project-user-role.repository';
-import { ProjectUserRoleService } from './project-user-role.service';
+import { ProjectUserRolesService } from './project-user-roles.service';
 
-describe('ProjectUserRoleService', () => {
-  let service: ProjectUserRoleService;
+describe('ProjectUserRolesService', () => {
+  let service: ProjectUserRolesService;
   let mockProjectUserRoleRepository: jest.Mocked<ProjectUserRoleRepository>;
   let mockI18nService: jest.Mocked<I18nService<I18nTranslations>>;
 
@@ -30,13 +30,13 @@ describe('ProjectUserRoleService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ProjectUserRoleService,
+        ProjectUserRolesService,
         { provide: ProjectUserRoleRepository, useValue: mockProjectUserRoleRepository },
         { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();
 
-    service = module.get<ProjectUserRoleService>(ProjectUserRoleService);
+    service = module.get<ProjectUserRolesService>(ProjectUserRolesService);
   });
 
   afterEach(() => {

@@ -10,7 +10,7 @@ import { ProjectCategory } from '../entities/project-category.entity';
 import { ProjectCategoryRepository } from '../repositories/project-category.repository';
 
 @Injectable()
-export class ProjectCategoryService {
+export class ProjectCategoriesService {
   constructor(
     private readonly projectCategoryRepository: ProjectCategoryRepository,
     @InjectRepository(ProjectCategoryTranslation) private readonly translationRepository: Repository<

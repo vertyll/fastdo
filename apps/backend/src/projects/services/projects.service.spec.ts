@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClsService } from 'nestjs-cls';
 import { I18nService } from 'nestjs-i18n';
 import { FileFacade } from 'src/core/file/facade/file.facade';
-import { INotificationService } from 'src/notifications/interfaces/notification-service.interface';
-import { INotificationServiceToken } from 'src/notifications/tokens/notification-service.token';
+import { INotificationsService } from 'src/notifications/interfaces/notifications-service.interface';
+import { INotificationsServiceToken } from 'src/notifications/tokens/notifications-service.token';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
 import { IUsersServiceToken } from 'src/users/tokens/users-service.token';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
@@ -14,8 +14,8 @@ import { Project } from '../entities/project.entity';
 import { ProjectInvitationRepository } from '../repositories/project-invitation.repository';
 import { ProjectUserRoleRepository } from '../repositories/project-user-role.repository';
 import { ProjectRepository } from '../repositories/project.repository';
-import { ProjectRoleService } from './project-role.service';
-import { ProjectUserRoleService } from './project-user-role.service';
+import { ProjectRolesService } from './project-roles.service';
+import { ProjectUserRolesService } from './project-user-roles.service';
 import { ProjectsService } from './projects.service';
 
 describe('ProjectsService', () => {
@@ -24,10 +24,10 @@ describe('ProjectsService', () => {
   let mockDataSource: jest.Mocked<DataSource>;
   let mockClsService: jest.Mocked<ClsService>;
   let mockFileFacade: jest.Mocked<FileFacade>;
-  let mockProjectRoleService: jest.Mocked<ProjectRoleService>;
-  let mockNotificationService: jest.Mocked<INotificationService>;
+  let mockProjectRoleService: jest.Mocked<ProjectRolesService>;
+  let mockNotificationService: jest.Mocked<INotificationsService>;
   let mockUsersService: jest.Mocked<IUsersService>;
-  let mockProjectUserRoleService: jest.Mocked<ProjectUserRoleService>;
+  let mockProjectUserRoleService: jest.Mocked<ProjectUserRolesService>;
   let mockProjectInvitationRepository: any;
   let mockQueryRunner: any;
   let mockI18nService: jest.Mocked<I18nService<I18nTranslations>>;
@@ -206,10 +206,10 @@ describe('ProjectsService', () => {
         { provide: DataSource, useValue: mockDataSource },
         { provide: ClsService, useValue: mockClsService },
         { provide: FileFacade, useValue: mockFileFacade },
-        { provide: ProjectRoleService, useValue: mockProjectRoleService },
-        { provide: ProjectUserRoleService, useValue: mockProjectUserRoleService },
+        { provide: ProjectRolesService, useValue: mockProjectRoleService },
+        { provide: ProjectUserRolesService, useValue: mockProjectUserRoleService },
         { provide: ProjectInvitationRepository, useValue: mockProjectInvitationRepository },
-        { provide: INotificationServiceToken, useValue: mockNotificationService },
+        { provide: INotificationsServiceToken, useValue: mockNotificationService },
         { provide: IUsersServiceToken, useValue: mockUsersService },
         { provide: I18nService, useValue: mockI18nService },
         { provide: ProjectUserRoleRepository, useValue: mockProjectUserRoleRepository },

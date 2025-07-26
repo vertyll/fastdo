@@ -6,12 +6,12 @@ import { CreateProjectStatusDto } from '../dtos/create-project-status.dto';
 import { ProjectStatusResponseDto } from '../dtos/project-status-response.dto';
 import { UpdateProjectStatusDto } from '../dtos/update-project-status.dto';
 import { ProjectStatus } from '../entities/project-status.entity';
-import { ProjectStatusService } from '../services/project-status.service';
+import { ProjectStatusesService } from '../services/project-statuses.service';
 
 @ApiTags('project-statuses')
 @Controller('projects/:projectId/statuses')
-export class ProjectStatusController {
-  constructor(private readonly projectStatusService: ProjectStatusService) {}
+export class ProjectStatusesController {
+  constructor(private readonly projectStatusService: ProjectStatusesService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all statuses for a project' })

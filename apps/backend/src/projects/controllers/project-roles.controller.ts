@@ -4,12 +4,12 @@ import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response
 import { Public } from '../../common/decorators/public.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { ProjectRoleResponseDto } from '../dtos/project-role-response.dto';
-import { ProjectRoleService } from '../services/project-role.service';
+import { ProjectRolesService } from '../services/project-roles.service';
 
 @ApiTags('project-roles')
 @Controller('project-roles')
-export class ProjectRoleController {
-  constructor(private readonly projectRoleService: ProjectRoleService) {}
+export class ProjectRolesController {
+  constructor(private readonly projectRoleService: ProjectRolesService) {}
 
   @Get()
   @Public()

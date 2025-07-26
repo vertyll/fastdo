@@ -4,12 +4,12 @@ import { Language } from 'src/core/language/entities/language.entity';
 import { MailModule } from '../core/mail/mail.module';
 import { EventsModule } from '../events/events.module';
 import { User } from '../users/entities/user.entity';
-import { NotificationController } from './controllers/notification.controller';
+import { NotificationsController } from './controllers/notifications.controller';
 import { NotificationSettings } from './entities/notification-settings.entity';
 import { NotificationTranslation } from './entities/notification-translation.entity';
 import { Notification } from './entities/notification.entity';
-import { NotificationService } from './services/notification.service';
-import { INotificationServiceToken } from './tokens/notification-service.token';
+import { NotificationsService } from './services/notifications.service';
+import { INotificationsServiceToken } from './tokens/notifications-service.token';
 
 @Module({
   imports: [
@@ -17,14 +17,14 @@ import { INotificationServiceToken } from './tokens/notification-service.token';
     MailModule,
     EventsModule,
   ],
-  controllers: [NotificationController],
+  controllers: [NotificationsController],
   providers: [
-    NotificationService,
+    NotificationsService,
     {
-      provide: INotificationServiceToken,
-      useClass: NotificationService,
+      provide: INotificationsServiceToken,
+      useClass: NotificationsService,
     },
   ],
-  exports: [INotificationServiceToken],
+  exports: [INotificationsServiceToken],
 })
 export class NotificationModule {}

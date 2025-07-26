@@ -7,11 +7,11 @@ import { Language } from '../core/language/entities/language.entity';
 import { NotificationModule } from '../notifications/notification.module';
 import { TasksModule } from '../tasks/tasks.module';
 import { UsersModule } from '../users/users.module';
-import { ProjectCategoryController } from './controllers/project-category.controller';
-import { ProjectRoleController } from './controllers/project-role.controller';
-import { ProjectStatusController } from './controllers/project-status.controller';
-import { ProjectTypeController } from './controllers/project-type.controller';
-import { ProjectUserRoleController } from './controllers/project-user-role.controller';
+import { ProjectCategoriesController } from './controllers/project-categories.controller';
+import { ProjectRolesController } from './controllers/project-roles.controller';
+import { ProjectStatusesController } from './controllers/project-statuses.controller';
+import { ProjectTypesController } from './controllers/project-types.controller';
+import { ProjectUserRolesController } from './controllers/project-user-roles.controller';
 import { ProjectsController } from './controllers/projects.controller';
 import { ProjectCategoryTranslation } from './entities/project-category-translation.entity';
 import { ProjectCategory } from './entities/project-category.entity';
@@ -33,11 +33,11 @@ import { ProjectStatusRepository } from './repositories/project-status.repositor
 import { ProjectTypeRepository } from './repositories/project-type.repository';
 import { ProjectUserRoleRepository } from './repositories/project-user-role.repository';
 import { ProjectRepository } from './repositories/project.repository';
-import { ProjectCategoryService } from './services/project-category.service';
-import { ProjectRoleService } from './services/project-role.service';
-import { ProjectStatusService } from './services/project-status.service';
-import { ProjectTypeService } from './services/project-type.service';
-import { ProjectUserRoleService } from './services/project-user-role.service';
+import { ProjectCategoriesService } from './services/project-categories.service';
+import { ProjectRolesService } from './services/project-roles.service';
+import { ProjectStatusesService } from './services/project-statuses.service';
+import { ProjectTypesService } from './services/project-types.service';
+import { ProjectUserRolesService } from './services/project-user-roles.service';
 import { ProjectManagementService } from './services/projects-managment.service';
 import { ProjectsService } from './services/projects.service';
 
@@ -70,25 +70,25 @@ import { ProjectsService } from './services/projects.service';
   ],
   controllers: [
     ProjectsController,
-    ProjectRoleController,
-    ProjectTypeController,
-    ProjectUserRoleController,
-    ProjectCategoryController,
-    ProjectStatusController,
+    ProjectRolesController,
+    ProjectTypesController,
+    ProjectUserRolesController,
+    ProjectCategoriesController,
+    ProjectStatusesController,
   ],
   providers: [
     ProjectsService,
     ProjectManagementService,
     ProjectRepository,
-    ProjectRoleService,
+    ProjectRolesService,
     ProjectRoleRepository,
-    ProjectTypeService,
+    ProjectTypesService,
     ProjectTypeRepository,
-    ProjectCategoryService,
+    ProjectCategoriesService,
     ProjectCategoryRepository,
-    ProjectStatusService,
+    ProjectStatusesService,
     ProjectStatusRepository,
-    ProjectUserRoleService,
+    ProjectUserRolesService,
     ProjectUserRoleRepository,
     ProjectInvitationRepository,
   ],

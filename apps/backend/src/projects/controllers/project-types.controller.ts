@@ -3,12 +3,12 @@ import { ApiHeader, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiWrappedResponse } from '../../common/decorators/api-wrapped-response.decorator';
 import { LanguageCodeEnum } from '../../core/language/enums/language-code.enum';
 import { ProjectTypeResponseDto } from '../dtos/project-type-response.dto';
-import { ProjectTypeService } from '../services/project-type.service';
+import { ProjectTypesService } from '../services/project-types.service';
 
 @ApiTags('project-types')
 @Controller('project-types')
-export class ProjectTypeController {
-  constructor(private readonly projectTypeService: ProjectTypeService) {}
+export class ProjectTypesController {
+  constructor(private readonly projectTypeService: ProjectTypesService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all project types' })

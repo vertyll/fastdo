@@ -3,7 +3,7 @@ import { TaskPriorityResponseDto } from '../dtos/task-priority-response.dto';
 import { TaskPriorityRepository } from '../repositories/task-priority.repository';
 
 @Injectable()
-export class TaskPriorityService {
+export class TaskPrioritiesService {
   constructor(
     private readonly taskPriorityRepository: TaskPriorityRepository,
   ) {}
