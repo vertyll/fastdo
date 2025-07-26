@@ -217,14 +217,18 @@ export class ProjectsService {
 
       await queryRunner.manager.getRepository(Project).update(id, dataToUpdate);
 
-      if (categories && categories.length > 0) {
+      if (categories) {
         await queryRunner.manager.getRepository(ProjectCategory).delete({ project: { id } });
-        await this.createCategoriesInTransaction(queryRunner, id, categories);
+        if (categories.length > 0) {
+          await this.createCategoriesInTransaction(queryRunner, id, categories);
+        }
       }
 
-      if (statuses && statuses.length > 0) {
+      if (statuses) {
         await queryRunner.manager.getRepository(ProjectStatus).delete({ project: { id } });
-        await this.createStatusesInTransaction(queryRunner, id, statuses);
+        if (statuses.length > 0) {
+          await this.createStatusesInTransaction(queryRunner, id, statuses);
+        }
       }
 
       if (usersWithRoles && usersWithRoles.length > 0) {

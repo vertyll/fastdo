@@ -802,19 +802,21 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     if (formValue.categories && Array.isArray(formValue.categories)) {
-      formValue.categories
+      const categories = formValue.categories
         .filter((cat: any) => cat.name && cat.name.trim())
-        .forEach((cat: any) => {
-          formData.append('categories', cat.name.trim());
-        });
+        .map((cat: any) => cat.name.trim());
+      formData.append('categories', JSON.stringify(categories));
+    } else {
+      formData.append('categories', JSON.stringify([]));
     }
 
     if (formValue.statuses && Array.isArray(formValue.statuses)) {
-      formValue.statuses
+      const statuses = formValue.statuses
         .filter((status: any) => status.name && status.name.trim())
-        .forEach((status: any) => {
-          formData.append('statuses', status.name.trim());
-        });
+        .map((status: any) => status.name.trim());
+      formData.append('statuses', JSON.stringify(statuses));
+    } else {
+      formData.append('statuses', JSON.stringify([]));
     }
 
     if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
