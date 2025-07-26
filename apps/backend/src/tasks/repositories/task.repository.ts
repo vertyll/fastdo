@@ -208,8 +208,6 @@ export class TaskRepository extends Repository<Task> {
 
     query.skip(skip).take(take);
 
-    const result = await query.getManyAndCount();
-
-    return result;
+    return await query.getManyAndCount();
   }
 }

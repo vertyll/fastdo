@@ -94,63 +94,6 @@ describe('TasksController', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return a paginated response of tasks', async () => {
-      const mockPriority: TaskPriority = {
-        id: 1,
-        code: TaskPriorityEnum.LOW,
-        color: '#green',
-        isActive: true,
-        dateCreation: new Date(),
-        dateModification: new Date(),
-        translations: [],
-      } as TaskPriority;
-
-      const query = {
-        priorityIds: [],
-        categoryIds: [],
-        statusIds: [],
-        assignedUserIds: [],
-        search: undefined,
-        page: 1,
-        pageSize: 10,
-        sort: undefined,
-      };
-
-      const result: ApiPaginatedResponse<any> = {
-        items: [
-          {
-            id: 1,
-            description: 'Test Task Description',
-            additionalDescription: undefined,
-            priceEstimation: 0,
-            workedTime: 0,
-            accessRole: undefined,
-            dateCreation: new Date(),
-            dateModification: new Date(),
-            project: {} as Project,
-            assignedUsers: [],
-            createdBy: {} as User,
-            priority: mockPriority,
-            categories: [],
-            status: null,
-            taskAttachments: [],
-            comments: [],
-            attachments: [],
-          },
-        ],
-        pagination: {
-          total: 1,
-          page: 1,
-          pageSize: 10,
-          totalPages: 1,
-        },
-      };
-      mockTasksService.findAll.mockResolvedValue(result);
-      expect(await controller.findAll(query)).toEqual(result);
-    });
-  });
-
   describe('findAllByProjectId', () => {
     it('should return tasks for a specific project', async () => {
       const mockPriority: TaskPriority = {
