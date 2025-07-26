@@ -6,7 +6,7 @@ import { I18nTranslations } from 'src/generated/i18n/i18n.generated';
 import { Repository } from 'typeorm';
 import { IMailService } from '../../core/mail/interfaces/mail-service.interface';
 import { IMailServiceToken } from '../../core/mail/tokens/mail-service.token';
-import { NotificationWebSocketService } from '../../events/services/notification-websocket.service';
+import { NotificationsWebsocketService } from '../../events/services/notifications-websocket.service';
 import { User } from '../../users/entities/user.entity';
 import { CreateNotificationDto } from '../dtos/create-notification.dto';
 import { UpdateNotificationSettingsDto } from '../dtos/update-notification-settings.dto';
@@ -26,7 +26,7 @@ export class NotificationsService implements INotificationsService {
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
     @Inject(IMailServiceToken) private readonly mailService: IMailService,
     private readonly i18n: I18nService<I18nTranslations>,
-    private readonly notificationWebSocketService: NotificationWebSocketService,
+    private readonly notificationWebSocketService: NotificationsWebsocketService,
   ) {}
 
   public async createNotification(createNotificationDto: CreateNotificationDto): Promise<Notification | null> {

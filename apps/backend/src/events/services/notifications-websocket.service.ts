@@ -10,7 +10,7 @@ import { IEventEmitterServiceToken } from '../tokens/event-emitter-service.token
 import { NotificationEvent } from '../types/notification-event.type';
 
 @Injectable()
-export class NotificationWebSocketService {
+export class NotificationsWebsocketService {
   constructor(
     @Inject(IEventEmitterServiceToken) private readonly eventEmitter: IEventEmitterService,
     private readonly i18n: I18nService<I18nTranslations>,

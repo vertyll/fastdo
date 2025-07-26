@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Language } from 'src/core/language/entities/language.entity';
 import { NotificationsGateway } from './gateways/notifications.gateway';
 import { EventEmitterService } from './services/event-emitter.service';
-import { NotificationWebSocketService } from './services/notification-websocket.service';
+import { NotificationsWebsocketService } from './services/notifications-websocket.service';
 import { SocketConnectionService } from './services/socket-connection.service';
 import { IEventEmitterServiceToken } from './tokens/event-emitter-service.token';
 
@@ -24,7 +24,7 @@ import { IEventEmitterServiceToken } from './tokens/event-emitter-service.token'
     NotificationsGateway,
     SocketConnectionService,
     EventEmitterService,
-    NotificationWebSocketService,
+    NotificationsWebsocketService,
     {
       provide: IEventEmitterServiceToken,
       useClass: EventEmitterService,
@@ -34,7 +34,7 @@ import { IEventEmitterServiceToken } from './tokens/event-emitter-service.token'
     IEventEmitterServiceToken,
     SocketConnectionService,
     NotificationsGateway,
-    NotificationWebSocketService,
+    NotificationsWebsocketService,
   ],
 })
 export class EventsModule {
