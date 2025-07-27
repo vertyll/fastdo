@@ -22,7 +22,7 @@ A web application for managing projects and tasks for specific projects. The app
 - Tailwind CSS
 
 ### Authentication:
-- JWT authentication - the application uses JWT tokens for user authentication and includes a token refresh mechanism
+- JWT authentication - the application uses JWT tokens for user authentication and includes a token refresh mechanism (http secure cookie)
 - the application allows logging in on multiple devices simultaneously
 
 ### Back-end Core:
