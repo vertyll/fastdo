@@ -8,8 +8,7 @@ A web application for managing projects and tasks for specific projects. The app
 ## Technology Stack
 
 ### Back-end:
-- NestJS
-- Fastify
+- NestJS (Fastify adapter)
 - TypeORM
 - PostgreSQL
 - Jest
