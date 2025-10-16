@@ -239,6 +239,8 @@
     "commentRequired": "Comment is required",
     "commentAdded": "Comment added",
     "commentError": "Error adding comment",
+    "commentDeleted": "Comment deleted",
+    "commentUpdated": "Comment updated",
     "noComments": "No comments",
     "categories": "Categories",
     "selectCategories": "Select categories",
