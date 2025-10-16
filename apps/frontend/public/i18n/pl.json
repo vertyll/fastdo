@@ -238,6 +238,8 @@
     "commentRequired": "Komentarz jest wymagany",
     "commentAdded": "Komentarz został dodany",
     "commentError": "Błąd podczas dodawania komentarza",
+    "commentDeleted": "Komentarz został usunięty",
+    "commentUpdated": "Komentarz został zaktualizowany",
     "noComments": "Brak komentarzy",
     "categories": "Kategorie",
     "selectCategories": "Wybierz kategorie",
