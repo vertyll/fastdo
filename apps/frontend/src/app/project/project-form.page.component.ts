@@ -174,7 +174,7 @@ import { Project } from './models/Project';
           <div formArrayName="statuses" class="space-y-3">
             @for (status of statusesFormArray.controls; track $index) {
               <div
-                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary"
+                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
                 <div
                   [formGroupName]="$index"
@@ -243,7 +243,7 @@ import { Project } from './models/Project';
               track $index
             ) {
               <div
-                class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 p-3 border border-border-primary dark:border-dark-border-primary rounded-lg bg-surface-secondary dark:bg-dark-surface-secondary"                [formGroupName]="$index"
+                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
                 <div class="flex-1">
                   <app-input-field

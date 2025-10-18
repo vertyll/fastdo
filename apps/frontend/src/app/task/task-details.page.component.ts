@@ -111,7 +111,7 @@ import { Task, TaskComment } from './models/Task';
           >
             <div class="lg:col-span-2 space-y-6">
               <div
-                class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6"
+                class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border"
               >
                 <h1
                   class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4"
@@ -196,7 +196,7 @@ import { Task, TaskComment } from './models/Task';
               }
 
               <div
-                class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6"
+                class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border"
               >
                 <h2
                   class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
@@ -466,7 +466,7 @@ import { Task, TaskComment } from './models/Task';
 
             <aside class="lg:col-span-1 space-y-6 mt-6 lg:mt-0">
               <div
-                class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6 space-y-6"
+                class="rounded-lg shadow-soft p-6 space-y-6 dark:border-dark-border-primary border-border-primary border"
               >
                 @if (task()?.status) {
                   <div class="flex items-start gap-4">
@@ -700,7 +700,7 @@ import { Task, TaskComment } from './models/Task';
           </main>
         } @else {
           <div
-            class="text-center py-20 bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft"
+            class="text-center py-20 rounded-lg shadow-soft dark:border-dark-border-primary border-border-primary border"
           >
             <h2
               class="text-2xl font-bold text-text-primary dark:text-dark-text-primary"

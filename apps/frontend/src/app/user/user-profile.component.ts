@@ -37,7 +37,7 @@ import { UserStateService } from './data-access/user.state.service';
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
         <div class="max-w-4xl mx-auto p-spacing-6">
-          <div class="bg-background-primary dark:bg-dark-background-primary shadow-boxShadow-md rounded-borderRadius-lg overflow-hidden">
+          <div class="bg-background-primary dark:bg-dark-background-primary shadow-boxShadow-md rounded-borderRadius-lg overflow-hidden dark:border-dark-border-primary border-border-primary border">
             @if (!isEditing) {
               <div class="p-spacing-6">
                 <div class="flex justify-between items-center mb-spacing-6">
@@ -116,7 +116,7 @@ import { UserStateService } from './data-access/user.state.service';
                       id="email"
                       type="email"
                       formControlName="email"
-                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
+                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
                     />
                   </div>
 
@@ -128,7 +128,7 @@ import { UserStateService } from './data-access/user.state.service';
                       id="password"
                       type="password"
                       formControlName="password"
-                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
+                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
                     />
                     @if (passwordErrors.length > 0) {
                       @for (error of passwordErrors; track error) {
@@ -145,7 +145,7 @@ import { UserStateService } from './data-access/user.state.service';
                       id="newPassword"
                       type="password"
                       formControlName="newPassword"
-                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
+                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
                     />
                     @if (newPasswordErrors.length > 0) {
                       @for (error of newPasswordErrors; track error) {
@@ -162,7 +162,7 @@ import { UserStateService } from './data-access/user.state.service';
                       id="confirmNewPassword"
                       type="password"
                       formControlName="confirmNewPassword"
-                      class="mt-1 block w-full px-spacing-3 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md shadow-boxShadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 focus:border-transparent transition-colors duration-transitionDuration-200 text-text-primary dark:text-dark-text-primary"
+                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
                     />
                     @if (confirmNewPasswordErrors.length > 0) {
                       @for (error of confirmNewPasswordErrors; track error) {

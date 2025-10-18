@@ -119,7 +119,7 @@ export interface TableConfig {
     </div>
   } @else {
     <div
-      class="table-container"
+      class="table-container dark:border-dark-border-primary border-border-primary border"
       [class.mobile-view]="isMobile()"
       [class.dark]="isDarkMode()"
       [ngStyle]="getTableContainerStyle()"
@@ -327,7 +327,7 @@ export interface TableConfig {
 
       .dark .state-overlay {
         background-color: #374151;
-        border-color: #4b5563;
+        border-color: #374151;
         color: #d1d5db;
       }
 
@@ -339,14 +339,14 @@ export interface TableConfig {
       .loading-spinner {
         width: 2rem;
         height: 2rem;
-        border: 3px solid #f3f4f6;
+        border: 3px solid #f9fafb;
         border-top: 3px solid #f97316;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
 
       .dark .loading-spinner {
-        border-color: #4b5563;
+        border-color: #374151;
         border-top-color: #fdba74;
       }
 
@@ -355,7 +355,6 @@ export interface TableConfig {
         overflow-y: auto;
         overflow-x: auto;
         border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         position: relative;
       }
 
@@ -381,7 +380,7 @@ export interface TableConfig {
         border-bottom: 1px solid #e5e7eb;
         padding: 0.75rem 1rem;
         z-index: 1;
-        background-color: #f3f4f6;
+        background-color: #f9fafb;
       }
 
       .header-center {
@@ -401,7 +400,7 @@ export interface TableConfig {
       }
 
       .mat-mdc-cell {
-        border-bottom: 1px solid #f3f4f6;
+        border-bottom: 1px solid #f9fafb;
         padding: 0.75rem 1rem;
         vertical-align: top;
       }
@@ -612,8 +611,8 @@ export interface TableConfig {
       }
 
       .action-secondary:hover:not(:disabled) {
-        background-color: #f3f4f6;
-        color: #4b5563;
+        background-color: #f9fafb;
+        color: #374151;
       }
 
       .action-danger {
@@ -738,8 +737,8 @@ export interface TableConfig {
 
       :host .dark .mat-mdc-header-cell {
         color: #d1d5db;
-        border-bottom-color: #4b5563;
-        background-color: #4b5563;
+        border-bottom-color: #374151;
+        background-color: #374151;
         z-index: 1;
       }
 
@@ -848,7 +847,7 @@ export interface TableConfig {
 
       .dark .action-secondary {
         color: #d1d5db;
-        background-color: #4b5563;
+        background-color: #374151;
       }
 
       .dark .action-secondary:hover:not(:disabled) {
@@ -916,7 +915,7 @@ export interface TableConfig {
       .loading-more-spinner {
         width: 1rem;
         height: 1rem;
-        border: 2px solid #f3f4f6;
+        border: 2px solid #f9fafb;
         border-top: 2px solid #f97316;
         border-radius: 50%;
         animation: spin 1s linear infinite;
@@ -942,7 +941,7 @@ export interface TableConfig {
       }
 
       .dark .loading-more-spinner {
-        border-color: #4b5563;
+        border-color: #374151;
         border-top-color: #fdba74;
       }
 
