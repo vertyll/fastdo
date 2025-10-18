@@ -233,7 +233,7 @@ interface SelectOption {
                     track attachment.id
                   ) {
                     <div
-                      class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-opacity duration-200"
+                      class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-gray-200 dark:border-gray-700 transition-opacity duration-200"
                       [class.opacity-50]="attachment._markedForDelete"
                     >
                       <div class="flex items-center gap-3 flex-1 min-w-0">

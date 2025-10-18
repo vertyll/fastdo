@@ -137,7 +137,7 @@ import { Task, TaskComment } from './models/Task';
 
               @if (task()?.attachments && task()!.attachments.length > 0) {
                 <div
-                  class="bg-surface-primary dark:bg-dark-surface-primary rounded-lg shadow-soft p-6"
+                  class="dark:border-dark-border-primary border-border-primary border rounded-lg shadow-soft p-6"
                 >
                   <h3
                     class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
