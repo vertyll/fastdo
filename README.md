@@ -52,7 +52,7 @@ A web application for managing projects and tasks for specific projects. The app
 - ESLint and Dprint for static code analysis and maintaining consistent code quality
 - Docker for development environment
 
-**During application development, SOLID principles, DRY, composition over inheritance, dependency injection, design patterns, architectural patterns, testing, and other good programming practices were applied.**
+> **Note:** During application development, SOLID principles, DRY, composition over inheritance, dependency injection, design patterns, architectural patterns, testing, and other good programming practices were applied.**
 
 ## Screenshots
 
