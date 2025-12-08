@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { FILE_CONSTANTS, FileStorageLocal, StorageType } from '../../config/types/app.config.type';
+import { FILE_CONSTANTS, FileStorageLocal, StorageTypeEnum } from '../../config/types/app.config.type';
 import { FileConfig } from '../types/file-config.interface';
 
 @Injectable()
@@ -20,9 +20,9 @@ export class FileConfigService {
     };
   }
 
-  private getStorageType(): StorageType {
+  private getStorageType(): StorageTypeEnum {
     const storageType = this.configService.get<string>('app.file.storage.type');
-    return (storageType as StorageType) || StorageType.LOCAL;
+    return (storageType as StorageTypeEnum) || StorageTypeEnum.LOCAL;
   }
 
   private getLocalConfig(): FileStorageLocal {

@@ -8,14 +8,14 @@ describe('JwtMiddleware', () => {
   let jwtService: jest.Mocked<JwtService>;
   let i18nService: jest.Mocked<I18nService>;
 
-  const mockRequest = (authorization?: string, url: string = '/test', method: string = 'GET') =>
+  const mockRequest = (authorization?: string, url: string = '/test', method: string = 'GET'): any =>
     ({
       headers: { authorization },
       url,
       method,
     }) as any;
 
-  const mockResponse = () =>
+  const mockResponse = (): any =>
     ({
       statusCode: 200,
       end: jest.fn(),

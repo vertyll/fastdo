@@ -1,16 +1,16 @@
 import { ClsStore } from 'nestjs-cls';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
-export enum Environment {
+export enum EnvironmentEnum {
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
 }
 
-export enum StorageType {
+export enum StorageTypeEnum {
   LOCAL = 'local',
 }
 
-export enum DatabaseType {
+export enum DatabaseTypeEnum {
   POSTGRES = 'postgres',
 }
 
@@ -117,7 +117,7 @@ export interface FileStorageLocal {
 }
 
 interface FileStorage {
-  type: StorageType;
+  type: StorageTypeEnum;
   local: FileStorageLocal;
 }
 
@@ -156,7 +156,7 @@ interface WebsocketConfig {
 }
 
 export interface AppConfig {
-  environment: Environment;
+  environment: EnvironmentEnum;
   port: number;
   appName: string;
   appUrl: string;

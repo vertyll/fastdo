@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { StorageType } from '../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../config/types/app.config.type';
 
 @Entity('file')
 export class File {
@@ -32,9 +32,9 @@ export class File {
   @Column('bigint')
   size: number;
 
-  @ApiProperty({ enum: StorageType, example: StorageType.LOCAL })
-  @Column({ type: 'enum', enum: StorageType })
-  storageType: StorageType;
+  @ApiProperty({ enum: StorageTypeEnum, example: StorageTypeEnum.LOCAL })
+  @Column({ type: 'enum', enum: StorageTypeEnum })
+  storageType: StorageTypeEnum;
 
   @ApiProperty({ example: '/uploads/2025/01/22/document.pdf', nullable: true })
   @Column({ type: 'text', nullable: true })

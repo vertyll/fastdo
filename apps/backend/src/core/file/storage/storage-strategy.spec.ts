@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
-import { StorageType } from '../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../config/types/app.config.type';
 import { FileConfigService } from '../config/file-config';
 import { InvalidStorageTypeException } from '../exceptions/invalid-storage-type.exception';
 import { LocalStorageService } from './providers/local-storage.service';
@@ -12,7 +12,7 @@ describe('StorageStrategy', () => {
 
   const mockConfig = {
     storage: {
-      type: StorageType.LOCAL,
+      type: StorageTypeEnum.LOCAL,
     },
   };
 
@@ -50,7 +50,7 @@ describe('StorageStrategy', () => {
 
   describe('getStorage', () => {
     it('should return local storage service when type is LOCAL', () => {
-      const storage = strategy.getStorage(StorageType.LOCAL);
+      const storage = strategy.getStorage(StorageTypeEnum.LOCAL);
       expect(storage).toBe(localStorageService);
     });
 
@@ -60,7 +60,7 @@ describe('StorageStrategy', () => {
     });
 
     it('should throw InvalidStorageTypeException for invalid storage type', () => {
-      const invalidType = 's3' as StorageType;
+      const invalidType = 's3' as StorageTypeEnum;
       expect(() => strategy.getStorage(invalidType)).toThrow(InvalidStorageTypeException);
     });
   });

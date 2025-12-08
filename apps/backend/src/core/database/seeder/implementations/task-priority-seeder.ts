@@ -5,14 +5,14 @@ import { Seeder } from '../../../../common/decorators/seeder.decorator';
 import { TaskPriorityTranslation } from '../../../../tasks/entities/task-priority-translation.entity';
 import { TaskPriority } from '../../../../tasks/entities/task-priority.entity';
 import { TaskPriorityEnum } from '../../../../tasks/enums/task-priority.enum';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { Language } from '../../../language/entities/language.entity';
 import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
 import { ISeeder } from '../interfaces/seeder.interface';
 
 @Injectable()
 @Seeder({
-  environment: [Environment.DEVELOPMENT, Environment.PRODUCTION],
+  environment: [EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION],
 })
 export class TaskPrioritySeeder implements ISeeder {
   constructor(

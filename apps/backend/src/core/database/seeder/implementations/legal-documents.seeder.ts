@@ -5,7 +5,7 @@ import { Seeder } from '../../../../common/decorators/seeder.decorator';
 import { PrivacyPolicy } from '../../../../terms-and-policies/entities/privacy-policy.entity';
 import { Terms } from '../../../../terms-and-policies/entities/terms.entity';
 import { LegalSectionTypeEnum } from '../../../../terms-and-policies/enums/legal-section-type.enum';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { Language } from '../../../language/entities/language.entity';
 import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
 import { ISeeder } from '../interfaces/seeder.interface';
@@ -14,7 +14,7 @@ import { SeederFactoryService } from '../services/seeder-factory.service';
 
 @Injectable()
 @Seeder({
-  environment: [Environment.DEVELOPMENT, Environment.PRODUCTION],
+  environment: [EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION],
 })
 export class LegalDocumentsSeeder implements ISeeder {
   private readonly baseSeeder: BaseSeederService;

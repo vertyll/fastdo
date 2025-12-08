@@ -6,14 +6,7 @@ const globals = require('globals');
 
 module.exports = [
   {
-    ignores: [
-      'dist/**',
-      'node_modules/**',
-      '**/*.js',
-      '**/.eslintrc.js',
-      '**/generated/**',
-      '**/metadata.ts',
-    ],
+    ignores: ['dist/**', 'node_modules/**', '**/*.js', '**/.eslintrc.js', '**/generated/**', '**/metadata.ts'],
   },
   {
     files: ['**/*.ts'],
@@ -31,7 +24,7 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': typescriptEslintPlugin,
-      'prettier': prettierPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
       ...typescriptEslintPlugin.configs.recommended.rules,
@@ -47,35 +40,50 @@ module.exports = [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-parameter-properties': 'off',
-
-      '@typescript-eslint/no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'off',
-
       // "@typescript-eslint/ban-types": "off",
       // "@typescript-eslint/no-inferrable-types": "off",
       // "@typescript-eslint/no-empty-interface": "off",
       // "@typescript-eslint/no-namespace": "off",
       // "@typescript-eslint/no-var-requires": "off",
-
-      '@typescript-eslint/no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-      }],
-
-      'no-unused-disable-directives': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/explicit-function-return-type': [
+        'warn',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+        },
+      ],
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'enum',
+          format: ['PascalCase'],
+          suffix: ['Enum'],
+        },
+      ],
     },
   },
   {
     files: ['**/*.spec.ts', '**/*.test.ts'],
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 ];

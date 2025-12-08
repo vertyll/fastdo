@@ -1,8 +1,8 @@
-import { StorageType } from '../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../config/types/app.config.type';
 
 export interface FileConfig {
   storage: {
-    type: StorageType;
+    type: StorageTypeEnum;
     local: {
       uploadDirPath: string;
     };

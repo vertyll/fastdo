@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
-import { StorageType } from '../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../config/types/app.config.type';
 import { FileDeleteException } from '../exceptions/file-delete.exception';
 import { FileNotFoundException } from '../exceptions/file-not-found.exception';
 import { FileUploadException } from '../exceptions/file-upload.exception';
@@ -66,7 +66,7 @@ describe('FileService', () => {
       mimetype: 'image/jpeg',
       encoding: '7bit',
       size: 1000,
-      storageType: StorageType.LOCAL,
+      storageType: StorageTypeEnum.LOCAL,
       origin: 'upload',
       url: 'http://example.com/file',
       metadata: {},
@@ -110,7 +110,7 @@ describe('FileService', () => {
       mimetype: 'image/jpeg',
       encoding: '7bit',
       size: 1000,
-      storageType: StorageType.LOCAL,
+      storageType: StorageTypeEnum.LOCAL,
       origin: 'upload',
       url: 'http://example.com/file',
       metadata: {},
@@ -154,7 +154,7 @@ describe('FileService', () => {
       mimetype: 'image/jpeg',
       encoding: '7bit',
       size: 1000,
-      storageType: StorageType.LOCAL,
+      storageType: StorageTypeEnum.LOCAL,
       origin: 'upload',
       url: 'http://example.com/file',
       metadata: {},

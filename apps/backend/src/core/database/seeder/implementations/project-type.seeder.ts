@@ -5,7 +5,7 @@ import { Seeder } from '../../../../common/decorators/seeder.decorator';
 import { ProjectTypeTranslation } from '../../../../projects/entities/project-type-translation.entity';
 import { ProjectType } from '../../../../projects/entities/project-type.entity';
 import { ProjectTypeEnum } from '../../../../projects/enums/project-type.enum';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { Language } from '../../../language/entities/language.entity';
 import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
 import { ISeeder } from '../interfaces/seeder.interface';
@@ -14,7 +14,7 @@ import { SeederFactoryService } from '../services/seeder-factory.service';
 
 @Injectable()
 @Seeder({
-  environment: [Environment.DEVELOPMENT, Environment.PRODUCTION],
+  environment: [EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION],
 })
 export class ProjectTypeSeeder implements ISeeder {
   private readonly baseSeeder: BaseSeederService;

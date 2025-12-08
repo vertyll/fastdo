@@ -4,7 +4,7 @@ import { ensureDir, unlink, writeFile } from 'fs-extra';
 import { I18nService } from 'nestjs-i18n';
 import { join } from 'path';
 import { I18nTranslations } from '../../../../generated/i18n/i18n.generated';
-import { StorageType } from '../../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../../config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
 import { FileMetadataDto } from '../../dtos/file-metadata.dto';
 import { FileDeleteException } from '../../exceptions/file-delete.exception';
@@ -50,7 +50,7 @@ export class LocalStorageService implements FileStorage {
         size: buffer.length,
         encoding: file.encoding || 'utf-8',
         metadata: options?.metadata || {},
-        storageType: StorageType.LOCAL,
+        storageType: StorageTypeEnum.LOCAL,
       };
     } catch (error) {
       console.error('Upload error:', error);

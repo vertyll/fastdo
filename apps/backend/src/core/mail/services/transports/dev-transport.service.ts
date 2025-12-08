@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import * as nodemailer from 'nodemailer';
 import { I18nTranslations } from '../../../../generated/i18n/i18n.generated';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
 import { IMailTransport } from '../../interfaces/mail-transport.interface';
@@ -31,7 +31,7 @@ export class DevTransport implements IMailTransport {
     if (!this.isMailDevAvailable) {
       this.logger.warn(`Would send email in production: ${JSON.stringify(options)}`);
       const environment = this.configService.get<string>('app.environment');
-      if (environment === Environment.DEVELOPMENT) return;
+      if (environment === EnvironmentEnum.DEVELOPMENT) return;
 
       throw new MailSendFailedException(this.i18n, this.i18n.t('messages.Mail.errors.mailDevNotAvailable'));
     }

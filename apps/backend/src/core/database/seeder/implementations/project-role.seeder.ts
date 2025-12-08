@@ -5,7 +5,7 @@ import { Seeder } from '../../../../common/decorators/seeder.decorator';
 import { ProjectRoleTranslation } from '../../../../projects/entities/project-role-translation.entity';
 import { ProjectRole } from '../../../../projects/entities/project-role.entity';
 import { ProjectRoleEnum } from '../../../../projects/enums/project-role.enum';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { Language } from '../../../language/entities/language.entity';
 import { LanguageCodeEnum } from '../../../language/enums/language-code.enum';
 import { ISeeder } from '../interfaces/seeder.interface';
@@ -14,7 +14,7 @@ import { SeederFactoryService } from '../services/seeder-factory.service';
 
 @Injectable()
 @Seeder({
-  environment: [Environment.DEVELOPMENT, Environment.PRODUCTION],
+  environment: [EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION],
 })
 export class ProjectRoleSeeder implements ISeeder {
   private readonly baseSeeder: BaseSeederService;

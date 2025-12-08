@@ -3,16 +3,16 @@ import * as process from 'node:process';
 import {
   AppConfig,
   DatabaseLoggerType,
-  DatabaseType,
-  Environment,
+  DatabaseTypeEnum,
+  EnvironmentEnum,
   FILE_CONSTANTS,
-  StorageType,
+  StorageTypeEnum,
 } from './types/app.config.type';
 
 export default registerAs(
   'app',
   (): AppConfig => ({
-    environment: (process.env.NODE_ENV as Environment) || Environment.DEVELOPMENT,
+    environment: (process.env.NODE_ENV as EnvironmentEnum) || EnvironmentEnum.DEVELOPMENT,
     port: parseInt(process.env.PORT || '3000', 10),
     appName: process.env.APP_NAME || 'nestjs-app',
     appUrl: process.env.APP_URL || 'http://localhost:3000',
@@ -24,7 +24,7 @@ export default registerAs(
       typesOutputPath: process.env.LANGUAGE_TYPES_OUTPUT_PATH || 'src/generated/i18n/i18n.generated.ts',
     },
     database: {
-      type: (process.env.DATABASE_TYPE as DatabaseType) || DatabaseType.POSTGRES,
+      type: (process.env.DATABASE_TYPE as DatabaseTypeEnum) || DatabaseTypeEnum.POSTGRES,
       host: process.env.DATABASE_HOST || 'localhost',
       port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
       username: process.env.DATABASE_USER || 'postgres',
@@ -120,7 +120,7 @@ export default registerAs(
     },
     file: {
       storage: {
-        type: (process.env.STORAGE_TYPE as StorageType) || StorageType.LOCAL,
+        type: (process.env.STORAGE_TYPE as StorageTypeEnum) || StorageTypeEnum.LOCAL,
         local: {
           uploadDirPath: process.env.UPLOAD_DIR_PATH || FILE_CONSTANTS.UPLOAD_DIR_PATH,
         },

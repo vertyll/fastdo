@@ -2,7 +2,7 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { Environment } from '../config/types/app.config.type';
+import { EnvironmentEnum } from '../config/types/app.config.type';
 import { MailConfigService } from './config/mail.config';
 import { MailSenderService } from './services/mail-sender.service';
 import { MailTemplateService } from './services/mail-template.service';
@@ -28,7 +28,7 @@ import { IMailTransportToken } from './tokens/mail-transport.token';
         const environment = configService.get<string>('app.environment');
         const mailLogger = new Logger('MailService');
 
-        return environment === Environment.DEVELOPMENT
+        return environment === EnvironmentEnum.DEVELOPMENT
           ? new DevTransport(configService, mailConfigService, mailLogger, i18n)
           : new NodemailerTransport(mailConfigService);
       },

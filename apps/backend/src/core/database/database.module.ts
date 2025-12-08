@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { DatabaseConfig, DatabaseType, Environment } from '../config/types/app.config.type';
+import { DatabaseConfig, DatabaseTypeEnum, EnvironmentEnum } from '../config/types/app.config.type';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService): DatabaseConfig => ({
-        type: configService.getOrThrow<DatabaseType>('app.database.type'),
+        type: configService.getOrThrow<DatabaseTypeEnum>('app.database.type'),
         host: configService.getOrThrow<string>('app.database.host'),
         port: configService.getOrThrow<number>('app.database.port'),
         username: configService.getOrThrow<string>('app.database.username'),
@@ -19,7 +19,7 @@ import { DatabaseConfig, DatabaseType, Environment } from '../config/types/app.c
         migrationsTableName: configService.get<string>('app.database.migrationsTableName'),
         ssl: configService.get('app.database.ssl'),
         autoLoadEntities: true,
-        synchronize: configService.get('app.environment') === Environment.DEVELOPMENT,
+        synchronize: configService.get('app.environment') === EnvironmentEnum.DEVELOPMENT,
         namingStrategy: new SnakeNamingStrategy(),
         logging: configService.get('app.database.logging'),
         logger: configService.get('app.database.logger'),

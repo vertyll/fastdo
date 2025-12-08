@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { join } from 'path';
-import { FILE_CONSTANTS, StorageType } from '../../config/types/app.config.type';
+import { FILE_CONSTANTS, StorageTypeEnum } from '../../config/types/app.config.type';
 import { FileConfigService } from './file-config';
 
 describe('FileConfigService', () => {
@@ -31,7 +31,7 @@ describe('FileConfigService', () => {
       configService.get.mockImplementation((key: string) => {
         switch (key) {
           case 'app.file.storage.type':
-            return StorageType.LOCAL;
+            return StorageTypeEnum.LOCAL;
           case 'app.file.validation.maxSize':
             return '1048576';
           case 'app.file.validation.allowedMimeTypes':
@@ -46,7 +46,7 @@ describe('FileConfigService', () => {
 
       expect(config).toEqual({
         storage: {
-          type: StorageType.LOCAL,
+          type: StorageTypeEnum.LOCAL,
           local: {
             uploadDirPath: join('uploads'),
           },
@@ -61,13 +61,13 @@ describe('FileConfigService', () => {
 
   describe('getStorageType', () => {
     it('should return the correct storage type', () => {
-      configService.get.mockReturnValue(StorageType.LOCAL);
-      expect(service['getStorageType']()).toBe(StorageType.LOCAL);
+      configService.get.mockReturnValue(StorageTypeEnum.LOCAL);
+      expect(service['getStorageType']()).toBe(StorageTypeEnum.LOCAL);
     });
 
     it('should return the default storage type if not set', () => {
       configService.get.mockReturnValue(undefined);
-      expect(service['getStorageType']()).toBe(StorageType.LOCAL);
+      expect(service['getStorageType']()).toBe(StorageTypeEnum.LOCAL);
     });
   });
 

@@ -1,8 +1,8 @@
-import { Environment } from '../../core/config/types/app.config.type';
+import { EnvironmentEnum } from '../../core/config/types/app.config.type';
 import { SEEDER_CONFIG_KEY, Seeder } from './seeder.decorator';
 
 describe('Seeder Decorator', () => {
-  const getMetadata = (target: any) => {
+  const getMetadata = (target: any): any => {
     return Reflect.getMetadata(SEEDER_CONFIG_KEY, target);
   };
 
@@ -21,13 +21,13 @@ describe('Seeder Decorator', () => {
 
   it('should set provided environment values', () => {
     @Seeder({
-      environment: [Environment.DEVELOPMENT, Environment.PRODUCTION],
+      environment: [EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION],
     })
     class TestSeeder {}
 
     const metadata = getMetadata(TestSeeder);
 
-    expect(metadata.environment).toEqual([Environment.DEVELOPMENT, Environment.PRODUCTION]);
+    expect(metadata.environment).toEqual([EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION]);
     expect(metadata.truncate).toBeFalsy();
     expect(metadata.priority).toBe(100);
   });
@@ -60,7 +60,7 @@ describe('Seeder Decorator', () => {
 
   it('should set all provided values', () => {
     @Seeder({
-      environment: [Environment.DEVELOPMENT],
+      environment: [EnvironmentEnum.DEVELOPMENT],
       truncate: true,
       priority: 50,
     })
@@ -69,7 +69,7 @@ describe('Seeder Decorator', () => {
     const metadata = getMetadata(TestSeeder);
 
     expect(metadata).toEqual({
-      environment: [Environment.DEVELOPMENT],
+      environment: [EnvironmentEnum.DEVELOPMENT],
       truncate: true,
       priority: 50,
     });
@@ -81,7 +81,7 @@ describe('Seeder Decorator', () => {
     })
     class TestSeeder {
       public testProperty = 'test';
-      public testMethod() {
+      public testMethod(): string {
         return 'test';
       }
     }

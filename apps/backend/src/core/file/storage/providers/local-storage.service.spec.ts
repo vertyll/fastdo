@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ensureDir, unlink, writeFile } from 'fs-extra';
 import { I18nService } from 'nestjs-i18n';
 import { join } from 'path';
-import { StorageType } from '../../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../../config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
 import { FileDeleteException } from '../../exceptions/file-delete.exception';
 import { FileNotFoundException } from '../../exceptions/file-not-found.exception';
@@ -51,7 +51,7 @@ describe('LocalStorageService', () => {
 
     fileConfigService.getConfig.mockReturnValue({
       storage: {
-        type: StorageType.LOCAL,
+        type: StorageTypeEnum.LOCAL,
         local: {
           uploadDirPath: '/uploads',
         },
@@ -84,7 +84,7 @@ describe('LocalStorageService', () => {
         size: Buffer.from('test content').length,
         encoding: 'utf-8',
         metadata: {},
-        storageType: StorageType.LOCAL,
+        storageType: StorageTypeEnum.LOCAL,
       });
 
       expect(ensureDir).toHaveBeenCalledWith('/uploads/test');

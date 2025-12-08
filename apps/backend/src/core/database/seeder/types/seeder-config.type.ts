@@ -1,7 +1,7 @@
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 
 export interface SeederConfig {
-  environment?: Environment[];
+  environment?: EnvironmentEnum[];
   truncate?: boolean;
   priority?: number;
 }

@@ -6,14 +6,14 @@ import { ProjectRolePermission } from '../../../../projects/entities/project-rol
 import { ProjectRole } from '../../../../projects/entities/project-role.entity';
 import { ProjectRolePermissionEnum } from '../../../../projects/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from '../../../../projects/enums/project-role.enum';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { BaseSeederService } from '../services/base-seeder.service';
 import { SeederFactoryService } from '../services/seeder-factory.service';
 
 @Injectable()
 @Seeder({
-  environment: [Environment.DEVELOPMENT, Environment.PRODUCTION],
+  environment: [EnvironmentEnum.DEVELOPMENT, EnvironmentEnum.PRODUCTION],
 })
 export class ProjectRoleToPermissionSeeder implements ISeeder {
   private readonly baseSeeder: BaseSeederService;

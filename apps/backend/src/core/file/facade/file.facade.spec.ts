@@ -1,6 +1,6 @@
 import { MultipartFile } from '@fastify/multipart';
 import { Test, TestingModule } from '@nestjs/testing';
-import { StorageType } from '../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../config/types/app.config.type';
 import { FileMetadataDto } from '../dtos/file-metadata.dto';
 import { File } from '../entities/file.entity';
 import { FileService } from '../services/file.service';
@@ -24,7 +24,7 @@ describe('FileFacade', () => {
     size: 1024,
     encoding: 'utf-8',
     metadata: {},
-    storageType: StorageType.LOCAL,
+    storageType: StorageTypeEnum.LOCAL,
     url: 'http://example.com/test.jpg',
   };
 

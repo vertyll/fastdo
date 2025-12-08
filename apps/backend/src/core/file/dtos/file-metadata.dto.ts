@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsObject, IsOptional } from 'class-validator';
-import { StorageType } from '../../config/types/app.config.type';
+import { StorageTypeEnum } from '../../config/types/app.config.type';
 
 export class FileMetadataDto {
   @ApiProperty({ required: false })
@@ -29,8 +29,8 @@ export class FileMetadataDto {
   @IsOptional()
   url?: string;
 
-  @ApiProperty({ enum: StorageType })
-  storageType: StorageType;
+  @ApiProperty({ enum: StorageTypeEnum })
+  storageType: StorageTypeEnum;
 
   @ApiProperty({ type: Object, required: false })
   @IsOptional()

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
 import * as nodemailer from 'nodemailer';
-import { Environment } from '../../../config/types/app.config.type';
+import { EnvironmentEnum } from '../../../config/types/app.config.type';
 import { MailConfigService } from '../../config/mail.config';
 import { MailSendFailedException } from '../../exceptions/mail-send-failed.exception';
 import { MailLoggerToken } from '../../tokens/mail-logger.token';
@@ -101,7 +101,7 @@ describe('DevTransport', () => {
 
     it('should not throw in development when MailDev is unavailable', async () => {
       transport['isMailDevAvailable'] = false;
-      jest.spyOn(configService, 'get').mockReturnValue(Environment.DEVELOPMENT);
+      jest.spyOn(configService, 'get').mockReturnValue(EnvironmentEnum.DEVELOPMENT);
 
       await transport.sendMail(mailOptions);
 
@@ -110,7 +110,7 @@ describe('DevTransport', () => {
 
     it('should throw MailSendFailedException in production when MailDev is unavailable', async () => {
       transport['isMailDevAvailable'] = false;
-      jest.spyOn(configService, 'get').mockReturnValue(Environment.PRODUCTION);
+      jest.spyOn(configService, 'get').mockReturnValue(EnvironmentEnum.PRODUCTION);
 
       await expect(transport.sendMail(mailOptions)).rejects.toThrow(MailSendFailedException);
     });
