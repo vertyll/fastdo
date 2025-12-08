@@ -1,5 +1,7 @@
 const tsParser = require('@typescript-eslint/parser');
 const typescriptEslintPlugin = require('@typescript-eslint/eslint-plugin');
+const prettierPlugin = require('eslint-plugin-prettier');
+const prettierConfig = require('eslint-config-prettier');
 const globals = require('globals');
 
 module.exports = [
@@ -29,9 +31,13 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': typescriptEslintPlugin,
+      'prettier': prettierPlugin,
     },
     rules: {
       ...typescriptEslintPlugin.configs.recommended.rules,
+      ...prettierConfig.rules,
+
+      'prettier/prettier': 'error',
 
       'no-unused-disable-directives': 'off',
 

@@ -1,0 +1,16 @@
+# dependencies
+node_modules
+dist
+coverage
+
+# generated files
+src/generated
+src/metadata.ts
+
+# lock files
+*-lock.json
+pnpm-lock.yaml
+
+# environment files
+.env*
+!.env.example
