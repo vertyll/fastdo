@@ -1,6 +1,9 @@
 {
   "name": "frontend",
   "version": "0.0.0",
+  "author": "Mikołaj Gawron gawrmiko@gmail.com",
+  "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "turbo:dev": "ng serve",
     "docker:dev": "ng serve --host 0.0.0.0",
@@ -11,7 +14,6 @@
     "test": "ng test",
     "format": "dprint fmt"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^20.1.0",
     "@angular/cdk": "^20.1.0",

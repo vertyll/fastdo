@@ -1,6 +1,8 @@
 {
   "name": "fastprod",
   "version": "0.0.0",
+  "author": "Mikołaj Gawron gawrmiko@gmail.com",
+  "private": true,
   "scripts": {
     "build": "turbo build",
     "build:backend": "turbo build --filter=backend",
@@ -11,7 +13,6 @@
     "format": "turbo format",
     "lint": "turbo lint"
   },
-  "private": true,
   "devDependencies": {
     "turbo": "^2.5.8"
   },
