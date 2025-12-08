@@ -42,9 +42,7 @@ import { ProjectsListFiltersComponent } from './ui/project-list-filters.componen
           {{ 'Project.addProject' | translate }}
         </app-button>
       </div>
-      <app-projects-list-filters
-        (filtersChange)="handleFiltersChange($event)"
-      />
+      <app-projects-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>
     <div>
       @switch (projectsStateService.state()) {
@@ -69,9 +67,7 @@ import { ProjectsListFiltersComponent } from './ui/project-list-filters.componen
           </div>
         }
         @case (listStateValue.ERROR) {
-          <app-error-message
-            [customMessage]="projectsStateService.error()?.message"
-          />
+          <app-error-message [customMessage]="projectsStateService.error()?.message" />
         }
       }
     </div>
@@ -188,11 +184,12 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
         icon: 'heroEye',
         color: 'primary',
         visible: (row: any) =>
-          (row.isPublic === true)
-          || (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
+          row.isPublic === true || (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
         disabled: (row: any) =>
-          !((row.isPublic === true)
-            || (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS))),
+          !(
+            row.isPublic === true ||
+            (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS))
+          ),
       },
       {
         key: 'edit',
@@ -219,7 +216,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     responsiveBreakpoint: 768,
   };
 
-  protected customTemplates: { [key: string]: TemplateRef<any>; } = {};
+  protected customTemplates: { [key: string]: TemplateRef<any> } = {};
 
   ngOnInit(): void {
     this.getAllProjects();
@@ -257,12 +254,10 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
       page,
     });
 
-    const searchParams: GetAllProjectsSearchParams = getAllProjectsSearchParams(
-      {
-        page,
-        pageSize,
-      },
-    );
+    const searchParams: GetAllProjectsSearchParams = getAllProjectsSearchParams({
+      page,
+      pageSize,
+    });
 
     this.getAllProjects(searchParams);
   }
@@ -276,7 +271,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     // TODO: Handle selection change logic
   }
 
-  protected onActionClick(event: { action: string; row: any; }): void {
+  protected onActionClick(event: { action: string; row: any }): void {
     const { action, row } = event;
 
     switch (action) {
@@ -299,7 +294,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.navigateToProjectTasks(row.id).then();
   }
 
-  protected onSortChange(_event: { column: string; direction: 'asc' | 'desc'; }): void {
+  protected onSortChange(_event: { column: string; direction: 'asc' | 'desc' }): void {
     // TODO: Implement sorting logic
   }
 
@@ -320,10 +315,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
             this.projectsService.delete(id).subscribe({
               error: err => {
                 if (err.error && err.error.message) {
-                  this.notificationService.showNotification(
-                    err.error.message,
-                    NotificationTypeEnum.Error,
-                  );
+                  this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
                 } else {
                   this.notificationService.showNotification(
                     this.translateService.instant('Project.deleteError'),
@@ -380,10 +372,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
       },
       error: err => {
         if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationTypeEnum.Error,
-          );
+          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Project.getAllError'),

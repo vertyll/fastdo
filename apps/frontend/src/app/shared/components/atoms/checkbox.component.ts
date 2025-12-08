@@ -22,7 +22,7 @@ export class CheckboxComponent {
   readonly checked = input(false);
   readonly value = input<any>();
 
-  readonly change = output<{
+  readonly changed = output<{
     value: any;
     checked: boolean;
   }>();
@@ -30,6 +30,6 @@ export class CheckboxComponent {
   protected onChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.control().setValue(target.checked);
-    this.change.emit({ value: target.value, checked: target.checked });
+    this.changed.emit({ value: target.value, checked: target.checked });
   }
 }

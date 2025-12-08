@@ -12,11 +12,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   req = req.clone({ withCredentials: true });
 
   if (
-    req.url.includes('/api/auth/login')
-    || req.url.includes('/api/auth/refresh-token')
-    || req.url.includes('/api/auth/register')
-    || req.url.includes('/api/auth/forgot-password')
-    || req.url.includes('/api/auth/reset-password')
+    req.url.includes('/api/auth/login') ||
+    req.url.includes('/api/auth/refresh-token') ||
+    req.url.includes('/api/auth/register') ||
+    req.url.includes('/api/auth/forgot-password') ||
+    req.url.includes('/api/auth/reset-password')
   ) {
     return next(req);
   }

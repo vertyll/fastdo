@@ -145,7 +145,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                       [maxSelectedItems]="filter.maxSelectedItems !== undefined ? filter.maxSelectedItems : undefined"
                       [minTermLength]="filter.minTermLength || 1"
                       [allowAddTag]="filter.allowAddTag || false"
-                      (onSearch)="onFilterSearch($event, filter)"
+                      (searched)="onFilterSearch($event, filter)"
                       [placeholder]="translateService.instant(filter.labelKey)"
                     />
                   }
@@ -158,12 +158,11 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
               type="button"
               (click)="toggleFilters()"
               class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer mb-spacing-4"
+              [attr.aria-label]="
+                showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate)
+              "
             >
-              {{
-                showAllFilters()
-                  ? ('Filters.showLessFilters' | translate)
-                  : ('Filters.showMoreFilters' | translate)
-              }}
+              {{ showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate) }}
             </button>
           </div>
         }
@@ -174,17 +173,17 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
             @for (filter of filledFilters(); track $index) {
               <span class="mr-spacing-2">
-                {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{
-                  filter.value
-                }})
+                {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{ filter.value }})
               </span>
             }
-            <span
+            <button
+              type="button"
               (click)="clearFilters()"
-              class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer"
+              class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer border-0 bg-transparent p-0"
+              [attr.aria-label]="'Filters.clearFilters' | translate"
             >
               <b>{{ 'Filters.clearFilters' | translate }}</b>
-            </span>
+            </button>
           </p>
         </div>
       }
@@ -216,7 +215,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   readonly type = input.required<string>();
   readonly filters = input<FilterMetadata[]>([]);
   readonly filterChange = output<T>();
-  readonly filterSearch = output<{ term: string; filter: string; }>();
+  readonly filterSearch = output<{ term: string; filter: string }>();
 
   public form!: FormGroup;
   private formChangeSubscriptions: Subscription[] = [];
@@ -253,7 +252,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.loadFiltersFromState();
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     this.updateFilters();
   }
 
@@ -299,9 +298,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private loadFiltersFromState(): void {
-    const savedFilters = this.store.selectSnapshot(
-      FiltersSelectors.getFiltersByType(this.type()),
-    );
+    const savedFilters = this.store.selectSnapshot(FiltersSelectors.getFiltersByType(this.type()));
 
     if (savedFilters && Object.keys(savedFilters).length > 0) {
       this.form.patchValue(savedFilters, { emitEvent: false });
@@ -310,84 +307,52 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private subscribeToLanguageChanges(): void {
-    this.langChangeSubscription = this.translateService.onLangChange.subscribe(
-      () => this.updateFilledFilters(),
-    );
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => this.updateFilledFilters());
   }
 
   private initFilters(): void {
-    const subscription = this.form.valueChanges
-      .pipe(debounceTime(350))
-      .subscribe(async value => {
-        const isInInitialState = this.checkIfInInitialState(value);
-        const urlParamsNotInForm = await this.getUrlParamsNotInForm();
-        const formValues = this.getFormValues(value);
+    const subscription = this.form.valueChanges.pipe(debounceTime(350)).subscribe(async value => {
+      const isInInitialState = this.checkIfInInitialState(value);
+      const urlParamsNotInForm = await this.getUrlParamsNotInForm();
+      const formValues = this.getFormValues(value);
 
-        if (!isInInitialState) {
-          this.handleNonInitialState(formValues, urlParamsNotInForm);
-        } else {
-          this.handleInitialState(formValues, urlParamsNotInForm);
-        }
-      });
+      if (!isInInitialState) {
+        this.handleNonInitialState(formValues, urlParamsNotInForm);
+      } else {
+        this.handleInitialState(formValues, urlParamsNotInForm);
+      }
+    });
 
     this.formChangeSubscriptions.push(subscription);
   }
 
   private checkIfInInitialState(value: T): boolean {
-    const defaultValues = this.filtersService.createDefaultFormValues(
-      this.filters(),
-    );
+    const defaultValues = this.filtersService.createDefaultFormValues(this.filters());
     return Object.entries(value).every(([key, val]) => this.equalsDefaultValues(key, val, defaultValues));
   }
 
   private async getUrlParamsNotInForm(): Promise<Record<string, any>> {
     const queryParams = await firstValueFrom(this.route.queryParams);
-    const formControlNames = Object.keys(
-      this.filtersService.createDefaultFormValues(this.filters()),
-    );
-    return Object.fromEntries(
-      Object.entries(queryParams).filter(
-        ([key]) => !formControlNames.includes(key),
-      ),
-    );
+    const formControlNames = Object.keys(this.filtersService.createDefaultFormValues(this.filters()));
+    return Object.fromEntries(Object.entries(queryParams).filter(([key]) => !formControlNames.includes(key)));
   }
 
   private getFormValues(value: T): Record<string, any> {
-    const defaultFormValues = this.filtersService.createDefaultFormValues(
-      this.filters(),
-    );
-    return Object.fromEntries(
-      Object.keys(defaultFormValues).map(key => [key, value[key] || '']),
-    );
+    const defaultFormValues = this.filtersService.createDefaultFormValues(this.filters());
+    return Object.fromEntries(Object.keys(defaultFormValues).map(key => [key, value[key] || '']));
   }
 
-  private handleNonInitialState(
-    formValues: Record<string, any>,
-    urlParamsNotInForm: Record<string, any>,
-  ): void {
-    this.store.dispatch(
-      new SavePartial({ type: this.type(), value: formValues }),
-    );
+  private handleNonInitialState(formValues: Record<string, any>, urlParamsNotInForm: Record<string, any>): void {
+    this.store.dispatch(new SavePartial({ type: this.type(), value: formValues }));
     this.updateUrlAndEmitChanges(formValues, urlParamsNotInForm);
   }
 
-  private handleInitialState(
-    formValues: Record<string, any>,
-    urlParamsNotInForm: Record<string, any>,
-  ): void {
-    this.store.dispatch(
-      new ClearPartial({ type: this.type(), keys: Object.keys(formValues) }),
-    );
-    this.updateUrlAndEmitChanges(
-      this.filtersService.createDefaultFormValues(this.filters()),
-      urlParamsNotInForm,
-    );
+  private handleInitialState(formValues: Record<string, any>, urlParamsNotInForm: Record<string, any>): void {
+    this.store.dispatch(new ClearPartial({ type: this.type(), keys: Object.keys(formValues) }));
+    this.updateUrlAndEmitChanges(this.filtersService.createDefaultFormValues(this.filters()), urlParamsNotInForm);
   }
 
-  private updateUrlAndEmitChanges(
-    formValues: Record<string, any>,
-    urlParamsNotInForm: Record<string, any>,
-  ): void {
+  private updateUrlAndEmitChanges(formValues: Record<string, any>, urlParamsNotInForm: Record<string, any>): void {
     this.router
       .navigate(['.'], {
         relativeTo: this.route,
@@ -407,12 +372,8 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.updateFilledFilters();
   }
 
-  private createFilterComponentFormValues(
-    queryParams: Record<string, any>,
-  ): Record<string, any> {
-    const defaultFormValues = this.filtersService.createDefaultFormValues(
-      this.filters(),
-    );
+  private createFilterComponentFormValues(queryParams: Record<string, any>): Record<string, any> {
+    const defaultFormValues = this.filtersService.createDefaultFormValues(this.filters());
     return Object.entries(defaultFormValues).reduce(
       (acc, [key, defaultValue]) => {
         const filter = this.filters().find(f => f.formControlName === key);
@@ -423,17 +384,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
     );
   }
 
-  private getFilterValue(
-    filter: FilterMetadata | undefined,
-    queryParamValue: any,
-    defaultValue: any,
-  ): any {
+  private getFilterValue(filter: FilterMetadata | undefined, queryParamValue: any, defaultValue: any): any {
     if (filter?.type === FilterTypeEnum.EditableMultiSelect) {
       return this.getMultiSelectValue(queryParamValue);
     }
-    return typeof defaultValue === 'number'
-      ? parseInt(queryParamValue)
-      : queryParamValue || defaultValue;
+    return typeof defaultValue === 'number' ? parseInt(queryParamValue) : queryParamValue || defaultValue;
   }
 
   private getMultiSelectValue(value: any): number[] {
@@ -451,39 +406,22 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.filterChange.emit({ ...this.form.value, ...formValue } as T);
   }
 
-  private equalsDefaultValues(
-    key: string,
-    value: any,
-    defaultFormValues: Record<string, any>,
-  ): boolean {
-    return Array.isArray(value)
-      ? this.arrayEquals(value, defaultFormValues[key])
-      : value == defaultFormValues[key];
+  private equalsDefaultValues(key: string, value: any, defaultFormValues: Record<string, any>): boolean {
+    return Array.isArray(value) ? this.arrayEquals(value, defaultFormValues[key]) : value == defaultFormValues[key];
   }
 
   private arrayEquals(arr1: any[], arr2: any[]): boolean {
-    return (
-      arr1.length === arr2.length
-      && arr1.every((value, index) => value === arr2[index])
-    );
+    return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
   }
 
   private updateFilledFilters(): void {
     const formValue = this.form.value;
-    const defaultValues = this.filtersService.createDefaultFormValues(
-      this.filters(),
-    );
+    const defaultValues = this.filtersService.createDefaultFormValues(this.filters());
 
     const newFilledFilters = Object.entries(formValue)
       .filter(([key, value]) => {
-        const filterMetadata = this.filters().find(
-          f => f.formControlName === key,
-        );
-        const isDefaultValue = this.equalsDefaultValues(
-          key,
-          value,
-          defaultValues,
-        );
+        const filterMetadata = this.filters().find(f => f.formControlName === key);
+        const isDefaultValue = this.equalsDefaultValues(key, value, defaultValues);
         return filterMetadata && value !== '' && !isDefaultValue;
       })
       .map(([key, value]) => this.createFilterValue(key, value));
@@ -492,14 +430,9 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private createFilterValue(key: string, value: any): FilterValue {
-    const filterMetadata = this.filters().find(
-      f => f.formControlName === key,
-    );
+    const filterMetadata = this.filters().find(f => f.formControlName === key);
 
-    if (
-      Array.isArray(value)
-      && filterMetadata?.type === FilterTypeEnum.EditableMultiSelect
-    ) {
+    if (Array.isArray(value) && filterMetadata?.type === FilterTypeEnum.EditableMultiSelect) {
       return {
         id: key,
         value: this.getMultiSelectNames(filterMetadata, value),
@@ -510,36 +443,24 @@ export class FilterGroupComponent<T extends Record<string, any>>
     return { id: key, value: this.translateOptionValue(options, value) };
   }
 
-  private getMultiSelectNames(
-    filterMetadata: FilterMetadata,
-    value: any[],
-  ): string {
+  private getMultiSelectNames(filterMetadata: FilterMetadata, value: any[]): string {
     return value
       .map(id => {
-        const option = filterMetadata.multiselectOptions?.find(
-          opt => opt.id === id,
-        );
+        const option = filterMetadata.multiselectOptions?.find(opt => opt.id === id);
         return option ? option.name : id;
       })
       .join(', ');
   }
 
-  private translateOptionValue(
-    options: { value: any; label: string; }[],
-    value: any,
-  ): string {
+  private translateOptionValue(options: { value: any; label: string }[], value: any): string {
     const foundOption = options.find(option => option.value == value);
-    return foundOption
-      ? this.translateService.instant(foundOption.label)
-      : value;
+    return foundOption ? this.translateService.instant(foundOption.label) : value;
   }
 
   private resetFormAndNavigate(): void {
     this.filledFilters.set([]);
 
-    this.form.reset(
-      this.filtersService.createDefaultFormValues(this.filters()),
-    );
+    this.form.reset(this.filtersService.createDefaultFormValues(this.filters()));
     this.store.dispatch(new ClearFilter({ type: this.type() }));
     this.router
       .navigate(['.'], {

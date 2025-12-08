@@ -7,10 +7,7 @@ import { Task } from '../models/Task';
 @Component({
   selector: 'app-task-table',
   standalone: true,
-  imports: [
-    TableComponent,
-    TranslateModule,
-  ],
+  imports: [TableComponent, TranslateModule],
   template: `
     <app-table
       [data]="tasks()"
@@ -31,13 +28,13 @@ export class TaskTableComponent {
   loading = input(false);
   loadingMore = input(false);
   hasMore = input(true);
-  customTemplates = input<{ [key: string]: TemplateRef<any>; }>({});
-  currentSort = input<{ column: string; direction: 'asc' | 'desc'; } | null>(null);
+  customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
+  currentSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
 
   loadMore = output<void>();
   taskClick = output<Task>();
-  actionClick = output<{ action: string; row: Task; }>();
-  sortChange = output<{ column: string; direction: 'asc' | 'desc'; }>();
+  actionClick = output<{ action: string; row: Task }>();
+  sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
   selectionChange = output<Task[]>();
 
   protected readonly tableConfig = computed<TableConfig>(() => ({
@@ -128,7 +125,7 @@ export class TaskTableComponent {
     this.taskClick.emit(task);
   }
 
-  protected onActionClick(event: { action: string; row: Task; }): void {
+  protected onActionClick(event: { action: string; row: Task }): void {
     this.actionClick.emit(event);
   }
 

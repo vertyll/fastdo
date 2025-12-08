@@ -12,13 +12,7 @@ import { TaskPriorityService } from '../data-access/task-priority.service';
 @Component({
   selector: 'app-tasks-list-filters',
   imports: [ReactiveFormsModule, FilterGroupComponent],
-  template: `
-    <app-filter-group
-      [filters]="filters"
-      [type]="'tasks'"
-      (filterChange)="onFiltersChange($event)"
-    />
-  `,
+  template: ` <app-filter-group [filters]="filters" [type]="'tasks'" (filterChange)="onFiltersChange($event)" /> `,
 })
 export class TasksListFiltersComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
@@ -118,9 +112,9 @@ export class TasksListFiltersComponent implements OnInit {
 
   private updatePriorityOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
-    this.filters.find(
-      filter => filter.formControlName === 'priorityIds',
-    )!.multiselectOptions = (this.prioritiesRaw || []).map((item: any) => ({
+    this.filters.find(filter => filter.formControlName === 'priorityIds')!.multiselectOptions = (
+      this.prioritiesRaw || []
+    ).map((item: any) => ({
       id: item.id,
       name: item.translations?.find((t: any) => t.lang === lang)?.name,
     }));
@@ -128,9 +122,9 @@ export class TasksListFiltersComponent implements OnInit {
 
   private updateStatusOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
-    this.filters.find(
-      filter => filter.formControlName === 'statusIds',
-    )!.multiselectOptions = (this.statusesRaw || []).map((item: any) => ({
+    this.filters.find(filter => filter.formControlName === 'statusIds')!.multiselectOptions = (
+      this.statusesRaw || []
+    ).map((item: any) => ({
       id: item.id,
       name: item.translations?.find((t: any) => t.lang === lang)?.name,
     }));
@@ -138,9 +132,9 @@ export class TasksListFiltersComponent implements OnInit {
 
   private updateCategoryOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
-    this.filters.find(
-      filter => filter.formControlName === 'categoryIds',
-    )!.multiselectOptions = (this.categoriesRaw || []).map((item: any) => ({
+    this.filters.find(filter => filter.formControlName === 'categoryIds')!.multiselectOptions = (
+      this.categoriesRaw || []
+    ).map((item: any) => ({
       id: item.id,
       name: item.translations?.find((t: any) => t.lang === lang)?.name,
     }));

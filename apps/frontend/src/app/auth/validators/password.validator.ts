@@ -5,9 +5,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
   providedIn: 'root',
 })
 export class PasswordValidator {
-  public validatePassword(
-    control: AbstractControl,
-  ): ValidationErrors | null {
+  public validatePassword(control: AbstractControl): ValidationErrors | null {
     const password = control.value;
 
     if (!password) {

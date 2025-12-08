@@ -29,51 +29,35 @@ export class TasksApiService {
   }
 
   public delete(taskId: number): Observable<ApiResponse<void>> {
-    return this.withLoadingState(
-      this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/${taskId}`),
-    );
+    return this.withLoadingState(this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/${taskId}`));
   }
 
   public batchDelete(taskIds: number[]): Observable<ApiResponse<void>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<void>>(`${this.URL}/tasks/batch-delete`, { taskIds }),
-    );
+    return this.withLoadingState(this.http.post<ApiResponse<void>>(`${this.URL}/tasks/batch-delete`, { taskIds }));
   }
 
   public addWithFiles(formData: FormData): Observable<ApiResponse<Task>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, formData),
-    );
+    return this.withLoadingState(this.http.post<ApiResponse<Task>>(`${this.URL}/tasks`, formData));
   }
 
   public getOne(taskId: number): Observable<ApiResponse<Task>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`));
   }
 
   public createCommentWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<any>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, formData),
-    );
+    return this.withLoadingState(this.http.post<ApiResponse<any>>(`${this.URL}/tasks/${taskId}/comments`, formData));
   }
 
   public deleteComment(commentId: number): Observable<ApiResponse<void>> {
-    return this.withLoadingState(
-      this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`),
-    );
+    return this.withLoadingState(this.http.delete<ApiResponse<void>>(`${this.URL}/tasks/comments/${commentId}`));
   }
 
   public updateCommentWithFiles(commentId: number, formData: FormData): Observable<ApiResponse<any>> {
-    return this.withLoadingState(
-      this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, formData),
-    );
+    return this.withLoadingState(this.http.put<ApiResponse<any>>(`${this.URL}/tasks/comments/${commentId}`, formData));
   }
 
   public updateWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<Task>> {
-    return this.withLoadingState(
-      this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, formData),
-    );
+    return this.withLoadingState(this.http.patch<ApiResponse<Task>>(`${this.URL}/tasks/${taskId}`, formData));
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

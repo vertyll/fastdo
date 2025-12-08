@@ -4,6 +4,8 @@
     "loadingMore": "Loading more...",
     "accept": "Accept",
     "appName": "FastDo",
+    "scrollToTop": "Scroll to top",
+    "toggleTheme": "Toggle theme",
     "logout": "Logout",
     "login": "Login",
     "register": "Register",
@@ -11,6 +13,7 @@
     "noItemsFound": "No items found",
     "enterText": "Enter text",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "save": "Save",
     "showMore": "Show more",
     "showLess": "Show less",
@@ -278,7 +281,9 @@
   "InfoPanel": {
     "userRoles": "User roles",
     "currentTime": "Current time",
-    "browserInfo": "Browser information"
+    "browserInfo": "Browser information",
+    "closeInfoPanel": "Close info panel",
+    "openInfoPanel": "Open info panel"
   },
   "Sidebar": {
     "tasks": "Tasks",
@@ -289,7 +294,9 @@
   "Navbar": {
     "dashboard": "Dashboard",
     "projects": "Projects",
-    "profile": "Profile"
+    "profile": "Profile",
+    "home": "Home",
+    "toggleMenu": "Toggle menu"
   },
   "RemoveItemButton": {
     "areYouSure": "Are you sure you want to delete this item?"
@@ -348,7 +355,8 @@
   "Image": {
     "cutPhoto": "Cut photo",
     "fullPreview": "Full preview",
-    "removeImage": "Remove image"
+    "removeImage": "Remove image",
+    "uploadImage": "Upload image"
   },
   "Validation": {
     "required": "This field is required",
@@ -357,6 +365,7 @@
   "Notifications": {
     "title": "Notifications",
     "markAllRead": "Mark all as read",
+    "markAsRead": "Mark as read",
     "noNotifications": "No notifications",
     "settings": "Notification settings",
     "clearAll": "Clear all",

@@ -14,14 +14,7 @@ import { EmailChangeService } from './data-access/email-change.service';
 
 @Component({
   selector: 'app-login',
-  imports: [
-    ReactiveFormsModule,
-    TranslateModule,
-    ErrorMessageComponent,
-    LinkComponent,
-    TitleComponent,
-    LabelComponent,
-  ],
+  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, LinkComponent, TitleComponent, LabelComponent],
   template: `
     <div
       class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
@@ -35,9 +28,7 @@ import { EmailChangeService } from './data-access/email-change.service';
           required
           class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
         />
-        <app-label forId="password"
-          >{{ 'Auth.password' | translate }}:
-        </app-label>
+        <app-label forId="password">{{ 'Auth.password' | translate }}: </app-label>
         <input
           id="password"
           type="password"
@@ -54,17 +45,10 @@ import { EmailChangeService } from './data-access/email-change.service';
         >
           {{ 'Auth.loginButton' | translate }}
         </button>
-        <app-link
-          class="mt-spacing-4 block"
-          [routerLink]="['/register']"
-          [linkType]="LinkType.Default"
-          >{{ 'Auth.dontHaveAccount' | translate }}</app-link
-        >
-        <app-link
-          class="mt-spacing-1 block"
-          [routerLink]="['/forgot-password']"
-          [linkType]="LinkType.Default"
-        >
+        <app-link class="mt-spacing-4 block" [routerLink]="['/register']" [linkType]="LinkType.Default">{{
+          'Auth.dontHaveAccount' | translate
+        }}</app-link>
+        <app-link class="mt-spacing-1 block" [routerLink]="['/forgot-password']" [linkType]="LinkType.Default">
           {{ 'Auth.forgotPassword' | translate }}
         </app-link>
       </form>
@@ -135,9 +119,7 @@ export class LoginComponent implements OnInit {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = this.translateService.instant(
-              'Auth.unknownLoginError',
-            );
+            this.errorMessage = this.translateService.instant('Auth.unknownLoginError');
           }
         },
       });

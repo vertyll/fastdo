@@ -21,9 +21,7 @@ export class ProjectRoleApiService {
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.withLoadingState(
-      this.http.get<ApiResponse<ProjectRole[]>>(`${this.URL}/project-roles`),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<ProjectRole[]>>(`${this.URL}/project-roles`));
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

@@ -1,0 +1,13 @@
+# dependencies
+node_modules
+dist
+.angular
+coverage
+
+# lock files
+*-lock.json
+pnpm-lock.yaml
+
+# environment files
+.env*
+!.env.example

@@ -102,7 +102,9 @@ import { LabelComponent } from '../atoms/label.component';
       background-color: rgb(255 255 255);
       border: 1px solid rgb(229 231 235);
       border-radius: 0.75rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      box-shadow:
+        0 10px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
       margin-top: 0.25rem;
       min-width: 100%;
       z-index: 1000;
@@ -118,7 +120,9 @@ import { LabelComponent } from '../atoms/label.component';
     :host-context(.dark) .ng-dropdown-panel {
       background-color: rgb(55 65 81);
       border-color: rgb(75 85 99);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+      box-shadow:
+        0 10px 25px -5px rgba(0, 0, 0, 0.3),
+        0 10px 10px -5px rgba(0, 0, 0, 0.2);
     }
 
     /* Dropdown options */
@@ -190,7 +194,6 @@ import { LabelComponent } from '../atoms/label.component';
       line-height: 1.5;
       font-weight: 400;
     }
-
 
     /* Dropdown arrow */
     .ng-arrow-wrapper {
@@ -452,13 +455,7 @@ import { LabelComponent } from '../atoms/label.component';
       }
     }
   `,
-  imports: [
-    NgSelectComponent,
-    TranslateModule,
-    FormsModule,
-    NgSelectModule,
-    LabelComponent,
-  ],
+  imports: [NgSelectComponent, TranslateModule, FormsModule, NgSelectModule, LabelComponent],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -476,45 +473,45 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
   readonly allowAddTag = input<boolean>(true);
   readonly placeholder = input<string>('');
 
-  readonly onSearch = output();
+  readonly searched = output();
 
   protected selectValue: any;
 
   private touched = false;
 
-  private onChange = (_value: any) => {};
-  private onTouched = () => {};
+  private onChange = (_value: any): void => {};
+  private onTouched = (): void => {};
 
-  public registerOnTouched(fn: any) {
+  public registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
 
-  private markAsTouched() {
+  private markAsTouched(): void {
     if (!this.touched) {
       this.onTouched();
       this.touched = true;
     }
   }
 
-  public registerOnChange(onChange: any) {
+  public registerOnChange(onChange: any): void {
     this.onChange = onChange;
   }
 
-  public writeValue(value: any) {
+  public writeValue(value: any): void {
     this.selectValue = value;
   }
 
-  protected onSelectChange(inputValue: any) {
+  protected onSelectChange(inputValue: any): void {
     this.markAsTouched();
     this.selectValue = inputValue;
     this.onChange(this.selectValue);
   }
 
-  protected onSelectSearch(event: any) {
-    this.onSearch.emit(event);
+  protected onSelectSearch(event: any): void {
+    this.searched.emit(event);
   }
 
-  get normalizedDataArray() {
+  get normalizedDataArray(): Array<{ id: any; name: string }> {
     return (this.dataArray() ?? []).map(item => {
       if (typeof item === 'number' || typeof item === 'string') {
         return { id: item, name: String(item) };

@@ -40,10 +40,7 @@ export class ProjectsService {
     );
   }
 
-  public updateFull(
-    projectId: number,
-    formData: FormData,
-  ): Observable<ApiResponse<Project>> {
+  public updateFull(projectId: number, formData: FormData): Observable<ApiResponse<Project>> {
     return this.httpService.updateFull(projectId, formData).pipe(
       tap(response => {
         this.state.updateProject(response.data);
@@ -51,9 +48,7 @@ export class ProjectsService {
     );
   }
 
-  public add(
-    formData: FormData,
-  ): Observable<ApiResponse<Project>> {
+  public add(formData: FormData): Observable<ApiResponse<Project>> {
     return this.httpService.add(formData).pipe(
       tap(response => {
         this.state.addProject(response.data);

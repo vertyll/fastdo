@@ -30,7 +30,7 @@ export interface ModalOptions {
   loading?: boolean;
   components?: {
     component: any;
-    data: Object;
+    data: object;
   }[];
   inputs?: ModalInput[];
   buttons?: ModalButton[];

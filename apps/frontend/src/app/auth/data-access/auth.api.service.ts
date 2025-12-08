@@ -17,17 +17,11 @@ export class AuthApiService {
   private readonly http = inject(HttpClient);
 
   public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
-    return this.http.post<ApiResponse<LoginResponse>>(
-      `${this.URL}/auth/login`,
-      dto,
-    );
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.URL}/auth/login`, dto);
   }
 
   public register(dto: RegisterDto): Observable<ApiResponse<RegisterResponse>> {
-    return this.http.post<ApiResponse<RegisterResponse>>(
-      `${this.URL}/auth/register`,
-      dto,
-    );
+    return this.http.post<ApiResponse<RegisterResponse>>(`${this.URL}/auth/register`, dto);
   }
 
   public refreshToken(): Observable<ApiResponse<LoginResponse>> {

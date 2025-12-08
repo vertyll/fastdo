@@ -5,12 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-button',
   imports: [TranslateModule],
   template: `
-    <button
-      [type]="type()"
-      (click)="onClick.emit($event)"
-      [disabled]="disabled()"
-      [class]="getButtonClass()"
-    >
+    <button [type]="type()" (click)="clicked.emit($event)" [disabled]="disabled()" [class]="getButtonClass()">
       <ng-content></ng-content>
     </button>
   `,
@@ -20,7 +15,7 @@ export class ButtonComponent {
   readonly disabled = input<boolean | undefined>(false);
   readonly cssClass = input<string>('');
 
-  readonly onClick = output<Event>();
+  readonly clicked = output<Event>();
 
   protected getButtonClass(): string {
     const baseClasses =

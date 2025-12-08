@@ -33,7 +33,7 @@ export class AutosizeTextareaComponent implements AfterViewInit {
 
   readonly submitText = output<string>();
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.calcHeight(this.textareaRef.nativeElement);
   }
 

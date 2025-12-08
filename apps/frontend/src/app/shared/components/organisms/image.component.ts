@@ -36,6 +36,10 @@ export type ImageSize = 'sm' | 'md' | 'lg';
             [ngClass]="{ 'cursor-pointer': mode() === 'preview' }"
             alt="Preview"
             (click)="handleImageClick()"
+            (keydown.enter)="handleImageClick()"
+            (keydown.space)="handleImageClick(); $event.preventDefault()"
+            [attr.role]="mode() === 'preview' ? 'button' : null"
+            [attr.tabindex]="mode() === 'preview' ? '0' : null"
           />
         } @else {
           <ng-icon
@@ -49,40 +53,30 @@ export type ImageSize = 'sm' | 'md' | 'lg';
           <button
             class="absolute flex bottom-3 right-2 bg-background-primary dark:bg-dark-background-primary rounded-full p-spacing-2 shadow-boxShadow-md"
             (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
+            [attr.aria-label]="'Image.uploadImage' | translate"
           >
-            <ng-icon
-              name="heroCamera"
-              size="20"
-              class="text-text-primary dark:text-dark-text-primary"
-            />
+            <ng-icon name="heroCamera" size="20" class="text-text-primary dark:text-dark-text-primary" />
           </button>
           @if (previewUrl()) {
             <button
               class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-spacing-2 shadow-boxShadow-md"
               (click)="$event.preventDefault(); $event.stopPropagation(); removeImage()"
-              title="{{ 'Image.removeImage' | translate }}"
+              [attr.aria-label]="'Image.removeImage' | translate"
+              [title]="'Image.removeImage' | translate"
             >
-              <ng-icon
-                name="heroXMark"
-                size="20"
-                class="text-white"
-              />
+              <ng-icon name="heroXMark" size="20" class="text-white" />
             </button>
           }
         }
-        <input
-          #fileInput
-          type="file"
-          class="hidden"
-          (change)="onFileSelected($event)"
-          accept="image/jpeg,image/png"
-        />
+        <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" accept="image/jpeg,image/png" />
       </div>
 
       <!-- Preview Modal -->
       @if (showPreviewModal()) {
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1111] p-spacing-4">
-          <div class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl">
+          <div
+            class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl"
+          >
             <div class="flex justify-between items-center mb-spacing-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
                 {{ 'Image.fullPreview' | translate }}
@@ -90,15 +84,13 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <button
                 (click)="closePreviewModal()"
                 class="text-text-secondary hover:text-text-primary dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
+                [attr.aria-label]="'Basic.close' | translate"
               >
+                >
                 <ng-icon name="heroXMark" size="24" />
               </button>
             </div>
-            <img
-              [src]="getFullImageUrl(previewUrl())"
-              class="max-h-[600px] w-auto mx-auto"
-              alt="Full Preview"
-            />
+            <img [src]="getFullImageUrl(previewUrl())" class="max-h-[600px] w-auto mx-auto" alt="Full Preview" />
           </div>
         </div>
       }
@@ -106,7 +98,9 @@ export type ImageSize = 'sm' | 'md' | 'lg';
       <!-- Cropper Modal -->
       @if (showCropper()) {
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-spacing-4">
-          <div class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl">
+          <div
+            class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl"
+          >
             <div class="flex justify-between items-center mb-spacing-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
                 {{ 'Image.cutPhoto' | translate }}
@@ -114,7 +108,9 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <button
                 (click)="closeCropper()"
                 class="text-text-secondary hover:text-text-primary dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
+                [attr.aria-label]="'Basic.close' | translate"
               >
+                >
                 <ng-icon name="heroXMark" size="24" />
               </button>
             </div>
@@ -127,6 +123,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <button
                 (click)="closeCropper()"
                 class="px-spacing-4 py-spacing-2 text-text-primary dark:text-dark-text-primary bg-neutral-200 dark:bg-neutral-700 rounded-borderRadius-md hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors duration-transitionDuration-200"
+                [attr.aria-label]="'Basic.cancel' | translate"
               >
                 {{ 'Basic.cancel' | translate }}
               </button>
@@ -134,6 +131,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
                 (click)="save()"
                 [disabled]="isSaving()"
                 class="px-spacing-4 py-spacing-2 text-white bg-primary-500 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-transitionDuration-200 disabled:opacity-50"
+                [attr.aria-label]="isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate)"
               >
                 {{ isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
               </button>
@@ -143,12 +141,14 @@ export type ImageSize = 'sm' | 'md' | 'lg';
       }
     </div>
   `,
-  styles: [`
-    .cropper-view-box,
-    .cropper-face {
-      border-radius: var(--cropper-view-box-border-radius, 0%);
-    }
-  `],
+  styles: [
+    `
+      .cropper-view-box,
+      .cropper-face {
+        border-radius: var(--cropper-view-box-border-radius, 0%);
+      }
+    `,
+  ],
   encapsulation: ViewEncapsulation.None,
 })
 export class ImageComponent implements OnDestroy {
@@ -159,7 +159,7 @@ export class ImageComponent implements OnDestroy {
   size = input<ImageSize>('md');
   initialUrl = input<string | null>(null);
 
-  imageSaved = output<{ file: File; preview: string | null; }>();
+  imageSaved = output<{ file: File; preview: string | null }>();
   croppingChange = output<boolean>();
   imageRemoved = output<void>();
 
@@ -214,7 +214,7 @@ export class ImageComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.cropper) {
       this.cropper.destroy();
       this.cropper = null;

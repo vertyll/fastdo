@@ -29,10 +29,7 @@ export class FiltersState {
   }
 
   @Action(SavePartial)
-  public savePartial(
-    { getState, setState }: StateContext<FilterStateModel>,
-    { payload }: SavePartial,
-  ): void {
+  public savePartial({ getState, setState }: StateContext<FilterStateModel>, { payload }: SavePartial): void {
     const state: FilterStateModel = getState();
     const newState = {
       ...state,
@@ -47,10 +44,7 @@ export class FiltersState {
   }
 
   @Action(ClearPartial)
-  public clearPartial(
-    { getState, setState }: StateContext<FilterStateModel>,
-    { payload }: ClearPartial,
-  ): void {
+  public clearPartial({ getState, setState }: StateContext<FilterStateModel>, { payload }: ClearPartial): void {
     const state = getState();
     if (!payload.type) return;
 
@@ -67,14 +61,11 @@ export class FiltersState {
   }
 
   @Action(ClearFilter)
-  public clearFilter(
-    { getState, setState }: StateContext<FilterStateModel>,
-    { payload }: ClearFilter,
-  ): void {
+  public clearFilter({ getState, setState }: StateContext<FilterStateModel>, { payload }: ClearFilter): void {
     if (!payload.type) return;
 
     const state = getState();
-    const { [payload.type]: removed, ...rest } = state;
+    const { [payload.type]: _removed, ...rest } = state;
 
     setState(rest);
     this.syncToStorage(rest);

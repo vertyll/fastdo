@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, filter, interval, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { NotificationStatusEnum } from '../enums/notification-status.enum';
 import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
@@ -59,9 +59,7 @@ export class NotificationStateService {
       if (this._webSocketConnected()) {
         return of(null);
       }
-      return this.loadNotifications().pipe(
-        catchError(() => of(null)),
-      );
+      return this.loadNotifications().pipe(catchError(() => of(null)));
     }),
   );
 
@@ -85,14 +83,14 @@ export class NotificationStateService {
     this.setupWebSocketEventListeners();
   }
 
-  public markAsRead(id: number) {
+  public markAsRead(id: number): Observable<any> {
     return this.notificationApiService.markAsRead(id).pipe(
       tap(() => {
         // Update local state
         const currentNotifications = this._notifications();
         if (Array.isArray(currentNotifications)) {
           const updatedNotifications = currentNotifications.map(n =>
-            n.id === id ? { ...n, status: NotificationStatusEnum.READ } : n
+            n.id === id ? { ...n, status: NotificationStatusEnum.READ } : n,
           );
           this._notifications.set(updatedNotifications);
         }
@@ -105,7 +103,7 @@ export class NotificationStateService {
     );
   }
 
-  public markAllAsRead() {
+  public markAllAsRead(): Observable<any> {
     return this.notificationApiService.markAllAsRead().pipe(
       tap(() => {
         const currentNotifications = this._notifications();
@@ -125,7 +123,7 @@ export class NotificationStateService {
     );
   }
 
-  public deleteNotification(id: number) {
+  public deleteNotification(id: number): Observable<any> {
     return this.notificationApiService.deleteNotification(id).pipe(
       tap(() => {
         this._notifications.set(this._notifications().filter(n => n.id !== id));
@@ -138,7 +136,7 @@ export class NotificationStateService {
     );
   }
 
-  public clearAllNotifications() {
+  public clearAllNotifications(): Observable<any> {
     return this.notificationApiService.clearAllNotifications().pipe(
       tap(() => {
         this._notifications.set([]);
@@ -151,7 +149,7 @@ export class NotificationStateService {
     );
   }
 
-  public updateSettings(settings: UpdateNotificationSettingsDto) {
+  public updateSettings(settings: UpdateNotificationSettingsDto): Observable<any> {
     return this.notificationApiService.updateSettings(settings).pipe(
       tap(updatedSettings => {
         if (updatedSettings) {
@@ -197,7 +195,7 @@ export class NotificationStateService {
     });
   }
 
-  private loadNotifications() {
+  private loadNotifications(): Observable<NotificationDto[]> {
     // Don't load if user is not logged in
     if (!this.authService.isLoggedIn()) {
       return of([]);
@@ -222,7 +220,7 @@ export class NotificationStateService {
     );
   }
 
-  private loadSettings() {
+  private loadSettings(): Observable<any> {
     // Don't load if user is not logged in
     if (!this.authService.isLoggedIn()) {
       return of(null);

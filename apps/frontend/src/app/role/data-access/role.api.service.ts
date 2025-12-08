@@ -19,14 +19,12 @@ export class RoleApiService {
     this.$idle.set(false);
     this.$error.set(null);
 
-    const options: { headers?: Record<string, string>; } = {};
+    const options: { headers?: Record<string, string> } = {};
     if (lang) {
       options.headers = { 'x-lang': lang };
     }
 
-    return this.withLoadingState(
-      this.http.get<ApiResponse<Role[]>>(`${this.URL}/roles`, options),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<Role[]>>(`${this.URL}/roles`, options));
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

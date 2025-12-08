@@ -6,19 +6,29 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-info-panel',
   imports: [NgIconComponent, TranslateModule],
-  providers: [provideIcons({
-    heroArrowLeft,
-    heroArrowRight,
-    heroEllipsisHorizontal,
-    heroChevronUp,
-  })],
+  providers: [
+    provideIcons({
+      heroArrowLeft,
+      heroArrowRight,
+      heroEllipsisHorizontal,
+      heroChevronUp,
+    }),
+  ],
   template: `
     @if (isLoggedIn()()) {
       <div>
         <div
           class="fixed bottom-0 right-0 bg-primary-500 hover:bg-primary-600 border border-neutral-900 text-white p-2 cursor-pointer flex items-center justify-center z-[500] w-10 h-10 user-select-none"
           (click)="togglePanel()()"
+          (keydown.enter)="togglePanel()()"
+          (keydown.space)="togglePanel()(); $event.preventDefault()"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="
+            panelOpen() ? ('InfoPanel.closeInfoPanel' | translate) : ('InfoPanel.openInfoPanel' | translate)
+          "
         >
+          >
           @if (!panelOpen()) {
             <ng-icon name="heroArrowLeft"></ng-icon>
           } @else {
@@ -27,7 +37,8 @@ import { TranslateModule } from '@ngx-translate/core';
         </div>
 
         <div
-  class="info-panel-container fixed bottom-0 right-0 bg-neutral-300 dark:bg-neutral-600 border border-neutral-900 text-text-primary dark:text-dark-text-primary px-4 transition-transform transform w-full h-10 duration-300 ease-in-out flex items-center flex-nowrap gap-6 overflow-x-auto pr-14 z-[499]"          [class.translate-x-0]="panelOpen()"
+          class="info-panel-container fixed bottom-0 right-0 bg-neutral-300 dark:bg-neutral-600 border border-neutral-900 text-text-primary dark:text-dark-text-primary px-4 transition-transform transform w-full h-10 duration-300 ease-in-out flex items-center flex-nowrap gap-6 overflow-x-auto pr-14 z-[499]"
+          [class.translate-x-0]="panelOpen()"
           [class.translate-x-full]="!panelOpen()"
         >
           <div #rolesSection class="flex items-center min-w-fit gap-1">
@@ -36,15 +47,21 @@ import { TranslateModule } from '@ngx-translate/core';
               <span class="dark:text-secondary-500 text-primary-500 whitespace-nowrap ml-1">
                 {{ userRolesString() }}
               </span>
-              <button class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10" (click)="toggleSection('')">
-                  <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
+              <button
+                class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
+                (click)="toggleSection('')"
+              >
+                <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
               </button>
             } @else {
               <span class="dark:text-secondary-500 text-primary-500 truncate max-w-40 ml-1">
                 {{ userRolesString() }}
               </span>
               @if (userRolesString().length > maxVisibleChars) {
-                <button class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10" (click)="toggleSection('roles')">
+                <button
+                  class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
+                  (click)="toggleSection('roles')"
+                >
                   <ng-icon name="heroEllipsisHorizontal" class="text-sm"></ng-icon>
                 </button>
               }
@@ -57,7 +74,10 @@ import { TranslateModule } from '@ngx-translate/core';
               <span class="dark:text-green-500 text-orange-500 whitespace-nowrap ml-1">
                 {{ currentTime() }}
               </span>
-              <button class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10" (click)="toggleSection('')">
+              <button
+                class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
+                (click)="toggleSection('')"
+              >
                 <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
               </button>
             } @else {
@@ -65,7 +85,10 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ currentTime() }}
               </span>
               @if (currentTime().length > maxVisibleChars) {
-                <button class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10" (click)="toggleSection('time')">
+                <button
+                  class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
+                  (click)="toggleSection('time')"
+                >
                   <ng-icon name="heroEllipsisHorizontal" class="text-sm"></ng-icon>
                 </button>
               }
@@ -78,7 +101,10 @@ import { TranslateModule } from '@ngx-translate/core';
               <span class="dark:text-secondary-500 text-primary-500 whitespace-nowrap ml-1">
                 {{ browserInfo() }}
               </span>
-              <button class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10" (click)="toggleSection('')">
+              <button
+                class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
+                (click)="toggleSection('')"
+              >
                 <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
               </button>
             } @else {
@@ -86,7 +112,10 @@ import { TranslateModule } from '@ngx-translate/core';
                 {{ browserInfo() }}
               </span>
               @if (browserInfo().length > maxVisibleChars) {
-                <button class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10" (click)="toggleSection('browser')">
+                <button
+                  class="flex items-center justify-center p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
+                  (click)="toggleSection('browser')"
+                >
                   <ng-icon name="heroEllipsisHorizontal" class="text-sm"></ng-icon>
                 </button>
               }
@@ -96,29 +125,31 @@ import { TranslateModule } from '@ngx-translate/core';
       </div>
     }
   `,
-  styles: [`
-    :host {
-      .truncate {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+  styles: [
+    `
+      :host {
+        .truncate {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
-      .info-panel-container::-webkit-scrollbar {
-        height: 6px;
+        .info-panel-container::-webkit-scrollbar {
+          height: 6px;
+        }
+        .info-panel-container::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .info-panel-container::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+        }
+        .dark .info-panel-container::-webkit-scrollbar-thumb {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
       }
-      .info-panel-container::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      .info-panel-container::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-      }
-      .dark .info-panel-container::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.2);
-      }
-    }
-  `],
+    `,
+  ],
 })
 export class InfoPanelComponent {
   readonly panelOpen = input<boolean>(false);

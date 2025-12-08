@@ -9,9 +9,6 @@ export class FiltersSelectors {
   }
 
   static getFiltersByType(type: string): (state: FilterStateModel) => FilterModel {
-    return createSelector(
-      [FiltersState],
-      (state: FilterStateModel): FilterModel => state[type] || {},
-    );
+    return createSelector([FiltersState], (state: FilterStateModel): FilterModel => state[type] || {});
   }
 }

@@ -27,42 +27,27 @@ export class ProjectsApiService {
   }
 
   public delete(projectId: number): Observable<ApiResponse<void>> {
-    return this.withLoadingState(
-      this.http.delete<ApiResponse<void>>(`${this.URL}/projects/${projectId}`),
-    );
+    return this.withLoadingState(this.http.delete<ApiResponse<void>>(`${this.URL}/projects/${projectId}`));
   }
 
   public update(projectId: number, name: string): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(
-      this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, { name }),
-    );
+    return this.withLoadingState(this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, { name }));
   }
 
-  public updateFull(
-    projectId: number,
-    formData: FormData,
-  ): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(
-      this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, formData),
-    );
+  public updateFull(projectId: number, formData: FormData): Observable<ApiResponse<Project>> {
+    return this.withLoadingState(this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, formData));
   }
 
-  public add(
-    formData: FormData,
-  ): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, formData),
-    );
+  public add(formData: FormData): Observable<ApiResponse<Project>> {
+    return this.withLoadingState(this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, formData));
   }
 
   public getById(projectId: number): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`));
   }
 
   public getByIdWithDetails(projectId: number, lang?: string): Observable<ApiResponse<Project>> {
-    const params: { [key: string]: string; } = {};
+    const params: { [key: string]: string } = {};
     if (lang) {
       params['lang'] = lang;
     }
@@ -72,21 +57,15 @@ export class ProjectsApiService {
   }
 
   public getProjectUsers(projectId: number): Observable<ApiResponse<User[]>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<User[]>>(`${this.URL}/projects/${projectId}/users`),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<User[]>>(`${this.URL}/projects/${projectId}/users`));
   }
 
-  public acceptInvitation(body: { invitationId: number; }) {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/accept`, body),
-    );
+  public acceptInvitation(body: { invitationId: number }): Observable<ApiResponse<void>> {
+    return this.withLoadingState(this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/accept`, body));
   }
 
-  public rejectInvitation(body: { invitationId: number; }) {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/reject`, body),
-    );
+  public rejectInvitation(body: { invitationId: number }): Observable<ApiResponse<void>> {
+    return this.withLoadingState(this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/reject`, body));
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

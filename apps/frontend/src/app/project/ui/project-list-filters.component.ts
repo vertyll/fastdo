@@ -8,13 +8,7 @@ import { ProjectTypeService } from '../data-access/project-type.service';
 @Component({
   selector: 'app-projects-list-filters',
   imports: [ReactiveFormsModule, FilterGroupComponent],
-  template: `
-    <app-filter-group
-      [filters]="filters"
-      [type]="'projects'"
-      (filterChange)="onFiltersChange($event)"
-    />
-  `,
+  template: ` <app-filter-group [filters]="filters" [type]="'projects'" (filterChange)="onFiltersChange($event)" /> `,
 })
 export class ProjectsListFiltersComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
@@ -54,10 +48,12 @@ export class ProjectsListFiltersComponent implements OnInit {
 
   private updateProjectTypeOptionsForCurrentLang(): void {
     const lang = this.translateService.currentLang || 'pl';
-    this.filters.find(filter => filter.formControlName === 'typeIds')!.multiselectOptions = (this.projectTypesRaw || [])
-      .map((item: any) => ({
-        id: item.id,
-        name: item.translations?.find((t: any) => t.lang === lang)?.name,
-      }));
+    this.filters.find(filter => filter.formControlName === 'typeIds')!.multiselectOptions = (
+      this.projectTypesRaw || []
+    ).map((item: any) => ({
+      id: item.id,
+      name:
+        item.translations?.find((t: any) => t.lang === lang)?.name || item.translations?.[0]?.name || item.name || '',
+    }));
   }
 }

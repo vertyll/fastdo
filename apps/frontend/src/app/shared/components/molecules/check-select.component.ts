@@ -12,12 +12,21 @@ import { LabelComponent } from '../atoms/label.component';
       <div
         [id]="id()"
         (click)="toggleDropdown()"
+        (keydown.enter)="toggleDropdown()"
+        (keydown.space)="toggleDropdown(); $event.preventDefault()"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="label()"
+        [attr.aria-expanded]="isDropdownOpen"
         class="dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary bg-transparent rounded-borderRadius-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer cursor-pointer"
       >
         <span>{{ label() }}</span>
         @if (isDropdownOpen) {
           <div
             (click)="$event.stopPropagation()"
+            (keydown.escape)="$event.stopPropagation()"
+            role="listbox"
+            tabindex="-1"
             class="absolute bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg mt-1 w-full z-10"
           >
             @for (option of translatedOptions; track $index) {
@@ -62,18 +71,16 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
     }>
   >([]);
 
-  protected translatedOptions: Array<{ value: any; label: string; }> = [];
+  protected translatedOptions: Array<{ value: any; label: string }> = [];
   protected isDropdownOpen = false;
 
   private langChangeSubscription!: Subscription;
 
   ngOnInit(): void {
     this.translateOptions();
-    this.langChangeSubscription = this.translateService.onLangChange.subscribe(
-      (_event: LangChangeEvent) => {
-        this.translateOptions();
-      },
-    );
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe((_event: LangChangeEvent) => {
+      this.translateOptions();
+    });
   }
 
   ngOnDestroy(): void {
@@ -84,10 +91,7 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event): void {
-    if (
-      !event.target
-      || !(event.target as HTMLElement).closest('.form-select')
-    ) {
+    if (!event.target || !(event.target as HTMLElement).closest('.form-select')) {
       this.isDropdownOpen = false;
     }
   }
@@ -96,24 +100,18 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
     const checkbox = event.target as HTMLInputElement;
     const value = checkbox.value;
     const control = this.control();
-    const currentValue = control.value
-      ? control.value.split(',')
-      : [];
+    const currentValue = control.value ? control.value.split(',') : [];
 
     if (checkbox.checked) {
       this.control().setValue([...currentValue, value].join(','));
     } else {
-      this.control().setValue(
-        currentValue.filter((v: any) => v !== value).join(','),
-      );
+      this.control().setValue(currentValue.filter((v: any) => v !== value).join(','));
     }
   }
 
   protected isChecked(value: any): boolean {
     const control = this.control();
-    const currentValue = control.value
-      ? control.value.split(',')
-      : [];
+    const currentValue = control.value ? control.value.split(',') : [];
     return currentValue.includes(value);
   }
 

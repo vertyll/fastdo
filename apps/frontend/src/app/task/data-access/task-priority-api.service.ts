@@ -21,9 +21,7 @@ export class TaskPriorityApiService {
     this.$idle.set(false);
     this.$error.set(null);
 
-    return this.withLoadingState(
-      this.http.get<ApiResponse<TaskPriority[]>>(`${this.URL}/task-priorities`),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<TaskPriority[]>>(`${this.URL}/task-priorities`));
   }
 
   private withLoadingState<T>(source$: Observable<T>): Observable<T> {

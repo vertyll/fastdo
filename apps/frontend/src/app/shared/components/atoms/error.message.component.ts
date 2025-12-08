@@ -16,7 +16,7 @@ import { ValidationService } from '../../services/validation.service';
         }
       </p>
     }
-    @if (customMessage() != null) {
+    @if (customMessage() !== null && customMessage() !== undefined) {
       <p class="text-danger-500" [innerHtml]="customMessage()"></p>
     }
   `,

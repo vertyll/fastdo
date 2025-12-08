@@ -18,9 +18,7 @@ export class HasRoleDirective implements OnInit {
       this.viewContainer.clear();
     } else {
       const allowedRoles = this.allowedRoles();
-      const roles = Array.isArray(allowedRoles)
-        ? allowedRoles
-        : [allowedRoles];
+      const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
       const hasRole = roles.some(role => userRoles.includes(role));
       if (hasRole && !this.isVisible) {
         this.viewContainer.createEmbeddedView(this.templateRef);

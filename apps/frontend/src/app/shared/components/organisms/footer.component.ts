@@ -12,7 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
       }
 
       a {
-        @apply transition-colors duration-300 hover:text-primary-500 dark:hover:text-dark-link-primary;      }
+        @apply transition-colors duration-300 hover:text-primary-500 dark:hover:text-dark-link-primary;
+      }
     `,
   ],
   template: `

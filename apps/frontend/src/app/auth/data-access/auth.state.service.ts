@@ -29,15 +29,15 @@ export class AuthStateService {
     this.token.set(token);
   }
 
-  public setLoggedIn(isLoggedIn: boolean) {
+  public setLoggedIn(isLoggedIn: boolean): void {
     this.authState.update(state => ({ ...state, isLoggedIn }));
   }
 
-  public setRoles(roles: RoleEnum[] | null) {
+  public setRoles(roles: RoleEnum[] | null): void {
     this.authState.update(state => ({ ...state, roles }));
   }
 
-  public clear() {
+  public clear(): void {
     this.setToken(null);
     this.authState.set({
       isLoggedIn: false,

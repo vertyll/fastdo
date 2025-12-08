@@ -22,9 +22,7 @@ export class AuthService {
   public readonly isLoggedIn = this.authStateService.isLoggedIn;
   public readonly userRoles = this.authStateService.roles;
 
-  private readonly accessToken = signal<string | null>(
-    this.authStateService.getToken(),
-  );
+  private readonly accessToken = signal<string | null>(this.authStateService.getToken());
 
   public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
     return this.authApiService.login(dto).pipe(

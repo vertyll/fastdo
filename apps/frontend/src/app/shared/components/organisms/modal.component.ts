@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, viewChild } from '@
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdDirective } from 'src/app/core/directives/ad.directive';
 import { ButtonRoleEnum, ModalInputTypeEnum } from '../../enums/modal.enum';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
@@ -34,6 +35,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
     LabelComponent,
     AdDirective,
     SelectFieldComponent,
+    TranslatePipe,
   ],
   viewProviders: [provideIcons({ heroXMarkSolid })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,11 +51,13 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
         class="w-full max-w-lg max-h-[90vh] bg-background-primary rounded-borderRadius-lg shadow-boxShadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 overflow-hidden flex flex-col"
         role="document"
       >
-        <div class="px-spacing-6 py-spacing-4 border-b border-border-primary dark:border-dark-border-primary flex justify-between items-center">
+        <div
+          class="px-spacing-6 py-spacing-4 border-b border-border-primary dark:border-dark-border-primary flex justify-between items-center"
+        >
           <h4 class="text-xl font-semibold">
             {{ modalService.modal().options?.title }}
           </h4>
-          <button (click)="closeModalIconHandler()" aria-label="Close">
+          <button (click)="closeModalIconHandler()" [attr.aria-label]="'Basic.close' | translate">
             <ng-icon
               name="heroXMarkSolid"
               class="w-6 h-6 text-text-secondary hover:text-text-primary dark:text-dark-text-primary dark:hover:text-dark-text-secondary transition-colors duration-transitionDuration-200"
@@ -64,23 +68,19 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
         <div class="px-spacing-6 py-spacing-4 overflow-y-auto flex-1">
           @if (modalService.modal().options?.loading) {
             <div class="flex justify-center py-spacing-4">
-              <app-spinner/>
+              <app-spinner />
             </div>
           }
 
           @if (modalService.modal().options?.message) {
-            <p
-              [innerHTML]="modalService.modal().options?.message"
-              class="mb-spacing-4"
-            ></p>
+            <p [innerHTML]="modalService.modal().options?.message" class="mb-spacing-4"></p>
           }
 
-          <ng-container adHost></ng-container>
+          <ng-container appAdHost></ng-container>
 
           @if (modalService.modal().options?.inputs?.length && form) {
             <form [formGroup]="form" (ngSubmit)="saveModal()" #formElement>
-              @for (input of modalService.modal().options?.inputs;
-                track input.id) {
+              @for (input of modalService.modal().options?.inputs; track input.id) {
                 @if (input.message) {
                   <p [innerHTML]="input.message" class="mt-spacing-3 mb-spacing-2"></p>
                 }
@@ -88,8 +88,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                 <div class="mb-spacing-4" [ngClass]="form.get(input.id) | inputInvalid">
                   <div
                     [ngClass]="{
-                      'flex items-center':
-                        input.type === ModalInputType.Checkbox,
+                      'flex items-center': input.type === ModalInputType.Checkbox,
                       block: input.type !== ModalInputType.Checkbox,
                     }"
                   >
@@ -100,25 +99,13 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                     }
                     @switch (input.type) {
                       @case (ModalInputType.Checkbox) {
-                        <app-checkbox
-                          [id]="input.id"
-                          [checked]="input.value"
-                          [control]="getFormControl(input.id)"
-                        />
+                        <app-checkbox [id]="input.id" [checked]="input.value" [control]="getFormControl(input.id)" />
                       }
                       @case (ModalInputType.Textarea) {
-                        <app-textarea
-                          [id]="input.id"
-                          [control]="getFormControl(input.id)"
-                          [rows]="3"
-                        />
+                        <app-textarea [id]="input.id" [control]="getFormControl(input.id)" [rows]="3" />
                       }
                       @case (ModalInputType.Date) {
-                        <app-input
-                          [id]="input.id"
-                          [type]="ModalInputType.Date"
-                          [control]="getFormControl(input.id)"
-                        />
+                        <app-input [id]="input.id" [type]="ModalInputType.Date" [control]="getFormControl(input.id)" />
                       }
                       @case (ModalInputType.DatetimeLocal) {
                         <app-input
@@ -143,40 +130,32 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                         />
                       }
                       @default {
-                        <app-input
-                          [id]="input.id"
-                          [type]="ModalInputType.Text"
-                          [control]="getFormControl(input.id)"
-                        />
+                        <app-input [id]="input.id" [type]="ModalInputType.Text" [control]="getFormControl(input.id)" />
                       }
                     }
                   </div>
 
-                  <app-error-message [input]="form.get(input.id)"/>
+                  <app-error-message [input]="form.get(input.id)" />
                   @if (input.error) {
-                    <app-error-message [customMessage]="input.error"/>
+                    <app-error-message [customMessage]="input.error" />
                   }
                 </div>
               }
 
               @if (modalService.modal().options?.error) {
-                <app-error-message
-                  [customMessage]="modalService.modal().options?.error"
-                />
+                <app-error-message [customMessage]="modalService.modal().options?.error" />
               }
             </form>
           }
         </div>
 
-        <div class="px-spacing-6 py-spacing-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-spacing-2 flex-shrink-0">
-          @for (button of modalService.modal().options?.buttons;
-            track button.role) {
+        <div
+          class="px-spacing-6 py-spacing-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-spacing-2 flex-shrink-0"
+        >
+          @for (button of modalService.modal().options?.buttons; track button.role) {
             @switch (button.role) {
               @case (ButtonRole.Cancel) {
-                <app-button
-                  (click)="closeModal(button)"
-                  [disabled]="modalService.modal().options?.loading"
-                >
+                <app-button (click)="closeModal(button)" [disabled]="modalService.modal().options?.loading">
                   {{ button.text }}
                 </app-button>
               }
@@ -225,15 +204,12 @@ export class ModalComponent {
   }
 
   private initializeForm(modalConfig: ModalConfig): void {
-    if (
-      !Array.isArray(modalConfig.options?.inputs)
-      || !modalConfig.options.inputs.length
-    ) {
+    if (!Array.isArray(modalConfig.options?.inputs) || !modalConfig.options.inputs.length) {
       this.form = new FormGroup({});
       return;
     }
 
-    const group: { [key: string]: FormControl; } = {};
+    const group: { [key: string]: FormControl } = {};
 
     modalConfig.options.inputs.forEach(input => {
       let initialValue = input.value;
@@ -242,10 +218,7 @@ export class ModalComponent {
         initialValue = Boolean(input.value);
       }
 
-      const control = new FormControl(
-        initialValue,
-        input.required ? Validators.required : undefined,
-      );
+      const control = new FormControl(initialValue, input.required ? Validators.required : undefined);
 
       group[input.id] = control;
 
@@ -265,11 +238,7 @@ export class ModalComponent {
 
   private initializeDynamicComponents(modalConfig: ModalConfig): void {
     const adHost = this.adHost();
-    if (
-      !adHost
-      || !Array.isArray(modalConfig.options?.components)
-      || !modalConfig.options.components.length
-    ) {
+    if (!adHost || !Array.isArray(modalConfig.options?.components) || !modalConfig.options.components.length) {
       return;
     }
 
@@ -277,9 +246,7 @@ export class ModalComponent {
     viewContainerRef.clear();
 
     modalConfig.options.components.forEach(component => {
-      const componentRef = viewContainerRef.createComponent<any>(
-        component.component,
-      );
+      const componentRef = viewContainerRef.createComponent<any>(component.component);
       Object.assign(componentRef.instance, component.data);
     });
   }
@@ -288,7 +255,7 @@ export class ModalComponent {
     return this.form.get(name) as FormControl;
   }
 
-  protected getSelectOptions(selectOptions: any[] | undefined): Array<{ value: any; label: string; }> {
+  protected getSelectOptions(selectOptions: any[] | undefined): Array<{ value: any; label: string }> {
     if (!selectOptions) return [];
     return selectOptions.map(option => ({
       value: option.id,
@@ -315,9 +282,7 @@ export class ModalComponent {
         await this.handleButtonAction(button);
       } else {
         const modalConfig = this.modalService.modal();
-        const saveButton = modalConfig.options?.buttons?.find(
-          btn => btn.role === ButtonRoleEnum.Ok,
-        );
+        const saveButton = modalConfig.options?.buttons?.find(btn => btn.role === ButtonRoleEnum.Ok);
         if (saveButton) {
           await this.handleButtonAction(saveButton);
         }

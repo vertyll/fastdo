@@ -7,7 +7,9 @@ export const languageInterceptor: HttpInterceptorFn = (req, next) => {
   const translateService = inject(TranslateService);
   const lang = translateService.currentLang || environment.defaultLanguage;
 
-  return next(req.clone({
-    headers: req.headers.set('x-lang', lang),
-  }));
+  return next(
+    req.clone({
+      headers: req.headers.set('x-lang', lang),
+    }),
+  );
 };

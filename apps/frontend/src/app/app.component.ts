@@ -41,9 +41,7 @@ export class AppComponent implements OnDestroy {
       this.translateService.use(savedLanguage);
     } else {
       const browserLang = this.translateService.getBrowserLang() || '';
-      const matchedLang = availableLanguages.includes(browserLang)
-        ? browserLang
-        : defaultLanguage;
+      const matchedLang = availableLanguages.includes(browserLang) ? browserLang : defaultLanguage;
 
       this.translateService.use(matchedLang);
       this.localStorageService.set('selected_language', matchedLang);

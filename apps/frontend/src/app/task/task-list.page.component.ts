@@ -36,30 +36,29 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
     ErrorMessageComponent,
     NgIconComponent,
   ],
-  viewProviders: [
-    provideIcons({ heroInformationCircle }),
-  ],
+  viewProviders: [provideIcons({ heroInformationCircle })],
   template: `
     <div class="flex flex-col gap-4">
-        <app-title>
-          {{ 'Task.taskForProject' | translate }}
-          : {{ projectName() }}
+      <app-title>
+        {{ 'Task.taskForProject' | translate }}
+        : {{ projectName() }}
       </app-title>
       <div class="flex gap-2 items-center">
         <app-button (click)="navigateToAddTask()">
           {{ 'Task.addTask' | translate }}
         </app-button>
-          @if (projectIsPublic()) {
-            <button mat-icon-button [matTooltip]="publicProjectTooltipText" matTooltipPosition="above" class="flex items-center justify-center">
-              <span class="flex items-center justify-center w-[35px] h-[35px]">
-                <ng-icon
-                  [size]="'30'"
-                  name="heroInformationCircle"
-                  class="text-blue-500"
-                />
-              </span>
-            </button>
-          }
+        @if (projectIsPublic()) {
+          <button
+            mat-icon-button
+            [matTooltip]="publicProjectTooltipText"
+            matTooltipPosition="above"
+            class="flex items-center justify-center"
+          >
+            <span class="flex items-center justify-center w-[35px] h-[35px]">
+              <ng-icon [size]="'30'" name="heroInformationCircle" class="text-blue-500" />
+            </span>
+          </button>
+        }
         @if (selectedTasks().length > 0) {
           <app-button
             (click)="handleBatchDelete()"
@@ -70,20 +69,20 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
           </app-button>
         }
       </div>
-      <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)"/>
+      <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>
 
     <!-- Templates definition outside of @switch -->
     <ng-template #statusTemplate let-task>
       <div class="flex items-center justify-center">
         @if (task.status) {
-          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+          <span
+            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+          >
             {{ getStatusName(task.status) }}
           </span>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400">
-            -
-          </span>
+          <span class="text-sm text-gray-500 dark:text-gray-400"> - </span>
         }
       </div>
     </ng-template>
@@ -93,15 +92,15 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
         @if (task.categories && task.categories.length > 0) {
           <div class="flex flex-wrap gap-1">
             @for (category of task.categories; track category.id) {
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200"
+              >
                 {{ getCategoryName(category) }}
               </span>
             }
           </div>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400">
-            -
-          </span>
+          <span class="text-sm text-gray-500 dark:text-gray-400"> - </span>
         }
       </div>
     </ng-template>
@@ -111,15 +110,15 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
         @if (task.assignedUsers && task.assignedUsers.length > 0) {
           <div class="flex flex-wrap gap-1">
             @for (user of task.assignedUsers; track user.id) {
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200"
+              >
                 {{ user.email }}
               </span>
             }
           </div>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400">
-            -
-          </span>
+          <span class="text-sm text-gray-500 dark:text-gray-400"> - </span>
         }
       </div>
     </ng-template>
@@ -166,7 +165,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected projectName = signal<string>('');
   protected projectIsPublic = signal<boolean>(false);
   protected selectedTasks = signal<Task[]>([]);
-  protected customTemplates = signal<{ [key: string]: TemplateRef<any>; }>({});
+  protected customTemplates = signal<{ [key: string]: TemplateRef<any> }>({});
   protected currentSearchParams = signal<GetAllTasksSearchParams>({
     q: '',
     sortBy: 'dateCreation',
@@ -223,7 +222,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const templates: { [key: string]: TemplateRef<any>; } = {};
+    const templates: { [key: string]: TemplateRef<any> } = {};
 
     if (this.statusTemplate) {
       templates['status'] = this.statusTemplate;
@@ -400,10 +399,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       }),
       catchError(err => {
         if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationTypeEnum.Error,
-          );
+          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.getAllError'),
@@ -431,23 +427,23 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
     const projectId = this.projectId();
     if (projectId) {
-      this.tasksService.loadMoreByProjectId(projectId, searchParams).pipe(
-        catchError(err => {
-          this.tasksStateService.setLoadingMore(false);
-          if (err.error && err.error.message) {
-            this.notificationService.showNotification(
-              err.error.message,
-              NotificationTypeEnum.Error,
-            );
-          } else {
-            this.notificationService.showNotification(
-              this.translateService.instant('Task.loadMoreError'),
-              NotificationTypeEnum.Error,
-            );
-          }
-          return EMPTY;
-        }),
-      ).subscribe();
+      this.tasksService
+        .loadMoreByProjectId(projectId, searchParams)
+        .pipe(
+          catchError(err => {
+            this.tasksStateService.setLoadingMore(false);
+            if (err.error && err.error.message) {
+              this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
+            } else {
+              this.notificationService.showNotification(
+                this.translateService.instant('Task.loadMoreError'),
+                NotificationTypeEnum.Error,
+              );
+            }
+            return EMPTY;
+          }),
+        )
+        .subscribe();
     }
   }
 
@@ -458,7 +454,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  protected handleActionClick(event: { action: string; row: any; }): void {
+  protected handleActionClick(event: { action: string; row: any }): void {
     const projectId = this.projectId();
     if (!projectId) return;
 
@@ -498,15 +494,15 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  protected handleSortChange(event: { column: string; direction: 'asc' | 'desc'; }): void {
-    const sortByMapping: { [key: string]: string; } = {
-      'dateCreation': 'dateCreation',
-      'dateModification': 'dateModification',
-      'description': 'description',
-      'id': 'id',
+  protected handleSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
+    const sortByMapping: { [key: string]: string } = {
+      dateCreation: 'dateCreation',
+      dateModification: 'dateModification',
+      description: 'description',
+      id: 'id',
     };
 
-    const backendSortBy = event.column === '' ? 'dateCreation' : (sortByMapping[event.column] || 'dateCreation');
+    const backendSortBy = event.column === '' ? 'dateCreation' : sortByMapping[event.column] || 'dateCreation';
 
     const currentParams = this.currentSearchParams();
     const searchParams = {
@@ -565,10 +561,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         if (err.error && err.error.message) {
-          this.notificationService.showNotification(
-            err.error.message,
-            NotificationTypeEnum.Error,
-          );
+          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.batchDeleteError'),

@@ -1,4 +1,4 @@
-export type FetchingError = { status: number; message: string; };
+export type FetchingError = { status: number; message: string };
 
 /*
  * Type
@@ -26,11 +26,7 @@ type LOADING_STATE_VALUE = typeof LOADING_STATE_VALUE;
 
 export type ListStateValue = keyof typeof LOADING_STATE_VALUE;
 
-export type ListState<T> =
-  | IdleState
-  | LoadingState
-  | SuccessState<T>
-  | ErrorState;
+export type ListState<T> = IdleState | LoadingState | SuccessState<T> | ErrorState;
 
 /*
  * Const

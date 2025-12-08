@@ -42,23 +42,11 @@ import { Project } from './models/Project';
   template: `
     <div class="max-w-2xl mx-auto p-6">
       <app-title>
-        {{
-          isEditMode
-            ? ('Project.editProject' | translate)
-            : ('Project.addProject' | translate)
-        }}
+        {{ isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate) }}
       </app-title>
 
-      <form
-        [formGroup]="projectForm"
-        (ngSubmit)="onSubmit()"
-        class="space-y-6 mt-6"
-      >
-        <app-input-field
-          [control]="nameControl"
-          id="name"
-          [label]="('Project.name' | translate) + ' *'"
-        />
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
+        <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />
 
         <div class="relative">
           <app-textarea
@@ -70,6 +58,7 @@ import { Project } from './models/Project';
           <label
             for="description"
             class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1"
+            [attr.aria-label]="'Project.description' | translate"
           >
             {{ 'Project.description' | translate }}
           </label>
@@ -87,20 +76,15 @@ import { Project } from './models/Project';
 
         <div class="flex items-center">
           <app-checkbox [control]="isPublicControl" id="isPublic" />
-          <label
-            for="isPublic"
-            class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary"
-          >
+          <label for="isPublic" class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary">
             {{ 'Project.isPublic' | translate }}
           </label>
         </div>
 
         <div>
-          <label
-            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
-          >
+          <span id="icon-label" class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
             {{ 'Project.icon' | translate }}
-          </label>
+          </span>
           <app-image
             [initialUrl]="currentProject?.icon?.url ?? null"
             mode="edit"
@@ -109,24 +93,23 @@ import { Project } from './models/Project';
             (imageSaved)="onImageSaved($event)"
             (croppingChange)="onCroppingChange($event)"
             (imageRemoved)="onImageRemoved()"
+            aria-labelledby="icon-label"
           />
         </div>
 
         <div>
-          <label
+          <span
+            id="categories-label"
             class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
           >
             {{ 'Project.categories' | translate }}
-          </label>
-          <div formArrayName="categories" class="space-y-3">
+          </span>
+          <div formArrayName="categories" class="space-y-3" role="group" aria-labelledby="categories-label">
             @for (category of categoriesFormArray.controls; track $index) {
               <div
                 class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
-                <div
-                  [formGroupName]="$index"
-                  class="flex flex-1 gap-3 items-end"
-                >
+                <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
                   <div class="flex-1">
                     <app-input-field
                       [control]="getCategoryNameControl($index)"
@@ -135,11 +118,12 @@ import { Project } from './models/Project';
                     />
                   </div>
                   <div class="flex flex-col justify-end pb-1">
-                    <label class="text-xs text-text-secondary mb-1">{{
+                    <label [for]="'category-color-' + $index" class="text-xs text-text-secondary mb-1">{{
                       'Project.selectColor' | translate
                     }}</label>
                     <input
                       type="color"
+                      [id]="'category-color-' + $index"
                       [formControl]="getCategoryColorControl($index)"
                       class="w-12 h-11 border border-border-primary dark:border-dark-border-primary rounded-md cursor-pointer"
                       [title]="'Project.selectColor' | translate"
@@ -156,30 +140,24 @@ import { Project } from './models/Project';
               </div>
             }
           </div>
-          <button
-            type="button"
-            (click)="addCategory()"
-            class="mt-2 text-primary-600 hover:text-primary-800 text-sm"
-          >
+          <button type="button" (click)="addCategory()" class="mt-2 text-primary-600 hover:text-primary-800 text-sm">
             + {{ 'Project.addCategory' | translate }}
           </button>
         </div>
 
         <div>
-          <label
+          <span
+            id="statuses-label"
             class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
           >
             {{ 'Project.statuses' | translate }}
-          </label>
-          <div formArrayName="statuses" class="space-y-3">
+          </span>
+          <div formArrayName="statuses" class="space-y-3" role="group" aria-labelledby="statuses-label">
             @for (status of statusesFormArray.controls; track $index) {
               <div
                 class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
-                <div
-                  [formGroupName]="$index"
-                  class="flex flex-1 gap-3 items-end"
-                >
+                <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
                   <div class="flex-1">
                     <app-input-field
                       [control]="getStatusNameControl($index)"
@@ -188,11 +166,12 @@ import { Project } from './models/Project';
                     />
                   </div>
                   <div class="flex flex-col justify-end pb-1">
-                    <label class="text-xs text-text-secondary mb-1">{{
+                    <label [for]="'status-color-' + $index" class="text-xs text-text-secondary mb-1">{{
                       'Project.selectColor' | translate
                     }}</label>
                     <input
                       type="color"
+                      [id]="'status-color-' + $index"
                       [formControl]="getStatusColorControl($index)"
                       class="w-12 h-11 border border-border-primary dark:border-dark-border-primary rounded-md cursor-pointer bg-background-primary dark:bg-dark-background-primary"
                       [title]="'Project.selectColor' | translate"
@@ -209,28 +188,16 @@ import { Project } from './models/Project';
               </div>
             }
           </div>
-          <button
-            type="button"
-            (click)="addStatus()"
-            class="mt-2 text-primary-600 hover:text-primary-800 text-sm"
-          >
+          <button type="button" (click)="addStatus()" class="mt-2 text-primary-600 hover:text-primary-800 text-sm">
             + {{ 'Project.addStatus' | translate }}
           </button>
         </div>
 
         <div>
-          <label
-            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
-          >
-            {{
-              isEditMode
-                ? ('Project.inviteAdditionalUsers' | translate)
-                : ('Project.inviteUsers' | translate)
-            }}
-          </label>
-          <p
-            class="text-sm text-text-secondary dark:text-dark-text-secondary mb-3"
-          >
+          <span id="users-label" class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
+            {{ isEditMode ? ('Project.inviteAdditionalUsers' | translate) : ('Project.inviteUsers' | translate) }}
+          </span>
+          <p class="text-sm text-text-secondary dark:text-dark-text-secondary mb-3">
             {{
               isEditMode
                 ? ('Project.inviteAdditionalUsersDescription' | translate)
@@ -238,10 +205,7 @@ import { Project } from './models/Project';
             }}
           </p>
           <div formArrayName="usersWithRoles" class="space-y-3">
-            @for (
-              userWithRole of usersWithRolesFormArray.controls;
-              track $index
-            ) {
+            @for (userWithRole of usersWithRolesFormArray.controls; track $index) {
               <div
                 class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
@@ -270,9 +234,7 @@ import { Project } from './models/Project';
                   [class.opacity-50]="isCurrentUser($index)"
                   [class.cursor-not-allowed]="isCurrentUser($index)"
                   [title]="
-                    isCurrentUser($index)
-                      ? ('Project.cannotRemoveYourself' | translate)
-                      : ('Basic.remove' | translate)
+                    isCurrentUser($index) ? ('Project.cannotRemoveYourself' | translate) : ('Basic.remove' | translate)
                   "
                 >
                   {{ 'Basic.remove' | translate }}
@@ -295,15 +257,8 @@ import { Project } from './models/Project';
           </app-button>
 
           @if (!isEditMode) {
-            <app-button
-              type="submit"
-              [disabled]="projectForm.invalid || isSubmitting"
-            >
-              {{
-                isSubmitting
-                  ? ('Basic.saving' | translate)
-                  : ('Basic.save' | translate)
-              }}
+            <app-button type="submit" [disabled]="projectForm.invalid || isSubmitting">
+              {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
             </app-button>
           } @else {
             <ng-container
@@ -312,15 +267,8 @@ import { Project } from './models/Project';
                 userPermissions: currentProject?.permissions ?? [],
               }"
             >
-              <app-button
-                type="submit"
-                [disabled]="projectForm.invalid || isSubmitting"
-              >
-                {{
-                  isSubmitting
-                    ? ('Basic.saving' | translate)
-                    : ('Basic.update' | translate)
-                }}
+              <app-button type="submit" [disabled]="projectForm.invalid || isSubmitting">
+                {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.update' | translate) }}
               </app-button>
             </ng-container>
           }
@@ -427,13 +375,11 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    this.usersWithRolesFormArray.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.fieldErrors['usersWithRoles']) {
-          this.fieldErrors['usersWithRoles'] = [];
-        }
-      });
+    this.usersWithRolesFormArray.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.fieldErrors['usersWithRoles']) {
+        this.fieldErrors['usersWithRoles'] = [];
+      }
+    });
   }
 
   private checkEditMode(): void {
@@ -457,16 +403,14 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   private subscribeToLanguageChanges(): void {
-    this.translateService.onLangChange
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.updateOptionsForCurrentLang();
-        },
-        error: error => {
-          console.error('Error handling language change:', error);
-        },
-      });
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.updateOptionsForCurrentLang();
+      },
+      error: error => {
+        console.error('Error handling language change:', error);
+      },
+    });
   }
 
   private loadAllOptions(): void {
@@ -502,9 +446,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     if (!this.projectId) return;
 
     const statuses$ = this.projectStatusService.getByProjectId(this.projectId);
-    const categories$ = this.projectCategoryService.getByProjectId(
-      this.projectId,
-    );
+    const categories$ = this.projectCategoryService.getByProjectId(this.projectId);
 
     forkJoin({
       statuses: statuses$,
@@ -532,32 +474,20 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     const lang = this.translateService.currentLang || 'pl';
     this.projectTypes = (this.projectTypesRaw || []).map((type: any) => ({
       ...type,
-      name: type.translations?.find((t: any) => t.lang === lang)?.name
-        || type.translations?.[0]?.name
-        || '',
+      name: type.translations?.find((t: any) => t.lang === lang)?.name || type.translations?.[0]?.name || '',
     }));
     this.projectRoles = (this.projectRolesRaw || []).map((role: any) => ({
       ...role,
-      name: role.translations?.find((t: any) => t.lang === lang)?.name
-        || role.translations?.[0]?.name
-        || '',
+      name: role.translations?.find((t: any) => t.lang === lang)?.name || role.translations?.[0]?.name || '',
     }));
-    this.projectStatuses = (this.projectStatusesRaw || []).map(
-      (status: any) => ({
-        ...status,
-        name: status.translations?.find((t: any) => t.lang === lang)?.name
-          || status.translations?.[0]?.name
-          || '',
-      }),
-    );
-    this.projectCategories = (this.projectCategoriesRaw || []).map(
-      (cat: any) => ({
-        ...cat,
-        name: cat.translations?.find((t: any) => t.lang === lang)?.name
-          || cat.translations?.[0]?.name
-          || '',
-      }),
-    );
+    this.projectStatuses = (this.projectStatusesRaw || []).map((status: any) => ({
+      ...status,
+      name: status.translations?.find((t: any) => t.lang === lang)?.name || status.translations?.[0]?.name || '',
+    }));
+    this.projectCategories = (this.projectCategoriesRaw || []).map((cat: any) => ({
+      ...cat,
+      name: cat.translations?.find((t: any) => t.lang === lang)?.name || cat.translations?.[0]?.name || '',
+    }));
   }
 
   private loadProject(): void {
@@ -622,10 +552,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       this.currentProject.projectUserRoles.forEach(projectUserRole => {
         this.usersWithRolesFormArray.push(
           this.fb.group({
-            email: [
-              projectUserRole.user.email,
-              [Validators.required, Validators.email],
-            ],
+            email: [projectUserRole.user.email, [Validators.required, Validators.email]],
             role: [projectUserRole.projectRole.id, Validators.required],
           }),
         );
@@ -652,54 +579,54 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return this.projectForm.get('usersWithRoles') as FormArray;
   }
 
-  protected get nameControl() {
+  protected get nameControl(): FormControl {
     return this.projectForm.get('name') as FormControl;
   }
 
-  protected get descriptionControl() {
+  protected get descriptionControl(): FormControl {
     return this.projectForm.get('description') as FormControl;
   }
 
-  protected get typeIdControl() {
+  protected get typeIdControl(): FormControl {
     return this.projectForm.get('typeId') as FormControl;
   }
 
-  protected get isPublicControl() {
+  protected get isPublicControl(): FormControl {
     return this.projectForm.get('isPublic') as FormControl;
   }
 
-  protected getCategoryNameControl(index: number) {
+  protected getCategoryNameControl(index: number): FormControl {
     return this.categoriesFormArray.at(index).get('name') as FormControl;
   }
 
-  protected getCategoryColorControl(index: number) {
+  protected getCategoryColorControl(index: number): FormControl {
     return this.categoriesFormArray.at(index).get('color') as FormControl;
   }
 
-  protected getStatusNameControl(index: number) {
+  protected getStatusNameControl(index: number): FormControl {
     return this.statusesFormArray.at(index).get('name') as FormControl;
   }
 
-  protected getStatusColorControl(index: number) {
+  protected getStatusColorControl(index: number): FormControl {
     return this.statusesFormArray.at(index).get('color') as FormControl;
   }
 
-  protected getUserEmailControl(index: number) {
+  protected getUserEmailControl(index: number): FormControl {
     return this.usersWithRolesFormArray.at(index).get('email') as FormControl;
   }
 
-  protected getUserRoleControl(index: number) {
+  protected getUserRoleControl(index: number): FormControl {
     return this.usersWithRolesFormArray.at(index).get('role') as FormControl;
   }
 
-  protected get projectTypeOptions() {
+  protected get projectTypeOptions(): Array<{ value: number; label: string }> {
     return this.projectTypes.map(type => ({
       value: type.id,
       label: type.name,
     }));
   }
 
-  protected get projectRoleOptions() {
+  protected get projectRoleOptions(): Array<{ value: number; label: string }> {
     return this.projectRoles.map(role => ({
       value: role.id,
       label: role.name,
@@ -767,7 +694,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return userEmail === currentUserEmail;
   }
 
-  protected onImageSaved(event: { file: File; preview: string | null; }): void {
+  protected onImageSaved(event: { file: File; preview: string | null }): void {
     this.selectedIconFile = event.file;
     this.iconRemoved = false;
   }
@@ -821,9 +748,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
     if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
       const usersWithRoles = formValue.usersWithRoles
-        .filter(
-          (userWithRole: any) => userWithRole.email && userWithRole.email.trim(),
-        )
+        .filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
         .map((userWithRole: any) => ({
           email: userWithRole.email.trim(),
           role: userWithRole.role,
@@ -846,12 +771,9 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       formData.append('icon', 'null');
     }
 
-    const handleError = (error: any, isUpdate: boolean) => {
+    const handleError = (error: any, isUpdate: boolean): void => {
       this.isSubmitting = false;
-      if (
-        error?.error?.errors?.message
-        && Array.isArray(error.error.errors.message)
-      ) {
+      if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
         this.fieldErrors = {};
         error.error.errors.message.forEach((errObj: any) => {
           if (errObj.field && Array.isArray(errObj.errors)) {
@@ -859,18 +781,16 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
           }
         });
       } else {
-        const errorMessage = error.error?.message
-          || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
+        const errorMessage =
+          error.error?.message || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
         if (
-          typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('user')
-          && errorMessage.toLowerCase().includes('not found')
+          typeof errorMessage === 'string' &&
+          errorMessage.toLowerCase().includes('user') &&
+          errorMessage.toLowerCase().includes('not found')
         ) {
           this.fieldErrors['usersWithRoles'] = [errorMessage];
         }
-        this.notificationService.showNotification(
-          errorMessage,
-          NotificationTypeEnum.Error,
-        );
+        this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
       }
     };
 
@@ -880,13 +800,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            const successMessage = this.translateService.instant(
-              'Project.updateSuccess',
-            );
-            this.notificationService.showNotification(
-              successMessage,
-              NotificationTypeEnum.Success,
-            );
+            const successMessage = this.translateService.instant('Project.updateSuccess');
+            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
             this.router.navigate(['/projects']).then();
             this.isSubmitting = false;
           },
@@ -903,10 +818,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
           next: response => {
             this.projectsStateService.addProject(response.data);
             const successMessage = this.translateService.instant('Project.addSuccess');
-            this.notificationService.showNotification(
-              successMessage,
-              NotificationTypeEnum.Success,
-            );
+            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
             this.router.navigate(['/projects']).then();
             this.isSubmitting = false;
           },

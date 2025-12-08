@@ -12,13 +12,7 @@ import { NavbarComponent } from '../organisms/navbar.component';
 
 @Component({
   selector: 'app-layout',
-  imports: [
-    NavbarComponent,
-    CookieBannerComponent,
-    FooterComponent,
-    InfoPanelComponent,
-    ScrollToTopComponent,
-  ],
+  imports: [NavbarComponent, CookieBannerComponent, FooterComponent, InfoPanelComponent, ScrollToTopComponent],
   template: `
     <div class="flex flex-col min-h-screen">
       <app-navbar />
@@ -112,12 +106,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private getBrowserInfo(): string {
     const userAgent = navigator.userAgent;
     const language = navigator.language;
-    const translatedUserAgent = this.translateService.instant(
-      'BrowserInfo.userAgent',
-    );
-    const translatedLanguage = this.translateService.instant(
-      'BrowserInfo.language',
-    );
+    const translatedUserAgent = this.translateService.instant('BrowserInfo.userAgent');
+    const translatedLanguage = this.translateService.instant('BrowserInfo.language');
     return `${translatedUserAgent}: ${userAgent}, ${translatedLanguage}: ${language}`;
   }
 }

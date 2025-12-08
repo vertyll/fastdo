@@ -17,10 +17,10 @@ export class TermsAndPolicyStateService {
     this.apiService.$idle()
       ? LOADING_STATE_VALUE.IDLE
       : this.apiService.$loading()
-      ? LOADING_STATE_VALUE.LOADING
-      : this.apiService.$error()
-      ? LOADING_STATE_VALUE.ERROR
-      : LOADING_STATE_VALUE.SUCCESS
+        ? LOADING_STATE_VALUE.LOADING
+        : this.apiService.$error()
+          ? LOADING_STATE_VALUE.ERROR
+          : LOADING_STATE_VALUE.SUCCESS,
   );
   public error = computed(() => this.apiService.$error());
 

@@ -37,7 +37,9 @@ import { UserStateService } from './data-access/user.state.service';
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
         <div class="max-w-4xl mx-auto p-spacing-6">
-          <div class="bg-background-primary dark:bg-dark-background-primary shadow-boxShadow-md rounded-borderRadius-lg overflow-hidden dark:border-dark-border-primary border-border-primary border">
+          <div
+            class="bg-background-primary dark:bg-dark-background-primary shadow-boxShadow-md rounded-borderRadius-lg overflow-hidden dark:border-dark-border-primary border-border-primary border"
+          >
             @if (!isEditing) {
               <div class="p-spacing-6">
                 <div class="flex justify-between items-center mb-spacing-6">
@@ -52,14 +54,8 @@ import { UserStateService } from './data-access/user.state.service';
                   </button>
                 </div>
 
-                <div
-                  [ngClass]="{ 'profile-info': !isMobile(), 'profile-info-mobile': isMobile() }">
-                  <app-image
-                    [initialUrl]="user().avatar?.url || null"
-                    mode="preview"
-                    size="md"
-                    format="circle"
-                  />
+                <div [ngClass]="{ 'profile-info': !isMobile(), 'profile-info-mobile': isMobile() }">
+                  <app-image [initialUrl]="user().avatar?.url || null" mode="preview" size="md" format="circle" />
                   <div class="profile-details">
                     <div class="text-xl font-medium text-text-primary dark:text-dark-text-primary">
                       {{ user().email }}
@@ -121,7 +117,10 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="password">
+                    <label
+                      class="block text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                      for="password"
+                    >
                       {{ 'Profile.password' | translate }}
                     </label>
                     <input
@@ -138,7 +137,10 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="newPassword">
+                    <label
+                      class="block text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                      for="newPassword"
+                    >
                       {{ 'Profile.newPassword' | translate }}
                     </label>
                     <input
@@ -155,7 +157,10 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="confirmNewPassword">
+                    <label
+                      class="block text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                      for="confirmNewPassword"
+                    >
                       {{ 'Profile.confirmNewPassword' | translate }}
                     </label>
                     <input
@@ -182,27 +187,29 @@ import { UserStateService } from './data-access/user.state.service';
       }
     }
   `,
-  styles: [`
-    .profile-info {
-      display: flex;
-      align-items: center;
-    }
-    .profile-info-mobile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .profile-details {
-      margin-left: 1rem;
-    }
-    @media (max-width: 640px) {
-      .profile-details {
-        margin-left: 0;
-        margin-top: 1rem;
+  styles: [
+    `
+      .profile-info {
+        display: flex;
+        align-items: center;
       }
-    }
-  `],
+      .profile-info-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .profile-details {
+        margin-left: 1rem;
+      }
+      @media (max-width: 640px) {
+        .profile-details {
+          margin-left: 0;
+          margin-top: 1rem;
+        }
+      }
+    `,
+  ],
 })
 export class UserProfileComponent implements OnInit {
   private readonly userService = inject(UserService);
@@ -257,7 +264,7 @@ export class UserProfileComponent implements OnInit {
     this.isEditing = !this.isEditing;
   }
 
-  protected onImageSaved(event: { file: File; preview: string | null; }): void {
+  protected onImageSaved(event: { file: File; preview: string | null }): void {
     this.selectedFile = event.file;
     this.avatarRemoved = false;
   }

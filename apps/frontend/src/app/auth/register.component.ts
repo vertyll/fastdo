@@ -27,124 +27,110 @@ import { PasswordValidator } from './validators/password.validator';
     CheckboxComponent,
   ],
   template: `
-   <div
-     class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
-   >
-     <app-title>{{ 'Auth.register' | translate }}</app-title>
-     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-       <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
-       <input
-         id="email"
-         formControlName="email"
-         required
-         class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-       />
+    <div
+      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
+    >
+      <app-title>{{ 'Auth.register' | translate }}</app-title>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
+        <input
+          id="email"
+          formControlName="email"
+          required
+          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+        />
 
-       <app-label forId="password">{{ 'Auth.password' | translate }}:</app-label>
-       <input
-         id="password"
-         type="password"
-         formControlName="password"
-         required
-         class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-       />
+        <app-label forId="password">{{ 'Auth.password' | translate }}:</app-label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          required
+          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+        />
 
-       <app-label forId="confirmPassword">
-         {{ 'Auth.confirmPassword' | translate }}:
-       </app-label>
-       <input
-         id="confirmPassword"
-         type="password"
-         formControlName="confirmPassword"
-         required
-         class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-       />
+        <app-label forId="confirmPassword"> {{ 'Auth.confirmPassword' | translate }}: </app-label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          required
+          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+        />
 
-       <div class="mb-spacing-1 mt-4">
-         <div class="flex items-center gap-2">
-           <app-checkbox
-             [control]="getControl('termsAccepted')"
-             [id]="'terms'"
-           />
-           <app-label forId="terms" [required]="true">
-             {{ 'Auth.acceptTerms' | translate }}
+        <div class="mb-spacing-1 mt-4">
+          <div class="flex items-center gap-2">
+            <app-checkbox [control]="getControl('termsAccepted')" [id]="'terms'" />
+            <app-label forId="terms" [required]="true">
+              {{ 'Auth.acceptTerms' | translate }}
               <a
-               class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover hover:underline"
-               [routerLink]="['/terms']"
-             >
-               {{ 'Auth.termsLink' | translate }}
-             </a>
-           </app-label>
-         </div>
-         @if (termsErrors.length > 0) {
-           @for (error of termsErrors; track error) {
-             <app-error-message [customMessage]="error" />
-           }
-         }
-       </div>
+                class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover hover:underline"
+                [routerLink]="['/terms']"
+              >
+                {{ 'Auth.termsLink' | translate }}
+              </a>
+            </app-label>
+          </div>
+          @if (termsErrors.length > 0) {
+            @for (error of termsErrors; track error) {
+              <app-error-message [customMessage]="error" />
+            }
+          }
+        </div>
 
-       <div class="mb-spacing-4">
-         <div class="flex items-center gap-2">
-           <app-checkbox
-             [control]="getControl('privacyPolicyAccepted')"
-             [id]="'privacy'"
-           />
-           <app-label forId="privacy" [required]="true">
-             {{ 'Auth.acceptPrivacyPolicy' | translate }}
+        <div class="mb-spacing-4">
+          <div class="flex items-center gap-2">
+            <app-checkbox [control]="getControl('privacyPolicyAccepted')" [id]="'privacy'" />
+            <app-label forId="privacy" [required]="true">
+              {{ 'Auth.acceptPrivacyPolicy' | translate }}
               <a
-               class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover hover:underline"
-               [routerLink]="['/privacy-policy']"
-             >
-               {{ 'Auth.privacyPolicyLink' | translate }}
-             </a>
-           </app-label>
-         </div>
-         @if (privacyPolicyErrors.length > 0) {
-           @for (error of privacyPolicyErrors; track error) {
-             <app-error-message [customMessage]="error" />
-           }
-         }
-       </div>
+                class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover hover:underline"
+                [routerLink]="['/privacy-policy']"
+              >
+                {{ 'Auth.privacyPolicyLink' | translate }}
+              </a>
+            </app-label>
+          </div>
+          @if (privacyPolicyErrors.length > 0) {
+            @for (error of privacyPolicyErrors; track error) {
+              <app-error-message [customMessage]="error" />
+            }
+          }
+        </div>
 
-       @if (emailErrors.length > 0) {
-         @for (error of emailErrors; track error) {
-           <app-error-message [customMessage]="error" />
-         }
-       }
+        @if (emailErrors.length > 0) {
+          @for (error of emailErrors; track error) {
+            <app-error-message [customMessage]="error" />
+          }
+        }
 
-       @if (passwordMismatch) {
-         <app-error-message
-           [customMessage]="'Auth.passwordDoNotMatch' | translate"
-         />
-       }
+        @if (passwordMismatch) {
+          <app-error-message [customMessage]="'Auth.passwordDoNotMatch' | translate" />
+        }
 
-       @if (passwordErrors.length > 0) {
-         @for (error of passwordErrors; track error) {
-           <app-error-message [customMessage]="error" />
-         }
-       }
+        @if (passwordErrors.length > 0) {
+          @for (error of passwordErrors; track error) {
+            <app-error-message [customMessage]="error" />
+          }
+        }
 
-       @if (errorMessage) {
-         <app-error-message [customMessage]="errorMessage" />
-       }
+        @if (errorMessage) {
+          <app-error-message [customMessage]="errorMessage" />
+        }
 
-       <button
-         type="submit"
-         class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
-       >
-         {{ 'Auth.registerButton' | translate }}
-       </button>
+        <button
+          type="submit"
+          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
+        >
+          {{ 'Auth.registerButton' | translate }}
+        </button>
 
-       <app-link
-         class="mt-spacing-4 block"
-         [routerLink]="['/login']"
-         [linkType]="LinkType.Default"
-       >
-         {{ 'Auth.alreadyHaveAccount' | translate }}
-       </app-link>
-     </form>
-   </div>
- `,
+        <app-link class="mt-spacing-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
+          {{ 'Auth.alreadyHaveAccount' | translate }}
+        </app-link>
+      </form>
+    </div>
+  `,
 })
 export class RegisterComponent implements OnInit {
   protected readonly router = inject(Router);
@@ -190,7 +176,7 @@ export class RegisterComponent implements OnInit {
 
   protected onSubmit(): void {
     if (this.registerForm.valid && !this.passwordMismatch) {
-      const { confirmPassword, ...dto } = this.registerForm.value;
+      const { confirmPassword: _confirmPassword, ...dto } = this.registerForm.value;
       this.authService.register(dto).subscribe({
         next: () => {
           this.router.navigate(['/login']).then(() => {
@@ -205,9 +191,7 @@ export class RegisterComponent implements OnInit {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = this.translateService.instant(
-              'Auth.unknownRegisterError',
-            );
+            this.errorMessage = this.translateService.instant('Auth.unknownRegisterError');
           }
         },
       });
@@ -237,9 +221,7 @@ export class RegisterComponent implements OnInit {
       errors.push(this.translateService.instant('Auth.passwordUppercase'));
     }
     if (passwordControl?.hasError('specialCharacter')) {
-      errors.push(
-        this.translateService.instant('Auth.passwordSpecialCharacter'),
-      );
+      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
     }
     return errors;
   }

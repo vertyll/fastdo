@@ -12,7 +12,7 @@ export class ProjectRolePermissionGuard implements CanActivate {
   ) {}
 
   public canActivate(
-    route: ActivatedRouteSnapshot & { data: { requiredPermission: ProjectRolePermissionEnum; }; },
+    route: ActivatedRouteSnapshot & { data: { requiredPermission: ProjectRolePermissionEnum } },
     _state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
     const projectId = route.params['id'];
@@ -22,8 +22,8 @@ export class ProjectRolePermissionGuard implements CanActivate {
         const permissions = response.data?.permissions ?? [];
         const isPublic = response.data?.isPublic;
         if (
-          (permissions.includes(requiredPermission))
-          || (isPublic && requiredPermission === ProjectRolePermissionEnum.SHOW_TASKS)
+          permissions.includes(requiredPermission) ||
+          (isPublic && requiredPermission === ProjectRolePermissionEnum.SHOW_TASKS)
         ) {
           return true;
         }

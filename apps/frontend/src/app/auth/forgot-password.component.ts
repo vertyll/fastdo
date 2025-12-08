@@ -24,7 +24,9 @@ import { AuthService } from './data-access/auth.service';
     RouterLink,
   ],
   template: `
-    <div class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary">
+    <div
+      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
+    >
       <app-title>{{ 'Auth.forgotPassword' | translate }}</app-title>
       <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()">
         <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
@@ -52,11 +54,7 @@ import { AuthService } from './data-access/auth.service';
           {{ 'Auth.sendResetLink' | translate }}
         </button>
 
-        <app-link
-          class="mt-spacing-4 block"
-          [routerLink]="['/login']"
-          [linkType]="LinkType.Default"
-        >
+        <app-link class="mt-spacing-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
           {{ 'Auth.backToLogin' | translate }}
         </app-link>
       </form>
@@ -104,9 +102,7 @@ export class ForgotPasswordComponent implements OnInit {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = this.translateService.instant(
-              'Auth.unknownError',
-            );
+            this.errorMessage = this.translateService.instant('Auth.unknownError');
           }
         },
       });

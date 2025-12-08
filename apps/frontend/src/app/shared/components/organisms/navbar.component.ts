@@ -61,14 +61,8 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       ]),
     ]),
     trigger('overlay', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('200ms ease-out', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1 }),
-        animate('200ms ease-in', style({ opacity: 0 })),
-      ]),
+      transition(':enter', [style({ opacity: 0 }), animate('200ms ease-out', style({ opacity: 1 }))]),
+      transition(':leave', [style({ opacity: 1 }), animate('200ms ease-in', style({ opacity: 0 }))]),
     ]),
     trigger('hamburgerCross', [
       transition(':enter', [
@@ -91,237 +85,248 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       ]),
     ]),
   ],
-  styles: [`
-    .top-nav {
-      @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 transition-colors duration-200;
-    }
-
-    .nav-content {
-      @apply h-full mx-auto flex items-center justify-between;
-    }
-
-    .modules-container {
-      @apply hidden md:flex space-x-4;
-    }
-
-    .module-item {
-      @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
-    }
-
-    .module-item.active {
-      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
-    }
-
-    .auth-section {
-      @apply md:flex items-center space-x-4 hidden;
-    }
-
-    .auth-button {
-      @apply px-3 py-1.5 rounded-md transition-colors duration-200 text-sm font-medium;
-    }
-
-    .login-button {
-      @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-dark-surface-secondary;
-    }
-
-    .register-button {
-      @apply bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200;
-    }
-
-    .logout-button {
-      @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
-    }
-
-    .menu-button {
-      @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
-    }
-
-    .menu-button.active {
-      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
-    }
-
-    .mobile-menu {
-      @apply fixed inset-0 z-50 md:hidden;
-    }
-
-    .mobile-menu-overlay {
-      @apply fixed inset-0 bg-black/30;
-    }
-
-    .mobile-menu-content {
-      @apply absolute w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-      position: absolute;
-      top: 3.5rem;
-      left: 4rem;
-    }
-
-    .mobile-menu-content.language-menu {
-      @apply absolute w-24 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-      position: absolute;
-      top: 3rem;
-      right: 0.5rem;
-      left: auto;
-      z-index: 60;
-    }
-
-    .mobile-module-item {
-      @apply flex items-center space-x-2 px-3 py-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 text-sm cursor-pointer;
-    }
-
-    .mobile-module-item.active {
-      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
-    }
-
-    .side-nav {
-      @apply hidden md:block w-24 bg-surface-primary dark:bg-dark-surface-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-    }
-
-    .side-nav-content {
-      @apply h-full flex flex-col items-center justify-start py-8 space-y-4;
-    }
-
-    .mobile-sections {
-      @apply md:hidden bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary mt-16 transition-colors duration-200;
-    }
-
-    .mobile-section-item {
-      @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
-    }
-
-    .mobile-section-item.active {
-      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
-    }
-
-    .mobile-section-icon {
-      @apply text-base;
-    }
-
-    .mobile-section-text {
-      @apply text-sm;
-    }
-
-    .show-more-button {
-      @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200;
-    }
-
-    .section-item {
-      @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary dark:text-dark-text-primary transition-colors duration-200;
-    }
-
-    .section-item.active {
-      @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
-    }
-
-    .section-icon {
-      @apply mb-2;
-    }
-
-    .section-title {
-      @apply text-xs font-medium text-center;
-    }
-
-    .counter-badge {
-      @apply absolute -top-1 -right-1 bg-primary-500 dark:bg-primary-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 transition-colors duration-200;
-    }
-
-    .main-content {
-      @apply pt-16;
-    }
-
-    .main-content.authenticated {
-      @apply pt-16 md:ml-24;
-    }
-
-    .content-wrapper {
-      @apply mx-auto py-4 px-4 md:px-8;
-    }
-
-    .public-nav {
-      @apply flex justify-between items-center h-full mx-auto px-4 md:px-8;
-    }
-
-    .app-logo {
-      @apply text-lg md:text-xl font-bold text-text-primary dark:text-dark-text-primary transition-colors duration-200;
-    }
-
-    .language-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
-    }
-
-    .profile-button {
-      @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
-    }
-
-    .language-dropdown {
-      @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-    }
-
-    .profile-dropdown {
-      @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-    }
-
-    .language-option {
-      @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
-    }
-
-    .language-option.active {
-      @apply text-primary-500 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 transition-colors duration-200;
-    }
-
-    .hamburger-icon {
-      @apply md:hidden w-6 h-6 flex flex-col justify-center items-center cursor-pointer relative z-50;
-    }
-
-    .hamburger-line {
-      @apply w-6 h-0.5 bg-text-secondary dark:bg-dark-text-secondary transition-all duration-300;
-    }
-
-    .hamburger-line:not(:last-child) {
-      @apply mb-1.5;
-    }
-
-    .hamburger-active .hamburger-line:nth-child(1) {
-      @apply transform rotate-45 translate-y-2;
-    }
-
-    .hamburger-active .hamburger-line:nth-child(2) {
-      @apply opacity-0;
-    }
-
-    .hamburger-active .hamburger-line:nth-child(3) {
-      @apply transform -rotate-45 -translate-y-2;
-    }
-
-    .mobile-nav-menu {
-      @apply md:hidden fixed inset-0 bg-background-primary dark:bg-dark-background-primary pt-20 transition-all duration-300 z-40 flex flex-col items-center gap-2;
-    }
-
-    .mobile-nav-item {
-      @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 py-2;
-    }
-
-    @media (max-width: 768px) {
-      .relative.flex.flex-row {
-        align-items: center;
-        gap: 0;
+  styles: [
+    `
+      .top-nav {
+        @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 transition-colors duration-200;
       }
 
-      app-notification-dropdown button,
-      app-theme-switcher button {
-        padding: 0.5rem;
-        height: 2.5rem;
-        width: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      .nav-content {
+        @apply h-full mx-auto flex items-center justify-between;
       }
-    }
-  `],
+
+      .modules-container {
+        @apply hidden md:flex space-x-4;
+      }
+
+      .module-item {
+        @apply flex items-center space-x-2 px-3.5 py-1 rounded-md cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
+      }
+
+      .module-item.active {
+        @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
+      }
+
+      .auth-section {
+        @apply md:flex items-center space-x-4 hidden;
+      }
+
+      .auth-button {
+        @apply px-3 py-1.5 rounded-md transition-colors duration-200 text-sm font-medium;
+      }
+
+      .login-button {
+        @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-dark-surface-secondary;
+      }
+
+      .register-button {
+        @apply bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200;
+      }
+
+      .logout-button {
+        @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
+      }
+
+      .menu-button {
+        @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
+      }
+
+      .menu-button.active {
+        @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
+      }
+
+      .mobile-menu {
+        @apply fixed inset-0 z-50 md:hidden;
+      }
+
+      .mobile-menu-overlay {
+        @apply fixed inset-0 bg-black/30;
+      }
+
+      .mobile-menu-content {
+        @apply absolute w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+        position: absolute;
+        top: 3.5rem;
+        left: 4rem;
+      }
+
+      .mobile-menu-content.language-menu {
+        @apply absolute w-24 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+        position: absolute;
+        top: 3rem;
+        right: 0.5rem;
+        left: auto;
+        z-index: 60;
+      }
+
+      .mobile-module-item {
+        @apply flex items-center space-x-2 px-3 py-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 text-sm cursor-pointer;
+      }
+
+      .mobile-module-item.active {
+        @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
+      }
+
+      .side-nav {
+        @apply hidden md:block w-24 bg-surface-primary dark:bg-dark-surface-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      }
+
+      .side-nav-content {
+        @apply h-full flex flex-col items-center justify-start py-8 space-y-4;
+      }
+
+      .mobile-sections {
+        @apply md:hidden bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary mt-16 transition-colors duration-200;
+      }
+
+      .mobile-section-item {
+        @apply flex items-center space-x-3 px-4 py-2.5 cursor-pointer hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 dark:text-dark-text-primary;
+      }
+
+      .mobile-section-item.active {
+        @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
+      }
+
+      .mobile-section-icon {
+        @apply text-base;
+      }
+
+      .mobile-section-text {
+        @apply text-sm;
+      }
+
+      .show-more-button {
+        @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200;
+      }
+
+      .section-item {
+        @apply flex flex-col items-center justify-center w-20 py-2 cursor-pointer rounded-xl relative transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary dark:text-dark-text-primary transition-colors duration-200;
+      }
+
+      .section-item.active {
+        @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
+      }
+
+      .section-icon {
+        @apply mb-2;
+      }
+
+      .section-title {
+        @apply text-xs font-medium text-center;
+      }
+
+      .counter-badge {
+        @apply absolute -top-1 -right-1 bg-primary-500 dark:bg-primary-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 transition-colors duration-200;
+      }
+
+      .main-content {
+        @apply pt-16;
+      }
+
+      .main-content.authenticated {
+        @apply pt-16 md:ml-24;
+      }
+
+      .content-wrapper {
+        @apply mx-auto py-4 px-4 md:px-8;
+      }
+
+      .public-nav {
+        @apply flex justify-between items-center h-full mx-auto px-4 md:px-8;
+      }
+
+      .app-logo {
+        @apply text-lg md:text-xl font-bold text-text-primary dark:text-dark-text-primary transition-colors duration-200;
+      }
+
+      .language-button {
+        @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+      }
+
+      .profile-button {
+        @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+      }
+
+      .language-dropdown {
+        @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      }
+
+      .profile-dropdown {
+        @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+      }
+
+      .language-option {
+        @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
+      }
+
+      .language-option.active {
+        @apply text-primary-500 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 transition-colors duration-200;
+      }
+
+      .hamburger-icon {
+        @apply md:hidden w-6 h-6 flex flex-col justify-center items-center cursor-pointer relative z-50;
+      }
+
+      .hamburger-line {
+        @apply w-6 h-0.5 bg-text-secondary dark:bg-dark-text-secondary transition-all duration-300;
+      }
+
+      .hamburger-line:not(:last-child) {
+        @apply mb-1.5;
+      }
+
+      .hamburger-active .hamburger-line:nth-child(1) {
+        @apply transform rotate-45 translate-y-2;
+      }
+
+      .hamburger-active .hamburger-line:nth-child(2) {
+        @apply opacity-0;
+      }
+
+      .hamburger-active .hamburger-line:nth-child(3) {
+        @apply transform -rotate-45 -translate-y-2;
+      }
+
+      .mobile-nav-menu {
+        @apply md:hidden fixed inset-0 bg-background-primary dark:bg-dark-background-primary pt-20 transition-all duration-300 z-40 flex flex-col items-center gap-2;
+      }
+
+      .mobile-nav-item {
+        @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 py-2;
+      }
+
+      @media (max-width: 768px) {
+        .relative.flex.flex-row {
+          align-items: center;
+          gap: 0;
+        }
+
+        app-notification-dropdown button,
+        app-theme-switcher button {
+          padding: 0.5rem;
+          height: 2.5rem;
+          width: 2.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    `,
+  ],
   template: `
     @if (!authService.isLoggedIn()) {
       <nav class="top-nav">
         <div class="public-nav">
-          <span class="app-logo cursor-pointer" (click)="navigateToHomePage()">
+          <span
+            class="app-logo cursor-pointer"
+            (click)="navigateToHomePage()"
+            (keydown.enter)="navigateToHomePage()"
+            (keydown.space)="navigateToHomePage(); $event.preventDefault()"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="'Navbar.home' | translate"
+          >
+            >
             {{ 'Basic.appName' | translate }}
           </span>
           <div class="flex items-center space-x-4">
@@ -358,7 +363,13 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               class="hamburger-icon"
               [class.hamburger-active]="mobileMenuOpen"
               (click)="toggleMobileMenu()"
+              (keydown.enter)="toggleMobileMenu()"
+              (keydown.space)="toggleMobileMenu(); $event.preventDefault()"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'Navbar.toggleMenu' | translate"
             >
+              >
               <span class="hamburger-line"></span>
               <span class="hamburger-line"></span>
               <span class="hamburger-line"></span>
@@ -369,16 +380,10 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
 
       @if (mobileMenuOpen) {
         <div class="mobile-nav-menu" @mobileNavMenu>
-          <button
-            class="mobile-nav-item w-full"
-            (click)="navigateToLoginPage()"
-          >
+          <button class="mobile-nav-item w-full" (click)="navigateToLoginPage()">
             {{ 'Basic.login' | translate }}
           </button>
-          <button
-            class="mobile-nav-item w-full"
-            (click)="navigateToRegisterPage()"
-          >
+          <button class="mobile-nav-item w-full" (click)="navigateToRegisterPage()">
             {{ 'Basic.register' | translate }}
           </button>
         </div>
@@ -392,6 +397,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                 class="module-item"
                 [class.active]="currentModule() === module.id"
                 (click)="selectModule(module)"
+                (keydown.enter)="selectModule(module)"
+                (keydown.space)="selectModule(module); $event.preventDefault()"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="module.title | translate"
               >
                 <ng-icon [name]="module.icon" size="24"></ng-icon>
                 <span class="font-medium">{{ module.title | translate }}</span>
@@ -415,7 +425,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                   </button>
                   <button class="auth-button" (click)="logout()">
                     <span class="hover:text-danger-600 dark:hover:text-danger-300">
-                    {{ 'Basic.logout' | translate }}
+                      {{ 'Basic.logout' | translate }}
                     </span>
                   </button>
                 </div>
@@ -458,11 +468,21 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               </button>
 
               @if (languageDropdownOpen) {
-                <div class="mobile-menu" (click)="closeLanguageDropdown()">
+                <div
+                  class="mobile-menu"
+                  (click)="closeLanguageDropdown()"
+                  (keydown.escape)="closeLanguageDropdown()"
+                  role="dialog"
+                  aria-modal="true"
+                  tabindex="-1"
+                >
                   <div class="mobile-menu-overlay" @overlay></div>
                   <div
                     class="mobile-menu-content language-menu"
                     (click)="$event.stopPropagation()"
+                    (keydown.escape)="$event.stopPropagation()"
+                    role="menu"
+                    tabindex="-1"
                     @dropdown
                   >
                     @for (lang of languages; track lang) {
@@ -483,11 +503,21 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       </nav>
 
       @if (menuOpen) {
-        <div class="mobile-menu" (click)="closeMenu()">
+        <div
+          class="mobile-menu"
+          (click)="closeMenu()"
+          (keydown.escape)="closeMenu()"
+          role="dialog"
+          aria-modal="true"
+          tabindex="-1"
+        >
           <div class="mobile-menu-overlay" @overlay></div>
           <div
             class="mobile-menu-content"
             (click)="$event.stopPropagation()"
+            (keydown.escape)="$event.stopPropagation()"
+            role="menu"
+            tabindex="-1"
             @dropdown
           >
             @for (module of modules(); track module.id) {
@@ -495,29 +525,43 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                 class="mobile-module-item"
                 [class.active]="currentModule() === module.id"
                 (click)="selectModuleAndCloseMenu(module)"
+                (keydown.enter)="selectModuleAndCloseMenu(module)"
+                (keydown.space)="selectModuleAndCloseMenu(module); $event.preventDefault()"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="module.title | translate"
               >
                 <ng-icon [name]="module.icon" size="20"></ng-icon>
                 <span>{{ module.title | translate }}</span>
               </div>
             }
             <div class="border-t border-border-primary dark:border-dark-border-primary mt-1">
-              <button (click)="navigateToProfileAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
+              <button
+                (click)="navigateToProfileAndCloseMenu()"
+                class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
+              >
                 {{ 'Navbar.profile' | translate }}
               </button>
-              <button (click)="navigateToNotificationSettingsAndCloseMenu()" class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left">
+              <button
+                (click)="navigateToNotificationSettingsAndCloseMenu()"
+                class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
+              >
                 <div class="flex items-center justify-between w-full">
                   <div class="flex items-center space-x-2">
                     <ng-icon name="heroBell" size="16"></ng-icon>
                     <span>{{ 'Notifications.title' | translate }}</span>
                   </div>
-                  @if(unreadNotificationCount() > 0) {
-                  <span class="counter-badge">
-                    {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
-                  </span>
+                  @if (unreadNotificationCount() > 0) {
+                    <span class="counter-badge">
+                      {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
+                    </span>
                   }
                 </div>
               </button>
-              <button (click)="logout()" class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left">
+              <button
+                (click)="logout()"
+                class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left"
+              >
                 {{ 'Basic.logout' | translate }}
               </button>
             </div>
@@ -532,6 +576,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               class="section-item"
               [class.active]="currentSection() === section.id"
               (click)="selectSection(section)"
+              (keydown.enter)="selectSection(section)"
+              (keydown.space)="selectSection(section); $event.preventDefault()"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="section.title | translate"
             >
               <div class="relative">
                 <ng-icon [name]="section.icon" size="24" class="section-icon"></ng-icon>
@@ -548,6 +597,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
             class="mobile-section-item"
             [class.active]="currentSection() === section.id"
             (click)="selectSection(section)"
+            (keydown.enter)="selectSection(section)"
+            (keydown.space)="selectSection(section); $event.preventDefault()"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="section.title | translate"
           >
             <div class="relative flex items-center">
               <ng-icon [name]="section.icon" size="20" class="mobile-section-icon"></ng-icon>
@@ -559,8 +613,9 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
         @if (sections().length > visibleItemsCount()) {
           <button class="show-more-button" (click)="toggleShowAllSections()">
             <ng-icon [name]="showAllSections ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
-            <span
-              class="ml-1">{{ showAllSections ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate) }}</span>
+            <span class="ml-1">{{
+              showAllSections ? ('Basic.showLess' | translate) : ('Basic.showMore' | translate)
+            }}</span>
           </button>
         }
       </div>
@@ -602,9 +657,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly languages: string[] = ['pl', 'en'];
 
   constructor() {
-    this.routerSubscription = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-    ).subscribe(() => {
+    this.routerSubscription = this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.initializeNavigation();
     });
   }
@@ -728,30 +781,29 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected navigateToLoginPage(): void {
-    this.router.navigate(['/login']).then(
-      () => this.mobileMenuOpen = false,
-    );
+    this.router.navigate(['/login']).then(() => (this.mobileMenuOpen = false));
   }
 
   protected navigateToRegisterPage(): void {
-    this.router.navigate(['/register']).then(
-      () => this.mobileMenuOpen = false,
-    );
+    this.router.navigate(['/register']).then(() => (this.mobileMenuOpen = false));
   }
 
   private initializeNavigation(): void {
     const currentUrl = this.router.url;
 
-    const activeModule = this.defaultModules
-      .slice()
-      .reverse()
-      .find(module => {
-        const moduleRoute = module.route === '/' ? '/' : module.route;
-        const sectionRoutes = module.sections.map(section => section.route);
+    const activeModule =
+      this.defaultModules
+        .slice()
+        .reverse()
+        .find(module => {
+          const moduleRoute = module.route === '/' ? '/' : module.route;
+          const sectionRoutes = module.sections.map(section => section.route);
 
-        return currentUrl.startsWith(moduleRoute)
-          || sectionRoutes.some(route => currentUrl.startsWith(route === '/' ? '/' : route));
-      }) || this.defaultModules[0];
+          return (
+            currentUrl.startsWith(moduleRoute) ||
+            sectionRoutes.some(route => currentUrl.startsWith(route === '/' ? '/' : route))
+          );
+        }) || this.defaultModules[0];
 
     this.currentModule.set(activeModule.id);
     this.sections.set(activeModule.sections);
@@ -772,7 +824,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  private handleOutsideClick = (event: MouseEvent) => {
+  private handleOutsideClick = (event: MouseEvent): void => {
     const target = event.target as HTMLElement;
 
     if (this.languageDropdownOpen && !target.closest('.language-button')) {

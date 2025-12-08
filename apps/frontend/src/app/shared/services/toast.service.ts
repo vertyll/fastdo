@@ -27,11 +27,7 @@ export class ToastService {
     });
   }
 
-  presentToast(
-    message: string,
-    success: boolean = false,
-    position: ToastPositionEnum = ToastPositionEnum.Fixed,
-  ) {
+  presentToast(message: string, success: boolean = false, position: ToastPositionEnum = ToastPositionEnum.Fixed): void {
     this.toastSignal.set({
       message,
       visible: true,
@@ -49,7 +45,7 @@ export class ToastService {
     }
   }
 
-  hideToast() {
+  hideToast(): void {
     this.toastSignal.set(this.initialState);
   }
 }

@@ -4,6 +4,8 @@
     "loadingMore": "Ładowanie więcej...",
     "accept": "Akceptuj",
     "appName": "FastDo",
+    "scrollToTop": "Przewiń do góry",
+    "toggleTheme": "Przełącz motyw",
     "logout": "Wyloguj",
     "login": "Zaloguj",
     "register": "Zarejestruj",
@@ -11,6 +13,7 @@
     "noItemsFound": "Nie znaleziono elementów",
     "enterText": "Wpisz tekst",
     "cancel": "Anuluj",
+    "confirm": "Potwierdź",
     "save": "Zapisz",
     "showMore": "Pokaż więcej",
     "showLess": "Pokaż mniej",
@@ -278,7 +281,9 @@
   "InfoPanel": {
     "userRoles": "Role użytkownika",
     "currentTime": "Aktualny czas",
-    "browserInfo": "Informacje o przeglądarce"
+    "browserInfo": "Informacje o przeglądarce",
+    "closeInfoPanel": "Zamknij panel informacyjny",
+    "openInfoPanel": "Otwórz panel informacyjny"
   },
   "Sidebar": {
     "tasks": "Zadania",
@@ -289,7 +294,9 @@
   "Navbar": {
     "dashboard": "Panel",
     "projects": "Projekty",
-    "profile": "Profil"
+    "profile": "Profil",
+    "home": "Strona główna",
+    "toggleMenu": "Przełącz menu"
   },
   "RemoveItemButton": {
     "areYouSure": " Czy na pewno chcesz usunąć ten element?"
@@ -348,7 +355,8 @@
   "Image": {
     "cutPhoto": "Przytnij zdjęcie",
     "fullPreview": "Podgląd zdjęcia",
-    "removeImage": "Usuń zdjęcie"
+    "removeImage": "Usuń zdjęcie",
+    "uploadImage": "Prześlij zdjęcie"
   },
   "Validation": {
     "required": "To pole jest wymagane",
@@ -357,6 +365,7 @@
   "Notifications": {
     "title": "Powiadomienia",
     "markAllRead": "Oznacz wszystkie jako przeczytane",
+    "markAsRead": "Oznacz jako przeczytane",
     "noNotifications": "Brak powiadomień",
     "settings": "Ustawienia powiadomień",
     "clearAll": "Wyczyść wszystkie",

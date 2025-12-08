@@ -77,7 +77,7 @@ export class NotificationWebSocketService {
         auth: `Bearer ${token}`,
       },
       extraHeaders: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       transports: ['websocket', 'polling'],
       autoConnect: true,
@@ -165,7 +165,7 @@ export class NotificationWebSocketService {
       this.emitWebSocketEvent('websocket-connected');
     });
 
-    this.socket.on('disconnect', reason => {
+    this.socket.on('disconnect', _reason => {
       // console.log('WebSocket disconnected:', reason);
       this.connectionStatus.set('disconnected');
       this.connectionSubject.next(false);
@@ -179,8 +179,9 @@ export class NotificationWebSocketService {
       this.emitWebSocketEvent('websocket-disconnected');
 
       if (
-        error.message?.includes('Authentication') || error.message?.includes('Invalid')
-        || error.message?.includes('Unauthorized')
+        error.message?.includes('Authentication') ||
+        error.message?.includes('Invalid') ||
+        error.message?.includes('Unauthorized')
       ) {
         this.handleAuthError();
       }
@@ -204,7 +205,7 @@ export class NotificationWebSocketService {
       this.handleAuthError();
     });
 
-    this.socket.on('token_warning', data => {
+    this.socket.on('token_warning', _data => {
       // console.log('WebSocket token will expire soon:', data);
       this.handleAuthError();
     });
@@ -218,17 +219,17 @@ export class NotificationWebSocketService {
       }
     });
 
-    this.socket.on('notification.created', data => {
+    this.socket.on('notification.created', _data => {
       // console.log('New notification received:', data);
       this.emitWebSocketEvent('notification-refresh');
     });
 
-    this.socket.on('notification.read', data => {
+    this.socket.on('notification.read', _data => {
       // console.log('Notification marked as read:', data);
       this.emitWebSocketEvent('notification-refresh');
     });
 
-    this.socket.on('notification.updated', data => {
+    this.socket.on('notification.updated', _data => {
       // console.log('Notification updated:', data);
       this.emitWebSocketEvent('notification-refresh');
     });

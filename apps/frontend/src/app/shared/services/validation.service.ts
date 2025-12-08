@@ -8,10 +8,7 @@ import { MessagesConfig } from '../types/validation.type';
 export class ValidationService {
   private readonly translate = inject(TranslateService);
 
-  public getValidatorErrorMessage(
-    validatorName: keyof MessagesConfig,
-    input?: any,
-  ): string {
+  public getValidatorErrorMessage(validatorName: keyof MessagesConfig, input?: any): string {
     const config: MessagesConfig = {
       required: this.translate.instant('FormValidationMessage.required'),
       email: this.translate.instant('FormValidationMessage.email'),
@@ -25,16 +22,12 @@ export class ValidationService {
         ? input.errors[validatorName].join(', ')
         : input.errors[validatorName],
       maxlength: this.translate.instant('FormValidationMessage.maxLength'),
-      passwordMatch: this.translate.instant(
-        'FormValidationMessage.passwordMatch',
-      ),
+      passwordMatch: this.translate.instant('FormValidationMessage.passwordMatch'),
       pattern: this.translate.instant('FormValidationMessage.pattern'),
       minlength: this.translate.instant('FormValidationMessage.minLength', {
         minLength: input.errors?.minlength?.requiredLength,
       }),
-      mismatchingPasswords: this.translate.instant(
-        'FormValidationMessage.mismatchingPasswords',
-      ),
+      mismatchingPasswords: this.translate.instant('FormValidationMessage.mismatchingPasswords'),
     };
 
     return config[validatorName];

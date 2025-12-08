@@ -49,9 +49,8 @@ export class ThemeService {
       this.setTheme('light');
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', e => {
-        this.setTheme(e.matches ? 'dark' : 'light');
-      });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      this.setTheme(e.matches ? 'dark' : 'light');
+    });
   }
 }

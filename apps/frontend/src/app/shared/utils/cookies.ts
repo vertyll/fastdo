@@ -8,8 +8,8 @@ export function setCookie(name: string, value: string, days: number): void {
 export function getCookie(name: string): string | null {
   const nameEQ = name + '=';
   const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i].trim();
+  for (const cookie of ca) {
+    const c = cookie.trim();
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;

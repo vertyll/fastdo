@@ -23,10 +23,10 @@ export class TasksStateService {
     this.apiService.$idle()
       ? LOADING_STATE_VALUE.IDLE
       : this.apiService.$loading()
-      ? LOADING_STATE_VALUE.LOADING
-      : this.apiService.$error()
-      ? LOADING_STATE_VALUE.ERROR
-      : LOADING_STATE_VALUE.SUCCESS
+        ? LOADING_STATE_VALUE.LOADING
+        : this.apiService.$error()
+          ? LOADING_STATE_VALUE.ERROR
+          : LOADING_STATE_VALUE.SUCCESS,
   );
   public error = computed(() => this.apiService.$error());
   public readonly pagination = this.paginationSignal.asReadonly();
@@ -56,9 +56,7 @@ export class TasksStateService {
   public setPagination(pagination: PaginationMeta): void {
     this.paginationSignal.set(pagination);
     // Use hasMore from API if available, otherwise fallback to page calculation
-    const hasMore = pagination.hasMore !== undefined
-      ? pagination.hasMore
-      : pagination.page < pagination.totalPages - 1;
+    const hasMore = pagination.hasMore !== undefined ? pagination.hasMore : pagination.page < pagination.totalPages - 1;
     this.hasMoreSignal.set(hasMore);
   }
 

@@ -13,9 +13,7 @@ export class PlatformService {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly platformSignal = signal<string>(this.platformId as string);
-  private readonly isPlatformBrowserSignal = signal<boolean>(
-    isPlatformBrowser(this.platformId),
-  );
+  private readonly isPlatformBrowserSignal = signal<boolean>(isPlatformBrowser(this.platformId));
   private readonly isMobileSignal = signal<boolean>(false);
 
   public readonly platform = this.platformSignal.asReadonly();

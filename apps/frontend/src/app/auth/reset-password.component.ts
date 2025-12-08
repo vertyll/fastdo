@@ -13,15 +13,11 @@ import { PasswordValidator } from './validators/password.validator';
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    TranslateModule,
-    ErrorMessageComponent,
-    TitleComponent,
-    LabelComponent,
-  ],
+  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, TitleComponent, LabelComponent],
   template: `
-    <div class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-surface-primary dark:bg-dark-surface-primary">
+    <div
+      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-surface-primary dark:bg-dark-surface-primary"
+    >
       <app-title>{{ 'Auth.resetPassword' | translate }}</app-title>
       <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
         <app-label forId="password">{{ 'Auth.newPassword' | translate }}:</app-label>
@@ -33,9 +29,7 @@ import { PasswordValidator } from './validators/password.validator';
           class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
         />
 
-        <app-label forId="confirmPassword">
-          {{ 'Auth.confirmNewPassword' | translate }}:
-        </app-label>
+        <app-label forId="confirmPassword"> {{ 'Auth.confirmNewPassword' | translate }}: </app-label>
         <input
           id="confirmPassword"
           type="password"
@@ -45,9 +39,7 @@ import { PasswordValidator } from './validators/password.validator';
         />
 
         @if (passwordMismatch) {
-          <app-error-message
-            [customMessage]="'Auth.passwordDoNotMatch' | translate"
-          />
+          <app-error-message [customMessage]="'Auth.passwordDoNotMatch' | translate" />
         }
 
         @if (passwordErrors.length > 0) {
@@ -124,9 +116,7 @@ export class ResetPasswordComponent implements OnInit {
           if (err.error && err.error.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = this.translateService.instant(
-              'Auth.unknownError',
-            );
+            this.errorMessage = this.translateService.instant('Auth.unknownError');
           }
         },
       });
@@ -154,9 +144,7 @@ export class ResetPasswordComponent implements OnInit {
       errors.push(this.translateService.instant('Auth.passwordUppercase'));
     }
     if (passwordControl?.hasError('specialCharacter')) {
-      errors.push(
-        this.translateService.instant('Auth.passwordSpecialCharacter'),
-      );
+      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
     }
     return errors;
   }

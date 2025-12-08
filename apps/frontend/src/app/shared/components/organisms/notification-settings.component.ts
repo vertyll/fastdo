@@ -13,13 +13,7 @@ import { TitleComponent } from '../atoms/title.component';
 @Component({
   selector: 'app-notification-settings',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    TranslateModule,
-    TitleComponent,
-    ButtonComponent,
-    CheckboxComponent,
-  ],
+  imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent],
   template: `
     <div class="max-w-2xl mx-auto p-6">
       <app-title>{{ 'Notifications.settings' | translate }}</app-title>
@@ -29,114 +23,90 @@ import { TitleComponent } from '../atoms/title.component';
           <!-- App Notifications -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="appNotifications" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.appNotifications' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('appNotifications')"
-              [id]="'appNotifications'"
-            />
+            <app-checkbox [control]="getControl('appNotifications')" [id]="'appNotifications'" />
           </div>
 
           <!-- Email Notifications -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="emailNotifications" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.emailNotifications' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('emailNotifications')"
-              [id]="'emailNotifications'"
-            />
+            <app-checkbox [control]="getControl('emailNotifications')" [id]="'emailNotifications'" />
           </div>
 
           <!-- Project Invitations -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="projectInvitations" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.projectInvitations' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('projectInvitations')"
-              [id]="'projectInvitations'"
-            />
+            <app-checkbox [control]="getControl('projectInvitations')" [id]="'projectInvitations'" />
           </div>
 
           <!-- Task Assignments -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="taskAssignments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.taskAssignments' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('taskAssignments')"
-              [id]="'taskAssignments'"
-            />
+            <app-checkbox [control]="getControl('taskAssignments')" [id]="'taskAssignments'" />
           </div>
 
           <!-- Task Comments -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="taskComments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.taskComments' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('taskComments')"
-              [id]="'taskComments'"
-            />
+            <app-checkbox [control]="getControl('taskComments')" [id]="'taskComments'" />
           </div>
 
           <!-- Task Status Changes -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="taskStatusChanges" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.taskStatusChanges' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('taskStatusChanges')"
-              [id]="'taskStatusChanges'"
-            />
+            <app-checkbox [control]="getControl('taskStatusChanges')" [id]="'taskStatusChanges'" />
           </div>
 
           <!-- Project Updates -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label for="projectUpdates" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                 {{ 'Notifications.projectUpdates' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('projectUpdates')"
-              [id]="'projectUpdates'"
-            />
+            <app-checkbox [control]="getControl('projectUpdates')" [id]="'projectUpdates'" />
           </div>
 
           <!-- System Notifications -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+              <label
+                for="systemNotifications"
+                class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+              >
                 {{ 'Notifications.systemNotifications' | translate }}
               </label>
             </div>
-            <app-checkbox
-              [control]="getControl('systemNotifications')"
-              [id]="'systemNotifications'"
-            />
+            <app-checkbox [control]="getControl('systemNotifications')" [id]="'systemNotifications'" />
           </div>
         </div>
 
         <!-- Buttons -->
         <div class="flex justify-end gap-4 pt-6">
-          <app-button
-            type="submit"
-            [disabled]="settingsForm.invalid || isSubmitting"
-          >
+          <app-button type="submit" [disabled]="settingsForm.invalid || isSubmitting">
             {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
           </app-button>
         </div>
@@ -187,16 +157,14 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
       systemNotifications: formValue.systemNotifications,
     };
 
-    this.notificationStateService.updateSettings(updateData)
+    this.notificationStateService
+      .updateSettings(updateData)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isSubmitting = false),
+        finalize(() => (this.isSubmitting = false)),
         catchError((error: any) => {
           const errorMessage = error.error?.message || this.translateService.instant('Notifications.settingsError');
-          this.notificationService.showNotification(
-            errorMessage,
-            NotificationTypeEnum.Error,
-          );
+          this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
           return of(null);
         }),
       )

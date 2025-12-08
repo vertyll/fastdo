@@ -18,9 +18,7 @@ export class TermsAndPolicyApiService {
   readonly $error = signal<FetchingError | null>(null);
 
   public getTerms(): Observable<ApiResponse<Terms>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<Terms>>(`${this.URL}/terms-and-policies/terms`),
-    );
+    return this.withLoadingState(this.http.get<ApiResponse<Terms>>(`${this.URL}/terms-and-policies/terms`));
   }
 
   public getPrivacyPolicy(): Observable<ApiResponse<PrivacyPolicy>> {

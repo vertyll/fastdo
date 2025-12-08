@@ -7,12 +7,7 @@ import { InputComponent } from '../atoms/input.component';
 
 @Component({
   selector: 'app-submit-text',
-  imports: [
-    InputComponent,
-    ButtonComponent,
-    ReactiveFormsModule,
-    TranslateModule,
-  ],
+  imports: [InputComponent, ButtonComponent, ReactiveFormsModule, TranslateModule],
   template: `
     <div class="flex items-center gap-4">
       <app-input
@@ -22,9 +17,7 @@ import { InputComponent } from '../atoms/input.component';
         type="text"
         id="submitTextInput"
       ></app-input>
-      <app-button
-        (onClick)="emitText()"
-      >
+      <app-button (clicked)="emitText()">
         {{ 'Basic.add' | translate }}
       </app-button>
     </div>

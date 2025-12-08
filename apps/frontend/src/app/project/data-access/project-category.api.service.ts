@@ -16,17 +16,13 @@ export class ProjectCategoryApiService {
   readonly $loading = signal(false);
   readonly $error = signal<FetchingError | null>(null);
 
-  public getByProjectId(
-    projectId: number,
-  ): Observable<ApiResponse<ProjectCategory[]>> {
+  public getByProjectId(projectId: number): Observable<ApiResponse<ProjectCategory[]>> {
     this.$loading.set(true);
     this.$idle.set(false);
     this.$error.set(null);
 
     return this.withLoadingState(
-      this.http.get<ApiResponse<ProjectCategory[]>>(
-        `${this.URL}/projects/${projectId}/categories`,
-      ),
+      this.http.get<ApiResponse<ProjectCategory[]>>(`${this.URL}/projects/${projectId}/categories`),
     );
   }
 

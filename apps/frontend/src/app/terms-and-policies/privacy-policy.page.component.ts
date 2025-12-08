@@ -13,12 +13,7 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
 @Component({
   selector: 'app-privacy-policy-page',
   standalone: true,
-  imports: [
-    TranslateModule,
-    SpinnerComponent,
-    ErrorMessageComponent,
-    DatePipe,
-  ],
+  imports: [TranslateModule, SpinnerComponent, ErrorMessageComponent, DatePipe],
   template: `
     @switch (stateService.state()) {
       @case (LOADING_STATE_VALUE.LOADING) {
@@ -37,16 +32,18 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
             </h1>
             <div class="mt-spacing-2 text-sm text-text-secondary-light dark:text-text-secondary-dark space-y-spacing-1">
               <p>{{ 'TermsAndPolicies.version' | translate }}: {{ policy().version }}</p>
-              <p>{{ 'TermsAndPolicies.effectiveDate' | translate }}:
-                {{ policy().dateEffective | date:'mediumDate':'':translate.currentLang }}
+              <p>
+                {{ 'TermsAndPolicies.effectiveDate' | translate }}:
+                {{ policy().dateEffective | date: 'mediumDate' : '' : translate.currentLang }}
               </p>
-              <p>{{ 'TermsAndPolicies.lastModified' | translate }}:
-                {{ policy().dateModification | date:'mediumDate':'':translate.currentLang }}
+              <p>
+                {{ 'TermsAndPolicies.lastModified' | translate }}:
+                {{ policy().dateModification | date: 'mediumDate' : '' : translate.currentLang }}
               </p>
             </div>
           </div>
           <div class="space-y-spacing-8">
-            @for(section of sortedSections(); track section.id) {
+            @for (section of sortedSections(); track section.id) {
               <section class="prose dark:prose-invert max-w-none">
                 <h2 class="text-xl font-semibold mb-spacing-4">
                   {{ getCurrentTranslation(section).title }}
@@ -60,7 +57,7 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
                   }
                   @case (LegalSection.LIST) {
                     <ul class="list-disc pl-spacing-6 space-y-spacing-2">
-                      @for(item of getCurrentTranslation(section).items; track item) {
+                      @for (item of getCurrentTranslation(section).items; track item) {
                         <li class="text-text-secondary-light dark:text-text-secondary-dark">{{ item }}</li>
                       }
                     </ul>
@@ -96,8 +93,7 @@ export class PrivacyPolicyPageComponent implements OnInit, OnDestroy {
 
   protected getCurrentTranslation(section: Section): SectionTranslation {
     const currentLang = this.translate.currentLang;
-    return section.translations.find(t => t.language?.code === currentLang)
-      || section.translations[0];
+    return section.translations.find(t => t.language?.code === currentLang) || section.translations[0];
   }
 
   private langChangeSubscription!: Subscription;

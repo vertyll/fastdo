@@ -68,9 +68,7 @@ import { Task, TaskComment } from './models/Task';
   template: `
     <div class="min-h-screen">
       <div class="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-        <header
-          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
-        >
+        <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <button
             (click)="goBack()"
             class="flex items-center gap-2 text-text-secondary dark:text-dark-text-secondary hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors duration-200"
@@ -106,13 +104,9 @@ import { Task, TaskComment } from './models/Task';
             </p>
           </div>
         } @else if (task()) {
-          <main
-            class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 animate-fade-in"
-          >
+          <main class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 animate-fade-in">
             <div class="lg:col-span-2 space-y-6">
-              <div
-                class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border"
-              >
+              <div class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border">
                 <h1
                   class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4"
                 >
@@ -121,14 +115,10 @@ import { Task, TaskComment } from './models/Task';
 
                 @if (task()!.additionalDescription) {
                   <div>
-                    <h2
-                      class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2"
-                    >
+                    <h2 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">
                       {{ 'Task.additionalDescription' | translate }}
                     </h2>
-                    <p
-                      class="text-text-primary dark:text-dark-text-primary leading-relaxed"
-                    >
+                    <p class="text-text-primary dark:text-dark-text-primary leading-relaxed">
                       {{ task()!.additionalDescription }}
                     </p>
                   </div>
@@ -136,31 +126,18 @@ import { Task, TaskComment } from './models/Task';
               </div>
 
               @if (task()?.attachments && task()!.attachments.length > 0) {
-                <div
-                  class="dark:border-dark-border-primary border-border-primary border rounded-lg shadow-soft p-6"
-                >
-                  <h3
-                    class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
-                  >
+                <div class="dark:border-dark-border-primary border-border-primary border rounded-lg shadow-soft p-6">
+                  <h3 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
                     {{ 'Task.attachments' | translate }}
                   </h3>
                   <div class="flex flex-wrap justify-center items-center -m-2">
-                    @for (
-                      attachment of task()!.attachments;
-                      track attachment.id
-                    ) {
+                    @for (attachment of task()!.attachments; track attachment.id) {
                       <div class="w-1/2 md:w-1/4 p-2 flex justify-center">
                         <div
                           class="group relative overflow-hidden rounded-lg border border-border-primary dark:border-dark-border-primary transition-shadow duration-200 hover:shadow-md"
                         >
-                          @if (
-                            isImage(
-                              attachment.filename || attachment.originalName
-                            )
-                          ) {
-                            <div
-                              class="w-full h-32 flex items-center justify-center"
-                            >
+                          @if (isImage(attachment.filename || attachment.originalName)) {
+                            <div class="w-full h-32 flex items-center justify-center">
                               <app-image
                                 [initialUrl]="attachment.url || null"
                                 mode="preview"
@@ -175,17 +152,10 @@ import { Task, TaskComment } from './models/Task';
                               target="_blank"
                               class="flex flex-col items-center justify-center gap-2 p-3 bg-neutral-100 dark:bg-neutral-800 h-32 text-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
                             >
-                              <ng-icon
-                                name="heroDocument"
-                                size="32"
-                                class="text-primary-500"
-                              ></ng-icon>
-                              <span
-                                class="text-xs text-text-secondary dark:text-dark-text-secondary break-all"
-                                >{{
-                                  attachment.filename || attachment.originalName
-                                }}</span
-                              >
+                              <ng-icon name="heroDocument" size="32" class="text-primary-500"></ng-icon>
+                              <span class="text-xs text-text-secondary dark:text-dark-text-secondary break-all">{{
+                                attachment.filename || attachment.originalName
+                              }}</span>
                             </a>
                           }
                         </div>
@@ -195,12 +165,8 @@ import { Task, TaskComment } from './models/Task';
                 </div>
               }
 
-              <div
-                class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border"
-              >
-                <h2
-                  class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4"
-                >
+              <div class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border">
+                <h2 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
                   {{ 'Task.comments' | translate }}
                   @if (task()!.comments && task()!.comments.length > 0) {
                     <span
@@ -210,11 +176,7 @@ import { Task, TaskComment } from './models/Task';
                   }
                 </h2>
 
-                <form
-                  [formGroup]="commentForm"
-                  (ngSubmit)="onSubmitComment()"
-                  class="mb-8"
-                >
+                <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="mb-8">
                   <div class="mb-3">
                     <app-textarea
                       id="commentContent"
@@ -262,9 +224,7 @@ import { Task, TaskComment } from './models/Task';
                                 <app-textarea
                                   id="editingCommentContent"
                                   [control]="editingCommentControl"
-                                  [placeholder]="
-                                    'Task.commentPlaceholder' | translate
-                                  "
+                                  [placeholder]="'Task.commentPlaceholder' | translate"
                                   [rows]="3"
                                 ></app-textarea>
                               }
@@ -274,9 +234,7 @@ import { Task, TaskComment } from './models/Task';
                                   [maxFiles]="maxAttachmentsLimit"
                                   [maxSizeBytes]="5242880"
                                   accept="image/jpeg,image/png,image/gif,application/pdf,text/plain"
-                                  (filesChange)="
-                                    onEditCommentFilesChange($event)
-                                  "
+                                  (filesChange)="onEditCommentFilesChange($event)"
                                 />
                               </div>
                               <div class="flex flex-wrap gap-2 mb-2">
@@ -292,9 +250,7 @@ import { Task, TaskComment } from './models/Task';
                                     ></ng-icon>
                                     <span
                                       class="text-xs font-medium text-text-primary dark:text-dark-text-primary break-all flex-1 truncate"
-                                      >{{
-                                        att.originalName || att.filename
-                                      }}</span
+                                      >{{ att.originalName || att.filename }}</span
                                     >
                                     <button
                                       type="button"
@@ -307,19 +263,11 @@ import { Task, TaskComment } from './models/Task';
                                       "
                                     >
                                       @if (att._markedForDelete) {
-                                        <ng-icon
-                                            name="heroTrash"
-                                            size="16"
-                                            class="align-middle"
-                                        ></ng-icon>
+                                        <ng-icon name="heroTrash" size="16" class="align-middle"></ng-icon>
                                       }
 
                                       @if (!att._markedForDelete) {
-                                        <ng-icon
-                                            name="heroArrowLeft"
-                                            size="16"
-                                            class="align-middle"
-                                        ></ng-icon>
+                                        <ng-icon name="heroArrowLeft" size="16" class="align-middle"></ng-icon>
                                       }
                                     </button>
                                   </div>
@@ -328,7 +276,7 @@ import { Task, TaskComment } from './models/Task';
                               <div class="flex gap-2">
                                 <app-button
                                   type="button"
-                                  (onClick)="onSaveEditComment()"
+                                  (clicked)="onSaveEditComment()"
                                   [cssClass]="
                                     'px-4 py-1.5 bg-info-600 text-white rounded-md hover:bg-info-700 text-sm font-semibold transition-colors'
                                   "
@@ -337,7 +285,7 @@ import { Task, TaskComment } from './models/Task';
                                 </app-button>
                                 <app-button
                                   type="button"
-                                  (onClick)="onCancelEditComment()"
+                                  (clicked)="onCancelEditComment()"
                                   [cssClass]="
                                     'px-4 py-1.5 bg-neutral-500 text-white rounded-md hover:bg-neutral-600 text-sm font-semibold transition-colors'
                                   "
@@ -383,40 +331,19 @@ import { Task, TaskComment } from './models/Task';
                                   {{ (comment.dateModification | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
                                 </span>
                               </div>
-                              <p
-                                class="text-text-primary dark:text-dark-text-primary break-words"
-                              >
+                              <p class="text-text-primary dark:text-dark-text-primary break-words">
                                 {{ comment.content }}
                               </p>
 
-                              @if (
-                                comment.attachments &&
-                                comment.attachments.length > 0
-                              ) {
-                                <div
-                                  class="flex flex-wrap justify-start -m-1 mt-2"
-                                >
-                                  @for (
-                                    attachment of comment.attachments;
-                                    track attachment.id
-                                  ) {
+                              @if (comment.attachments && comment.attachments.length > 0) {
+                                <div class="flex flex-wrap justify-start -m-1 mt-2">
+                                  @for (attachment of comment.attachments; track attachment.id) {
                                     <div class="w-1/2 sm:w-1/3 md:w-1/4 p-1">
-                                      <div
-                                        class="relative overflow-hidden rounded-md w-full"
-                                      >
-                                        @if (
-                                          isImage(
-                                            attachment.filename ||
-                                              attachment.originalName
-                                          )
-                                        ) {
-                                          <div
-                                            class="w-full overflow-hidden rounded-md"
-                                          >
+                                      <div class="relative overflow-hidden rounded-md w-full">
+                                        @if (isImage(attachment.filename || attachment.originalName)) {
+                                          <div class="w-full overflow-hidden rounded-md">
                                             <app-image
-                                              [initialUrl]="
-                                                attachment.url || null
-                                              "
+                                              [initialUrl]="attachment.url || null"
                                               mode="preview"
                                               format="square"
                                               size="md"
@@ -436,10 +363,7 @@ import { Task, TaskComment } from './models/Task';
                                             ></ng-icon>
                                             <span
                                               class="text-xs text-text-primary dark:text-dark-text-primary truncate"
-                                              >{{
-                                                attachment.filename ||
-                                                  attachment.originalName
-                                              }}</span
+                                              >{{ attachment.filename || attachment.originalName }}</span
                                             >
                                           </a>
                                         }
@@ -476,19 +400,12 @@ import { Task, TaskComment } from './models/Task';
                       class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
-                      <h4
-                        class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                      >
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                         {{ 'Task.status' | translate }}
                       </h4>
                       <div class="flex items-center gap-2 mt-1">
-                        <div
-                          class="w-3 h-3 rounded-full"
-                          [style.background-color]="task()?.status?.color"
-                        ></div>
-                        <p
-                          class="text-md font-semibold text-text-primary dark:text-dark-text-primary"
-                        >
+                        <div class="w-3 h-3 rounded-full" [style.background-color]="task()?.status?.color"></div>
+                        <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">
                           {{ getTranslatedName(task()?.status) }}
                         </p>
                       </div>
@@ -504,19 +421,12 @@ import { Task, TaskComment } from './models/Task';
                       class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
-                      <h4
-                        class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                      >
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                         {{ 'Task.priority' | translate }}
                       </h4>
                       <div class="flex items-center gap-2 mt-1">
-                        <div
-                          class="w-3 h-3 rounded-full"
-                          [style.background-color]="task()!.priority.color"
-                        ></div>
-                        <p
-                          class="text-md font-semibold text-text-primary dark:text-dark-text-primary"
-                        >
+                        <div class="w-3 h-3 rounded-full" [style.background-color]="task()!.priority.color"></div>
+                        <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">
                           {{ getTranslatedName(task()!.priority) }}
                         </p>
                       </div>
@@ -532,14 +442,10 @@ import { Task, TaskComment } from './models/Task';
                       class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
-                      <h4
-                        class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                      >
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                         {{ 'Task.project' | translate }}
                       </h4>
-                      <p
-                        class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1 break-words"
-                      >
+                      <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1 break-words">
                         {{ task()?.project?.name }}
                       </p>
                     </div>
@@ -553,21 +459,12 @@ import { Task, TaskComment } from './models/Task';
                     class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                   ></ng-icon>
                   <div class="flex-1 min-w-0">
-                    <h4
-                      class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                    >
+                    <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Task.timeTracking' | translate }}
                     </h4>
-                    <div
-                      class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1"
-                    >
-                      <span [title]="'Task.workedTime' | translate">{{
-                        formatHours(task()!.workedTime)
-                      }}</span>
-                      <span
-                        class="mx-1 text-text-muted dark:text-dark-text-muted font-normal"
-                        >/</span
-                      >
+                    <div class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1">
+                      <span [title]="'Task.workedTime' | translate">{{ formatHours(task()!.workedTime) }}</span>
+                      <span class="mx-1 text-text-muted dark:text-dark-text-muted font-normal">/</span>
                       <span [title]="'Task.priceEstimation' | translate">{{
                         formatHours(task()!.priceEstimation)
                       }}</span>
@@ -582,27 +479,17 @@ import { Task, TaskComment } from './models/Task';
                     class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                   ></ng-icon>
                   <div class="flex-1 min-w-0">
-                    <h4
-                      class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                    >
+                    <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Task.dates' | translate }}
                     </h4>
-                    <div
-                      class="text-sm text-text-primary dark:text-dark-text-primary mt-1 space-y-1"
-                    >
+                    <div class="text-sm text-text-primary dark:text-dark-text-primary mt-1 space-y-1">
                       <p>
-                        <span class="font-semibold"
-                          >{{ 'Task.created' | translate }}:</span
-                        >
+                        <span class="font-semibold">{{ 'Task.created' | translate }}:</span>
                         {{ task()!.dateCreation | customDate: 'dd.MM.yyyy' }}
                       </p>
                       <p>
-                        <span class="font-semibold"
-                          >{{ 'Task.modified' | translate }}:</span
-                        >
-                        {{
-                          (task()!.dateModification | customDate: 'dd.MM.yyyy') || '-'
-                        }}
+                        <span class="font-semibold">{{ 'Task.modified' | translate }}:</span>
+                        {{ (task()!.dateModification | customDate: 'dd.MM.yyyy') || '-' }}
                       </p>
                     </div>
                   </div>
@@ -615,30 +502,19 @@ import { Task, TaskComment } from './models/Task';
                     class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                   ></ng-icon>
                   <div class="flex-1 min-w-0">
-                    <h4
-                      class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                    >
+                    <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Task.people' | translate }}
                     </h4>
                     <div class="mt-2 space-y-2 text-sm">
-                      <p
-                        class="font-semibold text-text-primary dark:text-dark-text-primary break-words"
-                      >
+                      <p class="font-semibold text-text-primary dark:text-dark-text-primary break-words">
                         {{ 'Task.createdBy' | translate }}:
-                        <span class="font-normal">{{
-                          task()!.createdBy.email
-                        }}</span>
+                        <span class="font-normal">{{ task()!.createdBy.email }}</span>
                       </p>
 
-                      <h5
-                        class="font-semibold text-text-primary dark:text-dark-text-primary pt-1"
-                      >
+                      <h5 class="font-semibold text-text-primary dark:text-dark-text-primary pt-1">
                         {{ 'Task.assignedUsers' | translate }}:
                       </h5>
-                      @if (
-                        task()!.assignedUsers &&
-                        task()!.assignedUsers.length > 0
-                      ) {
+                      @if (task()!.assignedUsers && task()!.assignedUsers.length > 0) {
                         <div class="flex flex-wrap gap-2">
                           @for (user of task()!.assignedUsers; track user.id) {
                             <span
@@ -648,9 +524,7 @@ import { Task, TaskComment } from './models/Task';
                           }
                         </div>
                       } @else {
-                        <p
-                          class="text-xs text-text-muted dark:text-dark-text-muted italic"
-                        >
+                        <p class="text-xs text-text-muted dark:text-dark-text-muted italic">
                           {{ 'Task.noAssignedUsers' | translate }}
                         </p>
                       }
@@ -666,29 +540,19 @@ import { Task, TaskComment } from './models/Task';
                       class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
-                      <h4
-                        class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary"
-                      >
+                      <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                         {{ 'Task.categories' | translate }}
                       </h4>
                       <div class="flex flex-wrap gap-2 mt-2">
-                        @for (
-                          category of task()!.categories;
-                          track category.id
-                        ) {
+                        @for (category of task()!.categories; track category.id) {
                           <div
                             class="flex items-center gap-2 rounded-full px-2.5 py-1"
                             [style.background-color]="category.color + '20'"
                           >
-                            <div
-                              class="w-2.5 h-2.5 rounded-full"
-                              [style.background-color]="category.color"
-                            ></div>
-                            <span
-                              class="text-xs font-semibold"
-                              [style.color]="category.color"
-                              >{{ getTranslatedName(category) }}</span
-                            >
+                            <div class="w-2.5 h-2.5 rounded-full" [style.background-color]="category.color"></div>
+                            <span class="text-xs font-semibold" [style.color]="category.color">{{
+                              getTranslatedName(category)
+                            }}</span>
                           </div>
                         }
                       </div>
@@ -702,9 +566,7 @@ import { Task, TaskComment } from './models/Task';
           <div
             class="text-center py-20 rounded-lg shadow-soft dark:border-dark-border-primary border-border-primary border"
           >
-            <h2
-              class="text-2xl font-bold text-text-primary dark:text-dark-text-primary"
-            >
+            <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
               {{ 'Task.notFound' | translate }}
             </h2>
             <p class="text-text-muted dark:text-dark-text-muted mt-2">
@@ -755,12 +617,10 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTask();
-    this.translateService.onLangChange
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(({ lang }) => {
-        this.currentLang = lang;
-        this.task.set(this.task());
-      });
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(({ lang }) => {
+      this.currentLang = lang;
+      this.task.set(this.task());
+    });
   }
 
   ngOnDestroy(): void {
@@ -817,9 +677,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     const task = this.task();
     const projectId = task?.project?.id || this.route.snapshot.paramMap.get('id');
     if (task && projectId) {
-      this.router
-        .navigate(['/projects', projectId, 'tasks', 'edit', task.id])
-        .then();
+      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.id]).then();
     }
   }
 
@@ -923,16 +781,11 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   protected onEditComment(commentId: number, content: string): void {
-    this.editingCommentControl = new FormControl(content, [
-      Validators.required,
-      Validators.minLength(1),
-    ]);
+    this.editingCommentControl = new FormControl(content, [Validators.required, Validators.minLength(1)]);
     this.editingCommentId = commentId;
     this.editingCommentContent = content;
     const comment = this.task()?.comments?.find(c => c.id === commentId);
-    this.editingCommentExistingAttachments = comment?.attachments
-      ? [...comment.attachments]
-      : [];
+    this.editingCommentExistingAttachments = comment?.attachments ? [...comment.attachments] : [];
     this.editingCommentAttachments = [];
   }
 
@@ -945,11 +798,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   protected onSaveEditComment(): void {
-    if (
-      !this.editingCommentId
-      || !this.editingCommentControl
-      || this.editingCommentControl.invalid
-    ) {
+    if (!this.editingCommentId || !this.editingCommentControl || this.editingCommentControl.invalid) {
       return;
     }
 
@@ -960,9 +809,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       formData.append('attachments', file.file);
     });
 
-    const deletedIds = this.editingCommentExistingAttachments
-      .filter(a => a._markedForDelete)
-      .map(a => a.id);
+    const deletedIds = this.editingCommentExistingAttachments.filter(a => a._markedForDelete).map(a => a.id);
     if (deletedIds.length > 0) {
       formData.append('attachmentsToDelete', JSON.stringify(deletedIds));
     }

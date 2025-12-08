@@ -18,13 +18,14 @@ export class NotificationService {
     this.snackBar.open(message, action, {
       duration: duration,
       verticalPosition: verticalPosition,
-      panelClass: type === NotificationTypeEnum.Info
-        ? ['info-snackbar']
-        : type === NotificationTypeEnum.Success
-        ? ['success-snackbar']
-        : type === NotificationTypeEnum.Error
-        ? ['error-snackbar']
-        : ['info'],
+      panelClass:
+        type === NotificationTypeEnum.Info
+          ? ['info-snackbar']
+          : type === NotificationTypeEnum.Success
+            ? ['success-snackbar']
+            : type === NotificationTypeEnum.Error
+              ? ['error-snackbar']
+              : ['info'],
     });
   }
 }

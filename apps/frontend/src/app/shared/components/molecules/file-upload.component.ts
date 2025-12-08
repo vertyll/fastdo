@@ -18,23 +18,13 @@ export interface FileUploadItem {
 
 @Component({
   selector: 'app-file-upload',
-  imports: [
-    CommonModule,
-    NgIconComponent,
-    TranslateModule,
-    ButtonComponent,
-    ErrorMessageComponent,
-  ],
+  imports: [CommonModule, NgIconComponent, TranslateModule, ButtonComponent, ErrorMessageComponent],
   viewProviders: [provideIcons({ heroDocument, heroTrash, heroXMark })],
   template: `
     <div class="space-y-4">
       <!-- File Input -->
       <div class="flex items-center gap-2">
-        <app-button
-          type="button"
-          (click)="fileInput.click()"
-          [disabled]="disabled()"
-        >
+        <app-button type="button" (click)="fileInput.click()" [disabled]="disabled()">
           {{ 'Basic.selectFiles' | translate }}
         </app-button>
         <input
@@ -62,10 +52,7 @@ export interface FileUploadItem {
             @for (fileItem of files(); track fileItem.file.name) {
               <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <div class="flex items-center gap-3">
-                  <ng-icon
-                    name="heroDocument"
-                    class="w-5 h-5 text-blue-500"
-                  />
+                  <ng-icon name="heroDocument" class="w-5 h-5 text-blue-500" />
                   <div>
                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {{ fileItem.file.name }}
@@ -119,7 +106,7 @@ export class FileUploadComponent {
   disabled = input<boolean>(false);
 
   filesChange = output<FileUploadItem[]>();
-  error = output<string[]>();
+  errorOccurred = output<string[]>();
 
   files = signal<FileUploadItem[]>([]);
   errors = signal<string[]>([]);
@@ -141,10 +128,12 @@ export class FileUploadComponent {
 
     Array.from(selectedFiles).forEach(file => {
       if (this.maxSizeBytes() > 0 && file.size > this.maxSizeBytes()) {
-        newErrors.push(this.translate.instant('Basic.fileSizeExceeded', {
-          name: file.name,
-          size: this.formatFileSize(this.maxSizeBytes()),
-        }));
+        newErrors.push(
+          this.translate.instant('Basic.fileSizeExceeded', {
+            name: file.name,
+            size: this.formatFileSize(this.maxSizeBytes()),
+          }),
+        );
         return;
       }
 
@@ -161,7 +150,7 @@ export class FileUploadComponent {
 
     if (newErrors.length > 0) {
       this.errors.set(newErrors);
-      this.error.emit(newErrors);
+      this.errorOccurred.emit(newErrors);
     } else {
       this.errors.set([]);
     }

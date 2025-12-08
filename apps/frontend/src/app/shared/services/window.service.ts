@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Signal, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class WindowService {
     });
   }
 
-  getWindowWidth() {
+  getWindowWidth(): Signal<number> {
     return this.windowWidth.asReadonly();
   }
 }

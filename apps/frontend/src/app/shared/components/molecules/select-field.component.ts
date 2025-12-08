@@ -5,19 +5,10 @@ import { SelectFilterComponent } from '../atoms/select.component';
 
 @Component({
   selector: 'app-select-field',
-  imports: [
-    ReactiveFormsModule,
-    SelectFilterComponent,
-    LabelComponent,
-  ],
+  imports: [ReactiveFormsModule, SelectFilterComponent, LabelComponent],
   template: `
     <div class="relative">
-      <app-select 
-        [control]="control()" 
-        [id]="id()" 
-        [options]="options()" 
-        [placeholder]="placeholder()" 
-      />
+      <app-select [control]="control()" [id]="id()" [options]="options()" [placeholder]="placeholder()" />
       <app-label [forId]="id()" [isField]="true">{{ label() }}</app-label>
     </div>
   `,

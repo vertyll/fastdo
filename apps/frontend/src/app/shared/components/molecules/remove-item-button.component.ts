@@ -12,9 +12,10 @@ import { ModalService } from '../../services/modal.service';
   template: `
     <div class="relative">
       <div
-        (click)="removeMode && $event.stopPropagation()"
         class="absolute inset-0 flex items-center justify-center bg-danger-700 text-white rounded-md transition-opacity duration-300"
         [class.hidden]="!removeMode || mode() === 'modal'"
+        role="alert"
+        aria-live="polite"
       >
         <span class="text-sm font-semibold">
           {{ 'RemoveItemButton.areYouSure' | translate }}
@@ -22,22 +23,25 @@ import { ModalService } from '../../services/modal.service';
         <button
           (click)="removeMode = false; $event.stopPropagation()"
           class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
+          [attr.aria-label]="'Basic.cancel' | translate"
         >
-          <ng-icon name="heroXMark" size="18"/>
+          <ng-icon name="heroXMark" size="18" />
         </button>
         <button
           (click)="confirm.emit(); removeMode = false; $event.stopPropagation()"
           class="flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:scale-125"
+          [attr.aria-label]="'Basic.confirm' | translate"
         >
-          <ng-icon name="heroCheck" size="18"/>
+          <ng-icon name="heroCheck" size="18" />
         </button>
       </div>
       @if (!removeMode) {
         <button
           (click)="toggleRemoveMode(); $event.stopPropagation()"
           class="flex items-center justify-center p-2 rounded-md transition-all duration-200 text-text-primary dark:text-dark-text-primary hover:scale-125"
+          [attr.aria-label]="'Basic.remove' | translate"
         >
-          <ng-icon name="heroTrash" size="18"/>
+          <ng-icon name="heroTrash" size="18" />
         </button>
       }
     </div>
