@@ -326,7 +326,6 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
             tabindex="0"
             [attr.aria-label]="'Navbar.home' | translate"
           >
-            >
             {{ 'Basic.appName' | translate }}
           </span>
           <div class="flex items-center space-x-4">
@@ -369,7 +368,6 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               tabindex="0"
               [attr.aria-label]="'Navbar.toggleMenu' | translate"
             >
-              >
               <span class="hamburger-line"></span>
               <span class="hamburger-line"></span>
               <span class="hamburger-line"></span>

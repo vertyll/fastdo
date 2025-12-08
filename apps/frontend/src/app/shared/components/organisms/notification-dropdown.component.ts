@@ -111,7 +111,6 @@ import { NotificationDto } from '../../types/notification.type';
                         ('Notifications.markAsRead' | translate) + ': ' + getTranslation(notification).title
                       "
                     >
-                      >
                       <div class="flex items-start justify-between">
                         <div class="flex-1 min-w-0">
                           <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">

@@ -28,7 +28,6 @@ import { TranslateModule } from '@ngx-translate/core';
             panelOpen() ? ('InfoPanel.closeInfoPanel' | translate) : ('InfoPanel.openInfoPanel' | translate)
           "
         >
-          >
           @if (!panelOpen()) {
             <ng-icon name="heroArrowLeft"></ng-icon>
           } @else {

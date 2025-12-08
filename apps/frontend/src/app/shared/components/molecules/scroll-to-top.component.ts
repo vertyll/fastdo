@@ -14,7 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
         class="fixed bottom-12 right-8 px-3 py-2 bg-primary-500 border border-neutral-900 text-white rounded-lg shadow-lg hover:bg-primary-600 transition-all duration-300 animate-fade-in"
         [attr.aria-label]="'Basic.scrollToTop' | translate"
       >
-        >
         <ng-icon name="heroChevronUp" class="w-6 h-6" />
       </button>
     }

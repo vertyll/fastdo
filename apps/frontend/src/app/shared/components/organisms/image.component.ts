@@ -86,7 +86,6 @@ export type ImageSize = 'sm' | 'md' | 'lg';
                 class="text-text-secondary hover:text-text-primary dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
                 [attr.aria-label]="'Basic.close' | translate"
               >
-                >
                 <ng-icon name="heroXMark" size="24" />
               </button>
             </div>
@@ -110,7 +109,6 @@ export type ImageSize = 'sm' | 'md' | 'lg';
                 class="text-text-secondary hover:text-text-primary dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
                 [attr.aria-label]="'Basic.close' | translate"
               >
-                >
                 <ng-icon name="heroXMark" size="24" />
               </button>
             </div>
