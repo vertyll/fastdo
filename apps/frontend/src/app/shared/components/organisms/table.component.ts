@@ -157,7 +157,7 @@ export interface TableConfig {
                   <button
                     (click)="sort(column.key)"
                     class="sort-button"
-                    [attr.aria-label]="'Sort by ' + (column.label | translate)"
+                    [attr.aria-label]="('Table.sortBy' | translate) + ' ' + (column.label | translate)"
                   >
                     @if (currentSort?.column === column.key) {
                       @if (currentSort?.direction === 'asc') {

@@ -266,7 +266,9 @@ import { NotificationDto } from '../../types/notification.type';
                         (keydown.space)="markAsRead(notification); $event.preventDefault()"
                         role="button"
                         tabindex="0"
-                        [attr.aria-label]="'Mark as read: ' + getTranslation(notification).title"
+                        [attr.aria-label]="
+                          ('Notifications.markAsRead' | translate) + ': ' + getTranslation(notification).title
+                        "
                       >
                         <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
                           {{ getTranslation(notification).title }}

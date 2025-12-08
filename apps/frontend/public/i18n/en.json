@@ -311,6 +311,9 @@
   "EditableMultiSelect": {
     "addTagsAdHoc": "Add tag"
   },
+  "Table": {
+    "sortBy": "Sort by"
+  },
   "FormValidationMessage": {
     "required": "This field is required",
     "minLength": "This field must be at least {minLength} characters long",
