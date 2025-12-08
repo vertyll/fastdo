@@ -81,36 +81,44 @@ export class CreateProjectDto {
   icon?: MultipartFile | null;
 
   @ApiProperty({
-    description: 'Array of category names to create for this project',
+    description: 'Array of categories with colors to create for this project',
     required: false,
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        color: { type: 'string' },
+      },
+    },
   })
   @IsOptional()
-  @MultipartArray()
+  @MultipartJSON()
   @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return [value];
-    }
     return Array.isArray(value) ? value : [];
   })
   @IsArray()
-  @IsString({ each: true })
-  categories?: string[];
+  categories?: Array<{ name: string; color?: string }>;
 
   @ApiProperty({
-    description: 'Array of status names to create for this project',
+    description: 'Array of statuses with colors to create for this project',
     required: false,
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        color: { type: 'string' },
+      },
+    },
   })
   @IsOptional()
-  @MultipartArray()
+  @MultipartJSON()
   @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return [value];
-    }
     return Array.isArray(value) ? value : [];
   })
   @IsArray()
-  @IsString({ each: true })
-  statuses?: string[];
+  statuses?: Array<{ name: string; color?: string }>;
 
   @ApiProperty({
     description: 'Array of users with roles to invite to this project',

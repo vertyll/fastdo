@@ -31,10 +31,10 @@ export class ProjectDetailsResponseDto {
   type?: { id: number; code: string; translations: TranslationDto[] } | undefined;
 
   @ApiProperty({ type: [Object], required: false })
-  categories?: Array<{ id: number; name: string }>;
+  categories?: Array<{ id: number; name: string; color: string }>;
 
   @ApiProperty({ type: [Object], required: false })
-  statuses?: Array<{ id: number; name: string }>;
+  statuses?: Array<{ id: number; name: string; color: string }>;
 
   @ApiProperty({ type: [String], required: false })
   permissions?: string[];

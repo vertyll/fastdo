@@ -31,6 +31,7 @@ import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
+import { getContrastColor } from '../shared/utils/color.utils';
 import { TasksService } from './data-access/task.service';
 import { Task, TaskComment } from './models/Task';
 
@@ -546,11 +547,10 @@ import { Task, TaskComment } from './models/Task';
                       <div class="flex flex-wrap gap-2 mt-2">
                         @for (category of task()!.categories; track category.id) {
                           <div
-                            class="flex items-center gap-2 rounded-full px-2.5 py-1"
-                            [style.background-color]="category.color + '20'"
+                            class="flex items-center gap-2 rounded-full px-3 py-1.5"
+                            [style.background-color]="category.color"
                           >
-                            <div class="w-2.5 h-2.5 rounded-full" [style.background-color]="category.color"></div>
-                            <span class="text-xs font-semibold" [style.color]="category.color">{{
+                            <span class="text-xs font-semibold" [style.color]="getContrastColor(category.color)">{{
                               getTranslatedName(category)
                             }}</span>
                           </div>
@@ -907,5 +907,9 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       if (found && found.name) return found.name;
     }
     return obj.name || '';
+  }
+
+  protected getContrastColor(backgroundColor: string): string {
+    return getContrastColor(backgroundColor);
   }
 }

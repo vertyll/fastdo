@@ -39,6 +39,25 @@ import { Project } from './models/Project';
     ImageComponent,
     HasProjectPermissionDirective,
   ],
+  styles: `
+    input[type='color'] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-color: transparent;
+    }
+    input[type='color']::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type='color']::-webkit-color-swatch {
+      border: none;
+      border-radius: 0.375rem;
+    }
+    input[type='color']::-moz-color-swatch {
+      border: none;
+      border-radius: 0.375rem;
+    }
+  `,
   template: `
     <div class="max-w-2xl mx-auto p-6">
       <app-title>
@@ -125,7 +144,7 @@ import { Project } from './models/Project';
                       type="color"
                       [id]="'category-color-' + $index"
                       [formControl]="getCategoryColorControl($index)"
-                      class="w-12 h-11 border border-border-primary dark:border-dark-border-primary rounded-md cursor-pointer"
+                      class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
                       [title]="'Project.selectColor' | translate"
                     />
                   </div>
@@ -173,7 +192,7 @@ import { Project } from './models/Project';
                       type="color"
                       [id]="'status-color-' + $index"
                       [formControl]="getStatusColorControl($index)"
-                      class="w-12 h-11 border border-border-primary dark:border-dark-border-primary rounded-md cursor-pointer bg-background-primary dark:bg-dark-background-primary"
+                      class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
                       [title]="'Project.selectColor' | translate"
                     />
                   </div>
@@ -731,7 +750,10 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     if (formValue.categories && Array.isArray(formValue.categories)) {
       const categories = formValue.categories
         .filter((cat: any) => cat.name && cat.name.trim())
-        .map((cat: any) => cat.name.trim());
+        .map((cat: any) => ({
+          name: cat.name.trim(),
+          color: cat.color || '#3B82F6',
+        }));
       formData.append('categories', JSON.stringify(categories));
     } else {
       formData.append('categories', JSON.stringify([]));
@@ -740,7 +762,10 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     if (formValue.statuses && Array.isArray(formValue.statuses)) {
       const statuses = formValue.statuses
         .filter((status: any) => status.name && status.name.trim())
-        .map((status: any) => status.name.trim());
+        .map((status: any) => ({
+          name: status.name.trim(),
+          color: status.color || '#10B981',
+        }));
       formData.append('statuses', JSON.stringify(statuses));
     } else {
       formData.append('statuses', JSON.stringify([]));

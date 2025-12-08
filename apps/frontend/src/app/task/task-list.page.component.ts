@@ -18,6 +18,7 @@ import { TableColumn, TableComponent, TableConfig } from '../shared/components/o
 import { TasksListFiltersConfig } from '../shared/types/filter.type';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { GetAllTasksSearchParams } from '../shared/types/task.type';
+import { getContrastColor } from '../shared/utils/color.utils';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
@@ -77,7 +78,9 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
       <div class="flex items-center justify-center">
         @if (task.status) {
           <span
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+            [style.background-color]="task.status.color"
+            [style.color]="getContrastColor(task.status.color)"
           >
             {{ getStatusName(task.status) }}
           </span>
@@ -93,7 +96,9 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
           <div class="flex flex-wrap gap-1">
             @for (category of task.categories; track category.id) {
               <span
-                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200"
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                [style.background-color]="category.color"
+                [style.color]="getContrastColor(category.color)"
               >
                 {{ getCategoryName(category) }}
               </span>
@@ -584,6 +589,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
 
     return status.name || `Status #${status.id}`;
+  }
+
+  protected getContrastColor(backgroundColor: string): string {
+    return getContrastColor(backgroundColor);
   }
 
   protected getCategoryName(category: any): string {

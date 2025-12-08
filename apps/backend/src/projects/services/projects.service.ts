@@ -278,11 +278,11 @@ export class ProjectsService {
   private async createCategoriesInTransaction(
     queryRunner: QueryRunner,
     projectId: number,
-    categories: string[],
+    categories: Array<{ name: string; color?: string }>,
   ): Promise<void> {
-    for (const categoryName of categories) {
+    for (const categoryData of categories) {
       const category = queryRunner.manager.getRepository(ProjectCategory).create({
-        color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+        color: categoryData.color || '#' + Math.floor(Math.random() * 16777215).toString(16),
         project: { id: projectId },
       });
 
@@ -291,7 +291,7 @@ export class ProjectsService {
 
       for (const language of languages) {
         const translation = queryRunner.manager.getRepository(ProjectCategoryTranslation).create({
-          name: categoryName,
+          name: categoryData.name,
           description: null,
           projectCategory: savedCategory,
           language: language,
@@ -305,11 +305,11 @@ export class ProjectsService {
   private async createStatusesInTransaction(
     queryRunner: QueryRunner,
     projectId: number,
-    statuses: string[],
+    statuses: Array<{ name: string; color?: string }>,
   ): Promise<void> {
-    for (const statusName of statuses) {
+    for (const statusData of statuses) {
       const status = queryRunner.manager.getRepository(ProjectStatus).create({
-        color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+        color: statusData.color || '#' + Math.floor(Math.random() * 16777215).toString(16),
         project: { id: projectId },
       });
 
@@ -319,7 +319,7 @@ export class ProjectsService {
 
       for (const language of languages) {
         const translation = queryRunner.manager.getRepository(ProjectStatusTranslation).create({
-          name: statusName,
+          name: statusData.name,
           description: null,
           projectStatus: savedStatus,
           language: language,
@@ -728,6 +728,7 @@ export class ProjectsService {
       ? project.categories.map(cat => ({
           id: cat.id,
           name: (cat as any).name ?? cat.translations?.[0]?.name ?? '',
+          color: cat.color,
         }))
       : [];
 
@@ -735,6 +736,7 @@ export class ProjectsService {
       ? project.statuses.map(status => ({
           id: status.id,
           name: (status as any).name ?? status.translations?.[0]?.name ?? '',
+          color: status.color,
         }))
       : [];
 

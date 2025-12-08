@@ -6,11 +6,13 @@ export interface TaskPriority {
 export interface ProjectCategory {
   id: number;
   name: string;
+  color: string;
 }
 
 export interface ProjectStatus {
   id: number;
   name: string;
+  color: string;
 }
 
 export interface ProjectRole {
