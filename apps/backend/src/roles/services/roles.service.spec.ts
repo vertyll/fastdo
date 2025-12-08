@@ -132,9 +132,9 @@ describe('RolesService', () => {
       roleRepository.findOne.mockResolvedValue(null);
       i18nService.translate.mockReturnValue('Translated error message');
 
-      await expect(service.addRoleToUser(1, roleCode))
-        .rejects
-        .toThrow(new NotFoundException('Translated error message'));
+      await expect(service.addRoleToUser(1, roleCode)).rejects.toThrow(
+        new NotFoundException('Translated error message'),
+      );
 
       expect(i18nService.translate).toHaveBeenCalledWith('messages.Roles.errors.roleNotFound', {
         args: { roleCode },
@@ -156,9 +156,7 @@ describe('RolesService', () => {
       roleRepository.findOne.mockResolvedValue(mockRole);
       userRoleRepository.save.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.addRoleToUser(1, RoleEnum.Admin))
-        .rejects
-        .toThrow('Database error');
+      await expect(service.addRoleToUser(1, RoleEnum.Admin)).rejects.toThrow('Database error');
     });
   });
 
@@ -202,9 +200,7 @@ describe('RolesService', () => {
     it('should bubble up repository errors', async () => {
       userRoleRepository.find.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.getUserRoles(1))
-        .rejects
-        .toThrow('Database error');
+      await expect(service.getUserRoles(1)).rejects.toThrow('Database error');
     });
   });
 

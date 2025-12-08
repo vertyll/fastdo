@@ -8,20 +8,18 @@ describe('JwtMiddleware', () => {
   let jwtService: jest.Mocked<JwtService>;
   let i18nService: jest.Mocked<I18nService>;
 
-  const mockRequest = (
-    authorization?: string,
-    url: string = '/test',
-    method: string = 'GET',
-  ) => ({
-    headers: { authorization },
-    url,
-    method,
-  } as any);
+  const mockRequest = (authorization?: string, url: string = '/test', method: string = 'GET') =>
+    ({
+      headers: { authorization },
+      url,
+      method,
+    }) as any;
 
-  const mockResponse = () => ({
-    statusCode: 200,
-    end: jest.fn(),
-  } as any);
+  const mockResponse = () =>
+    ({
+      statusCode: 200,
+      end: jest.fn(),
+    }) as any;
 
   const mockNext = jest.fn();
 
@@ -104,17 +102,12 @@ describe('JwtMiddleware', () => {
     jwtService.verify.mockImplementation(() => {
       throw new Error('Verification failed');
     });
-    i18nService.t
-      .mockReturnValueOnce('Token verification failed')
-      .mockReturnValueOnce('Invalid token message');
+    i18nService.t.mockReturnValueOnce('Token verification failed').mockReturnValueOnce('Invalid token message');
 
     const res = mockResponse();
     middleware.use(req, res, mockNext);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Token verification failed',
-      expect.any(Error),
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Token verification failed', expect.any(Error));
     expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.verifyingTokenFailed');
     consoleSpy.mockRestore();
   });

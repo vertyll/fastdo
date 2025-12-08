@@ -11,9 +11,7 @@ import { StorageStrategy } from './storage/storage-strategy';
 import { FileValidator } from './validators/file-validator';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([File]),
-  ],
+  imports: [TypeOrmModule.forFeature([File])],
   providers: [
     FileService,
     FileValidator,

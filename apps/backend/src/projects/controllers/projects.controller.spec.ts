@@ -157,9 +157,7 @@ describe('ProjectsController', () => {
   describe('remove', () => {
     it('should remove a project with its tasks', async () => {
       await controller.remove('1');
-      expect(
-        mockProjectManagementService.removeProjectWithTasks,
-      ).toHaveBeenCalledWith(1);
+      expect(mockProjectManagementService.removeProjectWithTasks).toHaveBeenCalledWith(1);
     });
   });
 });

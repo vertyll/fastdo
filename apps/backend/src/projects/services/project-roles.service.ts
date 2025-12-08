@@ -6,9 +6,7 @@ import { ProjectRoleRepository } from '../repositories/project-role.repository';
 
 @Injectable()
 export class ProjectRolesService {
-  constructor(
-    private readonly projectRoleRepository: ProjectRoleRepository,
-  ) {}
+  constructor(private readonly projectRoleRepository: ProjectRoleRepository) {}
 
   public async findAll(): Promise<ProjectRoleResponseDto[]> {
     return this.projectRoleRepository.findAll();

@@ -5,9 +5,7 @@ import { FileConfig } from '../types/file-config.interface';
 
 @Injectable()
 export class FileConfigService {
-  constructor(
-    private configService: ConfigService,
-  ) {}
+  constructor(private configService: ConfigService) {}
 
   public getConfig(): FileConfig {
     return {
@@ -24,7 +22,7 @@ export class FileConfigService {
 
   private getStorageType(): StorageType {
     const storageType = this.configService.get<string>('app.file.storage.type');
-    return storageType as StorageType || StorageType.LOCAL;
+    return (storageType as StorageType) || StorageType.LOCAL;
   }
 
   private getLocalConfig(): FileStorageLocal {

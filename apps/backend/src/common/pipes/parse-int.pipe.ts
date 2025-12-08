@@ -10,9 +10,7 @@ export class ParseIntPipe implements PipeTransform<string | number, number> {
 
     if (typeof value === 'number') {
       if (!Number.isInteger(value)) {
-        throw new BadRequestException(
-          i18n.translate('messages.Validation.isInteger'),
-        );
+        throw new BadRequestException(i18n.translate('messages.Validation.isInteger'));
       }
       return value;
     }

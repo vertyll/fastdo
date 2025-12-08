@@ -49,7 +49,7 @@ export class TasksService implements ITasksService {
 
     const mappedItems = items.map(task => this.mapTaskToResponseDto(task));
 
-    const hasMore = items.length === pageSize && (skip + pageSize) < total;
+    const hasMore = items.length === pageSize && skip + pageSize < total;
 
     return {
       items: mappedItems,
@@ -76,7 +76,7 @@ export class TasksService implements ITasksService {
 
     const mappedItems = items.map(task => this.mapTaskToResponseDto(task));
 
-    const hasMore = items.length === pageSize && (skip + pageSize) < total;
+    const hasMore = items.length === pageSize && skip + pageSize < total;
 
     return {
       items: mappedItems,
@@ -139,12 +139,12 @@ export class TasksService implements ITasksService {
 
       if (createTaskDto.accessRoleId) taskData.accessRole = { id: createTaskDto.accessRoleId } as ProjectRole;
       if (createTaskDto.assignedUserIds && createTaskDto.assignedUserIds?.length > 0) {
-        taskData.assignedUsers = createTaskDto.assignedUserIds.map(id => ({ id } as User));
+        taskData.assignedUsers = createTaskDto.assignedUserIds.map(id => ({ id }) as User);
       } else {
         taskData.assignedUsers = [{ id: userId } as User];
       }
       if (createTaskDto.categoryIds && createTaskDto.categoryIds?.length > 0) {
-        taskData.categories = createTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
+        taskData.categories = createTaskDto.categoryIds.map(id => ({ id }) as ProjectCategory);
       }
       if (createTaskDto.statusId) taskData.status = { id: createTaskDto.statusId } as ProjectStatus;
       if (createTaskDto.priorityId) taskData.priority = { id: createTaskDto.priorityId } as TaskPriority;
@@ -175,14 +175,7 @@ export class TasksService implements ITasksService {
 
       const task = await transactionalTaskRepository.findOneOrFail({
         where: { id },
-        relations: [
-          'project',
-          'assignedUsers',
-          'createdBy',
-          'accessRole',
-          'taskAttachments',
-          'taskAttachments.file',
-        ],
+        relations: ['project', 'assignedUsers', 'createdBy', 'accessRole', 'taskAttachments', 'taskAttachments.file'],
       });
 
       this.validateTaskAccess(task, userId);
@@ -203,10 +196,10 @@ export class TasksService implements ITasksService {
         }
       }
       if (updateTaskDto.assignedUserIds !== undefined) {
-        task.assignedUsers = updateTaskDto.assignedUserIds.map(id => ({ id } as User));
+        task.assignedUsers = updateTaskDto.assignedUserIds.map(id => ({ id }) as User);
       }
       if (updateTaskDto.categoryIds !== undefined) {
-        task.categories = updateTaskDto.categoryIds.map(id => ({ id } as ProjectCategory));
+        task.categories = updateTaskDto.categoryIds.map(id => ({ id }) as ProjectCategory);
       }
       if (updateTaskDto.statusId !== undefined) {
         task.status = updateTaskDto.statusId ? ({ id: updateTaskDto.statusId } as ProjectStatus) : null;
@@ -219,9 +212,7 @@ export class TasksService implements ITasksService {
         const idsToDelete = updateTaskDto.attachmentsToDelete;
         await this.processTaskAttachmentDeletion(task, idsToDelete, queryRunner.manager);
         if (task.taskAttachments) {
-          task.taskAttachments = task.taskAttachments.filter(
-            attachment => !idsToDelete.includes(attachment.file.id),
-          );
+          task.taskAttachments = task.taskAttachments.filter(attachment => !idsToDelete.includes(attachment.file.id));
         }
       }
 
@@ -457,8 +448,10 @@ export class TasksService implements ITasksService {
       const hasRole = userRole && task.accessRole && userRole.id === task.accessRole.id;
       const hasManageTasksPermission = task.project.projectUserRoles.some(
         ur =>
-          ur.user && ur.user.id === userId && Array.isArray(ur.projectRole.permissions)
-          && ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
+          ur.user &&
+          ur.user.id === userId &&
+          Array.isArray(ur.projectRole.permissions) &&
+          ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
       );
 
       // Manager sees everything
@@ -470,9 +463,9 @@ export class TasksService implements ITasksService {
       // Client sees tasks with accessRole null, client, member
       if (isClient) {
         if (
-          !task.accessRole
-          || (task.accessRole.code === ProjectRoleEnum.CLIENT)
-          || (task.accessRole.code === ProjectRoleEnum.MEMBER)
+          !task.accessRole ||
+          task.accessRole.code === ProjectRoleEnum.CLIENT ||
+          task.accessRole.code === ProjectRoleEnum.MEMBER
         ) {
           return;
         }
@@ -582,9 +575,7 @@ export class TasksService implements ITasksService {
     const categories = Array.isArray(task.categories)
       ? task.categories.map(cat => ({ ...cat, translations: mapTranslations(cat.translations) }))
       : [];
-    const status = task.status
-      ? { ...task.status, translations: mapTranslations(task.status.translations) }
-      : null;
+    const status = task.status ? { ...task.status, translations: mapTranslations(task.status.translations) } : null;
 
     const taskAttachments = Array.isArray(task.taskAttachments)
       ? task.taskAttachments.map(attachment => attachment.file)
@@ -592,15 +583,15 @@ export class TasksService implements ITasksService {
 
     const comments = Array.isArray(task.comments)
       ? task.comments.map(comment => ({
-        id: comment.id,
-        content: comment.content,
-        dateCreation: comment.dateCreation,
-        dateModification: comment.dateModification,
-        author: comment.author,
-        attachments: Array.isArray(comment.commentAttachments)
-          ? comment.commentAttachments.map(attachment => attachment.file)
-          : [],
-      }))
+          id: comment.id,
+          content: comment.content,
+          dateCreation: comment.dateCreation,
+          dateModification: comment.dateModification,
+          author: comment.author,
+          attachments: Array.isArray(comment.commentAttachments)
+            ? comment.commentAttachments.map(attachment => attachment.file)
+            : [],
+        }))
       : [];
 
     return {

@@ -21,10 +21,7 @@ export class FileService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  public async uploadFile(
-    file: MultipartFile,
-    options?: FileUploadOptions,
-  ): Promise<FileMetadataDto> {
+  public async uploadFile(file: MultipartFile, options?: FileUploadOptions): Promise<FileMetadataDto> {
     try {
       await this.fileValidator.validate(file, options);
 
@@ -47,10 +44,7 @@ export class FileService {
     } catch (error) {
       if (error instanceof FileNotFoundException || error instanceof FileUploadException) throw error;
 
-      throw new FileUploadException(
-        this.i18n,
-        this.i18n.t('messages.File.errors.failedToProcessFileUpload'),
-      );
+      throw new FileUploadException(this.i18n, this.i18n.t('messages.File.errors.failedToProcessFileUpload'));
     }
   }
 
@@ -63,10 +57,7 @@ export class FileService {
       await storage.deleteFile(file.path);
       await this.fileRepository.delete(fileId);
     } catch {
-      throw new FileDeleteException(
-        this.i18n,
-        this.i18n.t('messages.File.errors.fileNotDeleted'),
-      );
+      throw new FileDeleteException(this.i18n, this.i18n.t('messages.File.errors.fileNotDeleted'));
     }
   }
 

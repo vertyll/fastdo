@@ -21,11 +21,11 @@ export class DurationPipe implements PipeTransform {
     }
 
     const multipliers: Record<string, number> = {
-      's': 1000,
-      'm': 1000 * 60,
-      'h': 1000 * 60 * 60,
-      'd': 1000 * 60 * 60 * 24,
-      'w': 1000 * 60 * 60 * 24 * 7,
+      s: 1000,
+      m: 1000 * 60,
+      h: 1000 * 60 * 60,
+      d: 1000 * 60 * 60 * 24,
+      w: 1000 * 60 * 60 * 24 * 7,
     };
 
     return numValue * multipliers[unit];

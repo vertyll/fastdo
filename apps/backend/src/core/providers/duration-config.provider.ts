@@ -6,9 +6,7 @@ import { IDurationConfigProvider } from './interfaces/duration-config-provider.i
 
 @Injectable()
 export class DurationConfigProvider implements IDurationConfigProvider {
-  constructor(
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   private transform<T>(pipe: PipeTransform, value: string, defaultValue: string, fallback: T): T {
     const valueToTransform = this.configService.get<string>(value) || defaultValue;

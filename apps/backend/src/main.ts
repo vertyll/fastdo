@@ -133,7 +133,7 @@ async function bootstrap(): Promise<void> {
     new I18nValidationExceptionFilter({
       errorFormatter: (errors: ValidationError[]): BadRequestException => {
         return new BadRequestException(
-          errors.map((error: ValidationError): { field: string; errors: string[]; } => ({
+          errors.map((error: ValidationError): { field: string; errors: string[] } => ({
             field: error.property,
             errors: Object.values(error.constraints ?? {}),
           })),

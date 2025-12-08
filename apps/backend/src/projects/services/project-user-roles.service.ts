@@ -13,15 +13,10 @@ export class ProjectUserRolesService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  public async assignRole(
-    assignProjectRoleDto: AssignProjectRoleDto,
-  ): Promise<ProjectUserRole> {
+  public async assignRole(assignProjectRoleDto: AssignProjectRoleDto): Promise<ProjectUserRole> {
     const { projectId, userId, role } = assignProjectRoleDto;
 
-    const existingRole = await this.projectUserRoleRepository.findByProjectAndUser(
-      projectId,
-      userId,
-    );
+    const existingRole = await this.projectUserRoleRepository.findByProjectAndUser(projectId, userId);
 
     if (existingRole) {
       existingRole.projectRole = { id: role } as any;
@@ -42,10 +37,7 @@ export class ProjectUserRolesService {
     userId: number,
     updateProjectRoleDto: UpdateProjectRoleDto,
   ): Promise<ProjectUserRole> {
-    const existingRole = await this.projectUserRoleRepository.findByProjectAndUser(
-      projectId,
-      userId,
-    );
+    const existingRole = await this.projectUserRoleRepository.findByProjectAndUser(projectId, userId);
 
     if (!existingRole) {
       throw new Error(this.i18n.t('messages.ProjectUserRole.errors.roleNotFound'));
@@ -56,10 +48,7 @@ export class ProjectUserRolesService {
   }
 
   public async removeRole(projectId: number, userId: number): Promise<void> {
-    const existingRole = await this.projectUserRoleRepository.findByProjectAndUser(
-      projectId,
-      userId,
-    );
+    const existingRole = await this.projectUserRoleRepository.findByProjectAndUser(projectId, userId);
 
     if (existingRole) {
       await this.projectUserRoleRepository.remove(existingRole);
@@ -74,21 +63,12 @@ export class ProjectUserRolesService {
     return this.projectUserRoleRepository.findByUserId(userId);
   }
 
-  public async getUserRoleInProject(
-    projectId: number,
-    userId: number,
-  ): Promise<number | null> {
-    const userRole = await this.projectUserRoleRepository.findByProjectAndUser(
-      projectId,
-      userId,
-    );
+  public async getUserRoleInProject(projectId: number, userId: number): Promise<number | null> {
+    const userRole = await this.projectUserRoleRepository.findByProjectAndUser(projectId, userId);
     return userRole ? userRole.projectRole.id : null;
   }
 
-  public async getUserRoleCodeInProject(
-    projectId: number,
-    userId: number,
-  ): Promise<string | null> {
+  public async getUserRoleCodeInProject(projectId: number, userId: number): Promise<string | null> {
     const userRole = await this.projectUserRoleRepository.findOne({
       where: {
         project: { id: projectId },
@@ -99,17 +79,12 @@ export class ProjectUserRolesService {
     return userRole ? userRole.projectRole.code : null;
   }
 
-  public async hasManagerRole(
-    projectId: number,
-    userId: number,
-  ): Promise<boolean> {
+  public async hasManagerRole(projectId: number, userId: number): Promise<boolean> {
     const roleCode = await this.getUserRoleCodeInProject(projectId, userId);
     return roleCode === ProjectRoleEnum.MANAGER;
   }
 
-  public async getUsersInProject(
-    projectId: number,
-  ): Promise<ProjectUserRole[]> {
+  public async getUsersInProject(projectId: number): Promise<ProjectUserRole[]> {
     return this.projectUserRoleRepository.find({
       where: { project: { id: projectId } },
       relations: ['user', 'projectRole'],

@@ -34,9 +34,7 @@ export class ProjectsController {
     type: ProjectListResponseDto,
     isPaginated: true,
   })
-  public getAll(
-    @Query() query: GetAllProjectsSearchParamsDto,
-  ): Promise<ApiPaginatedResponse<ProjectListResponseDto>> {
+  public getAll(@Query() query: GetAllProjectsSearchParamsDto): Promise<ApiPaginatedResponse<ProjectListResponseDto>> {
     return this.projectsService.findAll(query);
   }
 
@@ -58,9 +56,7 @@ export class ProjectsController {
     description: 'The project has been successfully created.',
     type: Project,
   })
-  public create(
-    @Body() createProjectDto: CreateProjectDto,
-  ): Promise<Project> {
+  public create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
     return this.projectsService.create(createProjectDto);
   }
 
@@ -112,10 +108,7 @@ export class ProjectsController {
     description: 'The project has been successfully updated.',
     type: Project,
   })
-  public update(
-    @Param('id') id: string,
-    @Body() updateProjectDto: UpdateProjectDto,
-  ): Promise<Project> {
+  public update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto): Promise<Project> {
     return this.projectsService.update(+id, updateProjectDto);
   }
 

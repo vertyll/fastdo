@@ -53,8 +53,7 @@ describe('JwtAuthGuard', () => {
       getClass: () => ({}),
     };
 
-    const mockCanActivate = jest.spyOn(AuthGuard('jwt').prototype, 'canActivate')
-      .mockImplementation(() => true);
+    const mockCanActivate = jest.spyOn(AuthGuard('jwt').prototype, 'canActivate').mockImplementation(() => true);
 
     await guard.canActivate(context as any);
 
@@ -76,8 +75,7 @@ describe('JwtAuthGuard', () => {
       getClass: () => ({}),
     };
 
-    const mockCanActivate = jest.spyOn(AuthGuard('jwt').prototype, 'canActivate')
-      .mockImplementation(() => false);
+    const mockCanActivate = jest.spyOn(AuthGuard('jwt').prototype, 'canActivate').mockImplementation(() => false);
 
     await guard.canActivate(context as any);
 

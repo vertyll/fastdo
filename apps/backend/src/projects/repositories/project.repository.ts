@@ -31,15 +31,10 @@ export class ProjectRepository extends Repository<Project> {
       .leftJoinAndSelect('projectUserRole.projectRole', 'projectRole')
       .leftJoinAndSelect('projectRole.permissions', 'permissions');
 
-    query.where(
-      '(projectUserRole.user.id = :userId OR project.isPublic = true)',
-      { userId },
-    );
+    query.where('(projectUserRole.user.id = :userId OR project.isPublic = true)', { userId });
 
     if (params.typeIds && params.typeIds.length > 0) {
-      query
-        .andWhere('type.id IS NOT NULL')
-        .andWhere('type.id IN (:...typeIds)', { typeIds: params.typeIds });
+      query.andWhere('type.id IS NOT NULL').andWhere('type.id IN (:...typeIds)', { typeIds: params.typeIds });
     }
 
     if (params.q) {
@@ -71,10 +66,7 @@ export class ProjectRepository extends Repository<Project> {
     }
 
     if (params.sortBy && params.orderBy) {
-      query.orderBy(
-        `project.${params.sortBy}`,
-        params.orderBy.toUpperCase() as 'ASC' | 'DESC',
-      );
+      query.orderBy(`project.${params.sortBy}`, params.orderBy.toUpperCase() as 'ASC' | 'DESC');
     } else {
       query.orderBy('project.dateCreation', 'DESC');
     }
@@ -84,11 +76,7 @@ export class ProjectRepository extends Repository<Project> {
     return query.getManyAndCount();
   }
 
-  public async findOneWithDetails(
-    id: number,
-    userId: number,
-    currentLanguage: string = 'pl',
-  ): Promise<Project> {
+  public async findOneWithDetails(id: number, userId: number, currentLanguage: string = 'pl'): Promise<Project> {
     const project = await this.findOneOrFail({
       where: { id },
       relations: [
@@ -113,9 +101,7 @@ export class ProjectRepository extends Repository<Project> {
 
     if (project.categories) {
       project.categories = project.categories.map(category => {
-        const translation = category.translations?.find(
-          t => t.language.code === currentLanguage,
-        );
+        const translation = category.translations?.find(t => t.language.code === currentLanguage);
         return {
           ...category,
           name: translation?.name || category.translations?.[0]?.name || '',
@@ -126,9 +112,7 @@ export class ProjectRepository extends Repository<Project> {
 
     if (project.statuses) {
       project.statuses = project.statuses.map(status => {
-        const translation = status.translations?.find(
-          t => t.language.code === currentLanguage,
-        );
+        const translation = status.translations?.find(t => t.language.code === currentLanguage);
         return {
           ...status,
           name: translation?.name || status.translations?.[0]?.name || '',

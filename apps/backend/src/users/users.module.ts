@@ -30,11 +30,7 @@ import { IUsersServiceToken } from './tokens/users-service.token';
     UserRoleRepository,
     UserEmailHistoryRepository,
   ],
-  exports: [
-    UserRepository,
-    UserRoleRepository,
-    IUsersServiceToken,
-  ],
+  exports: [UserRepository, UserRoleRepository, IUsersServiceToken],
   controllers: [UsersController],
 })
 export class UsersModule {}

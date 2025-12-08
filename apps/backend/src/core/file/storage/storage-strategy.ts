@@ -15,9 +15,7 @@ export class StorageStrategy {
     private readonly fileConfigService: FileConfigService,
     private readonly i18n: I18nService<I18nTranslations>,
   ) {
-    this.storageProviders = new Map([
-      [StorageType.LOCAL, this.localStorageService],
-    ]);
+    this.storageProviders = new Map([[StorageType.LOCAL, this.localStorageService]]);
   }
 
   public getStorage(type?: StorageType): FileStorage {

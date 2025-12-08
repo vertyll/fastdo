@@ -47,21 +47,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const fields = this.extractFields(exception);
     if (fields) responseBody.fields = fields;
 
-    this.logger.error(
-      `${request.method} ${request.url}`,
-      exception.stack,
-      'HttpExceptionFilter',
-    );
+    this.logger.error(`${request.method} ${request.url}`, exception.stack, 'HttpExceptionFilter');
 
     response.status(status).send(responseBody);
   }
 
   private formatGeneralMessage(exception: HttpException, i18n: I18nContext<I18nTranslations>): string {
     const response = exception.getResponse() as ApiErrorResponse;
-    if (
-      typeof response === 'object'
-      && response.message
-    ) {
+    if (typeof response === 'object' && response.message) {
       if (Array.isArray(response.message)) {
         return i18n.t('messages.Validation.failed');
       } else {

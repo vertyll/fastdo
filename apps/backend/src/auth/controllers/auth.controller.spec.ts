@@ -186,9 +186,7 @@ describe('AuthController', () => {
     it('should handle login failure', async () => {
       authService.login.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.login(mockLoginDto, mockResponse))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.login(mockLoginDto, mockResponse)).rejects.toThrow(UnauthorizedException);
       expect(authService.login).toHaveBeenCalledWith(mockLoginDto);
     });
   });
@@ -210,13 +208,9 @@ describe('AuthController', () => {
     });
 
     it('should handle registration with existing email', async () => {
-      authService.register.mockRejectedValue(
-        new UnauthorizedException('User already exists'),
-      );
+      authService.register.mockRejectedValue(new UnauthorizedException('User already exists'));
 
-      await expect(controller.register(mockRegisterDto))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.register(mockRegisterDto)).rejects.toThrow(UnauthorizedException);
       expect(authService.register).toHaveBeenCalledWith(mockRegisterDto);
     });
   });
@@ -237,9 +231,9 @@ describe('AuthController', () => {
     it('should handle refresh token failure', async () => {
       authService.refreshToken.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.refreshToken(mockAccessTokenDto.accessToken, mockResponse))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.refreshToken(mockAccessTokenDto.accessToken, mockResponse)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(authService.refreshToken).toHaveBeenCalledWith(mockAccessTokenDto.accessToken);
     });
   });
@@ -266,9 +260,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue({ userId: 1 });
       authService.logout.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.logout(mockRefreshToken, mockResponse))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.logout(mockRefreshToken, mockResponse)).rejects.toThrow(UnauthorizedException);
       expect(authService.logout).toHaveBeenCalledWith(1, mockRefreshToken);
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).not.toHaveBeenCalled();
@@ -278,9 +270,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue(null);
       i18nService.t.mockReturnValue('Unauthorized');
 
-      await expect(controller.logout(mockRefreshToken, mockResponse))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.logout(mockRefreshToken, mockResponse)).rejects.toThrow(UnauthorizedException);
 
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.unauthorized');
@@ -291,9 +281,7 @@ describe('AuthController', () => {
       clsService.get.mockReturnValue(null);
       i18nService.t.mockReturnValue('Unauthorized');
 
-      await expect(controller.logout(mockRefreshToken, mockResponse))
-        .rejects
-        .toThrow('Unauthorized');
+      await expect(controller.logout(mockRefreshToken, mockResponse)).rejects.toThrow('Unauthorized');
 
       expect(clsService.get).toHaveBeenCalledWith('user');
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.unauthorized');
@@ -313,10 +301,7 @@ describe('AuthController', () => {
       await controller.confirmEmail(mockToken, mockResponse);
 
       expect(authService.confirmEmail).toHaveBeenCalledWith(mockToken);
-      expect(mockResponse.redirect).toHaveBeenCalledWith(
-        'http://localhost:3000/login?confirmed=true',
-        302,
-      );
+      expect(mockResponse.redirect).toHaveBeenCalledWith('http://localhost:3000/login?confirmed=true', 302);
     });
 
     it('should redirect with error when confirmation fails', async () => {
@@ -337,9 +322,7 @@ describe('AuthController', () => {
     it('should handle service errors', async () => {
       authService.confirmEmail.mockRejectedValue(new Error('Service error'));
 
-      await expect(
-        controller.confirmEmail(mockToken, mockResponse),
-      ).rejects.toThrow('Service error');
+      await expect(controller.confirmEmail(mockToken, mockResponse)).rejects.toThrow('Service error');
 
       expect(authService.confirmEmail).toHaveBeenCalledWith(mockToken);
     });
@@ -385,24 +368,16 @@ describe('AuthController', () => {
     });
 
     it('should handle reset password with invalid token', async () => {
-      authService.resetPassword.mockRejectedValue(
-        new UnauthorizedException('Invalid token'),
-      );
+      authService.resetPassword.mockRejectedValue(new UnauthorizedException('Invalid token'));
 
-      await expect(controller.resetPassword(mockResetPasswordDto))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.resetPassword(mockResetPasswordDto)).rejects.toThrow(UnauthorizedException);
       expect(authService.resetPassword).toHaveBeenCalledWith(mockResetPasswordDto);
     });
 
     it('should handle reset password with expired token', async () => {
-      authService.resetPassword.mockRejectedValue(
-        new UnauthorizedException('Token expired'),
-      );
+      authService.resetPassword.mockRejectedValue(new UnauthorizedException('Token expired'));
 
-      await expect(controller.resetPassword(mockResetPasswordDto))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.resetPassword(mockResetPasswordDto)).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -411,9 +386,7 @@ describe('AuthController', () => {
       const invalidLoginDto: Partial<LoginDto> = { email: 'invalid-email', password: '' };
       authService.login.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.login(invalidLoginDto as LoginDto, mockResponse))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.login(invalidLoginDto as LoginDto, mockResponse)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should validate register DTO', async () => {
@@ -425,18 +398,14 @@ describe('AuthController', () => {
       };
       authService.register.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.register(invalidRegisterDto as RegisterDto))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.register(invalidRegisterDto as RegisterDto)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should validate forgot password DTO', async () => {
       const invalidForgotPasswordDto = { email: 'invalid-email' };
       authService.forgotPassword.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.forgotPassword(invalidForgotPasswordDto))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.forgotPassword(invalidForgotPasswordDto)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should validate reset password DTO', async () => {
@@ -446,9 +415,7 @@ describe('AuthController', () => {
       };
       authService.resetPassword.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.resetPassword(invalidResetPasswordDto))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(controller.resetPassword(invalidResetPasswordDto)).rejects.toThrow(UnauthorizedException);
     });
   });
 });

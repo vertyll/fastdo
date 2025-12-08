@@ -121,9 +121,9 @@ describe('UsersService', () => {
 
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce(user);
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce(null);
-      jest.spyOn(queryRunner.manager.getRepository(User), 'update').mockResolvedValueOnce(
-        { affected: 1 } as UpdateResult,
-      );
+      jest
+        .spyOn(queryRunner.manager.getRepository(User), 'update')
+        .mockResolvedValueOnce({ affected: 1 } as UpdateResult);
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce(updatedUser);
       jest.spyOn(refreshTokenService, 'deleteAllUserTokens').mockReturnValue(Promise.resolve());
       jest.spyOn(confirmationTokenService, 'generateToken').mockReturnValue('token');

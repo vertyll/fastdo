@@ -21,9 +21,8 @@ export class ProjectTypeSeeder implements ISeeder {
 
   constructor(
     @InjectRepository(ProjectType) private readonly projectTypeRepository: Repository<ProjectType>,
-    @InjectRepository(ProjectTypeTranslation) private readonly projectTypeTranslationRepository: Repository<
-      ProjectTypeTranslation
-    >,
+    @InjectRepository(ProjectTypeTranslation)
+    private readonly projectTypeTranslationRepository: Repository<ProjectTypeTranslation>,
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
     private readonly seederFactory: SeederFactoryService,
   ) {

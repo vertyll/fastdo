@@ -9,9 +9,7 @@ import { TermsAndPoliciesService } from '../services/terms-and-policies.service'
 @ApiTags('terms-and-policies')
 @Controller('terms-and-policies')
 export class TermsAndPoliciesController {
-  constructor(
-    private readonly service: TermsAndPoliciesService,
-  ) {}
+  constructor(private readonly service: TermsAndPoliciesService) {}
 
   @Public()
   @Get('terms')

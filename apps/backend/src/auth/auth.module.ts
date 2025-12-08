@@ -29,7 +29,7 @@ import { IRefreshTokenServiceToken } from './tokens/refresh-token-service.token'
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('app.security.jwt.accessToken.secret'),
-        signOptions: { expiresIn: configService.get<string>('app.security.jwt.accessToken.expiresIn') },
+        signOptions: { expiresIn: configService.get('app.security.jwt.accessToken.expiresIn') },
       }),
       inject: [ConfigService],
     }),
@@ -51,9 +51,6 @@ import { IRefreshTokenServiceToken } from './tokens/refresh-token-service.token'
     },
   ],
   controllers: [AuthController],
-  exports: [
-    IConfirmationTokenServiceToken,
-    IRefreshTokenServiceToken,
-  ],
+  exports: [IConfirmationTokenServiceToken, IRefreshTokenServiceToken],
 })
 export class AuthModule {}

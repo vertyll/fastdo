@@ -40,10 +40,7 @@ export class AuthController {
     description: 'The user has been successfully logged in.',
     type: AccessTokenDto,
   })
-  async login(
-    @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<AccessTokenDto> {
+  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: FastifyReply): Promise<AccessTokenDto> {
     const tokens = await this.authService.login(loginDto);
     res.setCookie('refresh_token', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
     return { accessToken: tokens.accessToken };
@@ -102,10 +99,7 @@ export class AuthController {
     status: 200,
     description: 'Email has been confirmed successfully.',
   })
-  public async confirmEmail(
-    @Query('token') token: string,
-    @Res() res: FastifyReply,
-  ): Promise<void> {
+  public async confirmEmail(@Query('token') token: string, @Res() res: FastifyReply): Promise<void> {
     const frontendUrl = this.configService.get<string>('app.frontend.url');
     const result = await this.authService.confirmEmail(token);
 
@@ -145,10 +139,7 @@ export class AuthController {
     status: 200,
     description: 'Email has been changed successfully.',
   })
-  public async confirmEmailChange(
-    @Query('token') token: string,
-    @Res() res: FastifyReply,
-  ): Promise<void> {
+  public async confirmEmailChange(@Query('token') token: string, @Res() res: FastifyReply): Promise<void> {
     const frontendUrl = this.configService.get<string>('app.frontend.url');
     const result = await this.authService.confirmEmailChange(token);
 

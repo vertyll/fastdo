@@ -50,10 +50,7 @@ describe('MailTemplateService', () => {
       const result = await service.getTemplate(templateName, data);
 
       expect(result).toBe(compiledTemplate);
-      expect(fs.readFile).toHaveBeenCalledWith(
-        expect.stringContaining(`${templateName}.hbs`),
-        'utf-8',
-      );
+      expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining(`${templateName}.hbs`), 'utf-8');
       expect(Handlebars.compile).toHaveBeenCalledWith(templateContent);
       expect(compileMock).toHaveBeenCalledWith(data);
     });
@@ -67,10 +64,7 @@ describe('MailTemplateService', () => {
       (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
 
       await expect(service.getTemplate(templateName, data)).rejects.toThrow('File not found');
-      expect(fs.readFile).toHaveBeenCalledWith(
-        expect.stringContaining(`${templateName}.hbs`),
-        'utf-8',
-      );
+      expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining(`${templateName}.hbs`), 'utf-8');
     });
   });
 });

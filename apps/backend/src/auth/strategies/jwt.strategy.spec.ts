@@ -63,19 +63,16 @@ describe('JwtStrategy', () => {
       t: jest.fn().mockReturnValue('translated message'),
     } as unknown as jest.Mocked<I18nService<I18nTranslations>>;
 
-    jwtStrategy = new JwtStrategy(
-      usersService,
-      i18nService,
-      configService,
-    );
+    jwtStrategy = new JwtStrategy(usersService, i18nService, configService);
   });
 
   describe('constructor', () => {
     it('should throw error if JWT_ACCESS_SECRET is not defined', () => {
       configService.get.mockReturnValue(null);
 
-      expect(() => new JwtStrategy(usersService, i18nService, configService))
-        .toThrow('JWT_ACCESS_SECRET is not defined');
+      expect(() => new JwtStrategy(usersService, i18nService, configService)).toThrow(
+        'JWT_ACCESS_SECRET is not defined',
+      );
     });
   });
 
@@ -92,8 +89,7 @@ describe('JwtStrategy', () => {
     it('should throw an UnauthorizedException if user is not found', async () => {
       usersService.findOne.mockResolvedValue(null);
 
-      await expect(jwtStrategy.validate(mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtStrategy.validate(mockPayload)).rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
 
@@ -101,8 +97,7 @@ describe('JwtStrategy', () => {
       const inactiveUser = { ...mockUser, isActive: false };
       usersService.findOne.mockResolvedValue(inactiveUser);
 
-      await expect(jwtStrategy.validate(mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtStrategy.validate(mockPayload)).rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
 
@@ -110,8 +105,7 @@ describe('JwtStrategy', () => {
       const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
       usersService.findOne.mockResolvedValue(unconfirmedUser);
 
-      await expect(jwtStrategy.validate(mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtStrategy.validate(mockPayload)).rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
   });

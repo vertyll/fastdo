@@ -15,18 +15,14 @@ export class ProjectRolePermissionsGuard implements CanActivate {
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredPermissions = this.reflector.getAllAndOverride<ProjectRolePermissionEnum[]>(
       PROJECT_ROLE_PERMISSIONS_KEY,
-      [
-        context.getHandler(),
-        context.getClass(),
-      ],
+      [context.getHandler(), context.getClass()],
     );
 
     if (!requiredPermissions || requiredPermissions.length === 0) return true;
 
-    const projectIdParamKey = this.reflector.getAllAndOverride<string>(PROJECT_ID_PARAM_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]) || 'id';
+    const projectIdParamKey =
+      this.reflector.getAllAndOverride<string>(PROJECT_ID_PARAM_KEY, [context.getHandler(), context.getClass()]) ||
+      'id';
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;

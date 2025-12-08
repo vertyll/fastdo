@@ -22,10 +22,7 @@ export class LocalStorageService implements FileStorage {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  public async uploadFile(
-    file: MultipartFile,
-    options?: FileUploadOptions,
-  ): Promise<FileMetadataDto> {
+  public async uploadFile(file: MultipartFile, options?: FileUploadOptions): Promise<FileMetadataDto> {
     try {
       const config = this.fileConfigService.getConfig();
       const uploadDirPath = config.storage.local.uploadDirPath;
@@ -41,10 +38,7 @@ export class LocalStorageService implements FileStorage {
       const fileName = path.split('/').pop();
       if (!fileName) {
         return Promise.reject(
-          new FileUploadException(
-            this.i18n,
-            this.i18n.t('messages.File.errors.failedExtractFileNameFromPath'),
-          ),
+          new FileUploadException(this.i18n, this.i18n.t('messages.File.errors.failedExtractFileNameFromPath')),
         );
       }
 
@@ -75,10 +69,7 @@ export class LocalStorageService implements FileStorage {
       await unlink(fullPath);
     } catch (error) {
       if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-        throw new FileNotFoundException(
-          this.i18n,
-          path,
-        );
+        throw new FileNotFoundException(this.i18n, path);
       }
       throw new FileDeleteException(
         this.i18n,

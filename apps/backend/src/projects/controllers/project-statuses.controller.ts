@@ -23,9 +23,7 @@ export class ProjectStatusesController {
     type: ProjectStatusResponseDto,
     isArray: true,
   })
-  public async getProjectStatuses(
-    @Param('projectId') projectId: string,
-  ): Promise<ProjectStatusResponseDto[]> {
+  public async getProjectStatuses(@Param('projectId') projectId: string): Promise<ProjectStatusResponseDto[]> {
     return this.projectStatusService.findByProjectId(+projectId);
   }
 
@@ -71,9 +69,7 @@ export class ProjectStatusesController {
     status: 204,
     description: 'The status has been successfully deleted.',
   })
-  public async deleteStatus(
-    @Param('statusId') statusId: string,
-  ): Promise<void> {
+  public async deleteStatus(@Param('statusId') statusId: string): Promise<void> {
     await this.projectStatusService.remove(+statusId);
   }
 }

@@ -6,9 +6,7 @@ import { File } from '../entities/file.entity';
 
 @Injectable()
 export class FileRepository {
-  constructor(
-    @InjectRepository(File) private readonly repository: Repository<File>,
-  ) {}
+  constructor(@InjectRepository(File) private readonly repository: Repository<File>) {}
 
   public async save(metadata: FileMetadataDto): Promise<File> {
     const file = this.repository.create(metadata);

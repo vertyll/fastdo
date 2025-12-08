@@ -173,10 +173,7 @@ export class ProjectsService {
     return this.mapProjectToDetailsResponseDto(project, userRole);
   }
 
-  public async update(
-    id: number,
-    updateProjectDto: UpdateProjectDto,
-  ): Promise<Project> {
+  public async update(id: number, updateProjectDto: UpdateProjectDto): Promise<Project> {
     const { categories, statuses, typeId, icon, userEmails, usersWithRoles, ...updateData } = updateProjectDto;
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -391,7 +388,7 @@ export class ProjectsService {
   private async inviteUsersToProjectWithRoles(
     queryRunner: QueryRunner,
     projectId: number,
-    usersWithRoles: { email: string; role: number; }[],
+    usersWithRoles: { email: string; role: number }[],
     inviterId: number,
   ): Promise<void> {
     const inviter = await this.usersService.findOne(inviterId);
@@ -484,7 +481,7 @@ export class ProjectsService {
   private async updateProjectUsersWithRoles(
     queryRunner: QueryRunner,
     projectId: number,
-    usersWithRoles: { email: string; role: number; }[],
+    usersWithRoles: { email: string; role: number }[],
     updaterId: number,
   ): Promise<void> {
     const updater = await this.usersService.findOne(updaterId);
@@ -492,12 +489,10 @@ export class ProjectsService {
       throw new Error(this.i18n.t('messages.Projects.errors.updaterNotFound'));
     }
 
-    const currentProjectUsers = await queryRunner.manager
-      .getRepository(ProjectUserRole)
-      .find({
-        where: { project: { id: projectId } },
-        relations: ['user', 'projectRole'],
-      });
+    const currentProjectUsers = await queryRunner.manager.getRepository(ProjectUserRole).find({
+      where: { project: { id: projectId } },
+      relations: ['user', 'projectRole'],
+    });
 
     const newUserEmails = usersWithRoles.map(u => u.email);
 
@@ -510,11 +505,13 @@ export class ProjectsService {
         if (currentUser.user.id === updaterId) {
           throw new Error(this.i18n.t('messages.Projects.errors.cannotRemoveYourselfFromProject'));
         }
-        const isManager = currentUser.projectRole
-          && currentUser.projectRole.id === (await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER))?.id;
+        const isManager =
+          currentUser.projectRole &&
+          currentUser.projectRole.id === (await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER))?.id;
         if (isManager) {
-          const managersLeft = currentProjectUsers.filter(u =>
-            u.projectRole && u.projectRole.id === currentUser.projectRole.id && newUserEmails.includes(u.user.email)
+          const managersLeft = currentProjectUsers.filter(
+            u =>
+              u.projectRole && u.projectRole.id === currentUser.projectRole.id && newUserEmails.includes(u.user.email),
           ).length;
           if (managersLeft === 0) {
             throw new Error(this.i18n.t('messages.Projects.errors.lastManagerCannotBeRemoved'));
@@ -524,14 +521,12 @@ export class ProjectsService {
       }
     }
 
-    const newUsersToInvite: { email: string; role: number; }[] = [];
+    const newUsersToInvite: { email: string; role: number }[] = [];
     for (const userWithRole of usersWithRoles) {
       try {
         const user = await this.usersService.findByEmail(userWithRole.email);
         if (user) {
-          const existingUserRole = currentProjectUsers.find(
-            cu => cu.user.email === userWithRole.email,
-          );
+          const existingUserRole = currentProjectUsers.find(cu => cu.user.email === userWithRole.email);
           if (existingUserRole) {
             if (existingUserRole.projectRole.id !== userWithRole.role) {
               existingUserRole.projectRole = { id: userWithRole.role } as any;
@@ -579,11 +574,7 @@ export class ProjectsService {
       .leftJoinAndSelect('pur.user', 'user')
       .leftJoinAndSelect('pur.project', 'project')
       .where('project.id = :projectId', { projectId })
-      .select([
-        'pur.id',
-        'user.id',
-        'user.email',
-      ])
+      .select(['pur.id', 'user.id', 'user.email'])
       .getMany();
 
     return projectUsers.map(pur => ({
@@ -602,8 +593,8 @@ export class ProjectsService {
     });
     const permissions = userRole?.projectRole?.permissions?.map(p => p.code) ?? [];
     if (
-      !permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT)
-      && !permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT)
+      !permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT) &&
+      !permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT)
     ) {
       throw new Error(this.i18n.t('messages.Projects.errors.accessDeniedToManageProject'));
     }
@@ -684,10 +675,7 @@ export class ProjectsService {
     }
   }
 
-  private mapProjectToListResponseDto(
-    project: Project,
-    userRole?: ProjectUserRole,
-  ): ProjectListResponseDto {
+  private mapProjectToListResponseDto(project: Project, userRole?: ProjectUserRole): ProjectListResponseDto {
     const mapTranslations = (translations: any[]): TranslationDto[] => {
       if (!translations) return [];
       return translations.map(t => ({
@@ -697,7 +685,7 @@ export class ProjectsService {
       }));
     };
 
-    let type: { id: number; code: string; translations: TranslationDto[]; } | undefined = undefined;
+    let type: { id: number; code: string; translations: TranslationDto[] } | undefined = undefined;
     const typeObj = project.type || userRole?.project?.type;
     if (typeObj && Array.isArray(typeObj.translations)) {
       type = {
@@ -721,10 +709,7 @@ export class ProjectsService {
     };
   }
 
-  private mapProjectToDetailsResponseDto(
-    project: Project,
-    userRole?: ProjectUserRole,
-  ): ProjectDetailsResponseDto {
+  private mapProjectToDetailsResponseDto(project: Project, userRole?: ProjectUserRole): ProjectDetailsResponseDto {
     const mapTranslations = (translations: any[]): TranslationDto[] => {
       if (!translations) return [];
       return translations.map(t => ({
@@ -741,39 +726,39 @@ export class ProjectsService {
 
     const categories = Array.isArray(project.categories)
       ? project.categories.map(cat => ({
-        id: cat.id,
-        name: (cat as any).name ?? cat.translations?.[0]?.name ?? '',
-      }))
+          id: cat.id,
+          name: (cat as any).name ?? cat.translations?.[0]?.name ?? '',
+        }))
       : [];
 
     const statuses = Array.isArray(project.statuses)
       ? project.statuses.map(status => ({
-        id: status.id,
-        name: (status as any).name ?? status.translations?.[0]?.name ?? '',
-      }))
+          id: status.id,
+          name: (status as any).name ?? status.translations?.[0]?.name ?? '',
+        }))
       : [];
 
     const projectUserRoles = Array.isArray(project.projectUserRoles)
       ? project.projectUserRoles.map(userRole => {
-        const role = userRole.projectRole;
-        return {
-          user: {
-            id: userRole.user.id,
-            email: userRole.user.email,
-          },
-          projectRole: {
-            id: role.id,
-            code: role.code,
-            translations: Array.isArray(role.translations)
-              ? role.translations.map(t => ({
-                lang: t.language?.code || '',
-                name: t.name,
-                description: t.description ?? undefined,
-              }))
-              : [],
-          },
-        };
-      })
+          const role = userRole.projectRole;
+          return {
+            user: {
+              id: userRole.user.id,
+              email: userRole.user.email,
+            },
+            projectRole: {
+              id: role.id,
+              code: role.code,
+              translations: Array.isArray(role.translations)
+                ? role.translations.map(t => ({
+                    lang: t.language?.code || '',
+                    name: t.name,
+                    description: t.description ?? undefined,
+                  }))
+                : [],
+            },
+          };
+        })
       : [];
 
     return {
@@ -785,13 +770,14 @@ export class ProjectsService {
       isActive: project.isActive,
       dateCreation: project.dateCreation,
       dateModification: project.dateModification,
-      type: (project.type && Array.isArray(project.type.translations))
-        ? {
-          id: project.type.id,
-          code: String(project.type.code),
-          translations: mapTranslations(project.type.translations),
-        }
-        : undefined,
+      type:
+        project.type && Array.isArray(project.type.translations)
+          ? {
+              id: project.type.id,
+              code: String(project.type.code),
+              translations: mapTranslations(project.type.translations),
+            }
+          : undefined,
       categories,
       statuses,
       permissions,

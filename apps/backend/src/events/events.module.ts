@@ -15,7 +15,7 @@ import { IEventEmitterServiceToken } from './tokens/event-emitter-service.token'
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('app.security.jwt.accessToken.secret'),
-        signOptions: { expiresIn: configService.get<string>('app.security.jwt.accessToken.expiresIn') },
+        signOptions: { expiresIn: configService.get('app.security.jwt.accessToken.expiresIn') },
       }),
       inject: [ConfigService],
     }),
@@ -30,12 +30,7 @@ import { IEventEmitterServiceToken } from './tokens/event-emitter-service.token'
       useClass: EventEmitterService,
     },
   ],
-  exports: [
-    IEventEmitterServiceToken,
-    SocketConnectionService,
-    NotificationsGateway,
-    NotificationsWebsocketService,
-  ],
+  exports: [IEventEmitterServiceToken, SocketConnectionService, NotificationsGateway, NotificationsWebsocketService],
 })
 export class EventsModule {
   constructor(

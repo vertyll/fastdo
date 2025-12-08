@@ -82,10 +82,7 @@ describe('ProjectsService', () => {
               projectRole: {
                 code: 'manager',
                 translations: [],
-                permissions: [
-                  { code: 'EDIT_PROJECT' },
-                  { code: 'DELETE_PROJECT' },
-                ],
+                permissions: [{ code: 'EDIT_PROJECT' }, { code: 'DELETE_PROJECT' }],
               },
             }),
             find: jest.fn().mockResolvedValue([]),
@@ -162,10 +159,7 @@ describe('ProjectsService', () => {
         id: 1,
         code: 'manager',
         translations: [],
-        permissions: [
-          { code: 'EDIT_PROJECT' },
-          { code: 'DELETE_PROJECT' },
-        ],
+        permissions: [{ code: 'EDIT_PROJECT' }, { code: 'DELETE_PROJECT' }],
       },
     };
 
@@ -230,9 +224,7 @@ describe('ProjectsService', () => {
 
   describe('findAll', () => {
     it('should return a paginated response of projects', async () => {
-      const projects: Project[] = [
-        { id: 1, name: 'Test Project' } as Project,
-      ];
+      const projects: Project[] = [{ id: 1, name: 'Test Project' } as Project];
       const total = 1;
 
       mockProjectRepository.findAllWithParams.mockResolvedValue([projects, total]);
@@ -342,9 +334,7 @@ describe('ProjectsService', () => {
       const result = { id: 1, ...updateDto } as Project;
       const updateResult: UpdateResult = { generatedMaps: [], raw: [], affected: 1 };
 
-      mockProjectRepository.findOne
-        .mockResolvedValueOnce(mockProject)
-        .mockResolvedValueOnce(mockProject);
+      mockProjectRepository.findOne.mockResolvedValueOnce(mockProject).mockResolvedValueOnce(mockProject);
 
       mockProjectRepository.findOneOrFail.mockResolvedValue(result);
       mockProjectRepository.update.mockResolvedValue(updateResult);
@@ -368,9 +358,7 @@ describe('ProjectsService', () => {
       const deleteResult: DeleteResult = { raw: [], affected: 1 };
       const mockProject = { id: 1, isPublic: false, projectUsers: [{ user: { id: 1 } }] } as any;
 
-      mockProjectRepository.findOne
-        .mockResolvedValueOnce(mockProject)
-        .mockResolvedValueOnce(mockProject);
+      mockProjectRepository.findOne.mockResolvedValueOnce(mockProject).mockResolvedValueOnce(mockProject);
 
       mockQueryRunner.manager.getRepository.mockReturnValue({
         delete: jest.fn().mockResolvedValue(deleteResult),

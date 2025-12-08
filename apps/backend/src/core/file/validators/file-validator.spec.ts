@@ -62,14 +62,11 @@ describe('FileValidator', () => {
         file: { bytesRead: 2048 },
       } as unknown as MultipartFile;
 
-      await expect(validator.validate(largeFile))
-        .rejects
-        .toThrow(FileValidationException);
+      await expect(validator.validate(largeFile)).rejects.toThrow(FileValidationException);
 
-      expect(i18nService.t).toHaveBeenCalledWith(
-        'messages.File.errors.exceededMaxFileSize',
-        { args: { maxSize: mockConfig.validation.maxSize } },
-      );
+      expect(i18nService.t).toHaveBeenCalledWith('messages.File.errors.exceededMaxFileSize', {
+        args: { maxSize: mockConfig.validation.maxSize },
+      });
     });
 
     it('should throw for invalid mime type', async () => {
@@ -78,14 +75,11 @@ describe('FileValidator', () => {
         mimetype: 'text/plain',
       } as unknown as MultipartFile;
 
-      await expect(validator.validate(invalidFile))
-        .rejects
-        .toThrow(FileValidationException);
+      await expect(validator.validate(invalidFile)).rejects.toThrow(FileValidationException);
 
-      expect(i18nService.t).toHaveBeenCalledWith(
-        'messages.File.errors.fileTypeNotAllowed',
-        { args: { mimeType: 'text/plain', allowedTypes: mockConfig.validation.allowedMimeTypes } },
-      );
+      expect(i18nService.t).toHaveBeenCalledWith('messages.File.errors.fileTypeNotAllowed', {
+        args: { mimeType: 'text/plain', allowedTypes: mockConfig.validation.allowedMimeTypes },
+      });
     });
 
     it('should use custom options when provided', async () => {
@@ -100,10 +94,7 @@ describe('FileValidator', () => {
         file: { bytesRead: 1500 },
       } as unknown as MultipartFile;
 
-      await expect(validator.validate(customFile, options))
-        .resolves
-        .not
-        .toThrow();
+      await expect(validator.validate(customFile, options)).resolves.not.toThrow();
     });
   });
 });

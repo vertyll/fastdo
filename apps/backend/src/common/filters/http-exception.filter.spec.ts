@@ -97,10 +97,7 @@ describe('HttpExceptionFilter', () => {
   });
 
   it('should handle non-array messages in exception response', () => {
-    const exception = new HttpException(
-      { message: 'Custom error message' },
-      HttpStatus.BAD_REQUEST,
-    );
+    const exception = new HttpException({ message: 'Custom error message' }, HttpStatus.BAD_REQUEST);
 
     filter.catch(exception, mockHost);
 

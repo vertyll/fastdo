@@ -90,9 +90,7 @@ describe('ConfirmationTokenService', () => {
       });
       i18nService.t.mockReturnValue('Translated error message');
 
-      expect(() => service.verifyToken(token)).toThrow(
-        new UnauthorizedException('Translated error message'),
-      );
+      expect(() => service.verifyToken(token)).toThrow(new UnauthorizedException('Translated error message'));
 
       expect(jwtService.verify).toHaveBeenCalledWith(token, { secret: mockConfig.secret });
       expect(configService.get).toHaveBeenCalledWith('app.security.jwt.confirmationToken.secret');

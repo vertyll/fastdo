@@ -38,9 +38,7 @@ describe('ProjectManagementService', () => {
       const projectId = 1;
       await service.removeProjectWithTasks(projectId);
 
-      expect(mockTasksService.removeByProjectId).toHaveBeenCalledWith(
-        projectId,
-      );
+      expect(mockTasksService.removeByProjectId).toHaveBeenCalledWith(projectId);
       expect(mockProjectsService.remove).toHaveBeenCalledWith(projectId);
     });
 
@@ -49,9 +47,7 @@ describe('ProjectManagementService', () => {
       const error = new Error('Task removal failed');
       mockTasksService.removeByProjectId.mockRejectedValue(error);
 
-      await expect(service.removeProjectWithTasks(projectId)).rejects.toThrow(
-        'Task removal failed',
-      );
+      await expect(service.removeProjectWithTasks(projectId)).rejects.toThrow('Task removal failed');
       expect(mockProjectsService.remove).not.toHaveBeenCalled();
     });
 
@@ -60,12 +56,8 @@ describe('ProjectManagementService', () => {
       const error = new Error('Project removal failed');
       mockProjectsService.remove.mockRejectedValue(error);
 
-      await expect(service.removeProjectWithTasks(projectId)).rejects.toThrow(
-        'Project removal failed',
-      );
-      expect(mockTasksService.removeByProjectId).toHaveBeenCalledWith(
-        projectId,
-      );
+      await expect(service.removeProjectWithTasks(projectId)).rejects.toThrow('Project removal failed');
+      expect(mockTasksService.removeByProjectId).toHaveBeenCalledWith(projectId);
     });
   });
 });

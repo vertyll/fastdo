@@ -7,9 +7,7 @@ import { IMailTransport } from '../../interfaces/mail-transport.interface';
 export class NodemailerTransport implements IMailTransport {
   private transporter: nodemailer.Transporter;
 
-  constructor(
-    private readonly mailConfig: MailConfigService,
-  ) {
+  constructor(private readonly mailConfig: MailConfigService) {
     const config = this.mailConfig.getConfig();
     this.transporter = nodemailer.createTransport({
       host: config.host,
@@ -21,7 +19,7 @@ export class NodemailerTransport implements IMailTransport {
     });
   }
 
-  public async sendMail(options: { from: string; to: string; subject: string; html: string; }): Promise<void> {
+  public async sendMail(options: { from: string; to: string; subject: string; html: string }): Promise<void> {
     await this.transporter.sendMail(options);
   }
 }

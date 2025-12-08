@@ -96,9 +96,7 @@ describe('FileService', () => {
     it('should throw FileUploadException on general error', async () => {
       mockStorage.uploadFile.mockRejectedValue(new Error('Storage error'));
 
-      await expect(service.uploadFile(mockFile, mockOptions))
-        .rejects
-        .toThrow(FileUploadException);
+      await expect(service.uploadFile(mockFile, mockOptions)).rejects.toThrow(FileUploadException);
     });
   });
 
@@ -135,18 +133,14 @@ describe('FileService', () => {
     it('should throw FileNotFoundException when file not found', async () => {
       mockFileRepository.findById.mockResolvedValue(null);
 
-      await expect(service.deleteFile(fileId))
-        .rejects
-        .toThrow(FileNotFoundException);
+      await expect(service.deleteFile(fileId)).rejects.toThrow(FileNotFoundException);
     });
 
     it('should throw FileDeleteException on delete error', async () => {
       mockFileRepository.findById.mockResolvedValue(mockFile);
       mockStorage.deleteFile.mockRejectedValue(new Error('Delete error'));
 
-      await expect(service.deleteFile(fileId))
-        .rejects
-        .toThrow(FileDeleteException);
+      await expect(service.deleteFile(fileId)).rejects.toThrow(FileDeleteException);
     });
   });
 
@@ -182,9 +176,7 @@ describe('FileService', () => {
     it('should throw FileNotFoundException when file not found', async () => {
       mockFileRepository.findById.mockResolvedValue(null);
 
-      await expect(service.getFile(fileId))
-        .rejects
-        .toThrow(FileNotFoundException);
+      await expect(service.getFile(fileId)).rejects.toThrow(FileNotFoundException);
     });
   });
 });

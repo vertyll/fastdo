@@ -41,14 +41,8 @@ export class ProjectRoleToPermissionSeeder implements ISeeder {
           ProjectRolePermissionEnum.VIEW_PROJECT,
           ProjectRolePermissionEnum.MANAGE_TASKS,
         ],
-        [ProjectRoleEnum.CLIENT]: [
-          ProjectRolePermissionEnum.SHOW_TASKS,
-          ProjectRolePermissionEnum.VIEW_PROJECT,
-        ],
-        [ProjectRoleEnum.MEMBER]: [
-          ProjectRolePermissionEnum.SHOW_TASKS,
-          ProjectRolePermissionEnum.VIEW_PROJECT,
-        ],
+        [ProjectRoleEnum.CLIENT]: [ProjectRolePermissionEnum.SHOW_TASKS, ProjectRolePermissionEnum.VIEW_PROJECT],
+        [ProjectRoleEnum.MEMBER]: [ProjectRolePermissionEnum.SHOW_TASKS, ProjectRolePermissionEnum.VIEW_PROJECT],
       };
 
       for (const role of roles) {

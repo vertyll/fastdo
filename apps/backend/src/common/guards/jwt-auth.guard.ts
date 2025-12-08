@@ -31,12 +31,10 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategyEnum.Jwt) {
     if (isPublic) return true;
 
     const canActivate = super.canActivate(context);
-    const result = canActivate instanceof Observable
-      ? await lastValueFrom(canActivate)
-      : await canActivate;
+    const result = canActivate instanceof Observable ? await lastValueFrom(canActivate) : await canActivate;
 
     if (result) {
-      const request = context.switchToHttp().getRequest<FastifyRequest & { user: JwtUser; }>();
+      const request = context.switchToHttp().getRequest<FastifyRequest & { user: JwtUser }>();
       if (request.user) {
         this.cls.set('user', {
           userId: Number(request.user.id),

@@ -9,7 +9,7 @@ export interface FileValidationOptions extends ValidationOptions {
 }
 
 export function IsFile(options: FileValidationOptions = {}) {
-  return function(target: object, propertyName: string): void {
+  return function (target: object, propertyName: string): void {
     registerDecorator({
       name: 'isFile',
       target: target.constructor,

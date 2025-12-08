@@ -27,10 +27,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
     return i18n;
   }
 
-  public intercept(
-    context: ExecutionContext,
-    next: CallHandler<T>,
-  ): Observable<ApiResponseWrapper<T>> {
+  public intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ApiResponseWrapper<T>> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
     const i18n = this.getI18n(context);

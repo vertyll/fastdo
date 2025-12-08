@@ -54,27 +54,24 @@ describe('ExpiryDatePipe', () => {
   it('should throw BadRequestException when DurationPipe returns null', () => {
     mockI18nContext.translate.mockReturnValue('Invalid duration');
 
-    expect(() => pipe.transform('invalid', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Invalid duration'));
+    expect(() => pipe.transform('invalid', {} as ArgumentMetadata)).toThrow(
+      new BadRequestException('Invalid duration'),
+    );
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isDuration');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isDuration');
   });
 
   it('should throw BadRequestException when DurationPipe returns zero or negative', () => {
     mockI18nContext.translate.mockReturnValue('Invalid duration');
 
-    expect(() => pipe.transform('0h', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Invalid duration'));
+    expect(() => pipe.transform('0h', {} as ArgumentMetadata)).toThrow(new BadRequestException('Invalid duration'));
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isDuration');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isDuration');
   });
 
   it('should throw Error when translation context is not available', () => {
     (I18nContext.current as jest.Mock).mockReturnValue(null);
 
-    expect(() => pipe.transform('1h', {} as ArgumentMetadata))
-      .toThrow(new Error('I18nContext not available'));
+    expect(() => pipe.transform('1h', {} as ArgumentMetadata)).toThrow(new Error('I18nContext not available'));
   });
 });

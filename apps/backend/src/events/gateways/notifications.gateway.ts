@@ -45,8 +45,8 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   async handleConnection(client: AuthenticatedSocket): Promise<void> {
     try {
       const token = this.extractTokenFromClient(client);
-      const clientIp = client.handshake.headers['x-forwarded-for'] || client.handshake.headers['x-real-ip']
-        || 'unknown';
+      const clientIp =
+        client.handshake.headers['x-forwarded-for'] || client.handshake.headers['x-real-ip'] || 'unknown';
 
       if (!token) {
         this.logger.warn(`Connection rejected from ${clientIp}: No token provided`);
@@ -103,10 +103,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   @SubscribeMessage(WebSocketEventEnum.JOIN_ROOM)
-  handleJoinRoom(
-    @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { room: string; },
-  ): WsResponse {
+  handleJoinRoom(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: { room: string }): WsResponse {
     if (!(client as any).userId) {
       return { event: WebSocketResponseEnum.JOIN_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
     }
@@ -121,10 +118,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   @SubscribeMessage(WebSocketEventEnum.LEAVE_ROOM)
-  handleLeaveRoom(
-    @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { room: string; },
-  ): WsResponse {
+  handleLeaveRoom(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: { room: string }): WsResponse {
     if (!(client as any).userId) {
       return { event: WebSocketResponseEnum.LEAVE_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
     }
@@ -141,7 +135,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(WebSocketEventEnum.MARK_NOTIFICATION_READ)
   handleMarkNotificationRead(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { notificationId: number; },
+    @MessageBody() data: { notificationId: number },
   ): WsResponse {
     if (!(client as any).userId) {
       return {
@@ -161,7 +155,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(WebSocketEventEnum.UPDATE_AUTH)
   async handleUpdateAuth(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { token: string; },
+    @MessageBody() data: { token: string },
   ): Promise<WsResponse> {
     try {
       const token = data.token?.startsWith('Bearer ') ? data.token.substring(7) : data.token;

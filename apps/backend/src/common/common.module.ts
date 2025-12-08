@@ -23,10 +23,12 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
     }),
     ThrottlerModule.forRootAsync({
       useFactory: (configService: ConfigService): ThrottlerModuleOptions => ({
-        throttlers: [{
-          ttl: configService.getOrThrow<number>('app.security.rateLimiting.windowMs'),
-          limit: configService.getOrThrow<number>('app.security.rateLimiting.max'),
-        }],
+        throttlers: [
+          {
+            ttl: configService.getOrThrow<number>('app.security.rateLimiting.windowMs'),
+            limit: configService.getOrThrow<number>('app.security.rateLimiting.max'),
+          },
+        ],
       }),
       inject: [ConfigService],
     }),

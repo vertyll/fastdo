@@ -17,11 +17,7 @@ export class JwtMiddleware implements NestMiddleware {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  public use(
-    req: FastifyRequest['raw'],
-    res: FastifyReply['raw'],
-    next: () => void,
-  ): void {
+  public use(req: FastifyRequest['raw'], res: FastifyReply['raw'], next: () => void): void {
     const token = this.extractTokenFromHeader(req);
 
     if (token) {
@@ -45,9 +41,7 @@ export class JwtMiddleware implements NestMiddleware {
     next();
   }
 
-  private extractTokenFromHeader(
-    req: FastifyRequest['raw'],
-  ): string | undefined {
+  private extractTokenFromHeader(req: FastifyRequest['raw']): string | undefined {
     const authorization = req.headers.authorization;
     if (!authorization) return undefined;
 
@@ -59,10 +53,7 @@ export class JwtMiddleware implements NestMiddleware {
     try {
       return this.jwt.verify(token);
     } catch (e) {
-      console.error(
-        this.i18n.t('messages.Auth.errors.verifyingTokenFailed'),
-        e,
-      );
+      console.error(this.i18n.t('messages.Auth.errors.verifyingTokenFailed'), e);
       throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
     }
   }

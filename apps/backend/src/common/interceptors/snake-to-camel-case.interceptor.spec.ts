@@ -23,35 +23,28 @@ describe('SnakeToCamelCaseInterceptor', () => {
         }),
     };
 
-    interceptor
-      .intercept(mockExecutionContext, mockCallHandler)
-      .subscribe(result => {
-        expect(result).toEqual({
-          snakeCase: 'value',
-          nestedObject: { anotherKey: 'value' },
-          dateCreation: new Date('2025-01-26T11:03:57.305Z'),
-        });
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe(result => {
+      expect(result).toEqual({
+        snakeCase: 'value',
+        nestedObject: { anotherKey: 'value' },
+        dateCreation: new Date('2025-01-26T11:03:57.305Z'),
       });
+    });
   });
 
   it('should handle arrays', () => {
     const mockExecutionContext = {} as any;
     const mockCallHandler = {
       handle: () =>
-        of([
-          { snake_case: 'value', date_creation: new Date('2025-01-26T11:03:57.305Z') },
-          { another_key: 'value' },
-        ]),
+        of([{ snake_case: 'value', date_creation: new Date('2025-01-26T11:03:57.305Z') }, { another_key: 'value' }]),
     };
 
-    interceptor
-      .intercept(mockExecutionContext, mockCallHandler)
-      .subscribe(result => {
-        expect(result).toEqual([
-          { snakeCase: 'value', dateCreation: new Date('2025-01-26T11:03:57.305Z') },
-          { anotherKey: 'value' },
-        ]);
-      });
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe(result => {
+      expect(result).toEqual([
+        { snakeCase: 'value', dateCreation: new Date('2025-01-26T11:03:57.305Z') },
+        { anotherKey: 'value' },
+      ]);
+    });
   });
 
   it('should not modify non-object values', () => {
@@ -60,11 +53,9 @@ describe('SnakeToCamelCaseInterceptor', () => {
       handle: () => of('string'),
     };
 
-    interceptor
-      .intercept(mockExecutionContext, mockCallHandler)
-      .subscribe(result => {
-        expect(result).toBe('string');
-      });
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe(result => {
+      expect(result).toBe('string');
+    });
   });
 
   it('should handle null and undefined values correctly', () => {
@@ -77,13 +68,11 @@ describe('SnakeToCamelCaseInterceptor', () => {
         }),
     };
 
-    interceptor
-      .intercept(mockExecutionContext, mockCallHandler)
-      .subscribe(result => {
-        expect(result).toEqual({
-          nullValue: null,
-          undefinedValue: undefined,
-        });
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe(result => {
+      expect(result).toEqual({
+        nullValue: null,
+        undefinedValue: undefined,
       });
+    });
   });
 });

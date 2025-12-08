@@ -122,12 +122,7 @@ export class AuthService implements IAuthService {
       const { email } = this.confirmationTokenService.verifyToken(token);
       const user = await this.userRepository.findOne({ where: { email } });
 
-      if (
-        !user
-        || user.isEmailConfirmed
-        || user.confirmationToken !== token
-        || !user.confirmationTokenExpiry
-      ) {
+      if (!user || user.isEmailConfirmed || user.confirmationToken !== token || !user.confirmationTokenExpiry) {
         return { success: false, email };
       }
 
@@ -158,11 +153,7 @@ export class AuthService implements IAuthService {
       const { email } = this.confirmationTokenService.verifyToken(token);
       const user = await this.userRepository.findOne({ where: { email } });
 
-      if (
-        !user
-        || user.emailChangeToken !== token
-        || !user.emailChangeTokenExpiry
-      ) {
+      if (!user || user.emailChangeToken !== token || !user.emailChangeTokenExpiry) {
         return { success: false, email };
       }
 
@@ -296,11 +287,12 @@ export class AuthService implements IAuthService {
       const user = await this.userRepository.findOne({ where: { email } });
 
       if (
-        !user
-        || user.confirmationToken !== resetPasswordDto.token
-        || !user.confirmationTokenExpiry
-        || user.confirmationTokenExpiry < new Date()
-      ) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
+        !user ||
+        user.confirmationToken !== resetPasswordDto.token ||
+        !user.confirmationTokenExpiry ||
+        user.confirmationTokenExpiry < new Date()
+      )
+        throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 
       const saltRounds = this.configService.get<number>('app.security.bcryptSaltRounds') ?? 10;
       const hashedPassword = await bcrypt.hash(resetPasswordDto.password, saltRounds);
@@ -324,14 +316,14 @@ export class AuthService implements IAuthService {
   private generateAccessToken(payload: JwtPayload): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('app.security.jwt.accessToken.secret'),
-      expiresIn: this.configService.get<string>('app.security.jwt.accessToken.expiresIn') || '15m',
+      expiresIn: this.configService.get('app.security.jwt.accessToken.expiresIn') || '15m',
     });
   }
 
   private generateRefreshToken(payload: JwtRefreshPayload): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('app.security.jwt.refreshToken.secret'),
-      expiresIn: this.configService.get<string>('app.security.jwt.refreshToken.expiresIn') || '7d',
+      expiresIn: this.configService.get('app.security.jwt.refreshToken.expiresIn') || '7d',
     });
   }
 

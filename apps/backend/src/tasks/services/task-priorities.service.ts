@@ -4,9 +4,7 @@ import { TaskPriorityRepository } from '../repositories/task-priority.repository
 
 @Injectable()
 export class TaskPrioritiesService {
-  constructor(
-    private readonly taskPriorityRepository: TaskPriorityRepository,
-  ) {}
+  constructor(private readonly taskPriorityRepository: TaskPriorityRepository) {}
 
   public async findAll(): Promise<TaskPriorityResponseDto[]> {
     const priorities = await this.taskPriorityRepository.find({

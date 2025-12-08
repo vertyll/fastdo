@@ -39,36 +39,35 @@ describe('DurationPipe', () => {
   it('should throw BadRequestException for invalid format', () => {
     mockI18nContext.translate.mockReturnValue('Invalid duration format');
 
-    expect(() => pipe.transform('abc', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Invalid duration format'));
-    expect(() => pipe.transform('123', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Invalid duration format'));
-    expect(() => pipe.transform('1y', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Invalid duration format'));
+    expect(() => pipe.transform('abc', {} as ArgumentMetadata)).toThrow(
+      new BadRequestException('Invalid duration format'),
+    );
+    expect(() => pipe.transform('123', {} as ArgumentMetadata)).toThrow(
+      new BadRequestException('Invalid duration format'),
+    );
+    expect(() => pipe.transform('1y', {} as ArgumentMetadata)).toThrow(
+      new BadRequestException('Invalid duration format'),
+    );
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isDuration');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isDuration');
   });
 
   it('should throw BadRequestException for non-positive numbers', () => {
     mockI18nContext.translate.mockReturnValueOnce('Must be positive');
-    expect(() => pipe.transform('0s', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Must be positive'));
+    expect(() => pipe.transform('0s', {} as ArgumentMetadata)).toThrow(new BadRequestException('Must be positive'));
 
     mockI18nContext.translate.mockReturnValueOnce('Invalid duration format');
-    expect(() => pipe.transform('-5m', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Invalid duration format'));
+    expect(() => pipe.transform('-5m', {} as ArgumentMetadata)).toThrow(
+      new BadRequestException('Invalid duration format'),
+    );
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.mustBePositive');
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isDuration');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.mustBePositive');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isDuration');
   });
 
   it('should throw Error when translation context is not available', () => {
     (I18nContext.current as jest.Mock).mockReturnValue(null);
 
-    expect(() => pipe.transform('5m', {} as ArgumentMetadata))
-      .toThrow(new Error('I18nContext not available'));
+    expect(() => pipe.transform('5m', {} as ArgumentMetadata)).toThrow(new Error('I18nContext not available'));
   });
 });

@@ -16,9 +16,7 @@ import { TasksService } from '../services/tasks.service';
 @ApiTags('tasks')
 @Controller('tasks')
 export class TasksController {
-  constructor(
-    private readonly tasksService: TasksService,
-  ) {}
+  constructor(private readonly tasksService: TasksService) {}
 
   @Post()
   @UseInterceptors(
@@ -38,9 +36,7 @@ export class TasksController {
     description: 'The task has been successfully created.',
     type: Task,
   })
-  public create(
-    @Body() createTaskDto: CreateTaskDto,
-  ): Promise<Task> {
+  public create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.create(createTaskDto);
   }
 
@@ -121,7 +117,7 @@ export class TasksController {
     status: 200,
     description: 'The tasks have been successfully deleted.',
   })
-  public batchDelete(@Body() body: { taskIds: number[]; }): Promise<void> {
+  public batchDelete(@Body() body: { taskIds: number[] }): Promise<void> {
     return this.tasksService.batchDelete(body.taskIds);
   }
 

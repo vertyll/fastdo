@@ -17,13 +17,13 @@ export class ConfirmationTokenService implements IConfirmationTokenService {
     return this.jwtService.sign(
       { email },
       {
-        expiresIn: this.configService.get<string>('app.security.jwt.confirmationToken.expiresIn'),
+        expiresIn: this.configService.get('app.security.jwt.confirmationToken.expiresIn'),
         secret: this.configService.get<string>('app.security.jwt.confirmationToken.secret'),
       },
     );
   }
 
-  public verifyToken(token: string): { email: string; } {
+  public verifyToken(token: string): { email: string } {
     try {
       return this.jwtService.verify(token, {
         secret: this.configService.get<string>('app.security.jwt.confirmationToken.secret'),

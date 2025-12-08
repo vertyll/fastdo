@@ -26,10 +26,7 @@ export class CreateProjectDto {
   @ApiProperty({ description: 'The name of the project' })
   @IsString()
   @MinLength(3, {
-    message: i18nValidationMessage<I18nTranslations>(
-      'messages.Validation.minLength',
-      { length: 3 },
-    ),
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', { length: 3 }),
   })
   name: string;
 

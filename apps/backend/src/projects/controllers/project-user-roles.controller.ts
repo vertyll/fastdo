@@ -81,10 +81,7 @@ export class ProjectUserRolesController {
     status: 204,
     description: 'The role has been successfully removed.',
   })
-  public async removeRole(
-    @Param('projectId') projectId: string,
-    @Param('userId') userId: string,
-  ): Promise<void> {
+  public async removeRole(@Param('projectId') projectId: string, @Param('userId') userId: string): Promise<void> {
     await this.projectUserRoleService.removeRole(+projectId, +userId);
   }
 

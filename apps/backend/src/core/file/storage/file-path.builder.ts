@@ -16,12 +16,7 @@ export class FilePathBuilder {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
 
-    return join(
-      year.toString(),
-      month,
-      day,
-      `${uniqueId}-${sanitizedFilename}`,
-    );
+    return join(year.toString(), month, day, `${uniqueId}-${sanitizedFilename}`);
   }
 
   private sanitizeFilename(filename: string): string {

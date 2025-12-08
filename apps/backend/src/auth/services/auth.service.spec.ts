@@ -301,10 +301,7 @@ describe('AuthService', () => {
         user: { id: savedUser.id },
         role: { id: mockRole.id },
       });
-      expect(mailService.sendConfirmationEmail).toHaveBeenCalledWith(
-        savedUser.email,
-        'generated-token',
-      );
+      expect(mailService.sendConfirmationEmail).toHaveBeenCalledWith(savedUser.email, 'generated-token');
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
     });
 
@@ -357,11 +354,14 @@ describe('AuthService', () => {
       const result = await service.login(loginDto);
 
       expect(result).toEqual({ accessToken: 'jwt.token.here', refreshToken: 'jwt.token.here' });
-      expect(jwtService.sign).toHaveBeenCalledWith({
-        email: mockUser.email,
-        sub: mockUser.id,
-        roles: [RoleEnum.User],
-      }, expect.any(Object));
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        {
+          email: mockUser.email,
+          sub: mockUser.id,
+          roles: [RoleEnum.User],
+        },
+        expect.any(Object),
+      );
     });
 
     it('should throw UnauthorizedException when email is not confirmed', async () => {
@@ -381,17 +381,19 @@ describe('AuthService', () => {
     beforeEach(() => {
       jwtService.verify.mockReturnValue({ sub: mockUser.id });
       (bcrypt.compare as jest.Mock).mockImplementation((token, hash) =>
-        Promise.resolve(token === refreshTokenString && hash === hashedToken)
+        Promise.resolve(token === refreshTokenString && hash === hashedToken),
       );
     });
 
     it('should successfully refresh tokens', async () => {
-      const storedTokens = [{
-        id: 1,
-        token: hashedToken,
-        dateExpiration: new Date(Date.now() + 10000),
-        user: mockUser,
-      }];
+      const storedTokens = [
+        {
+          id: 1,
+          token: hashedToken,
+          dateExpiration: new Date(Date.now() + 10000),
+          user: mockUser,
+        },
+      ];
 
       mockQueryRunner.manager.findOne.mockResolvedValueOnce(mockUser);
       refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce(storedTokens);
@@ -405,14 +407,16 @@ describe('AuthService', () => {
         accessToken: 'new.token.here',
         refreshToken: 'new.token.here',
       });
-      expect(refreshTokenService.removeToken).toHaveBeenCalledWith(expect.objectContaining({
-        id: storedTokens[0].id,
-        token: storedTokens[0].token,
-        user: expect.objectContaining({
-          id: mockUser.id,
-          email: mockUser.email,
+      expect(refreshTokenService.removeToken).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: storedTokens[0].id,
+          token: storedTokens[0].token,
+          user: expect.objectContaining({
+            id: mockUser.id,
+            email: mockUser.email,
+          }),
         }),
-      }));
+      );
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
     });
 
@@ -421,8 +425,7 @@ describe('AuthService', () => {
       refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce([]);
       refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
-      await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.refreshToken(refreshTokenString)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -438,8 +441,7 @@ describe('AuthService', () => {
       refreshTokenService.getUserRefreshTokens.mockResolvedValueOnce([expiredToken]);
       refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
-      await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.refreshToken(refreshTokenString)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -456,8 +458,7 @@ describe('AuthService', () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
       refreshTokenService.validateRefreshToken.mockRejectedValueOnce(new UnauthorizedException('translated message'));
 
-      await expect(service.refreshToken(refreshTokenString))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.refreshToken(refreshTokenString)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });
@@ -476,14 +477,16 @@ describe('AuthService', () => {
 
       await service.logout(mockUser.id, 'valid-token');
 
-      expect(refreshTokenService.removeToken).toHaveBeenCalledWith(expect.objectContaining({
-        id: validToken.id,
-        token: validToken.token,
-        user: expect.objectContaining({
-          id: mockUser.id,
-          email: mockUser.email,
+      expect(refreshTokenService.removeToken).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: validToken.id,
+          token: validToken.token,
+          user: expect.objectContaining({
+            id: mockUser.id,
+            email: mockUser.email,
+          }),
         }),
-      }));
+      );
     });
 
     it('should not remove the refresh token if it does not match', async () => {
@@ -593,10 +596,7 @@ describe('AuthService', () => {
           confirmationTokenExpiry: expect.any(Date),
         }),
       );
-      expect(mailService.sendPasswordResetEmail).toHaveBeenCalledWith(
-        email,
-        generatedToken,
-      );
+      expect(mailService.sendPasswordResetEmail).toHaveBeenCalledWith(email, generatedToken);
     });
 
     it('should not reveal user existence when email is not found', async () => {
@@ -628,10 +628,7 @@ describe('AuthService', () => {
     it('should successfully reset password', async () => {
       await service.resetPassword(resetPasswordDto);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith(
-        resetPasswordDto.password,
-        10,
-      );
+      expect(bcrypt.hash).toHaveBeenCalledWith(resetPasswordDto.password, 10);
       expect(refreshTokenRepository.delete).toHaveBeenCalledWith({
         user: { id: mockUser.id },
       });
@@ -653,8 +650,7 @@ describe('AuthService', () => {
         confirmationToken: 'different-token',
       });
 
-      await expect(service.resetPassword(resetPasswordDto))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.resetPassword(resetPasswordDto)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
@@ -665,16 +661,14 @@ describe('AuthService', () => {
         confirmationTokenExpiry: new Date(Date.now() - 1000),
       });
 
-      await expect(service.resetPassword(resetPasswordDto))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.resetPassword(resetPasswordDto)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when user not found', async () => {
       userRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.resetPassword(resetPasswordDto))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.resetPassword(resetPasswordDto)).rejects.toThrow(UnauthorizedException);
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     });
   });

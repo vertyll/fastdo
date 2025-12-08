@@ -150,18 +150,12 @@ export class LegalDocumentsSeeder implements ISeeder {
                 {
                   language: englishLang,
                   title: 'Collected Information',
-                  items: [
-                    'Email address (for verification only)',
-                    'Password (stored in encrypted form)',
-                  ],
+                  items: ['Email address (for verification only)', 'Password (stored in encrypted form)'],
                 },
                 {
                   language: polishLang,
                   title: 'Zbierane Informacje',
-                  items: [
-                    'Adres email (tylko do weryfikacji)',
-                    'Hasło (przechowywane w formie zaszyfrowanej)',
-                  ],
+                  items: ['Adres email (tylko do weryfikacji)', 'Hasło (przechowywane w formie zaszyfrowanej)'],
                 },
               ],
             },

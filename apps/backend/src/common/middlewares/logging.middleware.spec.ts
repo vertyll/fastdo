@@ -29,10 +29,7 @@ describe('LoggingMiddleware', () => {
 
   it('should set up response.on with finish event', () => {
     middleware.use(mockRequest, mockResponse, mockNext);
-    expect(mockResponse.on).toHaveBeenCalledWith(
-      'finish',
-      expect.any(Function),
-    );
+    expect(mockResponse.on).toHaveBeenCalledWith('finish', expect.any(Function));
   });
 
   it('should call console.timeEnd when response finishes', () => {

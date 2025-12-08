@@ -21,9 +21,8 @@ export class ProjectRolePermissionSeeder implements ISeeder {
 
   constructor(
     @InjectRepository(ProjectRolePermission) private readonly permissionRepository: Repository<ProjectRolePermission>,
-    @InjectRepository(ProjectRolePermissionTranslation) private readonly permissionTranslationRepository: Repository<
-      ProjectRolePermissionTranslation
-    >,
+    @InjectRepository(ProjectRolePermissionTranslation)
+    private readonly permissionTranslationRepository: Repository<ProjectRolePermissionTranslation>,
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
     private readonly seederFactory: SeederFactoryService,
   ) {

@@ -54,7 +54,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
   constructor(
     private readonly fieldName: string,
-    private readonly dtoClass?: new() => any,
+    private readonly dtoClass?: new () => any,
     options: FastifyFileInterceptorOptions = {},
   ) {
     this.options = { ...this.defaultOptions, ...options };
@@ -165,10 +165,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     }
   }
 
-  private async processFileIntelligently(
-    part: any,
-    i18n: I18nContext<I18nTranslations>,
-  ): Promise<ProcessedFile> {
+  private async processFileIntelligently(part: any, i18n: I18nContext<I18nTranslations>): Promise<ProcessedFile> {
     // Determine processing strategy
     const shouldUseBuffer = this.options.forceBuffer || this.shouldUseBufferStrategy(part);
 
@@ -202,10 +199,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     return false;
   }
 
-  private async processFileWithBuffer(
-    part: any,
-    i18n: I18nContext<I18nTranslations>,
-  ): Promise<ProcessedFile> {
+  private async processFileWithBuffer(part: any, i18n: I18nContext<I18nTranslations>): Promise<ProcessedFile> {
     const chunks: Buffer[] = [];
     let currentSize = 0;
 
@@ -243,10 +237,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     }
   }
 
-  private async processFileWithStream(
-    part: any,
-    i18n: I18nContext<I18nTranslations>,
-  ): Promise<ProcessedFile> {
+  private async processFileWithStream(part: any, i18n: I18nContext<I18nTranslations>): Promise<ProcessedFile> {
     const passThrough = new PassThrough();
     let currentSize = 0;
     let streamError: Error | null = null;
@@ -367,7 +358,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     };
   }
 
-  private applyTransformationsFromMetadata(formData: Record<string, any>, dtoClass: new() => any): void {
+  private applyTransformationsFromMetadata(formData: Record<string, any>, dtoClass: new () => any): void {
     const arrayFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_ARRAY_FIELDS);
     const booleanFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_BOOLEAN_FIELDS);
     const numberFields = this.getMetadataFromClassChain(dtoClass, MULTIPART_NUMBER_FIELDS);

@@ -26,9 +26,7 @@ export class UsersController {
     description: 'Profile updated successfully',
     type: User,
   })
-  public async updateProfile(
-    @Body() updateProfileDto: UpdateProfileDto,
-  ): Promise<User | null> {
+  public async updateProfile(@Body() updateProfileDto: UpdateProfileDto): Promise<User | null> {
     return this.usersService.updateProfile(updateProfileDto);
   }
 

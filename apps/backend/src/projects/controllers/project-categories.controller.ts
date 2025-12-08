@@ -11,9 +11,7 @@ import { ProjectCategoriesService } from '../services/project-categories.service
 @ApiTags('project-categories')
 @Controller('projects/:projectId/categories')
 export class ProjectCategoriesController {
-  constructor(
-    private readonly projectCategoryService: ProjectCategoriesService,
-  ) {}
+  constructor(private readonly projectCategoryService: ProjectCategoriesService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all categories for a project' })
@@ -25,9 +23,7 @@ export class ProjectCategoriesController {
     type: ProjectCategoryResponseDto,
     isArray: true,
   })
-  public async getProjectCategories(
-    @Param('projectId') projectId: string,
-  ): Promise<ProjectCategoryResponseDto[]> {
+  public async getProjectCategories(@Param('projectId') projectId: string): Promise<ProjectCategoryResponseDto[]> {
     return this.projectCategoryService.findByProjectId(+projectId);
   }
 
@@ -73,9 +69,7 @@ export class ProjectCategoriesController {
     status: 204,
     description: 'The category has been successfully deleted.',
   })
-  public async deleteCategory(
-    @Param('categoryId') categoryId: string,
-  ): Promise<void> {
+  public async deleteCategory(@Param('categoryId') categoryId: string): Promise<void> {
     await this.projectCategoryService.remove(+categoryId);
   }
 }

@@ -218,12 +218,7 @@ export class NotificationsService implements INotificationsService {
           ? notification.data.invitationId
           : undefined;
 
-      await this.mailService.sendNotificationEmail(
-        recipient.email,
-        notification.title,
-        content,
-        invitationId,
-      );
+      await this.mailService.sendNotificationEmail(recipient.email, notification.title, content, invitationId);
     } catch (error) {
       console.error('Failed to send email notification:', error);
     }
@@ -233,7 +228,7 @@ export class NotificationsService implements INotificationsService {
     type: NotificationTypeEnum,
     dto: CreateNotificationDto,
     langCode: string,
-  ): Promise<{ title: string; message: string; }> {
+  ): Promise<{ title: string; message: string }> {
     try {
       let title: string;
       let message: string;

@@ -12,9 +12,7 @@ describe('AppController (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication<NestFastifyApplication>(
-      new FastifyAdapter(),
-    );
+    app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     configService = app.get(ConfigService);
     await app.init();
     await app.getHttpAdapter().getInstance().ready();

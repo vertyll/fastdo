@@ -27,10 +27,7 @@ describe('Seeder Decorator', () => {
 
     const metadata = getMetadata(TestSeeder);
 
-    expect(metadata.environment).toEqual([
-      Environment.DEVELOPMENT,
-      Environment.PRODUCTION,
-    ]);
+    expect(metadata.environment).toEqual([Environment.DEVELOPMENT, Environment.PRODUCTION]);
     expect(metadata.truncate).toBeFalsy();
     expect(metadata.priority).toBe(100);
   });

@@ -17,9 +17,8 @@ import { ISeeder } from '../interfaces/seeder.interface';
 export class TaskPrioritySeeder implements ISeeder {
   constructor(
     @InjectRepository(TaskPriority) private readonly priorityRepository: Repository<TaskPriority>,
-    @InjectRepository(TaskPriorityTranslation) private readonly priorityTranslationRepository: Repository<
-      TaskPriorityTranslation
-    >,
+    @InjectRepository(TaskPriorityTranslation)
+    private readonly priorityTranslationRepository: Repository<TaskPriorityTranslation>,
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
   ) {}
 

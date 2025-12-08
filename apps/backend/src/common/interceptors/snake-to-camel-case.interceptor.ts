@@ -4,10 +4,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class SnakeToCamelCaseInterceptor implements NestInterceptor {
-  public intercept(
-    _context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<any> {
+  public intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(map(data => this.keysToCamel(data)));
   }
 
@@ -18,9 +15,7 @@ export class SnakeToCamelCaseInterceptor implements NestInterceptor {
   }
 
   private isObject(obj: any): boolean {
-    return (
-      obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function'
-    );
+    return obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function';
   }
 
   private isDate(value: any): boolean {
@@ -29,7 +24,7 @@ export class SnakeToCamelCaseInterceptor implements NestInterceptor {
 
   private keysToCamel(obj: any): any {
     if (this.isObject(obj)) {
-      const n: { [key: string]: any; } = {};
+      const n: { [key: string]: any } = {};
       Object.keys(obj).forEach(k => {
         const camelKey = this.toCamel(k);
 

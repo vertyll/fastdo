@@ -15,9 +15,7 @@ export class MailConfigService {
     const mailConfig: MailConfig = this.configService.getOrThrow<MailConfig>('app.mail');
 
     if (!mailConfig.host || !mailConfig.port || !mailConfig.from) {
-      throw new Error(
-        this.i18n.t('messages.Mail.errors.missingMailConfiguration'),
-      );
+      throw new Error(this.i18n.t('messages.Mail.errors.missingMailConfiguration'));
     }
 
     return {

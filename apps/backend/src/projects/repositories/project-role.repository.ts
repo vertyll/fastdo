@@ -11,9 +11,8 @@ import { ProjectRoleEnum } from '../enums/project-role.enum';
 export class ProjectRoleRepository {
   constructor(
     @InjectRepository(ProjectRole) private readonly projectRoleRepository: Repository<ProjectRole>,
-    @InjectRepository(ProjectRoleTranslation) private readonly projectRoleTranslationRepository: Repository<
-      ProjectRoleTranslation
-    >,
+    @InjectRepository(ProjectRoleTranslation)
+    private readonly projectRoleTranslationRepository: Repository<ProjectRoleTranslation>,
   ) {}
 
   public async findAll(): Promise<ProjectRoleResponseDto[]> {

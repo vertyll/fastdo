@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) implements IJwtStrat
     });
   }
 
-  async validate(payload: JwtPayload): Promise<User & { roles: string[]; }> {
+  async validate(payload: JwtPayload): Promise<User & { roles: string[] }> {
     const user = await this.usersService.findOne(payload.sub);
     if (!user || !user.isActive || !user.isEmailConfirmed) {
       throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));

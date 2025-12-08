@@ -22,9 +22,7 @@ import { TaskComment } from '../../../../tasks/entities/task-comment.entity';
 import { TaskPriorityTranslation } from '../../../../tasks/entities/task-priority-translation.entity';
 import { TaskPriority } from '../../../../tasks/entities/task-priority.entity';
 import { Task } from '../../../../tasks/entities/task.entity';
-import {
-  PrivacyPolicySectionTranslation,
-} from '../../../../terms-and-policies/entities/privacy-policy-section-translation.entity';
+import { PrivacyPolicySectionTranslation } from '../../../../terms-and-policies/entities/privacy-policy-section-translation.entity';
 import { PrivacyPolicySection } from '../../../../terms-and-policies/entities/privacy-policy-section.entity';
 import { PrivacyPolicy } from '../../../../terms-and-policies/entities/privacy-policy.entity';
 import { TermsSectionTranslation } from '../../../../terms-and-policies/entities/terms-section-translation.entity';

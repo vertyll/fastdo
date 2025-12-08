@@ -27,7 +27,7 @@ export class DevTransport implements IMailTransport {
     });
   }
 
-  public async sendMail(options: { from: string; to: string; subject: string; html: string; }): Promise<void> {
+  public async sendMail(options: { from: string; to: string; subject: string; html: string }): Promise<void> {
     if (!this.isMailDevAvailable) {
       this.logger.warn(`Would send email in production: ${JSON.stringify(options)}`);
       const environment = this.configService.get<string>('app.environment');

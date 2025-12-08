@@ -15,7 +15,7 @@ export class ProjectListResponseDto {
   isPublic: boolean;
 
   @ApiProperty({ required: false, type: () => Object, nullable: true, example: { url: 'https://...' } })
-  icon?: { url: string | null; } | null;
+  icon?: { url: string | null } | null;
 
   @ApiProperty()
   isActive: boolean;
@@ -34,10 +34,10 @@ export class ProjectListResponseDto {
   };
 
   @ApiProperty({ type: [Object], required: false })
-  categories?: Array<{ id: number; translations: TranslationDto[]; }>;
+  categories?: Array<{ id: number; translations: TranslationDto[] }>;
 
   @ApiProperty({ type: [Object], required: false })
-  statuses?: Array<{ id: number; translations: TranslationDto[]; }>;
+  statuses?: Array<{ id: number; translations: TranslationDto[] }>;
 
   @ApiProperty({ type: [String], required: false })
   permissions?: string[];

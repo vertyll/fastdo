@@ -26,19 +26,11 @@ export class NotificationsWebsocketService {
   }
 
   public async sendNotificationRead(notification: NotificationEvent): Promise<void> {
-    await this.eventEmitter.emitToUser(
-      notification.recipientId,
-      NotificationEventEnum.NOTIFICATION_READ,
-      notification,
-    );
+    await this.eventEmitter.emitToUser(notification.recipientId, NotificationEventEnum.NOTIFICATION_READ, notification);
   }
 
   public async sendNotificationDeleted(notificationId: number, recipientId: number): Promise<void> {
-    await this.eventEmitter.emitToUser(
-      recipientId,
-      NotificationEventEnum.NOTIFICATION_DELETED,
-      { notificationId },
-    );
+    await this.eventEmitter.emitToUser(recipientId, NotificationEventEnum.NOTIFICATION_DELETED, { notificationId });
   }
 
   public async sendTaskAssigned(taskId: number, taskTitle: string, recipientId: number): Promise<void> {
@@ -48,15 +40,11 @@ export class NotificationsWebsocketService {
       title: this.i18n.t('messages.Tasks.assigned.title' as any, { lang: lang.code, args: { title: taskTitle } }),
       message: this.i18n.t('messages.Tasks.assigned.message' as any, { lang: lang.code, args: { title: taskTitle } }),
     }));
-    await this.eventEmitter.emitToUser(
+    await this.eventEmitter.emitToUser(recipientId, 'task.assigned', {
+      taskId,
+      translations,
       recipientId,
-      'task.assigned',
-      {
-        taskId,
-        translations,
-        recipientId,
-      },
-    );
+    });
   }
 
   public async sendTaskStatusChanged(
@@ -77,15 +65,11 @@ export class NotificationsWebsocketService {
         args: { title: taskTitle, status: newStatus },
       }),
     }));
-    await this.eventEmitter.emitToUser(
+    await this.eventEmitter.emitToUser(recipientId, 'task.status_changed', {
+      taskId,
+      translations,
       recipientId,
-      'task.status_changed',
-      {
-        taskId,
-        translations,
-        recipientId,
-      },
-    );
+    });
   }
 
   public async sendProjectInvitation(projectId: number, projectName: string, recipientId: number): Promise<void> {
@@ -95,16 +79,12 @@ export class NotificationsWebsocketService {
       title: this.i18n.t('messages.Projects.invitation.title' as any, { lang: lang.code, args: { projectName } }),
       message: this.i18n.t('messages.Projects.invitation.message' as any, { lang: lang.code, args: { projectName } }),
     }));
-    await this.eventEmitter.emitToUser(
+    await this.eventEmitter.emitToUser(recipientId, 'project.invitation', {
+      projectId,
+      projectName,
+      translations,
       recipientId,
-      'project.invitation',
-      {
-        projectId,
-        projectName,
-        translations,
-        recipientId,
-      },
-    );
+    });
   }
 
   public async sendCommentAdded(taskId: number, taskTitle: string, recipientId: number): Promise<void> {
@@ -117,14 +97,10 @@ export class NotificationsWebsocketService {
         args: { title: taskTitle },
       }),
     }));
-    await this.eventEmitter.emitToUser(
+    await this.eventEmitter.emitToUser(recipientId, 'task.comment_added', {
+      taskId,
+      translations,
       recipientId,
-      'task.comment_added',
-      {
-        taskId,
-        translations,
-        recipientId,
-      },
-    );
+    });
   }
 }

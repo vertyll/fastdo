@@ -48,9 +48,6 @@ import { IMailTransportToken } from './tokens/mail-transport.token';
     },
     MailSenderService,
   ],
-  exports: [
-    IMailServiceToken,
-  ],
+  exports: [IMailServiceToken],
 })
-export class MailModule {
-}
+export class MailModule {}

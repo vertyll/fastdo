@@ -13,15 +13,12 @@ import { ProjectStatusRepository } from '../repositories/project-status.reposito
 export class ProjectStatusesService {
   constructor(
     private readonly projectStatusRepository: ProjectStatusRepository,
-    @InjectRepository(ProjectStatusTranslation) private readonly translationRepository: Repository<
-      ProjectStatusTranslation
-    >,
+    @InjectRepository(ProjectStatusTranslation)
+    private readonly translationRepository: Repository<ProjectStatusTranslation>,
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
   ) {}
 
-  public async findByProjectId(
-    projectId: number,
-  ): Promise<ProjectStatusResponseDto[]> {
+  public async findByProjectId(projectId: number): Promise<ProjectStatusResponseDto[]> {
     const statuses = await this.projectStatusRepository.find({
       where: { project: { id: projectId }, isActive: true },
       relations: ['translations', 'translations.language'],

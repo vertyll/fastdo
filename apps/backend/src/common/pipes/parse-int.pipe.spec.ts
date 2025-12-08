@@ -31,21 +31,19 @@ describe('ParseIntPipe', () => {
   it('should throw BadRequestException with translated message for non-integer string', () => {
     mockI18nContext.translate.mockReturnValue('Must be an integer');
 
-    expect(() => pipe.transform('abc', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Must be an integer'));
+    expect(() => pipe.transform('abc', {} as ArgumentMetadata)).toThrow(new BadRequestException('Must be an integer'));
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isInteger');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isInteger');
   });
 
   it('should throw BadRequestException with translated message for float string', () => {
     mockI18nContext.translate.mockReturnValue('Must be an integer');
 
-    expect(() => pipe.transform('123.45', {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Must be an integer'));
+    expect(() => pipe.transform('123.45', {} as ArgumentMetadata)).toThrow(
+      new BadRequestException('Must be an integer'),
+    );
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isInteger');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isInteger');
   });
 
   it('should return the same number for integer input', () => {
@@ -55,17 +53,14 @@ describe('ParseIntPipe', () => {
   it('should throw BadRequestException with translated message for non-integer number', () => {
     mockI18nContext.translate.mockReturnValue('Must be an integer');
 
-    expect(() => pipe.transform(123.45, {} as ArgumentMetadata))
-      .toThrow(new BadRequestException('Must be an integer'));
+    expect(() => pipe.transform(123.45, {} as ArgumentMetadata)).toThrow(new BadRequestException('Must be an integer'));
 
-    expect(mockI18nContext.translate)
-      .toHaveBeenCalledWith('messages.Validation.isInteger');
+    expect(mockI18nContext.translate).toHaveBeenCalledWith('messages.Validation.isInteger');
   });
 
   it('should throw Error when translation context is not available', () => {
     (I18nContext.current as jest.Mock).mockReturnValue(null);
 
-    expect(() => pipe.transform('123', {} as ArgumentMetadata))
-      .toThrow(new Error('I18nContext not available'));
+    expect(() => pipe.transform('123', {} as ArgumentMetadata)).toThrow(new Error('I18nContext not available'));
   });
 });

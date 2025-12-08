@@ -16,7 +16,7 @@ export class ProjectDetailsResponseDto {
   isPublic: boolean;
 
   @ApiProperty({ required: false })
-  icon: { url: string | null; } | null;
+  icon: { url: string | null } | null;
 
   @ApiProperty()
   isActive: boolean;
@@ -28,20 +28,20 @@ export class ProjectDetailsResponseDto {
   dateModification?: Date | null;
 
   @ApiProperty({ required: false })
-  type?: { id: number; code: string; translations: TranslationDto[]; } | undefined;
+  type?: { id: number; code: string; translations: TranslationDto[] } | undefined;
 
   @ApiProperty({ type: [Object], required: false })
-  categories?: Array<{ id: number; name: string; }>;
+  categories?: Array<{ id: number; name: string }>;
 
   @ApiProperty({ type: [Object], required: false })
-  statuses?: Array<{ id: number; name: string; }>;
+  statuses?: Array<{ id: number; name: string }>;
 
   @ApiProperty({ type: [String], required: false })
   permissions?: string[];
 
   @ApiProperty({ type: [Object], required: false })
   projectUserRoles?: Array<{
-    user: { id: number; email: string; };
+    user: { id: number; email: string };
     projectRole: {
       code: ProjectRoleEnum;
       translations: TranslationDto[];

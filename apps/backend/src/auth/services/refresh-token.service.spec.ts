@@ -96,9 +96,7 @@ describe('RefreshTokenService', () => {
     it('should throw UnauthorizedException if no tokens are found', async () => {
       refreshTokenRepository.find.mockResolvedValueOnce([]);
 
-      await expect(service.validateRefreshToken(1, 'plain-token'))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(service.validateRefreshToken(1, 'plain-token')).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if no valid token is found', async () => {
@@ -106,9 +104,7 @@ describe('RefreshTokenService', () => {
       refreshTokenRepository.find.mockResolvedValueOnce(tokens);
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(false as never);
 
-      await expect(service.validateRefreshToken(1, 'plain-token'))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(service.validateRefreshToken(1, 'plain-token')).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if token is expired', async () => {
@@ -116,9 +112,7 @@ describe('RefreshTokenService', () => {
       refreshTokenRepository.find.mockResolvedValueOnce(tokens);
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(true as never);
 
-      await expect(service.validateRefreshToken(1, 'plain-token'))
-        .rejects
-        .toThrow(UnauthorizedException);
+      await expect(service.validateRefreshToken(1, 'plain-token')).rejects.toThrow(UnauthorizedException);
     });
 
     it('should return valid token', async () => {

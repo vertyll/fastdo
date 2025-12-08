@@ -15,9 +15,7 @@ describe('FilePathBuilder', () => {
     jest.setSystemTime(mockDate);
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        FilePathBuilder,
-      ],
+      providers: [FilePathBuilder],
     }).compile();
 
     builder = module.get(FilePathBuilder);

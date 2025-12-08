@@ -88,12 +88,7 @@ describe('JwtRefreshStrategy', () => {
       validateRefreshToken: jest.fn(),
     } as unknown as jest.Mocked<IRefreshTokenService>;
 
-    jwtRefreshStrategy = new JwtRefreshStrategy(
-      usersService,
-      i18nService,
-      refreshTokenService,
-      configService,
-    );
+    jwtRefreshStrategy = new JwtRefreshStrategy(usersService, i18nService, refreshTokenService, configService);
   });
 
   describe('validate', () => {
@@ -111,8 +106,7 @@ describe('JwtRefreshStrategy', () => {
     it('should throw UnauthorizedException if user is not found', async () => {
       usersService.findOne.mockResolvedValue(null);
 
-      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload)).rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
 
@@ -120,8 +114,7 @@ describe('JwtRefreshStrategy', () => {
       const inactiveUser = { ...mockUser, isActive: false };
       usersService.findOne.mockResolvedValue(inactiveUser);
 
-      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload)).rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
 
@@ -129,8 +122,7 @@ describe('JwtRefreshStrategy', () => {
       const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
       usersService.findOne.mockResolvedValue(unconfirmedUser);
 
-      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload)).rejects.toThrow(UnauthorizedException);
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
 
@@ -140,8 +132,7 @@ describe('JwtRefreshStrategy', () => {
         new UnauthorizedException('messages.Auth.errors.invalidToken'),
       );
 
-      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtRefreshStrategy.validate(mockRequest, mockPayload)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if refresh token is missing', async () => {
@@ -149,8 +140,9 @@ describe('JwtRefreshStrategy', () => {
         cookies: {},
       } as Partial<FastifyRequest> as FastifyRequest;
 
-      await expect(jwtRefreshStrategy.validate(requestWithoutToken, mockPayload))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(jwtRefreshStrategy.validate(requestWithoutToken, mockPayload)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(i18nService.t).toHaveBeenCalledWith('messages.Auth.errors.invalidToken');
     });
   });

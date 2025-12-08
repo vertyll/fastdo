@@ -44,9 +44,7 @@ export class UsersService implements IUsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  public async updateProfile(
-    updateProfileDto: UpdateProfileDto,
-  ): Promise<User | null> {
+  public async updateProfile(updateProfileDto: UpdateProfileDto): Promise<User | null> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -90,10 +88,7 @@ export class UsersService implements IUsersService {
         updateData.emailChangeTokenExpiry = emailChangeTokenExpiry;
 
         try {
-          await this.mailService.sendEmailChangeConfirmation(
-            updateProfileDto.email,
-            emailChangeToken,
-          );
+          await this.mailService.sendEmailChangeConfirmation(updateProfileDto.email, emailChangeToken);
         } catch {
           throw new UnauthorizedException(this.i18n.t('messages.User.errors.emailSendFailed'));
         }

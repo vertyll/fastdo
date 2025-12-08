@@ -15,7 +15,8 @@ import { IRefreshTokenServiceToken } from '../tokens/refresh-token-service.token
 import { JwtRefreshPayload } from '../types/jwt-refresh-payload.interface';
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyEnum.JwtRefresh)
+export class JwtRefreshStrategy
+  extends PassportStrategy(Strategy, AuthStrategyEnum.JwtRefresh)
   implements IJwtRefreshStrategy
 {
   constructor(
@@ -28,9 +29,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, AuthStrategyE
     if (!refreshTokenSecret) throw new Error('JWT_REFRESH_SECRET is not defined');
 
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (request): string | null => request?.cookies?.refresh_token,
-      ]),
+      jwtFromRequest: ExtractJwt.fromExtractors([(request): string | null => request?.cookies?.refresh_token]),
       ignoreExpiration: false,
       secretOrKey: refreshTokenSecret,
       passReqToCallback: true,

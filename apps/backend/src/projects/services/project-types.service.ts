@@ -4,9 +4,7 @@ import { ProjectTypeRepository } from '../repositories/project-type.repository';
 
 @Injectable()
 export class ProjectTypesService {
-  constructor(
-    private readonly projectTypeRepository: ProjectTypeRepository,
-  ) {}
+  constructor(private readonly projectTypeRepository: ProjectTypeRepository) {}
 
   public async findAll(): Promise<ProjectTypeResponseDto[]> {
     const projectTypes = await this.projectTypeRepository.find({

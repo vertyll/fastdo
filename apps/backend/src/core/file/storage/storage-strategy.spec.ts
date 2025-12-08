@@ -61,8 +61,7 @@ describe('StorageStrategy', () => {
 
     it('should throw InvalidStorageTypeException for invalid storage type', () => {
       const invalidType = 's3' as StorageType;
-      expect(() => strategy.getStorage(invalidType))
-        .toThrow(InvalidStorageTypeException);
+      expect(() => strategy.getStorage(invalidType)).toThrow(InvalidStorageTypeException);
     });
   });
 });

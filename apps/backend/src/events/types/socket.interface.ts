@@ -11,9 +11,9 @@ export interface AuthenticatedSocket {
 }
 
 interface handshake {
-  headers: { [key: string]: string | string[] | undefined; };
-  query: { [key: string]: string | string[] | undefined; };
-  auth?: { [key: string]: any; };
+  headers: { [key: string]: string | string[] | undefined };
+  query: { [key: string]: string | string[] | undefined };
+  auth?: { [key: string]: any };
 }
 
 export interface SocketServer {

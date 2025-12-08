@@ -46,9 +46,6 @@ import { ITasksServiceToken } from './tokens/tasks-service.token';
       useClass: TasksService,
     },
   ],
-  exports: [
-    ITasksServiceToken,
-  ],
+  exports: [ITasksServiceToken],
 })
-export class TasksModule {
-}
+export class TasksModule {}

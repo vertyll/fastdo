@@ -18,11 +18,7 @@ import { join } from 'path';
         },
         typesOutputPath: join(process.cwd(), configService.getOrThrow('app.language.typesOutputPath')),
       }),
-      resolvers: [
-        new HeaderResolver(['x-lang']),
-        AcceptLanguageResolver,
-        { use: QueryResolver, options: ['lang'] },
-      ],
+      resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver, { use: QueryResolver, options: ['lang'] }],
       inject: [ConfigService],
     }),
   ],

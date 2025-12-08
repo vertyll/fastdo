@@ -11,10 +11,7 @@ export class UpdateTaskCommentDto {
   @ApiProperty({ description: 'Comment content' })
   @IsString()
   @MinLength(1, {
-    message: i18nValidationMessage<I18nTranslations>(
-      'messages.Validation.minLength',
-      { length: 1 },
-    ),
+    message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', { length: 1 }),
   })
   content: string;
 
@@ -30,13 +27,7 @@ export class UpdateTaskCommentDto {
   @IsOptional()
   @MultipartArray()
   @IsFile({
-    mimeTypes: [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'application/pdf',
-      'text/plain',
-    ],
+    mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
     maxSize: 5 * 1024 * 1024,
   })
   attachments?: MultipartFile[];

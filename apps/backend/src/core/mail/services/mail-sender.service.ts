@@ -34,10 +34,7 @@ export class MailSenderService {
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         const config = this.mailConfig.getConfig();
-        const html = await this.templateService.getTemplate(
-          options.templateName,
-          options.templateData,
-        );
+        const html = await this.templateService.getTemplate(options.templateName, options.templateData);
 
         await this.transport.sendMail({
           from: config.from,
@@ -49,17 +46,13 @@ export class MailSenderService {
         return;
       } catch (error) {
         currentError = error instanceof Error ? error : new Error(this.i18n.t('messages.Errors.unknownError'));
-        this.logger.warn(
-          `Failed to send email (attempt ${attempt}/${this.maxRetries}): ${currentError.message}`,
-        );
+        this.logger.warn(`Failed to send email (attempt ${attempt}/${this.maxRetries}): ${currentError.message}`);
 
         if (attempt < this.maxRetries) await this.delay(this.retryDelay * attempt);
       }
     }
 
-    this.logger.warn(
-      `Failed to send email after ${this.maxRetries} attempts`,
-    );
+    this.logger.warn(`Failed to send email after ${this.maxRetries} attempts`);
     throw new MailSendFailedException(
       this.i18n,
       currentError?.message || this.i18n.t('messages.Mail.errors.failedToSendEmail'),

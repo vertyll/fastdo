@@ -13,15 +13,12 @@ import { ProjectCategoryRepository } from '../repositories/project-category.repo
 export class ProjectCategoriesService {
   constructor(
     private readonly projectCategoryRepository: ProjectCategoryRepository,
-    @InjectRepository(ProjectCategoryTranslation) private readonly translationRepository: Repository<
-      ProjectCategoryTranslation
-    >,
+    @InjectRepository(ProjectCategoryTranslation)
+    private readonly translationRepository: Repository<ProjectCategoryTranslation>,
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
   ) {}
 
-  public async findByProjectId(
-    projectId: number,
-  ): Promise<ProjectCategoryResponseDto[]> {
+  public async findByProjectId(projectId: number): Promise<ProjectCategoryResponseDto[]> {
     const categories = await this.projectCategoryRepository.find({
       where: { project: { id: projectId }, isActive: true },
       relations: ['translations', 'translations.language'],

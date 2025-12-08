@@ -7,8 +7,6 @@ export class MailSendFailedException extends InternalServerErrorException {
     readonly i18n: I18nService<I18nTranslations>,
     message: string,
   ) {
-    super(
-      i18n.translate('messages.Mail.errors.failedToSendEmail', { args: { message } }),
-    );
+    super(i18n.translate('messages.Mail.errors.failedToSendEmail', { args: { message } }));
   }
 }
