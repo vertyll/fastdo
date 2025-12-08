@@ -17,7 +17,6 @@ import { ThemeService } from '../../services/theme.service';
         dark:text-text-muted-dark dark:hover:text-text-primary-dark dark:hover:bg-neutral-700"
       [attr.aria-label]="'Basic.toggleTheme' | translate"
     >
-      >
       @if (themeService.currentTheme === 'dark') {
         <ng-icon name="heroSun" size="24" class="text-yellow-400" />
       } @else {
