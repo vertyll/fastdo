@@ -74,13 +74,13 @@
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.25",
     "typeorm-naming-strategies": "^4.1.0",
-    "uuid": "^13.0.0"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.2",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.7",
-    "@swc/cli": "^0.7.9",
+    "@swc/cli": "^0.6.0",
     "@swc/core": "^1.12.14",
     "@types/bcryptjs": "^2.4.6",
     "@types/fs-extra": "^11.0.4",
@@ -118,9 +118,6 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "transformIgnorePatterns": [
-      "node_modules/(?!uuid)"
-    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
