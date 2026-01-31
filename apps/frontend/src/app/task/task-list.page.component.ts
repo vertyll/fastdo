@@ -85,7 +85,7 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
             {{ getStatusName(task.status) }}
           </span>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400"> - </span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">-</span>
         }
       </div>
     </ng-template>
