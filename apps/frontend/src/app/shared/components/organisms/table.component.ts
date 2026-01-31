@@ -556,8 +556,8 @@ export interface TableConfig {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 2rem;
-        min-height: 2rem;
+        min-width: 2.2rem;
+        min-height: 2.2rem;
       }
 
       .action-button:disabled {

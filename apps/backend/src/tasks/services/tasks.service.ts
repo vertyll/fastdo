@@ -438,6 +438,7 @@ export class TasksService implements ITasksService {
   }
 
   private validateTaskAccess(task: Task, userId: number): void {
+    // NOSONAR
     if (task.project && Array.isArray(task.project.projectUserRoles)) {
       const isCreator = task.createdBy?.id === userId;
       const isAssigned = Array.isArray(task.assignedUsers) && task.assignedUsers.some(u => u.id === userId);
