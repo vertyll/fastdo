@@ -178,9 +178,7 @@ interface SelectOption {
                 <app-error-message [customMessage]="fieldErrors['statusId'].join(', ')" />
               }
             }
-          </div>
 
-          <div class="mt-6">
             <app-select-field
               [control]="accessRoleControl"
               id="accessRole"
@@ -751,11 +749,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     this.attachments().forEach(attachment => {
       formData.append('attachments', attachment.file);
-    });
-
-    const entries: string[] = [];
-    formData.forEach((value, key) => {
-      entries.push(`${key}: ${value}`);
     });
 
     this.tasksService
