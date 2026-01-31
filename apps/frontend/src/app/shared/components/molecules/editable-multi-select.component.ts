@@ -31,14 +31,11 @@ import { LabelComponent } from '../atoms/label.component';
           class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary transition-colors duration-200 block w-full text-sm text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
         >
           <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-            @for (item of visibleChips; track item; let i = $index) {
-              <div class="ng-value">
-                <span class="ng-value-label">{{ getItemName(item) }}</span>
-                <span class="ng-value-icon" (click)="clear(item)" aria-hidden="true">×</span>
+            @if (items.length > 0) {
+              <div class="selected-count-chip">
+                <span class="count-text">{{ items.length }}</span>
+                <span class="clear-all-icon" (click)="clearAll()" aria-hidden="true">×</span>
               </div>
-            }
-            @if (overflowCount > 0) {
-              <div class="overflow-chip">+{{ overflowCount }}</div>
             }
           </ng-template>
 
@@ -291,158 +288,92 @@ import { LabelComponent } from '../atoms/label.component';
       background-color: rgba(239, 68, 68, 0.1);
     }
 
-    /* Tags (for multiple select) */
+    /* Value container - simplified for counter only */
     .ng-value-container {
       display: flex;
-      flex-wrap: nowrap;
       align-items: center;
-      gap: 0.25rem;
       padding-left: 0.75rem;
       min-height: 3rem;
       box-sizing: border-box;
       width: 100%;
-      overflow: hidden;
     }
 
     @media (max-width: 640px) {
       .ng-value-container {
-        padding: 0 3rem 0 0.5rem;
-        min-height: 3rem;
-        gap: 0.25rem;
+        padding-left: 0.5rem;
+        padding-right: 2.5rem;
       }
     }
 
-    .ng-value {
-      background: linear-gradient(135deg, rgb(254 215 170), rgb(253 186 116));
-      color: rgb(154 52 18);
-      padding: 0.25rem 0.625rem;
-      border-radius: 0.5rem;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid rgb(253 186 116);
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      flex-shrink: 0;
-      max-height: 2rem;
-      line-height: 1.2;
-    }
-
-    @media (max-width: 640px) {
-      .ng-value {
-        font-size: 0.75rem;
-        padding: 0.1875rem 0.375rem;
-        max-height: 1.75rem;
-        border-radius: 0.375rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .ng-value {
-        font-size: 0.6875rem;
-        padding: 0.15rem 0.3125rem;
-        max-height: 1.5rem;
-      }
-    }
-
-    /* Overflow chip with counter */
-    .overflow-chip {
+    /* Selected count chip */
+    .selected-count-chip {
       background: linear-gradient(135deg, rgb(249 115 22), rgb(234 88 12));
       color: #ffffff;
       padding: 0.25rem 0.625rem;
       border-radius: 0.5rem;
-      font-size: 0.8125rem;
+      font-size: 0.8rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.5rem;
       border: 1px solid rgb(249 115 22);
-      white-space: nowrap;
-      flex-shrink: 0;
-      max-height: 2rem;
-      line-height: 1.2;
-      cursor: default;
       box-shadow: 0 2px 8px -2px rgba(249, 115, 22, 0.3);
+      white-space: nowrap;
     }
 
     @media (max-width: 640px) {
-      .overflow-chip {
-        font-size: 0.75rem;
-        padding: 0.1875rem 0.5rem;
-        max-height: 1.75rem;
-        border-radius: 0.375rem;
+      .selected-count-chip {
+        font-size: 0.8125rem;
+        padding: 0.3125rem 0.625rem;
       }
     }
 
     @media (max-width: 480px) {
-      .overflow-chip {
-        font-size: 0.6875rem;
-        padding: 0.15rem 0.4375rem;
-        max-height: 1.5rem;
+      .selected-count-chip {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
       }
     }
 
-    @media (max-width: 640px) {
-      .ng-value:hover {
-        transform: none;
-        box-shadow: none;
-      }
+    .count-text {
+      line-height: 1;
     }
 
-    /* X button for removing tags */
-    .ng-value-icon {
+    .clear-all-icon {
       cursor: pointer;
       font-weight: bold;
-      color: rgb(249 115 22);
-      transition: color 0.2s ease;
+      color: #ffffff;
+      transition: all 0.2s ease;
       width: 18px;
       height: 18px;
       min-width: 18px;
       min-height: 18px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      margin-left: 0.25rem;
-      font-size: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 14px;
       line-height: 1;
-      padding: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      z-index: 1;
     }
 
     @media (max-width: 640px) {
-      .ng-value-icon {
+      .clear-all-icon {
         width: 16px;
         height: 16px;
         min-width: 16px;
         min-height: 16px;
-        font-size: 10px;
-        margin-left: 0.125rem;
+        font-size: 12px;
       }
     }
 
-    @media (max-width: 480px) {
-      .ng-value-icon {
-        width: 14px;
-        height: 14px;
-        min-width: 14px;
-        min-height: 14px;
-        font-size: 9px;
-        margin-left: 0.0625rem;
-      }
-    }
-
-    .ng-value-icon:hover {
-      color: rgb(239 68 68);
-      background: rgba(239, 68, 68, 0.2);
+    .clear-all-icon:hover {
+      background: rgba(255, 255, 255, 0.4);
       transform: scale(1.1);
     }
 
     @media (max-width: 640px) {
-      .ng-value-icon:hover {
+      .clear-all-icon:hover {
         transform: none;
       }
     }
@@ -470,7 +401,7 @@ import { LabelComponent } from '../atoms/label.component';
       background: rgb(249 115 22);
     }
 
-    /* Animatiosn for dropdown panel */
+    /* Animations for dropdown panel */
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -489,22 +420,11 @@ import { LabelComponent } from '../atoms/label.component';
     @media (max-width: 375px) {
       .ng-value-container {
         padding-left: 0.375rem;
-        padding-right: 2.75rem;
-        min-height: 3rem;
+        padding-right: 2.25rem;
       }
-      .ng-select .ng-input {
-        min-height: 3rem;
-        padding-left: 0.375rem;
-        padding-right: 2.75rem;
-      }
-      .ng-select .ng-select-container {
-        min-height: 3rem;
-      }
-      .ng-value,
-      .overflow-chip {
-        font-size: 0.625rem;
-        padding: 0.125rem 0.3125rem;
-        max-height: 1.375rem;
+      .selected-count-chip {
+        font-size: 0.6875rem;
+        padding: 0.1875rem 0.4375rem;
       }
     }
   `,
@@ -525,13 +445,10 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
   readonly minTermLength = input<number>(0);
   readonly allowAddTag = input<boolean>(true);
   readonly placeholder = input<string>('');
-  readonly maxVisibleChips = input<number>(1);
 
   readonly searched = output();
 
   protected selectValue: any;
-  protected visibleChips: any[] = [];
-  protected overflowCount: number = 0;
 
   private touched = false;
 
@@ -555,13 +472,11 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
 
   public writeValue(value: any): void {
     this.selectValue = value;
-    this.updateVisibleChips();
   }
 
   protected onSelectChange(inputValue: any): void {
     this.markAsTouched();
     this.selectValue = inputValue;
-    this.updateVisibleChips();
     this.onChange(this.selectValue);
   }
 
@@ -569,23 +484,9 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
     this.searched.emit(event);
   }
 
-  private updateVisibleChips(): void {
-    if (!this.multiple() || !this.selectValue) {
-      this.visibleChips = [];
-      this.overflowCount = 0;
-      return;
-    }
-
-    const selectedArray = Array.isArray(this.selectValue) ? this.selectValue : [this.selectValue];
-    const maxVisible = this.maxVisibleChips();
-
-    if (selectedArray.length > maxVisible) {
-      this.visibleChips = selectedArray.slice(0, maxVisible);
-      this.overflowCount = selectedArray.length - maxVisible;
-    } else {
-      this.visibleChips = selectedArray;
-      this.overflowCount = 0;
-    }
+  protected clearAll(): void {
+    this.selectValue = [];
+    this.onChange(this.selectValue);
   }
 
   get normalizedDataArray(): Array<{ id: any; name: string }> {
@@ -598,10 +499,5 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
       }
       return item;
     });
-  }
-
-  protected getItemName(itemId: any): string {
-    const item = this.normalizedDataArray.find(i => i.id === itemId);
-    return item ? item.name : String(itemId);
   }
 }
