@@ -244,6 +244,13 @@ export class ProjectsService {
     for (const cat of incomingCategories) {
       if (cat.id) {
         await categoryRepo.update({ id: cat.id, project: { id: projectId } }, { color: cat.color });
+        const categoryTranslations = await queryRunner.manager.getRepository(ProjectCategoryTranslation).find({
+          where: { projectCategory: { id: cat.id } },
+        });
+        for (const translation of categoryTranslations) {
+          translation.name = cat.name;
+          await queryRunner.manager.getRepository(ProjectCategoryTranslation).save(translation);
+        }
       } else {
         await this.createCategoriesInTransaction(queryRunner, projectId, [cat]);
       }
@@ -272,6 +279,13 @@ export class ProjectsService {
     for (const status of incomingStatuses) {
       if (status.id) {
         await statusRepo.update({ id: status.id, project: { id: projectId } }, { color: status.color });
+        const statusTranslations = await queryRunner.manager.getRepository(ProjectStatusTranslation).find({
+          where: { projectStatus: { id: status.id } },
+        });
+        for (const translation of statusTranslations) {
+          translation.name = status.name;
+          await queryRunner.manager.getRepository(ProjectStatusTranslation).save(translation);
+        }
       } else {
         await this.createStatusesInTransaction(queryRunner, projectId, [status]);
       }

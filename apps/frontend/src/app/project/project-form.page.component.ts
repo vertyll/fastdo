@@ -751,6 +751,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       const categories = formValue.categories
         .filter((cat: any) => cat.name?.trim())
         .map((cat: any) => ({
+          ...(cat.id ? { id: cat.id } : {}),
           name: cat.name.trim(),
           color: cat.color || '#3B82F6',
         }));
@@ -763,6 +764,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       const statuses = formValue.statuses
         .filter((status: any) => status.name?.trim())
         .map((status: any) => ({
+          ...(status.id ? { id: status.id } : {}),
           name: status.name.trim(),
           color: status.color || '#10B981',
         }));
