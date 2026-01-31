@@ -1,5 +1,6 @@
 import fastifyCookie from '@fastify/cookie';
-import helmet from '@fastify/helmet';
+import fastifyHelmet from '@fastify/helmet';
+import fastifyCors from '@fastify/cors';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import { BadRequestException, ClassSerializerInterceptor, ConsoleLogger, ValidationError } from '@nestjs/common';
@@ -62,7 +63,7 @@ async function bootstrap(): Promise<void> {
   );
   const configService: ConfigService = app.get(ConfigService);
 
-  await app.register(helmet, {
+  await app.register(fastifyHelmet as any, {
     crossOriginResourcePolicy: {
       policy: configService.getOrThrow<HelmetCrossOriginResourcePolicy>(
         'app.security.helmet.crossOriginResourcePolicy',
@@ -71,11 +72,11 @@ async function bootstrap(): Promise<void> {
     contentSecurityPolicy: configService.getOrThrow<boolean>('app.security.helmet.contentSecurityPolicy'),
   });
 
-  await app.register(fastifyCookie, {
+  await app.register(fastifyCookie as any, {
     secret: configService.getOrThrow<string>('app.security.jwt.accessToken.secret'),
   });
 
-  app.enableCors({
+  await app.register(fastifyCors as any, {
     origin: configService.get('app.frontend.url'),
     credentials: true,
     methods: configService.getOrThrow<string[]>('app.security.cors.methods'),
@@ -83,14 +84,14 @@ async function bootstrap(): Promise<void> {
   });
 
   const fileUploadsPath: string = configService.getOrThrow<string>('app.file.storage.local.uploadDirPath');
-  await app.register(fastifyStatic, {
+  await app.register(fastifyStatic as any, {
     root: join(process.cwd(), fileUploadsPath),
     prefix: '/uploads/',
     decorateReply: false,
   });
 
   const maxFileSize: number = configService.getOrThrow<number>('app.file.validation.maxSize');
-  await app.register(fastifyMultipart, {
+  await app.register(fastifyMultipart as any, {
     limits: {
       fileSize: maxFileSize,
     },
