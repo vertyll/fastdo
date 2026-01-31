@@ -61,7 +61,7 @@ export class WrapResponseInterceptor<T> implements NestInterceptor<T, ApiRespons
                 const translationParams = params.args || params;
                 return i18n.t(key as I18nPath, {
                   args: translationParams,
-                  defaultValue: String(i18n.t<I18nPath>('messages.Validation.errorOccurred')),
+                  defaultValue: String(i18n.t<I18nPath>('messages.Validation.errorOccurred')), // NOSONAR
                 });
               }),
             })),

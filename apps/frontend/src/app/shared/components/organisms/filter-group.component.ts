@@ -218,7 +218,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
   readonly filterSearch = output<{ term: string; filter: string }>();
 
   public form!: FormGroup;
-  private formChangeSubscriptions: Subscription[] = [];
+  private readonly formChangeSubscriptions: Subscription[] = [];
   private langChangeSubscription!: Subscription;
 
   public readonly filledFilters = signal<FilterValue[]>([]);
@@ -316,10 +316,10 @@ export class FilterGroupComponent<T extends Record<string, any>>
       const urlParamsNotInForm = await this.getUrlParamsNotInForm();
       const formValues = this.getFormValues(value);
 
-      if (!isInInitialState) {
-        this.handleNonInitialState(formValues, urlParamsNotInForm);
-      } else {
+      if (isInInitialState) {
         this.handleInitialState(formValues, urlParamsNotInForm);
+      } else {
+        this.handleNonInitialState(formValues, urlParamsNotInForm);
       }
     });
 
@@ -388,7 +388,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     if (filter?.type === FilterTypeEnum.EditableMultiSelect) {
       return this.getMultiSelectValue(queryParamValue);
     }
-    return typeof defaultValue === 'number' ? parseInt(queryParamValue) : queryParamValue || defaultValue;
+    return typeof defaultValue === 'number' ? Number.parseInt(queryParamValue) : queryParamValue || defaultValue;
   }
 
   private getMultiSelectValue(value: any): number[] {

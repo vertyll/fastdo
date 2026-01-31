@@ -7,16 +7,14 @@ import { RoleEnum } from 'src/app/shared/enums/role.enum';
 })
 export class HasRoleDirective implements OnInit {
   readonly allowedRoles = input.required<RoleEnum[] | RoleEnum>({ alias: 'appHasRole' });
-  private templateRef = inject(TemplateRef<any>);
-  private viewContainer = inject(ViewContainerRef);
-  private authService = inject(AuthService);
+  private readonly templateRef = inject(TemplateRef<any>);
+  private readonly viewContainer = inject(ViewContainerRef);
+  private readonly authService = inject(AuthService);
   private isVisible: boolean = false;
 
   ngOnInit(): void {
     const userRoles = this.authService.userRoles();
-    if (!userRoles) {
-      this.viewContainer.clear();
-    } else {
+    if (userRoles) {
       const allowedRoles = this.allowedRoles();
       const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
       const hasRole = roles.some(role => userRoles.includes(role));
@@ -27,6 +25,8 @@ export class HasRoleDirective implements OnInit {
         this.viewContainer.clear();
         this.isVisible = false;
       }
+    } else {
+      this.viewContainer.clear();
     }
   }
 }

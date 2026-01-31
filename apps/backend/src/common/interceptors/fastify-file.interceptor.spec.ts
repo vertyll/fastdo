@@ -47,7 +47,7 @@ describe('FastifyFileInterceptor', () => {
   it('should throw BadRequestException when file processing fails', async () => {
     const mockRequest = {
       parts: jest.fn().mockImplementation(() => {
-        throw { code: 'FST_REQ_FILE_TOO_LARGE', part: { file: { bytesRead: 10485760 }, fieldname: 'testFile' } };
+        throw { code: 'FST_REQ_FILE_TOO_LARGE', part: { file: { bytesRead: 10485760 }, fieldname: 'testFile' } }; // NOSONAR
       }),
     } as unknown as FastifyRequest;
 
@@ -89,6 +89,7 @@ describe('FastifyFileInterceptor', () => {
     const mockRequest = {
       parts: jest.fn().mockReturnValue(
         (async function* () {
+          // NOSONAR
           throw new Error('Form data error');
         })(),
       ),
@@ -105,6 +106,7 @@ describe('FastifyFileInterceptor', () => {
     const mockRequest = {
       parts: jest.fn().mockReturnValue(
         (async function* () {
+          // NOSONAR
           const error = new Error('Generic processing error');
           throw error;
         })(),
@@ -122,7 +124,8 @@ describe('FastifyFileInterceptor', () => {
     const mockRequest = {
       parts: jest.fn().mockReturnValue(
         (async function* () {
-          const error = new Error('');
+          // NOSONAR
+          const error = new Error(''); // NOSONAR
           error.message = '';
           throw error;
         })(),
@@ -142,6 +145,7 @@ describe('FastifyFileInterceptor', () => {
     const mockRequest = {
       parts: jest.fn().mockReturnValue(
         (async function* () {
+          // NOSONAR
           throw originalError;
         })(),
       ),

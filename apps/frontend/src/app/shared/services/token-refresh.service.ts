@@ -9,7 +9,7 @@ import { AuthService } from '../../auth/data-access/auth.service';
   providedIn: 'root',
 })
 export class TokenRefreshService {
-  private refreshTokenSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly refreshTokenSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);

@@ -2,7 +2,7 @@ import { MultipartFile } from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
 import { ensureDir, unlink, writeFile } from 'fs-extra';
 import { I18nService } from 'nestjs-i18n';
-import { join } from 'path';
+import { join } from 'node:path';
 import { I18nTranslations } from '../../../../generated/i18n/i18n.generated';
 import { StorageTypeEnum } from '../../../config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
@@ -37,9 +37,7 @@ export class LocalStorageService implements FileStorage {
 
       const fileName = path.split('/').pop();
       if (!fileName) {
-        return Promise.reject(
-          new FileUploadException(this.i18n, this.i18n.t('messages.File.errors.failedExtractFileNameFromPath')),
-        );
+        throw new FileUploadException(this.i18n, this.i18n.t('messages.File.errors.failedExtractFileNameFromPath'));
       }
 
       return {

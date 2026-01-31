@@ -636,7 +636,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly notificationStateService = inject(NotificationStateService);
 
-  private routerSubscription: Subscription;
+  private readonly routerSubscription: Subscription;
 
   private readonly defaultModules: NavModule[] = configNavModules;
 
@@ -822,7 +822,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  private handleOutsideClick = (event: MouseEvent): void => {
+  private readonly handleOutsideClick = (event: MouseEvent): void => {
     const target = event.target as HTMLElement;
 
     if (this.languageDropdownOpen && !target.closest('.language-button')) {

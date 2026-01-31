@@ -12,7 +12,7 @@ export class WindowService {
     });
   }
 
-  getWindowWidth(): Signal<number> {
+  public getWindowWidth(): Signal<number> {
     return this.windowWidth.asReadonly();
   }
 }

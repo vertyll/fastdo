@@ -17,15 +17,20 @@ export class ProjectsStateService {
   });
 
   public projects = computed(() => this.projectsSignal());
-  public state = computed(() =>
-    this.apiService.$idle()
-      ? LOADING_STATE_VALUE.IDLE
-      : this.apiService.$loading()
-        ? LOADING_STATE_VALUE.LOADING
-        : this.apiService.$error()
-          ? LOADING_STATE_VALUE.ERROR
-          : LOADING_STATE_VALUE.SUCCESS,
-  );
+
+  private getLoadingState(): string {
+    if (this.apiService.$idle()) {
+      return LOADING_STATE_VALUE.IDLE;
+    } else if (this.apiService.$loading()) {
+      return LOADING_STATE_VALUE.LOADING;
+    } else if (this.apiService.$error()) {
+      return LOADING_STATE_VALUE.ERROR;
+    } else {
+      return LOADING_STATE_VALUE.SUCCESS;
+    }
+  }
+
+  public state = computed(() => this.getLoadingState());
   public error = computed(() => this.apiService.$error());
   public readonly pagination = this.paginationSignal.asReadonly();
 

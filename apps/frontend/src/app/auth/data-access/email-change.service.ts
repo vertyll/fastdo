@@ -5,8 +5,8 @@ import { AuthService } from './auth.service';
 @Injectable({ providedIn: 'root' })
 export class EmailChangeService {
   constructor(
-    private authService: AuthService,
-    private router: Router,
+    private readonly authService: AuthService,
+    private readonly router: Router,
   ) {}
 
   public handleEmailChange(force = false): void {

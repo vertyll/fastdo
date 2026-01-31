@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, inject, input, output, signal } from '@angular/core';
-import { provideIcons } from '@ng-icons/core';
-import { NgIconComponent } from '@ng-icons/core';
+import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../atoms/button.component';
@@ -176,7 +175,7 @@ export class FileUploadComponent {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   public clearFiles(): void {

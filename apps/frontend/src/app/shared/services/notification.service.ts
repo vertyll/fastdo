@@ -15,17 +15,21 @@ export class NotificationService {
     duration: number = 3500,
     verticalPosition: MatSnackBarVerticalPosition = 'top',
   ): void {
+    let panelClass: string[];
+    if (type === NotificationTypeEnum.Info) {
+      panelClass = ['info-snackbar'];
+    } else if (type === NotificationTypeEnum.Success) {
+      panelClass = ['success-snackbar'];
+    } else if (type === NotificationTypeEnum.Error) {
+      panelClass = ['error-snackbar'];
+    } else {
+      panelClass = ['info'];
+    }
+
     this.snackBar.open(message, action, {
       duration: duration,
       verticalPosition: verticalPosition,
-      panelClass:
-        type === NotificationTypeEnum.Info
-          ? ['info-snackbar']
-          : type === NotificationTypeEnum.Success
-            ? ['success-snackbar']
-            : type === NotificationTypeEnum.Error
-              ? ['error-snackbar']
-              : ['info'],
+      panelClass: panelClass,
     });
   }
 }

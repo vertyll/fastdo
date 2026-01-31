@@ -153,7 +153,7 @@ export class AuthService implements IAuthService {
       const { email } = this.confirmationTokenService.verifyToken(token);
       const user = await this.userRepository.findOne({ where: { email } });
 
-      if (!user || user.emailChangeToken !== token || !user.emailChangeTokenExpiry) {
+      if (user?.emailChangeToken !== token || !user.emailChangeTokenExpiry) {
         return { success: false, email };
       }
 

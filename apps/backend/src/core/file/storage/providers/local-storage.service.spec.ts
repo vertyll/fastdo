@@ -2,7 +2,7 @@ import { MultipartFile } from '@fastify/multipart';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ensureDir, unlink, writeFile } from 'fs-extra';
 import { I18nService } from 'nestjs-i18n';
-import { join } from 'path';
+import { join } from 'node:path';
 import { StorageTypeEnum } from '../../../config/types/app.config.type';
 import { FileConfigService } from '../../config/file-config';
 import { FileDeleteException } from '../../exceptions/file-delete.exception';

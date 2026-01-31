@@ -403,7 +403,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         this.tasksStateService.setPagination(tasks.pagination);
       }),
       catchError(err => {
-        if (err.error && err.error.message) {
+        if (err.error?.message) {
           this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
@@ -437,7 +437,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         .pipe(
           catchError(err => {
             this.tasksStateService.setLoadingMore(false);
-            if (err.error && err.error.message) {
+            if (err.error?.message) {
               this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
             } else {
               this.notificationService.showNotification(
@@ -565,7 +565,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         this.getAllTasks(currentParams).subscribe();
       },
       error: (err: any) => {
-        if (err.error && err.error.message) {
+        if (err.error?.message) {
           this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
@@ -583,7 +583,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     if (status.translations && Array.isArray(status.translations)) {
       const currentLang = this.translateService.currentLang || 'pl';
       const translation = status.translations.find((t: any) => t.lang === currentLang);
-      if (translation && translation.name) {
+      if (translation?.name) {
         return translation.name;
       }
     }
@@ -601,7 +601,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     if (category.translations && Array.isArray(category.translations)) {
       const currentLang = this.translateService.currentLang || 'pl';
       const translation = category.translations.find((t: any) => t.lang === currentLang);
-      if (translation && translation.name) {
+      if (translation?.name) {
         return translation.name;
       }
     }

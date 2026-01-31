@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -485,12 +484,12 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   protected removeExistingAttachment(attachment: any): void {
-    if (!attachment._markedForDelete) {
-      attachment._markedForDelete = true;
-      this.attachmentsToDelete.update(toDelete => [...toDelete, attachment.id]);
-    } else {
+    if (attachment._markedForDelete) {
       attachment._markedForDelete = false;
       this.attachmentsToDelete.update(toDelete => toDelete.filter(id => id !== attachment.id));
+    } else {
+      attachment._markedForDelete = true;
+      this.attachmentsToDelete.update(toDelete => [...toDelete, attachment.id]);
     }
     this.existingAttachments.set([...this.existingAttachments()]);
 
@@ -511,7 +510,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   protected getMaxNewFiles(): number {

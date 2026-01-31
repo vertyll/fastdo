@@ -19,7 +19,7 @@ export class CustomDatePipe implements PipeTransform {
       date = new Date(value);
     }
 
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       const errorMessage = this.translateService.instant('Date.invalidDate');
       console.error(errorMessage, value);
       return '';
@@ -44,6 +44,6 @@ export class CustomDatePipe implements PipeTransform {
       ss: pad(date.getSeconds()),
       s: date.getSeconds().toString(),
     };
-    return format.replace(/dd|d|MM|M|yyyy|yy|HH|H|mm|m|ss|s/g, match => map[match]);
+    return format.replaceAll(/dd|d|MM|M|yyyy|yy|HH|H|mm|m|ss|s/g, match => map[match]);
   }
 }

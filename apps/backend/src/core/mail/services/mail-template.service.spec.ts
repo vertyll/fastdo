@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as fs from 'fs/promises';
+import * as fs from 'node:fs/promises';
 import * as Handlebars from 'handlebars';
-import * as path from 'path';
+import * as path from 'node:path';
 import { MailTemplateService } from './mail-template.service';
 
 jest.mock('fs/promises');

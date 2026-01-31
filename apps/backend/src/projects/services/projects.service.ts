@@ -494,14 +494,14 @@ export class ProjectsService {
       relations: ['user', 'projectRole'],
     });
 
-    const newUserEmails = usersWithRoles.map(u => u.email);
+    const newUserEmails = new Set(usersWithRoles.map(u => u.email));
 
-    if (!newUserEmails.includes(updater.email)) {
+    if (!newUserEmails.has(updater.email)) {
       throw new Error(this.i18n.t('messages.Projects.errors.updaterNotInNewUsersList'));
     }
 
     for (const currentUser of currentProjectUsers) {
-      if (!newUserEmails.includes(currentUser.user.email)) {
+      if (!newUserEmails.has(currentUser.user.email)) {
         if (currentUser.user.id === updaterId) {
           throw new Error(this.i18n.t('messages.Projects.errors.cannotRemoveYourselfFromProject'));
         }
@@ -510,8 +510,7 @@ export class ProjectsService {
           currentUser.projectRole.id === (await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER))?.id;
         if (isManager) {
           const managersLeft = currentProjectUsers.filter(
-            u =>
-              u.projectRole && u.projectRole.id === currentUser.projectRole.id && newUserEmails.includes(u.user.email),
+            u => u.projectRole && u.projectRole.id === currentUser.projectRole.id && newUserEmails.has(u.user.email),
           ).length;
           if (managersLeft === 0) {
             throw new Error(this.i18n.t('messages.Projects.errors.lastManagerCannotBeRemoved'));
@@ -668,7 +667,7 @@ export class ProjectsService {
     const repo = manager ? manager.getRepository(Notification) : this.notificationRepository;
     const notifications = await repo.find({ where: { type: NotificationTypeEnum.PROJECT_INVITATION } });
     for (const notification of notifications) {
-      if (notification.data && notification.data.invitationId === invitationId) {
+      if (notification.data?.invitationId === invitationId) {
         notification.data.invitationStatus = status;
         await repo.save(notification);
       }

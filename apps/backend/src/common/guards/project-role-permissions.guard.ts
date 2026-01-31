@@ -36,10 +36,10 @@ export class ProjectRolePermissionsGuard implements CanActivate {
       relations: ['projectRole', 'projectRole.permissions'],
     });
 
-    if (!userRole || !userRole.projectRole?.permissions) return false;
+    if (!userRole?.projectRole?.permissions) return false;
 
-    const userPermissions = userRole.projectRole.permissions.map(p => p.code);
+    const userPermissions = new Set(userRole.projectRole.permissions.map(p => p.code));
 
-    return requiredPermissions.some(permission => userPermissions.includes(permission));
+    return requiredPermissions.some(permission => userPermissions.has(permission));
   }
 }

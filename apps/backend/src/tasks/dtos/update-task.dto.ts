@@ -27,7 +27,7 @@ export class UpdateTaskDto {
   @Transform(({ value }) => {
     if (typeof value === 'string' && value !== '') {
       const num = Number(value);
-      return isNaN(num) ? undefined : num;
+      return Number.isNaN(num) ? undefined : num;
     }
     return value;
   })
@@ -60,7 +60,7 @@ export class UpdateTaskDto {
     if (value === null || value === 'null' || value === '') return null;
     if (typeof value === 'string') {
       const num = Number(value);
-      return isNaN(num) ? null : num;
+      return Number.isNaN(num) ? null : num;
     }
     return value;
   })
@@ -78,7 +78,7 @@ export class UpdateTaskDto {
   @Transform(({ value }) => {
     if (typeof value === 'string' && value !== '') {
       const num = Number(value);
-      return isNaN(num) ? undefined : num;
+      return Number.isNaN(num) ? undefined : num;
     }
     return value;
   })
@@ -93,7 +93,7 @@ export class UpdateTaskDto {
   @Transform(({ value }) => {
     if (typeof value === 'string' && value !== '') {
       const num = Number(value);
-      return isNaN(num) ? undefined : num;
+      return Number.isNaN(num) ? undefined : num;
     }
     return value;
   })
@@ -109,7 +109,7 @@ export class UpdateTaskDto {
     if (value === null || value === 'null' || value === '') return null;
     if (typeof value === 'string') {
       const num = Number(value);
-      return isNaN(num) ? null : num;
+      return Number.isNaN(num) ? null : num;
     }
     return value;
   })

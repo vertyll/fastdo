@@ -74,7 +74,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
 
-    this.timeIntervalId = window.setInterval(() => this.updateTime(), 1000);
+    this.timeIntervalId = globalThis.setInterval(() => this.updateTime(), 1000);
   }
 
   ngOnDestroy(): void {

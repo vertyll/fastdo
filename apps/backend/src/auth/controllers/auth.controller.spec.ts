@@ -107,12 +107,10 @@ describe('AuthController', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn().mockImplementation((key: string) => {
-              switch (key) {
-                case 'app.frontend.url':
-                  return 'http://localhost:3000';
-                default:
-                  return null;
+              if (key === 'app.frontend.url') {
+                return 'http://localhost:3000';
               }
+              return null;
             }),
           },
         },

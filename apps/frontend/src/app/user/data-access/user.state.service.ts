@@ -10,15 +10,17 @@ export class UserStateService {
   private readonly userSignal = signal<User>({} as User);
 
   public user = computed(() => this.userSignal());
-  public state = computed(() =>
-    this.apiService.$idle()
-      ? LOADING_STATE_VALUE.IDLE
-      : this.apiService.$loading()
-        ? LOADING_STATE_VALUE.LOADING
-        : this.apiService.$error()
-          ? LOADING_STATE_VALUE.ERROR
-          : LOADING_STATE_VALUE.SUCCESS,
-  );
+  public state = computed(() => {
+    if (this.apiService.$idle()) {
+      return LOADING_STATE_VALUE.IDLE;
+    } else if (this.apiService.$loading()) {
+      return LOADING_STATE_VALUE.LOADING;
+    } else if (this.apiService.$error()) {
+      return LOADING_STATE_VALUE.ERROR;
+    } else {
+      return LOADING_STATE_VALUE.SUCCESS;
+    }
+  });
   public error = computed(() => this.apiService.$error());
 
   public setUser(projects: User): void {

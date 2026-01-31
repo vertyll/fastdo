@@ -62,7 +62,7 @@ import { AuthService } from './data-access/auth.service';
   `,
 })
 export class ForgotPasswordComponent implements OnInit {
-  protected readonly router = inject(Router);
+  private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslateService);
@@ -99,7 +99,7 @@ export class ForgotPasswordComponent implements OnInit {
           });
         },
         error: err => {
-          if (err.error && err.error.message) {
+          if (err.error?.message) {
             this.errorMessage = err.error.message;
           } else {
             this.errorMessage = this.translateService.instant('Auth.unknownError');

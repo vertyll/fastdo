@@ -67,7 +67,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
         return;
       }
 
-      if (!payload || !payload.sub) {
+      if (!payload?.sub) {
         this.logger.warn(`Connection rejected from ${clientIp}: Invalid token payload`);
         client.emit(WebSocketResponseEnum.CONNECTION_ERROR, { message: 'Invalid token payload' });
         client.disconnect();
@@ -171,7 +171,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
         secret: this.configService.get<string>('app.security.jwt.accessToken.secret'),
       });
 
-      if (!payload || !payload.sub) {
+      if (!payload?.sub) {
         return {
           event: WebSocketResponseEnum.UPDATE_AUTH_RESPONSE,
           data: { success: false, message: 'Invalid token' },

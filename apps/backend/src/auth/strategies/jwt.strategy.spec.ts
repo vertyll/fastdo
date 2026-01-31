@@ -50,12 +50,10 @@ describe('JwtStrategy', () => {
 
     configService = {
       get: jest.fn().mockImplementation((key: string) => {
-        switch (key) {
-          case 'app.security.jwt.accessToken.secret':
-            return 'test-secret';
-          default:
-            return null;
+        if (key === 'app.security.jwt.accessToken.secret') {
+          return 'test-secret';
         }
+        return null;
       }),
     } as unknown as jest.Mocked<ConfigService>;
 

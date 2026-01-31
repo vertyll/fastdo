@@ -7,10 +7,10 @@ export interface AuthenticatedSocket {
   join(room: string): void;
   leave(room: string): void;
   connected: boolean;
-  handshake: handshake;
+  handshake: Handshake;
 }
 
-interface handshake {
+interface Handshake {
   headers: { [key: string]: string | string[] | undefined };
   query: { [key: string]: string | string[] | undefined };
   auth?: { [key: string]: any };

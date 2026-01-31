@@ -72,7 +72,7 @@ describe('JwtMiddleware', () => {
   });
 
   it('should handle missing path and method in request', () => {
-    const req = mockRequest('Bearer invalidtoken', undefined, undefined);
+    const req = mockRequest('Bearer invalidtoken');
     req.url = undefined;
     req.method = undefined;
     jwtService.verify.mockImplementation(() => {

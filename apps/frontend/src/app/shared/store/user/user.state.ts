@@ -25,7 +25,7 @@ export class UserState {
   constructor(private readonly userService: UserService) {}
 
   @Action(UserActions.GetCurrentUser)
-  getCurrentUser(ctx: StateContext<UserStateModel>): Observable<any> {
+  public getCurrentUser(ctx: StateContext<UserStateModel>): Observable<any> {
     ctx.patchState({ loading: true, error: null });
 
     return this.userService.getCurrentUser().pipe(
@@ -40,7 +40,7 @@ export class UserState {
   }
 
   @Action(UserActions.UpdateUserProfile)
-  updateProfile(ctx: StateContext<UserStateModel>, { payload }: UserActions.UpdateUserProfile): Observable<any> {
+  public updateProfile(ctx: StateContext<UserStateModel>, { payload }: UserActions.UpdateUserProfile): Observable<any> {
     ctx.patchState({ loading: true, error: null });
 
     return this.userService.updateProfile(payload).pipe(
@@ -55,7 +55,7 @@ export class UserState {
   }
 
   @Action(UserActions.SetUser)
-  setUser(ctx: StateContext<UserStateModel>, { payload }: UserActions.SetUser): void {
+  public setUser(ctx: StateContext<UserStateModel>, { payload }: UserActions.SetUser): void {
     ctx.patchState({
       user: payload,
       loading: false,
@@ -64,7 +64,7 @@ export class UserState {
   }
 
   @Action(UserActions.ClearUser)
-  clearUser(ctx: StateContext<UserStateModel>): void {
+  public clearUser(ctx: StateContext<UserStateModel>): void {
     ctx.setState({
       user: {} as User,
       loading: false,
@@ -73,7 +73,7 @@ export class UserState {
   }
 
   @Action(UserActions.SetError)
-  setError(ctx: StateContext<UserStateModel>, { payload }: UserActions.SetError): void {
+  public setError(ctx: StateContext<UserStateModel>, { payload }: UserActions.SetError): void {
     ctx.patchState({
       error: payload,
       loading: false,

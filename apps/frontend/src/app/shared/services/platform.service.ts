@@ -24,7 +24,7 @@ export class PlatformService {
     if (this.isPlatformBrowserSignal()) {
       this.updateIsMobile();
 
-      fromEvent(window, 'resize')
+      fromEvent(globalThis, 'resize')
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           this.updateIsMobile();
@@ -45,7 +45,7 @@ export class PlatformService {
 
   private updateIsMobile(): void {
     if (this.isPlatformBrowserSignal()) {
-      this.isMobileSignal.set(window.innerWidth < MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT);
+      this.isMobileSignal.set(globalThis.innerWidth < MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT);
     }
   }
 

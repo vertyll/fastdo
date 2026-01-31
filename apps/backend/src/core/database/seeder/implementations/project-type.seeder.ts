@@ -31,6 +31,7 @@ export class ProjectTypeSeeder implements ISeeder {
 
   async seed(): Promise<void> {
     await this.baseSeeder.execute(async (): Promise<void> => {
+      // NOSONAR
       const languages = await this.languageRepository.find();
       if (languages.length === 0) {
         this.baseSeeder.getLogger().error('No languages found. Please run language seeder first.');

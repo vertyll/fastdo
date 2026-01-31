@@ -5,7 +5,7 @@ import { IMailTransport } from '../../interfaces/mail-transport.interface';
 
 @Injectable()
 export class NodemailerTransport implements IMailTransport {
-  private transporter: nodemailer.Transporter;
+  private readonly transporter: nodemailer.Transporter;
 
   constructor(private readonly mailConfig: MailConfigService) {
     const config = this.mailConfig.getConfig();

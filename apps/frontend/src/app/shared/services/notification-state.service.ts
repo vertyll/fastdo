@@ -171,24 +171,24 @@ export class NotificationStateService {
   }
 
   private setupWebSocketEventListeners(): void {
-    window.addEventListener('websocket-connected', () => {
+    globalThis.addEventListener('websocket-connected', () => {
       this._webSocketConnected.set(true);
     });
 
-    window.addEventListener('websocket-disconnected', () => {
+    globalThis.addEventListener('websocket-disconnected', () => {
       this._webSocketConnected.set(false);
     });
 
-    window.addEventListener('notification-refresh', () => {
+    globalThis.addEventListener('notification-refresh', () => {
       this.refreshNotifications();
     });
 
-    window.addEventListener('notification.read', (event: any) => {
+    globalThis.addEventListener('notification.read', (event: any) => {
       if (event?.detail?.notificationId) {
         this._notificationRead.set(event.detail.notificationId);
       }
     });
-    window.addEventListener('notification.deleted', (event: any) => {
+    globalThis.addEventListener('notification.deleted', (event: any) => {
       if (event?.detail?.notificationId) {
         this._notificationDeleted.set(event.detail.notificationId);
       }

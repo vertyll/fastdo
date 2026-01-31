@@ -5,7 +5,7 @@ import { ModalConfig, ModalOptions } from '../types/modal.type';
   providedIn: 'root',
 })
 export class ModalService {
-  private modalSignal = signal<ModalConfig>({
+  private readonly modalSignal = signal<ModalConfig>({
     visible: false,
   });
 

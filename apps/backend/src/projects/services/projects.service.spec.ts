@@ -76,7 +76,7 @@ describe('ProjectsService', () => {
     mockDataSource = {
       createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
       getRepository: jest.fn().mockImplementation((entity: any) => {
-        if (entity && entity.name === 'ProjectUserRole') {
+        if (entity?.name === 'ProjectUserRole') {
           return {
             findOne: jest.fn().mockResolvedValue({
               projectRole: {
@@ -98,7 +98,7 @@ describe('ProjectsService', () => {
             update: jest.fn(),
           };
         }
-        if (entity && entity.name === 'Project') {
+        if (entity?.name === 'Project') {
           return {
             findOne: jest.fn(),
             update: jest.fn(),

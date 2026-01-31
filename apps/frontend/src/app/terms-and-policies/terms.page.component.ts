@@ -88,7 +88,7 @@ export class TermsPageComponent implements OnInit, OnDestroy {
 
   protected readonly sortedSections = computed(() => {
     const terms = this.stateService.terms();
-    return terms.sections?.sort((a, b) => a.order - b.order) || [];
+    return terms.sections?.slice().sort((a, b) => a.order - b.order) || [];
   });
 
   protected getCurrentTranslation(section: Section): SectionTranslation {

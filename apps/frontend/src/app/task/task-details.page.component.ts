@@ -904,7 +904,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     if (obj.translations && Array.isArray(obj.translations)) {
       let found = obj.translations.find((t: any) => t.lang === lang);
       if (!found && obj.translations[0]?.name) found = obj.translations[0];
-      if (found && found.name) return found.name;
+      if (found?.name) return found.name;
     }
     return obj.name || '';
   }

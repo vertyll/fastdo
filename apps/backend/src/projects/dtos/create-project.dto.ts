@@ -60,7 +60,7 @@ export class CreateProjectDto {
   @Transform(({ value }) => {
     if (typeof value === 'string' && value !== '') {
       const num = Number(value);
-      return isNaN(num) ? undefined : num;
+      return Number.isNaN(num) ? undefined : num;
     }
     return value;
   })

@@ -439,17 +439,16 @@ export class TasksService implements ITasksService {
 
   private validateTaskAccess(task: Task, userId: number): void {
     if (task.project && Array.isArray(task.project.projectUserRoles)) {
-      const isCreator = task.createdBy && task.createdBy.id === userId;
+      const isCreator = task.createdBy?.id === userId;
       const isAssigned = Array.isArray(task.assignedUsers) && task.assignedUsers.some(u => u.id === userId);
-      const userRole = task.project.projectUserRoles.find(ur => ur.user && ur.user.id === userId)?.projectRole;
+      const userRole = task.project.projectUserRoles.find(ur => ur.user?.id === userId)?.projectRole;
       const isManager = userRole && userRole.code === ProjectRoleEnum.MANAGER;
       const isClient = userRole && userRole.code === ProjectRoleEnum.CLIENT;
       const isMember = userRole && userRole.code === ProjectRoleEnum.MEMBER;
       const hasRole = userRole && task.accessRole && userRole.id === task.accessRole.id;
       const hasManageTasksPermission = task.project.projectUserRoles.some(
         ur =>
-          ur.user &&
-          ur.user.id === userId &&
+          ur.user?.id === userId &&
           Array.isArray(ur.projectRole.permissions) &&
           ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
       );

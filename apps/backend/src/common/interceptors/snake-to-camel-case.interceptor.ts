@@ -9,7 +9,7 @@ export class SnakeToCamelCaseInterceptor implements NestInterceptor {
   }
 
   private toCamel(s: string): string {
-    return s.replace(/([-_][a-z])/gi, $1 => {
+    return s.replaceAll(/([-_][a-z])/gi, $1 => {
       return $1.toUpperCase().replace('-', '').replace('_', '');
     });
   }

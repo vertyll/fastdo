@@ -358,7 +358,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   private readonly translateService = inject(TranslateService);
   private readonly authService = inject(AuthService);
 
-  private destroy$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
 
   protected projectForm!: FormGroup;
   protected projectTypesRaw: any[] = [];
@@ -749,7 +749,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
     if (formValue.categories && Array.isArray(formValue.categories)) {
       const categories = formValue.categories
-        .filter((cat: any) => cat.name && cat.name.trim())
+        .filter((cat: any) => cat.name?.trim())
         .map((cat: any) => ({
           name: cat.name.trim(),
           color: cat.color || '#3B82F6',
@@ -761,7 +761,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
     if (formValue.statuses && Array.isArray(formValue.statuses)) {
       const statuses = formValue.statuses
-        .filter((status: any) => status.name && status.name.trim())
+        .filter((status: any) => status.name?.trim())
         .map((status: any) => ({
           name: status.name.trim(),
           color: status.color || '#10B981',
@@ -773,7 +773,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
     if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
       const usersWithRoles = formValue.usersWithRoles
-        .filter((userWithRole: any) => userWithRole.email && userWithRole.email.trim())
+        .filter((userWithRole: any) => userWithRole.email?.trim())
         .map((userWithRole: any) => ({
           email: userWithRole.email.trim(),
           role: userWithRole.role,
@@ -783,7 +783,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
     if (formValue.userEmails && Array.isArray(formValue.userEmails)) {
       formValue.userEmails
-        .filter((userEmail: any) => userEmail.email && userEmail.email.trim())
+        .filter((userEmail: any) => userEmail.email?.trim())
         .forEach((userEmail: any) => {
           formData.append('userEmails', userEmail.email.trim());
         });

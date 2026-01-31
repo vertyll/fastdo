@@ -5,7 +5,7 @@ import { FileConfig } from '../types/file-config.interface';
 
 @Injectable()
 export class FileConfigService {
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   public getConfig(): FileConfig {
     return {
@@ -36,7 +36,7 @@ export class FileConfigService {
     const maxSize = this.configService.get<string | number>('app.file.validation.maxSize');
     if (typeof maxSize === 'number') return maxSize;
 
-    return maxSize ? parseInt(maxSize, 10) : FILE_CONSTANTS.MAX_FILE_SIZE;
+    return maxSize ? Number.parseInt(maxSize, 10) : FILE_CONSTANTS.MAX_FILE_SIZE;
   }
 
   private getAllowedMimeTypes(): string[] {

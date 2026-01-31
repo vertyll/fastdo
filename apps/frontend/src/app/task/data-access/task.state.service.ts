@@ -8,7 +8,7 @@ import { TasksApiService } from './task.api.service';
 export class TasksStateService {
   private readonly apiService = inject(TasksApiService);
 
-  private tasksSignal = signal<Task[]>([]);
+  private readonly tasksSignal = signal<Task[]>([]);
   private readonly paginationSignal = signal<PaginationMeta>({
     total: 0,
     page: 0,
@@ -19,15 +19,17 @@ export class TasksStateService {
   private readonly isLoadingMoreSignal = signal(false);
 
   public tasks = computed(() => this.tasksSignal());
-  public state = computed(() =>
-    this.apiService.$idle()
-      ? LOADING_STATE_VALUE.IDLE
-      : this.apiService.$loading()
-        ? LOADING_STATE_VALUE.LOADING
-        : this.apiService.$error()
-          ? LOADING_STATE_VALUE.ERROR
-          : LOADING_STATE_VALUE.SUCCESS,
-  );
+  public state = computed(() => {
+    if (this.apiService.$idle()) {
+      return LOADING_STATE_VALUE.IDLE;
+    } else if (this.apiService.$loading()) {
+      return LOADING_STATE_VALUE.LOADING;
+    } else if (this.apiService.$error()) {
+      return LOADING_STATE_VALUE.ERROR;
+    } else {
+      return LOADING_STATE_VALUE.SUCCESS;
+    }
+  });
   public error = computed(() => this.apiService.$error());
   public readonly pagination = this.paginationSignal.asReadonly();
   public readonly hasMore = this.hasMoreSignal.asReadonly();
@@ -56,7 +58,7 @@ export class TasksStateService {
   public setPagination(pagination: PaginationMeta): void {
     this.paginationSignal.set(pagination);
     // Use hasMore from API if available, otherwise fallback to page calculation
-    const hasMore = pagination.hasMore !== undefined ? pagination.hasMore : pagination.page < pagination.totalPages - 1;
+    const hasMore = pagination.hasMore ?? pagination.page < pagination.totalPages - 1;
     this.hasMoreSignal.set(hasMore);
   }
 

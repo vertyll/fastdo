@@ -10,7 +10,7 @@ export function getCookie(name: string): string | null {
   const ca = document.cookie.split(';');
   for (const cookie of ca) {
     const c = cookie.trim();
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    if (c.startsWith(nameEQ)) return c.substring(nameEQ.length, c.length);
   }
   return null;
 }

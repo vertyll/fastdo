@@ -46,7 +46,7 @@ export interface TableColumn {
   autoTruncate?: boolean;
   align?: 'left' | 'center' | 'right';
   verticalAlign?: 'top' | 'middle' | 'bottom';
-  hideOn?: 'mobile' | 'tablet' | never;
+  hideOn?: 'mobile' | 'tablet';
   priority?: number; // 1 = highest priority, shown first on mobile
 }
 
@@ -962,13 +962,13 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
   private selection: any[] = [];
-  private expandedTexts = new Map<string, boolean>();
+  private readonly expandedTexts = new Map<string, boolean>();
   protected currentSort: { column: string; direction: 'asc' | 'desc' } | null = null;
   private intersectionObserver?: IntersectionObserver;
   private previousDataLength = 0;
   private shouldPreserveScroll = false;
 
-  constructor(private elementRef: ElementRef) {
+  constructor(private readonly elementRef: ElementRef) {
     effect(() => {
       const currentData = this.data();
       const config = this.config();

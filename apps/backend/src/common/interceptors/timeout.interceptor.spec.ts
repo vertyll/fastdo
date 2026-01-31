@@ -1,5 +1,4 @@
-import { CallHandler, ExecutionContext } from '@nestjs/common';
-import { RequestTimeoutException } from '@nestjs/common';
+import { CallHandler, ExecutionContext, RequestTimeoutException } from '@nestjs/common';
 import { Observable, of, throwError } from 'rxjs';
 import { TimeoutInterceptor } from './timeout.interceptor';
 

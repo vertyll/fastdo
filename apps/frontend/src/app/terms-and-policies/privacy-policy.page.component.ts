@@ -88,7 +88,7 @@ export class PrivacyPolicyPageComponent implements OnInit, OnDestroy {
 
   protected readonly sortedSections = computed(() => {
     const policy = this.stateService.privacyPolicy();
-    return policy.sections?.sort((a, b) => a.order - b.order) || [];
+    return policy.sections ? policy.sections.slice().sort((a, b) => a.order - b.order) : [];
   });
 
   protected getCurrentTranslation(section: Section): SectionTranslation {

@@ -5,12 +5,12 @@ import { AuthStateService } from './auth.state.service';
 
 @Injectable({ providedIn: 'root' })
 export class AutoLogoutService {
-  private watcherRef: EffectRef | null = null;
+  private readonly watcherRef: EffectRef | null = null;
 
   constructor(
-    private authService: AuthService,
-    private authStateService: AuthStateService,
-    private router: Router,
+    private readonly authService: AuthService,
+    private readonly authStateService: AuthStateService,
+    private readonly router: Router,
   ) {
     this.watcherRef = effect(() => {
       const token = this.authService.getAccessToken();

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { join } from 'path';
+import { join } from 'node:path';
 import { FilePathBuilder } from './file-path.builder';
 
 jest.mock('uuid', () => ({

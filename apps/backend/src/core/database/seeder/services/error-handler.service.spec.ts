@@ -36,7 +36,7 @@ describe('SeederErrorHandler', () => {
     });
 
     it('should handle error with empty message', async () => {
-      const error = new Error();
+      const error = new Error(); // NOSONAR
 
       await expect(service.handle(error)).rejects.toThrow(error);
       expect(logger.error).toHaveBeenCalledWith('Seeding failed: ');

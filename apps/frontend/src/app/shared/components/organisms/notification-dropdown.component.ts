@@ -573,7 +573,7 @@ export class NotificationDropdownComponent {
   protected formatDate(date: Date | string): string {
     if (!date) return '';
     const d = new Date(date);
-    if (isNaN(d.getTime())) return '';
+    if (Number.isNaN(d.getTime())) return '';
     const now = new Date();
     const diffInMs = now.getTime() - d.getTime();
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));

@@ -183,30 +183,25 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
         label: 'Basic.view',
         icon: 'heroEye',
         color: 'primary',
-        visible: (row: any) =>
-          row.isPublic === true || (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
+        visible: (row: any) => row.isPublic === true || row.permissions?.includes(ProjectRolePermissionEnum.SHOW_TASKS),
         disabled: (row: any) =>
-          !(
-            row.isPublic === true ||
-            (row.permissions && row.permissions.includes(ProjectRolePermissionEnum.SHOW_TASKS))
-          ),
+          !(row.isPublic === true || row.permissions?.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
       },
       {
         key: 'edit',
         label: 'Basic.edit',
         icon: 'heroPencil',
         color: 'secondary',
-        visible: (row: any) => row.permissions && row.permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT),
-        disabled: (row: any) => !(row.permissions && row.permissions.includes(ProjectRolePermissionEnum.EDIT_PROJECT)),
+        visible: (row: any) => row.permissions?.includes(ProjectRolePermissionEnum.EDIT_PROJECT),
+        disabled: (row: any) => !row.permissions?.includes(ProjectRolePermissionEnum.EDIT_PROJECT),
       },
       {
         key: 'delete',
         label: 'Basic.delete',
         icon: 'heroTrash',
         color: 'danger',
-        visible: (row: any) => row.permissions && row.permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT),
-        disabled: (row: any) =>
-          !(row.permissions && row.permissions.includes(ProjectRolePermissionEnum.DELETE_PROJECT)),
+        visible: (row: any) => row.permissions?.includes(ProjectRolePermissionEnum.DELETE_PROJECT),
+        disabled: (row: any) => !row.permissions?.includes(ProjectRolePermissionEnum.DELETE_PROJECT),
       },
     ],
     selectable: false,
@@ -314,7 +309,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
           handler: () => {
             this.projectsService.delete(id).subscribe({
               error: err => {
-                if (err.error && err.error.message) {
+                if (err.error?.message) {
                   this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
                 } else {
                   this.notificationService.showNotification(
@@ -371,7 +366,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
         }
       },
       error: err => {
-        if (err.error && err.error.message) {
+        if (err.error?.message) {
           this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
         } else {
           this.notificationService.showNotification(

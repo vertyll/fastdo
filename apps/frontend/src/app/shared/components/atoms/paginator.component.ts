@@ -120,7 +120,7 @@ export class PaginatorComponent {
     this.getRangeLabel(this.currentPage(), this.pageSize(), this.total());
   }
 
-  getRangeLabel(page: number, pageSize: number, length: number): string {
+  protected getRangeLabel(page: number, pageSize: number, length: number): string {
     if (length === 0) {
       return this.translateService.instant('Paginator.page1Of1');
     }
@@ -131,12 +131,12 @@ export class PaginatorComponent {
     });
   }
 
-  isLastPage(): boolean {
+  protected isLastPage(): boolean {
     const totalPages = Math.ceil(this.total() / this.pageSize());
     return this.currentPage() >= totalPages - 1 || totalPages === 0;
   }
 
-  onPageSizeChange(newPageSize: number): void {
+  protected onPageSizeChange(newPageSize: number): void {
     const newPage = Math.floor((this.currentPage() * this.pageSize()) / newPageSize);
     this.pageChange.emit({
       page: newPage,
@@ -144,7 +144,7 @@ export class PaginatorComponent {
     });
   }
 
-  onFirstPage(): void {
+  protected onFirstPage(): void {
     if (this.currentPage() !== 0) {
       this.pageChange.emit({
         page: 0,
@@ -153,7 +153,7 @@ export class PaginatorComponent {
     }
   }
 
-  onPreviousPage(): void {
+  protected onPreviousPage(): void {
     if (this.currentPage() > 0) {
       this.pageChange.emit({
         page: this.currentPage() - 1,
@@ -162,7 +162,7 @@ export class PaginatorComponent {
     }
   }
 
-  onNextPage(): void {
+  protected onNextPage(): void {
     if (!this.isLastPage() && this.total() > 0) {
       this.pageChange.emit({
         page: this.currentPage() + 1,
@@ -171,7 +171,7 @@ export class PaginatorComponent {
     }
   }
 
-  onLastPage(): void {
+  protected onLastPage(): void {
     const lastPage = Math.ceil(this.total() / this.pageSize()) - 1;
     if (this.currentPage() !== lastPage && lastPage >= 0) {
       this.pageChange.emit({

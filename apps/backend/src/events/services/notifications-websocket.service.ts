@@ -4,7 +4,7 @@ import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 import { Language } from '../../core/language/entities/language.entity';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
-import { NotificationEventEnum as NotificationEventEnum } from '../enums/notification-event.enum';
+import { NotificationEventEnum } from '../enums/notification-event.enum';
 import { IEventEmitterService } from '../interfaces/event-emitter.interface';
 import { IEventEmitterServiceToken } from '../tokens/event-emitter-service.token';
 import { NotificationEvent } from '../types/notification-event.type';

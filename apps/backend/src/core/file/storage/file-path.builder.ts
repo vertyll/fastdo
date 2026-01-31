@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { join } from 'path';
+import { join } from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class FilePathBuilder {
   private sanitizeFilename(filename: string): string {
     return filename
       .toLowerCase()
-      .replace(/[^a-z0-9.-]/g, '-')
-      .replace(/-+/g, '-');
+      .replaceAll(/[^a-z0-9.-]/g, '-')
+      .replaceAll(/-+/g, '-');
   }
 }

@@ -7,7 +7,7 @@ import { MailConfig } from '../../config/types/app.config.type';
 @Injectable()
 export class MailConfigService {
   constructor(
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 

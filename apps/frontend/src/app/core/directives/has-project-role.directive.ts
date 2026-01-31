@@ -8,8 +8,8 @@ export class HasProjectRoleDirective implements OnInit, OnChanges {
   readonly allowedRoles = input.required<ProjectRoleEnum[] | ProjectRoleEnum>({ alias: 'appHasProjectRole' });
   readonly projectUserRole = input<string | undefined>();
 
-  private elementRef = inject(ElementRef);
-  private renderer = inject(Renderer2);
+  private readonly elementRef = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
   private originalDisplay: string | null = null;
 
   ngOnInit(): void {

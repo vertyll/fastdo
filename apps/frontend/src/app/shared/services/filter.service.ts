@@ -7,12 +7,10 @@ export class FiltersService {
   public createForm(filters: FilterMetadata[]): FormGroup {
     const group: any = {};
     filters.forEach(filter => {
-      switch (filter.type) {
-        case 'editableMultiSelect':
-          group[filter.formControlName] = new FormControl(filter.defaultValue || []);
-          break;
-        default:
-          group[filter.formControlName] = new FormControl(filter.defaultValue || '');
+      if (filter.type === 'editableMultiSelect') {
+        group[filter.formControlName] = new FormControl(filter.defaultValue || []);
+      } else {
+        group[filter.formControlName] = new FormControl(filter.defaultValue || '');
       }
     });
     return new FormGroup(group);

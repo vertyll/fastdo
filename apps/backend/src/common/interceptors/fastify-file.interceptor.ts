@@ -4,7 +4,7 @@ import { FastifyRequest } from 'fastify';
 import { I18nContext } from 'nestjs-i18n';
 import 'reflect-metadata';
 import { Observable } from 'rxjs';
-import { PassThrough, Readable } from 'stream';
+import { PassThrough, Readable } from 'node:stream';
 import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 import {
   MULTIPART_ARRAY_FIELDS,
@@ -86,6 +86,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
   }
 
   private async processFormData(
+    // NOSONAR
     parts: AsyncIterableIterator<any>,
     i18n: I18nContext<I18nTranslations>,
   ): Promise<Record<string, any>> {
@@ -125,10 +126,6 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
           files.push(processedFile.multipartFile);
           fileCount++;
-
-          // console.log(
-          //   `FastifyFileInterceptor: processed file ${part.filename}, size: ${processedFile.fileSize} bytes, buffered: ${processedFile.isBuffered}`,
-          // );
         } else if (part.type === 'field') {
           this.processFormField(formData, part);
         }
@@ -140,10 +137,6 @@ export class FastifyFileInterceptor implements NestInterceptor {
     // Assign files to formData based on multiple flag
     if (files.length > 0) {
       formData[this.fieldName] = this.options.multiple ? files : files[0];
-
-      // console.log(
-      //   `FastifyFileInterceptor: fieldName=${this.fieldName}, multiple=${this.options.multiple}, filesCount=${files.length}`,
-      // );
     }
 
     if (this.dtoClass) {
@@ -154,14 +147,12 @@ export class FastifyFileInterceptor implements NestInterceptor {
   }
 
   private processFormField(formData: Record<string, any>, part: any): void {
-    if (formData[part.fieldname] !== undefined) {
-      if (Array.isArray(formData[part.fieldname])) {
-        formData[part.fieldname].push(part.value);
-      } else {
-        formData[part.fieldname] = [formData[part.fieldname], part.value];
-      }
-    } else {
+    if (formData[part.fieldname] === undefined) {
       formData[part.fieldname] = part.value;
+    } else if (Array.isArray(formData[part.fieldname])) {
+      formData[part.fieldname].push(part.value);
+    } else {
+      formData[part.fieldname] = [formData[part.fieldname], part.value];
     }
   }
 
@@ -190,8 +181,8 @@ export class FastifyFileInterceptor implements NestInterceptor {
     // For large files, use streaming to save memory
 
     // If we can estimate size from headers, use that
-    if (part.headers && part.headers['content-length']) {
-      const estimatedSize = parseInt(part.headers['content-length'], 10);
+    if (part.headers?.['content-length']) {
+      const estimatedSize = Number.parseInt(part.headers['content-length'], 10);
       return estimatedSize <= this.options.bufferThreshold;
     }
 
@@ -412,7 +403,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
       if (formData[field] !== undefined && formData[field] !== '') {
         if (typeof formData[field] === 'string') {
           const num = Number(formData[field]);
-          if (!isNaN(num)) {
+          if (!Number.isNaN(num)) {
             formData[field] = num;
           }
         }
@@ -427,6 +418,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
       const classFields: string[] = Reflect.getMetadata(metadataKey, targetClass) || [];
       fields.push(...classFields);
     } catch (_) {
+      // NOSONAR
       // Silent error - no metadata is normal
     }
 
@@ -437,6 +429,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
         fields.push(...baseFields);
       }
     } catch (_) {
+      // NOSONAR
       // Silent error - no metadata is normal
     }
 

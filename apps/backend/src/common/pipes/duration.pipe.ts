@@ -10,11 +10,12 @@ export class DurationPipe implements PipeTransform {
 
     if (!value) return null;
 
-    const match = value.match(/^(\d+)([smhdw])$/);
+    const regex = /^(\d+)([smhdw])$/;
+    const match = regex.exec(value);
     if (!match) throw new BadRequestException(i18n.translate('messages.Validation.isDuration'));
 
     const [, amount, unit] = match;
-    const numValue: number = parseInt(amount, 10);
+    const numValue: number = Number.parseInt(amount, 10);
 
     if (numValue <= 0) {
       throw new BadRequestException(i18n.translate('messages.Validation.mustBePositive'));

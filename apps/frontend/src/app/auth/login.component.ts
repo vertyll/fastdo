@@ -57,7 +57,7 @@ import { EmailChangeService } from './data-access/email-change.service';
   styles: [],
 })
 export class LoginComponent implements OnInit {
-  protected readonly router = inject(Router);
+  private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslateService);
@@ -116,7 +116,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/projects']).then();
         },
         error: err => {
-          if (err.error && err.error.message) {
+          if (err.error?.message) {
             this.errorMessage = err.error.message;
           } else {
             this.errorMessage = this.translateService.instant('Auth.unknownLoginError');

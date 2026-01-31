@@ -1,6 +1,5 @@
 import { MultipartFile } from '@fastify/multipart';
-import { PartialType } from '@nestjs/swagger';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { IsFile } from '../../common/decorators/is-file.decorator';

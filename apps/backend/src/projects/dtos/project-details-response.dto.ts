@@ -28,7 +28,7 @@ export class ProjectDetailsResponseDto {
   dateModification?: Date | null;
 
   @ApiProperty({ required: false })
-  type?: { id: number; code: string; translations: TranslationDto[] } | undefined;
+  type?: { id: number; code: string; translations: TranslationDto[] };
 
   @ApiProperty({ type: [Object], required: false })
   categories?: Array<{ id: number; name: string; color: string }>;

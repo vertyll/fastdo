@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { join } from 'path';
+import { join } from 'node:path';
 import { FILE_CONSTANTS, StorageTypeEnum } from '../../config/types/app.config.type';
 import { FileConfigService } from './file-config';
 

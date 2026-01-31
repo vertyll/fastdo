@@ -9,7 +9,7 @@ export class ThemeService {
   private readonly storageKey = 'theme';
   private readonly defaultTheme: Theme = 'light';
 
-  private currentThemeSignal = signal<Theme>(this.defaultTheme);
+  private readonly currentThemeSignal = signal<Theme>(this.defaultTheme);
 
   constructor(private readonly localStorageService: LocalStorageService) {
     this.initializeTheme();
@@ -43,13 +43,13 @@ export class ThemeService {
       return;
     }
 
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches) {
       this.setTheme('dark');
     } else {
       this.setTheme('light');
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       this.setTheme(e.matches ? 'dark' : 'light');
     });
   }

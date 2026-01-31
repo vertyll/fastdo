@@ -67,12 +67,10 @@ describe('JwtRefreshStrategy', () => {
 
     configService = {
       get: jest.fn().mockImplementation((key: string) => {
-        switch (key) {
-          case 'app.security.jwt.refreshToken.secret':
-            return 'test-refresh-secret';
-          default:
-            return null;
+        if (key === 'app.security.jwt.refreshToken.secret') {
+          return 'test-refresh-secret';
         }
+        return null;
       }),
     } as unknown as jest.Mocked<ConfigService>;
 

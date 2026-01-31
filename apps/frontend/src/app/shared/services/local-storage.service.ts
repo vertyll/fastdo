@@ -5,7 +5,7 @@ import { ILocalStorage } from '../types/local-storage.type';
   providedIn: 'root',
 })
 export class LocalStorageService implements ILocalStorage {
-  get<T>(key: string, defaultValue: T): T {
+  public get<T>(key: string, defaultValue: T): T {
     try {
       const item = localStorage.getItem(key);
       return item ? JSON.parse(item) : defaultValue;
@@ -15,7 +15,7 @@ export class LocalStorageService implements ILocalStorage {
     }
   }
 
-  set<T>(key: string, value: T): void {
+  public set<T>(key: string, value: T): void {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
@@ -23,7 +23,7 @@ export class LocalStorageService implements ILocalStorage {
     }
   }
 
-  remove(key: string): void {
+  public remove(key: string): void {
     try {
       localStorage.removeItem(key);
     } catch (error) {
@@ -31,7 +31,7 @@ export class LocalStorageService implements ILocalStorage {
     }
   }
 
-  clear(): void {
+  public clear(): void {
     try {
       localStorage.clear();
     } catch (error) {
@@ -39,7 +39,7 @@ export class LocalStorageService implements ILocalStorage {
     }
   }
 
-  exists(key: string): boolean {
+  public exists(key: string): boolean {
     return localStorage.getItem(key) !== null;
   }
 }

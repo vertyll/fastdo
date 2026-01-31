@@ -16,7 +16,7 @@ export class ToastService {
   };
 
   private readonly router = inject(Router);
-  private toastSignal = signal<ToastObject>(this.initialState);
+  private readonly toastSignal = signal<ToastObject>(this.initialState);
   public toast = computed(() => this.toastSignal());
 
   constructor() {
@@ -27,7 +27,11 @@ export class ToastService {
     });
   }
 
-  presentToast(message: string, success: boolean = false, position: ToastPositionEnum = ToastPositionEnum.Fixed): void {
+  public presentToast(
+    message: string,
+    success: boolean = false,
+    position: ToastPositionEnum = ToastPositionEnum.Fixed,
+  ): void {
     this.toastSignal.set({
       message,
       visible: true,
@@ -45,7 +49,7 @@ export class ToastService {
     }
   }
 
-  hideToast(): void {
+  public hideToast(): void {
     this.toastSignal.set(this.initialState);
   }
 }

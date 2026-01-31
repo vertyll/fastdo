@@ -41,8 +41,7 @@ describe('DurationConfigProvider', () => {
           case undefined:
             return null;
           default:
-            const match = value.match(/^(\d+)([smhdw])$/);
-            return match ? null : null;
+            return null;
         }
       }),
     }));
@@ -61,8 +60,7 @@ describe('DurationConfigProvider', () => {
           case undefined:
             return null;
           default:
-            const match = value.match(/^(\d+)([smhdw])$/);
-            return match ? mockDate : mockDate;
+            return mockDate;
         }
       }),
     }));
