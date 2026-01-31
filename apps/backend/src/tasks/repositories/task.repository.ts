@@ -62,6 +62,7 @@ export class TaskRepository extends Repository<Task> {
         'categoriesLanguage.id',
         'categoriesLanguage.code',
         'status.id',
+        'status.color',
         'statusTranslations.id',
         'statusTranslations.name',
         'statusTranslations.description',
