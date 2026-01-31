@@ -182,8 +182,7 @@ export class ProjectsService {
 
     try {
       const userId = this.cls.get('user').userId;
-
-      const project = await this.projectRepository.findOne({ where: { id } });
+      const project = await this.projectRepository.findOne({ where: { id }, relations: ['categories', 'statuses'] });
       if (!project) {
         throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
       }
@@ -214,30 +213,11 @@ export class ProjectsService {
 
       await queryRunner.manager.getRepository(Project).update(id, dataToUpdate);
 
-      if (categories) {
-        await queryRunner.manager.getRepository(ProjectCategory).delete({ project: { id } });
-        if (categories.length > 0) {
-          await this.createCategoriesInTransaction(queryRunner, id, categories);
-        }
-      }
-
-      if (statuses) {
-        await queryRunner.manager.getRepository(ProjectStatus).delete({ project: { id } });
-        if (statuses.length > 0) {
-          await this.createStatusesInTransaction(queryRunner, id, statuses);
-        }
-      }
-
-      if (usersWithRoles && usersWithRoles.length > 0) {
-        await this.validateUsersExist(usersWithRoles.map(u => u.email));
-        await this.updateProjectUsersWithRoles(queryRunner, id, usersWithRoles, userId);
-      } else if (userEmails && userEmails.length > 0) {
-        await this.validateUsersExist(userEmails);
-        await this.inviteUsersToProject(queryRunner, id, userEmails, userId);
-      }
+      await this.handleCategoriesUpdate(queryRunner, id, categories);
+      await this.handleStatusesUpdate(queryRunner, id, statuses);
+      await this.handleUsersUpdate(queryRunner, id, usersWithRoles, userEmails, userId);
 
       await queryRunner.commitTransaction();
-
       return this.findOne(id);
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -245,6 +225,78 @@ export class ProjectsService {
       throw error;
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  private async handleCategoriesUpdate(
+    queryRunner: QueryRunner,
+    projectId: number,
+    categories: any[] | undefined,
+  ): Promise<void> {
+    if (!categories) return;
+    const categoryRepo = queryRunner.manager.getRepository(ProjectCategory);
+    const existingCategories = await categoryRepo.find({ where: { project: { id: projectId } } });
+    const incomingCategories = categories.map((cat: any) => ({
+      id: cat.id,
+      name: cat.name,
+      color: cat.color,
+    }));
+    for (const cat of incomingCategories) {
+      if (cat.id) {
+        await categoryRepo.update({ id: cat.id, project: { id: projectId } }, { color: cat.color });
+      } else {
+        await this.createCategoriesInTransaction(queryRunner, projectId, [cat]);
+      }
+    }
+    const incomingIds = new Set(incomingCategories.filter(c => c.id).map(c => c.id));
+    for (const existing of existingCategories) {
+      if (!incomingIds.has(existing.id)) {
+        await categoryRepo.delete({ id: existing.id });
+      }
+    }
+  }
+
+  private async handleStatusesUpdate(
+    queryRunner: QueryRunner,
+    projectId: number,
+    statuses: any[] | undefined,
+  ): Promise<void> {
+    if (!statuses) return;
+    const statusRepo = queryRunner.manager.getRepository(ProjectStatus);
+    const existingStatuses = await statusRepo.find({ where: { project: { id: projectId } } });
+    const incomingStatuses = statuses.map((status: any) => ({
+      id: status.id,
+      name: status.name,
+      color: status.color,
+    }));
+    for (const status of incomingStatuses) {
+      if (status.id) {
+        await statusRepo.update({ id: status.id, project: { id: projectId } }, { color: status.color });
+      } else {
+        await this.createStatusesInTransaction(queryRunner, projectId, [status]);
+      }
+    }
+    const incomingIds = new Set(incomingStatuses.filter(s => s.id).map(s => s.id));
+    for (const existing of existingStatuses) {
+      if (!incomingIds.has(existing.id)) {
+        await statusRepo.delete({ id: existing.id });
+      }
+    }
+  }
+
+  private async handleUsersUpdate(
+    queryRunner: QueryRunner,
+    projectId: number,
+    usersWithRoles: any[] | undefined,
+    userEmails: any[] | undefined,
+    userId: number,
+  ): Promise<void> {
+    if (usersWithRoles && usersWithRoles.length > 0) {
+      await this.validateUsersExist(usersWithRoles.map(u => u.email));
+      await this.updateProjectUsersWithRoles(queryRunner, projectId, usersWithRoles, userId);
+    } else if (userEmails && userEmails.length > 0) {
+      await this.validateUsersExist(userEmails);
+      await this.inviteUsersToProject(queryRunner, projectId, userEmails, userId);
     }
   }
 
@@ -496,10 +548,23 @@ export class ProjectsService {
 
     const newUserEmails = new Set(usersWithRoles.map(u => u.email));
 
-    if (!newUserEmails.has(updater.email)) {
+    this.validateUpdaterInNewUsers(updater.email, newUserEmails);
+    await this.removeUsersNotInList(queryRunner, currentProjectUsers, newUserEmails, updaterId);
+    await this.updateOrAddUsers(queryRunner, projectId, usersWithRoles, currentProjectUsers, updaterId);
+  }
+
+  private validateUpdaterInNewUsers(updaterEmail: string, newUserEmails: Set<string>): void {
+    if (!newUserEmails.has(updaterEmail)) {
       throw new Error(this.i18n.t('messages.Projects.errors.updaterNotInNewUsersList'));
     }
+  }
 
+  private async removeUsersNotInList(
+    queryRunner: QueryRunner,
+    currentProjectUsers: ProjectUserRole[],
+    newUserEmails: Set<string>,
+    updaterId: number,
+  ): Promise<void> {
     for (const currentUser of currentProjectUsers) {
       if (!newUserEmails.has(currentUser.user.email)) {
         if (currentUser.user.id === updaterId) {
@@ -519,7 +584,15 @@ export class ProjectsService {
         await queryRunner.manager.getRepository(ProjectUserRole).remove(currentUser);
       }
     }
+  }
 
+  private async updateOrAddUsers(
+    queryRunner: QueryRunner,
+    projectId: number,
+    usersWithRoles: { email: string; role: number }[],
+    currentProjectUsers: ProjectUserRole[],
+    updaterId: number,
+  ): Promise<void> {
     const newUsersToInvite: { email: string; role: number }[] = [];
     for (const userWithRole of usersWithRoles) {
       try {
@@ -539,7 +612,6 @@ export class ProjectsService {
         console.error(`Error updating user ${userWithRole.email}:`, error);
       }
     }
-
     if (newUsersToInvite.length > 0) {
       await this.inviteUsersToProjectWithRoles(queryRunner, projectId, newUsersToInvite, updaterId);
     }

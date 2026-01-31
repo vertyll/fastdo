@@ -438,51 +438,57 @@ export class TasksService implements ITasksService {
   }
 
   private validateTaskAccess(task: Task, userId: number): void {
-    // NOSONAR
-    if (task.project && Array.isArray(task.project.projectUserRoles)) {
-      const isCreator = task.createdBy?.id === userId;
-      const isAssigned = Array.isArray(task.assignedUsers) && task.assignedUsers.some(u => u.id === userId);
-      const userRole = task.project.projectUserRoles.find(ur => ur.user?.id === userId)?.projectRole;
-      const isManager = userRole && userRole.code === ProjectRoleEnum.MANAGER;
-      const isClient = userRole && userRole.code === ProjectRoleEnum.CLIENT;
-      const isMember = userRole && userRole.code === ProjectRoleEnum.MEMBER;
-      const hasRole = userRole && task.accessRole && userRole.id === task.accessRole.id;
-      const hasManageTasksPermission = task.project.projectUserRoles.some(
-        ur =>
-          ur.user?.id === userId &&
-          Array.isArray(ur.projectRole.permissions) &&
-          ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
-      );
-
-      // Manager sees everything
-      if (isManager || hasManageTasksPermission) return;
-      // Task creator sees everything
-      if (isCreator || isAssigned) return;
-      // If role is assigned, user can see tasks with that role
-      if (hasRole) return;
-      // Client sees tasks with accessRole null, client, member
-      if (isClient) {
-        if (
-          !task.accessRole ||
-          task.accessRole.code === ProjectRoleEnum.CLIENT ||
-          task.accessRole.code === ProjectRoleEnum.MEMBER
-        ) {
-          return;
-        }
-      }
-      // Team member sees tasks with accessRole null, member
-      if (isMember) {
-        if (!task.accessRole || task.accessRole.code === ProjectRoleEnum.MEMBER) {
-          return;
-        }
-      }
-      // User without role in public project sees only tasks with accessRole null
-      const hasNoRole = !userRole;
-      if (hasNoRole && task.project.isPublic && !task.accessRole) {
-        return;
-      }
-      throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
+    if (!(task.project && Array.isArray(task.project.projectUserRoles))) return;
+    const userRole = task.project.projectUserRoles.find(ur => ur.user?.id === userId)?.projectRole;
+    if (
+      this.isManagerOrHasManageTasksPermission(task, userId, userRole) ||
+      this.isCreatorOrAssigned(task, userId) ||
+      this.hasRoleAccess(task, userRole) ||
+      this.isClientWithAccess(task, userRole) ||
+      this.isMemberWithAccess(task, userRole) ||
+      this.isPublicNoRoleWithAccess(task, userRole)
+    ) {
+      return;
     }
+    throw new Error(this.i18n.t('messages.Tasks.errors.accessDeniedToTask'));
+  }
+
+  private isManagerOrHasManageTasksPermission(task: Task, userId: number, userRole: ProjectRole | undefined): boolean {
+    if (!userRole) return false;
+    if (userRole.code === ProjectRoleEnum.MANAGER) return true;
+    return task.project.projectUserRoles.some(
+      ur =>
+        ur.user?.id === userId &&
+        Array.isArray(ur.projectRole.permissions) &&
+        ur.projectRole.permissions.some(p => p.code === ProjectRolePermissionEnum.MANAGE_TASKS),
+    );
+  }
+
+  private isCreatorOrAssigned(task: Task, userId: number): boolean {
+    if (task.createdBy?.id === userId) return true;
+    return Array.isArray(task.assignedUsers) && task.assignedUsers.some(u => u.id === userId);
+  }
+
+  private hasRoleAccess(task: Task, userRole: ProjectRole | undefined): boolean {
+    return !!(userRole && task.accessRole && userRole.id === task.accessRole.id);
+  }
+
+  private isClientWithAccess(task: Task, userRole: ProjectRole | undefined): boolean {
+    if (!userRole || userRole.code !== ProjectRoleEnum.CLIENT) return false;
+    return (
+      !task.accessRole ||
+      task.accessRole.code === ProjectRoleEnum.CLIENT ||
+      task.accessRole.code === ProjectRoleEnum.MEMBER
+    );
+  }
+
+  private isMemberWithAccess(task: Task, userRole: ProjectRole | undefined): boolean {
+    if (!userRole || userRole.code !== ProjectRoleEnum.MEMBER) return false;
+    return !task.accessRole || task.accessRole.code === ProjectRoleEnum.MEMBER;
+  }
+
+  private isPublicNoRoleWithAccess(task: Task, userRole: ProjectRole | undefined): boolean {
+    return !userRole && task.project.isPublic && !task.accessRole;
   }
 
   private async processTaskAttachments(
