@@ -13,6 +13,7 @@ node_modules
 
 # IDE
 .idea
+.vscode
 
 # Enviroment
 .env

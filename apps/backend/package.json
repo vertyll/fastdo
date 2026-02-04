@@ -6,8 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "turbo:dev": "nest start --watch",
-    "docker:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:create": "typeorm-ts-node-commonjs migration:create",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./datasource.config.ts",
@@ -19,7 +18,6 @@
     "seed:list": "ts-node seed.ts --list",
     "schema:drop": "typeorm-ts-node-commonjs schema:drop -d ./datasource.config.ts",
     "setenv:dev": "shx cp -r environments/dev/. .",
-    "setenv:docker:dev": "shx cp -r environments/docker-dev/. .",
     "setenv:prod": "shx cp -r environments/prod/. .",
     "build": "nest build",
     "start": "nest start",

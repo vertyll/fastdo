@@ -7,11 +7,12 @@
     "build": "turbo build",
     "build:backend": "turbo build --filter=backend",
     "build:frontend": "turbo build --filter=frontend",
-    "dev": "turbo turbo:dev",
-    "docker:dev:backend": "turbo docker:dev --filter=backend",
-    "docker:dev:frontend": "turbo docker:dev --filter=frontend",
+    "dev": "turbo dev",
     "format": "turbo format",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "seed": "turbo seed",
+    "seed:reset": "turbo seed:reset",
+    "seed:list": "turbo seed:list"
   },
   "devDependencies": {
     "turbo": "^2.6.3"

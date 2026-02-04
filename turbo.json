@@ -12,18 +12,8 @@
       "cache": false,
       "persistent": false
     },
-    "setenv:docker:dev": {
-      "dependsOn": ["^setenv:docker:dev"],
-      "cache": false,
-      "persistent": false
-    },
-    "turbo:dev": {
+    "dev": {
       "dependsOn": ["setenv:dev"],
-      "cache": false,
-      "persistent": true
-    },
-    "docker:dev": {
-      "dependsOn": ["setenv:docker:dev"],
       "cache": false,
       "persistent": true
     },
@@ -46,6 +36,21 @@
       "dependsOn": ["^test:watch"],
       "cache": false,
       "persistent": true
+    },
+    "seed": {
+      "dependsOn": ["^seed"],
+      "cache": false,
+      "persistent": false
+    },
+    "seed:reset": {
+      "dependsOn": ["^seed:reset"],
+      "cache": false,
+      "persistent": false
+    },
+    "seed:list": {
+      "dependsOn": ["^seed:list"],
+      "cache": false,
+      "persistent": false
     }
   }
 }
