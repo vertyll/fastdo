@@ -3,8 +3,9 @@ ARG NODE_VERSION=24
 # Base stage
 FROM node:${NODE_VERSION}-alpine AS base
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@10.25.0 --activate
-RUN apk add --no-cache libc6-compat
+RUN corepack enable \
+  && corepack prepare pnpm@10.25.0 --activate \
+  && apk add --no-cache libc6-compat netcat-openbsd
 
 # Dependencies stage
 FROM base AS deps
@@ -35,7 +36,7 @@ WORKDIR /app
 
 RUN corepack enable \
   && corepack prepare pnpm@10.25.0 --activate \
-  && apk add --no-cache libc6-compat wget
+  && apk add --no-cache libc6-compat wget netcat-openbsd bash
 
 # Copy package files
 COPY --from=build /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
@@ -55,9 +56,10 @@ COPY --from=build /app/apps/backend/src/core/mail/templates ./apps/backend/dist/
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/apps/backend/node_modules ./apps/backend/node_modules
 
+COPY apps/backend/docker-entrypoint.sh /usr/local/bin/
 
-# Create uploads directory with proper permissions
-RUN mkdir -p /app/apps/backend/uploads \
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+  && mkdir -p /app/apps/backend/uploads \
   && chmod 755 /app/apps/backend/uploads
 
 WORKDIR /app/apps/backend
@@ -69,5 +71,7 @@ EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 CMD ["node", "dist/main.js"]
