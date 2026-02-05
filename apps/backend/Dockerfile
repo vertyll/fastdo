@@ -61,7 +61,7 @@ COPY --from=build /app/apps/backend/package.json ./apps/backend/
 COPY --from=build /app/apps/backend/dist ./apps/backend/dist
 
 # Copy necessary runtime files
-COPY --from=build /app/apps/backend/datasource.config.ts ./apps/backend/
+COPY --from=build /app/apps/backend/src/datasource.config.ts ./apps/backend/src
 COPY --from=build /app/apps/backend/src/migrations ./apps/backend/src/migrations
 COPY --from=build /app/apps/backend/src/i18n ./apps/backend/dist/i18n
 COPY --from=build /app/apps/backend/src/core/mail/templates ./apps/backend/dist/core/mail/templates

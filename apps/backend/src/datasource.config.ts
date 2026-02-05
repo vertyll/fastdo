@@ -5,17 +5,12 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 
 config();
 
-const allowedLoggers = [
-  'advanced-console',
-  'simple-console',
-  'formatted-console',
-  'file',
-  'debug',
-] as const;
+const allowedLoggers = ['advanced-console', 'simple-console', 'formatted-console', 'file', 'debug'] as const;
 
 const envLogger = process.env.DATABASE_LOGGER;
-const logger =
-  (allowedLoggers.includes(envLogger as any) ? envLogger : 'advanced-console') as typeof allowedLoggers[number];
+const logger = (
+  allowedLoggers.includes(envLogger as any) ? envLogger : 'advanced-console'
+) as (typeof allowedLoggers)[number];
 
 const dataSourceOptions: PostgresConnectionOptions = {
   type: 'postgres',
