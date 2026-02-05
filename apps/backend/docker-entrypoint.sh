@@ -28,7 +28,7 @@ echo "Database is up - running migrations"
 
 cd /app/apps/backend
 
-npx typeorm-ts-node-commonjs migration:run -d dist/src/datasource.config.js
+npx typeorm-ts-node-commonjs migration:run -d dist/datasource.config.js
 
 echo "Migrations completed successfully"
 echo "Starting application..."
