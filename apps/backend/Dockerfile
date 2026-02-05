@@ -44,12 +44,13 @@ WORKDIR /app
 RUN corepack enable \
   && corepack prepare pnpm@10.25.0 --activate \
   && apk add --no-cache \
-  libc6-compat \
-  wget \
-  netcat-openbsd \
-  bash \
-  coreutils \
-  dos2unix
+      libc6-compat \
+      wget \
+      netcat-openbsd \
+      bash \
+      coreutils \
+      dos2unix \
+      busybox-extras
 
 # Copy package files
 COPY --from=build /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
