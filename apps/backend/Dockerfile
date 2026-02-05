@@ -5,7 +5,13 @@ FROM node:${NODE_VERSION}-alpine AS base
 WORKDIR /app
 RUN corepack enable \
   && corepack prepare pnpm@10.25.0 --activate \
-  && apk add --no-cache libc6-compat
+  && apk add --no-cache \
+  libc6-compat \
+  wget \
+  netcat-openbsd \
+  bash \
+  coreutils \
+  dos2unix
 
 # Dependencies stage
 FROM base AS deps
@@ -41,7 +47,9 @@ RUN corepack enable \
   libc6-compat \
   wget \
   netcat-openbsd \
-  bash
+  bash \
+  coreutils \
+  dos2unix
 
 # Copy package files
 COPY --from=build /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
@@ -65,9 +73,10 @@ COPY --from=prod-deps /app/apps/backend/node_modules ./apps/backend/node_modules
 
 # Copy entrypoint script and create uploads directory
 COPY apps/backend/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
-  && mkdir -p /app/apps/backend/uploads \
-  && chmod 755 /app/apps/backend/uploads
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh && \
+  chmod +x /usr/local/bin/docker-entrypoint.sh && \
+  mkdir -p /app/apps/backend/uploads && \
+  chmod 755 /app/apps/backend/uploads
 
 WORKDIR /app/apps/backend
 
