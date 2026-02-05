@@ -1,4 +1,4 @@
-name: Build and Deploy FastProd
+name: Build and Deploy FastDo
 on:
   push:
     branches: [ main ]
@@ -93,8 +93,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           target: production
           build-args: |
-            BACKEND_URL=https://api.fastprod.${{ secrets.DOMAIN }}
-            DOMAIN=fastprod.${{ secrets.DOMAIN }}
+            BACKEND_URL=https://api.fastdo.${{ secrets.DOMAIN }}
+            DOMAIN=fastdo.${{ secrets.DOMAIN }}
             API_KEY=${{ secrets.API_KEY }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:buildcache,mode=max
@@ -122,27 +122,27 @@ jobs:
             podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest
             
             # Update containers
-            podman-compose -f fastprod.yml up -d
+            podman-compose -f fastdo.yml up -d
             
             sleep 15
             
             # Check backend status
             echo "=== Backend status ==="
-            podman ps | grep fastprod-backend || echo "Backend container not running!"
+            podman ps | grep fastdo-backend || echo "Backend container not running!"
             echo "=== Backend logs ==="
-            podman logs --tail 30 fastprod-backend
+            podman logs --tail 30 fastdo-backend
             
             # Check frontend status
             echo "=== Frontend status ==="
-            podman ps | grep fastprod-frontend || echo "Frontend container not running!"
+            podman ps | grep fastdo-frontend || echo "Frontend container not running!"
             echo "=== Frontend logs ==="
-            podman logs --tail 30 fastprod-frontend
+            podman logs --tail 30 fastdo-frontend
             
             # Healthcheck backend
             echo "=== Backend healthcheck ==="
             sleep 5
-            podman exec fastprod-backend wget -q --spider http://localhost:3000/api/health && echo "✓ Backend is healthy!" || echo "✗ Backend health check failed"
+            podman exec fastdo-backend wget -q --spider http://localhost:3000/api/health && echo "✓ Backend is healthy!" || echo "✗ Backend health check failed"
             
             # Healthcheck frontend
             echo "=== Frontend healthcheck ==="
-            podman exec fastprod-frontend wget -q --spider http://localhost:80 && echo "✓ Frontend is healthy!" || echo "✗ Frontend health check failed"
+            podman exec fastdo-frontend wget -q --spider http://localhost:80 && echo "✓ Frontend is healthy!" || echo "✗ Frontend health check failed"
