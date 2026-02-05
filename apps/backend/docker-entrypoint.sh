@@ -13,7 +13,7 @@ echo "Waiting for database at $DATABASE_HOST:$DATABASE_PORT..."
 TIMEOUT=60
 ELAPSED=0
 
-while ! nc -z "$DATABASE_HOST" "$DATABASE_PORT" 2>/dev/null; do
+while ! /usr/bin/nc -z "$DATABASE_HOST" "$DATABASE_PORT" 2>/dev/null; do
     if [ $ELAPSED -ge $TIMEOUT ]; then
         echo "Error: Database connection timeout after ${TIMEOUT}s"
         exit 1
