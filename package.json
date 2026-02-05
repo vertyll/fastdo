@@ -12,7 +12,9 @@
     "lint": "turbo lint",
     "seed": "turbo seed",
     "seed:reset": "turbo seed:reset",
-    "seed:list": "turbo seed:list"
+    "seed:list": "turbo seed:list",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch"
   },
   "devDependencies": {
     "turbo": "^2.6.3"
