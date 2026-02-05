@@ -121,34 +121,10 @@ jobs:
             podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest
             podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest
             
-            # Stop containers
-            echo "=== Stopping old containers ==="
-            podman-compose -f fastprod.yml down || true
-            
-            # Run migrations
-            echo "=== Running database migrations ==="
-            podman run --rm \
-              --network app-network \
-              --env-file .fastprod-backend.env \
-              -e DATABASE_HOST=postgres \
-              -e DATABASE_PORT=5432 \
-              -e DATABASE_USER=${POSTGRES_USER} \
-              -e DATABASE_PASSWORD=${POSTGRES_PASSWORD} \
-              -e DATABASE_NAME=${POSTGRES_DB} \
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest \
-              sh -c "cd /app/apps/backend && npx typeorm-ts-node-commonjs migration:run -d dist/datasource.config.js"
-            
-            if [ $? -ne 0 ]; then
-              echo "✗ Migration failed!"
-              exit 1
-            fi
-            echo "✓ Migrations completed successfully"
-            
-            # Start new containers
-            echo "=== Starting new containers ==="
+            # Update containers
             podman-compose -f fastprod.yml up -d
             
-            sleep 10
+            sleep 15
             
             # Check backend status
             echo "=== Backend status ==="
