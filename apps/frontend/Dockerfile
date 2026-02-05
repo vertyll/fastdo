@@ -35,7 +35,7 @@ RUN echo "export const environment = { \
   defaultLanguage: 'pl', \
   availableLanguages: ['pl', 'en'], \
   refreshToken: { bufferTime: 60000 } \
-};" > apps/frontend/src/environments/environment.prod.ts
+  };" > apps/frontend/src/environments/environment.prod.ts
 
 # Build the application
 RUN pnpm run build:frontend
