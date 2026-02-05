@@ -1,12 +1,6 @@
-# Git
-.git
-.gitignore
-.gitattributes
-
 # Dependencies
 node_modules
 npm-debug.log
-yarn-error.log
 pnpm-debug.log
 
 # Environment files
@@ -14,31 +8,26 @@ pnpm-debug.log
 .env.*
 !.env.example
 *.env
-*.env.*
+environments/
+
+# Build output
+dist
+build
+
+# Tests
+coverage
+.nyc_output
+*.spec.ts
+*.test.ts
+test
+**/__tests__
+**/__mocks__
 
 # IDE
 .vscode
 .idea
 *.swp
 *.swo
-*~
-.DS_Store
-
-# Build outputs
-dist
-build
-.next
-out
-
-# Test files
-coverage
-.nyc_output
-*.spec.ts
-*.spec.js
-*.test.ts
-*.test.js
-**/__tests__
-**/__mocks__
 
 # Logs
 logs
@@ -48,29 +37,34 @@ logs
 .DS_Store
 Thumbs.db
 
-# CI/CD
-.github
-.gitlab-ci.yml
+# Git
+.git
+.gitignore
 
 # Documentation
 *.md
-!README.md
 docs
 
-# Misc
+# Config files
 .prettierrc
 .eslintrc*
 .editorconfig
-tsconfig.json
-jest.config.js
+tsconfig.build.json
+tsconfig.spec.json
+nest-cli.json
 
 # Docker
-docker-compose.yml
-docker-compose.*.yml
 Dockerfile
 .dockerignore
+docker-compose*.yml
 
-# Temporary files
+# Uploads
+uploads
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Temporary
 tmp
 temp
 *.tmp
