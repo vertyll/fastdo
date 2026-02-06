@@ -2,8 +2,8 @@
 
 A web application for managing projects and tasks for specific projects. The application consists of a monorepo containing separate back-end and front-end applications.
 
-## Link: https://fastdo.vertyll.usermd.net/
-## Swagger: https://api.fastdo.vertyll.usermd.net/api#/ 
+## Link: https://fastdo.vertyll.dev
+## Swagger: https://api.fastdo.vertyll.dev/api#/ 
 
 ## Technology Stack
 
