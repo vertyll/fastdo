@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { DatabaseConfig, DatabaseTypeEnum, EnvironmentEnum } from '../config/types/app.config.type';
+import { DatabaseConfig, DatabaseTypeEnum } from '../config/types/app.config.type';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { DatabaseConfig, DatabaseTypeEnum, EnvironmentEnum } from '../config/typ
         migrationsTableName: configService.get<string>('app.database.migrationsTableName'),
         ssl: configService.get('app.database.ssl'),
         autoLoadEntities: true,
-        synchronize: configService.get('app.environment') === EnvironmentEnum.DEVELOPMENT,
+        synchronize: false,
         namingStrategy: new SnakeNamingStrategy(),
         logging: configService.get('app.database.logging'),
         logger: configService.get('app.database.logger'),
