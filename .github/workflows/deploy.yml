@@ -141,8 +141,8 @@ jobs:
             # Healthcheck backend
             echo "=== Backend healthcheck ==="
             sleep 5
-            podman exec fastdo-backend wget -q --spider http://localhost:3000/api/health && echo "✓ Backend is healthy!" || echo "✗ Backend health check failed"
+            podman exec fastdo-backend /usr/bin/wget -q --spider http://localhost:3000/api/health && echo "✓ Backend is healthy!" || echo "✗ Backend health check failed"
             
             # Healthcheck frontend
             echo "=== Frontend healthcheck ==="
-            podman exec fastdo-frontend wget -q --spider http://localhost:80 && echo "✓ Frontend is healthy!" || echo "✗ Frontend health check failed"
+            podman exec fastdo-frontend /usr/bin/curl -sf http://localhost:80 > /dev/null && echo "✓ Frontend is healthy!" || echo "✗ Frontend health check failed"
