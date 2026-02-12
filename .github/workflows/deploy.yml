@@ -114,15 +114,15 @@ jobs:
           script: |
             cd ~/podman/compose
             
-            echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin > /dev/null 2>&1
             
             # Pull images
             echo "=== Pulling images ==="
-            podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest
-            podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest
+            podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest > /dev/null 2>&1
+            podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest > /dev/null 2>&1
             
             # Update containers
-            podman-compose -f fastdo.yml up -d
+            podman-compose -f fastdo.yml up -d > /dev/null 2>&1
             
             sleep 15
             
