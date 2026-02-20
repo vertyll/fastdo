@@ -14,6 +14,7 @@ import { RolesModule } from './roles/roles.module';
 import { TasksModule } from './tasks/tasks.module';
 import { TermsAndPoliciesModule } from './terms-and-policies/terms-and-policies.module';
 import { UsersModule } from './users/users.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { UsersModule } from './users/users.module';
     NotificationModule,
     EventsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService],
 })
 export class AppModule {}
