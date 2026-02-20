@@ -129,18 +129,16 @@ jobs:
             # Check backend status
             echo "=== Backend status ==="
             podman ps | grep fastdo-backend || echo "Backend container not running!"
-            echo "=== Backend logs ==="
-            podman logs --tail 30 fastdo-backend
             
             # Check frontend status
             echo "=== Frontend status ==="
             podman ps | grep fastdo-frontend || echo "Frontend container not running!"
-            echo "=== Frontend logs ==="
-            podman logs --tail 30 fastdo-frontend
+            
+            # Sleep a bit more to allow services to fully start
+            sleep 15
             
             # Healthcheck backend
             echo "=== Backend healthcheck ==="
-            sleep 5
             podman exec fastdo-backend /usr/bin/wget -q --spider http://localhost:3000/api/health && echo "✓ Backend is healthy!" || echo "✗ Backend health check failed"
             
             # Healthcheck frontend
