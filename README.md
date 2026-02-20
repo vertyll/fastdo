@@ -89,7 +89,7 @@ pnpm run dev
 npm run dev
 ```
 
-`If you want to run the project in Docker containers:`
+`If you want to run the infrastructure in Docker containers:`
 - copy the `.env.docker.dev.example` file to `.env` in the main project directory
 - run:
 
@@ -97,7 +97,7 @@ npm run dev
 docker-compose -f docker-compose.dev.yml --env-file .env up -d
 ```
 
-By default, if you use one of the above paths:
+By default:
 - the back-end application should be available at [http://localhost:3000](http://localhost:3000)
 - the front-end application should be available at [http://localhost:4200](http://localhost:4200)
 
