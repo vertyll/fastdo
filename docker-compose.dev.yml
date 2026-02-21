@@ -15,6 +15,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   test-db:
     image: postgres:${POSTGRES_VERSION}-alpine
@@ -30,6 +31,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   mail-dev:
     image: maildev/maildev:latest
