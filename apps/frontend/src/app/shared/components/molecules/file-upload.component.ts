@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, inject, input, output, signal } from '@angular/core';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
@@ -17,7 +16,7 @@ export interface FileUploadItem {
 
 @Component({
   selector: 'app-file-upload',
-  imports: [CommonModule, NgIconComponent, TranslateModule, ButtonComponent, ErrorMessageComponent],
+  imports: [NgIconComponent, TranslateModule, ButtonComponent, ErrorMessageComponent],
   viewProviders: [provideIcons({ heroDocument, heroTrash, heroXMark })],
   template: `
     <div class="space-y-4">

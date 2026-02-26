@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, effect, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -18,7 +17,7 @@ import { NotificationDto } from '../../types/notification.type';
 @Component({
   selector: 'app-notification-dropdown',
   standalone: true,
-  imports: [CommonModule, NgIconComponent, TranslateModule],
+  imports: [NgIconComponent, TranslateModule],
   viewProviders: [
     provideIcons({
       heroBell,

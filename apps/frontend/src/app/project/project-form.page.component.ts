@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +26,6 @@ import { Project } from './models/Project';
 @Component({
   selector: 'app-project-form-page',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     TitleComponent,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +15,7 @@ import { PaginationParams } from '../../types/filter.type';
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIconComponent, TranslatePipe],
+  imports: [FormsModule, NgIconComponent, TranslatePipe],
   providers: [
     provideIcons({
       heroChevronDoubleLeftSolid,
