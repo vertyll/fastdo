@@ -51,7 +51,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
         @if (mode() === 'edit') {
           <button
-            class="absolute flex bottom-3 right-2 bg-background-primary dark:bg-dark-background-primary rounded-full p-2 shadow-md"
+            class="absolute flex bottom-3 right-2 bg-background-primary dark:bg-dark-background-primary rounded-full p-2 shadow-md hover:bg-background-secondary dark:hover:bg-dark-background-secondary transition-colors duration-200"
             (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
             [attr.aria-label]="'Image.uploadImage' | translate"
           >
@@ -59,7 +59,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
           </button>
           @if (previewUrl()) {
             <button
-              class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-2 shadow-md"
+              class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-2 shadow-md  transition-colors duration-200"
               (click)="$event.preventDefault(); $event.stopPropagation(); removeImage()"
               [attr.aria-label]="'Image.removeImage' | translate"
               [title]="'Image.removeImage' | translate"
@@ -73,7 +73,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Preview Modal -->
       @if (showPreviewModal()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1111] p-4">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-[1111] p-4">
           <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
@@ -94,7 +94,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Cropper Modal -->
       @if (showCropper()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">

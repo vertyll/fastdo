@@ -53,7 +53,7 @@ import { NotificationDto } from '../../types/notification.type';
         <!-- Mobile modal overlay when mobile context -->
         @if (isMobileContext()) {
           <div
-            class="fixed inset-0 bg-black bg-opacity-50 z-[80] flex items-start justify-center pt-16 p-4"
+            class="fixed inset-0 bg-black/50 z-[80] flex items-start justify-center pt-16 p-4"
             (click)="closeDropdown()"
             (keydown.escape)="closeDropdown()"
             role="dialog"

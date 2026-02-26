@@ -21,7 +21,7 @@ import { ToastService } from '../../services/toast.service';
       >
         <div class="text-white flex-grow" [innerHTML]="toast().message"></div>
         <button
-          class="rounded p-1.5 ml-4 bg-opacity-20 bg-black text-white hover:bg-opacity-30 transition-colors shrink-0 flex items-center justify-center"
+          class="rounded p-1.5 ml-4 bg-black/50 text-white hover:opacity-30 transition-colors shrink-0 flex items-center justify-center"
           (click)="hideToast()"
         >
           <ng-icon name="heroXMark" class="w-4 h-4" />
