@@ -196,7 +196,6 @@
     "taskNameMinLength": "Task name must be at least 3 characters long.",
     "title": "All tasks",
     "urgentTasks": "Urgent tasks",
-    "taskForProject": "Tasks for project",
     "howToUse": "How to use?",
     "changeNameDoc": "Change name: double-click to edit task name",
     "changeNameWithoutSaveDoc": "Change name without saving: press ESC key",

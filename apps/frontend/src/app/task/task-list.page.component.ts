@@ -43,7 +43,7 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
       <div class="flex flex-row items-center justify-between">
         <div class="flex gap-2 items-center">
           <app-title>
-            {{ 'Task.taskForProject' | translate }}
+            {{ 'Task.project' | translate }}
             : {{ projectName() }}
           </app-title>
           @if (projectIsPublic()) {

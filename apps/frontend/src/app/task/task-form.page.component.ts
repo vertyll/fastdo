@@ -71,7 +71,7 @@ interface SelectOption {
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
         </div>
       } @else {
-        <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
           <div class="relative">
             <app-textarea
               id="description"
