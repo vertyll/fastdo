@@ -278,18 +278,14 @@ import { Task, TaskComment } from './models/Task';
                                 <app-button
                                   type="button"
                                   (clicked)="onSaveEditComment()"
-                                  [cssClass]="
-                                    'px-4 py-1.5 bg-info-600 text-white rounded-md hover:bg-info-700 text-sm font-semibold transition-colors'
-                                  "
+                                  [cssClass]="'px-4 py-1.5 bg-info-600 text-white rounded-md hover:bg-info-700 text-sm font-semibold transition-colors'"
                                 >
                                   {{ 'Task.saveComment' | translate }}
                                 </app-button>
                                 <app-button
                                   type="button"
                                   (clicked)="onCancelEditComment()"
-                                  [cssClass]="
-                                    'px-4 py-1.5 bg-neutral-500 text-white rounded-md hover:bg-neutral-600 text-sm font-semibold transition-colors'
-                                  "
+                                  [cssClass]="'px-4 py-1.5 bg-neutral-500 text-white rounded-md hover:bg-neutral-600 text-sm font-semibold transition-colors'"
                                 >
                                   {{ 'Basic.cancel' | translate }}
                                 </app-button>
