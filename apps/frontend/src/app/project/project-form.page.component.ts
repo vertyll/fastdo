@@ -57,7 +57,7 @@ import { Project } from './models/Project';
     }
   `,
   template: `
-    <div class="max-w-2xl mx-auto p-6">
+    <div class="max-w-2xl mx-auto">
       <app-title>
         {{ isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate) }}
       </app-title>
@@ -92,7 +92,7 @@ import { Project } from './models/Project';
         </div>
 
         <div class="flex items-center">
-          <app-checkbox [control]="isPublicControl" id="isPublic" />
+          <app-checkbox [control]="isPublicControl" [id]="'isPublic'" />
           <label for="isPublic" class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary">
             {{ 'Project.isPublic' | translate }}
           </label>

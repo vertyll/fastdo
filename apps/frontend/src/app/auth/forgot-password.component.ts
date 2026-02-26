@@ -54,7 +54,7 @@ import { AuthService } from './data-access/auth.service';
           {{ 'Auth.sendResetLink' | translate }}
         </button>
 
-        <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
+        <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkTypeEnum.Default">
           {{ 'Auth.backToLogin' | translate }}
         </app-link>
       </form>
@@ -69,7 +69,7 @@ export class ForgotPasswordComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   protected readonly forgotPasswordForm: FormGroup;
-  protected readonly LinkType = LinkTypeEnum;
+  protected readonly LinkTypeEnum = LinkTypeEnum;
   protected emailErrors: string[] = [];
   protected errorMessage: string | null = null;
 

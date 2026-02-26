@@ -125,7 +125,7 @@ import { PasswordValidator } from './validators/password.validator';
           {{ 'Auth.registerButton' | translate }}
         </button>
 
-        <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
+        <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkTypeEnum.Default">
           {{ 'Auth.alreadyHaveAccount' | translate }}
         </app-link>
       </form>
@@ -141,7 +141,7 @@ export class RegisterComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   protected readonly registerForm: FormGroup;
-  protected readonly LinkType = LinkTypeEnum;
+  protected readonly LinkTypeEnum = LinkTypeEnum;
   protected passwordMismatch: boolean = false;
   protected passwordErrors: string[] = [];
   protected emailErrors: string[] = [];

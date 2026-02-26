@@ -68,7 +68,7 @@ import { Task, TaskComment } from './models/Task';
   ],
   template: `
     <div class="min-h-screen">
-      <div class="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+      <div class="container mx-auto max-w-7xl">
         <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <button
             (click)="goBack()"

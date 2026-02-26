@@ -17,7 +17,7 @@ import { NavbarComponent } from '../organisms/navbar.component';
     <div class="flex flex-col min-h-screen">
       <app-navbar />
       <main class="flex-grow">
-        <div class="grid px-4">
+        <div class="grid px-6">
           <ng-content></ng-content>
         </div>
       </main>

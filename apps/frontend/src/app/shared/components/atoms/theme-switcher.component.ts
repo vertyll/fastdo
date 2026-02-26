@@ -12,9 +12,7 @@ import { ThemeService } from '../../services/theme.service';
   template: `
     <button
       (click)="themeService.toggleTheme()"
-      class="inline-flex items-center justify-center p-2 rounded-lg transition-colors duration-200
-    text-text-muted hover:text-text-primary hover:bg-neutral-50
-    dark:text-dark-text-muted dark:hover:text-dark-text-primary dark:hover:bg-neutral-700"
+      class="relative flex items-center justify-center p-2 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
       [attr.aria-label]="'Basic.toggleTheme' | translate"
     >
       @if (themeService.currentTheme === 'dark') {

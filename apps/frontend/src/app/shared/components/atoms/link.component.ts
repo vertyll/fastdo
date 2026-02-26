@@ -11,9 +11,10 @@ import { LinkTypeEnum } from '../../enums/link-type.enum';
       [routerLink]="routerLink()"
       routerLinkActive="font-bold"
       [ngClass]="{
-        'text-text-primary dark:text-dark-text-primary no-underline hover:no-underline': linkType() === LinkType.Nav,
+        'text-text-primary dark:text-dark-text-primary no-underline hover:no-underline':
+          linkType() === LinkTypeEnum.Nav,
         'text-link-primary underline hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover transition-colors duration-200':
-          linkType() === LinkType.Default,
+          linkType() === LinkTypeEnum.Default,
       }"
     >
       <ng-content></ng-content>
@@ -25,5 +26,5 @@ export class LinkComponent {
   readonly linkType = input<LinkTypeEnum>(LinkTypeEnum.Default);
   readonly clickHandler = input<() => void>();
 
-  protected readonly LinkType = LinkTypeEnum;
+  protected readonly LinkTypeEnum = LinkTypeEnum;
 }

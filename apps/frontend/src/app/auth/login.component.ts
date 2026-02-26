@@ -45,10 +45,10 @@ import { EmailChangeService } from './data-access/email-change.service';
         >
           {{ 'Auth.loginButton' | translate }}
         </button>
-        <app-link class="mt-4 block" [routerLink]="['/register']" [linkType]="LinkType.Default">{{
+        <app-link class="mt-4 block" [routerLink]="['/register']" [linkType]="LinkTypeEnum.Default">{{
           'Auth.dontHaveAccount' | translate
         }}</app-link>
-        <app-link class="mt-1 block" [routerLink]="['/forgot-password']" [linkType]="LinkType.Default">
+        <app-link class="mt-1 block" [routerLink]="['/forgot-password']" [linkType]="LinkTypeEnum.Default">
           {{ 'Auth.forgotPassword' | translate }}
         </app-link>
       </form>
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
   private readonly emailChangeService = inject(EmailChangeService);
 
   protected readonly loginForm: FormGroup;
-  protected readonly LinkType = LinkTypeEnum;
+  protected readonly LinkTypeEnum = LinkTypeEnum;
   protected errorMessage: string | null = null;
 
   constructor() {

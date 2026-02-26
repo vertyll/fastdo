@@ -25,7 +25,7 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
         <app-error-message [customMessage]="stateService.error()?.message" />
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
-        <div class="max-w-4xl mx-auto p-6">
+        <div class="max-w-4xl mx-auto">
           <div class="mb-8">
             <h1 class="text-3xl font-bold">
               {{ 'TermsAndPolicies.terms' | translate }}

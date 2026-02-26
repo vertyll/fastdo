@@ -40,35 +40,36 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
   viewProviders: [provideIcons({ heroInformationCircle })],
   template: `
     <div class="flex flex-col gap-4">
-      <app-title>
-        {{ 'Task.taskForProject' | translate }}
-        : {{ projectName() }}
-      </app-title>
-      <div class="flex gap-2 items-center">
+      <div class="flex flex-row items-center justify-between">
+        <div class="flex gap-2 items-center">
+          <app-title>
+            {{ 'Task.taskForProject' | translate }}
+            : {{ projectName() }}
+          </app-title>
+          @if (projectIsPublic()) {
+            <button
+              [matTooltip]="publicProjectTooltipText"
+              matTooltipPosition="above"
+              class="flex items-center justify-center"
+            >
+              <span class="flex items-center justify-center w-[35px] h-[35px]">
+                <ng-icon [size]="'30'" name="heroInformationCircle" class="text-blue-500" />
+              </span>
+            </button>
+          }
+          @if (selectedTasks().length > 0) {
+            <app-button
+              (click)="handleBatchDelete()"
+              [disabled]="selectedTasks().length === 0"
+              cssClass="bg-danger-500 dark:bg-danger-600 hover:bg-danger-600 dark:hover:bg-danger-700 text-white"
+            >
+              {{ 'Task.deleteSelected' | translate }} ({{ selectedTasks().length }})
+            </app-button>
+          }
+        </div>
         <app-button (click)="navigateToAddTask()">
           {{ 'Task.addTask' | translate }}
         </app-button>
-        @if (projectIsPublic()) {
-          <button
-            mat-icon-button
-            [matTooltip]="publicProjectTooltipText"
-            matTooltipPosition="above"
-            class="flex items-center justify-center"
-          >
-            <span class="flex items-center justify-center w-[35px] h-[35px]">
-              <ng-icon [size]="'30'" name="heroInformationCircle" class="text-blue-500" />
-            </span>
-          </button>
-        }
-        @if (selectedTasks().length > 0) {
-          <app-button
-            (click)="handleBatchDelete()"
-            [disabled]="selectedTasks().length === 0"
-            cssClass="bg-danger-500 dark:bg-danger-600 hover:bg-danger-600 dark:hover:bg-danger-700 text-white"
-          >
-            {{ 'Task.deleteSelected' | translate }} ({{ selectedTasks().length }})
-          </app-button>
-        }
       </div>
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>

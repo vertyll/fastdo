@@ -36,7 +36,7 @@ import { UserStateService } from './data-access/user.state.service';
         </div>
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
-        <div class="max-w-4xl mx-auto p-6">
+        <div class="max-w-4xl mx-auto">
           <div
             class="bg-background-primary dark:bg-dark-background-primary shadow-md rounded-lg overflow-hidden dark:border-dark-border-primary border-border-primary border"
           >

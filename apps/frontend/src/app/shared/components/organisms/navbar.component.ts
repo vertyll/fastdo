@@ -285,7 +285,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .content-wrapper {
-        @apply mx-auto py-4 px-4 md:px-8;
+        @apply mx-auto p-6 md:px-8;
       }
 
       .public-nav {
