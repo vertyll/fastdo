@@ -385,7 +385,7 @@ export class NotificationDropdownComponent {
   protected readonly NotificationStatusEnum = NotificationStatusEnum;
 
   constructor(private readonly translateService: TranslateService) {
-    this.currentLang = this.translateService.currentLang || 'pl';
+    this.currentLang = this.translateService.getCurrentLang() || 'pl';
     this.translateService.onLangChange.subscribe(event => {
       this.currentLang = event.lang;
     });
@@ -588,7 +588,7 @@ export class NotificationDropdownComponent {
     } else if (diffInDays < 7) {
       return this.translateService.instant('Notifications.timeDaysAgo', { days: diffInDays });
     } else {
-      const locale = this.translateService.currentLang || 'pl';
+      const locale = this.translateService.getCurrentLang() || 'pl';
       return d.toLocaleDateString(locale);
     }
   }

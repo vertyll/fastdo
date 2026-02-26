@@ -31,8 +31,8 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
   selector: 'app-filter-group',
   template: `
     <div>
-      <form [formGroup]="form" class="space-y-spacing-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-spacing-4">
+      <form [formGroup]="form" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           @for (filter of filters().slice(0, mobileFilterToggleHidden() ? 2 : 4); track $index) {
             <div>
               @switch (filter.type) {
@@ -93,7 +93,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
           }
         </div>
         @if (filters().length > 4) {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-spacing-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             @for (filter of filters().slice(4); let i = $index; track i) {
               <div [class.hidden]="!showAllFilters()">
                 @switch (filter.type) {
@@ -157,7 +157,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
             <button
               type="button"
               (click)="toggleFilters()"
-              class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer mb-spacing-4"
+              class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer mb-4"
               [attr.aria-label]="
                 showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate)
               "
@@ -168,11 +168,11 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
         }
       </form>
       @if (filledFilters().length) {
-        <div class="mb-spacing-4">
-          <p class="text-sm text-text-secondary-light dark:text-text-primary-dark">
+        <div class="mb-4">
+          <p class="text-sm text-text-secondary-light dark:text-dark-text-primary">
             <b>{{ 'Filters.filtersSet' | translate }}: </b>
             @for (filter of filledFilters(); track $index) {
-              <span class="mr-spacing-2">
+              <span class="mr-2">
                 {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{ filter.value }})
               </span>
             }

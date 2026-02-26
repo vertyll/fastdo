@@ -87,6 +87,8 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
   ],
   styles: [
     `
+      @reference "../../../../styles.scss";
+
       .top-nav {
         @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 transition-colors duration-200;
       }
@@ -680,7 +682,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected getCurrentLanguage(): string {
-    return this.translateService.currentLang.toUpperCase();
+    return this.translateService.getCurrentLang().toUpperCase();
   }
 
   protected toggleLanguageDropdown(event: Event): void {

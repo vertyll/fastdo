@@ -65,7 +65,7 @@ import { Project } from './models/Project';
       <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
         <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />
 
-        <div class="relative">
+        <div class="relative mt-6">
           <app-textarea
             [control]="descriptionControl"
             id="description"
@@ -488,7 +488,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   private updateOptionsForCurrentLang(): void {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
     this.projectTypes = (this.projectTypesRaw || []).map((type: any) => ({
       ...type,
       name: type.translations?.find((t: any) => t.lang === lang)?.name || type.translations?.[0]?.name || '',
@@ -510,7 +510,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   private loadProject(): void {
     if (!this.projectId) return;
 
-    const currentLang = this.translateService.currentLang || 'pl';
+    const currentLang = this.translateService.getCurrentLang() || 'pl';
 
     this.projectsService
       .getProjectByIdWithDetails(this.projectId, currentLang)

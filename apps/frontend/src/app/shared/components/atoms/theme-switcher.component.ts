@@ -13,14 +13,14 @@ import { ThemeService } from '../../services/theme.service';
     <button
       (click)="themeService.toggleTheme()"
       class="inline-flex items-center justify-center p-2 rounded-lg transition-colors duration-200
-        text-text-muted hover:text-text-primary hover:bg-neutral-50
-        dark:text-text-muted-dark dark:hover:text-text-primary-dark dark:hover:bg-neutral-700"
+    text-text-muted hover:text-text-primary hover:bg-neutral-50
+    dark:text-dark-text-muted dark:hover:text-dark-text-primary dark:hover:bg-neutral-700"
       [attr.aria-label]="'Basic.toggleTheme' | translate"
     >
       @if (themeService.currentTheme === 'dark') {
         <ng-icon name="heroSun" size="24" class="text-yellow-400" />
       } @else {
-        <ng-icon name="heroMoon" size="24" class="text-text-muted-light dark:text-text-muted-dark" />
+        <ng-icon name="heroMoon" size="24" class="text-text-muted dark:text-dark-text-muted" />
       }
     </button>
   `,

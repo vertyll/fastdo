@@ -41,18 +41,18 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-spacing-4"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4"
       tabindex="-1"
       role="dialog"
       [ngStyle]="{ display: modalService.modal().visible ? 'flex' : 'none' }"
       data-keyboard="true"
     >
       <div
-        class="w-full max-w-lg max-h-[90vh] bg-background-primary rounded-borderRadius-lg shadow-boxShadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 overflow-hidden flex flex-col"
+        class="w-full max-w-lg max-h-[90vh] bg-background-primary rounded-lg shadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-200 overflow-hidden flex flex-col"
         role="document"
       >
         <div
-          class="px-spacing-6 py-spacing-4 border-b border-border-primary dark:border-dark-border-primary flex justify-between items-center"
+          class="px-6 py-4 border-b border-border-primary dark:border-dark-border-primary flex justify-between items-center"
         >
           <h4 class="text-xl font-semibold">
             {{ modalService.modal().options?.title }}
@@ -60,20 +60,20 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
           <button (click)="closeModalIconHandler()" [attr.aria-label]="'Basic.close' | translate">
             <ng-icon
               name="heroXMarkSolid"
-              class="w-6 h-6 text-text-secondary hover:text-text-primary dark:text-dark-text-primary dark:hover:text-dark-text-secondary transition-colors duration-transitionDuration-200"
+              class="w-6 h-6 text-text-secondary hover:text-text-primary dark:text-dark-text-primary dark:hover:text-dark-text-secondary transition-colors duration-200"
             ></ng-icon>
           </button>
         </div>
 
-        <div class="px-spacing-6 py-spacing-4 overflow-y-auto flex-1">
+        <div class="px-6 py-4 overflow-y-auto flex-1">
           @if (modalService.modal().options?.loading) {
-            <div class="flex justify-center py-spacing-4">
+            <div class="flex justify-center py-4">
               <app-spinner />
             </div>
           }
 
           @if (modalService.modal().options?.message) {
-            <p [innerHTML]="modalService.modal().options?.message" class="mb-spacing-4"></p>
+            <p [innerHTML]="modalService.modal().options?.message" class="mb-4"></p>
           }
 
           <ng-container appAdHost></ng-container>
@@ -82,10 +82,10 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
             <form [formGroup]="form" (ngSubmit)="saveModal()" #formElement>
               @for (input of modalService.modal().options?.inputs; track input.id) {
                 @if (input.message) {
-                  <p [innerHTML]="input.message" class="mt-spacing-3 mb-spacing-2"></p>
+                  <p [innerHTML]="input.message" class="mt-3 mb-2"></p>
                 }
 
-                <div class="mb-spacing-4" [ngClass]="form.get(input.id) | inputInvalid">
+                <div class="mb-4" [ngClass]="form.get(input.id) | inputInvalid">
                   <div
                     [ngClass]="{
                       'flex items-center': input.type === ModalInputType.Checkbox,
@@ -150,7 +150,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
         </div>
 
         <div
-          class="px-spacing-6 py-spacing-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-spacing-2 flex-shrink-0"
+          class="px-6 py-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-2 flex-shrink-0"
         >
           @for (button of modalService.modal().options?.buttons; track button.role) {
             @switch (button.role) {

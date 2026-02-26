@@ -28,7 +28,7 @@ import { PasswordValidator } from './validators/password.validator';
   ],
   template: `
     <div
-      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
+      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title>{{ 'Auth.register' | translate }}</app-title>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
@@ -58,7 +58,7 @@ import { PasswordValidator } from './validators/password.validator';
           class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
         />
 
-        <div class="mb-spacing-1 mt-4">
+        <div class="mb-1 mt-4">
           <div class="flex items-center gap-2">
             <app-checkbox [control]="getControl('termsAccepted')" [id]="'terms'" />
             <app-label forId="terms" [required]="true">
@@ -78,7 +78,7 @@ import { PasswordValidator } from './validators/password.validator';
           }
         </div>
 
-        <div class="mb-spacing-4">
+        <div class="mb-4">
           <div class="flex items-center gap-2">
             <app-checkbox [control]="getControl('privacyPolicyAccepted')" [id]="'privacy'" />
             <app-label forId="privacy" [required]="true">
@@ -120,12 +120,12 @@ import { PasswordValidator } from './validators/password.validator';
 
         <button
           type="submit"
-          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
+          class="submit-button w-full py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
         >
           {{ 'Auth.registerButton' | translate }}
         </button>
 
-        <app-link class="mt-spacing-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
+        <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
           {{ 'Auth.alreadyHaveAccount' | translate }}
         </app-link>
       </form>

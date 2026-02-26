@@ -16,7 +16,7 @@ import { PasswordValidator } from './validators/password.validator';
   imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, TitleComponent, LabelComponent],
   template: `
     <div
-      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-surface-primary dark:bg-dark-surface-primary"
+      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-surface-primary dark:bg-dark-surface-primary"
     >
       <app-title>{{ 'Auth.resetPassword' | translate }}</app-title>
       <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
@@ -54,7 +54,7 @@ import { PasswordValidator } from './validators/password.validator';
 
         <button
           type="submit"
-          class="submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:bg-primary-700 dark:focus:ring-primary-800 transition-colors duration-transitionDuration-200"
+          class="submit-button w-full py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:bg-primary-700 dark:focus:ring-primary-800 transition-colors duration-200"
         >
           {{ 'Auth.resetPasswordButton' | translate }}
         </button>

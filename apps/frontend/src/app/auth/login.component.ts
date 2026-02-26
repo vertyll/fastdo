@@ -17,7 +17,7 @@ import { EmailChangeService } from './data-access/email-change.service';
   imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, LinkComponent, TitleComponent, LabelComponent],
   template: `
     <div
-      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
+      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title>{{ 'Auth.login' | translate }}</app-title>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -41,14 +41,14 @@ import { EmailChangeService } from './data-access/email-change.service';
         }
         <button
           type="submit"
-          class="submit-button w-full py-spacing-2 mt-4 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
+          class="submit-button w-full py-2 mt-4 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
         >
           {{ 'Auth.loginButton' | translate }}
         </button>
-        <app-link class="mt-spacing-4 block" [routerLink]="['/register']" [linkType]="LinkType.Default">{{
+        <app-link class="mt-4 block" [routerLink]="['/register']" [linkType]="LinkType.Default">{{
           'Auth.dontHaveAccount' | translate
         }}</app-link>
-        <app-link class="mt-spacing-1 block" [routerLink]="['/forgot-password']" [linkType]="LinkType.Default">
+        <app-link class="mt-1 block" [routerLink]="['/forgot-password']" [linkType]="LinkType.Default">
           {{ 'Auth.forgotPassword' | translate }}
         </app-link>
       </form>

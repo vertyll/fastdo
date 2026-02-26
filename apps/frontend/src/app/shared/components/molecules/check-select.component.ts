@@ -18,7 +18,7 @@ import { LabelComponent } from '../atoms/label.component';
         tabindex="0"
         [attr.aria-label]="label()"
         [attr.aria-expanded]="isDropdownOpen"
-        class="dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-transitionDuration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary bg-transparent rounded-borderRadius-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer cursor-pointer"
+        class="dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary bg-transparent rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer cursor-pointer"
       >
         <span>{{ label() }}</span>
         @if (isDropdownOpen) {
@@ -27,10 +27,10 @@ import { LabelComponent } from '../atoms/label.component';
             (keydown.escape)="$event.stopPropagation()"
             role="listbox"
             tabindex="-1"
-            class="absolute bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg mt-1 w-full z-10"
+            class="absolute bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-lg mt-1 w-full z-10"
           >
             @for (option of translatedOptions; track $index) {
-              <div class="flex items-center p-spacing-2">
+              <div class="flex items-center p-2">
                 <input
                   type="checkbox"
                   [id]="option.value"

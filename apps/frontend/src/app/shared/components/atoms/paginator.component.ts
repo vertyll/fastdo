@@ -26,9 +26,9 @@ import { PaginationParams } from '../../types/filter.type';
   ],
   template: `
     <div
-      class="flex flex-col items-center gap-spacing-4 md:flex-row md:items-center md:justify-center px-spacing-4 py-spacing-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary md:px-spacing-6 rounded-borderRadius-lg"
+      class="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-center px-4 py-2 bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary md:px-6 rounded-lg"
     >
-      <div class="flex flex-wrap items-center gap-spacing-2">
+      <div class="flex flex-wrap items-center gap-2">
         <label for="page-size-select" class="text-sm text-text-secondary dark:text-dark-text-secondary"
           >{{ 'Paginator.itemsPerPage' | translate }}:</label
         >
@@ -37,7 +37,7 @@ import { PaginationParams } from '../../types/filter.type';
             id="page-size-select"
             [ngModel]="pageSize()"
             (ngModelChange)="onPageSizeChange($event)"
-            class="block w-20 appearance-none rounded-borderRadius-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary hover:dark:bg-dark-background-primary py-1.5 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="block w-20 appearance-none rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary hover:dark:bg-dark-background-primary py-1.5 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             @for (size of pageSizeOptions(); track size) {
               <option [value]="size">{{ size }}</option>
@@ -59,11 +59,11 @@ import { PaginationParams } from '../../types/filter.type';
         </span>
       </div>
 
-      <div class="flex items-center gap-spacing-1.5 md:gap-spacing-2">
+      <div class="flex items-center gap-1.5 md:gap-2">
         <button
           (click)="onFirstPage()"
           [disabled]="currentPage() === 0"
-          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
+          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.firstPage' | translate }}</span>
           <ng-icon name="heroChevronDoubleLeftSolid" size="16" class="text-current" />
@@ -72,7 +72,7 @@ import { PaginationParams } from '../../types/filter.type';
         <button
           (click)="onPreviousPage()"
           [disabled]="currentPage() === 0"
-          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
+          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.previousPage' | translate }}</span>
           <ng-icon name="heroChevronLeftSolid" size="16" class="text-current" />
@@ -81,7 +81,7 @@ import { PaginationParams } from '../../types/filter.type';
         <button
           (click)="onNextPage()"
           [disabled]="isLastPage() || total() === 0"
-          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
+          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.nextPage' | translate }}</span>
           <ng-icon name="heroChevronRightSolid" size="16" class="text-current" />
@@ -90,7 +90,7 @@ import { PaginationParams } from '../../types/filter.type';
         <button
           (click)="onLastPage()"
           [disabled]="isLastPage() || total() === 0"
-          class="relative inline-flex items-center justify-center rounded-borderRadius-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
+          class="relative inline-flex items-center justify-center rounded-md w-8 h-8 md:w-9 md:h-9 text-text-primary dark:text-dark-text-primary border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary focus:z-20 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background-primary dark:disabled:hover:bg-dark-background-primary"
         >
           <span class="sr-only">{{ 'Paginator.lastPage' | translate }}</span>
           <ng-icon name="heroChevronDoubleRightSolid" size="16" class="text-current" />

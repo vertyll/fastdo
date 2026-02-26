@@ -86,7 +86,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   private loadRoles(): void {
-    const currentLang = this.translateService.currentLang || 'en';
+    const currentLang = this.translateService.getCurrentLang() || 'en';
     this.rolesSubscription = this.roleService.getAllRoles(currentLang).subscribe({
       error: error => {
         console.warn('Failed to load roles:', error);

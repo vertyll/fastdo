@@ -85,7 +85,7 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
             {{ getStatusName(task.status) }}
           </span>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400">-</span>
+          <span class="text-sm text-neutral-500 dark:text-neutral-400">-</span>
         }
       </div>
     </ng-template>
@@ -105,7 +105,7 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
             }
           </div>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400"> - </span>
+          <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
         }
       </div>
     </ng-template>
@@ -123,7 +123,7 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
             }
           </div>
         } @else {
-          <span class="text-sm text-gray-500 dark:text-gray-400"> - </span>
+          <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
         }
       </div>
     </ng-template>
@@ -581,7 +581,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     if (!status) return '';
 
     if (status.translations && Array.isArray(status.translations)) {
-      const currentLang = this.translateService.currentLang || 'pl';
+      const currentLang = this.translateService.getCurrentLang() || 'pl';
       const translation = status.translations.find((t: any) => t.lang === currentLang);
       if (translation?.name) {
         return translation.name;
@@ -599,7 +599,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     if (!category) return '';
 
     if (category.translations && Array.isArray(category.translations)) {
-      const currentLang = this.translateService.currentLang || 'pl';
+      const currentLang = this.translateService.getCurrentLang() || 'pl';
       const translation = category.translations.find((t: any) => t.lang === currentLang);
       if (translation?.name) {
         return translation.name;

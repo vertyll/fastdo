@@ -259,7 +259,7 @@ import { Task, TaskComment } from './models/Task';
                                       class="ml-2 p-1 rounded-md outline-none border-none transition-colors duration-150 flex-shrink-0"
                                       [ngClass]="
                                         att._markedForDelete
-                                          ? 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100'
+                                          ? 'text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100'
                                           : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
                                       "
                                     >
@@ -605,7 +605,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     content: ['', [Validators.required, Validators.minLength(1)]],
   });
 
-  private currentLang: string = this.translateService.currentLang || 'pl';
+  private currentLang: string = this.translateService.getCurrentLang() || 'pl';
 
   get contentControl(): FormControl {
     return this.commentForm.get('content') as FormControl;

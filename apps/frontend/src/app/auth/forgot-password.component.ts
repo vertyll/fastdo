@@ -25,7 +25,7 @@ import { AuthService } from './data-access/auth.service';
   ],
   template: `
     <div
-      class="max-w-md mx-auto p-spacing-6 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-lg shadow-boxShadow-md mt-spacing-10 bg-background-primary dark:bg-dark-background-primary"
+      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title>{{ 'Auth.forgotPassword' | translate }}</app-title>
       <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()">
@@ -49,12 +49,12 @@ import { AuthService } from './data-access/auth.service';
 
         <button
           type="submit"
-          class="mt-4 submit-button w-full py-spacing-2 bg-primary-500 text-white rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
+          class="mt-4 submit-button w-full py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
         >
           {{ 'Auth.sendResetLink' | translate }}
         </button>
 
-        <app-link class="mt-spacing-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
+        <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkType.Default">
           {{ 'Auth.backToLogin' | translate }}
         </app-link>
       </form>

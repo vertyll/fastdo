@@ -34,7 +34,7 @@ export interface FileUploadItem {
           class="hidden"
         />
         @if (maxFiles() > 0) {
-          <span class="text-sm text-gray-500 dark:text-gray-400">
+          <span class="text-sm text-neutral-500 dark:text-neutral-400">
             {{ 'Basic.maxFiles' | translate: { count: maxFiles() } }}
           </span>
         }
@@ -43,19 +43,19 @@ export interface FileUploadItem {
       <!-- File List -->
       @if (files().length > 0) {
         <div class="space-y-2">
-          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             {{ 'Basic.selectedFiles' | translate }}
           </h4>
           <div class="space-y-2">
             @for (fileItem of files(); track fileItem.file.name) {
-              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div class="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                 <div class="flex items-center gap-3">
                   <ng-icon name="heroDocument" class="w-5 h-5 text-blue-500" />
                   <div>
-                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {{ fileItem.file.name }}
                     </div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                    <div class="text-xs text-neutral-500 dark:text-neutral-400">
                       {{ formatFileSize(fileItem.file.size) }}
                     </div>
                   </div>
@@ -84,7 +84,7 @@ export interface FileUploadItem {
 
       <!-- File Size Limit Info -->
       @if (maxSizeBytes() > 0) {
-        <div class="text-xs text-gray-500 dark:text-gray-400">
+        <div class="text-xs text-neutral-500 dark:text-neutral-400">
           {{ 'Basic.maxFileSize' | translate: { size: formatFileSize(maxSizeBytes()) } }}
         </div>
       }

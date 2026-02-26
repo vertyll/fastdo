@@ -7,8 +7,10 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [TranslateModule, RouterLink],
   styles: [
     `
+      @reference "../../../../styles.scss";
+
       footer {
-        @apply bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-spacing-4 text-center text-sm;
+        @apply bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-4 text-center text-sm;
       }
 
       a {

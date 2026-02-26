@@ -111,7 +111,7 @@ export class TasksListFiltersComponent implements OnInit {
   }
 
   private updatePriorityOptionsForCurrentLang(): void {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
     this.filters.find(filter => filter.formControlName === 'priorityIds')!.multiselectOptions = (
       this.prioritiesRaw || []
     ).map((item: any) => ({
@@ -121,7 +121,7 @@ export class TasksListFiltersComponent implements OnInit {
   }
 
   private updateStatusOptionsForCurrentLang(): void {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
     this.filters.find(filter => filter.formControlName === 'statusIds')!.multiselectOptions = (
       this.statusesRaw || []
     ).map((item: any) => ({
@@ -131,7 +131,7 @@ export class TasksListFiltersComponent implements OnInit {
   }
 
   private updateCategoryOptionsForCurrentLang(): void {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
     this.filters.find(filter => filter.formControlName === 'categoryIds')!.multiselectOptions = (
       this.categoriesRaw || []
     ).map((item: any) => ({

@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 
 export const languageInterceptor: HttpInterceptorFn = (req, next) => {
   const translateService = inject(TranslateService);
-  const lang = translateService.currentLang || environment.defaultLanguage;
+  const lang = translateService.getCurrentLang() || environment.defaultLanguage;
 
   return next(
     req.clone({

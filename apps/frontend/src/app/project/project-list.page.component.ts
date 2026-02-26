@@ -333,7 +333,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   }
 
   private mapProjectsToTableRows(projects: any[]): TableRow[] {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
     return projects.map(project => {
       let typeName = '';
       if (project.type?.translations) {

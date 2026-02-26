@@ -51,7 +51,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
         @if (mode() === 'edit') {
           <button
-            class="absolute flex bottom-3 right-2 bg-background-primary dark:bg-dark-background-primary rounded-full p-spacing-2 shadow-boxShadow-md"
+            class="absolute flex bottom-3 right-2 bg-background-primary dark:bg-dark-background-primary rounded-full p-2 shadow-md"
             (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
             [attr.aria-label]="'Image.uploadImage' | translate"
           >
@@ -59,7 +59,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
           </button>
           @if (previewUrl()) {
             <button
-              class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-spacing-2 shadow-boxShadow-md"
+              class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-2 shadow-md"
               (click)="$event.preventDefault(); $event.stopPropagation(); removeImage()"
               [attr.aria-label]="'Image.removeImage' | translate"
               [title]="'Image.removeImage' | translate"
@@ -73,11 +73,9 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Preview Modal -->
       @if (showPreviewModal()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1111] p-spacing-4">
-          <div
-            class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl"
-          >
-            <div class="flex justify-between items-center mb-spacing-4">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1111] p-4">
+          <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
                 {{ 'Image.fullPreview' | translate }}
               </h3>
@@ -96,11 +94,9 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Cropper Modal -->
       @if (showCropper()) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-spacing-4">
-          <div
-            class="bg-background-primary dark:bg-dark-background-primary rounded-borderRadius-lg p-spacing-6 w-full max-w-2xl"
-          >
-            <div class="flex justify-between items-center mb-spacing-4">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
                 {{ 'Image.cutPhoto' | translate }}
               </h3>
@@ -117,10 +113,10 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <img #cropperImage [src]="tempImageUrl()" class="max-w-full" alt="Cropper" />
             </div>
 
-            <div class="flex justify-end mt-spacing-4 space-x-spacing-3">
+            <div class="flex justify-end mt-4 space-x-3">
               <button
                 (click)="closeCropper()"
-                class="px-spacing-4 py-spacing-2 text-text-primary dark:text-dark-text-primary bg-neutral-200 dark:bg-neutral-700 rounded-borderRadius-md hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors duration-transitionDuration-200"
+                class="px-4 py-2 text-text-primary dark:text-dark-text-primary bg-neutral-200 dark:bg-neutral-700 rounded-md hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors duration-200"
                 [attr.aria-label]="'Basic.cancel' | translate"
               >
                 {{ 'Basic.cancel' | translate }}
@@ -128,7 +124,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
               <button
                 (click)="save()"
                 [disabled]="isSaving()"
-                class="px-spacing-4 py-spacing-2 text-white bg-primary-500 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-transitionDuration-200 disabled:opacity-50"
+                class="px-4 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200 disabled:opacity-50"
                 [attr.aria-label]="isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate)"
               >
                 {{ isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
@@ -243,7 +239,7 @@ export class ImageComponent implements OnDestroy {
 
     return `
       ${sizeClasses[this.size()]}
-      ${this.format() === 'circle' ? 'rounded-full' : 'rounded-borderRadius-lg'}
+      ${this.format() === 'circle' ? 'rounded-full' : 'rounded-lg'}
       overflow-hidden
       bg-neutral-200
       dark:bg-neutral-700

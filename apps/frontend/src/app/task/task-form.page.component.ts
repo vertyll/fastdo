@@ -192,20 +192,20 @@ interface SelectOption {
 
           <!-- File Attachments -->
           <div class="space-y-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100">
               {{ 'Task.attachments' | translate }}
             </h3>
 
             <!-- Existing Attachments -->
             @if (existingAttachments().length > 0) {
               <div class="space-y-2">
-                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                   {{ 'Task.existingAttachments' | translate }}
                 </h4>
                 <div class="flex flex-col gap-3">
                   @for (attachment of existingAttachments(); track attachment.id) {
                     <div
-                      class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-gray-200 dark:border-gray-700 transition-opacity duration-200"
+                      class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-neutral-200 dark:border-neutral-700 transition-opacity duration-200"
                       [class.opacity-50]="attachment._markedForDelete"
                     >
                       <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -226,10 +226,10 @@ interface SelectOption {
 
                         <!-- Tekst -->
                         <div class="min-w-0 flex-1">
-                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                          <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
                             {{ attachment.originalName }}
                           </p>
-                          <p class="text-xs text-gray-500 dark:text-gray-400">
+                          <p class="text-xs text-neutral-500 dark:text-neutral-400">
                             {{ formatFileSize(attachment.size) }}
                           </p>
                         </div>
@@ -243,7 +243,7 @@ interface SelectOption {
                           class="p-1 rounded-md outline-none border-none"
                           [ngClass]="
                             attachment._markedForDelete
-                              ? 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100'
+                              ? 'text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100'
                               : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
                           "
                           [title]="
@@ -268,7 +268,7 @@ interface SelectOption {
             <!-- New Attachments Upload -->
             <div class="space-y-2">
               @if (taskId()) {
-                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                   {{ 'Task.addNewAttachments' | translate }}
                 </h4>
               }
@@ -285,9 +285,11 @@ interface SelectOption {
               </div>
               @if (taskId()) {
                 <p
-                  class="text-xs text-gray-500 dark:text-gray-400"
+                  class="text-xs text-neutral-500 dark:text-neutral-400"
                   [class]="
-                    getTotalAttachments() > maxAttachmentsLimit ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'
+                    getTotalAttachments() > maxAttachmentsLimit
+                      ? 'text-red-500'
+                      : 'text-neutral-500 dark:text-neutral-400'
                   "
                 >
                   {{
@@ -854,7 +856,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   private updateOptionsForCurrentLang(): void {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
 
     this.priorities.set(
       (this.prioritiesRaw() || []).map((item: any) => ({

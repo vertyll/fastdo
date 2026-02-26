@@ -36,18 +36,18 @@ import { UserStateService } from './data-access/user.state.service';
         </div>
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
-        <div class="max-w-4xl mx-auto p-spacing-6">
+        <div class="max-w-4xl mx-auto p-6">
           <div
-            class="bg-background-primary dark:bg-dark-background-primary shadow-boxShadow-md rounded-borderRadius-lg overflow-hidden dark:border-dark-border-primary border-border-primary border"
+            class="bg-background-primary dark:bg-dark-background-primary shadow-md rounded-lg overflow-hidden dark:border-dark-border-primary border-border-primary border"
           >
             @if (!isEditing) {
-              <div class="p-spacing-6">
-                <div class="flex justify-between items-center mb-spacing-6">
+              <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
                   <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Profile.myProfile' | translate }}
                   </h2>
                   <button
-                    class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-transitionDuration-200"
+                    class="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200"
                     (click)="toggleEdit()"
                   >
                     {{ 'Profile.edit' | translate }}
@@ -68,22 +68,22 @@ import { UserStateService } from './data-access/user.state.service';
                 </div>
               </div>
             } @else {
-              <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-spacing-6 space-y-spacing-6">
-                <div class="flex justify-between items-center mb-spacing-6">
+              <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
+                <div class="flex justify-between items-center mb-6">
                   <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Basic.edit' | translate }}
                   </h2>
-                  <div class="flex justify-end space-x-spacing-4">
+                  <div class="flex justify-end space-x-4">
                     <button
                       type="button"
-                      class="px-spacing-4 py-spacing-2 border border-border-primary dark:border-dark-border-primary rounded-borderRadius-md text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
+                      class="px-4 py-2 border border-border-primary dark:border-dark-border-primary rounded-md text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
                       (click)="toggleEdit()"
                     >
                       {{ 'Basic.cancel' | translate }}
                     </button>
                     <button
                       type="submit"
-                      class="bg-primary-500 text-white px-spacing-4 py-spacing-2 rounded-borderRadius-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
+                      class="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
                       [disabled]="!profileForm.valid || stateService.state() === LOADING_STATE_VALUE.LOADING"
                     >
                       {{ 'Basic.save' | translate }}
@@ -91,7 +91,7 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
                 </div>
 
-                <div class="mb-spacing-6 flex items-center">
+                <div class="mb-6 flex items-center">
                   <app-image
                     [initialUrl]="user().avatar?.url || null"
                     mode="edit"
@@ -103,7 +103,7 @@ import { UserStateService } from './data-access/user.state.service';
                   />
                 </div>
 
-                <div class="space-y-spacing-4">
+                <div class="space-y-4">
                   <div>
                     <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="email">
                       {{ 'Profile.email' | translate }}

@@ -25,27 +25,27 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
         <app-error-message [customMessage]="stateService.error()?.message" />
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
-        <div class="max-w-4xl mx-auto p-spacing-6">
-          <div class="mb-spacing-8">
+        <div class="max-w-4xl mx-auto p-6">
+          <div class="mb-8">
             <h1 class="text-3xl font-bold">
               {{ 'TermsAndPolicies.privacyPolicy' | translate }}
             </h1>
-            <div class="mt-spacing-2 text-sm text-text-secondary-light dark:text-text-secondary-dark space-y-spacing-1">
+            <div class="mt-2 text-sm text-text-secondary-light dark:text-text-secondary-dark space-y-1">
               <p>{{ 'TermsAndPolicies.version' | translate }}: {{ policy().version }}</p>
               <p>
                 {{ 'TermsAndPolicies.effectiveDate' | translate }}:
-                {{ policy().dateEffective | date: 'mediumDate' : '' : translate.currentLang }}
+                {{ policy().dateEffective | date: 'mediumDate' : '' : translate.getCurrentLang() }}
               </p>
               <p>
                 {{ 'TermsAndPolicies.lastModified' | translate }}:
-                {{ policy().dateModification | date: 'mediumDate' : '' : translate.currentLang }}
+                {{ policy().dateModification | date: 'mediumDate' : '' : translate.getCurrentLang() }}
               </p>
             </div>
           </div>
-          <div class="space-y-spacing-8">
+          <div class="space-y-8">
             @for (section of sortedSections(); track section.id) {
               <section class="prose dark:prose-invert max-w-none">
-                <h2 class="text-xl font-semibold mb-spacing-4">
+                <h2 class="text-xl font-semibold mb-4">
                   {{ getCurrentTranslation(section).title }}
                 </h2>
 
@@ -56,7 +56,7 @@ import { Section, SectionTranslation } from './types/terms-and-policies.types';
                     </p>
                   }
                   @case (LegalSection.LIST) {
-                    <ul class="list-disc pl-spacing-6 space-y-spacing-2">
+                    <ul class="list-disc pl-6 space-y-2">
                       @for (item of getCurrentTranslation(section).items; track item) {
                         <li class="text-text-secondary-light dark:text-text-secondary-dark">{{ item }}</li>
                       }
@@ -92,7 +92,7 @@ export class PrivacyPolicyPageComponent implements OnInit, OnDestroy {
   });
 
   protected getCurrentTranslation(section: Section): SectionTranslation {
-    const currentLang = this.translate.currentLang;
+    const currentLang = this.translate.getCurrentLang();
     return section.translations.find(t => t.language?.code === currentLang) || section.translations[0];
   }
 

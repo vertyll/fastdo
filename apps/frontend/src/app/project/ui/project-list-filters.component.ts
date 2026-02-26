@@ -47,7 +47,7 @@ export class ProjectsListFiltersComponent implements OnInit {
   }
 
   private updateProjectTypeOptionsForCurrentLang(): void {
-    const lang = this.translateService.currentLang || 'pl';
+    const lang = this.translateService.getCurrentLang() || 'pl';
     this.filters.find(filter => filter.formControlName === 'typeIds')!.multiselectOptions = (
       this.projectTypesRaw || []
     ).map((item: any) => ({
