@@ -7,6 +7,9 @@ coverage
 src/generated
 src/metadata.ts
 
+# migrations
+src/migrations
+
 # lock files
 *-lock.json
 pnpm-lock.yaml
