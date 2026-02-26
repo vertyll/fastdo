@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -49,45 +48,101 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       heroBell,
     }),
   ],
-  animations: [
-    trigger('dropdown', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-10px)' }),
-        animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1, transform: 'translateY(0)' }),
-        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' })),
-      ]),
-    ]),
-    trigger('overlay', [
-      transition(':enter', [style({ opacity: 0 }), animate('200ms ease-out', style({ opacity: 1 }))]),
-      transition(':leave', [style({ opacity: 1 }), animate('200ms ease-in', style({ opacity: 0 }))]),
-    ]),
-    trigger('hamburgerCross', [
-      transition(':enter', [
-        style({ transform: 'rotate(0deg)' }),
-        animate('200ms ease-out', style({ transform: 'rotate(45deg)' })),
-      ]),
-      transition(':leave', [
-        style({ transform: 'rotate(45deg)' }),
-        animate('200ms ease-in', style({ transform: 'rotate(0deg)' })),
-      ]),
-    ]),
-    trigger('mobileNavMenu', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-100%)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1, transform: 'translateY(0)' }),
-        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-100%)' })),
-      ]),
-    ]),
-  ],
   styles: [
     `
       @reference "../../../../styles.scss";
+
+      /* ── Animation keyframes ── */
+
+      @keyframes dropdown-enter {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes dropdown-leave {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes overlay-enter {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes overlay-leave {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes mobile-nav-enter {
+        from {
+          opacity: 0;
+          transform: translateY(-100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes mobile-nav-leave {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-100%);
+        }
+      }
+
+      /* ── Animation classes applied by animate.enter / animate.leave ── */
+
+      .anim-dropdown-enter {
+        animation: dropdown-enter 200ms ease-out forwards;
+      }
+
+      .anim-dropdown-leave {
+        animation: dropdown-leave 200ms ease-in forwards;
+      }
+
+      .anim-overlay-enter {
+        animation: overlay-enter 200ms ease-out forwards;
+      }
+
+      .anim-overlay-leave {
+        animation: overlay-leave 200ms ease-in forwards;
+      }
+
+      .anim-mobile-nav-enter {
+        animation: mobile-nav-enter 300ms ease-out forwards;
+      }
+
+      .anim-mobile-nav-leave {
+        animation: mobile-nav-leave 300ms ease-in forwards;
+      }
+
+      /* ── Component styles ── */
 
       .top-nav {
         @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 transition-colors duration-200;
@@ -339,7 +394,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               </button>
 
               @if (languageDropdownOpen) {
-                <div class="language-dropdown" @dropdown>
+                <div class="language-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
                   @for (lang of languages; track lang) {
                     <button
                       class="language-option"
@@ -379,7 +434,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       </nav>
 
       @if (mobileMenuOpen) {
-        <div class="mobile-nav-menu" @mobileNavMenu>
+        <div class="mobile-nav-menu" animate.enter="anim-mobile-nav-enter" animate.leave="anim-mobile-nav-leave">
           <button class="mobile-nav-item w-full" (click)="navigateToLoginPage()">
             {{ 'Basic.login' | translate }}
           </button>
@@ -417,7 +472,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               </button>
 
               @if (profileDropdownOpen) {
-                <div class="profile-dropdown" @dropdown>
+                <div class="profile-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
                   <button class="auth-button" (click)="router.navigate(['/user-profile'])">
                     <span class="hover:text-link-hover dark:hover:text-link-dark-hover">
                       {{ 'Navbar.profile' | translate }}
@@ -440,7 +495,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               </button>
 
               @if (languageDropdownOpen) {
-                <div class="language-dropdown" @dropdown>
+                <div class="language-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
                   @for (lang of languages; track lang) {
                     <button
                       class="language-option"
@@ -476,14 +531,19 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                   aria-modal="true"
                   tabindex="-1"
                 >
-                  <div class="mobile-menu-overlay" @overlay></div>
+                  <div
+                    class="mobile-menu-overlay"
+                    animate.enter="anim-overlay-enter"
+                    animate.leave="anim-overlay-leave"
+                  ></div>
                   <div
                     class="mobile-menu-content language-menu"
                     (click)="$event.stopPropagation()"
                     (keydown.escape)="$event.stopPropagation()"
                     role="menu"
                     tabindex="-1"
-                    @dropdown
+                    animate.enter="anim-dropdown-enter"
+                    animate.leave="anim-dropdown-leave"
                   >
                     @for (lang of languages; track lang) {
                       <button
@@ -511,14 +571,15 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
           aria-modal="true"
           tabindex="-1"
         >
-          <div class="mobile-menu-overlay" @overlay></div>
+          <div class="mobile-menu-overlay" animate.enter="anim-overlay-enter" animate.leave="anim-overlay-leave"></div>
           <div
             class="mobile-menu-content"
             (click)="$event.stopPropagation()"
             (keydown.escape)="$event.stopPropagation()"
             role="menu"
             tabindex="-1"
-            @dropdown
+            animate.enter="anim-dropdown-enter"
+            animate.leave="anim-dropdown-leave"
           >
             @for (module of modules(); track module.id) {
               <div
@@ -710,7 +771,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
     this.localStorageService.set('selected_language', lang);
-    this.languageDropdownOpen = false;
     this.languageDropdownOpen = false;
   }
 

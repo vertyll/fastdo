@@ -1,6 +1,5 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ApplicationConfig, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -15,14 +14,14 @@ import { FiltersState } from './shared/store/filter/filter.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideHttpClient(
       withInterceptors([apiKeyInterceptor, authInterceptor, errorInterceptor, languageInterceptor]),
       withFetch(),
     ),
     provideRouter(routes, withComponentInputBinding()),
     provideStore([FiltersState], ngxsConfig),
-    importProvidersFrom(BrowserAnimationsModule, TranslateModule.forRoot()),
+    importProvidersFrom(TranslateModule.forRoot()),
     ...provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
   ],
 };
