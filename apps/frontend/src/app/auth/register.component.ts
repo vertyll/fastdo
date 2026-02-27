@@ -12,6 +12,7 @@ import { ToastPositionEnum } from '../shared/enums/toast-position.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
+import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 
 @Component({
   selector: 'app-register',
@@ -25,38 +26,34 @@ import { PasswordValidator } from './validators/password.validator';
     LabelComponent,
     RouterLink,
     CheckboxComponent,
+    InputFieldComponent,
   ],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.register' | translate"></app-title>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
-        <input
-          id="email"
-          formControlName="email"
-          required
-          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
-
-        <app-label forId="password">{{ 'Auth.password' | translate }}:</app-label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          required
-          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
-
-        <app-label forId="confirmPassword"> {{ 'Auth.confirmPassword' | translate }}: </app-label>
-        <input
-          id="confirmPassword"
-          type="password"
-          formControlName="confirmPassword"
-          required
-          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="flex flex-col gap-4">
+          <app-input-field
+            [label]="'Auth.email' | translate"
+            [control]="getControl('email')"
+            [type]="'email'"
+            [id]="'email'"
+          ></app-input-field>
+          <app-input-field
+            [label]="'Auth.password' | translate"
+            [control]="getControl('password')"
+            [type]="'password'"
+            [id]="'password'"
+          ></app-input-field>
+          <app-input-field
+            [label]="'Auth.confirmPassword' | translate"
+            [control]="getControl('confirmPassword')"
+            [type]="'password'"
+            [id]="'confirmPassword'"
+          ></app-input-field>
+        </div>
 
         <div class="mb-1 mt-4">
           <div class="flex items-center gap-2">

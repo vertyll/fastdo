@@ -7,7 +7,6 @@ import { AuthService } from '../auth/data-access/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
-import { TextareaComponent } from '../shared/components/atoms/textarea.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
@@ -22,6 +21,7 @@ import { ProjectTypeService } from './data-access/project-type.service';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { Project } from './models/Project';
+import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 
 @Component({
   selector: 'app-project-form-page',
@@ -32,10 +32,10 @@ import { Project } from './models/Project';
     ButtonComponent,
     InputFieldComponent,
     SelectFieldComponent,
-    TextareaComponent,
     CheckboxComponent,
     ImageComponent,
     HasProjectPermissionDirective,
+    TextareaFieldComponent,
   ],
   styles: `
     input[type='color'] {
@@ -66,19 +66,11 @@ import { Project } from './models/Project';
         <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />
 
         <div class="relative mt-6">
-          <app-textarea
+          <app-textarea-field
+            id="additionalDescription"
             [control]="descriptionControl"
-            id="description"
-            [placeholder]="'Project.descriptionPlaceholder' | translate"
-            [rows]="4"
+            [label]="'Project.description' | translate"
           />
-          <label
-            for="description"
-            class="absolute left-4 -top-2 text-xs text-text-primary dark:text-dark-text-primary bg-background-primary dark:bg-dark-background-primary px-1"
-            [attr.aria-label]="'Project.description' | translate"
-          >
-            {{ 'Project.description' | translate }}
-          </label>
         </div>
 
         <div class="mt-6">

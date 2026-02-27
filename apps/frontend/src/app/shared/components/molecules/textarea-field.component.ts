@@ -1,23 +1,23 @@
 import { Component, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { InputType } from '../../types/components.type';
-import { InputComponent } from '../atoms/input.component';
+import { TextareaComponent } from '../atoms/textarea.component';
 import { LabelComponent } from '../atoms/label.component';
 
 @Component({
-  selector: 'app-input-field',
-  imports: [InputComponent, LabelComponent],
+  selector: 'app-textarea-field',
+  imports: [TextareaComponent, LabelComponent],
   template: `
     <div class="relative">
       <app-label [forId]="id()" [isFloating]="isFloating()">{{ label() }}</app-label>
-      <app-input [type]="type()" [control]="control()" [id]="id()" />
+      <app-textarea [control]="control()" [id]="id()" [rows]="rows()" [placeholder]="placeholder()" />
     </div>
   `,
 })
-export class InputFieldComponent {
+export class TextareaFieldComponent {
   readonly control = input.required<FormControl>();
   readonly id = input.required<string>();
   readonly label = input.required<string>();
-  readonly type = input<InputType>('text');
+  readonly placeholder = input<string>('');
+  readonly rows = input<number>(3);
   readonly isFloating = input<boolean>(true);
 }

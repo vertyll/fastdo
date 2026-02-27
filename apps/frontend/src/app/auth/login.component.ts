@@ -1,9 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { LabelComponent } from '../shared/components/atoms/label.component';
 import { LinkComponent } from '../shared/components/atoms/link.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { LinkTypeEnum } from '../shared/enums/link-type.enum';
@@ -11,31 +10,38 @@ import { ToastPositionEnum } from '../shared/enums/toast-position.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { EmailChangeService } from './data-access/email-change.service';
+import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, LinkComponent, TitleComponent, LabelComponent],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    ErrorMessageComponent,
+    LinkComponent,
+    TitleComponent,
+    InputFieldComponent,
+  ],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.login' | translate"></app-title>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <app-label forId="email">{{ 'Auth.email' | translate }}: </app-label>
-        <input
-          id="email"
-          formControlName="email"
-          required
-          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
-        <app-label forId="password">{{ 'Auth.password' | translate }}: </app-label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          required
-          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="flex flex-col gap-4">
+          <app-input-field
+            [label]="'Auth.email' | translate"
+            [control]="getFormControl('email')"
+            [type]="'email'"
+            [id]="'email'"
+          ></app-input-field>
+          <app-input-field
+            [label]="'Auth.password' | translate"
+            [control]="getFormControl('password')"
+            [type]="'password'"
+            [id]="'password'"
+          ></app-input-field>
+        </div>
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
         }
@@ -124,5 +130,9 @@ export class LoginComponent implements OnInit {
         },
       });
     }
+  }
+
+  protected getFormControl(name: string): FormControl {
+    return this.loginForm.get(name) as FormControl;
   }
 }

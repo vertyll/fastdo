@@ -222,14 +222,16 @@ import { Task, TaskComment } from './models/Task';
                           @if (editingCommentId === comment.id) {
                             <div class="space-y-2">
                               @if (editingCommentControl) {
-                                <app-textarea
-                                  id="editingCommentContent"
-                                  [control]="editingCommentControl"
-                                  [placeholder]="'Task.commentPlaceholder' | translate"
-                                  [rows]="3"
-                                ></app-textarea>
+                                <div class="mb-3">
+                                  <app-textarea
+                                    id="editingCommentContent"
+                                    [control]="editingCommentControl"
+                                    [placeholder]="'Task.commentPlaceholder' | translate"
+                                    [rows]="3"
+                                  ></app-textarea>
+                                </div>
                               }
-                              <div class="mb-2">
+                              <div class="mb-4">
                                 <app-file-upload
                                   [multiple]="true"
                                   [maxFiles]="maxAttachmentsLimit"

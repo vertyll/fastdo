@@ -10,6 +10,7 @@ import { LabelComponent } from '../atoms/label.component';
   template: `
     <div class="space-y-2">
       <div class="relative">
+        <app-label [forId]="id()" [isFloating]="isFloating()">{{ placeholder() }}</app-label>
         <ng-select
           [multiple]="multiple()"
           bindLabel="name"
@@ -45,7 +46,6 @@ import { LabelComponent } from '../atoms/label.component';
             </ng-option>
           }
         </ng-select>
-        <app-label [forId]="id()" [isField]="true">{{ placeholder() }}</app-label>
       </div>
     </div>
   `,
@@ -429,6 +429,7 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
   readonly minTermLength = input<number>(0);
   readonly allowAddTag = input<boolean>(true);
   readonly placeholder = input<string>('');
+  readonly isFloating = input<boolean>(true);
 
   readonly searched = output();
 

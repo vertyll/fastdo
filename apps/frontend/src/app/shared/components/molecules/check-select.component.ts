@@ -47,7 +47,7 @@ import { LabelComponent } from '../atoms/label.component';
           </div>
         }
       </div>
-      <app-label [forId]="id()" [isField]="true">{{ label() }}</app-label>
+      <app-label [forId]="id()" [isFloating]="true">{{ label() }}</app-label>
     </div>
   `,
   styles: [

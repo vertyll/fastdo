@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
 import { heroUserCircle } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import { ToastService } from '../shared/services/toast.service';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
+import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -26,6 +27,7 @@ import { UserStateService } from './data-access/user.state.service';
     CustomDatePipe,
     CommonModule,
     ImageComponent,
+    InputFieldComponent,
   ],
   providers: [provideIcons({ heroUserCircle })],
   template: `
@@ -105,29 +107,20 @@ import { UserStateService } from './data-access/user.state.service';
 
                 <div class="space-y-4">
                   <div>
-                    <label class="block text-sm font-medium text-text-primary dark:text-dark-text-primary" for="email">
-                      {{ 'Profile.email' | translate }}
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      formControlName="email"
-                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+                    <app-input-field
+                      [id]="'email'"
+                      [type]="'email'"
+                      [control]="getFormControl('email')"
+                      [label]="'Profile.email' | translate"
                     />
                   </div>
 
                   <div>
-                    <label
-                      class="block text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                      for="password"
-                    >
-                      {{ 'Profile.password' | translate }}
-                    </label>
-                    <input
-                      id="password"
-                      type="password"
-                      formControlName="password"
-                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+                    <app-input-field
+                      [id]="'password'"
+                      [type]="'password'"
+                      [control]="getFormControl('password')"
+                      [label]="'Profile.password' | translate"
                     />
                     @if (passwordErrors.length > 0) {
                       @for (error of passwordErrors; track error) {
@@ -137,17 +130,11 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label
-                      class="block text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                      for="newPassword"
-                    >
-                      {{ 'Profile.newPassword' | translate }}
-                    </label>
-                    <input
-                      id="newPassword"
-                      type="password"
-                      formControlName="newPassword"
-                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+                    <app-input-field
+                      [id]="'newPassword'"
+                      [type]="'password'"
+                      [control]="getFormControl('newPassword')"
+                      [label]="'Profile.newPassword' | translate"
                     />
                     @if (newPasswordErrors.length > 0) {
                       @for (error of newPasswordErrors; track error) {
@@ -157,17 +144,11 @@ import { UserStateService } from './data-access/user.state.service';
                   </div>
 
                   <div>
-                    <label
-                      class="block text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                      for="confirmNewPassword"
-                    >
-                      {{ 'Profile.confirmNewPassword' | translate }}
-                    </label>
-                    <input
-                      id="confirmNewPassword"
-                      type="password"
-                      formControlName="confirmNewPassword"
-                      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
+                    <app-input-field
+                      [id]="'confirmNewPassword'"
+                      [type]="'password'"
+                      [control]="getFormControl('confirmNewPassword')"
+                      [label]="'Profile.confirmNewPassword' | translate"
                     />
                     @if (confirmNewPasswordErrors.length > 0) {
                       @for (error of confirmNewPasswordErrors; track error) {
@@ -328,6 +309,14 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
+  protected isMobile(): boolean {
+    return this.platformService.isMobile();
+  }
+
+  protected getFormControl(name: string): FormControl {
+    return this.profileForm.get(name) as FormControl;
+  }
+
   private getPasswordErrors(controlName: string): string[] {
     const control = this.profileForm.get(controlName);
     const errors: string[] = [];
@@ -351,9 +340,5 @@ export class UserProfileComponent implements OnInit {
       errors.push(this.translateService.instant('Auth.passwordDoNotMatch'));
     }
     return errors;
-  }
-
-  protected isMobile(): boolean {
-    return this.platformService.isMobile();
   }
 }

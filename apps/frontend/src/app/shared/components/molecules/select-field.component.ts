@@ -8,8 +8,8 @@ import { SelectFilterComponent } from '../atoms/select.component';
   imports: [ReactiveFormsModule, SelectFilterComponent, LabelComponent],
   template: `
     <div class="relative">
+      <app-label [forId]="id()" [isFloating]="isFloating()">{{ label() }}</app-label>
       <app-select [control]="control()" [id]="id()" [options]="options()" [placeholder]="placeholder()" />
-      <app-label [forId]="id()" [isField]="true">{{ label() }}</app-label>
     </div>
   `,
 })
@@ -18,6 +18,7 @@ export class SelectFieldComponent {
   readonly id = input.required<string>();
   readonly label = input.required<string>();
   readonly placeholder = input<string>('');
+  readonly isFloating = input<boolean>(true);
   readonly options = input<
     Array<{
       value: any;

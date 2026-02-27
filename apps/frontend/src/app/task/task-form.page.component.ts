@@ -12,7 +12,6 @@ import { ProjectStatusService } from '../project/data-access/project-status.serv
 import { ProjectsApiService } from '../project/data-access/project.api.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { TextareaComponent } from '../shared/components/atoms/textarea.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { EditableMultiSelectComponent } from '../shared/components/molecules/editable-multi-select.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
@@ -25,6 +24,7 @@ import { NotificationService } from '../shared/services/notification.service';
 import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
 import { AddTaskDto } from './dtos/add-task.dto';
+import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 
 interface SelectOption {
   id: number;
@@ -40,7 +40,6 @@ interface SelectOption {
     TranslateModule,
     ButtonComponent,
     TitleComponent,
-    TextareaComponent,
     EditableMultiSelectComponent,
     InputFieldComponent,
     SelectFieldComponent,
@@ -48,6 +47,7 @@ interface SelectOption {
     ImageComponent,
     ErrorMessageComponent,
     NgIcon,
+    TextareaFieldComponent,
   ],
   providers: [
     provideIcons({
@@ -68,36 +68,20 @@ interface SelectOption {
       } @else {
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
           <div class="relative">
-            <app-textarea
-              id="description"
-              [control]="descriptionControl"
-              [placeholder]="'Task.taskDescriptionPlaceholder' | translate"
-              [rows]="3"
+            <app-textarea-field
+              id="additionalDescription"
+              [control]="additionalDescriptionControl"
+              [label]="'Task.taskDescription' | translate"
             />
-            <label
-              for="description"
-              class="absolute left-4 -top-2 text-xs text-text-primary dark:text-dark-text-primary bg-background-primary dark:bg-dark-background-primary px-1"
-            >
-              {{ 'Task.taskDescription' | translate }} *
-            </label>
-
             <app-error-message [input]="descriptionControl" />
           </div>
 
           <div class="relative">
-            <app-textarea
+            <app-textarea-field
               id="additionalDescription"
               [control]="additionalDescriptionControl"
-              [placeholder]="'Task.additionalDescriptionPlaceholder' | translate"
-              [rows]="3"
+              [label]="'Task.additionalDescription' | translate"
             />
-            <label
-              for="additionalDescription"
-              class="absolute left-4 -top-2 text-xs text-text-primary dark:text-dark-text-primary bg-background-primary dark:bg-dark-background-primary px-1"
-            >
-              {{ 'Task.additionalDescription' | translate }}
-            </label>
-
             <app-error-message [input]="additionalDescriptionControl" />
           </div>
 
