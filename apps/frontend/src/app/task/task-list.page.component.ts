@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild, computed, inj
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroInformationCircle } from '@ng-icons/heroicons/outline';
+import { heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, distinctUntilChanged, map, switchMap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -38,14 +38,14 @@ import { PlatformService } from '../shared/services/platform.service';
     ErrorMessageComponent,
     NgIconComponent,
   ],
-  viewProviders: [provideIcons({ heroInformationCircle })],
+  viewProviders: [provideIcons({ heroInformationCircle, heroTrash })],
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
         <div class="flex gap-2 items-center">
           <app-title
             [text]="('Task.project' | translate) + ' : ' + projectName()"
-            [limit]="platformService.isMobile() ? 12 : null"
+            [limit]="platformService.isMobile() ? 6 : null"
           />
           @if (projectIsPublic()) {
             <button
@@ -59,13 +59,8 @@ import { PlatformService } from '../shared/services/platform.service';
             </button>
           }
           @if (selectedTasks().length > 0) {
-            <app-button
-              (click)="handleBatchDelete()"
-              [disabled]="selectedTasks().length === 0"
-              cssClass="bg-danger-500 dark:bg-danger-600 hover:bg-danger-600 dark:hover:bg-danger-700 text-white"
-            >
-              {{ 'Task.deleteSelected' | translate }} ({{ selectedTasks().length }})
-            </app-button>
+            <ng-icon (click)="handleBatchDelete()" [size]="'30'" class="cursor-pointer" name="heroTrash" />
+            ({{ selectedTasks().length }})
           }
         </div>
         <app-button (click)="navigateToAddTask()">
@@ -73,79 +68,79 @@ import { PlatformService } from '../shared/services/platform.service';
         </app-button>
       </div>
       <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
+
+      <!-- Templates definition outside of @switch -->
+      <ng-template #statusTemplate let-task>
+        <div class="flex items-center justify-center">
+          @if (task.status) {
+            <span
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+              [style.background-color]="task.status.color"
+              [style.color]="getContrastColor(task.status.color)"
+            >
+              {{ getStatusName(task.status) }}
+            </span>
+          } @else {
+            <span class="text-sm text-neutral-500 dark:text-neutral-400">-</span>
+          }
+        </div>
+      </ng-template>
+
+      <ng-template #categoriesTemplate let-task>
+        <div class="flex items-center justify-center">
+          @if (task.categories && task.categories.length > 0) {
+            <div class="flex flex-wrap gap-1">
+              @for (category of task.categories; track category.id) {
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                  [style.background-color]="category.color"
+                  [style.color]="getContrastColor(category.color)"
+                >
+                  {{ getCategoryName(category) }}
+                </span>
+              }
+            </div>
+          } @else {
+            <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
+          }
+        </div>
+      </ng-template>
+
+      <ng-template #assignedUsersTemplate let-task>
+        <div class="flex items-center justify-center">
+          @if (task.assignedUsers && task.assignedUsers.length > 0) {
+            <div class="flex flex-wrap gap-1">
+              @for (user of task.assignedUsers; track user.id) {
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200"
+                >
+                  {{ user.email }}
+                </span>
+              }
+            </div>
+          } @else {
+            <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
+          }
+        </div>
+      </ng-template>
+
+      @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
+        <app-error-message [customMessage]="tasksStateService.error()?.message" />
+      } @else {
+        <app-table
+          [data]="tasksStateService.tasks()"
+          [config]="tableConfig()"
+          [loading]="tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0"
+          [customTemplates]="customTemplates()"
+          [initialSort]="currentSort()"
+          (loadMore)="handleLoadMore()"
+          (rowClick)="handleTaskClick($event)"
+          (actionClick)="handleActionClick($event)"
+          (sortChange)="handleSortChange($event)"
+          (selectionChange)="handleSelectionChange($event)"
+        />
+      }
     </div>
-
-    <!-- Templates definition outside of @switch -->
-    <ng-template #statusTemplate let-task>
-      <div class="flex items-center justify-center">
-        @if (task.status) {
-          <span
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-            [style.background-color]="task.status.color"
-            [style.color]="getContrastColor(task.status.color)"
-          >
-            {{ getStatusName(task.status) }}
-          </span>
-        } @else {
-          <span class="text-sm text-neutral-500 dark:text-neutral-400">-</span>
-        }
-      </div>
-    </ng-template>
-
-    <ng-template #categoriesTemplate let-task>
-      <div class="flex items-center justify-center">
-        @if (task.categories && task.categories.length > 0) {
-          <div class="flex flex-wrap gap-1">
-            @for (category of task.categories; track category.id) {
-              <span
-                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-                [style.background-color]="category.color"
-                [style.color]="getContrastColor(category.color)"
-              >
-                {{ getCategoryName(category) }}
-              </span>
-            }
-          </div>
-        } @else {
-          <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
-        }
-      </div>
-    </ng-template>
-
-    <ng-template #assignedUsersTemplate let-task>
-      <div class="flex items-center justify-center">
-        @if (task.assignedUsers && task.assignedUsers.length > 0) {
-          <div class="flex flex-wrap gap-1">
-            @for (user of task.assignedUsers; track user.id) {
-              <span
-                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200"
-              >
-                {{ user.email }}
-              </span>
-            }
-          </div>
-        } @else {
-          <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
-        }
-      </div>
-    </ng-template>
-
-    @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
-      <app-error-message [customMessage]="tasksStateService.error()?.message" />
-    } @else {
-      <app-table
-        [data]="tasksStateService.tasks()"
-        [config]="tableConfig()"
-        [loading]="tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0"
-        [customTemplates]="customTemplates()"
-        [initialSort]="currentSort()"
-        (loadMore)="handleLoadMore()"
-        (rowClick)="handleTaskClick($event)"
-        (actionClick)="handleActionClick($event)"
-        (sortChange)="handleSortChange($event)"
-        (selectionChange)="handleSelectionChange($event)"
-      />
-    }
   `,
 })
 export class TaskListPageComponent implements OnInit, AfterViewInit {
