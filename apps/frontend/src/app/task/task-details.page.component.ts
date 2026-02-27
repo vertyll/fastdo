@@ -72,7 +72,7 @@ import { Task, TaskComment } from './models/Task';
         <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <button
             (click)="goBack()"
-            class="flex items-center gap-2 text-text-secondary dark:text-dark-text-secondary hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors duration-200"
+            class="flex items-center gap-2 text-text-primary dark:text-dark-text-primary hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors duration-200"
           >
             <ng-icon name="heroArrowLeft" size="20"></ng-icon>
             <span>{{ 'Basic.back' | translate }}</span>

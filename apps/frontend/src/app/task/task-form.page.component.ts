@@ -76,7 +76,7 @@ interface SelectOption {
             />
             <label
               for="description"
-              class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1"
+              class="absolute left-4 -top-2 text-xs text-text-primary dark:text-dark-text-primary bg-background-primary dark:bg-dark-background-primary px-1"
             >
               {{ 'Task.taskDescription' | translate }} *
             </label>
@@ -93,7 +93,7 @@ interface SelectOption {
             />
             <label
               for="additionalDescription"
-              class="absolute left-2 -top-2 text-xs text-text-secondary dark:text-dark-text-secondary bg-background-primary dark:bg-dark-background-primary px-1"
+              class="absolute left-4 -top-2 text-xs text-text-primary dark:text-dark-text-primary bg-background-primary dark:bg-dark-background-primary px-1"
             >
               {{ 'Task.additionalDescription' | translate }}
             </label>

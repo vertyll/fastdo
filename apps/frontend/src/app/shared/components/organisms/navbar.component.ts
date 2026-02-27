@@ -180,10 +180,6 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
         @apply bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200;
       }
 
-      .logout-button {
-        @apply text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 dark:text-danger-400 hover:text-danger-600 dark:hover:text-danger-300 transition-colors duration-200;
-      }
-
       .menu-button {
         @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
       }
@@ -253,7 +249,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .show-more-button {
-        @apply w-full flex items-center justify-center py-2 text-xs text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200;
+        @apply w-full flex items-center justify-center py-2 text-xs text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200;
       }
 
       .section-item {
@@ -297,11 +293,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .language-button {
-        @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+        @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary transition-colors duration-200 relative;
       }
 
       .profile-button {
-        @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-secondary dark:text-dark-text-secondary transition-colors duration-200 relative;
+        @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary transition-colors duration-200 relative;
       }
 
       .language-dropdown {
@@ -313,7 +309,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .language-option {
-        @apply px-3 py-2 text-sm text-text-secondary dark:text-dark-text-secondary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
+        @apply px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
       }
 
       .language-option.active {
@@ -599,13 +595,13 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
             <div class="border-t border-border-primary dark:border-dark-border-primary mt-1">
               <button
                 (click)="navigateToProfileAndCloseMenu()"
-                class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
+                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
               >
                 {{ 'Navbar.profile' | translate }}
               </button>
               <button
                 (click)="navigateToNotificationSettingsAndCloseMenu()"
-                class="mobile-module-item text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
+                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
               >
                 <div class="flex items-center justify-between w-full">
                   <div class="flex items-center space-x-2">
