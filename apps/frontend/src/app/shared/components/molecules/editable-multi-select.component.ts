@@ -85,25 +85,41 @@ import { LabelComponent } from '../atoms/label.component';
       height: 100%;
     }
 
-    :host-context(.dark) .ng-select .ng-input {
+    .dark .ng-select .ng-input > input {
+      color: rgb(249 250 251) !important;
+      caret-color: rgb(249 250 251);
+      background-color: transparent;
+    }
+
+    .dark .ng-dropdown-panel {
+      background-color: rgb(55 65 81);
+      border-color: rgb(75 85 99);
       color: rgb(249 250 251);
+    }
+
+    .dark .ng-option {
+      color: rgb(209 213 219);
+    }
+
+    .dark .ng-option:hover,
+    .dark .ng-option.ng-option-highlighted {
+      background-color: rgb(75 85 99);
+      color: rgb(249 250 251);
+    }
+
+    .ng-select .ng-input > input {
+      color: rgb(17 24 39);
+      background-color: transparent;
+      caret-color: rgb(17 24 39);
     }
 
     .ng-select .ng-input::placeholder {
       color: rgb(156 163 175);
     }
 
-    :host-context(.dark) .ng-select .ng-input::placeholder {
-      color: rgb(156 163 175);
-    }
-
     /* Focused state */
     .ng-select.ng-select-focused {
       box-shadow: 0 0 0 0 transparent;
-    }
-
-    :host-context(.dark) .ng-select.ng-select-focused .ng-select-container {
-      border-color: rgb(249 115 22);
     }
 
     /* Dropdown panel */
@@ -126,14 +142,6 @@ import { LabelComponent } from '../atoms/label.component';
       -webkit-backdrop-filter: blur(10px);
     }
 
-    :host-context(.dark) .ng-dropdown-panel {
-      background-color: rgb(55 65 81);
-      border-color: rgb(75 85 99);
-      box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 10px 10px -5px rgba(0, 0, 0, 0.2);
-    }
-
     /* Dropdown options */
     .ng-option {
       padding: 0.75rem 1rem;
@@ -150,22 +158,12 @@ import { LabelComponent } from '../atoms/label.component';
       font-weight: 500;
     }
 
-    :host-context(.dark) .ng-option {
-      color: rgb(209 213 219);
-    }
-
     .ng-option:hover,
     .ng-option.ng-option-highlighted {
       background-color: rgb(249 250 251);
       color: rgb(17 24 39);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
-    }
-
-    :host-context(.dark) .ng-option:hover,
-    :host-context(.dark) .ng-option.ng-option-highlighted {
-      background-color: rgb(75 85 99);
-      color: rgb(249 250 251);
     }
 
     .ng-option.ng-option-selected {
@@ -181,12 +179,6 @@ import { LabelComponent } from '../atoms/label.component';
       right: 1rem;
       font-weight: bold;
       color: #ffffff;
-    }
-
-    :host-context(.dark) .ng-option.ng-option-selected {
-      background: linear-gradient(135deg, rgb(249 115 22), rgb(234 88 12));
-      color: #ffffff;
-      box-shadow: 0 4px 12px -2px rgba(249, 115, 22, 0.6);
     }
 
     .ng-option.ng-option-disabled {
@@ -236,10 +228,6 @@ import { LabelComponent } from '../atoms/label.component';
       .ng-arrow-wrapper .ng-arrow {
         border-width: 4px 4px 0;
       }
-    }
-
-    :host-context(.dark) .ng-arrow-wrapper .ng-arrow {
-      border-color: rgb(156 163 175) transparent transparent;
     }
 
     .ng-select.ng-select-focused .ng-arrow-wrapper .ng-arrow {
@@ -386,10 +374,6 @@ import { LabelComponent } from '../atoms/label.component';
     .ng-dropdown-panel::-webkit-scrollbar-track {
       background: rgb(249 250 251);
       border-radius: 3px;
-    }
-
-    :host-context(.dark) .ng-dropdown-panel::-webkit-scrollbar-track {
-      background: rgb(75 85 99);
     }
 
     .ng-dropdown-panel::-webkit-scrollbar-thumb {
