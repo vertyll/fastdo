@@ -8,7 +8,6 @@ import appConfig from '../core/config/app.config';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { LoggingMiddleware } from './middlewares/logging.middleware';
 
 @Module({
   imports: [
@@ -54,7 +53,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
   ],
 })
 export class CommonModule implements NestModule {
-  public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(LoggingMiddleware).forRoutes('*');
+  public configure(_consumer: MiddlewareConsumer): void {
+    // consumer.apply(LoggingMiddleware).forRoutes('*'); // NOSONAR
   }
 }

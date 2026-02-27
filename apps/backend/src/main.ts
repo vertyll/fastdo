@@ -18,7 +18,7 @@ import { TranslationDto } from './common/dtos/translation.dto';
 import { SnakeToCamelCaseInterceptor } from './common/interceptors/snake-to-camel-case.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
-import { HelmetCrossOriginResourcePolicy, OpenApiConfig } from './core/config/types/app.config.type';
+import { EnvironmentEnum, HelmetCrossOriginResourcePolicy, OpenApiConfig } from './core/config/types/app.config.type';
 import { FileMetadataDto } from './core/file/dtos/file-metadata.dto';
 import { File } from './core/file/entities/file.entity';
 import { NotificationSettings } from './notifications/entities/notification-settings.entity';
@@ -57,7 +57,11 @@ async function bootstrap(): Promise<void> {
     {
       logger: new ConsoleLogger({
         json: true,
-        colors: true,
+        colors: process.env.NODE_ENV !== EnvironmentEnum.PRODUCTION,
+        logLevels:
+          process.env.NODE_ENV === EnvironmentEnum.PRODUCTION
+            ? ['error', 'warn', 'log']
+            : ['error', 'warn', 'log', 'debug'],
       }),
     },
   );
