@@ -58,9 +58,9 @@ import { Project } from './models/Project';
   `,
   template: `
     <div class="max-w-2xl mx-auto">
-      <app-title>
-        {{ isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate) }}
-      </app-title>
+      <app-title
+        [text]="isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate)"
+      ></app-title>
 
       <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
         <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />

@@ -58,14 +58,9 @@ interface SelectOption {
   ],
   template: `
     <div class="max-w-4xl mx-auto">
-      <app-title>
-        @if (projectId()) {
-          {{ 'Task.addTaskToProject' | translate }}
-        } @else {
-          {{ 'Task.addTask' | translate }}
-        }
-      </app-title>
-
+      <app-title
+        [text]="projectId() ? ('Task.addTaskToProject' | translate) : ('Task.addTask' | translate)"
+      ></app-title>
       @if (loading()) {
         <div class="flex justify-center items-center min-h-32">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>

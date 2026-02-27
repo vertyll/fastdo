@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -25,7 +25,7 @@ import { NavbarComponent } from '../organisms/navbar.component';
         [panelOpen]="panelOpen"
         [togglePanel]="togglePanel.bind(this)"
         [userRolesString]="userRolesString()"
-        [currentTime]="currentTime"
+        [currentTime]="currentTime()"
         [browserInfo]="browserInfo"
         [isLoggedIn]="isLoggedIn.bind(this)"
       />
@@ -61,7 +61,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     return translatedRoles.join(', ');
   });
   protected panelOpen: boolean = false;
-  protected currentTime: string = '';
+  protected currentTime = signal<string>('');
   protected browserInfo: string = '';
 
   ngOnInit(): void {
@@ -99,8 +99,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   private updateTime(): void {
-    const now = new Date();
-    this.currentTime = now.toLocaleTimeString();
+    this.currentTime.set(new Date().toLocaleTimeString());
   }
 
   private getBrowserInfo(): string {

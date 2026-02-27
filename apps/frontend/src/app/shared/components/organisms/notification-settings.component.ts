@@ -16,7 +16,7 @@ import { TitleComponent } from '../atoms/title.component';
   imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent],
   template: `
     <div class="max-w-2xl mx-auto">
-      <app-title>{{ 'Notifications.settings' | translate }}</app-title>
+      <app-title [text]="'Notifications.settings' | translate"></app-title>
 
       <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
         <div class="space-y-4">

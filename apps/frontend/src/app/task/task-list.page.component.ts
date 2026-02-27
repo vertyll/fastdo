@@ -24,6 +24,7 @@ import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { Task } from './models/Task';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
+import { PlatformService } from '../shared/services/platform.service';
 
 @Component({
   selector: 'app-task-list-page',
@@ -42,10 +43,10 @@ import { TasksListFiltersComponent } from './ui/task-list-filters.component';
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
         <div class="flex gap-2 items-center">
-          <app-title>
-            {{ 'Task.project' | translate }}
-            : {{ projectName() }}
-          </app-title>
+          <app-title
+            [text]="('Task.project' | translate) + ' : ' + projectName()"
+            [limit]="platformService.isMobile() ? 12 : null"
+          />
           @if (projectIsPublic()) {
             <button
               [matTooltip]="publicProjectTooltipText"
@@ -165,6 +166,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private readonly projectsService = inject(ProjectsService);
   private readonly translateService = inject(TranslateService);
 
+  protected readonly platformService = inject(PlatformService);
   protected readonly tasksStateService = inject(TasksStateService);
 
   protected projectId = signal<string | null>(null);

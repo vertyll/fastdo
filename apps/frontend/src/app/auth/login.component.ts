@@ -19,7 +19,7 @@ import { EmailChangeService } from './data-access/email-change.service';
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
-      <app-title>{{ 'Auth.login' | translate }}</app-title>
+      <app-title [text]="'Auth.login' | translate"></app-title>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <app-label forId="email">{{ 'Auth.email' | translate }}: </app-label>
         <input

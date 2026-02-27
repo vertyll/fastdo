@@ -30,7 +30,7 @@ import { PasswordValidator } from './validators/password.validator';
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
-      <app-title>{{ 'Auth.register' | translate }}</app-title>
+      <app-title [text]="'Auth.register' | translate"></app-title>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
         <input

@@ -37,7 +37,7 @@ import { ProjectsListFiltersComponent } from './ui/project-list-filters.componen
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <div class="flex flex-row items-center justify-between">
-        <app-title>{{ 'Project.title' | translate }}</app-title>
+        <app-title [text]="'Project.title' | translate"></app-title>
         <app-button (click)="navigateToAddProject()">
           {{ 'Project.addProject' | translate }}
         </app-button>

@@ -27,7 +27,7 @@ import { AuthService } from './data-access/auth.service';
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
-      <app-title>{{ 'Auth.forgotPassword' | translate }}</app-title>
+      <app-title [text]="'Auth.forgotPassword' | translate"></app-title>
       <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()">
         <app-label forId="email">{{ 'Auth.email' | translate }}:</app-label>
         <input

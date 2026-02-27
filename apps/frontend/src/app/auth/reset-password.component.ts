@@ -18,7 +18,7 @@ import { PasswordValidator } from './validators/password.validator';
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-surface-primary dark:bg-dark-surface-primary"
     >
-      <app-title>{{ 'Auth.resetPassword' | translate }}</app-title>
+      <app-title [text]="'Auth.resetPassword' | translate"></app-title>
       <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
         <app-label forId="password">{{ 'Auth.newPassword' | translate }}:</app-label>
         <input
