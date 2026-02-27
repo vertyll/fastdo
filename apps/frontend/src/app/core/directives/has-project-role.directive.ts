@@ -31,7 +31,7 @@ export class HasProjectRoleDirective implements OnInit, OnChanges {
     }
 
     const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-    const hasRole = roles.some(role => role === userRole);
+    const hasRole = roles.includes(userRole as ProjectRoleEnum);
 
     if (hasRole) {
       this.showElement();

@@ -50,7 +50,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
   ],
   styles: [
     `
-      @reference "../../../../styles.scss";
+      @reference "../../../../style.css";
 
       /* ── Animation keyframes ── */
 

@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@use './theme.scss' as theme;
+@import './theme.css';
 @import 'tailwindcss';
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
@@ -176,7 +176,7 @@
   }
 }
 
-@custom-variant dark (&:where(.dark, .dark *)); //NOSONAR
+@custom-variant dark (&:where(.dark, .dark *));
 
 html {
   font-family: system-ui;

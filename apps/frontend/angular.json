@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "css"
         }
       },
       "root": "",
@@ -22,7 +22,7 @@
             "browser": "src/main.ts",
             "polyfills": ["@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": [
               {
                 "glob": "**/*",
@@ -33,7 +33,7 @@
                 "input": "src"
               }
             ],
-            "styles": ["src/styles.scss", "node_modules/cropperjs/dist/cropper.css"],
+            "styles": ["src/style.css", "node_modules/cropperjs/dist/cropper.css"],
             "scripts": []
           },
           "configurations": {
@@ -86,14 +86,14 @@
           "options": {
             "polyfills": ["@angular/localize/init"],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/style.css", "node_modules/cropperjs/dist/cropper.css"],
             "scripts": []
           }
         },
