@@ -127,7 +127,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                     />
                   </div>
                   <div class="flex flex-col justify-end pb-1">
-                    <label [for]="'category-color-' + $index" class="text-xs text-text-secondary mb-1">{{
+                    <label [for]="'category-color-' + $index" class="text-xs mb-1">{{
                       'Project.selectColor' | translate
                     }}</label>
                     <input
@@ -142,7 +142,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                 <button
                   type="button"
                   (click)="removeCategory($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
                 >
                   {{ 'Basic.remove' | translate }}
                 </button>
@@ -175,7 +175,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                     />
                   </div>
                   <div class="flex flex-col justify-end pb-1">
-                    <label [for]="'status-color-' + $index" class="text-xs text-text-secondary mb-1">{{
+                    <label [for]="'status-color-' + $index" class="text-xs mb-1">{{
                       'Project.selectColor' | translate
                     }}</label>
                     <input
@@ -190,7 +190,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                 <button
                   type="button"
                   (click)="removeStatus($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
                 >
                   {{ 'Basic.remove' | translate }}
                 </button>
@@ -238,7 +238,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                 <button
                   type="button"
                   (click)="removeUserWithRole($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
                   [disabled]="isCurrentUser($index)"
                   [class.opacity-50]="isCurrentUser($index)"
                   [class.cursor-not-allowed]="isCurrentUser($index)"
