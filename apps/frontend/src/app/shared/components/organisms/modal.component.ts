@@ -41,7 +41,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4"
+      class="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 px-4"
       tabindex="-1"
       role="dialog"
       [ngStyle]="{ display: modalService.modal().visible ? 'flex' : 'none' }"
@@ -150,7 +150,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
         </div>
 
         <div
-          class="px-6 py-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-2 flex-shrink-0"
+          class="px-6 py-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-2 shrink-0"
         >
           @for (button of modalService.modal().options?.buttons; track button.role) {
             @switch (button.role) {

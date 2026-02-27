@@ -16,7 +16,7 @@ import { NavbarComponent } from '../organisms/navbar.component';
   template: `
     <div class="flex flex-col min-h-screen">
       <app-navbar />
-      <main class="flex-grow">
+      <main class="grow">
         <div class="grid px-6">
           <ng-content></ng-content>
         </div>

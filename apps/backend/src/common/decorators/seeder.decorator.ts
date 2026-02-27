@@ -3,7 +3,7 @@ import { SeederConfig } from '../../core/database/seeder/types/seeder-config.typ
 
 export const SEEDER_CONFIG_KEY = 'seeder:config';
 
-export const Seeder = (config: SeederConfig = {}): CustomDecorator<string> => {
+export const Seeder = (config: SeederConfig = {}): CustomDecorator => {
   return SetMetadata(SEEDER_CONFIG_KEY, {
     environment: config.environment || [],
     truncate: config.truncate || false,

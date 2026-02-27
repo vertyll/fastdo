@@ -73,7 +73,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Preview Modal -->
       @if (showPreviewModal()) {
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-[1111] p-4">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-1111 p-4">
           <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
@@ -87,7 +87,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
                 <ng-icon name="heroXMark" size="24" />
               </button>
             </div>
-            <img [src]="getFullImageUrl(previewUrl())" class="max-h-[600px] w-auto mx-auto" alt="Full Preview" />
+            <img [src]="getFullImageUrl(previewUrl())" class="max-h-150 w-auto mx-auto" alt="Full Preview" />
           </div>
         </div>
       }

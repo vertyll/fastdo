@@ -8,7 +8,6 @@ import { AutoLogoutService } from './auth/data-access/auto-logout.service';
 import { ModalComponent } from './shared/components/organisms/modal.component';
 import { LayoutComponent } from './shared/components/templates/layout.component';
 import { LocalStorageService } from './shared/services/local-storage.service';
-import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +22,6 @@ export class AppComponent implements OnDestroy {
   private readonly translateService = inject(TranslateService);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly autoLogoutService = inject(AutoLogoutService);
-  private readonly notificationWebSocketService = inject(NotificationWebSocketService);
 
   constructor() {
     registerLocaleData(localePl, 'pl');
@@ -33,7 +31,7 @@ export class AppComponent implements OnDestroy {
     const defaultLanguage: string = environment.defaultLanguage;
 
     this.translateService.addLangs(availableLanguages);
-    this.translateService.setDefaultLang(defaultLanguage);
+    this.translateService.setFallbackLang(defaultLanguage);
 
     const savedLanguage: string = this.localStorageService.get<string>('selected_language', '');
 

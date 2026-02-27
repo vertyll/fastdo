@@ -287,8 +287,7 @@ export class AuthService implements IAuthService {
       const user = await this.userRepository.findOne({ where: { email } });
 
       if (
-        !user ||
-        user.confirmationToken !== resetPasswordDto.token ||
+        user?.confirmationToken !== resetPasswordDto.token ||
         !user.confirmationTokenExpiry ||
         user.confirmationTokenExpiry < new Date()
       )

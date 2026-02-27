@@ -76,7 +76,7 @@ export class ProjectRepository extends Repository<Project> {
     return query.getManyAndCount();
   }
 
-  public async findOneWithDetails(id: number, userId: number, currentLanguage: string = 'pl'): Promise<Project> {
+  public async findOneWithDetails(id: number, _userId: number, currentLanguage: string = 'pl'): Promise<Project> {
     const project = await this.findOneOrFail({
       where: { id },
       relations: [

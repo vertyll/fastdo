@@ -42,7 +42,7 @@ import { NotificationDto } from '../../types/notification.type';
 
         @if (unreadCount() > 0) {
           <span
-            class="absolute -top-1 -right-1 bg-danger-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
+            class="absolute -top-1 -right-1 bg-danger-500 text-white text-xs font-bold rounded-full min-w-4.5 h-4.5 flex items-center justify-center px-1"
           >
             {{ unreadCount() > 99 ? '99+' : unreadCount() }}
           </span>
@@ -53,7 +53,7 @@ import { NotificationDto } from '../../types/notification.type';
         <!-- Mobile modal overlay when mobile context -->
         @if (isMobileContext()) {
           <div
-            class="fixed inset-0 bg-black/50 z-[80] flex items-start justify-center pt-16 p-4"
+            class="fixed inset-0 bg-black/50 z-80 flex items-start justify-center pt-16 p-4"
             (click)="closeDropdown()"
             (keydown.escape)="closeDropdown()"
             role="dialog"
@@ -172,7 +172,7 @@ import { NotificationDto } from '../../types/notification.type';
                           </span>
                         </div>
                         @if (notification.status === NotificationStatusEnum.UNREAD) {
-                          <div class="w-2 h-2 bg-primary-500 rounded-full mt-1 ml-2 flex-shrink-0"></div>
+                          <div class="w-2 h-2 bg-primary-500 rounded-full mt-1 ml-2 shrink-0"></div>
                         }
                       </div>
                     </div>
@@ -329,7 +329,7 @@ import { NotificationDto } from '../../types/notification.type';
                       </div>
                       <div class="flex items-center space-x-2 ml-2">
                         @if (notification.status === NotificationStatusEnum.UNREAD) {
-                          <div class="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
+                          <div class="w-2 h-2 bg-primary-500 rounded-full shrink-0"></div>
                         }
                         <button
                           class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900 opacity-0 group-hover:opacity-100 transition-opacity duration-200"

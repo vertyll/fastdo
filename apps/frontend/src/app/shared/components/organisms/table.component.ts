@@ -1095,10 +1095,7 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       if (col.hideOn === 'mobile' && this.isMobile()) {
         return false;
       }
-      if (col.hideOn === 'tablet' && this.isMobile()) {
-        return false;
-      }
-      return true;
+      return !(col.hideOn === 'tablet' && this.isMobile());
     });
 
     if (this.isMobile()) {

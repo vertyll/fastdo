@@ -7,7 +7,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild, input, output } from '
       #textarea
       [placeholder]="placeholder()"
       [value]="value()"
-      class="resize-y overflow-auto focus:outline-primary-500 w-full bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary transition-colors duration-200 min-h-[100px] p-2 rounded-lg border border-border-primary dark:border-dark-border-primary"
+      class="resize-y overflow-auto focus:outline-primary-500 w-full bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary transition-colors duration-200 min-h-25 p-2 rounded-lg border border-border-primary dark:border-dark-border-primary"
       (click)="$event.stopPropagation()"
       (keyup.enter)="emit(textarea)"
       (input)="calcHeight(textarea)"

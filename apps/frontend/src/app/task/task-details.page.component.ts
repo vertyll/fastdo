@@ -247,7 +247,7 @@ import { Task, TaskComment } from './models/Task';
                                     <ng-icon
                                       name="heroDocument"
                                       size="18"
-                                      class="text-primary-500 mr-2 flex-shrink-0"
+                                      class="text-primary-500 mr-2 shrink-0"
                                     ></ng-icon>
                                     <span
                                       class="text-xs font-medium text-text-primary dark:text-dark-text-primary break-all flex-1 truncate"
@@ -256,7 +256,7 @@ import { Task, TaskComment } from './models/Task';
                                     <button
                                       type="button"
                                       (click)="markAttachmentForDelete(att)"
-                                      class="ml-2 p-1 rounded-md outline-none border-none transition-colors duration-150 flex-shrink-0"
+                                      class="ml-2 p-1 rounded-md outline-none border-none transition-colors duration-150 shrink-0"
                                       [ngClass]="
                                         att._markedForDelete
                                           ? 'text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100'
@@ -328,7 +328,7 @@ import { Task, TaskComment } from './models/Task';
                                   {{ (comment.dateModification | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
                                 </span>
                               </div>
-                              <p class="text-text-primary dark:text-dark-text-primary break-words">
+                              <p class="text-text-primary dark:text-dark-text-primary wrap-break-word">
                                 {{ comment.content }}
                               </p>
 
@@ -356,7 +356,7 @@ import { Task, TaskComment } from './models/Task';
                                             <ng-icon
                                               name="heroDocument"
                                               size="20"
-                                              class="text-blue-500 flex-shrink-0"
+                                              class="text-blue-500 shrink-0"
                                             ></ng-icon>
                                             <span
                                               class="text-xs text-text-primary dark:text-dark-text-primary truncate"
@@ -394,7 +394,7 @@ import { Task, TaskComment } from './models/Task';
                     <ng-icon
                       name="heroExclamationTriangle"
                       size="20"
-                      class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                      class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
                       <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
@@ -415,7 +415,7 @@ import { Task, TaskComment } from './models/Task';
                     <ng-icon
                       name="heroFlag"
                       size="20"
-                      class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                      class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
                       <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
@@ -436,13 +436,15 @@ import { Task, TaskComment } from './models/Task';
                     <ng-icon
                       name="heroFolder"
                       size="20"
-                      class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                      class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
                       <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                         {{ 'Task.project' | translate }}
                       </h4>
-                      <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1 break-words">
+                      <p
+                        class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1 wrap-break-word"
+                      >
                         {{ task()?.project?.name }}
                       </p>
                     </div>
@@ -453,7 +455,7 @@ import { Task, TaskComment } from './models/Task';
                   <ng-icon
                     name="heroClock"
                     size="20"
-                    class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                    class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                   ></ng-icon>
                   <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
@@ -473,7 +475,7 @@ import { Task, TaskComment } from './models/Task';
                   <ng-icon
                     name="heroCalendar"
                     size="20"
-                    class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                    class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                   ></ng-icon>
                   <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
@@ -496,14 +498,14 @@ import { Task, TaskComment } from './models/Task';
                   <ng-icon
                     name="heroUserGroup"
                     size="20"
-                    class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                    class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                   ></ng-icon>
                   <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Task.people' | translate }}
                     </h4>
                     <div class="mt-2 space-y-2 text-sm">
-                      <p class="font-semibold text-text-primary dark:text-dark-text-primary break-words">
+                      <p class="font-semibold text-text-primary dark:text-dark-text-primary wrap-break-word">
                         {{ 'Task.createdBy' | translate }}:
                         <span class="font-normal">{{ task()!.createdBy.email }}</span>
                       </p>
@@ -534,7 +536,7 @@ import { Task, TaskComment } from './models/Task';
                     <ng-icon
                       name="heroTag"
                       size="20"
-                      class="flex-shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
+                      class="shrink-0 text-text-secondary dark:text-dark-text-secondary mt-1"
                     ></ng-icon>
                     <div class="flex-1 min-w-0">
                       <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">

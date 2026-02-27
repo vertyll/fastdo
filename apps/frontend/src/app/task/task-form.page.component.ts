@@ -205,7 +205,7 @@ interface SelectOption {
                     >
                       <div class="flex items-center gap-3 flex-1 min-w-0">
                         <!-- Icon/Image -->
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                           @if (isImage(attachment.filename)) {
                             <app-image
                               [initialUrl]="attachment.url || null"

@@ -128,7 +128,7 @@ export class TasksController {
       maxFiles: 4,
       maxTotalSize: 15 * 1024 * 1024, // 15MB total
       multiple: true, // Multiple files
-      bufferThreshold: 1 * 1024 * 1024, // 1MB threshold
+      bufferThreshold: 1024 * 1024, // 1MB threshold
     }),
   )
   @ApiConsumes('multipart/form-data')
@@ -163,7 +163,7 @@ export class TasksController {
       maxFiles: 4,
       maxTotalSize: 15 * 1024 * 1024, // 15MB total
       multiple: true,
-      bufferThreshold: 1 * 1024 * 1024, // 1MB threshold
+      bufferThreshold: 1024 * 1024, // 1MB threshold
     }),
   )
   @ApiConsumes('multipart/form-data')

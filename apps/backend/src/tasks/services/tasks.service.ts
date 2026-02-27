@@ -470,11 +470,11 @@ export class TasksService implements ITasksService {
   }
 
   private hasRoleAccess(task: Task, userRole: ProjectRole | undefined): boolean {
-    return !!(userRole && task.accessRole && userRole.id === task.accessRole.id);
+    return !!(userRole && userRole.id === task.accessRole?.id);
   }
 
   private isClientWithAccess(task: Task, userRole: ProjectRole | undefined): boolean {
-    if (!userRole || userRole.code !== ProjectRoleEnum.CLIENT) return false;
+    if (userRole?.code !== ProjectRoleEnum.CLIENT) return false;
     return (
       !task.accessRole ||
       task.accessRole.code === ProjectRoleEnum.CLIENT ||
@@ -483,7 +483,7 @@ export class TasksService implements ITasksService {
   }
 
   private isMemberWithAccess(task: Task, userRole: ProjectRole | undefined): boolean {
-    if (!userRole || userRole.code !== ProjectRoleEnum.MEMBER) return false;
+    if (userRole?.code !== ProjectRoleEnum.MEMBER) return false;
     return !task.accessRole || task.accessRole.code === ProjectRoleEnum.MEMBER;
   }
 

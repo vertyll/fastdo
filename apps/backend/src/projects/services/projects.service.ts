@@ -589,7 +589,7 @@ export class ProjectsService {
           currentUser.projectRole.id === (await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER))?.id;
         if (isManager) {
           const managersLeft = currentProjectUsers.filter(
-            u => u.projectRole && u.projectRole.id === currentUser.projectRole.id && newUserEmails.has(u.user.email),
+            u => u.projectRole?.id === currentUser.projectRole.id && newUserEmails.has(u.user.email),
           ).length;
           if (managersLeft === 0) {
             throw new Error(this.i18n.t('messages.Projects.errors.lastManagerCannotBeRemoved'));
@@ -691,7 +691,7 @@ export class ProjectsService {
       where: { id: invitationId },
       relations: ['user', 'project', 'role'],
     });
-    if (!invitation || invitation.status !== ProjectInvitationStatusEnum.PENDING) {
+    if (invitation?.status !== ProjectInvitationStatusEnum.PENDING) {
       throw new Error(this.i18n.t('messages.Projects.errors.invitationNotFoundOrAlreadyHandled'));
     }
     if (invitation.user.id !== userId) {
@@ -718,7 +718,7 @@ export class ProjectsService {
       where: { id: invitationId },
       relations: ['user'],
     });
-    if (!invitation || invitation.status !== ProjectInvitationStatusEnum.PENDING) {
+    if (invitation?.status !== ProjectInvitationStatusEnum.PENDING) {
       throw new Error(this.i18n.t('messages.Projects.errors.invitationNotFoundOrAlreadyHandled'));
     }
     if (invitation.user.id !== userId) {

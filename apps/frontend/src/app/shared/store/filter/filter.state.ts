@@ -34,7 +34,7 @@ export class FiltersState {
     const newState = {
       ...state,
       [payload.type]: {
-        ...(state[payload.type] || {}),
+        ...state[payload.type],
         ...payload.value,
       },
     };
@@ -48,7 +48,7 @@ export class FiltersState {
     const state = getState();
     if (!payload.type) return;
 
-    const currentFilters = { ...(state[payload.type] || {}) };
+    const currentFilters = { ...state[payload.type] };
     payload.keys.forEach(key => delete currentFilters[key]);
 
     const newState = {

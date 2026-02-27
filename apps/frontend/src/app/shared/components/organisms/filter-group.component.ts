@@ -394,10 +394,10 @@ export class FilterGroupComponent<T extends Record<string, any>>
   private getMultiSelectValue(value: any): number[] {
     if (!value) return [];
     if (Array.isArray(value)) {
-      return value.map(id => Number(id));
+      return value.map(Number);
     }
     if (typeof value === 'string') {
-      return value.split(',').map(id => Number(id));
+      return value.split(',').map(Number);
     }
     return [];
   }

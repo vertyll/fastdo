@@ -53,7 +53,7 @@ import { PlatformService } from '../shared/services/platform.service';
               matTooltipPosition="above"
               class="flex items-center justify-center"
             >
-              <span class="flex items-center justify-center w-[35px] h-[35px]">
+              <span class="flex items-center justify-center w-8.75 h-8.75">
                 <ng-icon [size]="'30'" name="heroInformationCircle" class="text-blue-500" />
               </span>
             </button>
