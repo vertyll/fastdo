@@ -482,7 +482,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
                 </div>
               }
             </div>
-            <app-notification-dropdown [isMobileContext]="false" [isMobileMenuOpen]="false" />
+            <app-notification-dropdown
+              [isMobileContext]="false"
+              [isMobileMenuOpen]="false"
+              [closeSignal]="closeNotificationDropdown()"
+            />
             <app-theme-switcher />
             <div class="relative">
               <button class="language-button" (click)="toggleLanguageDropdown($event)">
@@ -511,7 +515,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
             </button>
             <div class="relative flex flex-row items-center space-x-1">
-              <app-notification-dropdown [isMobileContext]="true" [isMobileMenuOpen]="mobileMenuOpen" />
+              <app-notification-dropdown
+                [isMobileContext]="true"
+                [isMobileMenuOpen]="mobileMenuOpen"
+                [closeSignal]="closeNotificationDropdown()"
+              />
               <app-theme-switcher />
               <button class="menu-button" (click)="toggleLanguageDropdown($event)">
                 <span>{{ getCurrentLanguage() }}</span>
@@ -712,6 +720,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected languageDropdownOpen: boolean = false;
   protected profileDropdownOpen: boolean = false;
   protected readonly languages: string[] = ['pl', 'en'];
+  protected readonly closeNotificationDropdown = signal<number>(0);
 
   constructor() {
     this.routerSubscription = this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
@@ -745,7 +754,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected toggleLanguageDropdown(event: Event): void {
     event.stopPropagation();
     this.languageDropdownOpen = !this.languageDropdownOpen;
-    if (this.languageDropdownOpen) this.profileDropdownOpen = false;
+    if (this.languageDropdownOpen) {
+      this.profileDropdownOpen = false;
+      this.closeNotificationDropdown.set(Date.now());
+    }
   }
 
   protected closeLanguageDropdown = (): void => {
@@ -756,7 +768,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected toggleProfileDropdown(event: Event): void {
     event.stopPropagation();
     this.profileDropdownOpen = !this.profileDropdownOpen;
-    if (this.profileDropdownOpen) this.languageDropdownOpen = false;
+    if (this.profileDropdownOpen) {
+      this.languageDropdownOpen = false;
+      this.closeNotificationDropdown.set(Date.now());
+    }
   }
 
   protected closeProfileDropdown = (): void => {
@@ -818,6 +833,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
+    if (this.menuOpen) {
+      this.closeNotificationDropdown.set(Date.now());
+    }
   }
 
   protected closeMenu(): void {

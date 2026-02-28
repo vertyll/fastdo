@@ -390,6 +390,13 @@ export class NotificationDropdownComponent {
       this.currentLang = event.lang;
     });
     this.listenNotificationSignals();
+
+    effect(() => {
+      const signal = this.closeSignal();
+      if (signal > 0 && this.isDropdownOpen) {
+        this.closeDropdown();
+      }
+    });
   }
 
   private listenNotificationSignals(): void {
@@ -415,6 +422,7 @@ export class NotificationDropdownComponent {
 
   public readonly isMobileContext = input<boolean>(false);
   public readonly isMobileMenuOpen = input<boolean>(false);
+  public readonly closeSignal = input<number>(0);
 
   protected readonly notifications = (): NotificationDto[] => {
     const all = this.notificationStateService.notifications();
