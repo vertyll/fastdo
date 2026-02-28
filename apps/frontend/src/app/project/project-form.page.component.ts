@@ -216,7 +216,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
           <div formArrayName="usersWithRoles" class="space-y-3">
             @for (userWithRole of usersWithRolesFormArray.controls; track $index) {
               <div
-                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
+                class="flex flex-col sm:flex-row gap-3 sm:items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
                 <div class="flex-1">
                   <app-input-field
@@ -226,7 +226,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                     type="email"
                   />
                 </div>
-                <div class="w-full sm:w-48">
+                <div class="flex-1 sm:w-48 sm:flex-none">
                   <app-select-field
                     [control]="getUserRoleControl($index)"
                     [id]="'user-role-' + $index"
@@ -238,7 +238,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                 <button
                   type="button"
                   (click)="removeUserWithRole($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
+                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900 self-start sm:self-auto sm:mb-1"
                   [disabled]="isCurrentUser($index)"
                   [class.opacity-50]="isCurrentUser($index)"
                   [class.cursor-not-allowed]="isCurrentUser($index)"
