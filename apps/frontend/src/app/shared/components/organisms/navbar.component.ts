@@ -145,7 +145,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       /* ── Component styles ── */
 
       .top-nav {
-        @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary fixed top-0 left-0 right-0 z-50 px-2.5 transition-colors duration-200;
+        @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary z-50 px-2.5 transition-colors duration-200;
       }
 
       .nav-content {
@@ -229,7 +229,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .mobile-sections {
-        @apply md:hidden bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary mt-16 transition-colors duration-200;
+        @apply md:hidden bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       }
 
       .mobile-section-item {
@@ -272,12 +272,8 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
         @apply absolute -top-1 -right-1 bg-primary-500 dark:bg-primary-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 transition-colors duration-200;
       }
 
-      .main-content {
-        @apply pt-16;
-      }
-
       .main-content.authenticated {
-        @apply pt-16 md:ml-24;
+        @apply md:ml-24;
       }
 
       .content-wrapper {
