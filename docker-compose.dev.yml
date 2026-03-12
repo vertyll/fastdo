@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:${POSTGRES_VERSION}-alpine
+    image: postgres:17-alpine
     restart: always
     ports:
       - "${POSTGRES_HOST_DB_PORT}:5432"
@@ -18,7 +18,7 @@ services:
       start_period: 10s
 
   test-db:
-    image: postgres:${POSTGRES_VERSION}-alpine
+    image: postgres:17-alpine
     restart: always
     ports:
       - "${POSTGRES_HOST_TEST_PORT}:5432"
