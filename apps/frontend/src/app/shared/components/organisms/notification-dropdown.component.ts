@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, input } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, computed, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -50,7 +50,6 @@ import { NotificationDto } from '../../types/notification.type';
       </button>
 
       @if (isDropdownOpen) {
-        <!-- Mobile modal overlay when mobile context -->
         @if (isMobileContext()) {
           <div
             class="fixed inset-0 bg-black/50 z-80 flex items-start justify-center pt-16 p-4"
@@ -134,13 +133,13 @@ import { NotificationDto } from '../../types/notification.type';
                               <div class="flex gap-2 mt-1 md:mt-0">
                                 <button
                                   class="px-3 py-1 rounded-md text-xs font-semibold bg-primary-500 hover:bg-primary-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                                  [disabled]="invitationLoading === notification.data.invitationId"
+                                  [disabled]="invitationLoading() === notification.data.invitationId"
                                   (click)="
                                     $event.stopPropagation();
                                     acceptInvitation(notification.data.invitationId, notification)
                                   "
                                 >
-                                  @if (invitationLoading === notification.data.invitationId) {
+                                  @if (invitationLoading() === notification.data.invitationId) {
                                     <span
                                       class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
                                     ></span>
@@ -150,13 +149,13 @@ import { NotificationDto } from '../../types/notification.type';
                                 </button>
                                 <button
                                   class="px-3 py-1 rounded-md text-xs font-semibold bg-danger-500 hover:bg-danger-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-danger-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                                  [disabled]="invitationLoading === notification.data.invitationId"
+                                  [disabled]="invitationLoading() === notification.data.invitationId"
                                   (click)="
                                     $event.stopPropagation();
                                     rejectInvitation(notification.data.invitationId, notification)
                                   "
                                 >
-                                  @if (invitationLoading === notification.data.invitationId) {
+                                  @if (invitationLoading() === notification.data.invitationId) {
                                     <span
                                       class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
                                     ></span>
@@ -213,7 +212,6 @@ import { NotificationDto } from '../../types/notification.type';
             </div>
           </div>
         } @else {
-          <!-- Regular dropdown for desktop -->
           <div
             class="notification-dropdown-panel absolute right-0 top-full mt-2 w-80 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200 z-50"
             (click)="$event.stopPropagation()"
@@ -290,13 +288,13 @@ import { NotificationDto } from '../../types/notification.type';
                             <div class="flex gap-2 mt-1 md:mt-0">
                               <button
                                 class="px-3 py-1 rounded-md text-xs font-semibold bg-primary-500 hover:bg-primary-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                                [disabled]="invitationLoading === notification.data.invitationId"
+                                [disabled]="invitationLoading() === notification.data.invitationId"
                                 (click)="
                                   $event.stopPropagation();
                                   acceptInvitation(notification.data.invitationId, notification)
                                 "
                               >
-                                @if (invitationLoading === notification.data.invitationId) {
+                                @if (invitationLoading() === notification.data.invitationId) {
                                   <span
                                     class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
                                   ></span>
@@ -306,13 +304,13 @@ import { NotificationDto } from '../../types/notification.type';
                               </button>
                               <button
                                 class="px-3 py-1 rounded-md text-xs font-semibold bg-danger-500 hover:bg-danger-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-danger-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                                [disabled]="invitationLoading === notification.data.invitationId"
+                                [disabled]="invitationLoading() === notification.data.invitationId"
                                 (click)="
                                   $event.stopPropagation();
                                   rejectInvitation(notification.data.invitationId, notification)
                                 "
                               >
-                                @if (invitationLoading === notification.data.invitationId) {
+                                @if (invitationLoading() === notification.data.invitationId) {
                                   <span
                                     class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
                                   ></span>
@@ -382,35 +380,6 @@ import { NotificationDto } from '../../types/notification.type';
   `,
 })
 export class NotificationDropdownComponent {
-  protected readonly NotificationStatusEnum = NotificationStatusEnum;
-
-  constructor(private readonly translateService: TranslateService) {
-    this.currentLang = this.translateService.getCurrentLang() || 'pl';
-    this.translateService.onLangChange.subscribe(event => {
-      this.currentLang = event.lang;
-    });
-    this.listenNotificationSignals();
-
-    effect(() => {
-      const signal = this.closeSignal();
-      if (signal > 0 && this.isDropdownOpen) {
-        this.closeDropdown();
-      }
-    });
-  }
-
-  private listenNotificationSignals(): void {
-    effect(() => {
-      const readId = this.notificationStateService.notificationRead();
-      if (readId) {
-        this.notificationStateService.removeNotificationById(readId);
-      }
-      const deletedId = this.notificationStateService.notificationDeleted();
-      if (deletedId) {
-        this.notificationStateService.removeNotificationById(deletedId);
-      }
-    });
-  }
   private readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly modalService = inject(ModalService);
@@ -420,11 +389,14 @@ export class NotificationDropdownComponent {
 
   private readonly cancelInvitationRequests$ = new Subject<void>();
 
+  protected readonly NotificationStatusEnum = NotificationStatusEnum;
+
   public readonly isMobileContext = input<boolean>(false);
   public readonly isMobileMenuOpen = input<boolean>(false);
   public readonly closeSignal = input<number>(0);
 
-  protected readonly notifications = (): NotificationDto[] => {
+  protected invitationLoading = signal<number | null>(null);
+  protected readonly notifications = computed(() => {
     const all = this.notificationStateService.notifications();
     const latestInvitationMap = new Map<number, NotificationDto>();
     for (const n of all) {
@@ -445,13 +417,27 @@ export class NotificationDropdownComponent {
       }
       return n;
     });
-  };
+  });
   protected readonly unreadCount = this.notificationStateService.unreadCount;
   protected readonly webSocketConnected = this.notificationStateService.webSocketConnected;
 
   protected isDropdownOpen: boolean = false;
-  protected invitationLoading: number | null = null;
   protected currentLang: string = 'pl';
+
+  constructor(private readonly translateService: TranslateService) {
+    this.currentLang = this.translateService.getCurrentLang() || 'pl';
+    this.translateService.onLangChange.subscribe(event => {
+      this.currentLang = event.lang;
+    });
+    this.listenNotificationSignals();
+
+    effect(() => {
+      const signal = this.closeSignal();
+      if (signal > 0 && this.isDropdownOpen) {
+        this.closeDropdown();
+      }
+    });
+  }
 
   protected getTranslation(notification: NotificationDto): { title: string; message: string } {
     if (notification.translations && notification.translations.length > 0) {
@@ -602,13 +588,13 @@ export class NotificationDropdownComponent {
   }
 
   protected acceptInvitation(invitationId: number, notification: NotificationDto): void {
-    this.invitationLoading = invitationId;
+    this.invitationLoading.set(invitationId);
     this.projectsApi
       .acceptInvitation({ invitationId })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          this.invitationLoading = null;
+          this.invitationLoading.set(null);
         }),
         catchError(error => {
           console.error('Error accepting invitation:', error);
@@ -643,13 +629,13 @@ export class NotificationDropdownComponent {
   }
 
   protected rejectInvitation(invitationId: number, notification: NotificationDto): void {
-    this.invitationLoading = invitationId;
+    this.invitationLoading.set(invitationId);
     this.projectsApi
       .rejectInvitation({ invitationId })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          this.invitationLoading = null;
+          this.invitationLoading.set(null);
         }),
         catchError(error => {
           console.error('Error rejecting invitation:', error);
@@ -681,5 +667,18 @@ export class NotificationDropdownComponent {
             });
         }
       });
+  }
+
+  private listenNotificationSignals(): void {
+    effect(() => {
+      const readId = this.notificationStateService.notificationRead();
+      if (readId) {
+        this.notificationStateService.removeNotificationById(readId);
+      }
+      const deletedId = this.notificationStateService.notificationDeleted();
+      if (deletedId) {
+        this.notificationStateService.removeNotificationById(deletedId);
+      }
+    });
   }
 }

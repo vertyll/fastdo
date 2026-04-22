@@ -50,7 +50,7 @@ export class ProjectsListFiltersComponent implements OnInit {
   }
 
   private updateProjectTypeOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang();
+    const lang = this.translateService.getCurrentLang() || 'pl';
     const typeFilter = this.filters.find(filter => filter.formControlName === 'typeIds');
     if (!typeFilter) return;
 
