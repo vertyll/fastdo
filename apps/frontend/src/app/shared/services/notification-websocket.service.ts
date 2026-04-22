@@ -1,9 +1,28 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Socket, io } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { AuthStateService } from '../../auth/data-access/auth.state.service';
+import { NotificationWsEvent, NotificationWsEventType } from '../defs/notification.defs';
+
+type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
+
+interface TokenAwareSocket extends Socket {
+  _currentToken?: string;
+}
+
+const SOCKET_OPTIONS = {
+  transports: ['websocket', 'polling'] as string[],
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+  timeout: 10000,
+  forceNew: true,
+};
+
+const AUTH_ERROR_KEYWORDS = ['Authentication', 'Invalid', 'Unauthorized'];
 
 @Injectable({
   providedIn: 'root',
@@ -12,12 +31,14 @@ export class NotificationWebSocketService {
   private readonly authService = inject(AuthService);
   private readonly authStateService = inject(AuthStateService);
 
-  private socket: Socket | null = null;
-  private readonly connectionStatus = signal<'disconnected' | 'connecting' | 'connected'>('disconnected');
+  private socket: TokenAwareSocket | null = null;
+  private readonly connectionStatus = signal<ConnectionStatus>('disconnected');
   private readonly connectionSubject = new BehaviorSubject<boolean>(false);
+  private readonly eventsSubject = new Subject<NotificationWsEvent>();
 
-  readonly connectionStatus$ = this.connectionStatus.asReadonly();
-  readonly isConnected$ = this.connectionSubject.asObservable();
+  public readonly connectionStatus$ = this.connectionStatus.asReadonly();
+  public readonly isConnected$ = this.connectionSubject.asObservable();
+  public readonly events$ = this.eventsSubject.asObservable();
 
   constructor() {
     effect(() => {
@@ -36,7 +57,7 @@ export class NotificationWebSocketService {
       const isLoggedIn = this.authStateService.isLoggedIn();
 
       if (isLoggedIn && token && this.socket?.connected) {
-        const currentSocketToken = (this.socket as any)._currentToken;
+        const currentSocketToken = this.socket._currentToken;
         if (currentSocketToken && currentSocketToken !== token) {
           this.reconnectWithNewToken();
         }
@@ -50,33 +71,12 @@ export class NotificationWebSocketService {
     }
 
     const token = this.authStateService.getToken();
-
     if (!token) {
       return;
     }
 
     this.connectionStatus.set('connecting');
-
-    this.socket = io(`${environment.backendUrl}/notifications`, {
-      query: {
-        token: token,
-        auth: `Bearer ${token}`,
-      },
-      extraHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-      transports: ['websocket', 'polling'],
-      autoConnect: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 10000, // 10 seconds timeout
-      forceNew: true, // Always create a new connection
-    });
-
-    // Store current token for comparison
-    (this.socket as any)._currentToken = token;
-
+    this.socket = this.createSocket(token);
     this.setupEventListeners();
   }
 
@@ -85,9 +85,7 @@ export class NotificationWebSocketService {
       this.socket.disconnect();
       this.socket = null;
     }
-    this.connectionStatus.set('disconnected');
-    this.connectionSubject.next(false);
-    this.emitWebSocketEvent('websocket-disconnected');
+    this.markDisconnected();
   }
 
   public isConnected(): boolean {
@@ -109,9 +107,7 @@ export class NotificationWebSocketService {
         return;
       }
 
-      this.socket.on(event, data => {
-        observer.next(data);
-      });
+      this.socket.on(event, data => observer.next(data));
 
       return () => {
         this.socket?.off(event);
@@ -125,121 +121,115 @@ export class NotificationWebSocketService {
   }
 
   public updateToken(newToken: string): void {
-    if (this.socket?.connected) {
-      // Store new token
-      (this.socket as any)._currentToken = newToken;
-
-      // Emit token update to server (if supported by backend)
-      this.socket.emit('update_auth', { token: `Bearer ${newToken}` });
-
-      // If server doesn't support token update, reconnect
-      setTimeout(() => {
-        if (this.socket && (this.socket as any)._currentToken === newToken) {
-          this.reconnectWithNewToken();
-        }
-      }, 1000);
+    if (!this.socket?.connected) {
+      return;
     }
+
+    this.socket._currentToken = newToken;
+    this.socket.emit('update_auth', { token: `Bearer ${newToken}` });
+
+    setTimeout(() => {
+      if (this.socket?._currentToken === newToken) {
+        this.reconnectWithNewToken();
+      }
+    }, 1000);
+  }
+
+  private createSocket(token: string): TokenAwareSocket {
+    const socket = io(`${environment.backendUrl}/notifications`, {
+      query: {
+        token,
+        auth: `Bearer ${token}`,
+      },
+      extraHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+      ...SOCKET_OPTIONS,
+    }) as TokenAwareSocket;
+
+    socket._currentToken = token;
+    return socket;
   }
 
   private setupEventListeners(): void {
     if (!this.socket) return;
 
-    this.socket.on('connect', () => {
-      this.connectionStatus.set('connected');
-      this.connectionSubject.next(true);
-      this.emitWebSocketEvent('websocket-connected');
-    });
-
-    this.socket.on('disconnect', _reason => {
-      this.connectionStatus.set('disconnected');
-      this.connectionSubject.next(false);
-      this.emitWebSocketEvent('websocket-disconnected');
-    });
+    this.socket.on('connect', () => this.markConnected());
+    this.socket.on('disconnect', () => this.markDisconnected());
 
     this.socket.on('connect_error', error => {
       console.error('WebSocket connection error:', error);
-      this.connectionStatus.set('disconnected');
-      this.connectionSubject.next(false);
-      this.emitWebSocketEvent('websocket-disconnected');
-
-      if (
-        error.message?.includes('Authentication') ||
-        error.message?.includes('Invalid') ||
-        error.message?.includes('Unauthorized')
-      ) {
+      this.markDisconnected();
+      if (this.isAuthErrorMessage(error?.message)) {
         this.handleAuthError();
       }
     });
 
     this.socket.on('connection_error', data => {
       console.error('Server connection error:', data);
-      this.connectionStatus.set('disconnected');
-      this.connectionSubject.next(false);
-      this.emitWebSocketEvent('websocket-disconnected');
-
-      if (data.message?.includes('Authentication') || data.message?.includes('Invalid')) {
+      this.markDisconnected();
+      if (this.isAuthErrorMessage(data?.message)) {
         this.handleAuthError();
       } else {
         this.disconnect();
       }
     });
 
-    this.socket.on('token_expired', () => {
-      this.handleAuthError();
-    });
-
-    this.socket.on('token_warning', _data => {
-      this.handleAuthError();
-    });
+    this.socket.on('token_expired', () => this.handleAuthError());
+    this.socket.on('token_warning', () => this.handleAuthError());
 
     this.socket.on('update_auth_response', data => {
-      if (!data.success) {
-        console.warn('WebSocket auth update failed:', data.message);
+      if (!data?.success) {
+        console.warn('WebSocket auth update failed:', data?.message);
         this.handleAuthError();
       }
     });
 
-    this.socket.on('notification.created', _data => {
-      this.emitWebSocketEvent('notification-refresh');
-    });
+    this.socket.on('notification.created', () => this.emitEvent('notification-refresh'));
+    this.socket.on('notification.read', data => this.emitEvent('notification-refresh', data));
+    this.socket.on('notification.updated', () => this.emitEvent('notification-refresh'));
+  }
 
-    this.socket.on('notification.read', _data => {
-      this.emitWebSocketEvent('notification-refresh');
-    });
+  private markConnected(): void {
+    this.connectionStatus.set('connected');
+    this.connectionSubject.next(true);
+    this.emitEvent('connected');
+  }
 
-    this.socket.on('notification.updated', _data => {
-      this.emitWebSocketEvent('notification-refresh');
-    });
+  private markDisconnected(): void {
+    this.connectionStatus.set('disconnected');
+    this.connectionSubject.next(false);
+    this.emitEvent('disconnected');
+  }
+
+  private isAuthErrorMessage(message?: string): boolean {
+    if (!message) return false;
+    return AUTH_ERROR_KEYWORDS.some(keyword => message.includes(keyword));
   }
 
   private reconnectWithNewToken(): void {
     this.disconnect();
-    setTimeout(() => {
-      this.connect();
-    }, 500);
+    setTimeout(() => this.connect(), 500);
   }
 
   private handleAuthError(): void {
-    // Try to refresh token through AuthService
     if (this.authService.isTokenValid()) {
-      // Token is still valid, just retry connection
       setTimeout(() => this.reconnectWithNewToken(), 1000);
-    } else {
-      // Token might be expired, trigger refresh
-      this.authService.refreshToken().subscribe({
-        next: () => {
-          setTimeout(() => this.reconnectWithNewToken(), 500);
-        },
-        error: err => {
-          console.error('Token refresh failed:', err);
-          // Let AuthService handle logout
-          this.disconnect();
-        },
-      });
+      return;
     }
+
+    this.authService.refreshToken().subscribe({
+      next: () => {
+        setTimeout(() => this.reconnectWithNewToken(), 500);
+      },
+      error: err => {
+        console.error('Token refresh failed:', err);
+        this.disconnect();
+      },
+    });
   }
 
-  private emitWebSocketEvent(eventName: string, data?: any): void {
-    globalThis.dispatchEvent(new CustomEvent(eventName, { detail: data }));
+  private emitEvent(type: NotificationWsEventType, payload?: NotificationWsEvent['payload']): void {
+    this.eventsSubject.next({ type, payload });
   }
 }

@@ -31,6 +31,18 @@ export interface NotificationSettingsDto {
   systemNotifications: boolean;
 }
 
+export type NotificationWsEventType =
+  | 'connected'
+  | 'disconnected'
+  | 'notification-refresh'
+  | 'notification-read'
+  | 'notification-deleted';
+
+export interface NotificationWsEvent {
+  type: NotificationWsEventType;
+  payload?: { notificationId?: number; [key: string]: any };
+}
+
 export interface UpdateNotificationSettingsDto {
   appNotifications?: boolean;
   emailNotifications?: boolean;

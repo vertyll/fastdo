@@ -8,6 +8,43 @@ export interface FileValidationOptions extends ValidationOptions {
   mimeTypes?: string[];
 }
 
+function isFileValid(file: any, mimeTypes: string[], maxSize?: number): boolean {
+  if (!file?.type || file.type !== 'file') return false;
+  if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) return false;
+  if (maxSize && file.file.bytesRead > maxSize) return false;
+  return true;
+}
+
+function buildFileErrorMessage(
+  file: any,
+  mimeTypes: string[],
+  maxSize: number | undefined,
+  args: ValidationArguments,
+): string {
+  const invalidFile = i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidFile')(args);
+  if (!file?.type || file.type !== 'file') {
+    return invalidFile;
+  }
+  if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) {
+    return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidMimeType', {
+      args: { allowed: mimeTypes.join(', ') },
+    })(args);
+  }
+  if (maxSize && file.file.bytesRead > maxSize) {
+    return i18nValidationMessage<I18nTranslations>('messages.File.errors.fileTooLarge', {
+      args: { maxSize: `${Math.floor(maxSize / 1024 / 1024)}MB` },
+    })(args);
+  }
+  return invalidFile;
+}
+
+function pickInvalidFile(value: unknown, mimeTypes: string[], maxSize: number | undefined): any {
+  if (Array.isArray(value)) {
+    return value.find(file => !isFileValid(file, mimeTypes, maxSize)) ?? value[0];
+  }
+  return value;
+}
+
 export function IsFile(options: FileValidationOptions = {}) {
   return function (target: object, propertyName: string): void {
     registerDecorator({
@@ -20,74 +57,19 @@ export function IsFile(options: FileValidationOptions = {}) {
           if (value === 'null') return true;
           if (!value) return true;
 
-          // Handle array of files
+          const mimeTypes = options.mimeTypes || [];
+
           if (Array.isArray(value)) {
-            return value.every(file => {
-              if (!file.type || file.type !== 'file') return false;
-              const mimeTypes = options.mimeTypes || [];
-              if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) return false;
-              return !(options.maxSize && file.file.bytesRead > options.maxSize);
-            });
+            return value.every(file => isFileValid(file, mimeTypes, options.maxSize));
           }
 
-          // Handle single file
-          if (!value.type || value.type !== 'file') return false;
-          const file = value as MultipartFile;
-          const mimeTypes = options.mimeTypes || [];
-          if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) return false;
-          return !(options.maxSize && file.file.bytesRead > options.maxSize);
+          return isFileValid(value as MultipartFile, mimeTypes, options.maxSize);
         },
         defaultMessage(args: ValidationArguments): string {
-          const value = args.value;
+          if (args.value === 'null') return '';
           const mimeTypes = options.mimeTypes || [];
-
-          if (value === 'null') {
-            return '';
-          }
-
-          // Handle array of files
-          if (Array.isArray(value)) {
-            const invalidFile = value.find(file => {
-              if (!file?.type || file.type !== 'file') return true;
-              if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) return true;
-              if (options.maxSize && file.file.bytesRead > options.maxSize) return true;
-              return false;
-            });
-
-            if (invalidFile) {
-              if (!invalidFile?.type || invalidFile.type !== 'file') {
-                return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidFile')(args);
-              }
-              if (mimeTypes.length > 0 && !mimeTypes.includes(invalidFile.mimetype)) {
-                return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidMimeType', {
-                  args: { allowed: mimeTypes.join(', ') },
-                })(args);
-              }
-              if (options.maxSize && invalidFile.file.bytesRead > options.maxSize) {
-                return i18nValidationMessage<I18nTranslations>('messages.File.errors.fileTooLarge', {
-                  args: { maxSize: `${Math.floor(options.maxSize / 1024 / 1024)}MB` },
-                })(args);
-              }
-            }
-          } else {
-            // Handle single file
-            const file = value as MultipartFile;
-            if (!file?.type || file.type !== 'file') {
-              return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidFile')(args);
-            }
-            if (mimeTypes.length > 0 && !mimeTypes.includes(file.mimetype)) {
-              return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidMimeType', {
-                args: { allowed: mimeTypes.join(', ') },
-              })(args);
-            }
-            if (options.maxSize && file.file.bytesRead > options.maxSize) {
-              return i18nValidationMessage<I18nTranslations>('messages.File.errors.fileTooLarge', {
-                args: { maxSize: `${Math.floor(options.maxSize / 1024 / 1024)}MB` },
-              })(args);
-            }
-          }
-
-          return i18nValidationMessage<I18nTranslations>('messages.File.errors.invalidFile')(args);
+          const fileToCheck = pickInvalidFile(args.value, mimeTypes, options.maxSize);
+          return buildFileErrorMessage(fileToCheck, mimeTypes, options.maxSize, args);
         },
       },
     });

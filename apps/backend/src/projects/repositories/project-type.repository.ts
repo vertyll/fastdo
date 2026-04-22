@@ -4,7 +4,7 @@ import { ProjectType } from '../entities/project-type.entity';
 
 @Injectable()
 export class ProjectTypeRepository extends Repository<ProjectType> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(ProjectType, dataSource.createEntityManager());
   }
 }

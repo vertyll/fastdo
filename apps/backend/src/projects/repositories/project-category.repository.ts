@@ -4,7 +4,7 @@ import { ProjectCategory } from '../entities/project-category.entity';
 
 @Injectable()
 export class ProjectCategoryRepository extends Repository<ProjectCategory> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(ProjectCategory, dataSource.createEntityManager());
   }
 }

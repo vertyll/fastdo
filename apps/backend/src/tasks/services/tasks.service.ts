@@ -293,9 +293,7 @@ export class TasksService implements ITasksService {
         relations: ['project', 'createdBy', 'assignedUsers', 'accessRole'],
       });
 
-      if (tasks.length !== taskIds.length) {
-        throw new Error('Some tasks not found');
-      }
+      this.assertAllTasksFound(tasks, taskIds);
       tasks.forEach(task => this.validateTaskAccess(task, userId));
 
       await transactionalTaskRepository.remove(tasks);
@@ -366,8 +364,8 @@ export class TasksService implements ITasksService {
         where: { id: commentId },
         relations: ['author', 'task'],
       });
-      if (!comment) throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
-      if (comment.author.id !== userId) throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
+      this.assertCommentExists(comment);
+      this.assertCommentOwner(comment, userId);
 
       // TODO: delete attachments from disk
       await transactionalCommentRepo.delete(commentId);
@@ -393,9 +391,7 @@ export class TasksService implements ITasksService {
         where: { id: commentId },
         relations: ['author', 'task', 'commentAttachments', 'commentAttachments.file'],
       });
-      if (comment.author.id !== userId) {
-        throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
-      }
+      this.assertCommentOwner(comment, userId);
 
       comment.content = updateCommentDto.content;
       comment.dateModification = new Date();
@@ -434,6 +430,24 @@ export class TasksService implements ITasksService {
       throw err;
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  private assertAllTasksFound(tasks: Task[], taskIds: number[]): void {
+    if (tasks.length !== taskIds.length) {
+      throw new Error('Some tasks not found');
+    }
+  }
+
+  private assertCommentExists(comment: TaskComment | null): asserts comment is TaskComment {
+    if (!comment) {
+      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotFound'));
+    }
+  }
+
+  private assertCommentOwner(comment: TaskComment, userId: number): void {
+    if (comment.author.id !== userId) {
+      throw new Error(this.i18n.t('messages.Tasks.errors.commentNotYourOwn'));
     }
   }
 

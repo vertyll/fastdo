@@ -72,59 +72,55 @@ export class ProjectTypeSeeder implements ISeeder {
       ];
 
       for (const typeData of projectTypesData) {
-        let projectType = await this.projectTypeRepository.findOne({
-          where: { code: typeData.code },
-        });
+        const projectType = await this.ensureProjectType(typeData.code, typeData.isActive);
 
-        if (!projectType) {
-          projectType = this.projectTypeRepository.create({
-            code: typeData.code,
-            isActive: typeData.isActive,
-          });
-          await this.projectTypeRepository.save(projectType);
-          this.baseSeeder.getLogger().log(`Created project type: ${typeData.code}`);
-        }
-
-        if (polishLang && typeData.translations.pl) {
-          const existingTranslation = await this.projectTypeTranslationRepository.findOne({
-            where: {
-              projectType: { id: projectType.id },
-              language: { id: polishLang.id },
-            },
-          });
-
-          if (!existingTranslation) {
-            const translation = this.projectTypeTranslationRepository.create({
-              name: typeData.translations.pl.name,
-              description: typeData.translations.pl.description,
-              language: polishLang,
-              projectType: projectType,
-            });
-            await this.projectTypeTranslationRepository.save(translation);
-            this.baseSeeder.getLogger().log(`Created translation for project type ${typeData.code} in pl`);
-          }
-        }
-
-        if (englishLang && typeData.translations.en) {
-          const existingTranslation = await this.projectTypeTranslationRepository.findOne({
-            where: {
-              projectType: { id: projectType.id },
-              language: { id: englishLang.id },
-            },
-          });
-
-          if (!existingTranslation) {
-            const translation = this.projectTypeTranslationRepository.create({
-              name: typeData.translations.en.name,
-              description: typeData.translations.en.description,
-              language: englishLang,
-              projectType: projectType,
-            });
-            await this.projectTypeTranslationRepository.save(translation);
-            this.baseSeeder.getLogger().log(`Created translation for project type ${typeData.code} in en`);
-          }
-        }
+        await this.ensureTranslation(projectType, typeData.code, polishLang, typeData.translations.pl, 'pl');
+        await this.ensureTranslation(projectType, typeData.code, englishLang, typeData.translations.en, 'en');
       }
     });
+  }
+
+  private async ensureProjectType(code: ProjectTypeEnum, isActive: boolean): Promise<ProjectType> {
+    const existing = await this.projectTypeRepository.findOne({ where: { code } });
+    if (existing) {
+      return existing;
+    }
+
+    const projectType = this.projectTypeRepository.create({ code, isActive });
+    await this.projectTypeRepository.save(projectType);
+    this.baseSeeder.getLogger().log(`Created project type: ${code}`);
+    return projectType;
+  }
+
+  private async ensureTranslation(
+    projectType: ProjectType,
+    code: ProjectTypeEnum,
+    language: Language | undefined,
+    translationData: { name: string; description: string } | undefined,
+    languageLabel: string,
+  ): Promise<void> {
+    if (!language || !translationData) {
+      return;
+    }
+
+    const existingTranslation = await this.projectTypeTranslationRepository.findOne({
+      where: {
+        projectType: { id: projectType.id },
+        language: { id: language.id },
+      },
+    });
+
+    if (existingTranslation) {
+      return;
+    }
+
+    const translation = this.projectTypeTranslationRepository.create({
+      name: translationData.name,
+      description: translationData.description,
+      language,
+      projectType,
+    });
+    await this.projectTypeTranslationRepository.save(translation);
+    this.baseSeeder.getLogger().log(`Created translation for project type ${code} in ${languageLabel}`);
   }
 }

@@ -307,10 +307,38 @@ describe('ProjectsService', () => {
       expect(mockClsService.get).toHaveBeenCalledWith('user');
     });
 
-    it('should rollback transaction on error', async () => {
+    it('should throw managerRoleNotFound error before starting a transaction', async () => {
       const createDto = { name: 'New Project' };
 
+      mockProjectRoleService.findOneByCode.mockResolvedValue(null);
+
       await expect(service.create(createDto)).rejects.toThrow('messages.Projects.errors.managerRoleNotFound');
+      expect(mockQueryRunner.startTransaction).not.toHaveBeenCalled();
+      expect(mockQueryRunner.rollbackTransaction).not.toHaveBeenCalled();
+      expect(mockQueryRunner.release).not.toHaveBeenCalled();
+    });
+
+    it('should rollback transaction on error during project save', async () => {
+      const createDto = { name: 'New Project' };
+      const mockManagerRole: ProjectRole = {
+        id: 1,
+        code: 'manager',
+        isActive: true,
+        dateCreation: new Date(),
+        dateModification: new Date(),
+        translations: [],
+        userRoles: [],
+        permissions: [],
+      } as ProjectRole;
+
+      mockProjectRoleService.findOneByCode.mockResolvedValue(mockManagerRole);
+      mockQueryRunner.manager.getRepository.mockImplementation(() => ({
+        create: jest.fn().mockReturnValue({}),
+        save: jest.fn().mockRejectedValue(new Error('DB failure')),
+      }));
+
+      await expect(service.create(createDto)).rejects.toThrow('DB failure');
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.release).toHaveBeenCalled();
     });

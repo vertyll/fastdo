@@ -4,7 +4,7 @@ import { RefreshToken } from '../entities/refresh-token.entity';
 
 @Injectable()
 export class RefreshTokenRepository extends Repository<RefreshToken> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(RefreshToken, dataSource.createEntityManager());
   }
 }

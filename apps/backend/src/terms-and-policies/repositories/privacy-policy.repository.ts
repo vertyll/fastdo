@@ -4,7 +4,7 @@ import { PrivacyPolicy } from '../entities/privacy-policy.entity';
 
 @Injectable()
 export class PrivacyPolicyRepository extends Repository<PrivacyPolicy> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(PrivacyPolicy, dataSource.createEntityManager());
   }
 

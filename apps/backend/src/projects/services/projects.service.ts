@@ -96,14 +96,19 @@ export class ProjectsService {
   }
 
   public async create(createProjectDto: CreateProjectDto): Promise<Project> {
+    const userId = this.cls.get('user').userId;
+    const { categories, statuses, typeId, icon, userEmails, usersWithRoles, ...projectData } = createProjectDto;
+
+    const managerRole = await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER);
+    if (!managerRole) {
+      throw new Error(this.i18n.t('messages.Projects.errors.managerRoleNotFound'));
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const userId = this.cls.get('user').userId;
-      const { categories, statuses, typeId, icon, userEmails, usersWithRoles, ...projectData } = createProjectDto;
-
       let iconFile = null;
       if (icon) {
         iconFile = await this.fileFacade.upload(icon);
@@ -117,11 +122,6 @@ export class ProjectsService {
         projectEntity.icon = { id: iconFile.id } as any;
       }
       const newProject = await queryRunner.manager.getRepository(Project).save(projectEntity);
-
-      const managerRole = await this.projectRoleService.findOneByCode(ProjectRoleEnum.MANAGER);
-      if (!managerRole) {
-        throw new Error(this.i18n.t('messages.Projects.errors.managerRoleNotFound'));
-      }
 
       await queryRunner.manager.getRepository(ProjectUserRole).save({
         project: { id: newProject.id },
@@ -176,20 +176,21 @@ export class ProjectsService {
   public async update(id: number, updateProjectDto: UpdateProjectDto): Promise<Project> {
     const { categories, statuses, typeId, icon, userEmails, usersWithRoles, ...updateData } = updateProjectDto;
 
+    const userId = this.cls.get('user').userId;
+    const project = await this.projectRepository.findOne({ where: { id }, relations: ['categories', 'statuses'] });
+    if (!project) {
+      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
+    }
+    await this.checkProjectManagementPermission(id, userId);
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const userId = this.cls.get('user').userId;
-      const project = await this.projectRepository.findOne({ where: { id }, relations: ['categories', 'statuses'] });
-      if (!project) {
-        throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
-      }
-      await this.checkProjectManagementPermission(id, userId);
-
       let iconFile = null;
-      if (String(icon) === 'null' || icon === null) {
+      const isIconRemoval = icon === null || (icon as unknown) === 'null';
+      if (isIconRemoval) {
         if (project.icon) {
           await this.fileFacade.delete(project.icon.id);
         }

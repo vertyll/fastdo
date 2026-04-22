@@ -4,7 +4,7 @@ import { TaskCommentAttachment } from '../entities/task-comment-attachment.entit
 
 @Injectable()
 export class TaskCommentAttachmentRepository extends Repository<TaskCommentAttachment> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(TaskCommentAttachment, dataSource.createEntityManager());
   }
 }
