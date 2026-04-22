@@ -1,4 +1,4 @@
-import { Language } from 'src/app/core/models/Language';
+import { Language } from 'src/app/core/defs/core.defs';
 import { NotificationStatusEnum } from '../enums/notification-status.enum';
 
 export interface NotificationDto {

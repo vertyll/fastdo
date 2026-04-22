@@ -1,7 +1,7 @@
 import { Component, computed, input, output, TemplateRef } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableColumn, TableComponent, TableConfig } from 'src/app/shared/components/organisms/table.component';
-import { Task, TaskPriorityCodeEnum } from '../models/Task';
+import { Task, TaskPriorityCodeEnum } from '../defs/task.defs';
 import { MOBILE_BREAKPOINT } from '../../app.contansts';
 
 @Component({

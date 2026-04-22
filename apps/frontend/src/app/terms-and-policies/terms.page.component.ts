@@ -7,8 +7,8 @@ import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
 import { TermsAndPolicyService } from './data-access/terms-and-policy.service';
 import { TermsAndPolicyStateService } from './data-access/terms-and-policy.state.service';
-import { LegalSectionEnum } from './enum/legal-section.enum';
-import { Section, SectionTranslation } from './types/terms-and-policies.types';
+import { LegalSectionEnum } from './defs/terms-and-policies.defs';
+import { Section, SectionTranslation } from './defs/terms-and-policies.defs';
 
 @Component({
   selector: 'app-terms-page',

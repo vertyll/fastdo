@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
-import { User } from '../models/User';
+import { User } from '../defs/user.defs';
 import { UserApiService } from './user.api.service';
 
 @Injectable({ providedIn: 'root' })

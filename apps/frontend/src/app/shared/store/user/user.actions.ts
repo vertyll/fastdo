@@ -1,4 +1,4 @@
-import { User } from '../../../user/models/User';
+import { User } from '../../../user/defs/user.defs';
 
 export class GetCurrentUser {
   static readonly type = '[User] Get Current User';

@@ -9,7 +9,13 @@ export type User = {
   dateModification: Date | null;
 };
 
-type Avatar = {
+export type Avatar = {
   id: string;
   url: string;
 };
+
+export interface UserStateModel {
+  user: User;
+  loading: boolean;
+  error: string | null;
+}

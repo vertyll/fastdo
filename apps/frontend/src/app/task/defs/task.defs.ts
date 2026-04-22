@@ -1,5 +1,5 @@
-import { File } from '../../core/models/File';
-import { ProjectCategory, ProjectStatus } from '../../project/models/Project';
+import { File } from '../../core/defs/core.defs';
+import { ProjectCategory, ProjectStatus } from '../../project/defs/project.defs';
 import { ProjectRole } from '../../shared/types/entities.type';
 
 export type Task = {
@@ -54,3 +54,33 @@ export enum TaskPriorityCodeEnum {
   MEDIUM = 'medium',
   HIGH = 'high',
 }
+
+export type TaskPayload = {
+  description: string;
+  additionalDescription?: string;
+  priceEstimation?: number;
+  workedTime?: number;
+  accessRoleId?: number;
+  projectId: number;
+  priorityId?: number;
+  categoryIds?: number[];
+  statusId?: number;
+  assignedUserIds?: number[];
+  attachmentIds?: string[];
+};
+
+export type GetAllTasksSearchParams = {
+  q: string;
+  sortBy: 'dateCreation' | 'dateModification' | 'description' | 'id';
+  orderBy: 'desc' | 'asc';
+  priorityIds?: number[];
+  categoryIds?: number[];
+  statusIds?: number[];
+  assignedUserIds?: number[];
+  createdFrom?: string;
+  createdTo?: string;
+  updatedFrom?: string;
+  updatedTo?: string;
+  page?: number;
+  pageSize?: number;
+};

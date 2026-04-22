@@ -3,14 +3,8 @@ import { Action, State, StateContext } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserService } from '../../../user/data-access/user.service';
-import { User } from '../../../user/models/User';
+import { User, UserStateModel } from '../../../user/defs/user.defs';
 import * as UserActions from './user.actions';
-
-export interface UserStateModel {
-  user: User;
-  loading: boolean;
-  error: string | null;
-}
 
 @State<UserStateModel>({
   name: 'user',

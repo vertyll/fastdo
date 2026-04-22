@@ -33,7 +33,7 @@ import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { getContrastColor } from '../shared/utils/color.utils';
 import { TasksService } from './data-access/task.service';
-import { Task, TaskComment } from './models/Task';
+import { Task, TaskComment } from './defs/task.defs';
 
 @Component({
   selector: 'app-task-details',

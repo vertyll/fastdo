@@ -1,6 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { RoleEnum } from '../../shared/enums/role.enum';
-import { AuthState } from '../../shared/types/auth.type';
+import { AuthState } from '../defs/auth.defs';
 import { ACCESS_TOKEN_KEY } from '../../app.contansts';
 
 @Injectable({

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectTypeApiService } from './project-type.api.service';
 import { ApiResponse } from 'src/app/shared/types/api-response.type';
-import { ProjectType } from '../models/Project';
+import { ProjectType } from '../defs/project.defs';
 
 @Injectable({
   providedIn: 'root',

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api-response.type';
-import { PrivacyPolicy } from '../model/Privacy-policy';
-import { Terms } from '../model/Terms';
+import { PrivacyPolicy, Terms } from '../defs/terms-and-policies.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 
 @Injectable({

@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api-response.type';
-import { PrivacyPolicy } from '../model/Privacy-policy';
-import { Terms } from '../model/Terms';
+import { PrivacyPolicy, Terms } from '../defs/terms-and-policies.defs';
 import { TermsAndPolicyApiService } from './terms-and-policy.api.service';
 import { TermsAndPolicyStateService } from './terms-and-policy.state.service';
 

@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
 import { User } from '../../shared/types/entities.type';
-import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
-import { Project } from '../models/Project';
+import { GetAllProjectsSearchParams, Project } from '../defs/project.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 
 @Injectable({

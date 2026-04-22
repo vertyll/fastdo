@@ -23,7 +23,7 @@ import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { NotificationService } from '../shared/services/notification.service';
 import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
-import { AddTaskDto } from './dtos/add-task.dto';
+import { TaskPayload } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 import { SimpleNameItem, TranslationItem, TranslatableOptionItem } from '../shared/types/common.type';
 import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.utils';
@@ -524,7 +524,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const taskData: AddTaskDto = {
+    const taskData: TaskPayload = {
       description: formValue.description,
       additionalDescription: formValue.additionalDescription || undefined,
       priceEstimation: formValue.priceEstimation || undefined,
@@ -705,7 +705,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private createTask(taskData: AddTaskDto): void {
+  private createTask(taskData: TaskPayload): void {
     const formData = this.buildTaskFormData(taskData);
 
     this.tasksService
@@ -736,7 +736,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private updateTask(taskId: number, taskData: AddTaskDto): void {
+  private updateTask(taskId: number, taskData: TaskPayload): void {
     const { projectId: _projectId, ...updateData } = taskData;
     const formData = this.buildTaskFormData(updateData, true);
 
@@ -769,7 +769,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private buildTaskFormData(taskData: Partial<AddTaskDto>, includeAttachmentsToDelete = false): FormData {
+  private buildTaskFormData(taskData: Partial<TaskPayload>, includeAttachmentsToDelete = false): FormData {
     const formData = new FormData();
 
     Object.keys(taskData).forEach(key => {

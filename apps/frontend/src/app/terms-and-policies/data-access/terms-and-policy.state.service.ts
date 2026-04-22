@@ -1,7 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
-import { PrivacyPolicy } from '../model/Privacy-policy';
-import { Terms } from '../model/Terms';
+import { PrivacyPolicy, Terms } from '../defs/terms-and-policies.defs';
 import { TermsAndPolicyApiService } from './terms-and-policy.api.service';
 
 @Injectable({ providedIn: 'root' })

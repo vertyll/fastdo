@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
-import { GetAllTasksSearchParams } from '../../shared/types/task.type';
-import { Task } from '../models/Task';
+import { GetAllTasksSearchParams, Task } from '../defs/task.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 
 @Injectable({

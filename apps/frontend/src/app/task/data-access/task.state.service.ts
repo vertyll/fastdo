@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
 import { PaginationMeta } from '../../shared/types/api-response.type';
-import { Task } from '../models/Task';
+import { Task } from '../defs/task.defs';
 import { TasksApiService } from './task.api.service';
 
 @Injectable({ providedIn: 'root' })

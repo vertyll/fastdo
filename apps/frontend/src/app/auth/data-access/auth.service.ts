@@ -4,11 +4,14 @@ import { Observable, catchError, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RoleEnum } from '../../shared/enums/role.enum';
 import { ApiResponse } from '../../shared/types/api-response.type';
-import { LoginResponse, RegisterResponse } from '../../shared/types/auth.type';
-import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
-import { LoginDto } from '../dtos/login.dto';
-import { RegisterDto } from '../dtos/register.dto';
-import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import {
+  ForgotPasswordPayload,
+  LoginPayload,
+  LoginResponse,
+  RegisterPayload,
+  RegisterResponse,
+  ResetPasswordPayload,
+} from '../defs/auth.defs';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
 import { DEFAULT_BUFFER_TIME } from '../../app.contansts';
@@ -26,7 +29,7 @@ export class AuthService {
 
   private readonly accessToken = signal<string | null>(this.authStateService.getToken());
 
-  public login(dto: LoginDto): Observable<ApiResponse<LoginResponse>> {
+  public login(dto: LoginPayload): Observable<ApiResponse<LoginResponse>> {
     return this.authApiService.login(dto).pipe(
       tap(response => this.setAccessToken(response.data.accessToken)),
       catchError(error => {
@@ -36,7 +39,7 @@ export class AuthService {
     );
   }
 
-  public register(dto: RegisterDto): Observable<ApiResponse<RegisterResponse>> {
+  public register(dto: RegisterPayload): Observable<ApiResponse<RegisterResponse>> {
     return this.authApiService.register(dto);
   }
 
@@ -48,11 +51,11 @@ export class AuthService {
     });
   }
 
-  public forgotPassword(dto: ForgotPasswordDto): Observable<ApiResponse<void>> {
+  public forgotPassword(dto: ForgotPasswordPayload): Observable<ApiResponse<void>> {
     return this.authApiService.forgotPassword(dto);
   }
 
-  public resetPassword(dto: ResetPasswordDto): Observable<ApiResponse<void>> {
+  public resetPassword(dto: ResetPasswordPayload): Observable<ApiResponse<void>> {
     return this.authApiService.resetPassword(dto);
   }
 

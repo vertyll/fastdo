@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
-import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
-import { Project } from '../models/Project';
+import { GetAllProjectsSearchParams, Project } from '../defs/project.defs';
 import { ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
 

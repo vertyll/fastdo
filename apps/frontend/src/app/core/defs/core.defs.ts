@@ -14,4 +14,12 @@ export type File = {
   dateDeletion?: string;
 };
 
-type StorageType = 'LOCAL' | 'CLOUD';
+export type StorageType = 'LOCAL' | 'CLOUD';
+
+export type Language = {
+  id: number;
+  code: string;
+  name: string;
+  isActive: boolean;
+  isDefault: boolean;
+};

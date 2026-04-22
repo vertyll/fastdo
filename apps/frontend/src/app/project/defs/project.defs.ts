@@ -1,5 +1,5 @@
 import { ProjectRolePermissionEnum } from 'src/app/shared/enums/project-role-permission.enum';
-import { File } from '../../core/models/File';
+import { File } from '../../core/defs/core.defs';
 
 export type Project = {
   id: number;
@@ -44,19 +44,32 @@ export type ProjectStatus = {
 
 export type ProjectUserRole = {
   id: number;
-  user: User;
-  projectRole: ProjectRole;
+  user: ProjectUserRoleUser;
+  projectRole: ProjectUserRoleRole;
   dateAssigned?: string;
 };
 
-type ProjectRole = {
+export type ProjectUserRoleRole = {
   id: number;
   code: string;
   name: string;
   description?: string;
 };
 
-type User = {
+export type ProjectUserRoleUser = {
   id: number;
   email: string;
+};
+
+export type GetAllProjectsSearchParams = {
+  q: string;
+  sortBy: 'dateCreation' | 'name' | 'dateModification';
+  orderBy: 'desc' | 'asc';
+  createdFrom?: string;
+  createdTo?: string;
+  updatedFrom?: string;
+  updatedTo?: string;
+  typeIds?: number[];
+  page?: number;
+  pageSize?: number;
 };

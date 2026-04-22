@@ -20,7 +20,7 @@ import { ProjectStatusService } from './data-access/project-status.service';
 import { ProjectTypeService } from './data-access/project-type.service';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
-import { Project } from './models/Project';
+import { Project } from './defs/project.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 import { TranslatableOptionItem, TranslationItem } from '../shared/types/common.type';
 
