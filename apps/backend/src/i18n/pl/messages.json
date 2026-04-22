@@ -111,6 +111,8 @@
       "updaterNotFound": "Aktualizujący nie został znaleziony",
       "updaterNotInNewUsersList": "Aktualizujący nie znajduje się na liście nowych użytkowników",
       "cannotRemoveYourselfFromProject": "Nie możesz usunąć siebie z projektu",
+      "cannotAddYourselfToProject": "Nie możesz dodać siebie do projektu",
+      "cannotModifyOwnProjectRole": "Nie możesz zmienić własnej roli w projekcie",
       "lastManagerCannotBeRemoved": "Nie można usunąć ostatniego menedżera projektu",
       "projectNotFoundOrAccessDenied": "Projekt nie został znaleziony lub odmowa dostępu",
       "accessDeniedToEditPublicProject": "Brak dostępu do edycji publicznego projektu",

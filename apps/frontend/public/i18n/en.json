@@ -162,6 +162,8 @@
     "addUserWithRole": "Add user with role",
     "selectRole": "Select role",
     "cannotRemoveYourself": "You cannot remove yourself from the project",
+    "cannotAddYourself": "You cannot add yourself to the project",
+    "cannotEditYourself": "You cannot edit your own data in the project",
     "image": "Image",
     "dateCreation": "Creation date",
     "dateModification": "Modification date",

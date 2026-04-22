@@ -111,6 +111,8 @@
       "updaterNotFound": "Updater not found",
       "updaterNotInNewUsersList": "Updater not found in new users list",
       "cannotRemoveYourselfFromProject": "You cannot remove yourself from the project",
+      "cannotAddYourselfToProject": "You cannot add yourself to the project",
+      "cannotModifyOwnProjectRole": "You cannot modify your own role in the project",
       "lastManagerCannotBeRemoved": "The last manager of the project cannot be removed",
       "projectNotFoundOrAccessDenied": "Project not found or access denied",
       "accessDeniedToEditPublicProject": "Access denied to edit public project",

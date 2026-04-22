@@ -119,6 +119,8 @@ export type I18nTranslations = {
                 "updaterNotFound": string;
                 "updaterNotInNewUsersList": string;
                 "cannotRemoveYourselfFromProject": string;
+                "cannotAddYourselfToProject": string;
+                "cannotModifyOwnProjectRole": string;
                 "lastManagerCannotBeRemoved": string;
                 "projectNotFoundOrAccessDenied": string;
                 "accessDeniedToEditPublicProject": string;

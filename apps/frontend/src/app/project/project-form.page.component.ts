@@ -585,11 +585,15 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     if (this.currentProject.projectUserRoles) {
+      const currentUserEmail = this.authService.getCurrentUserEmail();
       this.currentProject.projectUserRoles.forEach(projectUserRole => {
+        const isSelf =
+          !!currentUserEmail &&
+          projectUserRole.user.email.trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
         this.usersWithRolesFormArray.push(
           this.fb.group({
-            email: [projectUserRole.user.email, [Validators.required, Validators.email]],
-            role: [projectUserRole.projectRole.id, Validators.required],
+            email: [{ value: projectUserRole.user.email, disabled: isSelf }, [Validators.required, Validators.email]],
+            role: [{ value: projectUserRole.projectRole.id, disabled: isSelf }, Validators.required],
           }),
         );
       });
@@ -698,12 +702,30 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected addUserWithRole(): void {
-    this.usersWithRolesFormArray.push(
-      this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
-        role: ['', [Validators.required]],
-      }),
-    );
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    const notSelfValidator = (control: FormControl): { selfEmail: true } | null => {
+      const value = (control.value || '').trim().toLowerCase();
+      if (currentUserEmail && value && value === currentUserEmail.trim().toLowerCase()) {
+        return { selfEmail: true };
+      }
+      return null;
+    };
+    const group = this.fb.group({
+      email: ['', [Validators.required, Validators.email, notSelfValidator as any]],
+      role: ['', [Validators.required]],
+    });
+    group
+      .get('email')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        if (currentUserEmail && value?.trim().toLowerCase() === currentUserEmail.trim().toLowerCase()) {
+          this.notificationService.showNotification(
+            this.translateService.instant('Project.cannotAddYourself'),
+            NotificationTypeEnum.Error,
+          );
+        }
+      });
+    this.usersWithRolesFormArray.push(group);
   }
 
   protected removeUserWithRole(index: number): void {
@@ -726,8 +748,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     const userControl = this.usersWithRolesFormArray.at(index);
     const userEmail = userControl.get('email')?.value;
     const currentUserEmail = this.authService.getCurrentUserEmail();
-
-    return userEmail === currentUserEmail;
+    if (!userEmail || !currentUserEmail) return false;
+    return String(userEmail).trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
   }
 
   protected onImageSaved(event: { file: File; preview: string | null }): void {
@@ -750,7 +772,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     this.isSubmitting = true;
     this.fieldErrors = {};
 
-    const formData = this.buildProjectFormData(this.projectForm.value);
+    const formData = this.buildProjectFormData(this.projectForm.getRawValue());
     this.submitProjectForm(formData);
   }
 

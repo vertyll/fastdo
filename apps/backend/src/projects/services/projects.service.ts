@@ -462,6 +462,10 @@ export class ProjectsService {
       throw new Error(this.i18n.t('messages.Projects.errors.inviterNotFound'));
     }
 
+    if (usersWithRoles.some(u => u.email === inviter.email)) {
+      throw new Error(this.i18n.t('messages.Projects.errors.cannotAddYourselfToProject'));
+    }
+
     const project = await queryRunner.manager.getRepository(Project).findOne({ where: { id: projectId } });
     const projectName = project?.name || '';
     for (const userWithRole of usersWithRoles) {
@@ -607,27 +611,46 @@ export class ProjectsService {
     currentProjectUsers: ProjectUserRole[],
     updaterId: number,
   ): Promise<void> {
+    const selfExisting = currentProjectUsers.find(cu => cu.user.id === updaterId);
+    if (selfExisting) {
+      const selfInPayload = usersWithRoles.find(u => u.email === selfExisting.user.email);
+      if (selfInPayload && selfInPayload.role !== selfExisting.projectRole.id) {
+        throw new Error(this.i18n.t('messages.Projects.errors.cannotModifyOwnProjectRole'));
+      }
+    }
+
     const newUsersToInvite: { email: string; role: number }[] = [];
     for (const userWithRole of usersWithRoles) {
-      try {
-        const user = await this.usersService.findByEmail(userWithRole.email);
-        if (user) {
-          const existingUserRole = currentProjectUsers.find(cu => cu.user.email === userWithRole.email);
-          if (existingUserRole) {
-            if (existingUserRole.projectRole.id !== userWithRole.role) {
-              existingUserRole.projectRole = { id: userWithRole.role } as any;
-              await queryRunner.manager.getRepository(ProjectUserRole).save(existingUserRole);
-            }
-          } else {
-            newUsersToInvite.push({ email: userWithRole.email, role: userWithRole.role });
-          }
-        }
-      } catch (error) {
-        console.error(`Error updating user ${userWithRole.email}:`, error);
-      }
+      await this.processUserRoleUpdate(queryRunner, userWithRole, currentProjectUsers, updaterId, newUsersToInvite);
     }
     if (newUsersToInvite.length > 0) {
       await this.inviteUsersToProjectWithRoles(queryRunner, projectId, newUsersToInvite, updaterId);
+    }
+  }
+
+  private async processUserRoleUpdate(
+    queryRunner: QueryRunner,
+    userWithRole: { email: string; role: number },
+    currentProjectUsers: ProjectUserRole[],
+    updaterId: number,
+    newUsersToInvite: { email: string; role: number }[],
+  ): Promise<void> {
+    try {
+      const user = await this.usersService.findByEmail(userWithRole.email);
+      if (!user) {
+        return;
+      }
+      const existingUserRole = currentProjectUsers.find(cu => cu.user.email === userWithRole.email);
+      if (!existingUserRole) {
+        newUsersToInvite.push({ email: userWithRole.email, role: userWithRole.role });
+        return;
+      }
+      if (existingUserRole.projectRole.id !== userWithRole.role && existingUserRole.user.id !== updaterId) {
+        existingUserRole.projectRole = { id: userWithRole.role } as any;
+        await queryRunner.manager.getRepository(ProjectUserRole).save(existingUserRole);
+      }
+    } catch (error) {
+      console.error(`Error updating user ${userWithRole.email}:`, error);
     }
   }
 
