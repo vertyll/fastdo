@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ApiResponse } from '../types/api-response.type';
-import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
+import { ApiResponse } from '../defs/api-response.defs';
+import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../defs/notification.defs';
 import { HttpApiService } from './http-api.service';
 
 @Injectable({

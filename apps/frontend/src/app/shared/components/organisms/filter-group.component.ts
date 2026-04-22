@@ -21,7 +21,7 @@ import { FiltersService } from '../../services/filter.service';
 import { PlatformService } from '../../services/platform.service';
 import { ClearFilter, ClearPartial, SavePartial } from '../../store/filter/filter.actions';
 import { FiltersSelectors } from '../../store/filter/filter.selectors';
-import { FilterMetadata, FilterValue } from '../../types/filter.type';
+import { FilterMetadata, FilterValue } from '../../defs/filter.defs';
 import { CheckSelectComponent } from '../molecules/check-select.component';
 import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
 import { InputFieldComponent } from '../molecules/input-field.component';

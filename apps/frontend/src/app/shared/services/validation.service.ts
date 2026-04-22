@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { MessagesConfig } from '../types/validation.type';
+import { MessagesConfig } from '../defs/validation.defs';
 
 @Injectable({
   providedIn: 'root',

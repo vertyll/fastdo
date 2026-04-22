@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { InputType } from '../../types/components.type';
+import { InputType } from '../../defs/components.defs';
 import { InputComponent } from '../atoms/input.component';
 import { LabelComponent } from '../atoms/label.component';
 

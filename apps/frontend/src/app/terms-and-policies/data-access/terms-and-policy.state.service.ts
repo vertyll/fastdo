@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from 'src/app/shared/defs/list-state.defs';
 import { PrivacyPolicy, Terms } from '../defs/terms-and-policies.defs';
 import { TermsAndPolicyApiService } from './terms-and-policy.api.service';
 

@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { InputType } from '../../types/components.type';
+import { InputType } from '../../defs/components.defs';
 
 @Component({
   selector: 'app-input',

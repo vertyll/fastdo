@@ -4,7 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
-import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { TermsAndPolicyService } from './data-access/terms-and-policy.service';
 import { TermsAndPolicyStateService } from './data-access/terms-and-policy.state.service';
 import { LegalSectionEnum } from './defs/terms-and-policies.defs';

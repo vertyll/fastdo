@@ -7,7 +7,7 @@ import { ProjectCategoryService } from 'src/app/project/data-access/project-cate
 import { ProjectStatusService } from 'src/app/project/data-access/project-status.service';
 import { ProjectUserRoleService } from 'src/app/project/data-access/project-user-role.service';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
-import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
+import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from 'src/app/shared/defs/filter.defs';
 import { TaskPriorityService } from '../data-access/task-priority.service';
 
 @Component({

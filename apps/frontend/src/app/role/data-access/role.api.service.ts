@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../shared/types/api-response.type';
-import { Role } from '../../shared/types/entities.type';
+import { ApiResponse } from '../../shared/defs/api-response.defs';
+import { Role } from '../../shared/defs/entities.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 
 @Injectable({

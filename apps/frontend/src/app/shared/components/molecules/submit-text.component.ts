@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { InputType } from '../../types/components.type';
+import { InputType } from '../../defs/components.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { InputComponent } from '../atoms/input.component';
 

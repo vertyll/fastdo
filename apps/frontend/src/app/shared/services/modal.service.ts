@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { ModalConfig, ModalOptions } from '../types/modal.type';
+import { ModalConfig, ModalOptions } from '../defs/modal.defs';
 
 @Injectable({
   providedIn: 'root',

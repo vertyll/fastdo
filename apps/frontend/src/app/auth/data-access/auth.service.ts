@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Observable, catchError, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RoleEnum } from '../../shared/enums/role.enum';
-import { ApiResponse } from '../../shared/types/api-response.type';
+import { ApiResponse } from '../../shared/defs/api-response.defs';
 import {
   ForgotPasswordPayload,
   LoginPayload,

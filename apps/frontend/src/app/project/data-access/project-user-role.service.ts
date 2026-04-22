@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectUserRoleApiService } from './project-user-role.api.service';
-import { ApiResponse } from 'src/app/shared/types/api-response.type';
+import { ApiResponse } from 'src/app/shared/defs/api-response.defs';
 import { ProjectUserRole } from '../defs/project.defs';
 
 @Injectable({

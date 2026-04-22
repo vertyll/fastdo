@@ -1,6 +1,6 @@
 import { File } from '../../core/defs/core.defs';
 import { ProjectCategory, ProjectStatus } from '../../project/defs/project.defs';
-import { ProjectRole } from '../../shared/types/entities.type';
+import { ProjectRole } from '../../shared/defs/entities.defs';
 
 export type Task = {
   id: number;

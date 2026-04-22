@@ -1,4 +1,4 @@
-import { NavModule } from '../shared/types/config.type';
+import { NavModule } from '../shared/defs/config.defs';
 
 export const configNavModules: NavModule[] = [
   {

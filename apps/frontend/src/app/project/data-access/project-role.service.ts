@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectRoleApiService } from './project-role.api.service';
-import { ProjectRole } from 'src/app/shared/types/entities.type';
-import { ApiResponse } from 'src/app/shared/types/api-response.type';
+import { ProjectRole } from 'src/app/shared/defs/entities.defs';
+import { ApiResponse } from 'src/app/shared/defs/api-response.defs';
 
 @Injectable({
   providedIn: 'root',

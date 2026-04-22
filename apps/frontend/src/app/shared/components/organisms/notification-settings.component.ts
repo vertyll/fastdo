@@ -5,7 +5,7 @@ import { Subject, catchError, finalize, of, takeUntil } from 'rxjs';
 import { NotificationTypeEnum } from '../../enums/notification.enum';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
-import { UpdateNotificationSettingsDto } from '../../types/notification.type';
+import { UpdateNotificationSettingsDto } from '../../defs/notification.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { CheckboxComponent } from '../atoms/checkbox.component';
 import { TitleComponent } from '../atoms/title.component';

@@ -19,7 +19,7 @@ import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { NotificationStateService } from '../../services/notification-state.service';
-import { NavModule, NavSection } from '../../types/config.type';
+import { NavModule, NavSection } from '../../defs/config.defs';
 import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 import { ToastComponent } from '../atoms/toast.component';
 import { NotificationDropdownComponent } from './notification-dropdown.component';

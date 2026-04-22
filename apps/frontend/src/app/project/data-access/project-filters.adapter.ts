@@ -1,4 +1,4 @@
-import { PaginationParams, ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
+import { PaginationParams, ProjectListFiltersConfig } from 'src/app/shared/defs/filter.defs';
 import { GetAllProjectsSearchParams } from '../defs/project.defs';
 
 export function getAllProjectsSearchParams(

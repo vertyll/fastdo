@@ -10,7 +10,7 @@ import {
 } from '@ng-icons/heroicons/solid';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DEFAULT_PAGE_SIZE } from '../../../app.contansts';
-import { PaginationParams } from '../../types/filter.type';
+import { PaginationParams } from '../../defs/filter.defs';
 
 @Component({
   selector: 'app-paginator',

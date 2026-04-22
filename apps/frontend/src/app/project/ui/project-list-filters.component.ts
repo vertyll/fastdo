@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
-import { TranslatableOptionItem, TranslationItem } from 'src/app/shared/types/common.type';
-import { PROJECT_LIST_FILTERS, ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
+import { TranslatableOptionItem, TranslationItem } from 'src/app/shared/defs/common.defs';
+import { PROJECT_LIST_FILTERS, ProjectListFiltersConfig } from 'src/app/shared/defs/filter.defs';
 import { ProjectTypeService } from '../data-access/project-type.service';
 
 @Component({

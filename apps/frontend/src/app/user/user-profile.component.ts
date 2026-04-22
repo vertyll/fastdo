@@ -12,7 +12,7 @@ import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ToastService } from '../shared/services/toast.service';
-import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';

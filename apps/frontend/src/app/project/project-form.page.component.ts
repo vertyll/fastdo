@@ -22,7 +22,7 @@ import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { Project } from './defs/project.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
-import { TranslatableOptionItem, TranslationItem } from '../shared/types/common.type';
+import { TranslatableOptionItem, TranslationItem } from '../shared/defs/common.defs';
 
 type LocalizedOptionItem = TranslatableOptionItem & { name: string };
 

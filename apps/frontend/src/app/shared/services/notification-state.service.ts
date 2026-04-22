@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, filter, interval, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { NotificationStatusEnum } from '../enums/notification-status.enum';
-import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
+import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../defs/notification.defs';
 import { NotificationApiService } from './notification-api.service';
 
 @Injectable({

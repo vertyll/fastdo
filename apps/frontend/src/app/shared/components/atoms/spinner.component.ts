@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { SpinnerSize } from '../../types/components.type';
+import { SpinnerSize } from '../../defs/components.defs';
 
 @Component({
   imports: [CommonModule],

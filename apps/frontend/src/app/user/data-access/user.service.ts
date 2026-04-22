@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { ApiResponse } from '../../shared/types/api-response.type';
+import { ApiResponse } from '../../shared/defs/api-response.defs';
 import { User } from '../defs/user.defs';
 import { UserApiService } from './user.api.service';
 import { UserStateService } from './user.state.service';

@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Role } from '../../shared/types/entities.type';
+import { Role } from '../../shared/defs/entities.defs';
 import { RoleApiService } from './role.api.service';
 
 @Injectable({

@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ToastPositionEnum } from '../enums/toast-position.enum';
-import { ToastObject } from '../types/components.type';
+import { ToastObject } from '../defs/components.defs';
 
 @Injectable({
   providedIn: 'root',

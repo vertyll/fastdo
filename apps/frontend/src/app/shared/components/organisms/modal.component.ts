@@ -8,7 +8,7 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
 import { ButtonRoleEnum, ModalInputTypeEnum } from '../../enums/modal.enum';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { ModalService } from '../../services/modal.service';
-import { ModalConfig } from '../../types/modal.type';
+import { ModalConfig } from '../../defs/modal.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { CheckboxComponent } from '../atoms/checkbox.component';
 import { ErrorMessageComponent } from '../atoms/error.message.component';

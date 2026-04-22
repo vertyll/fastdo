@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
-import { PaginationMeta } from '../../shared/types/api-response.type';
+import { LOADING_STATE_VALUE } from 'src/app/shared/defs/list-state.defs';
+import { PaginationMeta } from '../../shared/defs/api-response.defs';
 import { Project } from '../defs/project.defs';
 import { ProjectsApiService } from './project.api.service';
 

@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { LOADING_STATE_VALUE } from 'src/app/shared/types/list-state.type';
+import { LOADING_STATE_VALUE } from 'src/app/shared/defs/list-state.defs';
 import { User } from '../defs/user.defs';
 import { UserApiService } from './user.api.service';
 

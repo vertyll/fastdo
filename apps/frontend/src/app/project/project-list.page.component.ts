@@ -15,11 +15,11 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
 import { ProjectRoleEnum } from '../shared/enums/project-role.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
-import { PaginationMeta } from '../shared/types/api-response.type';
-import { PaginationParams, ProjectListFiltersConfig } from '../shared/types/filter.type';
-import { LOADING_STATE_VALUE } from '../shared/types/list-state.type';
+import { PaginationMeta } from '../shared/defs/api-response.defs';
+import { PaginationParams, ProjectListFiltersConfig } from '../shared/defs/filter.defs';
+import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { GetAllProjectsSearchParams } from './defs/project.defs';
-import { TranslationItem } from '../shared/types/common.type';
+import { TranslationItem } from '../shared/defs/common.defs';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';

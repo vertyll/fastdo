@@ -25,7 +25,7 @@ import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
 import { TaskPayload } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
-import { SimpleNameItem, TranslationItem, TranslatableOptionItem } from '../shared/types/common.type';
+import { SimpleNameItem, TranslationItem, TranslatableOptionItem } from '../shared/defs/common.defs';
 import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.utils';
 
 @Component({

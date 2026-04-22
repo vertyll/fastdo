@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { FilterMetadata } from '../types/filter.type';
+import { FilterMetadata } from '../defs/filter.defs';
 import { FilterTypeEnum } from '../enums/filter-type.enum';
 
 @Injectable({ providedIn: 'root' })

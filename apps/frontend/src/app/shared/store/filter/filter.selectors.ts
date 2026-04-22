@@ -1,5 +1,5 @@
 import { Selector, createSelector } from '@ngxs/store';
-import { FilterModel, FilterStateModel } from '../../types/filter.type';
+import { FilterModel, FilterStateModel } from '../../defs/filter.defs';
 import { FiltersState } from './filter.state';
 
 export class FiltersSelectors {

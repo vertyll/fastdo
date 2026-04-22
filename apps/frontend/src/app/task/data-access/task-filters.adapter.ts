@@ -1,4 +1,4 @@
-import { PaginationParams, TasksListFiltersConfig } from 'src/app/shared/types/filter.type';
+import { PaginationParams, TasksListFiltersConfig } from 'src/app/shared/defs/filter.defs';
 import { GetAllTasksSearchParams } from '../defs/task.defs';
 
 export function getAllTasksSearchParams(

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../shared/types/api-response.type';
+import { ApiResponse } from '../../shared/defs/api-response.defs';
 import { User } from '../defs/user.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 

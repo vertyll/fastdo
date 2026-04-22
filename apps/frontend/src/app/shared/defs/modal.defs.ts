@@ -1,5 +1,5 @@
 import { ButtonRoleEnum, ModalInputTypeEnum } from '../enums/modal.enum';
-import { SimpleNameItem } from './common.type';
+import { SimpleNameItem } from './common.defs';
 
 export interface ModalInput<T = any> {
   id: string;

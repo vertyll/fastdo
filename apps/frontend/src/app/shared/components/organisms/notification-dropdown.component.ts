@@ -12,7 +12,7 @@ import { NotificationTypeEnum } from '../../enums/notification.enum';
 import { ModalService } from '../../services/modal.service';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
-import { NotificationDto } from '../../types/notification.type';
+import { NotificationDto } from '../../defs/notification.defs';
 
 @Component({
   selector: 'app-notification-dropdown',

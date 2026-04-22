@@ -1,4 +1,4 @@
-import { FilterModel } from '../../types/filter.type';
+import { FilterModel } from '../../defs/filter.defs';
 
 export class SavePartial {
   static readonly type = '[Filters] Save Partial';

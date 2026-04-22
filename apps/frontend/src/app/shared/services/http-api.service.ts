@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, signal } from '@angular/core';
 import { Observable, catchError, EMPTY, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { FetchingError } from '../types/list-state.type';
+import { FetchingError } from '../defs/list-state.defs';
 
 export abstract class HttpApiService {
   protected readonly http = inject(HttpClient);
