@@ -241,7 +241,7 @@ import { Task, TaskComment } from './defs/task.defs';
                                 />
                               </div>
                               <div class="flex flex-wrap gap-2 mb-2">
-                                @for (att of editingCommentAttachments; track att.id) {
+                                @for (att of editingCommentExistingAttachments; track att.id) {
                                   <div
                                     class="relative flex items-center border border-border-primary dark:border-dark-border-primary rounded-lg px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 shadow-sm transition-all duration-200 group w-full mb-2"
                                     [class.opacity-50]="att._markedForDelete"
