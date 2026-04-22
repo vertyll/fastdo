@@ -226,6 +226,10 @@ interface NameColorFormItem {
             @for (_ of usersWithRolesFormArray.controls; track $index) {
               <div
                 class="flex flex-col sm:flex-row gap-3 sm:items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
+                [class.opacity-60]="isCurrentUser($index)"
+                [class.pointer-events-none]="isCurrentUser($index)"
+                [attr.aria-disabled]="isCurrentUser($index) ? 'true' : null"
+                [title]="isCurrentUser($index) ? ('Project.cannotEditYourself' | translate) : null"
               >
                 <div class="flex-1">
                   <app-input-field
