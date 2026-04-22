@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { DestroyRef, Injectable, PLATFORM_ID, effect, inject, signal } from '@angular/core';
+import { DestroyRef, Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -31,17 +31,6 @@ export class PlatformService {
           this.updateIsMobile();
         });
     }
-
-    effect(() => {
-      const platform = this.platformSignal();
-      const isBrowser = this.isPlatformBrowserSignal();
-      const isMobile = this.isMobileSignal();
-      console.debug('Platform state updated:', {
-        platform,
-        isBrowser,
-        isMobile,
-      });
-    });
   }
 
   private updateIsMobile(): void {
