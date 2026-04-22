@@ -46,6 +46,12 @@ describe('JwtMiddleware', () => {
     jwtService = module.get(JwtService);
     i18nService = module.get(I18nService);
     mockNext.mockClear();
+
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should return 401 with translated message when invalid token is provided', () => {

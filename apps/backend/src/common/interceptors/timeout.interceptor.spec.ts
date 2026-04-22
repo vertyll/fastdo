@@ -34,6 +34,7 @@ describe('TimeoutInterceptor', () => {
   });
 
   it('should throw RequestTimeoutException if response exceeds timeout limit', done => {
+    jest.useFakeTimers();
     (mockCallHandler.handle as jest.Mock).mockReturnValue(new Observable(() => {}));
 
     interceptor.intercept(mockContext, mockCallHandler).subscribe({
@@ -42,9 +43,12 @@ describe('TimeoutInterceptor', () => {
       },
       error: error => {
         expect(error).toBeInstanceOf(RequestTimeoutException);
+        jest.useRealTimers();
         done();
       },
     });
+
+    jest.advanceTimersByTime(3001);
   });
 
   it('should pass other errors', done => {

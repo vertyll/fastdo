@@ -61,6 +61,8 @@ describe('MailSenderService', () => {
     templateService = module.get(IMailTemplateToken);
     mailConfig = module.get(MailConfigService);
     logger = module.get(MailLoggerToken);
+
+    jest.spyOn(service as any, 'delay').mockResolvedValue(undefined);
   });
 
   afterEach(() => {

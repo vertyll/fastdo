@@ -1,4 +1,4 @@
-import { ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { I18nContext } from 'nestjs-i18n';
 import { HttpExceptionFilter } from './http-exception.filter';
 
@@ -32,8 +32,13 @@ describe('HttpExceptionFilter', () => {
     } as ArgumentsHost;
 
     jest.spyOn(I18nContext, 'current').mockReturnValue(mockI18n);
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
 
     filter = new HttpExceptionFilter();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should format basic http exception', () => {

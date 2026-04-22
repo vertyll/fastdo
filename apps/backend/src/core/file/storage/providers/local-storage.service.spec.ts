@@ -63,6 +63,12 @@ describe('LocalStorageService', () => {
     });
 
     (join as jest.Mock).mockImplementation((...args) => args.join('/'));
+
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('uploadFile', () => {
