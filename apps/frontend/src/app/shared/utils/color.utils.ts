@@ -10,11 +10,21 @@ function getLuminance(r: number, g: number, b: number): number {
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }
 
+const HEX_3_REGEX = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+const HEX_6_REGEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+
+const COLOR_BLACK = '#000000';
+const COLOR_WHITE = '#FFFFFF';
+const LUMINANCE_THRESHOLD = 0.5;
+const MAX_COLOR_VALUE = 255;
+
 /**
  * Converts hex color to RGB values
  */
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const fullHex = hex.replace(HEX_3_REGEX, (_, r, g, b) => r + r + g + g + b + b);
+  const result = HEX_6_REGEX.exec(fullHex);
+
   return result
     ? {
         r: Number.parseInt(result[1], 16),
@@ -32,18 +42,18 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
  */
 export function getContrastColor(backgroundColor: string): string {
   if (!backgroundColor) {
-    return '#000000';
+    return COLOR_BLACK;
   }
 
   const rgb = hexToRgb(backgroundColor);
   if (!rgb) {
-    return '#000000';
+    return COLOR_BLACK;
   }
 
   const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
 
-  // If luminance is greater than 0.5, use black text, otherwise use white
-  return luminance > 0.5 ? '#000000' : '#FFFFFF';
+  // If luminance is greater than threshold, use black text, otherwise use white
+  return luminance > LUMINANCE_THRESHOLD ? COLOR_BLACK : COLOR_WHITE;
 }
 
 /**
@@ -57,10 +67,12 @@ export function addOpacity(color: string, opacity: number = 0.2): string {
     return color;
   }
 
-  const hex = color.replace('#', '');
-  const alpha = Math.round(opacity * 255)
+  const fullHex = color.replace(HEX_3_REGEX, (_, r, g, b) => r + r + g + g + b + b);
+  const cleanHex = fullHex.replace('#', '');
+
+  const alpha = Math.round(opacity * MAX_COLOR_VALUE)
     .toString(16)
     .padStart(2, '0');
 
-  return `#${hex}${alpha}`;
+  return `#${cleanHex}${alpha}`;
 }

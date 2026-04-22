@@ -32,6 +32,7 @@ import { CustomDatePipe } from '../../pipes/custom-date.pipe';
 import { PlatformService } from '../../services/platform.service';
 import { ThemeService } from '../../services/theme.service';
 import { ImageComponent } from './image.component';
+import { ThemeEnum } from '../../enums/theme.enum';
 
 export interface TableColumn {
   key: string;
@@ -459,6 +460,7 @@ export interface TableConfig {
       }
 
       .text-content {
+        --max-lines: 2;
         word-wrap: break-word;
         overflow-wrap: break-word;
         hyphens: auto;
@@ -467,7 +469,7 @@ export interface TableConfig {
 
       .text-content.truncated {
         display: -webkit-box;
-        -webkit-line-clamp: var(--max-lines, 2);
+        -webkit-line-clamp: var(--max-lines);
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
@@ -958,7 +960,7 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
 
   private readonly themeService = inject(ThemeService);
   private readonly platformService = inject(PlatformService);
-  protected readonly isDarkMode = computed(() => this.themeService.currentTheme === 'dark');
+  protected readonly isDarkMode = computed(() => this.themeService.currentTheme === ThemeEnum.Dark);
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
   private selection: any[] = [];
@@ -1305,8 +1307,4 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
 
     return this.isMobile() ? 1 : 3;
   }
-
-  protected trackByFunction = (index: number, item: any): any => {
-    return item.id || item.uuid || index;
-  };
 }

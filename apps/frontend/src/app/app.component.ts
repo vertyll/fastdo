@@ -19,31 +19,39 @@ import { LocalStorageService } from './shared/services/local-storage.service';
   `,
 })
 export class AppComponent implements OnDestroy {
+  private readonly selectedLanguageKey = 'selected_language';
+  private readonly availableLanguages: string[] = environment.availableLanguages;
+  private readonly defaultLanguage: string = environment.defaultLanguage;
+
   private readonly translateService = inject(TranslateService);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly autoLogoutService = inject(AutoLogoutService);
 
   constructor() {
+    this.registerLocales();
+    this.initializeLanguage();
+  }
+
+  private registerLocales(): void {
     registerLocaleData(localePl, 'pl');
     registerLocaleData(localeEn, 'en');
+  }
 
-    const availableLanguages: string[] = environment.availableLanguages;
-    const defaultLanguage: string = environment.defaultLanguage;
+  private initializeLanguage(): void {
+    this.translateService.addLangs(this.availableLanguages);
+    this.translateService.setFallbackLang(this.defaultLanguage);
 
-    this.translateService.addLangs(availableLanguages);
-    this.translateService.setFallbackLang(defaultLanguage);
-
-    const savedLanguage: string = this.localStorageService.get<string>('selected_language', '');
-
-    if (savedLanguage && availableLanguages.includes(savedLanguage)) {
+    const savedLanguage: string = this.localStorageService.get<string>(this.selectedLanguageKey, '');
+    if (savedLanguage && this.availableLanguages.includes(savedLanguage)) {
       this.translateService.use(savedLanguage);
-    } else {
-      const browserLang = this.translateService.getBrowserLang() || '';
-      const matchedLang = availableLanguages.includes(browserLang) ? browserLang : defaultLanguage;
-
-      this.translateService.use(matchedLang);
-      this.localStorageService.set('selected_language', matchedLang);
+      return;
     }
+
+    const browserLang = this.translateService.getBrowserLang() || '';
+    const matchedLang = this.availableLanguages.includes(browserLang) ? browserLang : this.defaultLanguage;
+
+    this.translateService.use(matchedLang);
+    this.localStorageService.set(this.selectedLanguageKey, matchedLang);
   }
 
   ngOnDestroy(): void {

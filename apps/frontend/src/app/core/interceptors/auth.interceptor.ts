@@ -1,9 +1,17 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { TokenRefreshService } from '../../shared/services/token-refresh.service';
+
+const PUBLIC_ENDPOINTS = [
+  '/api/auth/login',
+  '/api/auth/refresh-token',
+  '/api/auth/register',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password',
+];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenRefreshService = inject(TokenRefreshService);
@@ -11,13 +19,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   req = req.clone({ withCredentials: true });
 
-  if (
-    req.url.includes('/api/auth/login') ||
-    req.url.includes('/api/auth/refresh-token') ||
-    req.url.includes('/api/auth/register') ||
-    req.url.includes('/api/auth/forgot-password') ||
-    req.url.includes('/api/auth/reset-password')
-  ) {
+  const isPublicEndpoint = PUBLIC_ENDPOINTS.some(endpoint => req.url.includes(endpoint));
+
+  if (isPublicEndpoint) {
     return next(req);
   }
 
@@ -30,7 +34,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !req.url.includes('/api/auth/refresh-token')) {
+      if (error.status === HttpStatusCode.Unauthorized && !req.url.includes('/api/auth/refresh-token')) {
         return tokenRefreshService.refreshToken(req, next);
       }
       return throwError(() => error);

@@ -1,6 +1,3 @@
-/*
- * Interface
- */
 export interface ApiResponse<T> {
   data: T;
   statusCode: number;
@@ -15,9 +12,6 @@ export interface ApiPaginatedResponse<T> {
   pagination: PaginationMeta;
 }
 
-/*
- * Type
- */
 export type PaginationMeta = {
   total: number;
   page: number;

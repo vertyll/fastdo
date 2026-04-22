@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FilterMetadata } from '../types/filter.type';
+import { FilterTypeEnum } from '../enums/filter-type.enum';
 
 @Injectable({ providedIn: 'root' })
 export class FiltersService {
   public createForm(filters: FilterMetadata[]): FormGroup {
     const group: any = {};
     filters.forEach(filter => {
-      if (filter.type === 'editableMultiSelect') {
+      if (filter.type === FilterTypeEnum.EditableMultiSelect) {
         group[filter.formControlName] = new FormControl(filter.defaultValue || []);
       } else {
         group[filter.formControlName] = new FormControl(filter.defaultValue || '');
@@ -19,7 +20,8 @@ export class FiltersService {
   public createDefaultFormValues(filters: FilterMetadata[]): any {
     const values: any = {};
     filters.forEach(filter => {
-      values[filter.formControlName] = filter.defaultValue || (filter.type === 'editableMultiSelect' ? [] : '');
+      values[filter.formControlName] =
+        filter.defaultValue || (filter.type === FilterTypeEnum.EditableMultiSelect ? [] : '');
     });
     return values;
   }

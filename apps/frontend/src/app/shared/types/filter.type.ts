@@ -1,8 +1,5 @@
 import { FilterTypeEnum } from '../enums/filter-type.enum';
 
-/*
- * Interface
- */
 export interface FilterMap {
   [type: string]: FilterModel;
 }
@@ -26,9 +23,6 @@ export interface FilterMetadata {
 
 export type FilterStateModel = FilterMap;
 
-/*
- * Type
- */
 export type FilterModel = {
   [key: string]: any;
 };
@@ -65,9 +59,6 @@ export type PaginationParams = {
   pageSize: number;
 };
 
-/*
- * Const
- */
 export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
     type: FilterTypeEnum.Text,

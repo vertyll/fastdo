@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { DestroyRef, Injectable, PLATFORM_ID, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT } from '../../app.contansts';
 
 @Injectable({
@@ -25,7 +26,7 @@ export class PlatformService {
       this.updateIsMobile();
 
       fromEvent(globalThis, 'resize')
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(debounceTime(150), takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           this.updateIsMobile();
         });

@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, output } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,6 +16,7 @@ import { TaskPriorityService } from '../data-access/task-priority.service';
   template: ` <app-filter-group [filters]="filters" [type]="'tasks'" (filterChange)="onFiltersChange($event)" /> `,
 })
 export class TasksListFiltersComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly translateService = inject(TranslateService);
   private readonly taskPriorityService = inject(TaskPriorityService);
   private readonly projectStatusService = inject(ProjectStatusService);
@@ -50,7 +52,7 @@ export class TasksListFiltersComponent implements OnInit {
     this.taskPriorityService.getAll().subscribe({
       next: priorities => {
         this.prioritiesRaw = priorities.data || [];
-        this.updatePriorityOptionsForCurrentLang();
+        this.refreshLocalizedOptionsForCurrentLang();
       },
       error: err => {
         console.error('Error fetching task priorities:', err);
@@ -63,7 +65,7 @@ export class TasksListFiltersComponent implements OnInit {
     this.projectStatusService.getByProjectId(this.projectId).subscribe({
       next: statuses => {
         this.statusesRaw = statuses.data || [];
-        this.updateStatusOptionsForCurrentLang();
+        this.refreshLocalizedOptionsForCurrentLang();
       },
       error: err => {
         console.error('Error fetching project statuses:', err);
@@ -94,7 +96,7 @@ export class TasksListFiltersComponent implements OnInit {
     this.projectCategoryService.getByProjectId(this.projectId).subscribe({
       next: categories => {
         this.categoriesRaw = categories.data || [];
-        this.updateCategoryOptionsForCurrentLang();
+        this.refreshLocalizedOptionsForCurrentLang();
       },
       error: err => {
         console.error('Error fetching project categories:', err);
@@ -103,38 +105,23 @@ export class TasksListFiltersComponent implements OnInit {
   }
 
   private setupLanguageSubscription(): void {
-    this.translateService.onLangChange.subscribe(() => {
-      this.updatePriorityOptionsForCurrentLang();
-      this.updateStatusOptionsForCurrentLang();
-      this.updateCategoryOptionsForCurrentLang();
+    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.refreshLocalizedOptionsForCurrentLang();
     });
   }
 
-  private updatePriorityOptionsForCurrentLang(): void {
+  private refreshLocalizedOptionsForCurrentLang(): void {
     const lang = this.translateService.getCurrentLang() || 'pl';
-    this.filters.find(filter => filter.formControlName === 'priorityIds')!.multiselectOptions = (
-      this.prioritiesRaw || []
-    ).map((item: any) => ({
-      id: item.id,
-      name: item.translations?.find((t: any) => t.lang === lang)?.name,
-    }));
+    this.updateLocalizedOptions('priorityIds', this.prioritiesRaw, lang);
+    this.updateLocalizedOptions('statusIds', this.statusesRaw, lang);
+    this.updateLocalizedOptions('categoryIds', this.categoriesRaw, lang);
   }
 
-  private updateStatusOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    this.filters.find(filter => filter.formControlName === 'statusIds')!.multiselectOptions = (
-      this.statusesRaw || []
-    ).map((item: any) => ({
-      id: item.id,
-      name: item.translations?.find((t: any) => t.lang === lang)?.name,
-    }));
-  }
+  private updateLocalizedOptions(formControlName: string, items: any[], lang: string): void {
+    const filter = this.filters.find(item => item.formControlName === formControlName);
+    if (!filter) return;
 
-  private updateCategoryOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    this.filters.find(filter => filter.formControlName === 'categoryIds')!.multiselectOptions = (
-      this.categoriesRaw || []
-    ).map((item: any) => ({
+    filter.multiselectOptions = (items || []).map((item: any) => ({
       id: item.id,
       name: item.translations?.find((t: any) => t.lang === lang)?.name,
     }));

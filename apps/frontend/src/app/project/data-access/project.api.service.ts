@@ -1,49 +1,45 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable, catchError, tap, throwError } from 'rxjs';
-import { FetchingError } from 'src/app/shared/types/list-state.type';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/types/api-response.type';
 import { User } from '../../shared/types/entities.type';
 import { GetAllProjectsSearchParams } from '../../shared/types/project.type';
 import { Project } from '../models/Project';
+import { HttpApiService } from '../../shared/services/http-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectsApiService {
-  private readonly URL = environment.backendUrl + '/api';
-  private readonly http = inject(HttpClient);
-  readonly $idle = signal(true);
-  readonly $loading = signal(false);
-  readonly $error = signal<FetchingError | null>(null);
-
+export class ProjectsApiService extends HttpApiService {
   public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Project>>> {
     return this.withLoadingState(
-      this.http.get<ApiResponse<ApiPaginatedResponse<Project>>>(`${this.URL}/projects`, {
+      this.http.get<ApiResponse<ApiPaginatedResponse<Project>>>(`${this.baseUrl}/projects`, {
         params: searchParams,
       }),
     );
   }
 
   public delete(projectId: number): Observable<ApiResponse<void>> {
-    return this.withLoadingState(this.http.delete<ApiResponse<void>>(`${this.URL}/projects/${projectId}`));
+    return this.withLoadingState(this.http.delete<ApiResponse<void>>(`${this.baseUrl}/projects/${projectId}`));
   }
 
   public update(projectId: number, name: string): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, { name }));
+    return this.withLoadingState(
+      this.http.patch<ApiResponse<Project>>(`${this.baseUrl}/projects/${projectId}`, { name }),
+    );
   }
 
   public updateFull(projectId: number, formData: FormData): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(this.http.patch<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`, formData));
+    return this.withLoadingState(
+      this.http.patch<ApiResponse<Project>>(`${this.baseUrl}/projects/${projectId}`, formData),
+    );
   }
 
   public add(formData: FormData): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(this.http.post<ApiResponse<Project>>(`${this.URL}/projects`, formData));
+    return this.withLoadingState(this.http.post<ApiResponse<Project>>(`${this.baseUrl}/projects`, formData));
   }
 
   public getById(projectId: number): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}`));
+    return this.withLoadingState(this.http.get<ApiResponse<Project>>(`${this.baseUrl}/projects/${projectId}`));
   }
 
   public getByIdWithDetails(projectId: number, lang?: string): Observable<ApiResponse<Project>> {
@@ -52,36 +48,23 @@ export class ProjectsApiService {
       params['lang'] = lang;
     }
     return this.withLoadingState(
-      this.http.get<ApiResponse<Project>>(`${this.URL}/projects/${projectId}/details`, { params }),
+      this.http.get<ApiResponse<Project>>(`${this.baseUrl}/projects/${projectId}/details`, { params }),
     );
   }
 
   public getProjectUsers(projectId: number): Observable<ApiResponse<User[]>> {
-    return this.withLoadingState(this.http.get<ApiResponse<User[]>>(`${this.URL}/projects/${projectId}/users`));
+    return this.withLoadingState(this.http.get<ApiResponse<User[]>>(`${this.baseUrl}/projects/${projectId}/users`));
   }
 
   public acceptInvitation(body: { invitationId: number }): Observable<ApiResponse<void>> {
-    return this.withLoadingState(this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/accept`, body));
+    return this.withLoadingState(
+      this.http.post<ApiResponse<void>>(`${this.baseUrl}/projects/invitations/accept`, body),
+    );
   }
 
   public rejectInvitation(body: { invitationId: number }): Observable<ApiResponse<void>> {
-    return this.withLoadingState(this.http.post<ApiResponse<void>>(`${this.URL}/projects/invitations/reject`, body));
-  }
-
-  private withLoadingState<T>(source$: Observable<T>): Observable<T> {
-    this.$idle.set(false);
-    this.$error.set(null);
-    this.$loading.set(true);
-
-    return source$.pipe(
-      catchError((e: HttpErrorResponse) => {
-        this.$error.set({ message: e.message, status: e.status });
-        this.$loading.set(false);
-        return throwError(() => e);
-      }),
-      tap(() => {
-        this.$loading.set(false);
-      }),
+    return this.withLoadingState(
+      this.http.post<ApiResponse<void>>(`${this.baseUrl}/projects/invitations/reject`, body),
     );
   }
 }

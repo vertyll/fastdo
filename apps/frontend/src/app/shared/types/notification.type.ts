@@ -31,15 +31,6 @@ export interface NotificationSettingsDto {
   systemNotifications: boolean;
 }
 
-export interface CreateNotificationDto {
-  type: string;
-  title: string;
-  message: string;
-  recipientId: number;
-  data?: any;
-  sendEmail?: boolean;
-}
-
 export interface UpdateNotificationSettingsDto {
   appNotifications?: boolean;
   emailNotifications?: boolean;

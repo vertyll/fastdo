@@ -5,11 +5,6 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/data-access/auth.service';
 import { AuthStateService } from '../../auth/data-access/auth.state.service';
 
-export interface NotificationEvent {
-  type: 'notification.created' | 'notification.read' | 'notification.updated';
-  data: any;
-}
-
 @Injectable({
   providedIn: 'root',
 })

@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ToastPositionEnum } from '../enums/toast-position.enum';
 import { ToastObject } from '../types/components.type';
 
@@ -17,13 +18,11 @@ export class ToastService {
 
   private readonly router = inject(Router);
   private readonly toastSignal = signal<ToastObject>(this.initialState);
-  public toast = computed(() => this.toastSignal());
+  public readonly toast = computed(() => this.toastSignal());
 
   constructor() {
-    this.router.events.subscribe(val => {
-      if (val instanceof NavigationEnd) {
-        this.hideToast();
-      }
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.hideToast();
     });
   }
 
@@ -41,7 +40,7 @@ export class ToastService {
     });
 
     if (position === ToastPositionEnum.Fixed) {
-      window.scroll({
+      globalThis.scrollTo({
         top: 0,
         left: 0,
         behavior: 'smooth',

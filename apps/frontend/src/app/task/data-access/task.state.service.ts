@@ -57,7 +57,6 @@ export class TasksStateService {
 
   public setPagination(pagination: PaginationMeta): void {
     this.paginationSignal.set(pagination);
-    // Use hasMore from API if available, otherwise fallback to page calculation
     const hasMore = pagination.hasMore ?? pagination.page < pagination.totalPages - 1;
     this.hasMoreSignal.set(hasMore);
   }

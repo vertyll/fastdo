@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
 import { heroUserCircle } from '@ng-icons/heroicons/outline';
@@ -156,7 +157,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                       }
                     }
 
-                    @if (LOADING_STATE_VALUE.ERROR) {
+                    @if (stateService.error()) {
                       <app-error-message [customMessage]="stateService.error()?.message" />
                     }
                   </div>
@@ -200,9 +201,11 @@ export class UserProfileComponent implements OnInit {
   private readonly passwordValidator = inject(PasswordValidator);
   private readonly translateService = inject(TranslateService);
   private readonly platformService = inject(PlatformService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
   protected readonly user = computed(() => this.stateService.user());
+  protected readonly isMobile = this.platformService.isMobile;
   protected isEditing = false;
   protected selectedFile: File | null = null;
   protected avatarRemoved: boolean = false;
@@ -220,20 +223,14 @@ export class UserProfileComponent implements OnInit {
       newPassword: [null, [this.passwordValidator.validatePassword]],
       confirmNewPassword: [null],
     });
-
-    this.profileForm.valueChanges.subscribe(() => {
-      this.passwordErrors = this.getPasswordErrors('password');
-      this.newPasswordErrors = this.getPasswordErrors('newPassword');
-      this.confirmNewPasswordErrors = this.getConfirmNewPasswordErrors();
-    });
   }
 
   ngOnInit(): void {
     this.loadUserProfile();
-  }
 
-  private loadUserProfile(): void {
-    this.userService.getCurrentUser().subscribe();
+    this.profileForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.updateFormErrors();
+    });
   }
 
   protected toggleEdit(): void {
@@ -263,58 +260,66 @@ export class UserProfileComponent implements OnInit {
     if (this.isCropping || !this.profileForm.valid) {
       return;
     }
-    if (this.profileForm.valid) {
-      const formData = new FormData();
-      let hasChanges = false;
 
-      if (this.profileForm.get('email')?.dirty && this.profileForm.get('email')?.value !== this.user()?.email) {
-        formData.append('email', this.profileForm.get('email')?.value);
-        hasChanges = true;
-      }
+    const formData = new FormData();
+    let hasChanges = false;
 
-      if (this.profileForm.get('password')?.value) {
-        formData.append('password', this.profileForm.get('password')?.value);
-        hasChanges = true;
-      }
-
-      if (this.profileForm.get('newPassword')?.dirty) {
-        formData.append('newPassword', this.profileForm.get('newPassword')?.value);
-        hasChanges = true;
-      }
-
-      const hadAvatar = !!this.user()?.avatar;
-      if (this.selectedFile) {
-        formData.append('avatar', this.selectedFile);
-        hasChanges = true;
-      } else if (hadAvatar && this.avatarRemoved) {
-        formData.append('avatar', 'null');
-        hasChanges = true;
-      }
-
-      if (hasChanges) {
-        this.userService.updateProfile(formData).subscribe({
-          next: () => {
-            this.isEditing = false;
-            this.selectedFile = null;
-            this.profileForm.reset();
-            this.toastService.presentToast(this.translateService.instant('Profile.updateSuccess'), true);
-          },
-          error: err => {
-            this.toastService.presentToast(err.error.message || this.translateService.instant('Profile.updateError'));
-          },
-        });
-      } else {
-        this.isEditing = false;
-      }
+    const emailControl = this.profileForm.get('email');
+    if (emailControl?.dirty && emailControl.value !== this.user()?.email) {
+      formData.append('email', emailControl.value);
+      hasChanges = true;
     }
-  }
 
-  protected isMobile(): boolean {
-    return this.platformService.isMobile();
+    const passwordControl = this.profileForm.get('password');
+    if (passwordControl?.value) {
+      formData.append('password', passwordControl.value);
+      hasChanges = true;
+    }
+
+    const newPasswordControl = this.profileForm.get('newPassword');
+    if (newPasswordControl?.dirty) {
+      formData.append('newPassword', newPasswordControl.value);
+      hasChanges = true;
+    }
+
+    const hadAvatar = !!this.user()?.avatar;
+    if (this.selectedFile) {
+      formData.append('avatar', this.selectedFile);
+      hasChanges = true;
+    } else if (hadAvatar && this.avatarRemoved) {
+      formData.append('avatar', 'null');
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      this.userService.updateProfile(formData).subscribe({
+        next: () => {
+          this.isEditing = false;
+          this.selectedFile = null;
+          this.profileForm.reset();
+          this.toastService.presentToast(this.translateService.instant('Profile.updateSuccess'), true);
+        },
+        error: err => {
+          this.toastService.presentToast(err.error.message || this.translateService.instant('Profile.updateError'));
+        },
+      });
+    } else {
+      this.isEditing = false;
+    }
   }
 
   protected getFormControl(name: string): FormControl {
     return this.profileForm.get(name) as FormControl;
+  }
+
+  private updateFormErrors(): void {
+    this.passwordErrors = this.getPasswordErrors('password');
+    this.newPasswordErrors = this.getPasswordErrors('newPassword');
+    this.confirmNewPasswordErrors = this.getConfirmNewPasswordErrors();
+  }
+
+  private loadUserProfile(): void {
+    this.userService.getCurrentUser().subscribe();
   }
 
   private getPasswordErrors(controlName: string): string[] {

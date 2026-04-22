@@ -1,42 +1,39 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { LabelComponent } from '../shared/components/atoms/label.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { ToastPositionEnum } from '../shared/enums/toast-position.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
+import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, TitleComponent, LabelComponent],
+  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, TitleComponent, InputFieldComponent],
   template: `
     <div
       class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-surface-primary dark:bg-dark-surface-primary"
     >
       <app-title [text]="'Auth.resetPassword' | translate"></app-title>
-      <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
-        <app-label forId="password">{{ 'Auth.newPassword' | translate }}:</app-label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          required
-          class="input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
-
-        <app-label forId="confirmPassword"> {{ 'Auth.confirmNewPassword' | translate }}: </app-label>
-        <input
-          id="confirmPassword"
-          type="password"
-          formControlName="confirmPassword"
-          required
-          class="mb-4 input-field bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary block w-full h-12 px-2 py-4 text-sm transition-colors duration-200 text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-        />
+      <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="flex flex-col gap-4 mb-4">
+          <app-input-field
+            [label]="'Auth.newPassword' | translate"
+            [control]="getControl('password')"
+            [type]="'password'"
+            [id]="'password'"
+          ></app-input-field>
+          <app-input-field
+            [label]="'Auth.confirmNewPassword' | translate"
+            [control]="getControl('confirmPassword')"
+            [type]="'password'"
+            [id]="'confirmPassword'"
+          ></app-input-field>
+        </div>
 
         @if (passwordMismatch) {
           <app-error-message [customMessage]="'Auth.passwordDoNotMatch' | translate" />
@@ -93,10 +90,12 @@ export class ResetPasswordComponent implements OnInit {
     });
 
     this.resetPasswordForm.valueChanges.subscribe(() => {
-      this.checkPasswords();
-      this.errorMessage = null;
-      this.passwordErrors = this.getPasswordErrors();
+      this.updateFormErrors();
     });
+  }
+
+  protected getControl(name: string): FormControl {
+    return this.resetPasswordForm.get(name) as FormControl;
   }
 
   protected onSubmit(): void {
@@ -125,27 +124,41 @@ export class ResetPasswordComponent implements OnInit {
     }
   }
 
+  private updateFormErrors(): void {
+    this.checkPasswords();
+    this.errorMessage = null;
+    this.passwordErrors = this.getPasswordErrors();
+  }
+
   private checkPasswords(): void {
     const password = this.resetPasswordForm.get('password')?.value;
     const confirmPassword = this.resetPasswordForm.get('confirmPassword')?.value;
     this.passwordMismatch = password !== confirmPassword;
   }
 
-  private getPasswordErrors(): string[] {
-    const passwordControl = this.resetPasswordForm.get('password');
+  private getControlErrors(
+    controlName: string,
+    errorKeyMap: Record<string, string>,
+    checkTouched: boolean = false,
+  ): string[] {
+    const control = this.resetPasswordForm.get(controlName);
     const errors: string[] = [];
-    if (passwordControl?.hasError('required')) {
-      errors.push(this.translateService.instant('Auth.passwordRequired'));
-    }
-    if (passwordControl?.hasError('minlength')) {
-      errors.push(this.translateService.instant('Auth.passwordMinLength'));
-    }
-    if (passwordControl?.hasError('uppercase')) {
-      errors.push(this.translateService.instant('Auth.passwordUppercase'));
-    }
-    if (passwordControl?.hasError('specialCharacter')) {
-      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
+    if (control && (!checkTouched || control.touched)) {
+      for (const [error, translateKey] of Object.entries(errorKeyMap)) {
+        if (control.hasError(error)) {
+          errors.push(this.translateService.instant(translateKey));
+        }
+      }
     }
     return errors;
+  }
+
+  private getPasswordErrors(): string[] {
+    return this.getControlErrors('password', {
+      required: 'Auth.passwordRequired',
+      minlength: 'Auth.passwordMinLength',
+      uppercase: 'Auth.passwordUppercase',
+      specialCharacter: 'Auth.passwordSpecialCharacter',
+    });
   }
 }

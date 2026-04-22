@@ -1,8 +1,5 @@
 import { RoleEnum } from '../enums/role.enum';
 
-/*
- * Interface
- */
 export interface RegisterResponse {
   email: string;
   password: string;
@@ -15,10 +12,6 @@ export interface RegisterResponse {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-}
-
-export interface RefreshTokenResponse {
-  accessToken: string;
 }
 
 export interface AuthState {

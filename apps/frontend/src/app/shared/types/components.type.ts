@@ -1,9 +1,5 @@
 import { ToastPositionEnum } from '../enums/toast-position.enum';
 
-/*
- * Type
- */
-
 export type InputType =
   | 'text'
   | 'number'
@@ -20,10 +16,6 @@ export type InputType =
   | 'color';
 
 export type SpinnerSize = 'small' | 'medium' | 'large';
-
-/*
- * Interface
- */
 
 export interface ToastObject {
   message: string;

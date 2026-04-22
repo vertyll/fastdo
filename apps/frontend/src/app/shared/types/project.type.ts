@@ -1,7 +1,3 @@
-/*
- * Type
- */
-
 export type GetAllProjectsSearchParams = {
   q: string;
   sortBy: 'dateCreation' | 'name' | 'dateModification';

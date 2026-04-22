@@ -37,7 +37,7 @@ export type TaskPriority = {
   id: number;
   name: string;
   color: string;
-  code: TaskPriorityCode;
+  code: TaskPriorityCodeEnum;
 };
 
 export type TaskComment = {
@@ -49,4 +49,8 @@ export type TaskComment = {
   attachments: File[];
 };
 
-type TaskPriorityCode = 'low' | 'medium' | 'high';
+export enum TaskPriorityCodeEnum {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+}

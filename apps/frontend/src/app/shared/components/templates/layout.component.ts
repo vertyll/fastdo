@@ -1,7 +1,6 @@
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { RoleService } from 'src/app/role/data-access/role.service';
 import { CookieBannerComponent } from '../molecules/cookie-banner.component';
@@ -9,6 +8,7 @@ import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 import { FooterComponent } from '../organisms/footer.component';
 import { InfoPanelComponent } from '../organisms/info-panel.component';
 import { NavbarComponent } from '../organisms/navbar.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-layout',
@@ -23,11 +23,11 @@ import { NavbarComponent } from '../organisms/navbar.component';
       </main>
       <app-info-panel
         [panelOpen]="panelOpen"
-        [togglePanel]="togglePanel.bind(this)"
+        [togglePanel]="togglePanel"
         [userRolesString]="userRolesString()"
         [currentTime]="currentTime()"
         [browserInfo]="browserInfo"
-        [isLoggedIn]="isLoggedIn.bind(this)"
+        [isLoggedIn]="isLoggedIn"
       />
       <app-cookie-banner />
       <app-scroll-to-top />
@@ -35,14 +35,12 @@ import { NavbarComponent } from '../organisms/navbar.component';
     </div>
   `,
 })
-export class LayoutComponent implements OnInit, OnDestroy {
+export class LayoutComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly translateService = inject(TranslateService);
   protected readonly roleService = inject(RoleService);
   protected readonly router = inject(Router);
-
-  private rolesSubscription: Subscription | undefined;
-  private timeIntervalId: number | undefined;
+  private readonly destroyRef = inject(DestroyRef);
 
   protected isLoggedIn = this.authService.isLoggedIn;
   protected userRoles = this.authService.userRoles;
@@ -74,29 +72,24 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
 
-    this.timeIntervalId = globalThis.setInterval(() => this.updateTime(), 1000);
-  }
-
-  ngOnDestroy(): void {
-    this.rolesSubscription?.unsubscribe();
-
-    if (this.timeIntervalId) {
-      clearInterval(this.timeIntervalId);
-    }
+    const timeIntervalId = globalThis.setInterval(() => this.updateTime(), 1000);
+    this.destroyRef.onDestroy(() => clearInterval(timeIntervalId));
   }
 
   private loadRoles(): void {
-    const currentLang = this.translateService.getCurrentLang() || 'en';
-    this.rolesSubscription = this.roleService.getAllRoles(currentLang).subscribe({
-      error: error => {
-        console.warn('Failed to load roles:', error);
-      },
-    });
+    this.roleService
+      .getAllRoles()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: error => {
+          console.warn('Failed to load roles:', error);
+        },
+      });
   }
 
-  protected togglePanel(): void {
+  protected togglePanel = (): void => {
     this.panelOpen = !this.panelOpen;
-  }
+  };
 
   private updateTime(): void {
     this.currentTime.set(new Date().toLocaleTimeString());

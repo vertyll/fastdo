@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, catchError, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { RoleEnum } from '../../shared/enums/role.enum';
 import { ApiResponse } from '../../shared/types/api-response.type';
 import { LoginResponse, RegisterResponse } from '../../shared/types/auth.type';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
@@ -10,6 +11,7 @@ import { RegisterDto } from '../dtos/register.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
+import { DEFAULT_BUFFER_TIME } from '../../app.contansts';
 
 @Injectable({
   providedIn: 'root',
@@ -92,13 +94,8 @@ export class AuthService {
       return null;
     }
 
-    try {
-      const decoded: any = jwtDecode(token);
-      return decoded.email || null;
-    } catch (error) {
-      console.error('Failed to decode token for email:', error);
-      return null;
-    }
+    const decoded = this.tryDecodeToken<{ email?: string }>(token);
+    return decoded?.email || null;
   }
 
   public clearAuthState(): void {
@@ -108,15 +105,11 @@ export class AuthService {
   }
 
   public isTokenExpired(token: string): boolean {
-    try {
-      const decoded: any = jwtDecode(token);
-      if (!decoded.exp) return true;
+    const decoded = this.tryDecodeToken<{ exp?: number }>(token);
+    if (!decoded?.exp) return true;
 
-      const bufferTime = environment.refreshToken.bufferTime || 60 * 1000;
-      return Date.now() >= decoded.exp * 1000 - bufferTime;
-    } catch {
-      return true;
-    }
+    const bufferTime = environment.refreshToken.bufferTime || DEFAULT_BUFFER_TIME;
+    return Date.now() >= decoded.exp * 1000 - bufferTime;
   }
 
   private setAccessToken(token: string): void {
@@ -127,31 +120,37 @@ export class AuthService {
   }
 
   private decodeToken(token: string): void {
-    try {
-      const decoded: any = jwtDecode(token);
-      this.authStateService.setLoggedIn(true);
-      this.authStateService.setRoles(decoded.roles || []);
-    } catch (error) {
-      console.error('Failed to decode token:', error);
+    const decoded = this.tryDecodeToken<{ roles?: RoleEnum[] }>(token);
+    if (!decoded) {
       this.clearAuthState();
+      return;
     }
+
+    this.authStateService.setLoggedIn(true);
+    this.authStateService.setRoles(decoded.roles || []);
   }
 
   private setupRefreshTokenTimer(token: string): void {
     this.stopRefreshTokenTimer();
 
-    try {
-      const decoded: any = jwtDecode(token);
-      const bufferTime = environment.refreshToken.bufferTime || 60 * 1000;
-      const expiresInMs = decoded.exp * 1000 - Date.now() - bufferTime;
+    const decoded = this.tryDecodeToken<{ exp?: number }>(token);
+    if (!decoded?.exp) return;
 
-      if (expiresInMs > 0) {
-        this.refreshTokenTimeout = setTimeout(() => {
-          this.refreshToken().subscribe();
-        }, expiresInMs);
-      }
-    } catch (error) {
-      console.error('Failed to set up refresh token timer:', error);
+    const bufferTime = environment.refreshToken.bufferTime || DEFAULT_BUFFER_TIME;
+    const expiresInMs = decoded.exp * 1000 - Date.now() - bufferTime;
+
+    if (expiresInMs > 0) {
+      this.refreshTokenTimeout = setTimeout(() => {
+        this.refreshToken().subscribe();
+      }, expiresInMs);
+    }
+  }
+
+  private tryDecodeToken<T>(token: string): T | null {
+    try {
+      return jwtDecode<T>(token);
+    } catch {
+      return null;
     }
   }
 

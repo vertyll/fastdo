@@ -1,56 +1,63 @@
-import { Injectable, signal } from '@angular/core';
-import { Theme } from '../types/common.type';
+import { Injectable, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ThemeEnum } from '../enums/theme.enum';
 import { LocalStorageService } from './local-storage.service';
+import { THEME_KEY } from '../../app.contansts';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  private readonly storageKey = 'theme';
-  private readonly defaultTheme: Theme = 'light';
+  private readonly DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)';
+  private readonly defaultTheme: ThemeEnum = ThemeEnum.Light;
 
-  private readonly currentThemeSignal = signal<Theme>(this.defaultTheme);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly document = inject(DOCUMENT);
 
-  constructor(private readonly localStorageService: LocalStorageService) {
+  private readonly currentThemeSignal = signal<ThemeEnum>(this.defaultTheme);
+
+  constructor() {
     this.initializeTheme();
   }
 
-  public get currentTheme(): Theme {
+  public get currentTheme(): ThemeEnum {
     return this.currentThemeSignal();
   }
 
   public toggleTheme(): void {
-    const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+    const newTheme = this.currentTheme === ThemeEnum.Light ? ThemeEnum.Dark : ThemeEnum.Light;
     this.setTheme(newTheme);
   }
 
-  public setTheme(theme: Theme): void {
+  public setTheme(theme: ThemeEnum): void {
     this.currentThemeSignal.set(theme);
-    this.localStorageService.set(this.storageKey, theme);
+    this.localStorageService.set(THEME_KEY, theme);
 
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === ThemeEnum.Dark) {
+      this.document.documentElement.classList.add(ThemeEnum.Dark);
     } else {
-      document.documentElement.classList.remove('dark');
+      this.document.documentElement.classList.remove(ThemeEnum.Dark);
     }
   }
 
   private initializeTheme(): void {
-    const savedTheme = this.localStorageService.get<Theme>(this.storageKey, this.defaultTheme);
+    const savedTheme = this.localStorageService.get<ThemeEnum>(THEME_KEY, this.defaultTheme);
 
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+    if (savedTheme && Object.values(ThemeEnum).includes(savedTheme)) {
       this.setTheme(savedTheme);
       return;
     }
 
-    if (globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-      this.setTheme('dark');
+    const mediaQuery = globalThis.matchMedia?.(this.DARK_MODE_MEDIA_QUERY);
+
+    if (mediaQuery?.matches) {
+      this.setTheme(ThemeEnum.Dark);
     } else {
-      this.setTheme('light');
+      this.setTheme(ThemeEnum.Light);
     }
 
-    globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      this.setTheme(e.matches ? 'dark' : 'light');
+    mediaQuery?.addEventListener('change', e => {
+      this.setTheme(e.matches ? ThemeEnum.Dark : ThemeEnum.Light);
     });
   }
 }

@@ -1,7 +1,9 @@
-import { Component, OnInit, inject, output } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
+import { TranslatableOptionItem, TranslationItem } from 'src/app/shared/types/common.type';
 import { PROJECT_LIST_FILTERS, ProjectListFiltersConfig } from 'src/app/shared/types/filter.type';
 import { ProjectTypeService } from '../data-access/project-type.service';
 
@@ -11,21 +13,22 @@ import { ProjectTypeService } from '../data-access/project-type.service';
   template: ` <app-filter-group [filters]="filters" [type]="'projects'" (filterChange)="onFiltersChange($event)" /> `,
 })
 export class ProjectsListFiltersComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly translateService = inject(TranslateService);
   private readonly projectTypeService = inject(ProjectTypeService);
 
   protected readonly filtersChange = output<ProjectListFiltersConfig>();
 
   protected filters = PROJECT_LIST_FILTERS;
-  protected projectTypesRaw: any[] = [];
+  protected projectTypesRaw: TranslatableOptionItem[] = [];
 
   ngOnInit(): void {
     this.getProjectTypes();
     this.setupLanguageSubscription();
   }
 
-  protected onFiltersChange(filters: Record<string, any>): void {
-    this.filtersChange.emit(filters as ProjectListFiltersConfig);
+  protected onFiltersChange(filters: Record<string, unknown>): void {
+    this.filtersChange.emit(filters as unknown as ProjectListFiltersConfig);
   }
 
   private getProjectTypes(): void {
@@ -41,19 +44,28 @@ export class ProjectsListFiltersComponent implements OnInit {
   }
 
   private setupLanguageSubscription(): void {
-    this.translateService.onLangChange.subscribe(() => {
+    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateProjectTypeOptionsForCurrentLang();
     });
   }
 
   private updateProjectTypeOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    this.filters.find(filter => filter.formControlName === 'typeIds')!.multiselectOptions = (
-      this.projectTypesRaw || []
-    ).map((item: any) => ({
+    const lang = this.translateService.getCurrentLang();
+    const typeFilter = this.filters.find(filter => filter.formControlName === 'typeIds');
+    if (!typeFilter) return;
+
+    typeFilter.multiselectOptions = (this.projectTypesRaw || []).map(item => ({
       id: item.id,
-      name:
-        item.translations?.find((t: any) => t.lang === lang)?.name || item.translations?.[0]?.name || item.name || '',
+      name: this.getLocalizedName(item, lang),
     }));
+  }
+
+  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
+    return (
+      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
+      item.translations?.[0]?.name ||
+      item.name ||
+      ''
+    );
   }
 }

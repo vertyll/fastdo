@@ -22,6 +22,15 @@ import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { Project } from './models/Project';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
+import { TranslatableOptionItem, TranslationItem } from '../shared/types/common.type';
+
+type LocalizedOptionItem = TranslatableOptionItem & { name: string };
+
+interface NameColorFormItem {
+  id?: number;
+  name?: string;
+  color?: string;
+}
 
 @Component({
   selector: 'app-project-form-page',
@@ -114,7 +123,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
             {{ 'Project.categories' | translate }}
           </span>
           <div formArrayName="categories" class="space-y-3" role="group" aria-labelledby="categories-label">
-            @for (category of categoriesFormArray.controls; track $index) {
+            @for (_ of categoriesFormArray.controls; track $index) {
               <div
                 class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
@@ -162,7 +171,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
             {{ 'Project.statuses' | translate }}
           </span>
           <div formArrayName="statuses" class="space-y-3" role="group" aria-labelledby="statuses-label">
-            @for (status of statusesFormArray.controls; track $index) {
+            @for (_ of statusesFormArray.controls; track $index) {
               <div
                 class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
@@ -214,7 +223,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
             }}
           </p>
           <div formArrayName="usersWithRoles" class="space-y-3">
-            @for (userWithRole of usersWithRolesFormArray.controls; track $index) {
+            @for (_ of usersWithRolesFormArray.controls; track $index) {
               <div
                 class="flex flex-col sm:flex-row gap-3 sm:items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
               >
@@ -351,14 +360,14 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   private readonly destroy$ = new Subject<void>();
 
   protected projectForm!: FormGroup;
-  protected projectTypesRaw: any[] = [];
-  protected projectStatusesRaw: any[] = [];
-  protected projectCategoriesRaw: any[] = [];
-  protected projectRolesRaw: any[] = [];
-  protected projectTypes: any[] = [];
-  protected projectStatuses: any[] = [];
-  protected projectCategories: any[] = [];
-  protected projectRoles: any[] = [];
+  protected projectTypesRaw: TranslatableOptionItem[] = [];
+  protected projectStatusesRaw: TranslatableOptionItem[] = [];
+  protected projectCategoriesRaw: TranslatableOptionItem[] = [];
+  protected projectRolesRaw: TranslatableOptionItem[] = [];
+  protected projectTypes: LocalizedOptionItem[] = [];
+  protected projectStatuses: LocalizedOptionItem[] = [];
+  protected projectCategories: LocalizedOptionItem[] = [];
+  protected projectRoles: LocalizedOptionItem[] = [];
   protected isSubmitting: boolean = false;
   protected isEditMode: boolean = false;
   protected projectId: number | null = null;
@@ -481,22 +490,40 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
   private updateOptionsForCurrentLang(): void {
     const lang = this.translateService.getCurrentLang() || 'pl';
-    this.projectTypes = (this.projectTypesRaw || []).map((type: any) => ({
-      ...type,
-      name: type.translations?.find((t: any) => t.lang === lang)?.name || type.translations?.[0]?.name || '',
+    this.projectTypes = this.mapToLocalizedOptions(this.projectTypesRaw, lang);
+    this.projectRoles = this.mapToLocalizedOptions(this.projectRolesRaw, lang);
+    this.projectStatuses = this.mapToLocalizedOptions(this.projectStatusesRaw, lang);
+    this.projectCategories = this.mapToLocalizedOptions(this.projectCategoriesRaw, lang);
+  }
+
+  private mapToLocalizedOptions(items: TranslatableOptionItem[], lang: string): LocalizedOptionItem[] {
+    return (items || []).map(item => ({
+      ...item,
+      name: this.getLocalizedName(item, lang),
     }));
-    this.projectRoles = (this.projectRolesRaw || []).map((role: any) => ({
-      ...role,
-      name: role.translations?.find((t: any) => t.lang === lang)?.name || role.translations?.[0]?.name || '',
-    }));
-    this.projectStatuses = (this.projectStatusesRaw || []).map((status: any) => ({
-      ...status,
-      name: status.translations?.find((t: any) => t.lang === lang)?.name || status.translations?.[0]?.name || '',
-    }));
-    this.projectCategories = (this.projectCategoriesRaw || []).map((cat: any) => ({
-      ...cat,
-      name: cat.translations?.find((t: any) => t.lang === lang)?.name || cat.translations?.[0]?.name || '',
-    }));
+  }
+
+  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
+    return (
+      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
+      item.translations?.[0]?.name ||
+      ''
+    );
+  }
+
+  private serializeNameColorItems(
+    items: unknown,
+    defaultColor: string,
+  ): Array<{ id?: number; name: string; color: string }> {
+    if (!Array.isArray(items)) return [];
+
+    return (items as NameColorFormItem[])
+      .filter(item => item.name?.trim())
+      .map(item => ({
+        ...(item.id ? { id: item.id } : {}),
+        name: item.name!.trim(),
+        color: item.color || defaultColor,
+      }));
   }
 
   private loadProject(): void {
@@ -718,14 +745,16 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected onSubmit(): void {
-    if (this.projectForm.invalid || this.isSubmitting || this.isCropping) {
-      return;
-    }
+    if (this.projectForm.invalid || this.isSubmitting || this.isCropping) return;
 
     this.isSubmitting = true;
     this.fieldErrors = {};
-    const formValue = this.projectForm.value;
 
+    const formData = this.buildProjectFormData(this.projectForm.value);
+    this.submitProjectForm(formData);
+  }
+
+  private buildProjectFormData(formValue: any): FormData {
     const formData = new FormData();
 
     formData.append('name', formValue.name);
@@ -737,80 +766,52 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       formData.append('typeId', formValue.typeId);
     }
 
-    if (formValue.categories && Array.isArray(formValue.categories)) {
-      const categories = formValue.categories
-        .filter((cat: any) => cat.name?.trim())
-        .map((cat: any) => ({
-          ...(cat.id ? { id: cat.id } : {}),
-          name: cat.name.trim(),
-          color: cat.color || '#3B82F6',
-        }));
-      formData.append('categories', JSON.stringify(categories));
-    } else {
-      formData.append('categories', JSON.stringify([]));
-    }
+    formData.append('categories', JSON.stringify(this.serializeNameColorItems(formValue.categories, '#3B82F6')));
+    formData.append('statuses', JSON.stringify(this.serializeNameColorItems(formValue.statuses, '#10B981')));
 
-    if (formValue.statuses && Array.isArray(formValue.statuses)) {
-      const statuses = formValue.statuses
-        .filter((status: any) => status.name?.trim())
-        .map((status: any) => ({
-          ...(status.id ? { id: status.id } : {}),
-          name: status.name.trim(),
-          color: status.color || '#10B981',
-        }));
-      formData.append('statuses', JSON.stringify(statuses));
-    } else {
-      formData.append('statuses', JSON.stringify([]));
-    }
+    this.appendUsersWithRoles(formData, formValue.usersWithRoles);
+    this.appendUserEmails(formData, formValue.userEmails);
+    this.appendIcon(formData);
 
-    if (formValue.usersWithRoles && Array.isArray(formValue.usersWithRoles)) {
-      const usersWithRoles = formValue.usersWithRoles
-        .filter((userWithRole: any) => userWithRole.email?.trim())
-        .map((userWithRole: any) => ({
-          email: userWithRole.email.trim(),
-          role: userWithRole.role,
-        }));
-      formData.append('usersWithRoles', JSON.stringify(usersWithRoles));
-    }
+    return formData;
+  }
 
-    if (formValue.userEmails && Array.isArray(formValue.userEmails)) {
-      formValue.userEmails
-        .filter((userEmail: any) => userEmail.email?.trim())
-        .forEach((userEmail: any) => {
-          formData.append('userEmails', userEmail.email.trim());
-        });
-    }
+  private appendUsersWithRoles(formData: FormData, usersWithRoles: unknown): void {
+    if (!Array.isArray(usersWithRoles)) return;
 
+    const payload = usersWithRoles
+      .filter((userWithRole: any) => userWithRole.email?.trim())
+      .map((userWithRole: any) => ({
+        email: userWithRole.email.trim(),
+        role: userWithRole.role,
+      }));
+
+    formData.append('usersWithRoles', JSON.stringify(payload));
+  }
+
+  private appendUserEmails(formData: FormData, userEmails: unknown): void {
+    if (!Array.isArray(userEmails)) return;
+
+    userEmails
+      .filter((userEmail: any) => userEmail.email?.trim())
+      .forEach((userEmail: any) => {
+        formData.append('userEmails', userEmail.email.trim());
+      });
+  }
+
+  private appendIcon(formData: FormData): void {
     const hadIcon = !!this.currentProject?.icon?.url;
     if (this.selectedIconFile) {
       formData.append('icon', this.selectedIconFile);
-    } else if (hadIcon && this.iconRemoved) {
-      formData.append('icon', 'null');
+      return;
     }
 
-    const handleError = (error: any, isUpdate: boolean): void => {
-      this.isSubmitting = false;
-      if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
-        this.fieldErrors = {};
-        error.error.errors.message.forEach((errObj: any) => {
-          if (errObj.field && Array.isArray(errObj.errors)) {
-            this.fieldErrors[errObj.field] = errObj.errors;
-          }
-        });
-      } else {
-        const errorMessage =
-          error.error?.message || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
-        if (
-          typeof errorMessage === 'string' &&
-          errorMessage.toLowerCase().includes('user') &&
-          errorMessage.toLowerCase().includes('not found')
-        ) {
-          this.fieldErrors['usersWithRoles'] = [errorMessage];
-        }
-        this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
-      }
-    };
+    if (hadIcon && this.iconRemoved) {
+      formData.append('icon', 'null');
+    }
+  }
 
+  private submitProjectForm(formData: FormData): void {
     if (this.isEditMode && this.projectId) {
       this.projectsService
         .updateFull(this.projectId, formData)
@@ -822,29 +823,54 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
             this.router.navigate(['/projects']).then();
             this.isSubmitting = false;
           },
-          error: error => handleError(error, true),
+          error: error => this.handleSubmitError(error, true),
           complete: () => {
             this.isSubmitting = false;
           },
         });
-    } else {
-      this.projectsService
-        .add(formData)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: response => {
-            this.projectsStateService.addProject(response.data);
-            const successMessage = this.translateService.instant('Project.addSuccess');
-            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
-            this.router.navigate(['/projects']).then();
-            this.isSubmitting = false;
-          },
-          error: error => handleError(error, false),
-          complete: () => {
-            this.isSubmitting = false;
-          },
-        });
+      return;
     }
+
+    this.projectsService
+      .add(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.projectsStateService.addProject(response.data);
+          const successMessage = this.translateService.instant('Project.addSuccess');
+          this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
+          this.router.navigate(['/projects']).then();
+          this.isSubmitting = false;
+        },
+        error: error => this.handleSubmitError(error, false),
+        complete: () => {
+          this.isSubmitting = false;
+        },
+      });
+  }
+
+  private handleSubmitError(error: any, isUpdate: boolean): void {
+    this.isSubmitting = false;
+    if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
+      this.fieldErrors = {};
+      error.error.errors.message.forEach((errObj: any) => {
+        if (errObj.field && Array.isArray(errObj.errors)) {
+          this.fieldErrors[errObj.field] = errObj.errors;
+        }
+      });
+      return;
+    }
+
+    const errorMessage =
+      error.error?.message || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
+    if (
+      typeof errorMessage === 'string' &&
+      errorMessage.toLowerCase().includes('user') &&
+      errorMessage.toLowerCase().includes('not found')
+    ) {
+      this.fieldErrors['usersWithRoles'] = [errorMessage];
+    }
+    this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
   }
 
   protected cancel(): void {

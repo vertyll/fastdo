@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroChevronUp } from '@ng-icons/heroicons/outline';
 import { TranslatePipe } from '@ngx-translate/core';
+import { SCROLL_TO_TOP_THRESHOLD } from '../../../app.contansts';
 
 @Component({
   selector: 'app-scroll-to-top',
@@ -39,7 +40,7 @@ export class ScrollToTopComponent {
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
-    this.isVisible = window.scrollY > 300;
+    this.isVisible = window.scrollY > SCROLL_TO_TOP_THRESHOLD;
   }
 
   scrollToTop(): void {

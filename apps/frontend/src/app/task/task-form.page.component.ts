@@ -25,11 +25,8 @@ import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
 import { AddTaskDto } from './dtos/add-task.dto';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
-
-interface SelectOption {
-  id: number;
-  name: string;
-}
+import { SimpleNameItem, TranslationItem, TranslatableOptionItem } from '../shared/types/common.type';
+import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.utils';
 
 @Component({
   selector: 'app-task-form',
@@ -69,8 +66,8 @@ interface SelectOption {
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
           <div class="relative">
             <app-textarea-field
-              id="additionalDescription"
-              [control]="additionalDescriptionControl"
+              id="description"
+              [control]="descriptionControl"
               [label]="'Task.taskDescription' | translate"
             />
             <app-error-message [input]="descriptionControl" />
@@ -340,20 +337,21 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
 
-  readonly prioritiesRaw = signal<any[]>([]);
-  readonly categoriesRaw = signal<any[]>([]);
-  readonly statusesRaw = signal<any[]>([]);
-  readonly accessRolesRaw = signal<any[]>([]);
-  readonly priorities = signal<SelectOption[]>([]);
-  readonly categories = signal<SelectOption[]>([]);
-  readonly statuses = signal<SelectOption[]>([]);
-  readonly accessRoles = signal<SelectOption[]>([]);
-  readonly projectUsers = signal<SelectOption[]>([]);
+  readonly prioritiesRaw = signal<TranslatableOptionItem[]>([]);
+  readonly categoriesRaw = signal<TranslatableOptionItem[]>([]);
+  readonly statusesRaw = signal<TranslatableOptionItem[]>([]);
+  readonly accessRolesRaw = signal<TranslatableOptionItem[]>([]);
+  readonly priorities = signal<SimpleNameItem[]>([]);
+  readonly categories = signal<SimpleNameItem[]>([]);
+  readonly statuses = signal<SimpleNameItem[]>([]);
+  readonly accessRoles = signal<SimpleNameItem[]>([]);
+  readonly projectUsers = signal<SimpleNameItem[]>([]);
   readonly attachments = signal<FileUploadItem[]>([]);
   readonly existingAttachments = signal<any[]>([]);
   readonly attachmentsToDelete = signal<string[]>([]);
 
   protected readonly maxAttachmentsLimit = 4;
+  protected readonly formatFileSize = formatFileSizeUtil;
 
   taskForm: FormGroup = this.fb.group({
     description: ['', [Validators.required]],
@@ -393,7 +391,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   get priorityOptions(): Array<{ value: number; label: string }> {
-    return this.priorities().map((item: any) => ({
+    return this.priorities().map(item => ({
       value: item.id,
       label: item.name,
     }));
@@ -414,6 +412,13 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeRouteContext();
+    this.initializeFormDefaults();
+    this.loadOptions();
+    this.setupLanguageSubscription();
+  }
+
+  private initializeRouteContext(): void {
     const projectIdParam = this.route.snapshot.paramMap.get('id');
     const taskIdParam = this.route.snapshot.paramMap.get('taskId');
     this.projectId.set(projectIdParam);
@@ -422,19 +427,14 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     if (projectIdParam) {
       this.taskForm.patchValue({ projectId: +projectIdParam });
     }
+  }
 
-    this.taskForm.patchValue({ accessRole: null });
-    this.taskForm.patchValue({ statusId: null });
-
-    const mediumPriority = this.prioritiesRaw().find((p: any) => p.code === TaskPriorityEnum.MEDIUM);
-    if (mediumPriority) {
-      this.taskForm.patchValue({ priorityId: mediumPriority.id });
-    } else {
-      this.taskForm.patchValue({ priorityId: null });
-    }
-
-    this.loadOptions();
-    this.setupLanguageSubscription();
+  private initializeFormDefaults(): void {
+    this.taskForm.patchValue({
+      accessRole: null,
+      statusId: null,
+      priorityId: null,
+    });
   }
 
   ngOnDestroy(): void {
@@ -484,14 +484,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     return imageExtensions.some(ext => filename.toLowerCase().endsWith(ext));
   }
 
-  protected formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
   protected getMaxNewFiles(): number {
     const maxTotal = this.maxAttachmentsLimit;
     const existing = this.existingAttachments().length;
@@ -527,7 +519,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     const currentTaskId = this.taskId();
 
     if (!currentProjectId) {
-      this.error.set('Projekt jest wymagany dla wszystkich zadań');
+      this.error.set(this.translateService.instant('Task.projectRequiredError'));
       this.submitting.set(false);
       return;
     }
@@ -580,7 +572,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const currentPriority = this.taskForm.get('priorityId')?.value;
           if (currentPriority == null) {
             const mediumPriorityRaw = (prioritiesRes.data || []).find(
-              (item: any) => item.code === TaskPriorityEnum.MEDIUM,
+              (item: TranslatableOptionItem) => item.code === TaskPriorityEnum.MEDIUM,
             );
             if (mediumPriorityRaw) {
               this.taskForm.patchValue({ priorityId: mediumPriorityRaw.id });
@@ -589,7 +581,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         },
         error: error => {
           console.error('Error loading priorities:', error);
-          this.error.set('Błąd podczas ładowania priorytetów');
+          this.error.set(this.translateService.instant('Task.loadError'));
         },
       });
 
@@ -603,7 +595,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         },
         error: error => {
           console.error('Error loading access roles:', error);
-          this.error.set('Błąd podczas ładowania ról dostępu');
+          this.error.set(this.translateService.instant('Task.loadError'));
         },
       });
 
@@ -618,7 +610,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           },
           error: error => {
             console.error('Error loading categories:', error);
-            this.error.set('Błąd podczas ładowania kategorii');
+            this.error.set(this.translateService.instant('Task.loadError'));
           },
         });
 
@@ -632,7 +624,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           },
           error: error => {
             console.error('Error loading statuses:', error);
-            this.error.set('Błąd podczas ładowania statusów');
+            this.error.set(this.translateService.instant('Task.loadError'));
           },
         });
 
@@ -645,7 +637,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           },
           error: error => {
             console.error('Error loading project users:', error);
-            this.error.set('Błąd podczas ładowania użytkowników projektu');
+            this.error.set(this.translateService.instant('Task.loadError'));
           },
         });
 
@@ -669,7 +661,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const data = response.data;
           let priorityId = data.priority?.id ?? null;
           if (!data.priority) {
-            const mediumPriority = this.prioritiesRaw().find((p: any) => p.code === TaskPriorityEnum.MEDIUM);
+            const mediumPriority = this.prioritiesRaw().find(p => p.code === TaskPriorityEnum.MEDIUM);
             if (mediumPriority) {
               priorityId = mediumPriority.id;
             }
@@ -707,30 +699,14 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         },
         error: error => {
           console.error('Error loading task data:', error);
-          this.error.set('Błąd podczas ładowania danych zadania');
+          this.error.set(this.translateService.instant('Task.loadError'));
           this.loading.set(false);
         },
       });
   }
 
   private createTask(taskData: AddTaskDto): void {
-    const formData = new FormData();
-
-    Object.keys(taskData).forEach(key => {
-      const value = (taskData as any)[key];
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          const jsonValue = JSON.stringify(value);
-          formData.append(key, jsonValue);
-        } else {
-          formData.append(key, value.toString());
-        }
-      }
-    });
-
-    this.attachments().forEach(attachment => {
-      formData.append('attachments', attachment.file);
-    });
+    const formData = this.buildTaskFormData(taskData);
 
     this.tasksService
       .addWithFiles(formData)
@@ -762,29 +738,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
   private updateTask(taskId: number, taskData: AddTaskDto): void {
     const { projectId: _projectId, ...updateData } = taskData;
-
-    const formData = new FormData();
-
-    Object.keys(updateData).forEach(key => {
-      const value = (updateData as any)[key];
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          const jsonValue = JSON.stringify(value);
-          formData.append(key, jsonValue);
-        } else {
-          formData.append(key, value.toString());
-        }
-      }
-    });
-
-    this.attachments().forEach(attachment => {
-      formData.append('attachments', attachment.file);
-    });
-
-    const attachmentsToDelete = this.attachmentsToDelete();
-    if (attachmentsToDelete.length > 0) {
-      formData.append('attachmentsToDelete', JSON.stringify(attachmentsToDelete));
-    }
+    const formData = this.buildTaskFormData(updateData, true);
 
     this.tasksService
       .updateWithFiles(taskId, formData)
@@ -815,6 +769,34 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  private buildTaskFormData(taskData: Partial<AddTaskDto>, includeAttachmentsToDelete = false): FormData {
+    const formData = new FormData();
+
+    Object.keys(taskData).forEach(key => {
+      const value = (taskData as any)[key];
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value.toString());
+        }
+      }
+    });
+
+    this.attachments().forEach(attachment => {
+      formData.append('attachments', attachment.file);
+    });
+
+    if (includeAttachmentsToDelete) {
+      const attachmentsToDelete = this.attachmentsToDelete();
+      if (attachmentsToDelete.length > 0) {
+        formData.append('attachmentsToDelete', JSON.stringify(attachmentsToDelete));
+      }
+    }
+
+    return formData;
+  }
+
   private handleSubmissionError(error: any): void {
     const messages = error?.error?.errors?.message ?? [];
     if (Array.isArray(messages) && messages.length > 0) {
@@ -827,7 +809,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
       this.error.set(null);
     } else {
-      const errorMessage = error?.error?.errors?.error || error?.error?.message || error?.message || 'Wystąpił błąd';
+      const errorMessage =
+        error?.error?.errors?.error ||
+        error?.error?.message ||
+        error?.message ||
+        this.translateService.instant('Task.unknownError');
       this.error.set(errorMessage);
       this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
     }
@@ -837,36 +823,25 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private updateOptionsForCurrentLang(): void {
     const lang = this.translateService.getCurrentLang() || 'pl';
 
-    this.priorities.set(
-      (this.prioritiesRaw() || []).map((item: any) => ({
-        id: item.id,
-        name:
-          item.translations?.find((t: any) => t.lang === lang)?.name || item.translations?.[0]?.name || item.name || '',
-      })),
-    );
+    this.priorities.set(this.mapToLocalizedSelectOptions(this.prioritiesRaw(), lang));
+    this.categories.set(this.mapToLocalizedSelectOptions(this.categoriesRaw(), lang));
+    this.statuses.set(this.mapToLocalizedSelectOptions(this.statusesRaw(), lang));
+    this.accessRoles.set(this.mapToLocalizedSelectOptions(this.accessRolesRaw(), lang));
+  }
 
-    this.categories.set(
-      (this.categoriesRaw() || []).map((item: any) => ({
-        id: item.id,
-        name:
-          item.translations?.find((t: any) => t.lang === lang)?.name || item.translations?.[0]?.name || item.name || '',
-      })),
-    );
+  private mapToLocalizedSelectOptions(items: TranslatableOptionItem[], lang: string): SimpleNameItem[] {
+    return (items || []).map(item => ({
+      id: item.id,
+      name: this.getLocalizedName(item, lang),
+    }));
+  }
 
-    this.statuses.set(
-      (this.statusesRaw() || []).map((item: any) => ({
-        id: item.id,
-        name:
-          item.translations?.find((t: any) => t.lang === lang)?.name || item.translations?.[0]?.name || item.name || '',
-      })),
-    );
-
-    this.accessRoles.set(
-      (this.accessRolesRaw() || []).map((item: any) => ({
-        id: item.id,
-        name:
-          item.translations?.find((t: any) => t.lang === lang)?.name || item.translations?.[0]?.name || item.name || '',
-      })),
+  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
+    return (
+      item.translations?.find((t: TranslationItem) => t.lang === lang)?.name ||
+      item.translations?.[0]?.name ||
+      item.name ||
+      ''
     );
   }
 }

@@ -1,25 +1,13 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../types/api-response.type';
-import {
-  CreateNotificationDto,
-  NotificationDto,
-  NotificationSettingsDto,
-  UpdateNotificationSettingsDto,
-} from '../types/notification.type';
+import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../types/notification.type';
+import { HttpApiService } from './http-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NotificationApiService {
-  private readonly http = inject(HttpClient);
-
-  private get baseUrl(): string {
-    return `${environment.backendUrl}/api`;
-  }
-
+export class NotificationApiService extends HttpApiService {
   public getNotifications(): Observable<NotificationDto[]> {
     return this.http
       .get<ApiResponse<NotificationDto[]>>(`${this.baseUrl}/notifications/me`)
@@ -51,12 +39,6 @@ export class NotificationApiService {
   public updateSettings(settings: UpdateNotificationSettingsDto): Observable<NotificationSettingsDto> {
     return this.http
       .patch<ApiResponse<NotificationSettingsDto>>(`${this.baseUrl}/notifications/settings`, settings)
-      .pipe(map(response => response.data));
-  }
-
-  public createNotification(notification: CreateNotificationDto): Observable<NotificationDto> {
-    return this.http
-      .post<ApiResponse<NotificationDto>>(`${this.baseUrl}/notifications`, notification)
       .pipe(map(response => response.data));
   }
 }

@@ -4,6 +4,7 @@ import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline'
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../atoms/button.component';
 import { ErrorMessageComponent } from '../atoms/error.message.component';
+import { formatFileSize as formatFileSizeUtil } from '../../utils/file-size.utils';
 
 export interface FileUploadItem {
   file: File;
@@ -93,6 +94,7 @@ export interface FileUploadItem {
 })
 export class FileUploadComponent {
   private readonly translate = inject(TranslateService);
+  protected readonly formatFileSize = formatFileSizeUtil;
 
   @ViewChild('fileInput', { static: true })
   fileInput!: ElementRef<HTMLInputElement>;
@@ -167,25 +169,5 @@ export class FileUploadComponent {
     const updatedFiles = this.files().filter(f => f !== fileItem);
     this.files.set(updatedFiles);
     this.filesChange.emit(updatedFiles);
-  }
-
-  protected formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  public clearFiles(): void {
-    this.files().forEach(fileItem => URL.revokeObjectURL(fileItem.preview));
-    this.files.set([]);
-    this.errors.set([]);
-    this.filesChange.emit([]);
-  }
-
-  public setFiles(files: FileUploadItem[]): void {
-    this.files.set(files);
-    this.filesChange.emit(files);
   }
 }

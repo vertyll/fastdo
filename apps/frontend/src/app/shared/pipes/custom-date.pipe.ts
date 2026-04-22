@@ -1,6 +1,8 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
+const FORMAT_REGEX = /dd|d|MM|M|yyyy|yy|HH|H|mm|m|ss|s/g;
+
 @Pipe({
   name: 'customDate',
 })
@@ -10,14 +12,7 @@ export class CustomDatePipe implements PipeTransform {
   public transform(value: number | string | Date | null, format: string = 'dd.MM.yyyy'): string {
     if (!value) return '';
 
-    let date: Date;
-    if (value instanceof Date) {
-      date = value;
-    } else if (typeof value === 'number') {
-      date = new Date(value);
-    } else {
-      date = new Date(value);
-    }
+    const date = new Date(value);
 
     if (Number.isNaN(date.getTime())) {
       const errorMessage = this.translateService.instant('Date.invalidDate');
@@ -44,6 +39,6 @@ export class CustomDatePipe implements PipeTransform {
       ss: pad(date.getSeconds()),
       s: date.getSeconds().toString(),
     };
-    return format.replaceAll(/dd|d|MM|M|yyyy|yy|HH|H|mm|m|ss|s/g, match => map[match]);
+    return format.replaceAll(FORMAT_REGEX, match => map[match]);
   }
 }

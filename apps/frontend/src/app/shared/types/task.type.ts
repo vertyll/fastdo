@@ -1,7 +1,3 @@
-/*
- * Type
- */
-
 export type GetAllTasksSearchParams = {
   q: string;
   sortBy: 'dateCreation' | 'dateModification' | 'description' | 'id';

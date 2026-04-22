@@ -1,17 +1,18 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { RoleEnum } from '../../shared/enums/role.enum';
 import { AuthState } from '../../shared/types/auth.type';
+import { ACCESS_TOKEN_KEY } from '../../app.contansts';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthStateService {
   private readonly authState = signal<AuthState>({
-    isLoggedIn: !!localStorage.getItem('access_token'),
+    isLoggedIn: !!localStorage.getItem(ACCESS_TOKEN_KEY),
     roles: null,
   });
 
-  private readonly token = signal<string | null>(localStorage.getItem('access_token'));
+  private readonly token = signal<string | null>(localStorage.getItem(ACCESS_TOKEN_KEY));
 
   public readonly isLoggedIn = computed(() => this.authState().isLoggedIn);
   public readonly roles = computed(() => this.authState().roles);
@@ -22,9 +23,9 @@ export class AuthStateService {
 
   public setToken(token: string | null): void {
     if (token) {
-      localStorage.setItem('access_token', token);
+      localStorage.setItem(ACCESS_TOKEN_KEY, token);
     } else {
-      localStorage.removeItem('access_token');
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
     }
     this.token.set(token);
   }

@@ -2,6 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
+import { X_LANG_HEADER } from '../../app.contansts';
 
 export const languageInterceptor: HttpInterceptorFn = (req, next) => {
   const translateService = inject(TranslateService);
@@ -9,7 +10,7 @@ export const languageInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(
     req.clone({
-      headers: req.headers.set('x-lang', lang),
+      headers: req.headers.set(X_LANG_HEADER, lang),
     }),
   );
 };

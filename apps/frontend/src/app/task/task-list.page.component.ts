@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { EMPTY, Observable, distinctUntilChanged, map, switchMap } from 'rxjs';
+import { distinctUntilChanged, EMPTY, map, Observable, switchMap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ButtonRoleEnum } from 'src/app/shared/enums/modal.enum';
@@ -22,9 +22,10 @@ import { getContrastColor } from '../shared/utils/color.utils';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
-import { Task } from './models/Task';
+import { Task, TaskPriorityCodeEnum } from './models/Task';
 import { TasksListFiltersComponent } from './ui/task-list-filters.component';
 import { PlatformService } from '../shared/services/platform.service';
+import { MOBILE_BREAKPOINT } from '../app.contansts';
 
 @Component({
   selector: 'app-task-list-page',
@@ -216,7 +217,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     loadingMore: this.tasksStateService.isLoadingMore(),
     hover: true,
     striped: true,
-    responsiveBreakpoint: 768,
+    responsiveBreakpoint: MOBILE_BREAKPOINT,
     rowClassFunction: (row: Task) => this.getRowClassByPriority(row),
   }));
 
@@ -321,11 +322,11 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     if (!task.priority) return '';
 
     switch (task.priority.code) {
-      case 'high':
+      case TaskPriorityCodeEnum.HIGH:
         return 'priority-high';
-      case 'low':
+      case TaskPriorityCodeEnum.LOW:
         return 'priority-low';
-      case 'medium':
+      case TaskPriorityCodeEnum.MEDIUM:
       default:
         return '';
     }

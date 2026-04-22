@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { getCookie, setCookie } from '../../utils/cookies';
 import { ButtonComponent } from '../atoms/button.component';
+import { COOKIE_ACCEPTED_VALUE, COOKIE_EXPIRATION_DAYS, COOKIE_NAME } from '../../../app.contansts';
 
 @Component({
   selector: 'app-cookie-banner',
@@ -27,14 +28,14 @@ export class CookieBannerComponent implements OnInit {
   protected showBanner: boolean = false;
 
   ngOnInit(): void {
-    const cookiesAccepted = getCookie('cookies_accepted');
+    const cookiesAccepted = getCookie(COOKIE_NAME);
     if (!cookiesAccepted) {
       this.showBanner = true;
     }
   }
 
   protected acceptCookies(): void {
-    setCookie('cookies_accepted', 'true', 365);
+    setCookie(COOKIE_NAME, COOKIE_ACCEPTED_VALUE, COOKIE_EXPIRATION_DAYS);
     this.showBanner = false;
   }
 }

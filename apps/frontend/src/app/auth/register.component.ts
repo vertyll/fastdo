@@ -158,12 +158,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm.valueChanges.subscribe(() => {
-      this.checkPasswords();
-      this.errorMessage = null;
-      this.passwordErrors = this.getPasswordErrors();
-      this.emailErrors = this.getEmailErrors();
-      this.termsErrors = this.getTermsErrors();
-      this.privacyPolicyErrors = this.getPrivacyPolicyErrors();
+      this.updateFormErrors();
     });
   }
 
@@ -199,57 +194,59 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+  private updateFormErrors(): void {
+    this.checkPasswords();
+    this.errorMessage = null;
+    this.passwordErrors = this.getPasswordErrors();
+    this.emailErrors = this.getEmailErrors();
+    this.termsErrors = this.getTermsErrors();
+    this.privacyPolicyErrors = this.getPrivacyPolicyErrors();
+  }
+
   private checkPasswords(): void {
     const password = this.registerForm.get('password')?.value;
     const confirmPassword = this.registerForm.get('confirmPassword')?.value;
     this.passwordMismatch = password !== confirmPassword;
   }
 
-  private getPasswordErrors(): string[] {
-    const passwordControl = this.registerForm.get('password');
+  private getControlErrors(
+    controlName: string,
+    errorKeyMap: Record<string, string>,
+    checkTouched: boolean = false,
+  ): string[] {
+    const control = this.registerForm.get(controlName);
     const errors: string[] = [];
-    if (passwordControl?.hasError('required')) {
-      errors.push(this.translateService.instant('Auth.passwordRequired'));
-    }
-    if (passwordControl?.hasError('minlength')) {
-      errors.push(this.translateService.instant('Auth.passwordMinLength'));
-    }
-    if (passwordControl?.hasError('uppercase')) {
-      errors.push(this.translateService.instant('Auth.passwordUppercase'));
-    }
-    if (passwordControl?.hasError('specialCharacter')) {
-      errors.push(this.translateService.instant('Auth.passwordSpecialCharacter'));
+    if (control && (!checkTouched || control.touched)) {
+      for (const [error, translateKey] of Object.entries(errorKeyMap)) {
+        if (control.hasError(error)) {
+          errors.push(this.translateService.instant(translateKey));
+        }
+      }
     }
     return errors;
+  }
+
+  private getPasswordErrors(): string[] {
+    return this.getControlErrors('password', {
+      required: 'Auth.passwordRequired',
+      minlength: 'Auth.passwordMinLength',
+      uppercase: 'Auth.passwordUppercase',
+      specialCharacter: 'Auth.passwordSpecialCharacter',
+    });
   }
 
   private getEmailErrors(): string[] {
-    const emailControl = this.registerForm.get('email');
-    const errors: string[] = [];
-    if (emailControl?.hasError('required')) {
-      errors.push(this.translateService.instant('Auth.emailRequired'));
-    }
-    if (emailControl?.hasError('email')) {
-      errors.push(this.translateService.instant('Auth.emailInvalid'));
-    }
-    return errors;
+    return this.getControlErrors('email', {
+      required: 'Auth.emailRequired',
+      email: 'Auth.emailInvalid',
+    });
   }
 
   private getTermsErrors(): string[] {
-    const termsControl = this.registerForm.get('termsAccepted');
-    const errors: string[] = [];
-    if (termsControl?.hasError('required') && termsControl.touched) {
-      errors.push(this.translateService.instant('Auth.termsRequired'));
-    }
-    return errors;
+    return this.getControlErrors('termsAccepted', { required: 'Auth.termsRequired' }, true);
   }
 
   private getPrivacyPolicyErrors(): string[] {
-    const privacyControl = this.registerForm.get('privacyPolicyAccepted');
-    const errors: string[] = [];
-    if (privacyControl?.hasError('required') && privacyControl.touched) {
-      errors.push(this.translateService.instant('Auth.privacyPolicyRequired'));
-    }
-    return errors;
+    return this.getControlErrors('privacyPolicyAccepted', { required: 'Auth.privacyPolicyRequired' }, true);
   }
 }

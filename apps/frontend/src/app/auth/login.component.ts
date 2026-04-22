@@ -84,34 +84,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      if (params['email']) {
-        this.loginForm.patchValue({ email: params['email'] });
-      }
-
-      if (params['confirmed'] === 'true') {
-        this.translateService.get('Auth.emailConfirmed').subscribe((message: string): void => {
-          this.toastService.presentToast(message, true, ToastPositionEnum.Relative);
-        });
-      }
-
-      if (params['error'] === 'invalid_email_token') {
-        this.translateService.get('Auth.invalidEmailToken').subscribe((message: string): void => {
-          this.toastService.presentToast(message, false, ToastPositionEnum.Relative);
-        });
-      }
-
-      if (params['emailChanged'] === 'true') {
-        this.emailChangeService.handleEmailChange(true);
-        this.translateService
-          .get('Auth.emailChanged')
-          .subscribe(message => this.toastService.presentToast(message, true));
-      }
-
-      if (params['error'] === 'invalid_email_change_token') {
-        this.translateService.get('Auth.invalidEmailChangeToken').subscribe((message: string): void => {
-          this.toastService.presentToast(message, false, ToastPositionEnum.Relative);
-        });
-      }
+      this.handleEmailPrefill(params['email']);
+      this.handleAccountConfirmation(params['confirmed']);
+      this.handleEmailChange(params['emailChanged']);
+      this.handleErrors(params['error']);
     });
   }
 
@@ -134,5 +110,40 @@ export class LoginComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.loginForm.get(name) as FormControl;
+  }
+
+  private handleEmailPrefill(email?: string): void {
+    if (email) {
+      this.loginForm.patchValue({ email });
+    }
+  }
+
+  private handleAccountConfirmation(confirmed?: string): void {
+    if (confirmed === 'true') {
+      this.showTranslatedToast('Auth.emailConfirmed', true, ToastPositionEnum.Relative);
+    }
+  }
+
+  private handleEmailChange(emailChanged?: string): void {
+    if (emailChanged === 'true') {
+      this.emailChangeService.handleEmailChange(true);
+      this.showTranslatedToast('Auth.emailChanged', true);
+    }
+  }
+
+  private handleErrors(error?: string): void {
+    if (error === 'invalid_email_token') {
+      this.showTranslatedToast('Auth.invalidEmailToken', false, ToastPositionEnum.Relative);
+    }
+
+    if (error === 'invalid_email_change_token') {
+      this.showTranslatedToast('Auth.invalidEmailChangeToken', false, ToastPositionEnum.Relative);
+    }
+  }
+
+  private showTranslatedToast(key: string, isSuccess: boolean, position?: ToastPositionEnum): void {
+    this.translateService.get(key).subscribe((message: string): void => {
+      this.toastService.presentToast(message, isSuccess, position);
+    });
   }
 }

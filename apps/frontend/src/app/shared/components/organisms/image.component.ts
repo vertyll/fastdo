@@ -94,7 +94,10 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
       <!-- Cropper Modal -->
       @if (showCropper()) {
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div
+          class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          [class.cropper-format-circle]="format() === 'circle'"
+        >
           <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-text-primary dark:text-dark-text-primary">
@@ -137,9 +140,9 @@ export type ImageSize = 'sm' | 'md' | 'lg';
   `,
   styles: [
     `
-      .cropper-view-box,
-      .cropper-face {
-        border-radius: var(--cropper-view-box-border-radius, 0%);
+      .cropper-format-circle .cropper-view-box,
+      .cropper-format-circle .cropper-face {
+        border-radius: 50%;
       }
     `,
   ],
@@ -186,11 +189,6 @@ export class ImageComponent implements OnDestroy {
         zoomable: true,
         movable: true,
         rotatable: true,
-        ready: () => {
-          if (this.format() === 'circle') {
-            document.documentElement.style.setProperty('--cropper-view-box-border-radius', '50%');
-          }
-        },
       });
     }
   }

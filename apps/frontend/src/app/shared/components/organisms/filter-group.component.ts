@@ -84,7 +84,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                     [maxSelectedItems]="filter.maxSelectedItems !== undefined ? filter.maxSelectedItems : undefined"
                     [minTermLength]="filter.minTermLength || 1"
                     [allowAddTag]="filter.allowAddTag || false"
-                    (onSearch)="onFilterSearch($event, filter)"
+                    (search)="onFilterSearch($event, filter)"
                     [placeholder]="translateService.instant(filter.labelKey)"
                   />
                 }

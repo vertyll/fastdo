@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
+const UPPERCASE_REGEX = /[A-Z]/;
+const SPECIAL_CHARACTER_REGEX = /[!@#$%^&*(),.?":{}|<>]/;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -12,8 +15,8 @@ export class PasswordValidator {
       return null;
     }
 
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasUpperCase = UPPERCASE_REGEX.test(password);
+    const hasSpecialCharacter = SPECIAL_CHARACTER_REGEX.test(password);
     const isValidLength = password.length >= 8;
     const errors: ValidationErrors = {};
 

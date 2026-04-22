@@ -1,7 +1,8 @@
-import { Component, TemplateRef, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, TemplateRef } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TableComponent, TableColumn, TableConfig } from 'src/app/shared/components/organisms/table.component';
-import { Task } from '../models/Task';
+import { TableColumn, TableComponent, TableConfig } from 'src/app/shared/components/organisms/table.component';
+import { Task, TaskPriorityCodeEnum } from '../models/Task';
+import { MOBILE_BREAKPOINT } from '../../app.contansts';
 
 @Component({
   selector: 'app-task-table',
@@ -52,7 +53,7 @@ export class TaskTableComponent {
     loadingMore: this.loadingMore(),
     hover: true,
     striped: true,
-    responsiveBreakpoint: 768,
+    responsiveBreakpoint: MOBILE_BREAKPOINT,
     rowClassFunction: (row: Task) => this.getRowClassByPriority(row),
   }));
 
@@ -132,11 +133,11 @@ export class TaskTableComponent {
     if (!task.priority) return '';
 
     switch (task.priority.code) {
-      case 'high':
+      case TaskPriorityCodeEnum.HIGH:
         return 'priority-high';
-      case 'low':
+      case TaskPriorityCodeEnum.LOW:
         return 'priority-low';
-      case 'medium':
+      case TaskPriorityCodeEnum.MEDIUM:
       default:
         return '';
     }

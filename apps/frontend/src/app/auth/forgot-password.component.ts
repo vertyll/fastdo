@@ -80,8 +80,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.forgotPasswordForm.valueChanges.subscribe(() => {
-      this.errorMessage = null;
-      this.emailErrors = this.getEmailErrors();
+      this.updateFormErrors();
     });
   }
 
@@ -114,15 +113,32 @@ export class ForgotPasswordComponent implements OnInit {
     return this.forgotPasswordForm.get(name) as FormControl;
   }
 
-  private getEmailErrors(): string[] {
-    const emailControl = this.forgotPasswordForm.get('email');
+  private updateFormErrors(): void {
+    this.errorMessage = null;
+    this.emailErrors = this.getEmailErrors();
+  }
+
+  private getControlErrors(
+    controlName: string,
+    errorKeyMap: Record<string, string>,
+    checkTouched: boolean = false,
+  ): string[] {
+    const control = this.forgotPasswordForm.get(controlName);
     const errors: string[] = [];
-    if (emailControl?.hasError('required')) {
-      errors.push(this.translateService.instant('Auth.emailRequired'));
-    }
-    if (emailControl?.hasError('email')) {
-      errors.push(this.translateService.instant('Auth.emailInvalid'));
+    if (control && (!checkTouched || control.touched)) {
+      for (const [error, translateKey] of Object.entries(errorKeyMap)) {
+        if (control.hasError(error)) {
+          errors.push(this.translateService.instant(translateKey));
+        }
+      }
     }
     return errors;
+  }
+
+  private getEmailErrors(): string[] {
+    return this.getControlErrors('email', {
+      required: 'Auth.emailRequired',
+      email: 'Auth.emailInvalid',
+    });
   }
 }

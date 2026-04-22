@@ -1,7 +1,3 @@
-/*
- * Interface
- */
-
 export interface NavModule {
   id: string;
   title: string;
