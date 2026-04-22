@@ -1,4 +1,23 @@
 {
+  "PageTitles": {
+    "home": "Home",
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "Reset password",
+    "terms": "Terms",
+    "privacyPolicy": "Privacy policy",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "newProject": "New project",
+    "editProject": "Edit project",
+    "projectTasks": "Project tasks",
+    "newTask": "New task",
+    "taskDetails": "Task details",
+    "editTask": "Edit task",
+    "userProfile": "User profile",
+    "notificationSettings": "Notification settings"
+  },
   "Basic": {
     "loading": "Loading...",
     "loadingMore": "Loading more...",

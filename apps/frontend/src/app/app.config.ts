@@ -6,7 +6,7 @@ import {
   provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideStore } from '@ngxs/store';
@@ -15,6 +15,7 @@ import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { languageInterceptor } from './core/interceptors/language.interceptor';
+import { TranslatedTitleStrategy } from './core/strategies/translated-title.strategy';
 import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
 import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
     ),
     provideRouter(routes, withComponentInputBinding()),
+    { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
     provideStore([FiltersState], ngxsConfig),
     importProvidersFrom(TranslateModule.forRoot()),
     ...provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),

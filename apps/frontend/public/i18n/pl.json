@@ -1,4 +1,23 @@
 {
+  "PageTitles": {
+    "home": "Strona główna",
+    "login": "Logowanie",
+    "register": "Rejestracja",
+    "forgotPassword": "Zapomniałem hasła",
+    "resetPassword": "Resetowanie hasła",
+    "terms": "Regulamin",
+    "privacyPolicy": "Polityka prywatności",
+    "dashboard": "Panel",
+    "projects": "Projekty",
+    "newProject": "Nowy projekt",
+    "editProject": "Edytuj projekt",
+    "projectTasks": "Zadania projektu",
+    "newTask": "Nowe zadanie",
+    "taskDetails": "Szczegóły zadania",
+    "editTask": "Edytuj zadanie",
+    "userProfile": "Profil użytkownika",
+    "notificationSettings": "Ustawienia powiadomień"
+  },
   "Basic": {
     "loading": "Ładowanie...",
     "loadingMore": "Ładowanie więcej...",
