@@ -18,6 +18,7 @@ import { FileUploadComponent, FileUploadItem } from '../shared/components/molecu
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
+import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { NotificationService } from '../shared/services/notification.service';
@@ -45,6 +46,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
     ErrorMessageComponent,
     NgIcon,
     TextareaFieldComponent,
+    SpinnerComponent,
   ],
   providers: [
     provideIcons({
@@ -60,7 +62,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
       ></app-title>
       @if (loading()) {
         <div class="flex justify-center items-center min-h-32">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+          <app-spinner />
         </div>
       } @else {
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
@@ -305,7 +307,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
               [disabled]="!taskForm.valid || submitting() || getTotalAttachments() > maxAttachmentsLimit"
             >
               @if (submitting()) {
-                <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                <app-spinner />
               }
               {{ 'Basic.save' | translate }}
             </app-button>

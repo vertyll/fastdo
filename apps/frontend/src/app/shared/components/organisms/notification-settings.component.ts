@@ -8,115 +8,131 @@ import { NotificationService } from '../../services/notification.service';
 import { UpdateNotificationSettingsDto } from '../../defs/notification.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { CheckboxComponent } from '../atoms/checkbox.component';
+import { SpinnerComponent } from '../atoms/spinner.component';
 import { TitleComponent } from '../atoms/title.component';
 
 @Component({
   selector: 'app-notification-settings',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent],
+  imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
   template: `
     <div class="max-w-2xl mx-auto">
       <app-title [text]="'Notifications.settings' | translate"></app-title>
 
-      <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
-        <div class="space-y-4">
-          <!-- App Notifications -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="appNotifications" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.appNotifications' | translate }}
-              </label>
+      @if (notificationStateService.settings()) {
+        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
+          <div class="space-y-4">
+            <!-- App Notifications -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label for="appNotifications" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+                  {{ 'Notifications.appNotifications' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('appNotifications')" [id]="'appNotifications'" />
             </div>
-            <app-checkbox [control]="getControl('appNotifications')" [id]="'appNotifications'" />
+
+            <!-- Email Notifications -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label
+                  for="emailNotifications"
+                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                >
+                  {{ 'Notifications.emailNotifications' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('emailNotifications')" [id]="'emailNotifications'" />
+            </div>
+
+            <!-- Project Invitations -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label
+                  for="projectInvitations"
+                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                >
+                  {{ 'Notifications.projectInvitations' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('projectInvitations')" [id]="'projectInvitations'" />
+            </div>
+
+            <!-- Task Assignments -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label for="taskAssignments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+                  {{ 'Notifications.taskAssignments' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('taskAssignments')" [id]="'taskAssignments'" />
+            </div>
+
+            <!-- Task Comments -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label for="taskComments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+                  {{ 'Notifications.taskComments' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('taskComments')" [id]="'taskComments'" />
+            </div>
+
+            <!-- Task Status Changes -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label
+                  for="taskStatusChanges"
+                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                >
+                  {{ 'Notifications.taskStatusChanges' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('taskStatusChanges')" [id]="'taskStatusChanges'" />
+            </div>
+
+            <!-- Project Updates -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label for="projectUpdates" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
+                  {{ 'Notifications.projectUpdates' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('projectUpdates')" [id]="'projectUpdates'" />
+            </div>
+
+            <!-- System Notifications -->
+            <div class="flex items-center justify-between">
+              <div>
+                <label
+                  for="systemNotifications"
+                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
+                >
+                  {{ 'Notifications.systemNotifications' | translate }}
+                </label>
+              </div>
+              <app-checkbox [control]="getControl('systemNotifications')" [id]="'systemNotifications'" />
+            </div>
           </div>
 
-          <!-- Email Notifications -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="emailNotifications" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.emailNotifications' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('emailNotifications')" [id]="'emailNotifications'" />
+          <!-- Buttons -->
+          <div class="flex justify-end gap-4 pt-6">
+            <app-button type="submit" [disabled]="settingsForm.invalid || isSubmitting()">
+              {{ isSubmitting() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
+            </app-button>
           </div>
-
-          <!-- Project Invitations -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="projectInvitations" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.projectInvitations' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('projectInvitations')" [id]="'projectInvitations'" />
-          </div>
-
-          <!-- Task Assignments -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="taskAssignments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.taskAssignments' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('taskAssignments')" [id]="'taskAssignments'" />
-          </div>
-
-          <!-- Task Comments -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="taskComments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.taskComments' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('taskComments')" [id]="'taskComments'" />
-          </div>
-
-          <!-- Task Status Changes -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="taskStatusChanges" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.taskStatusChanges' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('taskStatusChanges')" [id]="'taskStatusChanges'" />
-          </div>
-
-          <!-- Project Updates -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label for="projectUpdates" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                {{ 'Notifications.projectUpdates' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('projectUpdates')" [id]="'projectUpdates'" />
-          </div>
-
-          <!-- System Notifications -->
-          <div class="flex items-center justify-between">
-            <div>
-              <label
-                for="systemNotifications"
-                class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-              >
-                {{ 'Notifications.systemNotifications' | translate }}
-              </label>
-            </div>
-            <app-checkbox [control]="getControl('systemNotifications')" [id]="'systemNotifications'" />
-          </div>
+        </form>
+      } @else {
+        <div class="flex justify-center py-10">
+          <app-spinner />
         </div>
-
-        <!-- Buttons -->
-        <div class="flex justify-end gap-4 pt-6">
-          <app-button type="submit" [disabled]="settingsForm.invalid || isSubmitting()">
-            {{ isSubmitting() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
-          </app-button>
-        </div>
-      </form>
+      }
     </div>
   `,
 })
 export class NotificationSettingsComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
-  private readonly notificationStateService = inject(NotificationStateService);
+  protected readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();

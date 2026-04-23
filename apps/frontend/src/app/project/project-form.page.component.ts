@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { AuthService } from '../auth/data-access/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
+import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
@@ -45,6 +46,7 @@ interface NameColorFormItem {
     ImageComponent,
     HasProjectPermissionDirective,
     TextareaFieldComponent,
+    SpinnerComponent,
   ],
   styles: `
     input[type='color'] {
@@ -71,279 +73,287 @@ interface NameColorFormItem {
         [text]="isEditMode ? ('Project.editProject' | translate) : ('Project.addProject' | translate)"
       ></app-title>
 
-      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
-        <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />
-
-        <div class="relative mt-6">
-          <app-textarea-field
-            id="additionalDescription"
-            [control]="descriptionControl"
-            [label]="'Project.description' | translate"
-          />
+      @if (loading()) {
+        <div class="flex justify-center py-10">
+          <app-spinner />
         </div>
+      } @else {
+        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
+          <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />
 
-        <div class="mt-6">
-          <app-select-field
-            [control]="typeIdControl"
-            id="typeId"
-            [label]="'Project.type' | translate"
-            [placeholder]="'Project.selectType' | translate"
-            [options]="projectTypeOptions"
-          />
-        </div>
-
-        <div class="flex items-center">
-          <app-checkbox [control]="isPublicControl" [id]="'isPublic'" />
-          <label for="isPublic" class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary">
-            {{ 'Project.isPublic' | translate }}
-          </label>
-        </div>
-
-        <div>
-          <span id="icon-label" class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
-            {{ 'Project.icon' | translate }}
-          </span>
-          <app-image
-            [initialUrl]="currentProject?.icon?.url ?? null"
-            mode="edit"
-            size="md"
-            format="square"
-            (imageSaved)="onImageSaved($event)"
-            (croppingChange)="onCroppingChange($event)"
-            (imageRemoved)="onImageRemoved()"
-            aria-labelledby="icon-label"
-          />
-        </div>
-
-        <div>
-          <span
-            id="categories-label"
-            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
-          >
-            {{ 'Project.categories' | translate }}
-          </span>
-          <div formArrayName="categories" class="space-y-3" role="group" aria-labelledby="categories-label">
-            @for (_ of categoriesFormArray.controls; track $index) {
-              <div
-                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
-              >
-                <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
-                  <div class="flex-1">
-                    <app-input-field
-                      [control]="getCategoryNameControl($index)"
-                      [id]="'category-name-' + $index"
-                      [label]="'Project.categoryName' | translate"
-                    />
-                  </div>
-                  <div class="flex flex-col justify-end pb-1">
-                    <label [for]="'category-color-' + $index" class="text-xs mb-1">{{
-                      'Project.selectColor' | translate
-                    }}</label>
-                    <input
-                      type="color"
-                      [id]="'category-color-' + $index"
-                      [formControl]="getCategoryColorControl($index)"
-                      class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
-                      [title]="'Project.selectColor' | translate"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="removeCategory($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
-                >
-                  {{ 'Basic.remove' | translate }}
-                </button>
-              </div>
-            }
+          <div class="relative mt-6">
+            <app-textarea-field
+              id="additionalDescription"
+              [control]="descriptionControl"
+              [label]="'Project.description' | translate"
+            />
           </div>
-          <button type="button" (click)="addCategory()" class="mt-2 text-primary-600 hover:text-primary-800 text-sm">
-            + {{ 'Project.addCategory' | translate }}
-          </button>
-        </div>
 
-        <div>
-          <span
-            id="statuses-label"
-            class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
-          >
-            {{ 'Project.statuses' | translate }}
-          </span>
-          <div formArrayName="statuses" class="space-y-3" role="group" aria-labelledby="statuses-label">
-            @for (_ of statusesFormArray.controls; track $index) {
-              <div
-                class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
-              >
-                <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
-                  <div class="flex-1">
-                    <app-input-field
-                      [control]="getStatusNameControl($index)"
-                      [id]="'status-name-' + $index"
-                      [label]="'Project.statusName' | translate"
-                    />
-                  </div>
-                  <div class="flex flex-col justify-end pb-1">
-                    <label [for]="'status-color-' + $index" class="text-xs mb-1">{{
-                      'Project.selectColor' | translate
-                    }}</label>
-                    <input
-                      type="color"
-                      [id]="'status-color-' + $index"
-                      [formControl]="getStatusColorControl($index)"
-                      class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
-                      [title]="'Project.selectColor' | translate"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="removeStatus($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
-                >
-                  {{ 'Basic.remove' | translate }}
-                </button>
-              </div>
-            }
+          <div class="mt-6">
+            <app-select-field
+              [control]="typeIdControl"
+              id="typeId"
+              [label]="'Project.type' | translate"
+              [placeholder]="'Project.selectType' | translate"
+              [options]="projectTypeOptions"
+            />
           </div>
-          <button type="button" (click)="addStatus()" class="mt-2 text-primary-600 hover:text-primary-800 text-sm">
-            + {{ 'Project.addStatus' | translate }}
-          </button>
-        </div>
 
-        <div>
-          <span id="users-label" class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
-            {{ isEditMode ? ('Project.inviteAdditionalUsers' | translate) : ('Project.inviteUsers' | translate) }}
-          </span>
-          <p class="text-sm text-text-secondary dark:text-dark-text-secondary mb-3">
-            {{
-              isEditMode
-                ? ('Project.inviteAdditionalUsersDescription' | translate)
-                : ('Project.inviteUsersDescription' | translate)
-            }}
-          </p>
-          <div formArrayName="usersWithRoles" class="space-y-3">
-            @for (_ of usersWithRolesFormArray.controls; track $index) {
-              <div
-                class="flex flex-col sm:flex-row gap-3 sm:items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
-                [class.opacity-60]="isCurrentUser($index)"
-                [class.pointer-events-none]="isCurrentUser($index)"
-                [attr.aria-disabled]="isCurrentUser($index) ? 'true' : null"
-                [title]="isCurrentUser($index) ? ('Project.cannotEditYourself' | translate) : null"
-              >
-                <div class="flex-1">
-                  <app-input-field
-                    [control]="getUserEmailControl($index)"
-                    [id]="'user-email-' + $index"
-                    [label]="'Project.userEmailPlaceholder' | translate"
-                    type="email"
-                  />
-                </div>
-                <div class="flex-1 sm:w-48 sm:flex-none">
-                  <app-select-field
-                    [control]="getUserRoleControl($index)"
-                    [id]="'user-role-' + $index"
-                    [label]="'Project.selectRole' | translate"
-                    [placeholder]="'Project.selectRole' | translate"
-                    [options]="projectRoleOptions"
-                  />
-                </div>
-                <button
-                  type="button"
-                  (click)="removeUserWithRole($index)"
-                  class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900 self-start sm:self-auto sm:mb-1"
-                  [disabled]="isCurrentUser($index)"
-                  [class.opacity-50]="isCurrentUser($index)"
-                  [class.cursor-not-allowed]="isCurrentUser($index)"
-                  [title]="
-                    isCurrentUser($index) ? ('Project.cannotRemoveYourself' | translate) : ('Basic.remove' | translate)
-                  "
-                >
-                  {{ 'Basic.remove' | translate }}
-                </button>
-              </div>
-            }
+          <div class="flex items-center">
+            <app-checkbox [control]="isPublicControl" [id]="'isPublic'" />
+            <label for="isPublic" class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary">
+              {{ 'Project.isPublic' | translate }}
+            </label>
           </div>
-          <button
-            type="button"
-            (click)="addUserWithRole()"
-            class="mt-2 text-primary-600 hover:text-primary-800 text-sm"
-          >
-            + {{ 'Project.addUserWithRole' | translate }}
-          </button>
-        </div>
 
-        <div class="flex justify-between items-center pt-6">
-          <app-button type="button" (click)="cancel()">
-            {{ 'Basic.cancel' | translate }}
-          </app-button>
+          <div>
+            <span id="icon-label" class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
+              {{ 'Project.icon' | translate }}
+            </span>
+            <app-image
+              [initialUrl]="currentProject?.icon?.url ?? null"
+              mode="edit"
+              size="md"
+              format="square"
+              (imageSaved)="onImageSaved($event)"
+              (croppingChange)="onCroppingChange($event)"
+              (imageRemoved)="onImageRemoved()"
+              aria-labelledby="icon-label"
+            />
+          </div>
 
-          @if (!isEditMode) {
-            <app-button type="submit" [disabled]="projectForm.invalid || isSubmitting">
-              {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
-            </app-button>
-          } @else {
-            <ng-container
-              *appHasProjectPermission="{
-                requiredPermissions: [ProjectRolePermissionEnum.EDIT_PROJECT],
-                userPermissions: currentProject?.permissions ?? [],
-              }"
+          <div>
+            <span
+              id="categories-label"
+              class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
             >
+              {{ 'Project.categories' | translate }}
+            </span>
+            <div formArrayName="categories" class="space-y-3" role="group" aria-labelledby="categories-label">
+              @for (_ of categoriesFormArray.controls; track $index) {
+                <div
+                  class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
+                >
+                  <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
+                    <div class="flex-1">
+                      <app-input-field
+                        [control]="getCategoryNameControl($index)"
+                        [id]="'category-name-' + $index"
+                        [label]="'Project.categoryName' | translate"
+                      />
+                    </div>
+                    <div class="flex flex-col justify-end pb-1">
+                      <label [for]="'category-color-' + $index" class="text-xs mb-1">{{
+                        'Project.selectColor' | translate
+                      }}</label>
+                      <input
+                        type="color"
+                        [id]="'category-color-' + $index"
+                        [formControl]="getCategoryColorControl($index)"
+                        class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
+                        [title]="'Project.selectColor' | translate"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="removeCategory($index)"
+                    class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
+                  >
+                    {{ 'Basic.remove' | translate }}
+                  </button>
+                </div>
+              }
+            </div>
+            <button type="button" (click)="addCategory()" class="mt-2 text-primary-600 hover:text-primary-800 text-sm">
+              + {{ 'Project.addCategory' | translate }}
+            </button>
+          </div>
+
+          <div>
+            <span
+              id="statuses-label"
+              class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2"
+            >
+              {{ 'Project.statuses' | translate }}
+            </span>
+            <div formArrayName="statuses" class="space-y-3" role="group" aria-labelledby="statuses-label">
+              @for (_ of statusesFormArray.controls; track $index) {
+                <div
+                  class="flex gap-3 items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
+                >
+                  <div [formGroupName]="$index" class="flex flex-1 gap-3 items-end">
+                    <div class="flex-1">
+                      <app-input-field
+                        [control]="getStatusNameControl($index)"
+                        [id]="'status-name-' + $index"
+                        [label]="'Project.statusName' | translate"
+                      />
+                    </div>
+                    <div class="flex flex-col justify-end pb-1">
+                      <label [for]="'status-color-' + $index" class="text-xs mb-1">{{
+                        'Project.selectColor' | translate
+                      }}</label>
+                      <input
+                        type="color"
+                        [id]="'status-color-' + $index"
+                        [formControl]="getStatusColorControl($index)"
+                        class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
+                        [title]="'Project.selectColor' | translate"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="removeStatus($index)"
+                    class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
+                  >
+                    {{ 'Basic.remove' | translate }}
+                  </button>
+                </div>
+              }
+            </div>
+            <button type="button" (click)="addStatus()" class="mt-2 text-primary-600 hover:text-primary-800 text-sm">
+              + {{ 'Project.addStatus' | translate }}
+            </button>
+          </div>
+
+          <div>
+            <span id="users-label" class="block text-sm font-medium text-text-primary dark:text-dark-text-primary mb-2">
+              {{ isEditMode ? ('Project.inviteAdditionalUsers' | translate) : ('Project.inviteUsers' | translate) }}
+            </span>
+            <p class="text-sm text-text-secondary dark:text-dark-text-secondary mb-3">
+              {{
+                isEditMode
+                  ? ('Project.inviteAdditionalUsersDescription' | translate)
+                  : ('Project.inviteUsersDescription' | translate)
+              }}
+            </p>
+            <div formArrayName="usersWithRoles" class="space-y-3">
+              @for (_ of usersWithRolesFormArray.controls; track $index) {
+                <div
+                  class="flex flex-col sm:flex-row gap-3 sm:items-end p-3 border border-border-primary dark:border-dark-border-primary rounded-lg"
+                  [class.opacity-60]="isCurrentUser($index)"
+                  [class.pointer-events-none]="isCurrentUser($index)"
+                  [attr.aria-disabled]="isCurrentUser($index) ? 'true' : null"
+                  [title]="isCurrentUser($index) ? ('Project.cannotEditYourself' | translate) : null"
+                >
+                  <div class="flex-1">
+                    <app-input-field
+                      [control]="getUserEmailControl($index)"
+                      [id]="'user-email-' + $index"
+                      [label]="'Project.userEmailPlaceholder' | translate"
+                      type="email"
+                    />
+                  </div>
+                  <div class="flex-1 sm:w-48 sm:flex-none">
+                    <app-select-field
+                      [control]="getUserRoleControl($index)"
+                      [id]="'user-role-' + $index"
+                      [label]="'Project.selectRole' | translate"
+                      [placeholder]="'Project.selectRole' | translate"
+                      [options]="projectRoleOptions"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    (click)="removeUserWithRole($index)"
+                    class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900 self-start sm:self-auto sm:mb-1"
+                    [disabled]="isCurrentUser($index)"
+                    [class.opacity-50]="isCurrentUser($index)"
+                    [class.cursor-not-allowed]="isCurrentUser($index)"
+                    [title]="
+                      isCurrentUser($index)
+                        ? ('Project.cannotRemoveYourself' | translate)
+                        : ('Basic.remove' | translate)
+                    "
+                  >
+                    {{ 'Basic.remove' | translate }}
+                  </button>
+                </div>
+              }
+            </div>
+            <button
+              type="button"
+              (click)="addUserWithRole()"
+              class="mt-2 text-primary-600 hover:text-primary-800 text-sm"
+            >
+              + {{ 'Project.addUserWithRole' | translate }}
+            </button>
+          </div>
+
+          <div class="flex justify-between items-center pt-6">
+            <app-button type="button" (click)="cancel()">
+              {{ 'Basic.cancel' | translate }}
+            </app-button>
+
+            @if (!isEditMode) {
               <app-button type="submit" [disabled]="projectForm.invalid || isSubmitting">
-                {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.update' | translate) }}
+                {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
               </app-button>
-            </ng-container>
+            } @else {
+              <ng-container
+                *appHasProjectPermission="{
+                  requiredPermissions: [ProjectRolePermissionEnum.EDIT_PROJECT],
+                  userPermissions: currentProject?.permissions ?? [],
+                }"
+              >
+                <app-button type="submit" [disabled]="projectForm.invalid || isSubmitting">
+                  {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.update' | translate) }}
+                </app-button>
+              </ng-container>
+            }
+          </div>
+
+          @if (fieldErrors['name']) {
+            <div class="mt-1">
+              @for (err of fieldErrors['name']; track err) {
+                <div class="text-danger-600 text-xs">{{ err }}</div>
+              }
+            </div>
           }
-        </div>
 
-        @if (fieldErrors['name']) {
-          <div class="mt-1">
-            @for (err of fieldErrors['name']; track err) {
-              <div class="text-danger-600 text-xs">{{ err }}</div>
-            }
-          </div>
-        }
+          @if (fieldErrors['description']) {
+            <div class="mt-1">
+              @for (err of fieldErrors['description']; track err) {
+                <div class="text-danger-600 text-xs">{{ err }}</div>
+              }
+            </div>
+          }
 
-        @if (fieldErrors['description']) {
-          <div class="mt-1">
-            @for (err of fieldErrors['description']; track err) {
-              <div class="text-danger-600 text-xs">{{ err }}</div>
-            }
-          </div>
-        }
+          @if (fieldErrors['typeId']) {
+            <div class="mt-1">
+              @for (err of fieldErrors['typeId']; track err) {
+                <div class="text-danger-600 text-xs">{{ err }}</div>
+              }
+            </div>
+          }
 
-        @if (fieldErrors['typeId']) {
-          <div class="mt-1">
-            @for (err of fieldErrors['typeId']; track err) {
-              <div class="text-danger-600 text-xs">{{ err }}</div>
-            }
-          </div>
-        }
+          @if (fieldErrors['categories']) {
+            <div class="mt-1">
+              @for (err of fieldErrors['categories']; track err) {
+                <div class="text-danger-600 text-xs">{{ err }}</div>
+              }
+            </div>
+          }
 
-        @if (fieldErrors['categories']) {
-          <div class="mt-1">
-            @for (err of fieldErrors['categories']; track err) {
-              <div class="text-danger-600 text-xs">{{ err }}</div>
-            }
-          </div>
-        }
+          @if (fieldErrors['statuses']) {
+            <div class="mt-1">
+              @for (err of fieldErrors['statuses']; track err) {
+                <div class="text-danger-600 text-xs">{{ err }}</div>
+              }
+            </div>
+          }
 
-        @if (fieldErrors['statuses']) {
-          <div class="mt-1">
-            @for (err of fieldErrors['statuses']; track err) {
-              <div class="text-danger-600 text-xs">{{ err }}</div>
-            }
-          </div>
-        }
-
-        @if (fieldErrors['usersWithRoles']) {
-          <div class="mt-1">
-            @for (err of fieldErrors['usersWithRoles']; track err) {
-              <div class="text-danger-600 text-xs">{{ err }}</div>
-            }
-          </div>
-        }
-      </form>
+          @if (fieldErrors['usersWithRoles']) {
+            <div class="mt-1">
+              @for (err of fieldErrors['usersWithRoles']; track err) {
+                <div class="text-danger-600 text-xs">{{ err }}</div>
+              }
+            </div>
+          }
+        </form>
+      }
     </div>
   `,
 })
@@ -375,6 +385,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   protected projectCategories: LocalizedOptionItem[] = [];
   protected projectRoles: LocalizedOptionItem[] = [];
   protected isSubmitting: boolean = false;
+  protected readonly loading = signal(true);
   protected isEditMode: boolean = false;
   protected projectId: number | null = null;
   protected currentProject: Project | null = null;
@@ -682,6 +693,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
           if (this.isEditMode && this.projectId) {
             this.loadProjectSpecificData();
+          } else {
+            this.loading.set(false);
           }
         },
         error: error => {
@@ -690,6 +703,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
             this.translateService.instant('Project.loadError'),
             NotificationTypeEnum.Error,
           );
+          this.loading.set(false);
         },
       });
   }
@@ -718,6 +732,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
             this.translateService.instant('Project.loadError'),
             NotificationTypeEnum.Error,
           );
+          this.loading.set(false);
         },
       });
   }
@@ -772,6 +787,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
         next: response => {
           this.currentProject = response.data;
           this.populateForm();
+          this.loading.set(false);
         },
         error: error => {
           console.error('Error loading project:', error);
@@ -779,6 +795,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
             this.translateService.instant('Project.loadError'),
             NotificationTypeEnum.Error,
           );
+          this.loading.set(false);
           this.router.navigate(['/projects']).then();
         },
       });

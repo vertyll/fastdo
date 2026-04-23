@@ -23,6 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
+import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { TextareaComponent } from '../shared/components/atoms/textarea.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
@@ -49,6 +50,7 @@ import { Task, TaskComment } from './defs/task.defs';
     ErrorMessageComponent,
     ButtonComponent,
     TextareaComponent,
+    SpinnerComponent,
   ],
   providers: [
     provideIcons({
@@ -100,9 +102,7 @@ import { Task, TaskComment } from './defs/task.defs';
 
         @if (loading()) {
           <div class="flex justify-center items-center py-20">
-            <p class="text-text-muted dark:text-dark-text-muted text-lg">
-              {{ 'Basic.loading' | translate }}
-            </p>
+            <app-spinner />
           </div>
         } @else if (task()) {
           <main class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 animate-fade-in">

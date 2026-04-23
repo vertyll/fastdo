@@ -13,11 +13,12 @@ import { ModalService } from '../../services/modal.service';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
 import { NotificationDto } from '../../defs/notification.defs';
+import { SpinnerComponent } from '../atoms/spinner.component';
 
 @Component({
   selector: 'app-notification-dropdown',
   standalone: true,
-  imports: [NgIconComponent, TranslateModule],
+  imports: [NgIconComponent, TranslateModule, SpinnerComponent],
   viewProviders: [
     provideIcons({
       heroBell,
@@ -140,9 +141,7 @@ import { NotificationDto } from '../../defs/notification.defs';
                                   "
                                 >
                                   @if (invitationLoading() === notification.data.invitationId) {
-                                    <span
-                                      class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
-                                    ></span>
+                                    <app-spinner />
                                   } @else {
                                     {{ 'Basic.accept' | translate }}
                                   }
@@ -156,9 +155,7 @@ import { NotificationDto } from '../../defs/notification.defs';
                                   "
                                 >
                                   @if (invitationLoading() === notification.data.invitationId) {
-                                    <span
-                                      class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
-                                    ></span>
+                                    <app-spinner />
                                   } @else {
                                     {{ 'Basic.delete' | translate }}
                                   }
@@ -295,9 +292,7 @@ import { NotificationDto } from '../../defs/notification.defs';
                                 "
                               >
                                 @if (invitationLoading() === notification.data.invitationId) {
-                                  <span
-                                    class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
-                                  ></span>
+                                  <app-spinner />
                                 } @else {
                                   {{ 'Basic.accept' | translate }}
                                 }
@@ -311,9 +306,7 @@ import { NotificationDto } from '../../defs/notification.defs';
                                 "
                               >
                                 @if (invitationLoading() === notification.data.invitationId) {
-                                  <span
-                                    class="loader inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-1"
-                                  ></span>
+                                  <app-spinner />
                                 } @else {
                                   {{ 'Basic.delete' | translate }}
                                 }
