@@ -1,16 +1,25 @@
-import { Component, DestroyRef, OnInit, inject, output } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { FilterGroupComponent } from 'src/app/shared/components/organisms/filter-group.component';
+import { SpinnerComponent } from 'src/app/shared/components/atoms/spinner.component';
 import { TranslatableOptionItem, TranslationItem } from 'src/app/shared/defs/common.defs';
 import { PROJECT_LIST_FILTERS, ProjectListFiltersConfig } from 'src/app/shared/defs/filter.defs';
 import { ProjectTypeService } from '../data-access/project-type.service';
 
 @Component({
   selector: 'app-projects-list-filters',
-  imports: [ReactiveFormsModule, FilterGroupComponent],
-  template: ` <app-filter-group [filters]="filters" [type]="'projects'" (filterChange)="onFiltersChange($event)" /> `,
+  imports: [ReactiveFormsModule, FilterGroupComponent, SpinnerComponent],
+  template: `
+    @if (isLoading()) {
+      <div class="flex justify-center py-4">
+        <app-spinner />
+      </div>
+    } @else {
+      <app-filter-group [filters]="filters" [type]="'projects'" (filterChange)="onFiltersChange($event)" />
+    }
+  `,
 })
 export class ProjectsListFiltersComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -21,6 +30,7 @@ export class ProjectsListFiltersComponent implements OnInit {
 
   protected filters = PROJECT_LIST_FILTERS;
   protected projectTypesRaw: TranslatableOptionItem[] = [];
+  protected readonly isLoading = signal(true);
 
   ngOnInit(): void {
     this.getProjectTypes();
@@ -36,9 +46,11 @@ export class ProjectsListFiltersComponent implements OnInit {
       next: types => {
         this.projectTypesRaw = types.data || [];
         this.updateProjectTypeOptionsForCurrentLang();
+        this.isLoading.set(false);
       },
       error: err => {
         console.error('Error fetching project types:', err);
+        this.isLoading.set(false);
       },
     });
   }
