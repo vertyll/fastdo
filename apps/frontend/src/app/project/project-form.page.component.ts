@@ -79,7 +79,7 @@ interface NameColorFormItem {
         </div>
       } @else {
         <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
-          <app-input-field [control]="nameControl" id="name" [label]="('Project.name' | translate) + ' *'" />
+          <app-input-field [control]="nameControl" id="name" [label]="'Project.name' | translate" />
 
           <div class="relative mt-6">
             <app-textarea-field

@@ -21,6 +21,7 @@ import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
 import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
 import { ThemeService } from './shared/services/theme.service';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -39,5 +40,11 @@ export const appConfig: ApplicationConfig = {
       inject(NotificationWebSocketService);
       inject(ThemeService);
     }),
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: {
+        subscriptSizing: 'dynamic',
+      },
+    },
   ],
 };

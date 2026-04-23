@@ -306,7 +306,7 @@ export class UserProfileComponent implements OnInit {
 
   private initializeForm(): void {
     this.profileForm = this.fb.group({
-      email: ['', [Validators.email]],
+      email: ['', [Validators.email, Validators.required]],
       password: ['', [this.passwordValidator.validatePassword]],
       newPassword: [null, [this.passwordValidator.validatePassword]],
       confirmNewPassword: [null],
