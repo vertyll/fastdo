@@ -574,9 +574,6 @@ export interface TableConfig {
         vertical-align: middle;
       }
 
-      /* Sticky actions column: always visible when scrolling horizontally.
-         A subtle vertical separator + left shadow indicates the pinned area,
-         which fades out smoothly when the table is scrolled to the end. */
       .actions-sticky {
         position: sticky;
         right: 0;
@@ -620,20 +617,6 @@ export interface TableConfig {
       .table-container.is-scrolled-x:not(.is-at-end-x) .actions-sticky::before,
       .table-container.is-scrolled-x:not(.is-at-end-x) .actions-sticky::after {
         opacity: 1;
-      }
-
-      /* Row hover should keep the sticky cell visually in sync with the row's background.
-         Odd rows -> row-bg / row-hover-bg; even rows -> row-even-bg / row-even-hover-bg. */
-      .mat-mdc-row:nth-child(even) .actions-sticky {
-        background-color: var(--app-table-row-even-bg);
-      }
-
-      .mat-mdc-row:hover .actions-sticky {
-        background-color: var(--app-table-row-hover-bg);
-      }
-
-      .mat-mdc-row:nth-child(even):hover .actions-sticky {
-        background-color: var(--app-table-row-even-hover-bg);
       }
 
       .actions-container {
