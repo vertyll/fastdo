@@ -691,7 +691,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
   `,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  readonly visibleItemsCount = input<number>(2);
+  public readonly visibleItemsCount = input<number>(2);
 
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);

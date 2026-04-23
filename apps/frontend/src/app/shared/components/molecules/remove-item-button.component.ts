@@ -52,9 +52,10 @@ export class RemoveItemButtonComponent {
   private readonly modalService = inject(ModalService);
   private readonly translateService = inject(TranslateService);
 
-  mode = input<'modal' | 'inline'>('modal');
+  public readonly mode = input<'modal' | 'inline'>('modal');
 
-  readonly confirm = output<void>();
+  public readonly confirm = output<void>();
+
   protected removeMode: boolean = false;
 
   protected toggleRemoveMode(): void {

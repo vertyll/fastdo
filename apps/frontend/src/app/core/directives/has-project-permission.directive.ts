@@ -10,10 +10,11 @@ export interface HasProjectPermissionContext {
   selector: '[appHasProjectPermission]',
 })
 export class HasProjectPermissionDirective implements OnInit, OnChanges {
-  readonly context = input.required<HasProjectPermissionContext>({ alias: 'appHasProjectPermission' });
-
   private readonly templateRef = inject(TemplateRef<any>);
   private readonly viewContainer = inject(ViewContainerRef);
+
+  public readonly context = input.required<HasProjectPermissionContext>({ alias: 'appHasProjectPermission' });
+
   private isVisible: boolean = false;
 
   ngOnInit(): void {

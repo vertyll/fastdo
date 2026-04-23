@@ -17,12 +17,12 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   `,
 })
 export class CheckboxComponent {
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly checked = input(false);
-  readonly value = input<any>();
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly checked = input(false);
+  public readonly value = input<any>();
 
-  readonly changed = output<{
+  public readonly changed = output<{
     value: any;
     checked: boolean;
   }>();

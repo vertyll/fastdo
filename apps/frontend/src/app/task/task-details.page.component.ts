@@ -579,7 +579,7 @@ import { Task, TaskComment } from './defs/task.defs';
   `,
 })
 export class TaskDetailsPageComponent implements OnInit, OnDestroy {
-  readonly taskId = input.required<string>();
+  public readonly taskId = input.required<string>();
 
   protected readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -611,7 +611,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   private currentLang: string = this.translateService.getCurrentLang() || 'pl';
 
-  get contentControl(): FormControl {
+  public get contentControl(): FormControl {
     return this.commentForm.get('content') as FormControl;
   }
 

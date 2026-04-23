@@ -15,9 +15,9 @@ import { LabelComponent } from '../atoms/label.component';
   `,
 })
 export class InputFieldComponent {
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly label = input.required<string>();
-  readonly type = input<InputType>('text');
-  readonly isFloating = input<boolean>(true);
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly label = input.required<string>();
+  public readonly type = input<InputType>('text');
+  public readonly isFloating = input<boolean>(true);
 }

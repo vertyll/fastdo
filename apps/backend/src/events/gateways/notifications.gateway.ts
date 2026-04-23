@@ -28,7 +28,7 @@ import { AuthenticatedSocket, SocketServer } from '../types/socket.interface';
 })
 export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: SocketServer;
+  public server: SocketServer;
 
   private readonly logger = new Logger(NotificationsGateway.name);
 

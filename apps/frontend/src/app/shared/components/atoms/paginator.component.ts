@@ -103,11 +103,11 @@ export class PaginatorComponent {
   private readonly translateService = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly total = input<number>(0);
-  readonly pageSize = input<number>(10);
-  readonly currentPage = input<number>(0);
-  readonly pageSizeOptions = input<number[]>(DEFAULT_PAGE_SIZE);
-  readonly pageChange = output<PaginationParams>();
+  public readonly total = input<number>(0);
+  public readonly pageSize = input<number>(10);
+  public readonly currentPage = input<number>(0);
+  public readonly pageSizeOptions = input<number[]>(DEFAULT_PAGE_SIZE);
+  public readonly pageChange = output<PaginationParams>();
 
   constructor() {
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {

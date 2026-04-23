@@ -943,23 +943,23 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   private readonly themeService = inject(ThemeService);
   private readonly platformService = inject(PlatformService);
 
-  data = input.required<TableRow[]>();
-  config = input.required<TableConfig>();
-  loading = input(false);
-  customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
-  initialSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
-  height = input<string | null>(null);
-  noResultsMessage = input<string>('Basic.noResults');
+  public readonly data = input.required<TableRow[]>();
+  public readonly config = input.required<TableConfig>();
+  public readonly loading = input(false);
+  public readonly customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
+  public readonly initialSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
+  public readonly height = input<string | null>(null);
+  public readonly noResultsMessage = input<string>('Basic.noResults');
 
-  selectionChange = output<any[]>();
-  actionClick = output<{ action: string; row: any }>();
-  sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
-  rowClick = output<any>();
-  projectImageClick = output<any>();
-  loadMore = output<void>();
+  public readonly selectionChange = output<any[]>();
+  public readonly actionClick = output<{ action: string; row: any }>();
+  public readonly sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
+  public readonly rowClick = output<any>();
+  public readonly projectImageClick = output<any>();
+  public readonly loadMore = output<void>();
 
   @ContentChild('customTemplate')
-  customTemplate!: TemplateRef<any>;
+  public readonly customTemplate!: TemplateRef<any>;
 
   protected readonly isDarkMode = computed(() => this.themeService.currentTheme === ThemeEnum.Dark);
   protected readonly isMobile = computed(() => this.platformService.isMobile());
@@ -1017,7 +1017,7 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     }
   }
 
-  get displayedColumns(): string[] {
+  public get displayedColumns(): string[] {
     const columns = [];
     if (this.config().selectable) {
       columns.push('select');

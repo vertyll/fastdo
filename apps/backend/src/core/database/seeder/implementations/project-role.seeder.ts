@@ -29,7 +29,7 @@ export class ProjectRoleSeeder implements ISeeder {
     this.baseSeeder = this.seederFactory.createSeederService(ProjectRoleSeeder.name);
   }
 
-  async seed(): Promise<void> {
+  public async seed(): Promise<void> {
     await this.baseSeeder.execute(async (): Promise<void> => {
       const existingRoles = await this.projectRoleRepository.find();
       if (existingRoles.length > 0) {

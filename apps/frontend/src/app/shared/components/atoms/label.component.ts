@@ -23,7 +23,7 @@ import { Component, input } from '@angular/core';
   `,
 })
 export class LabelComponent {
-  readonly forId = input<string | null>();
-  readonly isFloating = input<boolean>(false);
-  readonly required = input<boolean>(false);
+  public readonly forId = input<string | null>();
+  public readonly isFloating = input<boolean>(false);
+  public readonly required = input<boolean>(false);
 }

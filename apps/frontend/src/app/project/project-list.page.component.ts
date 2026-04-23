@@ -121,7 +121,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   protected readonly ProjectRoleEnum = ProjectRoleEnum;
 
   @ViewChild('projectUserRoleTemplate')
-  projectUserRoleTemplate!: TemplateRef<any>;
+  public readonly projectUserRoleTemplate!: TemplateRef<any>;
 
   protected tableRows: TableRow[] = [];
   private rawProjects: ProjectListItem[] = [];

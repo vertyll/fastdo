@@ -187,7 +187,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
 export class ModalComponent {
   protected readonly modalService = inject(ModalService);
 
-  readonly adHost = viewChild(AdDirective);
+  public readonly adHost = viewChild(AdDirective);
 
   protected readonly ButtonRole = ButtonRoleEnum;
   protected readonly ModalInputType = ModalInputTypeEnum;

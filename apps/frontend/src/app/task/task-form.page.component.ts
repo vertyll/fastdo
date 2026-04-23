@@ -331,24 +331,24 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  readonly projectId = signal<string | null>(null);
-  readonly taskId = signal<string | null>(null);
-  readonly loading = signal(true);
-  readonly submitting = signal(false);
-  readonly error = signal<string | null>(null);
+  public readonly projectId = signal<string | null>(null);
+  public readonly taskId = signal<string | null>(null);
+  public readonly loading = signal(true);
+  public readonly submitting = signal(false);
+  public readonly error = signal<string | null>(null);
 
-  readonly prioritiesRaw = signal<TranslatableOptionItem[]>([]);
-  readonly categoriesRaw = signal<TranslatableOptionItem[]>([]);
-  readonly statusesRaw = signal<TranslatableOptionItem[]>([]);
-  readonly accessRolesRaw = signal<TranslatableOptionItem[]>([]);
-  readonly priorities = signal<SimpleNameItem[]>([]);
-  readonly categories = signal<SimpleNameItem[]>([]);
-  readonly statuses = signal<SimpleNameItem[]>([]);
-  readonly accessRoles = signal<SimpleNameItem[]>([]);
-  readonly projectUsers = signal<SimpleNameItem[]>([]);
-  readonly attachments = signal<FileUploadItem[]>([]);
-  readonly existingAttachments = signal<any[]>([]);
-  readonly attachmentsToDelete = signal<string[]>([]);
+  public readonly prioritiesRaw = signal<TranslatableOptionItem[]>([]);
+  public readonly categoriesRaw = signal<TranslatableOptionItem[]>([]);
+  public readonly statusesRaw = signal<TranslatableOptionItem[]>([]);
+  public readonly accessRolesRaw = signal<TranslatableOptionItem[]>([]);
+  public readonly priorities = signal<SimpleNameItem[]>([]);
+  public readonly categories = signal<SimpleNameItem[]>([]);
+  public readonly statuses = signal<SimpleNameItem[]>([]);
+  public readonly accessRoles = signal<SimpleNameItem[]>([]);
+  public readonly projectUsers = signal<SimpleNameItem[]>([]);
+  public readonly attachments = signal<FileUploadItem[]>([]);
+  public readonly existingAttachments = signal<any[]>([]);
+  public readonly attachmentsToDelete = signal<string[]>([]);
 
   protected readonly maxAttachmentsLimit = 4;
   protected readonly formatFileSize = formatFileSizeUtil;
@@ -356,49 +356,49 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   protected taskForm!: FormGroup;
   protected fieldErrors: Record<string, string[]> = {};
 
-  get descriptionControl(): FormControl {
+  public get descriptionControl(): FormControl {
     return this.taskForm.get('description') as FormControl;
   }
 
-  get additionalDescriptionControl(): FormControl {
+  public get additionalDescriptionControl(): FormControl {
     return this.taskForm.get('additionalDescription') as FormControl;
   }
 
-  get priceEstimationControl(): FormControl {
+  public get priceEstimationControl(): FormControl {
     return this.taskForm.get('priceEstimation') as FormControl;
   }
 
-  get workedTimeControl(): FormControl {
+  public get workedTimeControl(): FormControl {
     return this.taskForm.get('workedTime') as FormControl;
   }
 
-  get priorityIdControl(): FormControl {
+  public get priorityIdControl(): FormControl {
     return this.taskForm.get('priorityId') as FormControl;
   }
 
-  get statusIdControl(): FormControl {
+  public get statusIdControl(): FormControl {
     return this.taskForm.get('statusId') as FormControl;
   }
 
-  get accessRoleControl(): FormControl {
+  public get accessRoleControl(): FormControl {
     return this.taskForm.get('accessRole') as FormControl;
   }
 
-  get priorityOptions(): Array<{ value: number; label: string }> {
+  public get priorityOptions(): Array<{ value: number; label: string }> {
     return this.priorities().map(item => ({
       value: item.id,
       label: item.name,
     }));
   }
 
-  get statusOptions(): Array<{ value: number | null; label: string }> {
+  public get statusOptions(): Array<{ value: number | null; label: string }> {
     return [
       { value: null, label: this.translateService.instant('Basic.none') },
       ...this.statuses().map(s => ({ value: s.id, label: s.name })),
     ];
   }
 
-  get accessRoleOptions(): Array<{ value: number | null; label: string }> {
+  public get accessRoleOptions(): Array<{ value: number | null; label: string }> {
     return [
       { value: null, label: this.translateService.instant('Basic.none') },
       ...this.accessRoles().map(r => ({ value: r.id, label: r.name })),

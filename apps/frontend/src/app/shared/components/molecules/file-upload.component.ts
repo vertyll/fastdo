@@ -97,19 +97,19 @@ export class FileUploadComponent {
   protected readonly formatFileSize = formatFileSizeUtil;
 
   @ViewChild('fileInput', { static: true })
-  fileInput!: ElementRef<HTMLInputElement>;
+  public readonly fileInput!: ElementRef<HTMLInputElement>;
 
-  multiple = input<boolean>(false);
-  accept = input<string>('');
-  maxFiles = input<number>(0);
-  maxSizeBytes = input<number>(0);
-  disabled = input<boolean>(false);
+  public readonly multiple = input<boolean>(false);
+  public readonly accept = input<string>('');
+  public readonly maxFiles = input<number>(0);
+  public readonly maxSizeBytes = input<number>(0);
+  public readonly disabled = input<boolean>(false);
 
-  filesChange = output<FileUploadItem[]>();
-  errorOccurred = output<string[]>();
+  public readonly filesChange = output<FileUploadItem[]>();
+  public readonly errorOccurred = output<string[]>();
 
-  files = signal<FileUploadItem[]>([]);
-  errors = signal<string[]>([]);
+  public files = signal<FileUploadItem[]>([]);
+  public errors = signal<string[]>([]);
 
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

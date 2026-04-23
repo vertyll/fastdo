@@ -212,17 +212,18 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
 export class FilterGroupComponent<T extends Record<string, any>>
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
-  readonly type = input.required<string>();
-  readonly filters = input<FilterMetadata[]>([]);
-  readonly filterChange = output<T>();
-  readonly filterSearch = output<{ term: string; filter: string }>();
+  public readonly type = input.required<string>();
+  public readonly filters = input<FilterMetadata[]>([]);
 
-  public form!: FormGroup;
+  public readonly filterChange = output<T>();
+  public readonly filterSearch = output<{ term: string; filter: string }>();
+
+  protected form!: FormGroup;
   private readonly formChangeSubscriptions: Subscription[] = [];
   private langChangeSubscription!: Subscription;
 
-  public readonly filledFilters = signal<FilterValue[]>([]);
-  public readonly showAllFilters = signal<boolean>(false);
+  protected readonly filledFilters = signal<FilterValue[]>([]);
+  protected readonly showAllFilters = signal<boolean>(false);
 
   protected readonly mobileFilterToggleHidden = signal<boolean>(false);
   protected readonly translateService = inject(TranslateService);
@@ -260,23 +261,23 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.unsubscribeAll();
   }
 
-  public getLabelKeyForFilter(formControlName: string): string {
+  protected getLabelKeyForFilter(formControlName: string): string {
     const filter = this.filters().find(f => f.formControlName === formControlName);
     return filter?.labelKey ?? formControlName;
   }
 
-  public onFilterSearch(event: any, filter: FilterMetadata): void {
+  protected onFilterSearch(event: any, filter: FilterMetadata): void {
     this.filterSearch.emit({
       term: event.term,
       filter: filter.formControlName,
     });
   }
 
-  public clearFilters(): void {
+  protected clearFilters(): void {
     this.resetFormAndNavigate();
   }
 
-  public toggleFilters(): void {
+  protected toggleFilters(): void {
     this.showAllFilters.set(!this.showAllFilters());
   }
 

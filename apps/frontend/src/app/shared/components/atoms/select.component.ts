@@ -23,10 +23,10 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
 })
 export class SelectFilterComponent {
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly placeholder = input<string>('');
-  readonly options = input<
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly placeholder = input<string>('');
+  public readonly options = input<
     Array<{
       value: any;
       label: string;

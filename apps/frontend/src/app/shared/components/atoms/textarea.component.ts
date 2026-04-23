@@ -15,8 +15,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   `,
 })
 export class TextareaComponent {
-  readonly id = input.required<string>();
-  readonly control = input.required<FormControl>();
-  readonly placeholder = input<string>('');
-  readonly rows = input<number>(3);
+  public readonly id = input.required<string>();
+  public readonly control = input.required<FormControl>();
+  public readonly placeholder = input<string>('');
+  public readonly rows = input<number>(3);
 }

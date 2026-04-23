@@ -14,10 +14,10 @@ import { LabelComponent } from '../atoms/label.component';
   `,
 })
 export class TextareaFieldComponent {
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly label = input.required<string>();
-  readonly placeholder = input<string>('');
-  readonly rows = input<number>(3);
-  readonly isFloating = input<boolean>(true);
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly label = input.required<string>();
+  public readonly placeholder = input<string>('');
+  public readonly rows = input<number>(3);
+  public readonly isFloating = input<boolean>(true);
 }

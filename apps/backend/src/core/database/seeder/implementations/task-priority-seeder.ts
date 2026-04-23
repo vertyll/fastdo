@@ -22,7 +22,7 @@ export class TaskPrioritySeeder implements ISeeder {
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
   ) {}
 
-  async seed(): Promise<void> {
+  public async seed(): Promise<void> {
     const existingPriorities = await this.priorityRepository.count();
     if (existingPriorities > 0) {
       return;

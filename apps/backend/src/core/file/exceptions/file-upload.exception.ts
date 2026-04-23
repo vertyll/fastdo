@@ -4,7 +4,7 @@ import { I18nTranslations } from '../../../generated/i18n/i18n.generated';
 
 export class FileUploadException extends HttpException {
   constructor(
-    readonly i18n: I18nService<I18nTranslations>,
+    public readonly i18n: I18nService<I18nTranslations>,
     message: string,
     cause?: Error,
   ) {

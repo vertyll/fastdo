@@ -6,10 +6,12 @@ import { RoleEnum } from 'src/app/shared/enums/role.enum';
   selector: '[appHasRole]',
 })
 export class HasRoleDirective implements OnInit {
-  readonly allowedRoles = input.required<RoleEnum[] | RoleEnum>({ alias: 'appHasRole' });
   private readonly templateRef = inject(TemplateRef<any>);
   private readonly viewContainer = inject(ViewContainerRef);
   private readonly authService = inject(AuthService);
+
+  public readonly allowedRoles = input.required<RoleEnum[] | RoleEnum>({ alias: 'appHasRole' });
+
   private isVisible: boolean = false;
 
   ngOnInit(): void {

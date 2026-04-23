@@ -15,6 +15,6 @@ import { TruncateTextPipe } from '../../pipes/truncate-text.pipe';
   `,
 })
 export class TitleComponent {
-  readonly text = input.required<string>();
-  readonly limit = input<number | null>(null);
+  public readonly text = input.required<string>();
+  public readonly limit = input<number | null>(null);
 }

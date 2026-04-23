@@ -151,14 +151,14 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 export class ImageComponent implements OnDestroy {
   private readonly baseUrl = environment.backendUrl;
 
-  mode = input<ImageMode>('view');
-  format = input<ImageFormat>('circle');
-  size = input<ImageSize>('md');
-  initialUrl = input<string | null>(null);
+  public readonly mode = input<ImageMode>('view');
+  public readonly format = input<ImageFormat>('circle');
+  public readonly size = input<ImageSize>('md');
+  public readonly initialUrl = input<string | null>(null);
 
-  imageSaved = output<{ file: File; preview: string | null }>();
-  croppingChange = output<boolean>();
-  imageRemoved = output<void>();
+  public readonly imageSaved = output<{ file: File; preview: string | null }>();
+  public readonly croppingChange = output<boolean>();
+  public readonly imageRemoved = output<void>();
 
   protected previewUrl = signal<string | null>(null);
   protected showCropper = signal(false);
@@ -170,10 +170,10 @@ export class ImageComponent implements OnDestroy {
   private selectedFile: File | null = null;
 
   @ViewChild('fileInput')
-  fileInput!: ElementRef<HTMLInputElement>;
+  public readonly fileInput!: ElementRef<HTMLInputElement>;
 
   @ViewChild('cropperImage')
-  set cropperImage(element: ElementRef<HTMLImageElement>) {
+  public set cropperImage(element: ElementRef<HTMLImageElement>) {
     if (element && this.showCropper()) {
       if (this.cropper) {
         this.cropper.destroy();

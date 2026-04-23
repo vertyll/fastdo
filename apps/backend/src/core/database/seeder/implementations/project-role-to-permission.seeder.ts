@@ -26,7 +26,7 @@ export class ProjectRoleToPermissionSeeder implements ISeeder {
     this.baseSeeder = this.seederFactory.createSeederService(ProjectRoleToPermissionSeeder.name);
   }
 
-  async seed(): Promise<void> {
+  public async seed(): Promise<void> {
     await this.baseSeeder.execute(async (): Promise<void> => {
       const roles = await this.roleRepository.find({ relations: ['permissions'] });
       const permissions = await this.permissionRepository.find();

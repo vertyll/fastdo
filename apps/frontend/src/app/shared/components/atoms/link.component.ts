@@ -22,9 +22,9 @@ import { LinkTypeEnum } from '../../enums/link-type.enum';
   `,
 })
 export class LinkComponent {
-  readonly routerLink = input.required<string | any[]>();
-  readonly linkType = input<LinkTypeEnum>(LinkTypeEnum.Default);
-  readonly clickHandler = input<() => void>();
+  public readonly routerLink = input.required<string | any[]>();
+  public readonly linkType = input<LinkTypeEnum>(LinkTypeEnum.Default);
+  public readonly clickHandler = input<() => void>();
 
   protected readonly LinkTypeEnum = LinkTypeEnum;
 }

@@ -327,7 +327,7 @@ export class AuthService implements IAuthService {
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async cleanExpiredTokens(): Promise<void> {
+  public async cleanExpiredTokens(): Promise<void> {
     this.logger.log('Removing expired tokens...');
     const affected = await this.refreshTokensService.deleteExpiredTokens();
     this.logger.log(`Removed ${affected} expired tokens`);

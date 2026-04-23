@@ -11,11 +11,11 @@ import { TranslateModule } from '@ngx-translate/core';
   `,
 })
 export class ButtonComponent {
-  readonly type = input<'button' | 'submit'>('button');
-  readonly disabled = input<boolean | undefined>(false);
-  readonly cssClass = input<string>('');
+  public readonly type = input<'button' | 'submit'>('button');
+  public readonly disabled = input<boolean | undefined>(false);
+  public readonly cssClass = input<string>('');
 
-  readonly clicked = output<Event>();
+  public readonly clicked = output<Event>();
 
   protected getButtonClass(): string {
     const baseClasses =

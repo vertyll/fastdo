@@ -20,12 +20,8 @@ function getStoredState(): FilterStateModel {
 @Injectable()
 export class FiltersState {
   @Selector()
-  static getState(state: FilterStateModel): FilterStateModel {
+  public static getState(state: FilterStateModel): FilterStateModel {
     return state;
-  }
-
-  private syncToStorage(state: FilterStateModel): void {
-    localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(state));
   }
 
   @Action(SavePartial)
@@ -69,5 +65,9 @@ export class FiltersState {
 
     setState(rest);
     this.syncToStorage(rest);
+  }
+
+  private syncToStorage(state: FilterStateModel): void {
+    localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(state));
   }
 }

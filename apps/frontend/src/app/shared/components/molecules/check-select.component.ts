@@ -61,10 +61,10 @@ import { LabelComponent } from '../atoms/label.component';
 export class CheckSelectComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
 
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly label = input.required<string>();
-  readonly options = input<
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly label = input.required<string>();
+  public readonly options = input<
     Array<{
       value: any;
       label: string;
@@ -90,7 +90,7 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event): void {
+  public onClickOutside(event: Event): void {
     if (!event.target || !(event.target as HTMLElement).closest('.form-select')) {
       this.isDropdownOpen = false;
     }

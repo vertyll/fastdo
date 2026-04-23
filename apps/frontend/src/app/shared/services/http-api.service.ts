@@ -7,9 +7,9 @@ import { FetchingError } from '../defs/list-state.defs';
 export abstract class HttpApiService {
   protected readonly http = inject(HttpClient);
 
-  readonly $idle = signal(true);
-  readonly $loading = signal(false);
-  readonly $error = signal<FetchingError | null>(null);
+  public readonly $idle = signal(true);
+  public readonly $loading = signal(false);
+  public readonly $error = signal<FetchingError | null>(null);
 
   protected get baseUrl(): string {
     return `${environment.backendUrl}/api`;

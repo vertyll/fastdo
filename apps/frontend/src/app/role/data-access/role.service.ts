@@ -9,8 +9,8 @@ import { RoleApiService } from './role.api.service';
 export class RoleService {
   private readonly apiService = inject(RoleApiService);
 
-  readonly $roles = signal<Role[]>([]);
-  readonly $loading = signal(false);
+  public readonly $roles = signal<Role[]>([]);
+  public readonly $loading = signal(false);
 
   public getAllRoles(lang?: string): Observable<Role[]> {
     this.$loading.set(true);

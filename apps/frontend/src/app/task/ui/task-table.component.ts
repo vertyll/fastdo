@@ -24,18 +24,18 @@ import { MOBILE_BREAKPOINT } from '../../app.contansts';
   `,
 })
 export class TaskTableComponent {
-  tasks = input.required<Task[]>();
-  loading = input(false);
-  loadingMore = input(false);
-  hasMore = input(true);
-  customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
-  currentSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
+  public readonly tasks = input.required<Task[]>();
+  public readonly loading = input(false);
+  public readonly loadingMore = input(false);
+  public readonly hasMore = input(true);
+  public readonly customTemplates = input<{ [key: string]: TemplateRef<any> }>({});
+  public readonly currentSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
 
-  loadMore = output<void>();
-  taskClick = output<Task>();
-  actionClick = output<{ action: string; row: Task }>();
-  sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
-  selectionChange = output<Task[]>();
+  public readonly loadMore = output<void>();
+  public readonly taskClick = output<Task>();
+  public readonly actionClick = output<{ action: string; row: Task }>();
+  public readonly sortChange = output<{ column: string; direction: 'asc' | 'desc' }>();
+  public readonly selectionChange = output<Task[]>();
 
   protected readonly tableConfig = computed<TableConfig>(() => ({
     columns: this.getTableColumns(),

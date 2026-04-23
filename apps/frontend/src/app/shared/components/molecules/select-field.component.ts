@@ -14,12 +14,12 @@ import { SelectFilterComponent } from '../atoms/select.component';
   `,
 })
 export class SelectFieldComponent {
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly label = input.required<string>();
-  readonly placeholder = input<string>('');
-  readonly isFloating = input<boolean>(true);
-  readonly options = input<
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly label = input.required<string>();
+  public readonly placeholder = input<string>('');
+  public readonly isFloating = input<boolean>(true);
+  public readonly options = input<
     Array<{
       value: any;
       label: string;

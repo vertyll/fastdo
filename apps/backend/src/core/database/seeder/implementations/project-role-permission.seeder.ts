@@ -29,7 +29,7 @@ export class ProjectRolePermissionSeeder implements ISeeder {
     this.baseSeeder = this.seederFactory.createSeederService(ProjectRolePermissionSeeder.name);
   }
 
-  async seed(): Promise<void> {
+  public async seed(): Promise<void> {
     await this.baseSeeder.execute(async (): Promise<void> => {
       const existingPermissions = await this.permissionRepository.find();
       if (existingPermissions.length > 0) {

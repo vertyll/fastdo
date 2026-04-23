@@ -16,8 +16,8 @@ import { InputType } from '../../defs/components.defs';
   `,
 })
 export class InputComponent {
-  readonly control = input.required<FormControl>();
-  readonly id = input.required<string>();
-  readonly type = input<InputType>('text');
-  readonly placeholder = input('');
+  public readonly control = input.required<FormControl>();
+  public readonly id = input.required<string>();
+  public readonly type = input<InputType>('text');
+  public readonly placeholder = input('');
 }

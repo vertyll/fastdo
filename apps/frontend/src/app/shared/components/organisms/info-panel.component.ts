@@ -151,12 +151,12 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
 })
 export class InfoPanelComponent {
-  readonly panelOpen = input<boolean>(false);
-  readonly togglePanel = input.required<() => void>();
-  readonly userRolesString = input<string>('');
-  readonly currentTime = input<string>('');
-  readonly browserInfo = input<string>('');
-  readonly isLoggedIn = input.required<() => boolean>();
+  public readonly panelOpen = input<boolean>(false);
+  public readonly togglePanel = input.required<() => void>();
+  public readonly userRolesString = input<string>('');
+  public readonly currentTime = input<string>('');
+  public readonly browserInfo = input<string>('');
+  public readonly isLoggedIn = input.required<() => boolean>();
 
   protected readonly maxVisibleChars = 20;
   protected expandedSection = signal<string>('');

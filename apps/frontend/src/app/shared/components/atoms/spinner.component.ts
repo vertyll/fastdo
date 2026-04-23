@@ -17,5 +17,5 @@ import { SpinnerSize } from '../../defs/components.defs';
   `,
 })
 export class SpinnerComponent {
-  readonly size = input<SpinnerSize>('medium');
+  public readonly size = input<SpinnerSize>('medium');
 }

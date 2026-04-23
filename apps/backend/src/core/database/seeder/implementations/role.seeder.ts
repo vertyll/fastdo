@@ -27,7 +27,7 @@ export class RoleSeeder implements ISeeder {
     this.baseSeeder = this.seederFactory.createSeederService(RoleSeeder.name);
   }
 
-  async seed(): Promise<void> {
+  public async seed(): Promise<void> {
     await this.baseSeeder.execute(async (): Promise<void> => {
       const languages = await this.languageRepository.find();
 

@@ -422,22 +422,22 @@ import { LabelComponent } from '../atoms/label.component';
   ],
 })
 export class EditableMultiSelectComponent implements ControlValueAccessor, Validators {
-  readonly dataArray = input.required<any[]>();
-  readonly maxSelectedItems = input<number | undefined>(undefined);
-  readonly multiple = input<boolean>(true);
-  readonly id = input.required<string>();
-  readonly minTermLength = input<number>(0);
-  readonly allowAddTag = input<boolean>(true);
-  readonly placeholder = input<string>('');
-  readonly isFloating = input<boolean>(true);
+  public readonly dataArray = input.required<any[]>();
+  public readonly maxSelectedItems = input<number | undefined>(undefined);
+  public readonly multiple = input<boolean>(true);
+  public readonly id = input.required<string>();
+  public readonly minTermLength = input<number>(0);
+  public readonly allowAddTag = input<boolean>(true);
+  public readonly placeholder = input<string>('');
+  public readonly isFloating = input<boolean>(true);
 
-  readonly searched = output();
+  public readonly searched = output();
 
   protected selectValue: any;
 
   private touched = false;
 
-  get normalizedDataArray(): Array<{ id: any; name: string }> {
+  public get normalizedDataArray(): Array<{ id: any; name: string }> {
     return (this.dataArray() ?? []).map(item => {
       if (typeof item === 'number' || typeof item === 'string') {
         return { id: item, name: String(item) };

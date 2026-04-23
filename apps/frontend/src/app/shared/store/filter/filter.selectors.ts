@@ -4,11 +4,11 @@ import { FiltersState } from './filter.state';
 
 export class FiltersSelectors {
   @Selector([FiltersState])
-  static getState(state: FilterStateModel): FilterStateModel {
+  public static getState(state: FilterStateModel): FilterStateModel {
     return state;
   }
 
-  static getFiltersByType(type: string): (state: FilterStateModel) => FilterModel {
+  public static getFiltersByType(type: string): (state: FilterStateModel) => FilterModel {
     return createSelector([FiltersState], (state: FilterStateModel): FilterModel => state[type] || {});
   }
 }

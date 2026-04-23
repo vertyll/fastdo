@@ -24,10 +24,10 @@ import { InputComponent } from '../atoms/input.component';
   `,
 })
 export class SubmitTextComponent {
-  readonly placeholder = input<string>('');
-  readonly type = input<InputType>('text');
-  readonly control = input<FormControl>(new FormControl());
-  readonly submitText = output<string>();
+  public readonly placeholder = input<string>('');
+  public readonly type = input<InputType>('text');
+  public readonly control = input<FormControl>(new FormControl());
+  public readonly submitText = output<string>();
 
   protected emitText(): void {
     const text = this.control().value?.trim();

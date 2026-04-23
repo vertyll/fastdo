@@ -5,8 +5,8 @@ import { ProjectRoleEnum } from 'src/app/shared/enums/project-role.enum';
   selector: '[appHasProjectRole]',
 })
 export class HasProjectRoleDirective implements OnInit, OnChanges {
-  readonly allowedRoles = input.required<ProjectRoleEnum[] | ProjectRoleEnum>({ alias: 'appHasProjectRole' });
-  readonly projectUserRole = input<string | undefined>();
+  public readonly allowedRoles = input.required<ProjectRoleEnum[] | ProjectRoleEnum>({ alias: 'appHasProjectRole' });
+  public readonly projectUserRole = input<string | undefined>();
 
   private readonly elementRef = inject(ElementRef);
   private readonly renderer = inject(Renderer2);

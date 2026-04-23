@@ -145,11 +145,11 @@ import { MOBILE_BREAKPOINT } from '../app.contansts';
 })
 export class TaskListPageComponent implements OnInit, AfterViewInit {
   @ViewChild('statusTemplate', { static: false })
-  statusTemplate!: TemplateRef<any>;
+  public readonly statusTemplate!: TemplateRef<any>;
   @ViewChild('categoriesTemplate', { static: false })
-  categoriesTemplate!: TemplateRef<any>;
+  public readonly categoriesTemplate!: TemplateRef<any>;
   @ViewChild('assignedUsersTemplate', { static: false })
-  assignedUsersTemplate!: TemplateRef<any>;
+  public readonly assignedUsersTemplate!: TemplateRef<any>;
 
   protected readonly listStateValue = LOADING_STATE_VALUE;
 

@@ -5,7 +5,7 @@ import { StorageTypeEnum } from '../../config/types/app.config.type';
 
 export class InvalidStorageTypeException extends BadRequestException {
   constructor(
-    readonly i18n: I18nService<I18nTranslations>,
+    public readonly i18n: I18nService<I18nTranslations>,
     type: StorageTypeEnum | string,
   ) {
     super({
