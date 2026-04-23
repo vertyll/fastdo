@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, finalize, of, takeUntil } from 'rxjs';
@@ -106,8 +106,8 @@ import { TitleComponent } from '../atoms/title.component';
 
         <!-- Buttons -->
         <div class="flex justify-end gap-4 pt-6">
-          <app-button type="submit" [disabled]="settingsForm.invalid || isSubmitting">
-            {{ isSubmitting ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
+          <app-button type="submit" [disabled]="settingsForm.invalid || isSubmitting()">
+            {{ isSubmitting() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
           </app-button>
         </div>
       </form>
@@ -122,7 +122,28 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   protected settingsForm!: FormGroup;
-  protected isSubmitting: boolean = false;
+  protected readonly isSubmitting = signal(false);
+
+  constructor() {
+    effect(() => {
+      const settings = this.notificationStateService.settings();
+      if (settings && this.settingsForm) {
+        this.settingsForm.patchValue(
+          {
+            appNotifications: settings.appNotifications,
+            emailNotifications: settings.emailNotifications,
+            projectInvitations: settings.projectInvitations,
+            taskAssignments: settings.taskAssignments,
+            taskComments: settings.taskComments,
+            taskStatusChanges: settings.taskStatusChanges,
+            projectUpdates: settings.projectUpdates,
+            systemNotifications: settings.systemNotifications,
+          },
+          { emitEvent: false },
+        );
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -139,11 +160,11 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   }
 
   protected onSubmit(): void {
-    if (this.settingsForm.invalid || this.isSubmitting) {
+    if (this.settingsForm.invalid || this.isSubmitting()) {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
     const formValue = this.settingsForm.value;
     const updateData: UpdateNotificationSettingsDto = {
@@ -161,7 +182,7 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
       .updateSettings(updateData)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => (this.isSubmitting = false)),
+        finalize(() => this.isSubmitting.set(false)),
         catchError((error: any) => {
           const errorMessage = error.error?.message || this.translateService.instant('Notifications.settingsError');
           this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
@@ -198,14 +219,14 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
 
     if (settings) {
       this.settingsForm.patchValue({
-        appNotifications: settings.appNotifications ?? true,
-        emailNotifications: settings.emailNotifications ?? true,
-        projectInvitations: settings.projectInvitations ?? true,
-        taskAssignments: settings.taskAssignments ?? true,
-        taskComments: settings.taskComments ?? true,
-        taskStatusChanges: settings.taskStatusChanges ?? true,
-        projectUpdates: settings.projectUpdates ?? true,
-        systemNotifications: settings.systemNotifications ?? true,
+        appNotifications: settings.appNotifications,
+        emailNotifications: settings.emailNotifications,
+        projectInvitations: settings.projectInvitations,
+        taskAssignments: settings.taskAssignments,
+        taskComments: settings.taskComments,
+        taskStatusChanges: settings.taskStatusChanges,
+        projectUpdates: settings.projectUpdates,
+        systemNotifications: settings.systemNotifications,
       });
     }
   }
