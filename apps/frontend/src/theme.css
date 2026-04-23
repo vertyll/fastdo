@@ -103,7 +103,6 @@
   color-scheme: dark;
 }
 
-/* Angular Material v21 dark mode using component tokens (docs-recommended path). */
 .dark,
 .cdk-overlay-container.dark {
   --app-elevation-soft: 0 12px 28px rgba(2, 6, 23, 0.45);
@@ -209,87 +208,6 @@
   --mdc-checkbox-selected-pressed-icon-color: var(--color-primary-700);
   --mdc-checkbox-selected-focus-icon-color: var(--color-primary-500);
   --mdc-checkbox-selected-checkmark-color: #ffffff;
-}
-
-/* Fallbacks for edge cases where MDC tokens are not fully respected. */
-.cdk-overlay-container.dark .mat-mdc-select-panel,
-.cdk-overlay-container.dark .mat-mdc-autocomplete-panel {
-  background-color: var(--color-dark-surface-primary);
-  color: var(--color-dark-text-primary);
-}
-
-.cdk-overlay-container.dark .mat-mdc-option .mdc-list-item__primary-text {
-  color: var(--color-dark-text-primary);
-}
-
-.dark .mat-mdc-form-field .mdc-floating-label,
-.dark .mat-mdc-form-field .mat-mdc-select-placeholder {
-  color: var(--color-dark-text-secondary);
-}
-
-/* Ensure select value and floating label keep Material default spacing. */
-.mat-mdc-form-field .mat-mdc-form-field-infix {
-  min-height: var(--mat-form-field-container-height, 56px);
-}
-
-.mat-mdc-form-field .mat-mdc-select-trigger,
-.mat-mdc-form-field .mat-mdc-select-value-text {
-  line-height: var(--mat-select-trigger-text-line-height, 1.5rem);
-}
-
-.mat-mdc-form-field .mat-mdc-input-element,
-.mat-mdc-form-field textarea.mat-mdc-input-element {
-  line-height: var(--mat-input-text-line-height, 1.5rem);
-}
-
-.mat-mdc-form-field .mat-mdc-text-field-wrapper {
-  border-radius: var(--app-control-radius);
-  transition:
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-table-accent) 15%, transparent);
-}
-
-.cdk-overlay-container .mat-mdc-select-panel,
-.cdk-overlay-container .mat-mdc-autocomplete-panel {
-  border: 1px solid var(--app-table-border);
-  border-radius: calc(var(--app-control-radius) - 2px);
-  box-shadow: var(--app-elevation-soft);
-}
-
-.cdk-overlay-container .mat-mdc-option {
-  min-height: 40px;
-}
-
-.dark
-  .mat-mdc-checkbox
-  .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate)
-  ~ .mdc-checkbox__background,
-.cdk-overlay-container.dark
-  .mat-mdc-checkbox
-  .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate)
-  ~ .mdc-checkbox__background {
-  border-color: var(--color-dark-border-secondary);
-}
-
-.dark .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
-.dark .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background,
-.cdk-overlay-container.dark .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
-.cdk-overlay-container.dark
-  .mat-mdc-checkbox
-  .mdc-checkbox__native-control:enabled:indeterminate
-  ~ .mdc-checkbox__background {
-  background-color: var(--color-primary-500);
-  border-color: var(--color-primary-500);
-}
-
-.cdk-overlay-container.dark .mat-mdc-menu-panel,
-.cdk-overlay-container.dark .mat-mdc-tooltip {
-  color: var(--color-dark-text-primary);
-  background-color: var(--color-dark-surface-primary);
 }
 
 .success-snackbar,
