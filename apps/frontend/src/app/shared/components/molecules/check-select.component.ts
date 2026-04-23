@@ -1,62 +1,23 @@
-import { Component, HostListener, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { LabelComponent } from '../atoms/label.component';
 
 @Component({
   selector: 'app-check-select',
-  imports: [ReactiveFormsModule, LabelComponent],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule],
   template: `
-    <div class="relative">
-      <div
-        [id]="id()"
-        (click)="toggleDropdown()"
-        (keydown.enter)="toggleDropdown()"
-        (keydown.space)="toggleDropdown(); $event.preventDefault()"
-        role="button"
-        tabindex="0"
-        [attr.aria-label]="label()"
-        [attr.aria-expanded]="isDropdownOpen"
-        class="dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-200 block px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary bg-transparent rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer cursor-pointer"
-      >
-        <span>{{ label() }}</span>
-        @if (isDropdownOpen) {
-          <div
-            (click)="$event.stopPropagation()"
-            (keydown.escape)="$event.stopPropagation()"
-            role="listbox"
-            tabindex="-1"
-            class="absolute bg-background-primary dark:bg-dark-background-primary border border-border-primary dark:border-dark-border-primary rounded-lg mt-1 w-full z-10"
-          >
-            @for (option of translatedOptions; track $index) {
-              <div class="flex items-center p-2">
-                <input
-                  type="checkbox"
-                  [id]="option.value"
-                  [value]="option.value"
-                  (change)="onCheckboxChange($event)"
-                  [checked]="isChecked(option.value)"
-                  class="form-check-input h-4 w-4 text-primary-500 border-border-primary dark:border-dark-border-primary rounded focus:ring-primary-200 dark:focus:ring-primary-800 focus:ring-2"
-                />
-                <app-label [forId]="option.value">
-                  {{ option.label }}
-                </app-label>
-              </div>
-            }
-          </div>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>{{ label() }}</mat-label>
+      <mat-select [id]="id()" multiple [value]="selectedValues()" (selectionChange)="onSelectionChange($event.value)">
+        @for (option of translatedOptions(); track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
         }
-      </div>
-      <app-label [forId]="id()" [isFloating]="true">{{ label() }}</app-label>
-    </div>
+      </mat-select>
+    </mat-form-field>
   `,
-  styles: [
-    `
-      .form-check-input {
-        margin-right: 0.5rem;
-      }
-    `,
-  ],
 })
 export class CheckSelectComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
@@ -64,17 +25,17 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   public readonly control = input.required<FormControl>();
   public readonly id = input.required<string>();
   public readonly label = input.required<string>();
-  public readonly options = input<
-    Array<{
-      value: any;
-      label: string;
-    }>
-  >([]);
+  public readonly options = input<Array<{ value: any; label: string }>>([]);
 
-  protected translatedOptions: Array<{ value: any; label: string }> = [];
-  protected isDropdownOpen = false;
+  protected readonly translatedOptions = signal<Array<{ value: any; label: string }>>([]);
 
-  private langChangeSubscription!: Subscription;
+  protected readonly selectedValues = computed(() => {
+    const value = this.control().value;
+    if (!value) return [];
+    return typeof value === 'string' ? value.split(',').filter(v => v !== '') : value;
+  });
+
+  private langChangeSubscription?: Subscription;
 
   ngOnInit(): void {
     this.translateOptions();
@@ -84,45 +45,19 @@ export class CheckSelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.langChangeSubscription) {
-      this.langChangeSubscription.unsubscribe();
-    }
+    this.langChangeSubscription?.unsubscribe();
   }
 
-  @HostListener('document:click', ['$event'])
-  public onClickOutside(event: Event): void {
-    if (!event.target || !(event.target as HTMLElement).closest('.form-select')) {
-      this.isDropdownOpen = false;
-    }
-  }
-
-  protected onCheckboxChange(event: Event): void {
-    const checkbox = event.target as HTMLInputElement;
-    const value = checkbox.value;
-    const control = this.control();
-    const currentValue = control.value ? control.value.split(',') : [];
-
-    if (checkbox.checked) {
-      this.control().setValue([...currentValue, value].join(','));
-    } else {
-      this.control().setValue(currentValue.filter((v: any) => v !== value).join(','));
-    }
-  }
-
-  protected isChecked(value: any): boolean {
-    const control = this.control();
-    const currentValue = control.value ? control.value.split(',') : [];
-    return currentValue.includes(value);
-  }
-
-  protected toggleDropdown(): void {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  protected onSelectionChange(values: any[]): void {
+    this.control().setValue(values.join(','));
   }
 
   private translateOptions(): void {
-    this.translatedOptions = this.options().map(option => ({
-      value: option.value,
-      label: this.translateService.instant(option.label),
-    }));
+    this.translatedOptions.set(
+      this.options().map(option => ({
+        value: option.value,
+        label: this.translateService.instant(option.label),
+      })),
+    );
   }
 }

@@ -70,7 +70,7 @@ import { TranslateModule } from '@ngx-translate/core';
           <div #timeSection class="flex items-center min-w-fit gap-1">
             <b class="whitespace-nowrap">{{ 'InfoPanel.currentTime' | translate }}:</b>
             @if (expandedSection() === 'time') {
-              <span class="dark:text-green-500 text-orange-500 whitespace-nowrap ml-1">
+              <span class="dark:text-secondary-500 text-primary-500 whitespace-nowrap ml-1">
                 {{ currentTime() }}
               </span>
               <button
@@ -80,7 +80,7 @@ import { TranslateModule } from '@ngx-translate/core';
                 <ng-icon name="heroChevronUp" class="text-sm"></ng-icon>
               </button>
             } @else {
-              <span class="dark:text-green-500 text-orange-500 truncate max-w-40 ml-1">
+              <span class="dark:text-secondary-500 text-primary-500 truncate max-w-40 ml-1">
                 {{ currentTime() }}
               </span>
               @if (currentTime().length > maxVisibleChars) {

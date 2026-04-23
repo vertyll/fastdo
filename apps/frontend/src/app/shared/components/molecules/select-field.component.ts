@@ -1,16 +1,18 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { LabelComponent } from '../atoms/label.component';
 import { SelectFilterComponent } from '../atoms/select.component';
 
 @Component({
   selector: 'app-select-field',
-  imports: [ReactiveFormsModule, SelectFilterComponent, LabelComponent],
+  imports: [ReactiveFormsModule, SelectFilterComponent],
   template: `
-    <div class="relative">
-      <app-label [forId]="id()" [isFloating]="isFloating()">{{ label() }}</app-label>
-      <app-select [control]="control()" [id]="id()" [options]="options()" [placeholder]="placeholder()" />
-    </div>
+    <app-select
+      [control]="control()"
+      [id]="id()"
+      [options]="options()"
+      [placeholder]="placeholder()"
+      [label]="label()"
+    />
   `,
 })
 export class SelectFieldComponent {

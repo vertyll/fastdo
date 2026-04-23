@@ -1,31 +1,46 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-select',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, MatFormFieldModule, MatSelectModule],
   template: `
-    <select
-      [formControl]="control()"
-      [id]="id()"
-      class="bg-background-secondary dark:bg-dark-background-secondary transition-colors duration-200 dark:text-dark-text-primary block h-12 px-2.5 pb-2.5 pt-4 w-full text-sm text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-600 dark:focus:border-primary-500 peer"
-    >
-      @if (placeholder()) {
-        <option value="">{{ placeholder() }}</option>
+    <mat-form-field appearance="outline" class="w-full">
+      @if (label()) {
+        <mat-label>{{ label() }}</mat-label>
       }
-      @for (option of options(); track $index) {
-        <option [value]="option.value">
-          {{ option.label | translate }}
-        </option>
-      }
-    </select>
+      <mat-select [formControl]="control()" [id]="id()" [placeholder]="placeholder()">
+        @if (placeholder()) {
+          <mat-option [value]="''">{{ placeholder() }}</mat-option>
+        }
+        @for (option of options(); track $index) {
+          <mat-option [value]="option.value">
+            {{ option.label | translate }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   `,
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+      }
+      mat-form-field {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class SelectFilterComponent {
   public readonly control = input.required<FormControl>();
   public readonly id = input.required<string>();
   public readonly placeholder = input<string>('');
+  public readonly label = input<string>('');
   public readonly options = input<
     Array<{
       value: any;

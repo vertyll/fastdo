@@ -33,7 +33,7 @@
                 "input": "src"
               }
             ],
-            "styles": ["src/style.css", "node_modules/cropperjs/dist/cropper.css"],
+            "styles": ["src/material-theme.scss", "src/theme.css", "src/style.css", "node_modules/cropperjs/dist/cropper.css"],
             "scripts": []
           },
           "configurations": {
@@ -93,7 +93,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/style.css", "node_modules/cropperjs/dist/cropper.css"],
+            "styles": ["src/material-theme.scss", "src/theme.css", "src/style.css", "node_modules/cropperjs/dist/cropper.css"],
             "scripts": []
           }
         },

@@ -1,16 +1,12 @@
 import { Component, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TextareaComponent } from '../atoms/textarea.component';
-import { LabelComponent } from '../atoms/label.component';
 
 @Component({
   selector: 'app-textarea-field',
-  imports: [TextareaComponent, LabelComponent],
+  imports: [TextareaComponent],
   template: `
-    <div class="relative">
-      <app-label [forId]="id()" [isFloating]="isFloating()">{{ label() }}</app-label>
-      <app-textarea [control]="control()" [id]="id()" [rows]="rows()" [placeholder]="placeholder()" />
-    </div>
+    <app-textarea [control]="control()" [id]="id()" [rows]="rows()" [placeholder]="placeholder()" [label]="label()" />
   `,
 })
 export class TextareaFieldComponent {

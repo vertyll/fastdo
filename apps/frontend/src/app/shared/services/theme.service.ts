@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeEnum } from '../enums/theme.enum';
 import { LocalStorageService } from './local-storage.service';
 import { THEME_KEY } from '../../app.contansts';
@@ -13,6 +14,7 @@ export class ThemeService {
 
   private readonly localStorageService = inject(LocalStorageService);
   private readonly document = inject(DOCUMENT);
+  private readonly overlayContainer = inject(OverlayContainer);
 
   private readonly currentThemeSignal = signal<ThemeEnum>(this.defaultTheme);
 
@@ -33,10 +35,15 @@ export class ThemeService {
     this.currentThemeSignal.set(theme);
     this.localStorageService.set(THEME_KEY, theme);
 
-    if (theme === ThemeEnum.Dark) {
+    const isDarkTheme = theme === ThemeEnum.Dark;
+    const overlayContainerClassList = this.overlayContainer.getContainerElement().classList;
+
+    if (isDarkTheme) {
       this.document.documentElement.classList.add(ThemeEnum.Dark);
+      overlayContainerClassList.add(ThemeEnum.Dark);
     } else {
       this.document.documentElement.classList.remove(ThemeEnum.Dark);
+      overlayContainerClassList.remove(ThemeEnum.Dark);
     }
   }
 

@@ -1,22 +1,35 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-textarea',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
   template: `
-    <textarea
-      [id]="id()"
-      [formControl]="control()"
-      [placeholder]="placeholder()"
-      [rows]="rows()"
-      class="bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary transition-colors duration-200 block w-full p-2 text-sm text-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary appearance-none focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 peer"
-    ></textarea>
+    <mat-form-field appearance="outline" class="w-full">
+      @if (label()) {
+        <mat-label>{{ label() }}</mat-label>
+      }
+      <textarea matInput [id]="id()" [formControl]="control()" [placeholder]="placeholder()" [rows]="rows()"></textarea>
+    </mat-form-field>
   `,
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+      }
+      mat-form-field {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class TextareaComponent {
   public readonly id = input.required<string>();
   public readonly control = input.required<FormControl>();
   public readonly placeholder = input<string>('');
   public readonly rows = input<number>(3);
+  public readonly label = input<string>('');
 }

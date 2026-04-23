@@ -1,21 +1,24 @@
-import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SpinnerSize } from '../../defs/components.defs';
 
 @Component({
-  imports: [CommonModule],
+  imports: [MatProgressSpinnerModule],
   selector: 'app-spinner',
-  template: `
-    <div
-      class="spinner border-4 border-t-4 border-border-primary dark:border-dark-border-primary rounded-full animate-spin"
-      [ngClass]="{
-        'w-8 h-8 border-t-primary-500': size() === 'small',
-        'w-12 h-12 border-t-primary-500': size() === 'medium',
-        'w-16 h-16 border-t-primary-500': size() === 'large',
-      }"
-    ></div>
-  `,
+  template: ` <mat-progress-spinner mode="indeterminate" [diameter]="diameter()" /> `,
 })
 export class SpinnerComponent {
   public readonly size = input<SpinnerSize>('medium');
+
+  protected readonly diameter = computed(() => {
+    switch (this.size()) {
+      case 'small':
+        return 24;
+      case 'large':
+        return 64;
+      case 'medium':
+      default:
+        return 40;
+    }
+  });
 }
