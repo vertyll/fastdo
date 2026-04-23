@@ -19,7 +19,7 @@ export default tseslint.config(
     processor: angular.processInlineTemplates,
     rules: {
       'prettier/prettier': 'error',
-      
+
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -65,6 +65,25 @@ export default tseslint.config(
           allowExpressions: true,
           allowTypedFunctionExpressions: true,
           allowHigherOrderFunctions: true,
+        },
+      ],
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: {
+            constructors: 'off',
+          },
+          ignoredMethodNames: [
+            'ngOnChanges',
+            'ngOnInit',
+            'ngDoCheck',
+            'ngAfterContentInit',
+            'ngAfterContentChecked',
+            'ngAfterViewInit',
+            'ngAfterViewChecked',
+            'ngOnDestroy',
+          ],
         },
       ],
       '@typescript-eslint/naming-convention': [

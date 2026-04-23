@@ -70,6 +70,15 @@ module.exports = [
           allowHigherOrderFunctions: true,
         },
       ],
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: {
+            constructors: 'off',
+          },
+        },
+      ],
       '@typescript-eslint/naming-convention': [
         'error',
         {
