@@ -11,6 +11,7 @@ import {
   inject,
   input,
   output,
+  signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -32,31 +33,82 @@ import { CustomDatePipe } from '../../pipes/custom-date.pipe';
 import { PlatformService } from '../../services/platform.service';
 import { ThemeService } from '../../services/theme.service';
 import { ImageComponent } from './image.component';
+import { SpinnerComponent } from '../atoms/spinner.component';
 import { ThemeEnum } from '../../enums/theme.enum';
 
-export interface TableColumn {
-  key: string;
-  label: string;
-  type: 'text' | 'boolean' | 'date' | 'image' | 'custom';
-  sortable?: boolean;
-  width?: string | number;
-  customTemplate?: string;
-  truncate?: boolean;
-  truncateLength?: number;
+/**
+ * Table configuration reference
+ * -----------------------------
+ *
+ * `TableConfig` is the top-level object consumed by `<app-table>`. It describes
+ * which columns to render, what row-level actions are available and how the
+ * table should behave (sorting, pagination, hover highlighting, horizontal
+ * scroll, infinite scroll, etc.).
+ *
+ * `TableColumn` describes a single column: its key in the row object, the
+ * header label (translation key), the cell type and optional presentation
+ * hints (width, alignment, responsive visibility, text truncation).
+ *
+ * `TruncateConfig` is an opt-in object attached to a column: when omitted the
+ * cell renders full text with no width limit and no "show more" button; when
+ * provided (even as an empty `{}`), text truncation is enabled with sensible
+ * defaults — use `maxChars`, `maxLines` or `maxWidth` to tune it and
+ * `expandable: false` to hide the toggle button.
+ *
+ * `TableAction` describes a row-level action rendered in the sticky actions
+ * column (view / edit / delete / custom). Use `visible` and `disabled`
+ * predicates to control per-row availability.
+ */
+export interface TruncateConfig {
+  /** Maximum number of characters used to size the cell (CSS `ch` unit)
+   *  and to decide whether the "show more / show less" toggle is needed. */
+  maxChars?: number;
+  /** Maximum number of lines shown in the collapsed state (CSS `-webkit-line-clamp`). */
   maxLines?: number;
-  autoTruncate?: boolean;
+  /** Explicit CSS `max-width` for the cell (e.g. `'24rem'`, `'400px'`).
+   *  Takes precedence over `maxChars`. */
+  maxWidth?: string;
+  /** Whether the "show more / show less" toggle button is rendered. Defaults to `true`. */
+  expandable?: boolean;
+}
+
+export interface TableColumn {
+  /** Property name on the row object whose value is rendered in this column. */
+  key: string;
+  /** Translation key used as the column header. */
+  label: string;
+  /** Cell renderer type. `custom` delegates rendering to a named template. */
+  type: 'text' | 'boolean' | 'date' | 'image' | 'custom';
+  /** Enables clicking on the header to sort by this column. */
+  sortable?: boolean;
+  /** Preferred column width, used as a `min-width` hint on the header. */
+  width?: string | number;
+  /** Name of a `<ng-template>` passed via content projection (only for `type: 'custom'`). */
+  customTemplate?: string;
+  /** Text truncation config. Omit to render full text without a toggle button. */
+  truncate?: TruncateConfig;
+  /** Horizontal text alignment inside the cell. */
   align?: 'left' | 'center' | 'right';
+  /** Vertical alignment inside the cell. */
   verticalAlign?: 'top' | 'middle' | 'bottom';
+  /** Hides the column on the given breakpoint and below. */
   hideOn?: 'mobile' | 'tablet';
-  priority?: number; // 1 = highest priority, shown first on mobile
+  /** Display priority (1 = highest). Lower-priority columns are hidden first on narrow screens. */
+  priority?: number;
 }
 
 export interface TableAction {
+  /** Stable identifier emitted via `(action)` when the action is triggered. */
   key: string;
+  /** Translation key used for the tooltip / accessible label. */
   label: string;
+  /** Optional icon name rendered inside the action button. */
   icon?: string;
+  /** Visual variant of the action button. */
   color?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
+  /** Predicate controlling whether the action is rendered for a given row. */
   visible?: (row: any) => boolean;
+  /** Predicate controlling whether the action is disabled for a given row. */
   disabled?: (row: any) => boolean;
 }
 
@@ -65,17 +117,29 @@ export interface TableRow {
 }
 
 export interface TableConfig {
+  /** Columns rendered in the table, in order. */
   columns: TableColumn[];
+  /** Row-level actions rendered in the sticky actions column. */
   actions?: TableAction[];
+  /** Adds a leading checkbox column for row selection. */
   selectable?: boolean;
+  /** Enables header click sorting (per-column sort still requires `column.sortable`). */
   sortable?: boolean;
+  /** Enables pagination controls. */
   paginated?: boolean;
+  /** Alternates background color for even rows (zebra striping). */
   striped?: boolean;
+  /** Highlights the row under the cursor. */
   hover?: boolean;
+  /** Enables horizontal scroll when the content does not fit the container. */
   scrollable?: boolean;
+  /** Viewport width (px) below which responsive rules apply. */
   responsiveBreakpoint?: number;
+  /** Enables emitting a `loadMore` event when the user scrolls near the bottom. */
   infiniteScroll?: boolean;
+  /** Shows the inline spinner at the bottom while more rows are being loaded. */
   loadingMore?: boolean;
+  /** Function returning extra CSS class(es) for a given row. */
   rowClassFunction?: (row: any) => string;
 }
 
@@ -92,6 +156,7 @@ export interface TableConfig {
     NgIconComponent,
     TranslateModule,
     CustomDatePipe,
+    SpinnerComponent,
   ],
   providers: [
     provideIcons({
@@ -108,7 +173,7 @@ export interface TableConfig {
   template: `
     @if (loading() && !data().length) {
       <div class="state-overlay">
-        <div class="loading-spinner"></div>
+        <app-spinner />
         <span>{{ 'Basic.loading' | translate }}</span>
       </div>
     } @else if (!data().length) {
@@ -119,10 +184,14 @@ export interface TableConfig {
       </div>
     } @else {
       <div
+        #tableScrollContainer
         class="table-container dark:border-dark-border-primary border-border-primary border"
         [class.mobile-view]="isMobile()"
         [class.dark]="isDarkMode()"
+        [class.is-scrolled-x]="isScrolledX()"
+        [class.is-at-end-x]="isAtEndX()"
         [ngStyle]="getTableContainerStyle()"
+        (scroll)="onTableScroll($event)"
       >
         <table mat-table [dataSource]="data()" class="mat-elevation-z1 responsive-table">
           @if (config().selectable) {
@@ -151,7 +220,7 @@ export interface TableConfig {
                 mat-header-cell
                 *matHeaderCellDef
                 [class]="getHeaderClass(column)"
-                [style.width]="getColumnWidth(column)"
+                [style.min-width]="getColumnWidth(column)"
               >
                 {{ column.label | translate }}
                 @if (column.sortable && config().sortable) {
@@ -175,20 +244,22 @@ export interface TableConfig {
               <td mat-cell *matCellDef="let row" [class]="getCellClass(column)" [attr.data-column]="column.key">
                 @switch (column.type) {
                   @case ('text') {
-                    @if (column.truncate || column.autoTruncate) {
-                      <div class="text-cell" [class.expandable]="shouldShowExpandButton(row, column.key, column)">
+                    @if (column.truncate) {
+                      <div
+                        class="text-cell"
+                        [class.expandable]="shouldShowExpandButton(row, column.key, column)"
+                        [ngStyle]="getTextCellStyle(column)"
+                      >
                         <div
-                          class="text-content"
+                          class="text-content truncated"
                           [class.expanded]="isTextExpanded(row, column.key)"
-                          [class.truncated]="
-                            !isTextExpanded(row, column.key) && shouldShowExpandButton(row, column.key, column)
-                          "
                           [style.--max-lines]="getMaxLines(column)"
                           [title]="getValue(row, column.key)"
+                          [attr.data-truncate-key]="getRowId(row) + '__' + column.key"
                         >
-                          {{ getValue(row, column.key) || '-' }}
+                          {{ getDisplayedText(row, column) }}
                         </div>
-                        @if (shouldShowExpandButton(row, column.key, column)) {
+                        @if (isExpandable(column) && shouldShowExpandButton(row, column.key, column)) {
                           <span
                             (click)="toggleTextExpansion(row, column.key, $event)"
                             (keydown.enter)="toggleTextExpansion(row, column.key, $event)"
@@ -248,11 +319,11 @@ export interface TableConfig {
             </ng-container>
           }
           @if (config().actions?.length) {
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef class="actions-header">
+            <ng-container matColumnDef="actions" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef class="actions-header actions-sticky">
                 {{ 'Basic.actions' | translate }}
               </th>
-              <td mat-cell *matCellDef="let row" class="actions-cell">
+              <td mat-cell *matCellDef="let row" class="actions-cell actions-sticky">
                 <div class="actions-container">
                   @for (action of config().actions; track action.key) {
                     @if (isActionVisible(action, row)) {
@@ -287,7 +358,7 @@ export interface TableConfig {
         @if (config().infiniteScroll && config().loadingMore && data().length > 0) {
           <div class="loading-more-overlay">
             <div class="loading-more-content">
-              <div class="loading-more-spinner"></div>
+              <app-spinner />
               <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
             </div>
           </div>
@@ -309,32 +380,15 @@ export interface TableConfig {
         justify-content: center;
         padding: 2rem;
         min-height: 70px;
-        color: #6b7280;
-      }
-
-      .dark .state-overlay {
-        background-color: #374151;
-        border-color: #374151;
-        color: #d1d5db;
+        color: var(--app-table-state-text);
+        background-color: var(--app-table-state-bg);
+        border-color: var(--app-table-state-border);
       }
 
       .no-data-state {
         border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      }
-
-      .loading-spinner {
-        width: 2rem;
-        height: 2rem;
-        border: 3px solid #f9fafb;
-        border-top: 3px solid #f97316;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      .dark .loading-spinner {
-        border-color: #374151;
-        border-top-color: #fdba74;
+        border: 1px solid var(--app-table-border);
+        background-color: var(--app-table-row-bg);
       }
 
       .table-container {
@@ -346,9 +400,9 @@ export interface TableConfig {
       }
 
       .responsive-table {
-        width: 100%;
-        min-width: 600px;
-        table-layout: fixed;
+        width: max-content;
+        min-width: 100%;
+        table-layout: auto;
       }
 
       .select-column {
@@ -363,11 +417,10 @@ export interface TableConfig {
 
       :host .mat-mdc-header-cell {
         font-weight: 600;
-        color: #374151;
-        border-bottom: 1px solid #e5e7eb;
-        padding: 0.75rem 1rem;
+        color: var(--app-table-header-text);
+        border-bottom: 1px solid var(--app-table-border);
         z-index: 1;
-        background-color: #f9fafb;
+        background-color: var(--app-table-header-bg);
       }
 
       .header-center {
@@ -387,9 +440,21 @@ export interface TableConfig {
       }
 
       .mat-mdc-cell {
-        border-bottom: 1px solid #f9fafb;
+        border-bottom: 1px solid var(--app-table-border-soft);
+        color: var(--app-table-cell-text);
         padding: 0.75rem 1rem;
         vertical-align: top;
+        white-space: nowrap;
+      }
+
+      :host .mat-mdc-header-cell {
+        white-space: nowrap;
+      }
+
+      .mat-mdc-cell:has(.text-cell),
+      .mat-mdc-cell:has(.simple-text),
+      .mat-mdc-cell:has(.custom-cell) {
+        white-space: normal;
       }
 
       .cell-center {
@@ -416,47 +481,20 @@ export interface TableConfig {
         padding-right: 0;
       }
 
-      ::ng-deep
-        .mat-mdc-checkbox
-        .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate='true'])
-        ~ .mdc-checkbox__background {
-        border-color: #f97316; /* primary-500 */
-      }
-
-      ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
-      ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background,
-      ::ng-deep
-        .mat-mdc-checkbox
-        .mdc-checkbox__native-control[data-indeterminate='true']:enabled
-        ~ .mdc-checkbox__background {
-        background-color: #f97316; /* primary-500 */
-        border-color: #f97316; /* primary-500 */
-      }
-
-      ::ng-deep
-        .mat-mdc-checkbox:hover
-        .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate='true'])
-        ~ .mdc-checkbox__background {
-        border-color: #ea580c; /* primary-600 */
-      }
-
-      ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
-      ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background,
-      ::ng-deep
-        .mat-mdc-checkbox:hover
-        .mdc-checkbox__native-control[data-indeterminate='true']:enabled
-        ~ .mdc-checkbox__background {
-        background-color: #ea580c; /* primary-600 */
-        border-color: #ea580c; /* primary-600 */
-      }
-
-      ::ng-deep .mat-mdc-checkbox .mdc-checkbox__ripple {
-        color: #f97316;
-      }
-
       .text-cell {
         position: relative;
-        max-width: 100%;
+        margin-inline: 0;
+        text-align: inherit;
+      }
+
+      .cell-center .text-cell,
+      .cell-center.text-cell {
+        margin-inline: auto;
+      }
+      .cell-right .text-cell,
+      .cell-right.text-cell {
+        margin-inline-start: auto;
+        margin-inline-end: 0;
       }
 
       .text-content {
@@ -489,7 +527,7 @@ export interface TableConfig {
         margin-top: 0.25rem;
         margin-left: 0.25rem;
         padding: 0.125rem 0.25rem;
-        color: #f97316;
+        color: var(--app-table-accent);
         font-size: 0.75rem;
         font-weight: 600;
         cursor: pointer;
@@ -500,18 +538,13 @@ export interface TableConfig {
       }
 
       .expand-link:hover {
-        color: #ea580c;
-        background-color: #fff7ed;
+        color: var(--app-table-accent-hover);
+        background-color: var(--app-table-accent-hover-bg);
       }
 
       .expand-link:active {
-        color: #c2410c;
-        background-color: #ffedd5;
-      }
-
-      .expand-link:focus {
-        outline: 2px solid #f97316;
-        outline-offset: 2px;
+        color: var(--app-table-accent-active);
+        background-color: var(--app-table-accent-active-bg);
       }
 
       .boolean-cell {
@@ -523,7 +556,6 @@ export interface TableConfig {
       }
 
       .image-cell {
-        padding: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -540,6 +572,68 @@ export interface TableConfig {
       .actions-cell {
         text-align: center;
         vertical-align: middle;
+      }
+
+      /* Sticky actions column: always visible when scrolling horizontally.
+         A subtle vertical separator + left shadow indicates the pinned area,
+         which fades out smoothly when the table is scrolled to the end. */
+      .actions-sticky {
+        position: sticky;
+        right: 0;
+        z-index: 2;
+        background-color: var(--app-table-row-bg);
+        background-clip: padding-box;
+      }
+
+      th.actions-sticky {
+        background-color: var(--app-table-header-bg);
+        z-index: 3;
+      }
+
+      .table-container .actions-sticky::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: var(--app-table-border);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+      }
+
+      .table-container .actions-sticky::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 12px;
+        transform: translateX(-100%);
+        background: linear-gradient(to left, color-mix(in srgb, var(--app-table-border) 35%, transparent), transparent);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+      }
+
+      .table-container.is-scrolled-x:not(.is-at-end-x) .actions-sticky::before,
+      .table-container.is-scrolled-x:not(.is-at-end-x) .actions-sticky::after {
+        opacity: 1;
+      }
+
+      /* Row hover should keep the sticky cell visually in sync with the row's background.
+         Odd rows -> row-bg / row-hover-bg; even rows -> row-even-bg / row-even-hover-bg. */
+      .mat-mdc-row:nth-child(even) .actions-sticky {
+        background-color: var(--app-table-row-even-bg);
+      }
+
+      .mat-mdc-row:hover .actions-sticky {
+        background-color: var(--app-table-row-hover-bg);
+      }
+
+      .mat-mdc-row:nth-child(even):hover .actions-sticky {
+        background-color: var(--app-table-row-even-hover-bg);
       }
 
       .actions-container {
@@ -568,96 +662,88 @@ export interface TableConfig {
       }
 
       .action-primary {
-        color: #f97316;
-        background-color: #fff7ed;
+        color: var(--app-table-action-primary-fg);
+        background-color: var(--app-table-action-primary-bg);
       }
 
       .action-primary:hover:not(:disabled) {
-        background-color: #ffedd5;
-        color: #ea580c;
+        background-color: var(--app-table-action-primary-hover-bg);
+        color: var(--app-table-action-primary-hover-fg);
       }
 
       .action-secondary {
-        color: #6b7280;
-        background-color: #f9fafb;
+        color: var(--app-table-action-secondary-fg);
+        background-color: var(--app-table-action-secondary-bg);
       }
 
       .action-secondary:hover:not(:disabled) {
-        background-color: #f9fafb;
-        color: #374151;
+        background-color: var(--app-table-action-secondary-hover-bg);
+        color: var(--app-table-action-secondary-hover-fg);
       }
 
       .action-danger {
-        color: #ef4444;
-        background-color: #fef2f2;
+        color: var(--app-table-action-danger-fg);
+        background-color: var(--app-table-action-danger-bg);
       }
 
       .action-danger:hover:not(:disabled) {
-        background-color: #fee2e2;
-        color: #dc2626;
+        background-color: var(--app-table-action-danger-hover-bg);
+        color: var(--app-table-action-danger-hover-fg);
       }
 
       .action-success {
-        color: #10b981;
-        background-color: #ecfdf5;
+        color: var(--app-table-action-success-fg);
+        background-color: var(--app-table-action-success-bg);
       }
 
       .action-success:hover:not(:disabled) {
-        background-color: #d1fae5;
-        color: #059669;
+        background-color: var(--app-table-action-success-hover-bg);
+        color: var(--app-table-action-success-hover-fg);
       }
 
       .action-warning {
-        color: #f59e0b;
-        background-color: #fffbeb;
+        color: var(--app-table-action-warning-fg);
+        background-color: var(--app-table-action-warning-bg);
       }
 
       .action-warning:hover:not(:disabled) {
-        background-color: #fef3c7;
-        color: #d97706;
+        background-color: var(--app-table-action-warning-hover-bg);
+        color: var(--app-table-action-warning-hover-fg);
       }
 
       .sort-button {
-        margin-left: 0.5rem;
-        padding: 0.125rem 0.25rem;
-        color: #6b7280;
-        font-size: 0.75rem;
+        color: var(--app-table-muted-text);
         background: none;
-        border: none;
         border-radius: 0.25rem;
         cursor: pointer;
         transition: color 0.2s ease;
       }
 
       .sort-button:hover {
-        color: #f97316;
-      }
-
-      .sort-button:focus {
-        outline: 2px solid #f97316;
-        outline-offset: 2px;
+        color: var(--app-table-accent);
       }
 
       .mat-mdc-row {
+        background-color: var(--app-table-row-bg);
         cursor: pointer;
         transition: background-color 0.15s ease;
       }
 
       .mat-mdc-row:hover {
-        background-color: #fff7ed;
+        background-color: var(--app-table-row-hover-bg);
       }
 
       .mat-mdc-row:nth-child(even) {
-        background-color: #f9fafb;
+        background-color: var(--app-table-row-even-bg);
       }
 
       .mat-mdc-row:nth-child(even):hover {
-        background-color: #ffedd5;
+        background-color: var(--app-table-row-even-hover-bg);
       }
 
       @media (max-width: 768px) {
         .responsive-table {
-          min-width: 500px;
+          min-width: 100%;
         }
 
         .text-content {
@@ -683,7 +769,7 @@ export interface TableConfig {
 
       @media (max-width: 640px) {
         .responsive-table {
-          min-width: 400px;
+          min-width: 100%;
         }
 
         .text-content {
@@ -696,157 +782,10 @@ export interface TableConfig {
           padding: 0.5rem;
         }
 
-        .expand-toggle {
-          font-size: 0.625rem;
-          padding: 0.125rem;
-        }
-
         .expand-link {
           font-size: 0.625rem;
           padding: 0.125rem;
         }
-      }
-
-      :host .dark .mat-mdc-header-cell {
-        color: #d1d5db;
-        border-bottom-color: #374151;
-        background-color: #374151;
-        z-index: 1;
-      }
-
-      .dark .mat-mdc-cell {
-        color: #e5e7eb;
-        border-bottom-color: #374151;
-      }
-
-      .dark .mat-mdc-row {
-        background-color: #1f2937;
-      }
-
-      .dark .mat-mdc-row:hover {
-        background-color: #7c2d12;
-      }
-
-      .dark .mat-mdc-row:nth-child(even) {
-        background-color: #374151;
-      }
-
-      .dark .mat-mdc-row:nth-child(even):hover {
-        background-color: #9a3412;
-      }
-
-      .dark .expand-link {
-        color: #fdba74;
-      }
-
-      .dark .expand-link:hover {
-        color: #fed7aa;
-        background-color: #9a3412;
-      }
-
-      .dark .expand-link:active {
-        color: #ffedd5;
-        background-color: #7c2d12;
-      }
-
-      .dark
-        ::ng-deep
-        .mat-mdc-checkbox
-        .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate='true'])
-        ~ .mdc-checkbox__background {
-        border-color: #ea580c; /* primary-600 */
-      }
-
-      .dark ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
-      .dark ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background,
-      .dark
-        ::ng-deep
-        .mat-mdc-checkbox
-        .mdc-checkbox__native-control[data-indeterminate='true']:enabled
-        ~ .mdc-checkbox__background {
-        background-color: #ea580c; /* primary-600 */
-        border-color: #ea580c; /* primary-600 */
-      }
-
-      .dark
-        ::ng-deep
-        .mat-mdc-checkbox:hover
-        .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate='true'])
-        ~ .mdc-checkbox__background {
-        border-color: #c2410c; /* primary-700 */
-      }
-
-      .dark ::ng-deep .mat-mdc-checkbox:hover .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
-      .dark
-        ::ng-deep
-        .mat-mdc-checkbox:hover
-        .mdc-checkbox__native-control:enabled:indeterminate
-        ~ .mdc-checkbox__background,
-      .dark
-        ::ng-deep
-        .mat-mdc-checkbox:hover
-        .mdc-checkbox__native-control[data-indeterminate='true']:enabled
-        ~ .mdc-checkbox__background {
-        background-color: #c2410c; /* primary-700 */
-        border-color: #c2410c; /* primary-700 */
-      }
-
-      .dark .action-primary {
-        color: #fdba74;
-        background-color: #9a3412;
-      }
-
-      .dark .action-primary:hover:not(:disabled) {
-        background-color: #7c2d12;
-        color: #fed7aa;
-      }
-
-      .dark .action-secondary {
-        color: #d1d5db;
-        background-color: #374151;
-      }
-
-      .dark .action-secondary:hover:not(:disabled) {
-        background-color: #374151;
-        color: #e5e7eb;
-      }
-
-      .dark .action-danger {
-        color: #fca5a5;
-        background-color: #991b1b;
-      }
-
-      .dark .action-danger:hover:not(:disabled) {
-        background-color: #7f1d1d;
-        color: #fecaca;
-      }
-
-      .dark .action-success {
-        color: #6ee7b7;
-        background-color: #065f46;
-      }
-
-      .dark .action-success:hover:not(:disabled) {
-        background-color: #064e3b;
-        color: #a7f3d0;
-      }
-
-      .dark .action-warning {
-        color: #fcd34d;
-        background-color: #92400e;
-      }
-
-      .dark .action-warning:hover:not(:disabled) {
-        background-color: #78350f;
-        color: #fde68a;
-      }
-
-      .dark .sort-button {
-        color: #9ca3af;
-      }
-
-      .dark .sort-button:hover {
-        color: #fdba74;
       }
 
       .loading-more-overlay {
@@ -854,7 +793,7 @@ export interface TableConfig {
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--app-table-overlay-bg);
         backdrop-filter: blur(2px);
         z-index: 10;
         pointer-events: none;
@@ -868,73 +807,26 @@ export interface TableConfig {
         gap: 0.5rem;
       }
 
-      .loading-more-spinner {
-        width: 1rem;
-        height: 1rem;
-        border: 2px solid #f9fafb;
-        border-top: 2px solid #f97316;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
       .loading-more-text {
         font-size: 0.875rem;
-        color: #6b7280;
+        color: var(--app-table-loading-text);
         font-weight: 500;
       }
 
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .dark .loading-more-overlay {
-        background: rgba(31, 41, 55, 0.9);
-      }
-
-      .dark .loading-more-spinner {
-        border-color: #374151;
-        border-top-color: #fdba74;
-      }
-
-      .dark .loading-more-text {
-        color: #d1d5db;
-      }
-
       .priority-high {
-        background-color: #fef2f2 !important;
+        background-color: var(--app-table-priority-high-bg) !important;
       }
 
       .priority-high:hover {
-        background-color: #fee2e2 !important;
+        background-color: var(--app-table-priority-high-hover-bg) !important;
       }
 
       .priority-low {
-        background-color: #eff6ff !important;
+        background-color: var(--app-table-priority-low-bg) !important;
       }
 
       .priority-low:hover {
-        background-color: #dbeafe !important;
-      }
-
-      .dark .priority-high {
-        background-color: #7f1d1d !important;
-      }
-
-      .dark .priority-high:hover {
-        background-color: #991b1b !important;
-      }
-
-      .dark .priority-low {
-        background-color: #1e3a8a !important;
-      }
-
-      .dark .priority-low:hover {
-        background-color: #1e40af !important;
+        background-color: var(--app-table-priority-low-hover-bg) !important;
       }
     `,
   ],
@@ -964,12 +856,18 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   protected readonly isDarkMode = computed(() => this.themeService.currentTheme === ThemeEnum.Dark);
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
-  private selection: any[] = [];
-  private readonly expandedTexts = new Map<string, boolean>();
+  private readonly expandedTexts = signal<ReadonlyMap<string, boolean>>(new Map());
+  private readonly overflowMap = signal<ReadonlyMap<string, boolean>>(new Map());
+
   protected currentSort: { column: string; direction: 'asc' | 'desc' } | null = null;
+
+  private selection: any[] = [];
   private intersectionObserver?: IntersectionObserver;
   private previousDataLength = 0;
   private shouldPreserveScroll = false;
+
+  protected readonly isScrolledX = signal(false);
+  protected readonly isAtEndX = signal(true);
 
   constructor(private readonly elementRef: ElementRef) {
     effect(() => {
@@ -1000,6 +898,12 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+  }
+
   ngAfterViewChecked(): void {
     // Preserve scroll position after view is updated when loading more
     if (this.shouldPreserveScroll) {
@@ -1009,12 +913,17 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
         this.preserveScrollPosition();
       }, 0);
     }
+
+    // Recalculate horizontal scroll state (e.g. after data/layout changes).
+    this.updateHorizontalScrollState();
+
+    // Detect real text overflow to decide whether `show more` button should appear.
+    this.updateOverflowState();
   }
 
-  ngOnDestroy(): void {
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-    }
+  public onTableScroll(event: Event): void {
+    const el = event.target as HTMLElement;
+    this.applyHorizontalScrollState(el);
   }
 
   public get displayedColumns(): string[] {
@@ -1054,6 +963,10 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     this.rowClick.emit(row);
   }
 
+  protected getRowId(row: any): any {
+    return row.id || row._id || JSON.stringify(row);
+  }
+
   protected getHeaderClass(column: TableColumn): string {
     const align = column.align || 'left';
     return `header-${align}`;
@@ -1066,11 +979,15 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   }
 
   protected getMaxLines(column: TableColumn): number {
-    if (column.maxLines) {
-      return column.maxLines;
+    if (column.truncate?.maxLines) {
+      return column.truncate.maxLines;
     }
 
     return this.isMobile() ? 1 : 3;
+  }
+
+  protected isExpandable(column: TableColumn): boolean {
+    return column.truncate?.expandable !== false;
   }
 
   protected getTableContainerStyle(): { [key: string]: string } {
@@ -1117,24 +1034,67 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     }
 
     const key = `${this.getRowId(row)}-${columnKey}`;
-    const isExpanded = this.expandedTexts.get(key) || false;
-    this.expandedTexts.set(key, !isExpanded);
+    const current = this.expandedTexts();
+    const next = new Map(current);
+    next.set(key, !(current.get(key) || false));
+    this.expandedTexts.set(next);
   }
 
   protected shouldShowExpandButton(row: any, columnKey: string, column: TableColumn): boolean {
+    if (!column.truncate) return false;
+
     const text = this.getValue(row, columnKey);
     if (!text) return false;
 
+    // Always show button when user expanded the text (so they can collapse it back).
+    if (this.isTextExpanded(row, columnKey)) return true;
+
+    // Hard rule: if maxChars is configured and text exceeds it, always show toggle.
+    // (DOM overflow measurement is unreliable here, because max-width is set to `${maxChars}ch`,
+    // so the text physically fits — but it IS clamped by line-clamp, so user needs the button.)
+    const { maxChars } = column.truncate;
+    if (maxChars && text.length > maxChars) return true;
+
+    // Otherwise: real DOM overflow measurement (set in ngAfterViewChecked).
+    const key = `${this.getRowId(row)}__${columnKey}`;
+    const measured = this.overflowMap().get(key);
+    if (measured !== undefined) return measured;
+
+    // Fallback heuristic for the very first render, before measurement happens.
     const maxLines = this.getMaxLines(column);
     const approximateCharsPerLine = this.isMobile() ? 20 : 60;
-    const approximateMaxChars = maxLines * approximateCharsPerLine;
+    return text.length > maxLines * approximateCharsPerLine;
+  }
 
-    return text.length > approximateMaxChars;
+  protected getTextCellStyle(column: TableColumn): { [key: string]: string } {
+    const cfg = column.truncate;
+    if (!cfg) return {};
+    if (cfg.maxWidth) {
+      return { 'max-width': cfg.maxWidth };
+    }
+    if (cfg.maxChars) {
+      return { 'max-width': `${cfg.maxChars}ch` };
+    }
+    return {};
   }
 
   protected isTextExpanded(row: any, columnKey: string): boolean {
     const key = `${this.getRowId(row)}-${columnKey}`;
-    return this.expandedTexts.get(key) || false;
+    return this.expandedTexts().get(key) || false;
+  }
+
+  protected getDisplayedText(row: any, column: TableColumn): string {
+    const value = this.getValue(row, column.key);
+    if (value === null || value === undefined || value === '') return '-';
+    const text = String(value);
+
+    const maxChars = column.truncate?.maxChars;
+    if (!maxChars) return text;
+
+    if (this.isTextExpanded(row, column.key)) return text;
+    if (text.length <= maxChars) return text;
+
+    return text.slice(0, maxChars) + '…';
   }
 
   protected toggleSelectAll(event: any): void {
@@ -1229,6 +1189,55 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     return baseClass;
   }
 
+  private updateOverflowState(): void {
+    const nodes = this.elementRef.nativeElement.querySelectorAll(
+      '.text-content.truncated[data-truncate-key]',
+    ) as NodeListOf<HTMLElement>;
+    if (!nodes.length) {
+      if (this.overflowMap().size > 0) this.overflowMap.set(new Map());
+      return;
+    }
+    const next = new Map<string, boolean>();
+    let changed = false;
+    const prev = this.overflowMap();
+    nodes.forEach(el => {
+      const key = el.dataset['truncateKey'];
+      if (!key) return;
+      // When element is in expanded state, we can't measure clamp overflow — keep previous value.
+      if (el.classList.contains('expanded')) {
+        const prevVal = prev.get(key) ?? true;
+        next.set(key, prevVal);
+        return;
+      }
+      const overflows = el.scrollHeight - el.clientHeight > 1 || el.scrollWidth - el.clientWidth > 1;
+      next.set(key, overflows);
+      if (prev.get(key) !== overflows) changed = true;
+    });
+    if (changed || next.size !== prev.size) {
+      this.overflowMap.set(next);
+    }
+  }
+
+  private updateHorizontalScrollState(): void {
+    const el = this.elementRef.nativeElement.querySelector('.table-container') as HTMLElement | null;
+    if (el) {
+      this.applyHorizontalScrollState(el);
+    }
+  }
+
+  private applyHorizontalScrollState(el: HTMLElement): void {
+    const canScroll = el.scrollWidth - el.clientWidth > 1;
+    const scrolled = el.scrollLeft > 0;
+    const atEnd = !canScroll || el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+
+    if (this.isScrolledX() !== scrolled) {
+      this.isScrolledX.set(scrolled);
+    }
+    if (this.isAtEndX() !== atEnd) {
+      this.isAtEndX.set(atEnd);
+    }
+  }
+
   private preserveScrollPosition(): void {
     const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
     if (tableContainer) {
@@ -1286,10 +1295,6 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
         this.intersectionObserver?.observe(lastRow);
       }
     }, 100);
-  }
-
-  private getRowId(row: any): any {
-    return row.id || row._id || JSON.stringify(row);
   }
 
   private getActionColorClass(color?: string): string {

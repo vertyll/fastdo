@@ -265,8 +265,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         align: 'center',
         verticalAlign: 'middle',
         sortable: true,
-        truncate: true,
-        maxLines: 2,
+        truncate: { maxLines: 2, maxChars: 100 },
         priority: 2,
       },
       {

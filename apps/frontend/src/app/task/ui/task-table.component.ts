@@ -73,8 +73,7 @@ export class TaskTableComponent {
         label: 'Task.description',
         type: 'text',
         sortable: true,
-        truncate: true,
-        maxLines: 2,
+        truncate: { maxLines: 2, maxChars: 80 },
         priority: 2,
       },
       {
