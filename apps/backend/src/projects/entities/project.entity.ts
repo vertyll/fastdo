@@ -11,53 +11,53 @@ import { ProjectUserRole } from './project-user-role.entity';
 export class Project {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  description: string | null;
+  public description: string | null;
 
   @ApiProperty()
   @Column({ default: false })
-  isPublic: boolean;
+  public isPublic: boolean;
 
   @ApiProperty({ type: () => File })
   @ManyToOne(() => File, { nullable: true, onDelete: 'SET NULL' })
-  icon: Relation<File> | null;
+  public icon: Relation<File> | null;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => ProjectType })
   @ManyToOne(() => ProjectType, projectType => projectType.projects, { nullable: true })
-  type: Relation<ProjectType> | null;
+  public type: Relation<ProjectType> | null;
 
   @ApiProperty({ type: () => Task })
   @OneToMany(() => Task, task => task.project, { onDelete: 'CASCADE' })
-  tasks: Relation<Task[]>;
+  public tasks: Relation<Task[]>;
 
   @ApiProperty({ type: () => ProjectUserRole })
   @OneToMany(() => ProjectUserRole, projectUserRole => projectUserRole.project)
-  projectUserRoles: Relation<ProjectUserRole[]>;
+  public projectUserRoles: Relation<ProjectUserRole[]>;
 
   @ApiProperty({ type: () => ProjectCategory })
   @OneToMany(() => ProjectCategory, category => category.project)
-  categories: Relation<ProjectCategory[]>;
+  public categories: Relation<ProjectCategory[]>;
 
   @ApiProperty({ type: () => ProjectStatus })
   @OneToMany(() => ProjectStatus, status => status.project)
-  statuses: Relation<ProjectStatus[]>;
+  public statuses: Relation<ProjectStatus[]>;
 }

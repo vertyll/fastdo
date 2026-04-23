@@ -4,19 +4,19 @@ import { IsNumber } from 'class-validator';
 export class AssignProjectRoleDto {
   @ApiProperty({ description: 'The project ID' })
   @IsNumber()
-  projectId: number;
+  public readonly projectId: number;
 
   @ApiProperty({ description: 'The user ID' })
   @IsNumber()
-  userId: number;
+  public readonly userId: number;
 
   @ApiProperty({ description: 'The project role ID', example: 1 })
   @IsNumber()
-  role: number;
+  public readonly role: number;
 }
 
 export class UpdateProjectRoleDto {
   @ApiProperty({ description: 'The new project role ID', example: 1 })
   @IsNumber()
-  role: number;
+  public readonly role: number;
 }

@@ -3,42 +3,42 @@ import { TranslationDto } from 'src/common/dtos/translation.dto';
 
 export class ProjectListResponseDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty()
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({ required: false })
-  description?: string | null;
+  public readonly description?: string | null;
 
   @ApiProperty()
-  isPublic: boolean;
+  public readonly isPublic: boolean;
 
   @ApiProperty({ required: false, type: () => Object, nullable: true, example: { url: 'https://...' } })
-  icon?: { url: string | null } | null;
+  public readonly icon?: { url: string | null } | null;
 
   @ApiProperty()
-  isActive: boolean;
+  public readonly isActive: boolean;
 
   @ApiProperty()
-  dateCreation: Date;
+  public readonly dateCreation: Date;
 
   @ApiProperty({ required: false })
-  dateModification?: Date | null;
+  public readonly dateModification?: Date | null;
 
   @ApiProperty({ required: false })
-  type?: {
+  public readonly type?: {
     id: number;
     code: string;
     translations: TranslationDto[];
   };
 
   @ApiProperty({ type: [Object], required: false })
-  categories?: Array<{ id: number; translations: TranslationDto[] }>;
+  public readonly categories?: Array<{ id: number; translations: TranslationDto[] }>;
 
   @ApiProperty({ type: [Object], required: false })
-  statuses?: Array<{ id: number; translations: TranslationDto[] }>;
+  public readonly statuses?: Array<{ id: number; translations: TranslationDto[] }>;
 
   @ApiProperty({ type: [String], required: false })
-  permissions?: string[];
+  public readonly permissions?: string[];
 }

@@ -6,23 +6,23 @@ import { User } from '../../users/entities/user.entity';
 export class RefreshToken {
   @Exclude()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @Exclude()
   @Column()
   @Index()
-  token: string;
+  public token: string;
 
   @Exclude()
   @Column()
   @Index()
-  dateExpiration: Date;
+  public dateExpiration: Date;
 
   @Exclude()
   @ManyToOne(() => User, user => user.refreshTokens)
   @JoinColumn()
   @Index()
-  user: Relation<User>;
+  public user: Relation<User>;
 
   constructor(partial: Partial<RefreshToken>) {
     Object.assign(this, partial);

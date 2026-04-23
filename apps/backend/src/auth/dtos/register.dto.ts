@@ -6,7 +6,7 @@ import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 export class RegisterDto {
   @ApiProperty({ description: 'E-mail address' })
   @IsEmail({}, { message: i18nValidationMessage<I18nTranslations>('messages.Validation.isEmail') })
-  email: string;
+  public readonly email: string;
 
   @ApiProperty({ description: 'User password' })
   @IsString({ message: i18nValidationMessage<I18nTranslations>('messages.Validation.isString') })
@@ -19,15 +19,15 @@ export class RegisterDto {
   @Matches(/[!@#$%^&*(),.?":{}|<>]/, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.specialCharacter'),
   })
-  password: string;
+  public readonly password: string;
 
   @ApiProperty({ description: 'Terms acceptance' })
   @IsBoolean()
   @Equals(true, { message: i18nValidationMessage<I18nTranslations>('messages.Validation.termsRequired') })
-  termsAccepted: boolean;
+  public readonly termsAccepted: boolean;
 
   @ApiProperty({ description: 'Privacy policy acceptance' })
   @IsBoolean()
   @Equals(true, { message: i18nValidationMessage<I18nTranslations>('messages.Validation.privacyPolicyRequired') })
-  privacyPolicyAccepted: boolean;
+  public readonly privacyPolicyAccepted: boolean;
 }

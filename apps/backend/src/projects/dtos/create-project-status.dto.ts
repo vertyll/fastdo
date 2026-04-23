@@ -8,13 +8,13 @@ export class CreateProjectStatusDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TranslationDto)
-  translations: TranslationDto[];
+  public readonly translations: TranslationDto[];
 
   @ApiProperty({ description: 'The color of the status' })
   @IsString()
-  color: string;
+  public readonly color: string;
 
   @ApiProperty({ description: 'The project ID' })
   @IsNumber()
-  projectId: number;
+  public readonly projectId: number;
 }

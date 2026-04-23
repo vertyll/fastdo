@@ -6,24 +6,24 @@ import { TaskStatusTranslation } from './task-status-translation.entity';
 export class TaskStatus {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  color: string;
+  public color: string;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column({ default: false })
-  isDefault: boolean;
+  public isDefault: boolean;
 
   @ApiProperty({ type: () => TaskStatusTranslation, isArray: true })
   @OneToMany(() => TaskStatusTranslation, translation => translation.taskStatus, {
     cascade: true,
     eager: true,
   })
-  translations: Relation<TaskStatusTranslation[]>;
+  public translations: Relation<TaskStatusTranslation[]>;
 }

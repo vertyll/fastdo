@@ -7,21 +7,21 @@ import { TaskStatus } from './task-status.entity';
 export class TaskStatusTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  description: string | null;
+  public description: string | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE', eager: true })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 
   @ApiProperty({ type: () => TaskStatus })
   @ManyToOne(() => TaskStatus, status => status.translations, { onDelete: 'CASCADE' })
-  taskStatus: Relation<TaskStatus>;
+  public taskStatus: Relation<TaskStatus>;
 }

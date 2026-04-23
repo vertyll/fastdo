@@ -8,7 +8,7 @@ export class GetAllTasksSearchParamsDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  q?: string;
+  public readonly q?: string;
 
   @ApiProperty({
     required: false,
@@ -17,7 +17,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @ArrayTransform()
-  priorityIds: number[];
+  public readonly priorityIds: number[];
 
   @ApiProperty({
     required: false,
@@ -26,7 +26,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @ArrayTransform()
-  categoryIds: number[];
+  public readonly categoryIds: number[];
 
   @ApiProperty({
     required: false,
@@ -35,7 +35,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @ArrayTransform()
-  statusIds: number[];
+  public readonly statusIds: number[];
 
   @ApiProperty({
     required: false,
@@ -44,7 +44,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @ArrayTransform()
-  assignedUserIds: number[];
+  public readonly assignedUserIds: number[];
 
   @ApiProperty({
     required: false,
@@ -54,7 +54,7 @@ export class GetAllTasksSearchParamsDto {
   @IsOptional()
   @IsString()
   @IsIn(Object.values(TaskSortByEnum))
-  sortBy?: TaskSortByEnum;
+  public readonly sortBy?: TaskSortByEnum;
 
   @ApiProperty({
     required: false,
@@ -64,7 +64,7 @@ export class GetAllTasksSearchParamsDto {
   @IsOptional()
   @IsString()
   @IsIn(Object.values(OrderByEnum))
-  orderBy?: OrderByEnum;
+  public readonly orderBy?: OrderByEnum;
 
   @ApiProperty({
     required: false,
@@ -72,7 +72,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  createdFrom?: string;
+  public readonly createdFrom?: string;
 
   @ApiProperty({
     required: false,
@@ -80,7 +80,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  createdTo?: string;
+  public readonly createdTo?: string;
 
   @ApiProperty({
     required: false,
@@ -88,7 +88,7 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  updatedFrom?: string;
+  public readonly updatedFrom?: string;
 
   @ApiProperty({
     required: false,
@@ -96,15 +96,15 @@ export class GetAllTasksSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  updatedTo?: string;
+  public readonly updatedTo?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
-  page?: number;
+  public readonly page?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
-  pageSize?: number;
+  public readonly pageSize?: number;
 }

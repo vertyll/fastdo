@@ -12,7 +12,7 @@ export class CreateTaskCommentDto {
   @MinLength(1, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', { length: 1 }),
   })
-  content: string;
+  public readonly content: string;
 
   @ApiProperty({
     type: 'array',
@@ -29,5 +29,5 @@ export class CreateTaskCommentDto {
     mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
     maxSize: 5 * 1024 * 1024,
   })
-  attachments?: MultipartFile[];
+  public readonly attachments?: MultipartFile[];
 }

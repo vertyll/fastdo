@@ -5,18 +5,18 @@ export class ProjectRoleDto {
     description: 'The unique identifier of the project role',
     example: 1,
   })
-  id: number;
+  public readonly id: number;
 
   @ApiProperty({
     description: 'The translated name of the project role',
     example: 'Manager',
   })
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({
     description: 'The translated description of the project role',
     example: 'Manages the project and oversees all activities',
     required: false,
   })
-  description?: string;
+  public readonly description?: string;
 }

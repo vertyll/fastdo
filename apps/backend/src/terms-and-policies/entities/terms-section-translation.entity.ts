@@ -7,25 +7,25 @@ import { TermsSection } from './terms-section.entity';
 export class TermsSectionTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  title: string;
+  public title: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  content: string | null;
+  public content: string | null;
 
   @ApiProperty()
   @Column({ type: 'simple-array', nullable: true })
-  items: string[] | null;
+  public items: string[] | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, { eager: true })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 
   @ApiProperty({ type: () => TermsSection })
   @ManyToOne(() => TermsSection, section => section.translations)
-  section: Relation<TermsSection>;
+  public section: Relation<TermsSection>;
 }

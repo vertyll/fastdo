@@ -23,39 +23,39 @@ import { TaskPriority } from './task-priority.entity';
 export class Task {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'text' })
-  description: string;
+  public description: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  additionalDescription: string | null;
+  public additionalDescription: string | null;
 
   @ApiProperty({ description: 'Price estimation in hours (0-100, where 100 = 1 hour)' })
   @Column({ type: 'int', default: 0 })
-  priceEstimation: number;
+  public priceEstimation: number;
 
   @ApiProperty({ description: 'Worked time in hours (0-100, where 100 = 1 hour)' })
   @Column({ type: 'int', default: 0 })
-  workedTime: number;
+  public workedTime: number;
 
   @ApiProperty({ type: () => ProjectRole })
   @ManyToOne(() => ProjectRole, { nullable: true })
-  accessRole: Relation<ProjectRole> | null;
+  public accessRole: Relation<ProjectRole> | null;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => Project })
   @ManyToOne(() => Project, project => project.tasks, { onDelete: 'CASCADE' })
-  project: Relation<Project>;
+  public project: Relation<Project>;
 
   @ApiProperty({ type: () => User, isArray: true })
   @ManyToMany(() => User, { onDelete: 'CASCADE' })
@@ -64,15 +64,15 @@ export class Task {
     joinColumn: { name: 'task_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
   })
-  assignedUsers: Relation<User[]>;
+  public assignedUsers: Relation<User[]>;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  createdBy: Relation<User>;
+  public createdBy: Relation<User>;
 
   @ApiProperty({ type: () => TaskPriority })
   @ManyToOne(() => TaskPriority, priority => priority.id, { onDelete: 'SET NULL' })
-  priority: Relation<TaskPriority>;
+  public priority: Relation<TaskPriority>;
 
   @ApiProperty({ type: () => ProjectCategory, isArray: true })
   @ManyToMany(() => ProjectCategory, { onDelete: 'CASCADE' })
@@ -81,17 +81,17 @@ export class Task {
     joinColumn: { name: 'task_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
   })
-  categories: Relation<ProjectCategory[]>;
+  public categories: Relation<ProjectCategory[]>;
 
   @ApiProperty({ type: () => ProjectStatus, required: false })
   @ManyToOne(() => ProjectStatus, status => status.id, { nullable: true, onDelete: 'SET NULL' })
-  status: Relation<ProjectStatus> | null;
+  public status: Relation<ProjectStatus> | null;
 
   @ApiProperty({ type: () => TaskAttachment, isArray: true })
   @OneToMany(() => TaskAttachment, attachment => attachment.task, { cascade: true })
-  taskAttachments: Relation<TaskAttachment[]>;
+  public taskAttachments: Relation<TaskAttachment[]>;
 
   @ApiProperty({ type: () => TaskComment, isArray: true })
   @OneToMany(() => TaskComment, comment => comment.task, { cascade: true })
-  comments: Relation<TaskComment[]>;
+  public comments: Relation<TaskComment[]>;
 }

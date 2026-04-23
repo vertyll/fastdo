@@ -6,21 +6,21 @@ import { User } from './user.entity';
 export class UserEmailHistory {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  oldEmail: string;
+  public oldEmail: string;
 
   @ApiProperty()
   @Column()
-  newEmail: string;
+  public newEmail: string;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateChange: Date;
+  public dateChange: Date;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.emailHistories)
-  user: Relation<User>;
+  public user: Relation<User>;
 }

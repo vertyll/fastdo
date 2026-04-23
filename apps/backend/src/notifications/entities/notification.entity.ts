@@ -18,36 +18,36 @@ import { NotificationTranslation } from './notification-translation.entity';
 export class Notification {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: NotificationTypeEnum })
   @Column({ type: 'enum', enum: NotificationTypeEnum })
-  type: NotificationTypeEnum;
+  public type: NotificationTypeEnum;
 
   @ApiProperty({ enum: NotificationStatusEnum })
   @Column({ type: 'enum', enum: NotificationStatusEnum, default: NotificationStatusEnum.UNREAD })
-  status: NotificationStatusEnum;
+  public status: NotificationStatusEnum;
 
   @ApiProperty()
   @Column({ type: 'json', nullable: true })
-  data: any;
+  public data: any;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  dateModification: Date;
+  public dateModification: Date;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  recipient: Relation<User>;
+  public recipient: Relation<User>;
 
   @ApiProperty({ type: () => NotificationTranslation, isArray: true })
   @OneToMany(() => NotificationTranslation, translation => translation.notification, {
     cascade: true,
     eager: true,
   })
-  translations: Relation<NotificationTranslation[]>;
+  public translations: Relation<NotificationTranslation[]>;
 }

@@ -7,19 +7,19 @@ import { TaskCommentDto } from './task-comment.dto';
 
 export class TaskResponseDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty()
-  description: string;
+  public readonly description: string;
 
   @ApiProperty()
-  additionalDescription: string | null;
+  public readonly additionalDescription: string | null;
 
   @ApiProperty({ description: 'Price estimation in hours (0-100, where 100 = 1 hour)' })
-  priceEstimation: number;
+  public readonly priceEstimation: number;
 
   @ApiProperty({ description: 'Worked time in hours (0-100, where 100 = 1 hour)' })
-  workedTime: number;
+  public readonly workedTime: number;
 
   @ApiProperty({
     type: 'object',
@@ -34,7 +34,7 @@ export class TaskResponseDto {
     required: ['id', 'code', 'isActive', 'dateCreation', 'translations'],
     nullable: true,
   })
-  accessRole?: {
+  public readonly accessRole?: {
     id: number;
     code: string;
     isActive: boolean;
@@ -44,19 +44,19 @@ export class TaskResponseDto {
   };
 
   @ApiProperty({ type: () => Date })
-  dateCreation: Date;
+  public readonly dateCreation: Date;
 
   @ApiProperty({ type: () => Date, nullable: true })
-  dateModification: Date | null;
+  public readonly dateModification: Date | null;
 
   @ApiProperty({ type: () => Project })
-  project: Project;
+  public readonly project: Project;
 
   @ApiProperty({ type: () => User, isArray: true })
-  assignedUsers: User[];
+  public readonly assignedUsers: User[];
 
   @ApiProperty({ type: () => User })
-  createdBy: User;
+  public readonly createdBy: User;
 
   @ApiProperty({
     type: 'object',
@@ -72,7 +72,7 @@ export class TaskResponseDto {
     required: ['id', 'code', 'color', 'isActive', 'dateCreation', 'translations'],
     nullable: true,
   })
-  priority?: {
+  public readonly priority?: {
     id: number;
     code: string;
     color: string;
@@ -95,7 +95,7 @@ export class TaskResponseDto {
       required: ['id', 'color', 'isActive', 'translations'],
     },
   })
-  categories: Array<{
+  public readonly categories: Array<{
     id: number;
     color: string;
     isActive: boolean;
@@ -113,7 +113,7 @@ export class TaskResponseDto {
     required: ['id', 'color', 'isActive', 'translations'],
     nullable: true,
   })
-  status: {
+  public readonly status: {
     id: number;
     color: string;
     isActive: boolean;
@@ -121,8 +121,8 @@ export class TaskResponseDto {
   } | null;
 
   @ApiProperty({ type: () => File, isArray: true })
-  attachments: File[];
+  public readonly attachments: File[];
 
   @ApiProperty({ type: () => TaskCommentDto, isArray: true })
-  comments: TaskCommentDto[];
+  public readonly comments: TaskCommentDto[];
 }

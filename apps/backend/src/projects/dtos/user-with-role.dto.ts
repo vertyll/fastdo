@@ -4,9 +4,9 @@ import { IsEmail, IsNumber } from 'class-validator';
 export class UserWithRoleDto {
   @ApiProperty({ description: 'User email address' })
   @IsEmail()
-  email: string;
+  public readonly email: string;
 
   @ApiProperty({ description: 'Project role ID', example: 1 })
   @IsNumber()
-  role: number;
+  public readonly role: number;
 }

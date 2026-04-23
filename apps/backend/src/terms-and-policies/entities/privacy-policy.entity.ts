@@ -6,27 +6,27 @@ import { PrivacyPolicySection } from './privacy-policy-section.entity';
 export class PrivacyPolicy {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  version: string;
+  public version: string;
 
   @ApiProperty()
   @Column({ type: 'timestamp' })
-  dateEffective: Date;
+  public dateEffective: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => PrivacyPolicySection, isArray: true })
   @OneToMany(() => PrivacyPolicySection, section => section.privacyPolicy, {
     cascade: true,
   })
-  sections: Relation<PrivacyPolicySection[]>;
+  public sections: Relation<PrivacyPolicySection[]>;
 }

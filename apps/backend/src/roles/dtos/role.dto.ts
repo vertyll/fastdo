@@ -2,14 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class RoleDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty()
-  code: string;
+  public readonly code: string;
 
   @ApiProperty()
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({ required: false, nullable: true })
-  description: string | null;
+  public readonly description: string | null;
 }

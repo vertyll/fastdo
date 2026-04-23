@@ -8,22 +8,22 @@ import { Project } from './project.entity';
 export class ProjectUserRole {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ type: () => Project })
   @ManyToOne(() => Project, project => project.projectUserRoles)
-  project: Relation<Project>;
+  public project: Relation<Project>;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.projectUserRoles)
-  user: Relation<User>;
+  public user: Relation<User>;
 
   @ApiProperty({ type: () => ProjectRole })
   @ManyToOne(() => ProjectRole, projectRole => projectRole.userRoles, { nullable: false })
   @JoinColumn({ name: 'project_role_id' })
-  projectRole: Relation<ProjectRole>;
+  public projectRole: Relation<ProjectRole>;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateAssigned: Date;
+  public dateAssigned: Date;
 }

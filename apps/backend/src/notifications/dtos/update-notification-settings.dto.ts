@@ -5,40 +5,40 @@ export class UpdateNotificationSettingsDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  emailNotifications?: boolean;
+  public readonly emailNotifications?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  appNotifications?: boolean;
+  public readonly appNotifications?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  projectInvitations?: boolean;
+  public readonly projectInvitations?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  taskAssignments?: boolean;
+  public readonly taskAssignments?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  taskComments?: boolean;
+  public readonly taskComments?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  taskStatusChanges?: boolean;
+  public readonly taskStatusChanges?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  projectUpdates?: boolean;
+  public readonly projectUpdates?: boolean;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  systemNotifications?: boolean;
+  public readonly systemNotifications?: boolean;
 }

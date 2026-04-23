@@ -9,15 +9,15 @@ export class UpdateProjectCategoryDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TranslationDto)
-  translations?: TranslationDto[];
+  public readonly translations?: TranslationDto[];
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  color?: string;
+  public readonly color?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean;
+  public readonly isActive?: boolean;
 }

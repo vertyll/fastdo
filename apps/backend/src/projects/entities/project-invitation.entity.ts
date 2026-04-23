@@ -17,19 +17,19 @@ import { Project } from './project.entity';
 export class ProjectInvitation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ type: () => Project })
   @ManyToOne(() => Project, { eager: true, onDelete: 'CASCADE' })
-  project: Relation<Project>;
+  public project: Relation<Project>;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
-  user: Relation<User>;
+  public user: Relation<User>;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
-  inviter: Relation<User>;
+  public inviter: Relation<User>;
 
   @ApiProperty({ type: () => ProjectRole })
   @ManyToOne(() => ProjectRole, {
@@ -37,7 +37,7 @@ export class ProjectInvitation {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  role: Relation<ProjectRole> | null;
+  public role: Relation<ProjectRole> | null;
 
   @ApiProperty({ enum: ProjectInvitationStatusEnum })
   @Column({
@@ -45,13 +45,13 @@ export class ProjectInvitation {
     enum: ProjectInvitationStatusEnum,
     default: ProjectInvitationStatusEnum.PENDING,
   })
-  status: ProjectInvitationStatusEnum;
+  public status: ProjectInvitationStatusEnum;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreated: Date;
+  public dateCreated: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  dateUpdated: Date;
+  public dateUpdated: Date;
 }

@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class InitialDatabase1770403109884 implements MigrationInterface {
-    name = 'InitialDatabase1770403109884'
+    public name = 'InitialDatabase1770403109884'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "refresh_token" ("id" SERIAL NOT NULL, "token" character varying NOT NULL, "date_expiration" TIMESTAMP NOT NULL, "user_id" integer, CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe" PRIMARY KEY ("id"))`);

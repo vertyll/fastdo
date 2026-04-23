@@ -7,13 +7,13 @@ import { User } from './user.entity';
 export class UserRole {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.userRoles)
-  user: Relation<User>;
+  public user: Relation<User>;
 
   @ApiProperty({ type: () => Role })
   @ManyToOne(() => Role, role => role.userRoles)
-  role: Relation<Role>;
+  public role: Relation<Role>;
 }

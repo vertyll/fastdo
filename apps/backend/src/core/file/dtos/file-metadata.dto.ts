@@ -5,35 +5,35 @@ import { StorageTypeEnum } from '../../config/types/app.config.type';
 export class FileMetadataDto {
   @ApiProperty({ required: false })
   @IsOptional()
-  id?: string;
+  public readonly id?: string;
 
   @ApiProperty()
-  filename: string;
+  public readonly filename: string;
 
   @ApiProperty()
-  originalName: string;
+  public readonly originalName: string;
 
   @ApiProperty()
-  path: string;
+  public readonly path: string;
 
   @ApiProperty()
-  mimetype: string;
+  public readonly mimetype: string;
 
   @ApiProperty()
-  size: number;
+  public readonly size: number;
 
   @ApiProperty()
-  encoding: string;
+  public readonly encoding: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  url?: string;
+  public readonly url?: string;
 
   @ApiProperty({ enum: StorageTypeEnum })
-  storageType: StorageTypeEnum;
+  public readonly storageType: StorageTypeEnum;
 
   @ApiProperty({ type: Object, required: false })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+  public readonly metadata?: Record<string, any>;
 }

@@ -17,7 +17,7 @@ export class UpdateProfileDto extends PartialType(RegisterDto) {
   @Matches(/[!@#$%^&*(),.?":{}|<>]/, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.specialCharacter'),
   })
-  password?: string;
+  public readonly password?: string;
 
   @ApiProperty({ description: 'New password', required: false })
   @IsOptional()
@@ -29,7 +29,7 @@ export class UpdateProfileDto extends PartialType(RegisterDto) {
   @Matches(/[!@#$%^&*(),.?":{}|<>]/, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.specialCharacter'),
   })
-  newPassword?: string;
+  public readonly newPassword?: string;
 
   @ApiProperty({
     type: 'string',
@@ -42,5 +42,5 @@ export class UpdateProfileDto extends PartialType(RegisterDto) {
     mimeTypes: ['image/jpeg', 'image/png'],
     maxSize: 5 * 1024 * 1024, // 5MB
   })
-  avatar?: MultipartFile | null;
+  public readonly avatar?: MultipartFile | null;
 }

@@ -7,32 +7,32 @@ import { TaskPriorityTranslation } from './task-priority-translation.entity';
 export class TaskPriority {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: TaskPriorityEnum })
   @Column({ type: 'enum', enum: TaskPriorityEnum })
-  code: TaskPriorityEnum;
+  public code: TaskPriorityEnum;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  color: string;
+  public color: string;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => TaskPriorityTranslation, isArray: true })
   @OneToMany(() => TaskPriorityTranslation, translation => translation.priority, {
     cascade: true,
     eager: true,
   })
-  translations: Relation<TaskPriorityTranslation[]>;
+  public translations: Relation<TaskPriorityTranslation[]>;
 }

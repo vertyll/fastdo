@@ -6,27 +6,27 @@ import { TermsSection } from './terms-section.entity';
 export class Terms {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  version: string;
+  public version: string;
 
   @ApiProperty()
   @Column({ type: 'timestamp' })
-  dateEffective: Date;
+  public dateEffective: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => TermsSection })
   @OneToMany(() => TermsSection, section => section.terms, {
     cascade: true,
   })
-  sections: Relation<TermsSection[]>;
+  public sections: Relation<TermsSection[]>;
 }

@@ -13,12 +13,12 @@ export class CreateTaskDto {
   @MinLength(3, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', { length: 3 }),
   })
-  description: string;
+  public readonly description: string;
 
   @ApiProperty({ required: false, description: 'Additional description' })
   @IsOptional()
   @IsString()
-  additionalDescription?: string;
+  public readonly additionalDescription?: string;
 
   @ApiProperty({ description: 'Project ID - required for all tasks' })
   @MultipartNumber()
@@ -30,7 +30,7 @@ export class CreateTaskDto {
     return value;
   })
   @IsNumber()
-  projectId: number;
+  public readonly projectId: number;
 
   @ApiProperty({ required: false, description: 'Priority ID' })
   @IsOptional()
@@ -43,7 +43,7 @@ export class CreateTaskDto {
     return value;
   })
   @IsNumber()
-  priorityId?: number;
+  public readonly priorityId?: number;
 
   @ApiProperty({ required: false, description: 'Array of category IDs from project', type: [Number] })
   @IsOptional()
@@ -57,7 +57,7 @@ export class CreateTaskDto {
   })
   @IsArray()
   @IsNumber({}, { each: true })
-  categoryIds?: number[];
+  public readonly categoryIds?: number[];
 
   @ApiProperty({ required: false, description: 'Status ID from project' })
   @IsOptional()
@@ -70,7 +70,7 @@ export class CreateTaskDto {
     return value;
   })
   @IsNumber()
-  statusId?: number;
+  public readonly statusId?: number;
 
   @ApiProperty({
     required: false,
@@ -90,7 +90,7 @@ export class CreateTaskDto {
   @IsNumber()
   @Min(0)
   @Max(10000)
-  priceEstimation?: number;
+  public readonly priceEstimation?: number;
 
   @ApiProperty({ required: false, description: 'Worked time (0-100, where 100 = 1 hour)', minimum: 0, maximum: 10000 })
   @IsOptional()
@@ -105,7 +105,7 @@ export class CreateTaskDto {
   @IsNumber()
   @Min(0)
   @Max(10000)
-  workedTime?: number;
+  public readonly workedTime?: number;
 
   @ApiProperty({ required: false, description: 'Required role ID to access this task' })
   @IsOptional()
@@ -118,7 +118,7 @@ export class CreateTaskDto {
     return value;
   })
   @IsNumber()
-  accessRoleId?: number;
+  public readonly accessRoleId?: number;
 
   @ApiProperty({ required: false, description: 'Array of user IDs to assign task to', type: [Number] })
   @IsOptional()
@@ -132,7 +132,7 @@ export class CreateTaskDto {
   })
   @IsArray()
   @IsNumber({}, { each: true })
-  assignedUserIds?: number[];
+  public readonly assignedUserIds?: number[];
 
   @ApiProperty({
     type: 'array',
@@ -149,5 +149,5 @@ export class CreateTaskDto {
     mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
     maxSize: 10 * 1024 * 1024, // 10MB
   })
-  attachments?: MultipartFile[];
+  public readonly attachments?: MultipartFile[];
 }

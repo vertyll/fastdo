@@ -7,21 +7,21 @@ import { Task } from './task.entity';
 export class TaskAttachment {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  dateModification: Date;
+  public dateModification: Date;
 
   @ApiProperty({ type: () => Task })
   @ManyToOne(() => Task, task => task.taskAttachments, { onDelete: 'CASCADE' })
-  task: Relation<Task>;
+  public task: Relation<Task>;
 
   @ApiProperty({ type: () => File })
   @ManyToOne(() => File, file => file.id, { onDelete: 'CASCADE' })
-  file: Relation<File>;
+  public file: Relation<File>;
 }

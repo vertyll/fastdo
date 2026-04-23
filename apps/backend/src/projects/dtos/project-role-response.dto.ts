@@ -3,8 +3,8 @@ import { TranslationDto } from '../../common/dtos/translation.dto';
 
 export class ProjectRoleResponseDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty({ type: [TranslationDto] })
-  translations: TranslationDto[];
+  public readonly translations: TranslationDto[];
 }

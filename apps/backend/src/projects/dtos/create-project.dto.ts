@@ -28,7 +28,7 @@ export class CreateProjectDto {
   @MinLength(3, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.minLength', { length: 3 }),
   })
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({
     description: 'The description of the project',
@@ -36,7 +36,7 @@ export class CreateProjectDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+  public readonly description?: string;
 
   @ApiProperty({
     description: 'Whether the project is public',
@@ -52,7 +52,7 @@ export class CreateProjectDto {
     return Boolean(value);
   })
   @IsBoolean()
-  isPublic?: boolean;
+  public readonly isPublic?: boolean;
 
   @ApiProperty({ description: 'The type ID of the project', required: false })
   @IsOptional()
@@ -65,7 +65,7 @@ export class CreateProjectDto {
     return value;
   })
   @IsNumber()
-  typeId?: number;
+  public readonly typeId?: number;
 
   @ApiProperty({
     type: 'string',
@@ -78,7 +78,7 @@ export class CreateProjectDto {
     mimeTypes: ['image/jpeg', 'image/png'],
     maxSize: 2 * 1024 * 1024, // 2MB
   })
-  icon?: MultipartFile | null;
+  public readonly icon?: MultipartFile | null;
 
   @ApiProperty({
     description: 'Array of categories with colors to create for this project',
@@ -98,7 +98,7 @@ export class CreateProjectDto {
     return Array.isArray(value) ? value : [];
   })
   @IsArray()
-  categories?: Array<{ name: string; color?: string }>;
+  public readonly categories?: Array<{ name: string; color?: string }>;
 
   @ApiProperty({
     description: 'Array of statuses with colors to create for this project',
@@ -118,7 +118,7 @@ export class CreateProjectDto {
     return Array.isArray(value) ? value : [];
   })
   @IsArray()
-  statuses?: Array<{ name: string; color?: string }>;
+  public readonly statuses?: Array<{ name: string; color?: string }>;
 
   @ApiProperty({
     description: 'Array of users with roles to invite to this project',
@@ -134,7 +134,7 @@ export class CreateProjectDto {
   @ValidateIf((_object, value) => Array.isArray(value) && value.length > 0)
   @ValidateNested({ each: true })
   @Type(() => UserWithRoleDto)
-  usersWithRoles?: UserWithRoleDto[];
+  public readonly usersWithRoles?: UserWithRoleDto[];
 
   @ApiProperty({
     description: 'Array of user emails to invite to this project (legacy - use usersWithRoles instead)',
@@ -150,5 +150,5 @@ export class CreateProjectDto {
   })
   @IsArray()
   @IsString({ each: true })
-  userEmails?: string[];
+  public readonly userEmails?: string[];
 }

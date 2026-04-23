@@ -6,5 +6,5 @@ import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 export class AccessTokenDto {
   @ApiProperty()
   @IsString({ message: i18nValidationMessage<I18nTranslations>('messages.Validation.isString') })
-  accessToken: string;
+  public readonly accessToken: string;
 }

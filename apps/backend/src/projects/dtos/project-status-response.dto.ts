@@ -3,11 +3,11 @@ import { TranslationDto } from '../../common/dtos/translation.dto';
 
 export class ProjectStatusResponseDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty()
-  color: string;
+  public readonly color: string;
 
   @ApiProperty({ type: [TranslationDto] })
-  translations: TranslationDto[];
+  public readonly translations: TranslationDto[];
 }

@@ -4,5 +4,5 @@ import { IsNumber } from 'class-validator';
 export class RejectInvitationDto {
   @ApiProperty()
   @IsNumber()
-  invitationId: number;
+  public readonly invitationId: number;
 }

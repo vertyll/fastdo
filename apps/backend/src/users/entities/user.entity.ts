@@ -11,83 +11,83 @@ import { UserRole } from './user-role.entity';
 export class User {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ unique: true })
-  email: string;
+  public email: string;
 
   @ApiProperty()
   @Column()
   @Exclude()
-  password: string;
+  public password: string;
 
   @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
-  refreshTokens: Relation<RefreshToken[]>;
+  public refreshTokens: Relation<RefreshToken[]>;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => UserRole })
   @OneToMany(() => UserRole, userRole => userRole.user)
-  userRoles: Relation<UserRole[]>;
+  public userRoles: Relation<UserRole[]>;
 
   @ApiProperty()
   @Column({ default: false })
-  isEmailConfirmed: boolean;
+  public isEmailConfirmed: boolean;
 
   @Column({ type: 'varchar', nullable: true })
   @Exclude()
-  confirmationToken: string | null;
+  public confirmationToken: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
-  confirmationTokenExpiry: Date | null;
+  public confirmationTokenExpiry: Date | null;
 
   @ApiProperty()
   @Column({ default: false })
-  termsAccepted: boolean;
+  public termsAccepted: boolean;
 
   @ApiProperty()
   @Column({ default: false })
-  privacyPolicyAccepted: boolean;
+  public privacyPolicyAccepted: boolean;
 
   @Column({ type: 'timestamp', nullable: true })
-  dateTermsAcceptance: Date | null;
+  public dateTermsAcceptance: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  datePrivacyPolicyAcceptance: Date | null;
+  public datePrivacyPolicyAcceptance: Date | null;
 
   @ApiProperty({ type: () => File })
   @ManyToOne(() => File, { nullable: true, onDelete: 'SET NULL' })
-  avatar: Relation<File> | null;
+  public avatar: Relation<File> | null;
 
   @Column({ type: 'varchar', nullable: true })
   @Exclude()
-  emailChangeToken: string | null;
+  public emailChangeToken: string | null;
 
   @Column({ type: 'varchar', nullable: true })
   @Exclude()
-  pendingEmail: string | null;
+  public pendingEmail: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
-  emailChangeTokenExpiry: Date | null;
+  public emailChangeTokenExpiry: Date | null;
 
   @OneToMany(() => ProjectUserRole, projectUserRole => projectUserRole.user)
-  projectUserRoles: Relation<ProjectUserRole[]>;
+  public projectUserRoles: Relation<ProjectUserRole[]>;
 
   @OneToMany(() => UserEmailHistory, userEmailHistory => userEmailHistory.user)
-  emailHistories: Relation<UserEmailHistory[]>;
+  public emailHistories: Relation<UserEmailHistory[]>;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

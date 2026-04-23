@@ -6,7 +6,7 @@ import { LanguageCodeEnum } from '../enums/language-code.enum';
 export class Language {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: LanguageCodeEnum, enumName: 'LanguageCodeEnum' })
   @Column({
@@ -14,17 +14,17 @@ export class Language {
     enum: LanguageCodeEnum,
     unique: true,
   })
-  code: LanguageCodeEnum;
+  public code: LanguageCodeEnum;
 
   @ApiProperty()
   @Column({ length: 100 })
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column({ default: false })
-  isDefault: boolean;
+  public isDefault: boolean;
 }

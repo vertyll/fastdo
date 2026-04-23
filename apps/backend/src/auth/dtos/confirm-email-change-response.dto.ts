@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ConfirmEmailChangeResponseDto {
   @ApiProperty()
-  success: boolean;
+  public readonly success: boolean;
 
   @ApiProperty()
-  email: string;
+  public readonly email: string;
 }

@@ -4,20 +4,20 @@ import { User } from '../../users/entities/user.entity';
 
 export class TaskCommentDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty()
-  content: string;
+  public readonly content: string;
 
   @ApiProperty({ type: () => Date })
-  dateCreation: Date;
+  public readonly dateCreation: Date;
 
   @ApiProperty({ type: () => Date, nullable: true })
-  dateModification: Date | null;
+  public readonly dateModification: Date | null;
 
   @ApiProperty({ type: () => User })
-  author: User;
+  public readonly author: User;
 
   @ApiProperty({ type: () => File, isArray: true })
-  attachments: File[];
+  public readonly attachments: File[];
 }

@@ -7,29 +7,29 @@ import { ProjectRolePermission } from './project-role-permission.entity';
 export class ProjectRolePermissionTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  description: string | null;
+  public description: string | null;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ManyToOne(() => ProjectRolePermission, permission => permission.translations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_role_permission_id' })
-  permission: Relation<ProjectRolePermission>;
+  public permission: Relation<ProjectRolePermission>;
 
   @ManyToOne(() => Language, { eager: true })
   @JoinColumn({ name: 'language_id' })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 }

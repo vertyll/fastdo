@@ -5,25 +5,25 @@ import { NotificationTypeEnum } from '../enums/notification-type.enum';
 export class CreateNotificationDto {
   @ApiProperty({ enum: NotificationTypeEnum })
   @IsEnum(NotificationTypeEnum)
-  type: NotificationTypeEnum;
+  public readonly type: NotificationTypeEnum;
 
   @ApiProperty()
   @IsString()
-  title: string;
+  public readonly title: string;
 
   @ApiProperty()
   @IsString()
-  message: string;
+  public readonly message: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  data?: any;
+  public readonly data?: any;
 
   @ApiProperty()
-  recipientId: number;
+  public readonly recipientId: number;
 
   @ApiProperty({ required: false, default: true })
   @IsOptional()
   @IsBoolean()
-  sendEmail?: boolean = true;
+  public readonly sendEmail?: boolean = true;
 }

@@ -6,7 +6,7 @@ import { I18nTranslations } from '../../generated/i18n/i18n.generated';
 export class ResetPasswordDto {
   @ApiProperty({ description: 'Reset token' })
   @IsString({ message: i18nValidationMessage<I18nTranslations>('messages.Validation.isString') })
-  token: string;
+  public readonly token: string;
 
   @ApiProperty({ description: 'New password' })
   @IsString({ message: i18nValidationMessage<I18nTranslations>('messages.Validation.isString') })
@@ -19,5 +19,5 @@ export class ResetPasswordDto {
   @Matches(/[!@#$%^&*(),.?":{}|<>]/, {
     message: i18nValidationMessage<I18nTranslations>('messages.Validation.specialCharacter'),
   })
-  password: string;
+  public readonly password: string;
 }

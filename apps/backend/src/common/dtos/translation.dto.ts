@@ -2,11 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TranslationDto {
   @ApiProperty()
-  lang: string;
+  public readonly lang: string;
 
   @ApiProperty()
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({ required: false, nullable: true })
-  description?: string | null;
+  public readonly description?: string | null;
 }

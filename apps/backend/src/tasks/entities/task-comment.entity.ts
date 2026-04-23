@@ -8,29 +8,29 @@ import { Task } from './task.entity';
 export class TaskComment {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'text' })
-  content: string;
+  public content: string;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => Task })
   @ManyToOne(() => Task, task => task.comments, { onDelete: 'CASCADE' })
-  task: Relation<Task>;
+  public task: Relation<Task>;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  author: Relation<User>;
+  public author: Relation<User>;
 
   @ApiProperty({ type: () => TaskCommentAttachment, isArray: true })
   @OneToMany(() => TaskCommentAttachment, attachment => attachment.comment, { cascade: true })
-  commentAttachments: Relation<TaskCommentAttachment[]>;
+  public commentAttachments: Relation<TaskCommentAttachment[]>;
 }

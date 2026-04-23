@@ -7,21 +7,21 @@ import { TaskComment } from './task-comment.entity';
 export class TaskCommentAttachment {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  dateModification: Date;
+  public dateModification: Date;
 
   @ApiProperty({ type: () => TaskComment })
   @ManyToOne(() => TaskComment, comment => comment.commentAttachments, { onDelete: 'CASCADE' })
-  comment: Relation<TaskComment>;
+  public comment: Relation<TaskComment>;
 
   @ApiProperty({ type: () => File })
   @ManyToOne(() => File, file => file.id, { onDelete: 'CASCADE' })
-  file: Relation<File>;
+  public file: Relation<File>;
 }

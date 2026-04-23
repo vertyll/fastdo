@@ -8,28 +8,28 @@ import { ProjectRole } from './project-role.entity';
 export class ProjectRolePermission {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: ProjectRolePermissionEnum, enumName: 'ProjectRolePermissionEnum' })
   @Column({ type: 'enum', enum: ProjectRolePermissionEnum, unique: true })
-  code: ProjectRolePermissionEnum;
+  public code: ProjectRolePermissionEnum;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @OneToMany(() => ProjectRolePermissionTranslation, translation => translation.permission, { cascade: true })
-  translations: Relation<ProjectRolePermissionTranslation[]>;
+  public translations: Relation<ProjectRolePermissionTranslation[]>;
 
   @ManyToMany(() => ProjectRole, role => role.permissions)
   @JoinTable({ name: 'project_role_to_permission' })
-  roles: Relation<ProjectRole[]>;
+  public roles: Relation<ProjectRole[]>;
 }

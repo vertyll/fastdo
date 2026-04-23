@@ -4,43 +4,43 @@ import { ProjectRoleEnum } from '../enums/project-role.enum';
 
 export class ProjectDetailsResponseDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
 
   @ApiProperty()
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({ required: false })
-  description?: string | null;
+  public readonly description?: string | null;
 
   @ApiProperty()
-  isPublic: boolean;
+  public readonly isPublic: boolean;
 
   @ApiProperty({ required: false })
-  icon: { url: string | null } | null;
+  public readonly icon: { url: string | null } | null;
 
   @ApiProperty()
-  isActive: boolean;
+  public readonly isActive: boolean;
 
   @ApiProperty()
-  dateCreation: Date;
+  public readonly dateCreation: Date;
 
   @ApiProperty({ required: false })
-  dateModification?: Date | null;
+  public readonly dateModification?: Date | null;
 
   @ApiProperty({ required: false })
-  type?: { id: number; code: string; translations: TranslationDto[] };
+  public readonly type?: { id: number; code: string; translations: TranslationDto[] };
 
   @ApiProperty({ type: [Object], required: false })
-  categories?: Array<{ id: number; name: string; color: string }>;
+  public readonly categories?: Array<{ id: number; name: string; color: string }>;
 
   @ApiProperty({ type: [Object], required: false })
-  statuses?: Array<{ id: number; name: string; color: string }>;
+  public readonly statuses?: Array<{ id: number; name: string; color: string }>;
 
   @ApiProperty({ type: [String], required: false })
-  permissions?: string[];
+  public readonly permissions?: string[];
 
   @ApiProperty({ type: [Object], required: false })
-  projectUserRoles?: Array<{
+  public readonly projectUserRoles?: Array<{
     user: { id: number; email: string };
     projectRole: {
       code: ProjectRoleEnum;

@@ -2,11 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ProjectTypeDto {
   @ApiProperty({ description: 'Project type ID' })
-  id: number;
+  public readonly id: number;
 
   @ApiProperty({ description: 'Project type name (translated)' })
-  name: string;
+  public readonly name: string;
 
   @ApiProperty({ description: 'Project type description (translated)', required: false })
-  description?: string;
+  public readonly description?: string;
 }

@@ -6,11 +6,11 @@ export class LoginDto {
     description: 'E-mail address',
   })
   @IsEmail()
-  email: string;
+  public readonly email: string;
 
   @ApiProperty({
     description: 'User password',
   })
   @IsString()
-  password: string;
+  public readonly password: string;
 }

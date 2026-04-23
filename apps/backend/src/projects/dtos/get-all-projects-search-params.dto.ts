@@ -6,7 +6,7 @@ export class GetAllProjectsSearchParamsDto {
   @ApiProperty({ required: false, description: 'Search query' })
   @IsOptional()
   @IsString()
-  q?: string;
+  public readonly q?: string;
 
   @ApiProperty({
     required: false,
@@ -16,7 +16,7 @@ export class GetAllProjectsSearchParamsDto {
   @IsOptional()
   @IsString()
   @IsIn(['dateCreation', 'dateModification', 'name'])
-  sortBy?: string;
+  public readonly sortBy?: string;
 
   @ApiProperty({
     required: false,
@@ -26,7 +26,7 @@ export class GetAllProjectsSearchParamsDto {
   @IsOptional()
   @IsString()
   @IsIn(['asc', 'desc'])
-  orderBy?: 'asc' | 'desc';
+  public readonly orderBy?: 'asc' | 'desc';
 
   @ApiProperty({
     required: false,
@@ -34,7 +34,7 @@ export class GetAllProjectsSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  createdFrom?: string;
+  public readonly createdFrom?: string;
 
   @ApiProperty({
     required: false,
@@ -42,7 +42,7 @@ export class GetAllProjectsSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  createdTo?: string;
+  public readonly createdTo?: string;
 
   @ApiProperty({
     required: false,
@@ -50,7 +50,7 @@ export class GetAllProjectsSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  updatedFrom?: string;
+  public readonly updatedFrom?: string;
 
   @ApiProperty({
     required: false,
@@ -58,7 +58,7 @@ export class GetAllProjectsSearchParamsDto {
   })
   @IsOptional()
   @IsString()
-  updatedTo?: string;
+  public readonly updatedTo?: string;
 
   @ApiProperty({
     required: false,
@@ -67,15 +67,15 @@ export class GetAllProjectsSearchParamsDto {
   })
   @IsOptional()
   @ArrayTransform()
-  typeIds?: number[];
+  public readonly typeIds?: number[];
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
-  page?: number;
+  public readonly page?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
-  pageSize?: number;
+  public readonly pageSize?: number;
 }

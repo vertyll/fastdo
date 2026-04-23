@@ -8,24 +8,24 @@ import { Project } from './project.entity';
 export class ProjectType {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: ProjectTypeEnum, enumName: 'ProjectTypeEnum' })
   @Column({ type: 'enum', enum: ProjectTypeEnum, unique: true })
-  code: ProjectTypeEnum;
+  public code: ProjectTypeEnum;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty({ type: () => Project })
   @OneToMany(() => Project, project => project.type)
-  projects: Relation<Project[]>;
+  public projects: Relation<Project[]>;
 
   @ApiProperty({ type: () => ProjectTypeTranslation, isArray: true })
   @OneToMany(() => ProjectTypeTranslation, translation => translation.projectType, {
     cascade: true,
     eager: true,
   })
-  translations: Relation<ProjectTypeTranslation[]>;
+  public translations: Relation<ProjectTypeTranslation[]>;
 }

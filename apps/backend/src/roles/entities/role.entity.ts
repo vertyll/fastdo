@@ -8,29 +8,29 @@ import { RoleTranslation } from './role-translation.entity';
 export class Role {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: RoleEnum, enumName: 'RoleEnum' })
   @Column({ type: 'enum', enum: RoleEnum, unique: true })
-  code: RoleEnum;
+  public code: RoleEnum;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => UserRole })
   @OneToMany(() => UserRole, userRole => userRole.role)
-  userRoles: Relation<UserRole[]>;
+  public userRoles: Relation<UserRole[]>;
 
   @ApiProperty({ type: () => RoleTranslation })
   @OneToMany(() => RoleTranslation, translation => translation.role)
-  translations: Relation<RoleTranslation[]>;
+  public translations: Relation<RoleTranslation[]>;
 }

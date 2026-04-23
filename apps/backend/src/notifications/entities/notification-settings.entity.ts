@@ -14,49 +14,49 @@ import { User } from '../../users/entities/user.entity';
 export class NotificationSettings {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  emailNotifications: boolean;
+  public emailNotifications: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  appNotifications: boolean;
+  public appNotifications: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  projectInvitations: boolean;
+  public projectInvitations: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  taskAssignments: boolean;
+  public taskAssignments: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  taskComments: boolean;
+  public taskComments: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  taskStatusChanges: boolean;
+  public taskStatusChanges: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  projectUpdates: boolean;
+  public projectUpdates: boolean;
 
   @ApiProperty()
   @Column({ type: 'boolean', default: true })
-  systemNotifications: boolean;
+  public systemNotifications: boolean;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  dateModification: Date;
+  public dateModification: Date;
 
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  user: Relation<User>;
+  public user: Relation<User>;
 }

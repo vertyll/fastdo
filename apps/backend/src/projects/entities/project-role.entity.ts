@@ -9,30 +9,30 @@ import { ProjectUserRole } from './project-user-role.entity';
 export class ProjectRole {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ enum: ProjectRoleEnum, enumName: 'ProjectRoleEnum' })
   @Column({ type: 'enum', enum: ProjectRoleEnum, unique: true })
-  code: ProjectRoleEnum;
+  public code: ProjectRoleEnum;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @OneToMany(() => ProjectRoleTranslation, translation => translation.projectRole, { cascade: true })
-  translations: Relation<ProjectRoleTranslation[]>;
+  public translations: Relation<ProjectRoleTranslation[]>;
 
   @OneToMany(() => ProjectUserRole, userRole => userRole.projectRole)
-  userRoles: Relation<ProjectUserRole[]>;
+  public userRoles: Relation<ProjectUserRole[]>;
 
   @ManyToMany(() => ProjectRolePermission, permission => permission.roles)
-  permissions: Relation<ProjectRolePermission[]>;
+  public permissions: Relation<ProjectRolePermission[]>;
 }

@@ -7,24 +7,24 @@ import { Project } from './project.entity';
 export class ProjectCategory {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  color: string;
+  public color: string;
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  public isActive: boolean;
 
   @ApiProperty({ type: () => Project })
   @ManyToOne(() => Project, project => project.categories, { onDelete: 'CASCADE' })
-  project: Relation<Project>;
+  public project: Relation<Project>;
 
   @ApiProperty({ type: () => ProjectCategoryTranslation, isArray: true })
   @OneToMany(() => ProjectCategoryTranslation, translation => translation.projectCategory, {
     cascade: true,
     eager: true,
   })
-  translations: Relation<ProjectCategoryTranslation[]>;
+  public translations: Relation<ProjectCategoryTranslation[]>;
 }

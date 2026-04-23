@@ -8,11 +8,11 @@ import { Terms } from './terms.entity';
 export class TermsSection {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  order: number;
+  public order: number;
 
   @ApiProperty({
     enum: LegalSectionTypeEnum,
@@ -22,15 +22,15 @@ export class TermsSection {
     type: 'enum',
     enum: LegalSectionTypeEnum,
   })
-  type: LegalSectionTypeEnum;
+  public type: LegalSectionTypeEnum;
 
   @ApiProperty()
   @ManyToOne(() => Terms, terms => terms.sections)
-  terms: Relation<Terms>;
+  public terms: Relation<Terms>;
 
   @ApiProperty({ type: () => TermsSectionTranslation })
   @OneToMany(() => TermsSectionTranslation, translation => translation.section, {
     cascade: true,
   })
-  translations: Relation<TermsSectionTranslation[]>;
+  public translations: Relation<TermsSectionTranslation[]>;
 }

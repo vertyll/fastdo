@@ -7,21 +7,21 @@ import { ProjectStatus } from './project-status.entity';
 export class ProjectStatusTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ length: 100 })
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column('text', { nullable: true })
-  description: string | null;
+  public description: string | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, { eager: true })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 
   @ApiProperty({ type: () => ProjectStatus })
   @ManyToOne(() => ProjectStatus, status => status.translations, { onDelete: 'CASCADE' })
-  projectStatus: Relation<ProjectStatus>;
+  public projectStatus: Relation<ProjectStatus>;
 }

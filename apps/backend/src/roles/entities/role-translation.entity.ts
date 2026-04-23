@@ -7,29 +7,29 @@ import { Role } from './role.entity';
 export class RoleTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column('text', { nullable: true })
-  description: string | null;
+  public description: string | null;
 
   @ApiProperty()
   @Column()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, { eager: true })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 
   @ApiProperty({ type: () => Role })
   @ManyToOne(() => Role, role => role.translations)
-  role: Relation<Role>;
+  public role: Relation<Role>;
 }

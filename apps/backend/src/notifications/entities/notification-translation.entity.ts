@@ -7,21 +7,21 @@ import { Notification } from './notification.entity';
 export class NotificationTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ length: 100 })
-  title: string;
+  public title: string;
 
   @ApiProperty()
   @Column('text')
-  message: string;
+  public message: string;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, { eager: true })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 
   @ApiProperty({ type: () => Notification })
   @ManyToOne(() => Notification, notification => notification.translations, { onDelete: 'CASCADE' })
-  notification: Relation<Notification>;
+  public notification: Relation<Notification>;
 }

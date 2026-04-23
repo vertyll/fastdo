@@ -8,26 +8,26 @@ import { PrivacyPolicy } from './privacy-policy.entity';
 export class PrivacyPolicySection {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column()
-  order: number;
+  public order: number;
 
   @ApiProperty({ enum: LegalSectionTypeEnum, enumName: 'LegalSectionType' })
   @Column({
     type: 'enum',
     enum: LegalSectionTypeEnum,
   })
-  type: LegalSectionTypeEnum;
+  public type: LegalSectionTypeEnum;
 
   @ApiProperty({ type: () => PrivacyPolicy })
   @ManyToOne(() => PrivacyPolicy, policy => policy.sections)
-  privacyPolicy: Relation<PrivacyPolicy>;
+  public privacyPolicy: Relation<PrivacyPolicy>;
 
   @ApiProperty({ type: () => PrivacyPolicySectionTranslation, isArray: true })
   @OneToMany(() => PrivacyPolicySectionTranslation, translation => translation.section, {
     cascade: true,
   })
-  translations: Relation<PrivacyPolicySectionTranslation[]>;
+  public translations: Relation<PrivacyPolicySectionTranslation[]>;
 }

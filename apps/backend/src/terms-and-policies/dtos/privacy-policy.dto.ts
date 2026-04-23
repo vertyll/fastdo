@@ -2,39 +2,39 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class PrivacyPolicySectionTranslationDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
   @ApiProperty()
-  title: string;
+  public readonly title: string;
   @ApiProperty({ nullable: true })
-  content: string | null;
+  public readonly content: string | null;
   @ApiProperty({ nullable: true })
-  items: string[] | null;
+  public readonly items: string[] | null;
   @ApiProperty()
-  language: { id: number; code: string; name: string };
+  public readonly language: { id: number; code: string; name: string };
 }
 
 export class PrivacyPolicySectionDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
   @ApiProperty()
-  order: number;
+  public readonly order: number;
   @ApiProperty()
-  type: string;
+  public readonly type: string;
   @ApiProperty({ type: [PrivacyPolicySectionTranslationDto] })
-  translations: PrivacyPolicySectionTranslationDto[];
+  public readonly translations: PrivacyPolicySectionTranslationDto[];
 }
 
 export class PrivacyPolicyDto {
   @ApiProperty()
-  id: number;
+  public readonly id: number;
   @ApiProperty()
-  version: string;
+  public readonly version: string;
   @ApiProperty()
-  dateEffective: Date;
+  public readonly dateEffective: Date;
   @ApiProperty()
-  dateCreation: Date;
+  public readonly dateCreation: Date;
   @ApiProperty()
-  dateModification: Date | null;
+  public readonly dateModification: Date | null;
   @ApiProperty({ type: [PrivacyPolicySectionDto] })
-  sections: PrivacyPolicySectionDto[];
+  public readonly sections: PrivacyPolicySectionDto[];
 }

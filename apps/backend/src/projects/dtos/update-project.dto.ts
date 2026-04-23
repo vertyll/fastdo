@@ -25,7 +25,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     mimeTypes: ['image/jpeg', 'image/png'],
     maxSize: 2 * 1024 * 1024, // 2MB
   })
-  icon?: MultipartFile | null;
+  public readonly icon?: MultipartFile | null;
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -37,7 +37,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     return Boolean(value);
   })
   @IsBoolean()
-  isActive?: boolean;
+  public readonly isActive?: boolean;
 
   @ApiProperty({
     description: 'Array of users with roles to invite to this project',
@@ -53,7 +53,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @ValidateIf((_object, value) => Array.isArray(value) && value.length > 0)
   @ValidateNested({ each: true })
   @Type(() => UserWithRoleDto)
-  usersWithRoles?: UserWithRoleDto[];
+  public readonly usersWithRoles?: UserWithRoleDto[];
 
   @ApiProperty({
     description: 'Array of user emails to invite to this project (legacy)',
@@ -69,5 +69,5 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   })
   @IsArray()
   @IsString({ each: true })
-  userEmails?: string[];
+  public readonly userEmails?: string[];
 }

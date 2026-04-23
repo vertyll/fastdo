@@ -7,29 +7,29 @@ import { TaskPriority } from './task-priority.entity';
 export class TaskPriorityTranslation {
   @ApiProperty()
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  name: string;
+  public name: string;
 
   @ApiProperty()
   @Column({ type: 'text', nullable: true })
-  description: string | null;
+  public description: string | null;
 
   @ApiProperty()
   @CreateDateColumn()
-  dateCreation: Date;
+  public dateCreation: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })
-  dateModification: Date | null;
+  public dateModification: Date | null;
 
   @ApiProperty({ type: () => Language })
   @ManyToOne(() => Language, language => language.code, { onDelete: 'CASCADE', eager: true })
-  language: Relation<Language>;
+  public language: Relation<Language>;
 
   @ApiProperty({ type: () => TaskPriority })
   @ManyToOne(() => TaskPriority, priority => priority.translations, { onDelete: 'CASCADE' })
-  priority: Relation<TaskPriority>;
+  public priority: Relation<TaskPriority>;
 }
