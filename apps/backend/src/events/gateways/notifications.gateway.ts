@@ -38,11 +38,11 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     private readonly configService: ConfigService,
   ) {}
 
-  afterInit(_server: SocketServer): void {
+  public afterInit(_server: SocketServer): void {
     this.logger.log('WebSocket Gateway initialized');
   }
 
-  async handleConnection(client: AuthenticatedSocket): Promise<void> {
+  public async handleConnection(client: AuthenticatedSocket): Promise<void> {
     try {
       const token = this.extractTokenFromClient(client);
       const clientIp =
@@ -95,7 +95,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
-  handleDisconnect(client: AuthenticatedSocket): void {
+  public handleDisconnect(client: AuthenticatedSocket): void {
     if ((client as any).userId) {
       this.socketConnectionService.removeConnection((client as any).userId, client.id);
       this.logger.log(`User ${(client as any).userId} disconnected`);
@@ -103,7 +103,10 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   @SubscribeMessage(WebSocketEventEnum.JOIN_ROOM)
-  handleJoinRoom(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: { room: string }): WsResponse {
+  public handleJoinRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { room: string },
+  ): WsResponse {
     if (!(client as any).userId) {
       return { event: WebSocketResponseEnum.JOIN_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
     }
@@ -118,7 +121,10 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   @SubscribeMessage(WebSocketEventEnum.LEAVE_ROOM)
-  handleLeaveRoom(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: { room: string }): WsResponse {
+  public handleLeaveRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { room: string },
+  ): WsResponse {
     if (!(client as any).userId) {
       return { event: WebSocketResponseEnum.LEAVE_ROOM_RESPONSE, data: { success: false, message: 'Unauthorized' } };
     }
@@ -133,7 +139,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   @SubscribeMessage(WebSocketEventEnum.MARK_NOTIFICATION_READ)
-  handleMarkNotificationRead(
+  public handleMarkNotificationRead(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { notificationId: number },
   ): WsResponse {
@@ -153,7 +159,7 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   @SubscribeMessage(WebSocketEventEnum.UPDATE_AUTH)
-  async handleUpdateAuth(
+  public async handleUpdateAuth(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { token: string },
   ): Promise<WsResponse> {
@@ -196,13 +202,13 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
-  emitToUser(userId: number, event: string, data: any): void {
+  public emitToUser(userId: number, event: string, data: any): void {
     const room = `user_${userId}`;
     this.server.to(room).emit(event, data);
     this.logger.debug(`Emitted '${event}' to user ${userId}`);
   }
 
-  emitToRoom(room: string, event: string, data: any): void {
+  public emitToRoom(room: string, event: string, data: any): void {
     this.server.to(room).emit(event, data);
     this.logger.debug(`Emitted '${event}' to room '${room}'`);
   }

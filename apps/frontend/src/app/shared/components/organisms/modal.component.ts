@@ -191,6 +191,7 @@ export class ModalComponent {
 
   protected readonly ButtonRole = ButtonRoleEnum;
   protected readonly ModalInputType = ModalInputTypeEnum;
+
   public form: FormGroup = new FormGroup({});
 
   constructor() {
@@ -201,6 +202,45 @@ export class ModalComponent {
         this.initializeDynamicComponents(modalConfig);
       }
     });
+  }
+
+  protected getFormControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
+  }
+
+  protected getSelectOptions(selectOptions: any[] | undefined): Array<{ value: any; label: string }> {
+    if (!selectOptions) return [];
+    return selectOptions.map(option => ({
+      value: option.id,
+      label: option.name,
+    }));
+  }
+
+  protected closeModal(button: any): void {
+    if (button.handler) {
+      button.handler();
+    }
+    this.modalService.close();
+  }
+
+  protected closeModalIconHandler(): void {
+    this.modalService.close();
+  }
+
+  protected async saveModal(button: any = null): Promise<void> {
+    this.form.markAllAsTouched();
+
+    if (this.form.valid) {
+      if (button) {
+        await this.handleButtonAction(button);
+      } else {
+        const modalConfig = this.modalService.modal();
+        const saveButton = modalConfig.options?.buttons?.find(btn => btn.role === ButtonRoleEnum.Ok);
+        if (saveButton) {
+          await this.handleButtonAction(saveButton);
+        }
+      }
+    }
   }
 
   private initializeForm(modalConfig: ModalConfig): void {
@@ -249,45 +289,6 @@ export class ModalComponent {
       const componentRef = viewContainerRef.createComponent<any>(component.component);
       Object.assign(componentRef.instance, component.data);
     });
-  }
-
-  protected getFormControl(name: string): FormControl {
-    return this.form.get(name) as FormControl;
-  }
-
-  protected getSelectOptions(selectOptions: any[] | undefined): Array<{ value: any; label: string }> {
-    if (!selectOptions) return [];
-    return selectOptions.map(option => ({
-      value: option.id,
-      label: option.name,
-    }));
-  }
-
-  protected closeModal(button: any): void {
-    if (button.handler) {
-      button.handler();
-    }
-    this.modalService.close();
-  }
-
-  protected closeModalIconHandler(): void {
-    this.modalService.close();
-  }
-
-  protected async saveModal(button: any = null): Promise<void> {
-    this.form.markAllAsTouched();
-
-    if (this.form.valid) {
-      if (button) {
-        await this.handleButtonAction(button);
-      } else {
-        const modalConfig = this.modalService.modal();
-        const saveButton = modalConfig.options?.buttons?.find(btn => btn.role === ButtonRoleEnum.Ok);
-        if (saveButton) {
-          await this.handleButtonAction(saveButton);
-        }
-      }
-    }
   }
 
   private async handleButtonAction(button: any): Promise<void> {

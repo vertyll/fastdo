@@ -71,18 +71,13 @@ export class LoginComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly emailChangeService = inject(EmailChangeService);
 
-  protected readonly loginForm: FormGroup;
   protected readonly LinkTypeEnum = LinkTypeEnum;
+
+  protected loginForm!: FormGroup;
   protected errorMessage: string | null = null;
 
-  constructor() {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
-    });
-  }
-
   ngOnInit(): void {
+    this.initializeForm();
     this.route.queryParams.subscribe(params => {
       this.handleEmailPrefill(params['email']);
       this.handleAccountConfirmation(params['confirmed']);
@@ -110,6 +105,13 @@ export class LoginComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.loginForm.get(name) as FormControl;
+  }
+
+  private initializeForm(): void {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+    });
   }
 
   private handleEmailPrefill(email?: string): void {

@@ -23,7 +23,7 @@ export class LanguageSeeder implements ISeeder {
     this.baseSeeder = this.seederFactory.createSeederService(LanguageSeeder.name);
   }
 
-  async seed(): Promise<void> {
+  public async seed(): Promise<void> {
     await this.baseSeeder.execute(async (): Promise<void> => {
       const existingLanguages = await this.languageRepository.find();
       if (existingLanguages.length > 0) {

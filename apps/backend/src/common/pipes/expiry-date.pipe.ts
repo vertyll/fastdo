@@ -5,7 +5,7 @@ import { DurationPipe } from './duration.pipe';
 
 @Injectable()
 export class ExpiryDatePipe implements PipeTransform {
-  transform(value: string, metadata: ArgumentMetadata): Date | null {
+  public transform(value: string, metadata: ArgumentMetadata): Date | null {
     const i18n = I18nContext.current<I18nTranslations>();
     if (!i18n) throw new Error('I18nContext not available');
 

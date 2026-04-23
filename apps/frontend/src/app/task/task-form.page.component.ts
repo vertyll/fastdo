@@ -353,39 +353,33 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   protected readonly maxAttachmentsLimit = 4;
   protected readonly formatFileSize = formatFileSizeUtil;
 
-  taskForm: FormGroup = this.fb.group({
-    description: ['', [Validators.required]],
-    additionalDescription: [''],
-    priceEstimation: [0],
-    workedTime: [0],
-    accessRole: [null],
-    priorityId: [null],
-    statusId: [null],
-    projectId: [null],
-    categoryIds: [[]],
-    assignedUserIds: [[]],
-  });
-
+  protected taskForm!: FormGroup;
   protected fieldErrors: Record<string, string[]> = {};
 
   get descriptionControl(): FormControl {
     return this.taskForm.get('description') as FormControl;
   }
+
   get additionalDescriptionControl(): FormControl {
     return this.taskForm.get('additionalDescription') as FormControl;
   }
+
   get priceEstimationControl(): FormControl {
     return this.taskForm.get('priceEstimation') as FormControl;
   }
+
   get workedTimeControl(): FormControl {
     return this.taskForm.get('workedTime') as FormControl;
   }
+
   get priorityIdControl(): FormControl {
     return this.taskForm.get('priorityId') as FormControl;
   }
+
   get statusIdControl(): FormControl {
     return this.taskForm.get('statusId') as FormControl;
   }
+
   get accessRoleControl(): FormControl {
     return this.taskForm.get('accessRole') as FormControl;
   }
@@ -412,29 +406,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeForm();
     this.initializeRouteContext();
     this.initializeFormDefaults();
     this.loadOptions();
     this.setupLanguageSubscription();
-  }
-
-  private initializeRouteContext(): void {
-    const projectIdParam = this.route.snapshot.paramMap.get('id');
-    const taskIdParam = this.route.snapshot.paramMap.get('taskId');
-    this.projectId.set(projectIdParam);
-    this.taskId.set(taskIdParam);
-
-    if (projectIdParam) {
-      this.taskForm.patchValue({ projectId: +projectIdParam });
-    }
-  }
-
-  private initializeFormDefaults(): void {
-    this.taskForm.patchValue({
-      accessRole: null,
-      statusId: null,
-      priorityId: null,
-    });
   }
 
   ngOnDestroy(): void {
@@ -551,6 +527,40 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/projects']).then();
     }
+  }
+
+  private initializeForm(): void {
+    this.fb.group({
+      description: ['', [Validators.required]],
+      additionalDescription: [''],
+      priceEstimation: [0],
+      workedTime: [0],
+      accessRole: [null],
+      priorityId: [null],
+      statusId: [null],
+      projectId: [null],
+      categoryIds: [[]],
+      assignedUserIds: [[]],
+    });
+  }
+
+  private initializeRouteContext(): void {
+    const projectIdParam = this.route.snapshot.paramMap.get('id');
+    const taskIdParam = this.route.snapshot.paramMap.get('taskId');
+    this.projectId.set(projectIdParam);
+    this.taskId.set(taskIdParam);
+
+    if (projectIdParam) {
+      this.taskForm.patchValue({ projectId: +projectIdParam });
+    }
+  }
+
+  private initializeFormDefaults(): void {
+    this.taskForm.patchValue({
+      accessRole: null,
+      statusId: null,
+      priorityId: null,
+    });
   }
 
   private setupLanguageSubscription(): void {

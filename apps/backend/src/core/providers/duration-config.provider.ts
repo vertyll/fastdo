@@ -8,6 +8,14 @@ import { IDurationConfigProvider } from './interfaces/duration-config-provider.i
 export class DurationConfigProvider implements IDurationConfigProvider {
   constructor(private readonly configService: ConfigService) {}
 
+  public getDuration(key: string, defaultValue: string): number {
+    return this.transform(new DurationPipe(), key, defaultValue, 0);
+  }
+
+  public getExpiryDate(key: string, defaultValue: string): Date {
+    return this.transform(new ExpiryDatePipe(), key, defaultValue, new Date());
+  }
+
   private transform<T>(pipe: PipeTransform, value: string, defaultValue: string, fallback: T): T {
     const valueToTransform = this.configService.get<string>(value) || defaultValue;
     const result = pipe.transform(valueToTransform, { type: 'custom', metatype: String, data: '' });
@@ -17,13 +25,5 @@ export class DurationConfigProvider implements IDurationConfigProvider {
     }
 
     return result as T;
-  }
-
-  public getDuration(key: string, defaultValue: string): number {
-    return this.transform(new DurationPipe(), key, defaultValue, 0);
-  }
-
-  public getExpiryDate(key: string, defaultValue: string): Date {
-    return this.transform(new ExpiryDatePipe(), key, defaultValue, new Date());
   }
 }

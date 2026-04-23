@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Role } from '../../shared/defs/entities.defs';
 import { RoleApiService } from './role.api.service';
@@ -7,10 +7,10 @@ import { RoleApiService } from './role.api.service';
   providedIn: 'root',
 })
 export class RoleService {
+  private readonly apiService = inject(RoleApiService);
+
   readonly $roles = signal<Role[]>([]);
   readonly $loading = signal(false);
-
-  constructor(private readonly apiService: RoleApiService) {}
 
   public getAllRoles(lang?: string): Observable<Role[]> {
     this.$loading.set(true);

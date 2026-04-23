@@ -36,7 +36,7 @@ export class JwtRefreshStrategy
     });
   }
 
-  async validate(request: FastifyRequest, payload: JwtRefreshPayload): Promise<User> {
+  public async validate(request: FastifyRequest, payload: JwtRefreshPayload): Promise<User> {
     const refreshToken = request.cookies?.refresh_token;
     if (!refreshToken) throw new UnauthorizedException(this.i18n.t('messages.Auth.errors.invalidToken'));
 

@@ -437,18 +437,20 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
 
   private touched = false;
 
-  private onChange = (_value: any): void => {};
-  private onTouched = (): void => {};
+  get normalizedDataArray(): Array<{ id: any; name: string }> {
+    return (this.dataArray() ?? []).map(item => {
+      if (typeof item === 'number' || typeof item === 'string') {
+        return { id: item, name: String(item) };
+      }
+      if (typeof item.name !== 'string') {
+        return { ...item, name: String(item.name) };
+      }
+      return item;
+    });
+  }
 
   public registerOnTouched(fn: any): void {
     this.onTouched = fn;
-  }
-
-  private markAsTouched(): void {
-    if (!this.touched) {
-      this.onTouched();
-      this.touched = true;
-    }
   }
 
   public registerOnChange(onChange: any): void {
@@ -474,15 +476,14 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
     this.onChange(this.selectValue);
   }
 
-  get normalizedDataArray(): Array<{ id: any; name: string }> {
-    return (this.dataArray() ?? []).map(item => {
-      if (typeof item === 'number' || typeof item === 'string') {
-        return { id: item, name: String(item) };
-      }
-      if (typeof item.name !== 'string') {
-        return { ...item, name: String(item.name) };
-      }
-      return item;
-    });
+  private onChange = (_value: any): void => {};
+
+  private onTouched = (): void => {};
+
+  private markAsTouched(): void {
+    if (!this.touched) {
+      this.onTouched();
+      this.touched = true;
+    }
   }
 }

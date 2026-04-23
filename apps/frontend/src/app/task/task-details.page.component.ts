@@ -628,28 +628,6 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private loadTask(): void {
-    this.loading.set(true);
-    this.tasksService
-      .getOne(+this.taskId())
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: response => {
-          this.task.set(response.data);
-          this.loading.set(false);
-        },
-        error: error => {
-          console.error('Error loading task:', error);
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.loadError'),
-            NotificationTypeEnum.Error,
-          );
-          this.loading.set(false);
-        },
-        complete: () => {},
-      });
-  }
-
   protected goBack(): void {
     const projectId = this.route.snapshot.paramMap.get('id');
     if (projectId) {
@@ -697,34 +675,6 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
         },
       ],
     });
-  }
-
-  private confirmDelete(): void {
-    this.tasksService
-      .remove(+this.taskId())
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.deleteSuccess'),
-            NotificationTypeEnum.Success,
-          );
-          const projectId = this.route.snapshot.paramMap.get('id');
-          if (projectId) {
-            this.router.navigate(['/projects', projectId, 'tasks']).then();
-          } else {
-            this.router.navigate(['/projects']).then();
-          }
-        },
-        error: error => {
-          console.error('Error deleting task:', error);
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.deleteError'),
-            NotificationTypeEnum.Error,
-          );
-        },
-        complete: () => {},
-      });
   }
 
   protected onSubmitComment(): void {
@@ -911,5 +861,55 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected getContrastColor(backgroundColor: string): string {
     return getContrastColor(backgroundColor);
+  }
+
+  private loadTask(): void {
+    this.loading.set(true);
+    this.tasksService
+      .getOne(+this.taskId())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.task.set(response.data);
+          this.loading.set(false);
+        },
+        error: error => {
+          console.error('Error loading task:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.loadError'),
+            NotificationTypeEnum.Error,
+          );
+          this.loading.set(false);
+        },
+        complete: () => {},
+      });
+  }
+
+  private confirmDelete(): void {
+    this.tasksService
+      .remove(+this.taskId())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.deleteSuccess'),
+            NotificationTypeEnum.Success,
+          );
+          const projectId = this.route.snapshot.paramMap.get('id');
+          if (projectId) {
+            this.router.navigate(['/projects', projectId, 'tasks']).then();
+          } else {
+            this.router.navigate(['/projects']).then();
+          }
+        },
+        error: error => {
+          console.error('Error deleting task:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.deleteError'),
+            NotificationTypeEnum.Error,
+          );
+        },
+        complete: () => {},
+      });
   }
 }

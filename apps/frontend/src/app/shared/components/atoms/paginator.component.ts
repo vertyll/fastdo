@@ -100,23 +100,19 @@ import { PaginationParams } from '../../defs/filter.defs';
   `,
 })
 export class PaginatorComponent {
+  private readonly translateService = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
+
   readonly total = input<number>(0);
   readonly pageSize = input<number>(10);
   readonly currentPage = input<number>(0);
   readonly pageSizeOptions = input<number[]>(DEFAULT_PAGE_SIZE);
   readonly pageChange = output<PaginationParams>();
 
-  private readonly translateService = inject(TranslateService);
-  private readonly destroyRef = inject(DestroyRef);
-
   constructor() {
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateLabels();
     });
-  }
-
-  private updateLabels(): void {
-    this.getRangeLabel(this.currentPage(), this.pageSize(), this.total());
   }
 
   protected getRangeLabel(page: number, pageSize: number, length: number): string {
@@ -178,5 +174,9 @@ export class PaginatorComponent {
         pageSize: this.pageSize(),
       });
     }
+  }
+
+  private updateLabels(): void {
+    this.getRangeLabel(this.currentPage(), this.pageSize(), this.total());
   }
 }

@@ -40,7 +40,10 @@ export class AuthController {
     description: 'The user has been successfully logged in.',
     type: AccessTokenDto,
   })
-  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: FastifyReply): Promise<AccessTokenDto> {
+  public async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<AccessTokenDto> {
     const tokens = await this.authService.login(loginDto);
     res.setCookie('refresh_token', tokens.refreshToken, this.cookieConfigService.getRefreshTokenConfig());
     return { accessToken: tokens.accessToken };
@@ -67,7 +70,7 @@ export class AuthController {
     description: 'Access token has been refreshed successfully.',
     type: AccessTokenDto,
   })
-  async refreshToken(
+  public async refreshToken(
     @Cookies('refresh_token') refreshToken: string,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<AccessTokenDto> {
@@ -82,7 +85,7 @@ export class AuthController {
     status: 200,
     description: 'User has been successfully logged out.',
   })
-  async logout(
+  public async logout(
     @Cookies('refresh_token') refreshToken: string,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {

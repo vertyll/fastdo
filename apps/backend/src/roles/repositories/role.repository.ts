@@ -8,7 +8,7 @@ export class RoleRepository extends Repository<Role> {
     super(Role, dataSource.createEntityManager());
   }
 
-  async findAllActive(lang: string): Promise<Role[]> {
+  public async findAllActive(lang: string): Promise<Role[]> {
     return this.createQueryBuilder('role')
       .leftJoinAndSelect('role.translations', 'translation')
       .leftJoinAndSelect('translation.language', 'language', 'language.code = :lang', { lang })

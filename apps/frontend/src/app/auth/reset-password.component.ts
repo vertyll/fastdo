@@ -68,20 +68,15 @@ export class ResetPasswordComponent implements OnInit {
   private readonly passwordValidator = inject(PasswordValidator);
   private readonly toastService = inject(ToastService);
 
-  protected readonly resetPasswordForm: FormGroup;
+  protected resetPasswordForm!: FormGroup;
   protected passwordMismatch: boolean = false;
   protected passwordErrors: string[] = [];
   protected errorMessage: string | null = null;
+
   private token: string | null = null;
 
-  constructor() {
-    this.resetPasswordForm = this.fb.group({
-      password: ['', [Validators.required, this.passwordValidator.validatePassword]],
-      confirmPassword: ['', [Validators.required]],
-    });
-  }
-
   ngOnInit(): void {
+    this.initializeForm();
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
       if (!this.token) {
@@ -122,6 +117,13 @@ export class ResetPasswordComponent implements OnInit {
     } else {
       this.resetPasswordForm.markAllAsTouched();
     }
+  }
+
+  private initializeForm(): void {
+    this.resetPasswordForm = this.fb.group({
+      password: ['', [Validators.required, this.passwordValidator.validatePassword]],
+      confirmPassword: ['', [Validators.required]],
+    });
   }
 
   private updateFormErrors(): void {

@@ -33,17 +33,17 @@ export class PlatformService {
     }
   }
 
-  private updateIsMobile(): void {
-    if (this.isPlatformBrowserSignal()) {
-      this.isMobileSignal.set(globalThis.innerWidth < MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT);
-    }
-  }
-
   public updatePlatform(platform: string): void {
     this.platformSignal.set(platform);
   }
 
   public updateIsPlatformBrowser(isBrowser: boolean): void {
     this.isPlatformBrowserSignal.set(isBrowser);
+  }
+
+  private updateIsMobile(): void {
+    if (this.isPlatformBrowserSignal()) {
+      this.isMobileSignal.set(globalThis.innerWidth < MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT);
+    }
   }
 }

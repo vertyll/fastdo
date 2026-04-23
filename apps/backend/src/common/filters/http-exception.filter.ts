@@ -22,13 +22,6 @@ interface ResponseBody {
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(HttpExceptionFilter.name);
 
-  private getI18n(host: ArgumentsHost): I18nContext<I18nTranslations> {
-    const i18n = I18nContext.current<I18nTranslations>(host);
-    if (!i18n) throw new Error('I18nContext not available');
-
-    return i18n;
-  }
-
   public catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
@@ -50,6 +43,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     this.logger.error(`${request.method} ${request.url}`, exception.stack, 'HttpExceptionFilter');
 
     response.status(status).send(responseBody);
+  }
+
+  private getI18n(host: ArgumentsHost): I18nContext<I18nTranslations> {
+    const i18n = I18nContext.current<I18nTranslations>(host);
+    if (!i18n) throw new Error('I18nContext not available');
+
+    return i18n;
   }
 
   private formatGeneralMessage(exception: HttpException, i18n: I18nContext<I18nTranslations>): string {

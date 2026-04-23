@@ -18,7 +18,7 @@ export class TaskPrioritiesController {
     isPaginated: false,
     isArray: true,
   })
-  async findAll(): Promise<TaskPriorityResponseDto[]> {
+  public async findAll(): Promise<TaskPriorityResponseDto[]> {
     return this.taskPriorityService.findAll();
   }
 }

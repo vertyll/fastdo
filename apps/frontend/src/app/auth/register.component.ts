@@ -137,8 +137,9 @@ export class RegisterComponent implements OnInit {
   private readonly passwordValidator = inject(PasswordValidator);
   private readonly toastService = inject(ToastService);
 
-  protected readonly registerForm: FormGroup;
   protected readonly LinkTypeEnum = LinkTypeEnum;
+
+  protected registerForm!: FormGroup;
   protected passwordMismatch: boolean = false;
   protected passwordErrors: string[] = [];
   protected emailErrors: string[] = [];
@@ -146,17 +147,8 @@ export class RegisterComponent implements OnInit {
   protected privacyPolicyErrors: string[] = [];
   protected errorMessage: string | null = null;
 
-  constructor() {
-    this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, this.passwordValidator.validatePassword]],
-      confirmPassword: ['', [Validators.required]],
-      termsAccepted: [false, [Validators.requiredTrue]],
-      privacyPolicyAccepted: [false, [Validators.requiredTrue]],
-    });
-  }
-
   ngOnInit(): void {
+    this.initializeForm();
     this.registerForm.valueChanges.subscribe(() => {
       this.updateFormErrors();
     });
@@ -192,6 +184,16 @@ export class RegisterComponent implements OnInit {
       this.termsErrors = this.getTermsErrors();
       this.privacyPolicyErrors = this.getPrivacyPolicyErrors();
     }
+  }
+
+  private initializeForm(): void {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, this.passwordValidator.validatePassword]],
+      confirmPassword: ['', [Validators.required]],
+      termsAccepted: [false, [Validators.requiredTrue]],
+      privacyPolicyAccepted: [false, [Validators.requiredTrue]],
+    });
   }
 
   private updateFormErrors(): void {

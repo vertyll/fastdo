@@ -76,6 +76,10 @@ export class LayoutComponent implements OnInit {
     this.destroyRef.onDestroy(() => clearInterval(timeIntervalId));
   }
 
+  protected togglePanel = (): void => {
+    this.panelOpen = !this.panelOpen;
+  };
+
   private loadRoles(): void {
     this.roleService
       .getAllRoles()
@@ -86,10 +90,6 @@ export class LayoutComponent implements OnInit {
         },
       });
   }
-
-  protected togglePanel = (): void => {
-    this.panelOpen = !this.panelOpen;
-  };
 
   private updateTime(): void {
     this.currentTime.set(new Date().toLocaleTimeString());

@@ -264,6 +264,115 @@ export class ProjectsService {
     }
   }
 
+  public async remove(id: number): Promise<void> {
+    const userId = this.cls.get('user').userId;
+
+    const project = await this.projectRepository.findOne({ where: { id } });
+    if (!project) {
+      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
+    }
+    await this.checkProjectManagementPermission(id, userId);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.getRepository(ProjectUserRole).delete({ project: { id } });
+
+      await queryRunner.manager.getRepository(Project).delete(id);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async getProjectUsers(projectId: number): Promise<UserDto[]> {
+    const userId = this.cls.get('user').userId;
+
+    const project = await this.projectRepository.findOne({
+      where: [
+        {
+          id: projectId,
+          projectUserRoles: {
+            user: { id: userId },
+          },
+        },
+        {
+          id: projectId,
+          isPublic: true,
+        },
+      ],
+    });
+
+    if (!project) {
+      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFoundOrAccessDenied'));
+    }
+
+    const projectUsers = await this.dataSource
+      .getRepository(ProjectUserRole)
+      .createQueryBuilder('pur')
+      .leftJoinAndSelect('pur.user', 'user')
+      .leftJoinAndSelect('pur.project', 'project')
+      .where('project.id = :projectId', { projectId })
+      .select(['pur.id', 'user.id', 'user.email'])
+      .getMany();
+
+    return projectUsers.map(pur => ({
+      id: pur.user.id,
+      name: pur.user.email,
+    }));
+  }
+
+  public async acceptInvitation(invitationId: number): Promise<void> {
+    const userId = this.cls.get('user').userId;
+    const invitation = await this.projectInvitationRepository.findOne({
+      where: { id: invitationId },
+      relations: ['user', 'project', 'role'],
+    });
+    if (invitation?.status !== ProjectInvitationStatusEnum.PENDING) {
+      throw new Error(this.i18n.t('messages.Projects.errors.invitationNotFoundOrAlreadyHandled'));
+    }
+    if (invitation.user.id !== userId) {
+      throw new Error(this.i18n.t('messages.Projects.errors.notAllowedToAcceptInvitation'));
+    }
+    await this.dataSource.transaction(async manager => {
+      if (invitation.role) {
+        await manager.getRepository(ProjectUserRole).save({
+          project: invitation.project,
+          user: invitation.user,
+          projectRole: invitation.role,
+        });
+      }
+      invitation.status = ProjectInvitationStatusEnum.ACCEPTED;
+      await manager.getRepository(ProjectInvitation).save(invitation);
+
+      await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.ACCEPTED, manager);
+    });
+  }
+
+  public async rejectInvitation(invitationId: number): Promise<void> {
+    const userId = this.cls.get('user').userId;
+    const invitation = await this.projectInvitationRepository.findOne({
+      where: { id: invitationId },
+      relations: ['user'],
+    });
+    if (invitation?.status !== ProjectInvitationStatusEnum.PENDING) {
+      throw new Error(this.i18n.t('messages.Projects.errors.invitationNotFoundOrAlreadyHandled'));
+    }
+    if (invitation.user.id !== userId) {
+      throw new Error(this.i18n.t('messages.Projects.errors.notAllowedToRejectInvitation'));
+    }
+    invitation.status = ProjectInvitationStatusEnum.REJECTED;
+    await this.projectInvitationRepository.save(invitation);
+
+    await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.REJECTED);
+  }
+
   private async handleStatusesUpdate(
     queryRunner: QueryRunner,
     projectId: number,
@@ -312,33 +421,6 @@ export class ProjectsService {
     } else if (userEmails && userEmails.length > 0) {
       await this.validateUsersExist(userEmails);
       await this.inviteUsersToProject(queryRunner, projectId, userEmails, userId);
-    }
-  }
-
-  public async remove(id: number): Promise<void> {
-    const userId = this.cls.get('user').userId;
-
-    const project = await this.projectRepository.findOne({ where: { id } });
-    if (!project) {
-      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFound'));
-    }
-    await this.checkProjectManagementPermission(id, userId);
-
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.manager.getRepository(ProjectUserRole).delete({ project: { id } });
-
-      await queryRunner.manager.getRepository(Project).delete(id);
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
     }
   }
 
@@ -655,43 +737,6 @@ export class ProjectsService {
     }
   }
 
-  public async getProjectUsers(projectId: number): Promise<UserDto[]> {
-    const userId = this.cls.get('user').userId;
-
-    const project = await this.projectRepository.findOne({
-      where: [
-        {
-          id: projectId,
-          projectUserRoles: {
-            user: { id: userId },
-          },
-        },
-        {
-          id: projectId,
-          isPublic: true,
-        },
-      ],
-    });
-
-    if (!project) {
-      throw new Error(this.i18n.t('messages.Projects.errors.projectNotFoundOrAccessDenied'));
-    }
-
-    const projectUsers = await this.dataSource
-      .getRepository(ProjectUserRole)
-      .createQueryBuilder('pur')
-      .leftJoinAndSelect('pur.user', 'user')
-      .leftJoinAndSelect('pur.project', 'project')
-      .where('project.id = :projectId', { projectId })
-      .select(['pur.id', 'user.id', 'user.email'])
-      .getMany();
-
-    return projectUsers.map(pur => ({
-      id: pur.user.id,
-      name: pur.user.email,
-    }));
-  }
-
   private async checkProjectManagementPermission(projectId: number, userId: number): Promise<void> {
     const userRole = await this.dataSource.getRepository(ProjectUserRole).findOne({
       where: {
@@ -707,51 +752,6 @@ export class ProjectsService {
     ) {
       throw new Error(this.i18n.t('messages.Projects.errors.accessDeniedToManageProject'));
     }
-  }
-
-  public async acceptInvitation(invitationId: number): Promise<void> {
-    const userId = this.cls.get('user').userId;
-    const invitation = await this.projectInvitationRepository.findOne({
-      where: { id: invitationId },
-      relations: ['user', 'project', 'role'],
-    });
-    if (invitation?.status !== ProjectInvitationStatusEnum.PENDING) {
-      throw new Error(this.i18n.t('messages.Projects.errors.invitationNotFoundOrAlreadyHandled'));
-    }
-    if (invitation.user.id !== userId) {
-      throw new Error(this.i18n.t('messages.Projects.errors.notAllowedToAcceptInvitation'));
-    }
-    await this.dataSource.transaction(async manager => {
-      if (invitation.role) {
-        await manager.getRepository(ProjectUserRole).save({
-          project: invitation.project,
-          user: invitation.user,
-          projectRole: invitation.role,
-        });
-      }
-      invitation.status = ProjectInvitationStatusEnum.ACCEPTED;
-      await manager.getRepository(ProjectInvitation).save(invitation);
-
-      await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.ACCEPTED, manager);
-    });
-  }
-
-  public async rejectInvitation(invitationId: number): Promise<void> {
-    const userId = this.cls.get('user').userId;
-    const invitation = await this.projectInvitationRepository.findOne({
-      where: { id: invitationId },
-      relations: ['user'],
-    });
-    if (invitation?.status !== ProjectInvitationStatusEnum.PENDING) {
-      throw new Error(this.i18n.t('messages.Projects.errors.invitationNotFoundOrAlreadyHandled'));
-    }
-    if (invitation.user.id !== userId) {
-      throw new Error(this.i18n.t('messages.Projects.errors.notAllowedToRejectInvitation'));
-    }
-    invitation.status = ProjectInvitationStatusEnum.REJECTED;
-    await this.projectInvitationRepository.save(invitation);
-
-    await this.updateInvitationNotificationsStatus(invitationId, ProjectInvitationStatusEnum.REJECTED);
   }
 
   private async validateUsersExist(emails: string[]): Promise<void> {

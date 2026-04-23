@@ -206,26 +206,18 @@ export class UserProfileComponent implements OnInit {
   protected readonly LOADING_STATE_VALUE = LOADING_STATE_VALUE;
   protected readonly user = computed(() => this.stateService.user());
   protected readonly isMobile = this.platformService.isMobile;
+
   protected isEditing = false;
   protected selectedFile: File | null = null;
   protected avatarRemoved: boolean = false;
-  protected profileForm: FormGroup;
-
+  protected profileForm!: FormGroup;
   protected passwordErrors: string[] = [];
   protected newPasswordErrors: string[] = [];
   protected confirmNewPasswordErrors: string[] = [];
   protected isCropping: boolean = false;
 
-  constructor() {
-    this.profileForm = this.fb.group({
-      email: ['', [Validators.email]],
-      password: ['', [this.passwordValidator.validatePassword]],
-      newPassword: [null, [this.passwordValidator.validatePassword]],
-      confirmNewPassword: [null],
-    });
-  }
-
   ngOnInit(): void {
+    this.initializeForm();
     this.loadUserProfile();
 
     this.profileForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -310,6 +302,15 @@ export class UserProfileComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.profileForm.get(name) as FormControl;
+  }
+
+  private initializeForm(): void {
+    this.profileForm = this.fb.group({
+      email: ['', [Validators.email]],
+      password: ['', [this.passwordValidator.validatePassword]],
+      newPassword: [null, [this.passwordValidator.validatePassword]],
+      confirmNewPassword: [null],
+    });
   }
 
   private updateFormErrors(): void {

@@ -23,6 +23,7 @@ import { ValidationService } from '../../services/validation.service';
 })
 export class ErrorMessageComponent {
   protected readonly validation = inject(ValidationService);
+
   readonly input = input<AbstractControl | null>();
   readonly customMessage = input<string | undefined>();
 }

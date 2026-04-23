@@ -32,6 +32,10 @@ export class AppComponent implements OnDestroy {
     this.initializeLanguage();
   }
 
+  ngOnDestroy(): void {
+    this.autoLogoutService.stopWatching();
+  }
+
   private registerLocales(): void {
     registerLocaleData(localePl, 'pl');
     registerLocaleData(localeEn, 'en');
@@ -52,9 +56,5 @@ export class AppComponent implements OnDestroy {
 
     this.translateService.use(matchedLang);
     this.localStorageService.set(this.selectedLanguageKey, matchedLang);
-  }
-
-  ngOnDestroy(): void {
-    this.autoLogoutService.stopWatching();
   }
 }

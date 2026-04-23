@@ -235,11 +235,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   protected readonly FilterType = FilterTypeEnum;
 
-  public getLabelKeyForFilter(formControlName: string): string {
-    const filter = this.filters().find(f => f.formControlName === formControlName);
-    return filter?.labelKey ?? formControlName;
-  }
-
   constructor() {
     effect(() => {
       this.mobileFilterToggleHidden.set(this.platformService.isMobile());
@@ -263,6 +258,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
 
   ngOnDestroy(): void {
     this.unsubscribeAll();
+  }
+
+  public getLabelKeyForFilter(formControlName: string): string {
+    const filter = this.filters().find(f => f.formControlName === formControlName);
+    return filter?.labelKey ?? formControlName;
   }
 
   public onFilterSearch(event: any, filter: FilterMetadata): void {

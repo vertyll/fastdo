@@ -39,11 +39,11 @@ export class ScrollToTopComponent {
   protected isVisible: boolean = false;
 
   @HostListener('window:scroll')
-  onWindowScroll(): void {
+  public onWindowScroll(): void {
     this.isVisible = window.scrollY > SCROLL_TO_TOP_THRESHOLD;
   }
 
-  scrollToTop(): void {
+  protected scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

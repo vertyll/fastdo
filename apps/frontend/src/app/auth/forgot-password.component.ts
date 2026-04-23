@@ -67,15 +67,14 @@ export class ForgotPasswordComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly toastService = inject(ToastService);
 
-  protected readonly forgotPasswordForm: FormGroup;
   protected readonly LinkTypeEnum = LinkTypeEnum;
+
+  protected forgotPasswordForm!: FormGroup;
   protected emailErrors: string[] = [];
   protected errorMessage: string | null = null;
 
   constructor() {
-    this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-    });
+    this.initializeForm();
   }
 
   ngOnInit(): void {
@@ -111,6 +110,12 @@ export class ForgotPasswordComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.forgotPasswordForm.get(name) as FormControl;
+  }
+
+  private initializeForm(): void {
+    this.forgotPasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+    });
   }
 
   private updateFormErrors(): void {

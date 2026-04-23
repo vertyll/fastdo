@@ -940,6 +940,9 @@ export interface TableConfig {
   ],
 })
 export class TableComponent implements AfterViewChecked, OnDestroy {
+  private readonly themeService = inject(ThemeService);
+  private readonly platformService = inject(PlatformService);
+
   data = input.required<TableRow[]>();
   config = input.required<TableConfig>();
   loading = input(false);
@@ -958,8 +961,6 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   @ContentChild('customTemplate')
   customTemplate!: TemplateRef<any>;
 
-  private readonly themeService = inject(ThemeService);
-  private readonly platformService = inject(PlatformService);
   protected readonly isDarkMode = computed(() => this.themeService.currentTheme === ThemeEnum.Dark);
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
@@ -1016,77 +1017,6 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     }
   }
 
-  protected getTableContainerStyle(): { [key: string]: string } {
-    if (this.height()) {
-      return { height: this.height()! };
-    }
-
-    if (this.config().infiniteScroll && this.data().length > 0) {
-      return { 'max-height': '600px' };
-    }
-
-    return {};
-  }
-
-  private preserveScrollPosition(): void {
-    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
-    if (tableContainer) {
-      // Keep the scroll position slightly adjusted to account for new content
-      const currentScrollTop = tableContainer.scrollTop;
-      if (currentScrollTop > 0) {
-        tableContainer.scrollTop = currentScrollTop;
-      }
-    }
-  }
-
-  private updateInfiniteScrollObserver(): void {
-    if (!this.config().infiniteScroll || !this.intersectionObserver) {
-      return;
-    }
-
-    // Disconnect from previous observation
-    this.intersectionObserver.disconnect();
-
-    // Re-observe the new last row
-    setTimeout(() => {
-      const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
-      if (lastRow) {
-        this.intersectionObserver?.observe(lastRow);
-      }
-    }, 100);
-  }
-
-  private initializeInfiniteScroll(): void {
-    if (!this.config().infiniteScroll || typeof IntersectionObserver === 'undefined') {
-      return;
-    }
-
-    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
-    if (!tableContainer) return;
-
-    this.intersectionObserver = new IntersectionObserver(
-      entries => {
-        const target = entries[0];
-        if (target.isIntersecting && !this.config().loadingMore) {
-          this.loadMore.emit();
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px',
-        root: tableContainer, // Use table container as root instead of viewport
-      },
-    );
-
-    // Observe the last row when it exists
-    setTimeout(() => {
-      const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
-      if (lastRow) {
-        this.intersectionObserver?.observe(lastRow);
-      }
-    }, 100);
-  }
-
   get displayedColumns(): string[] {
     const columns = [];
     if (this.config().selectable) {
@@ -1110,6 +1040,49 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       columns.push('actions');
     }
     return columns;
+  }
+
+  public isSelected(row: any): boolean {
+    return this.selection.some(item => this.getRowId(item) === this.getRowId(row));
+  }
+
+  public getValue(row: any, key: string): any {
+    return key.split('.').reduce((obj, k) => obj?.[k], row);
+  }
+
+  public onRowClick(row: any): void {
+    this.rowClick.emit(row);
+  }
+
+  protected getHeaderClass(column: TableColumn): string {
+    const align = column.align || 'left';
+    return `header-${align}`;
+  }
+
+  protected getCellClass(column: TableColumn): string {
+    const horizontalAlign = column.align || 'left';
+    const verticalAlign = column.verticalAlign || 'top';
+    return `cell-${horizontalAlign} cell-${verticalAlign}`;
+  }
+
+  protected getMaxLines(column: TableColumn): number {
+    if (column.maxLines) {
+      return column.maxLines;
+    }
+
+    return this.isMobile() ? 1 : 3;
+  }
+
+  protected getTableContainerStyle(): { [key: string]: string } {
+    if (this.height()) {
+      return { height: this.height()! };
+    }
+
+    if (this.config().infiniteScroll && this.data().length > 0) {
+      return { 'max-height': '600px' };
+    }
+
+    return {};
   }
 
   protected getColumnWidth(column: TableColumn): string {
@@ -1256,6 +1229,65 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     return baseClass;
   }
 
+  private preserveScrollPosition(): void {
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    if (tableContainer) {
+      // Keep the scroll position slightly adjusted to account for new content
+      const currentScrollTop = tableContainer.scrollTop;
+      if (currentScrollTop > 0) {
+        tableContainer.scrollTop = currentScrollTop;
+      }
+    }
+  }
+
+  private updateInfiniteScrollObserver(): void {
+    if (!this.config().infiniteScroll || !this.intersectionObserver) {
+      return;
+    }
+
+    // Disconnect from previous observation
+    this.intersectionObserver.disconnect();
+
+    // Re-observe the new last row
+    setTimeout(() => {
+      const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
+      if (lastRow) {
+        this.intersectionObserver?.observe(lastRow);
+      }
+    }, 100);
+  }
+
+  private initializeInfiniteScroll(): void {
+    if (!this.config().infiniteScroll || typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    if (!tableContainer) return;
+
+    this.intersectionObserver = new IntersectionObserver(
+      entries => {
+        const target = entries[0];
+        if (target.isIntersecting && !this.config().loadingMore) {
+          this.loadMore.emit();
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
+        root: tableContainer, // Use table container as root instead of viewport
+      },
+    );
+
+    // Observe the last row when it exists
+    setTimeout(() => {
+      const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
+      if (lastRow) {
+        this.intersectionObserver?.observe(lastRow);
+      }
+    }, 100);
+  }
+
   private getRowId(row: any): any {
     return row.id || row._id || JSON.stringify(row);
   }
@@ -1275,36 +1307,5 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       default:
         return 'action-secondary';
     }
-  }
-
-  public isSelected(row: any): boolean {
-    return this.selection.some(item => this.getRowId(item) === this.getRowId(row));
-  }
-
-  public getValue(row: any, key: string): any {
-    return key.split('.').reduce((obj, k) => obj?.[k], row);
-  }
-
-  public onRowClick(row: any): void {
-    this.rowClick.emit(row);
-  }
-
-  protected getHeaderClass(column: TableColumn): string {
-    const align = column.align || 'left';
-    return `header-${align}`;
-  }
-
-  protected getCellClass(column: TableColumn): string {
-    const horizontalAlign = column.align || 'left';
-    const verticalAlign = column.verticalAlign || 'top';
-    return `cell-${horizontalAlign} cell-${verticalAlign}`;
-  }
-
-  protected getMaxLines(column: TableColumn): number {
-    if (column.maxLines) {
-      return column.maxLines;
-    }
-
-    return this.isMobile() ? 1 : 3;
   }
 }

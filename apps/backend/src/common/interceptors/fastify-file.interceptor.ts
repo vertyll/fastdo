@@ -71,7 +71,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     }
   }
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  public async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const i18n = I18nContext.current<I18nTranslations>(context);
     if (!i18n) {
       throw new BadRequestException({

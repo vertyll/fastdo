@@ -13,7 +13,7 @@ export class RolesController {
   @Get()
   @ApiOperation({ summary: 'Get all active roles with translations' })
   @ApiResponse({ status: 200, type: [RoleDto] })
-  async getAllRoles(): Promise<RoleDto[]> {
+  public async getAllRoles(): Promise<RoleDto[]> {
     return this.rolesService.getAllRoles();
   }
 }

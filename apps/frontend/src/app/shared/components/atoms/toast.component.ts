@@ -35,9 +35,10 @@ import { ToastService } from '../../services/toast.service';
 })
 export class ToastComponent {
   private readonly toastService = inject(ToastService);
+
   protected readonly toast = this.toastService.toast;
 
-  hideToast(): void {
+  protected hideToast(): void {
     this.toastService.hideToast();
   }
 }

@@ -363,6 +363,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
   private readonly destroy$ = new Subject<void>();
 
+  protected readonly ProjectRolePermissionEnum = ProjectRolePermissionEnum;
+
   protected projectForm!: FormGroup;
   protected projectTypesRaw: TranslatableOptionItem[] = [];
   protected projectStatusesRaw: TranslatableOptionItem[] = [];
@@ -380,8 +382,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   protected iconRemoved: boolean = false;
   protected isCropping: boolean = false;
   protected fieldErrors: Record<string, string[]> = {};
-
-  protected readonly ProjectRolePermissionEnum = ProjectRolePermissionEnum;
 
   ngOnInit(): void {
     this.checkEditMode();
@@ -402,6 +402,236 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
         this.fieldErrors['usersWithRoles'] = [];
       }
     });
+  }
+
+  protected get categoriesFormArray(): FormArray {
+    return this.projectForm.get('categories') as FormArray;
+  }
+
+  protected get statusesFormArray(): FormArray {
+    return this.projectForm.get('statuses') as FormArray;
+  }
+
+  protected get usersWithRolesFormArray(): FormArray {
+    return this.projectForm.get('usersWithRoles') as FormArray;
+  }
+
+  protected get nameControl(): FormControl {
+    return this.projectForm.get('name') as FormControl;
+  }
+
+  protected get descriptionControl(): FormControl {
+    return this.projectForm.get('description') as FormControl;
+  }
+
+  protected get typeIdControl(): FormControl {
+    return this.projectForm.get('typeId') as FormControl;
+  }
+
+  protected get isPublicControl(): FormControl {
+    return this.projectForm.get('isPublic') as FormControl;
+  }
+
+  protected getCategoryNameControl(index: number): FormControl {
+    return this.categoriesFormArray.at(index).get('name') as FormControl;
+  }
+
+  protected getCategoryColorControl(index: number): FormControl {
+    return this.categoriesFormArray.at(index).get('color') as FormControl;
+  }
+
+  protected getStatusNameControl(index: number): FormControl {
+    return this.statusesFormArray.at(index).get('name') as FormControl;
+  }
+
+  protected getStatusColorControl(index: number): FormControl {
+    return this.statusesFormArray.at(index).get('color') as FormControl;
+  }
+
+  protected getUserEmailControl(index: number): FormControl {
+    return this.usersWithRolesFormArray.at(index).get('email') as FormControl;
+  }
+
+  protected getUserRoleControl(index: number): FormControl {
+    return this.usersWithRolesFormArray.at(index).get('role') as FormControl;
+  }
+
+  protected cancel(): void {
+    this.router.navigate(['/projects']).then();
+  }
+
+  protected get projectTypeOptions(): Array<{ value: number; label: string }> {
+    return this.projectTypes.map(type => ({
+      value: type.id,
+      label: type.name,
+    }));
+  }
+
+  protected get projectRoleOptions(): Array<{ value: number; label: string }> {
+    return this.projectRoles.map(role => ({
+      value: role.id,
+      label: role.name,
+    }));
+  }
+
+  protected addCategory(): void {
+    this.categoriesFormArray.push(
+      this.fb.group({
+        id: [null],
+        name: ['', Validators.required],
+        color: ['#3B82F6', Validators.required],
+      }),
+    );
+  }
+
+  protected removeCategory(index: number): void {
+    this.categoriesFormArray.removeAt(index);
+  }
+
+  protected addStatus(): void {
+    this.statusesFormArray.push(
+      this.fb.group({
+        id: [null],
+        name: ['', Validators.required],
+        color: ['#10B981', Validators.required],
+      }),
+    );
+  }
+
+  protected removeStatus(index: number): void {
+    this.statusesFormArray.removeAt(index);
+  }
+
+  protected addUserWithRole(): void {
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    const notSelfValidator = (control: FormControl): { selfEmail: true } | null => {
+      const value = (control.value || '').trim().toLowerCase();
+      if (currentUserEmail && value && value === currentUserEmail.trim().toLowerCase()) {
+        return { selfEmail: true };
+      }
+      return null;
+    };
+    const group = this.fb.group({
+      email: ['', [Validators.required, Validators.email, notSelfValidator as any]],
+      role: ['', [Validators.required]],
+    });
+    group
+      .get('email')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        if (currentUserEmail && value?.trim().toLowerCase() === currentUserEmail.trim().toLowerCase()) {
+          this.notificationService.showNotification(
+            this.translateService.instant('Project.cannotAddYourself'),
+            NotificationTypeEnum.Error,
+          );
+        }
+      });
+    this.usersWithRolesFormArray.push(group);
+  }
+
+  protected removeUserWithRole(index: number): void {
+    const userControl = this.usersWithRolesFormArray.at(index);
+    const userEmail = userControl.get('email')?.value;
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+
+    if (userEmail === currentUserEmail) {
+      this.notificationService.showNotification(
+        this.translateService.instant('Project.cannotRemoveYourself'),
+        NotificationTypeEnum.Error,
+      );
+      return;
+    }
+
+    this.usersWithRolesFormArray.removeAt(index);
+  }
+
+  protected isCurrentUser(index: number): boolean {
+    const userControl = this.usersWithRolesFormArray.at(index);
+    const userEmail = userControl.get('email')?.value;
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    if (!userEmail || !currentUserEmail) return false;
+    return String(userEmail).trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
+  }
+
+  protected onImageSaved(event: { file: File; preview: string | null }): void {
+    this.selectedIconFile = event.file;
+    this.iconRemoved = false;
+  }
+
+  protected onCroppingChange(isCropping: boolean): void {
+    this.isCropping = isCropping;
+  }
+
+  protected onImageRemoved(): void {
+    this.selectedIconFile = null;
+    this.iconRemoved = true;
+  }
+
+  protected onSubmit(): void {
+    if (this.projectForm.invalid || this.isSubmitting || this.isCropping) return;
+
+    this.isSubmitting = true;
+    this.fieldErrors = {};
+
+    const formData = this.buildProjectFormData(this.projectForm.getRawValue());
+    this.submitProjectForm(formData);
+  }
+
+  private buildProjectFormData(formValue: any): FormData {
+    const formData = new FormData();
+
+    formData.append('name', formValue.name);
+    if (formValue.description) {
+      formData.append('description', formValue.description);
+    }
+    formData.append('isPublic', String(formValue.isPublic || false));
+    if (formValue.typeId) {
+      formData.append('typeId', formValue.typeId);
+    }
+
+    formData.append('categories', JSON.stringify(this.serializeNameColorItems(formValue.categories, '#3B82F6')));
+    formData.append('statuses', JSON.stringify(this.serializeNameColorItems(formValue.statuses, '#10B981')));
+
+    this.appendUsersWithRoles(formData, formValue.usersWithRoles);
+    this.appendUserEmails(formData, formValue.userEmails);
+    this.appendIcon(formData);
+
+    return formData;
+  }
+
+  private appendUsersWithRoles(formData: FormData, usersWithRoles: unknown): void {
+    if (!Array.isArray(usersWithRoles)) return;
+
+    const payload = usersWithRoles
+      .filter((userWithRole: any) => userWithRole.email?.trim())
+      .map((userWithRole: any) => ({
+        email: userWithRole.email.trim(),
+        role: userWithRole.role,
+      }));
+
+    formData.append('usersWithRoles', JSON.stringify(payload));
+  }
+
+  private appendUserEmails(formData: FormData, userEmails: unknown): void {
+    if (!Array.isArray(userEmails)) return;
+
+    userEmails
+      .filter((userEmail: any) => userEmail.email?.trim())
+      .forEach((userEmail: any) => {
+        formData.append('userEmails', userEmail.email.trim());
+      });
+  }
+
+  private appendIcon(formData: FormData): void {
+    const hadIcon = !!this.currentProject?.icon?.url;
+    if (this.selectedIconFile) {
+      formData.append('icon', this.selectedIconFile);
+      return;
+    }
+
+    if (hadIcon && this.iconRemoved) {
+      formData.append('icon', 'null');
+    }
   }
 
   private checkEditMode(): void {
@@ -611,232 +841,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     }
   }
 
-  get categoriesFormArray(): FormArray {
-    return this.projectForm.get('categories') as FormArray;
-  }
-
-  get statusesFormArray(): FormArray {
-    return this.projectForm.get('statuses') as FormArray;
-  }
-
-  get usersWithRolesFormArray(): FormArray {
-    return this.projectForm.get('usersWithRoles') as FormArray;
-  }
-
-  protected get nameControl(): FormControl {
-    return this.projectForm.get('name') as FormControl;
-  }
-
-  protected get descriptionControl(): FormControl {
-    return this.projectForm.get('description') as FormControl;
-  }
-
-  protected get typeIdControl(): FormControl {
-    return this.projectForm.get('typeId') as FormControl;
-  }
-
-  protected get isPublicControl(): FormControl {
-    return this.projectForm.get('isPublic') as FormControl;
-  }
-
-  protected getCategoryNameControl(index: number): FormControl {
-    return this.categoriesFormArray.at(index).get('name') as FormControl;
-  }
-
-  protected getCategoryColorControl(index: number): FormControl {
-    return this.categoriesFormArray.at(index).get('color') as FormControl;
-  }
-
-  protected getStatusNameControl(index: number): FormControl {
-    return this.statusesFormArray.at(index).get('name') as FormControl;
-  }
-
-  protected getStatusColorControl(index: number): FormControl {
-    return this.statusesFormArray.at(index).get('color') as FormControl;
-  }
-
-  protected getUserEmailControl(index: number): FormControl {
-    return this.usersWithRolesFormArray.at(index).get('email') as FormControl;
-  }
-
-  protected getUserRoleControl(index: number): FormControl {
-    return this.usersWithRolesFormArray.at(index).get('role') as FormControl;
-  }
-
-  protected get projectTypeOptions(): Array<{ value: number; label: string }> {
-    return this.projectTypes.map(type => ({
-      value: type.id,
-      label: type.name,
-    }));
-  }
-
-  protected get projectRoleOptions(): Array<{ value: number; label: string }> {
-    return this.projectRoles.map(role => ({
-      value: role.id,
-      label: role.name,
-    }));
-  }
-
-  protected addCategory(): void {
-    this.categoriesFormArray.push(
-      this.fb.group({
-        id: [null],
-        name: ['', Validators.required],
-        color: ['#3B82F6', Validators.required],
-      }),
-    );
-  }
-
-  protected removeCategory(index: number): void {
-    this.categoriesFormArray.removeAt(index);
-  }
-
-  protected addStatus(): void {
-    this.statusesFormArray.push(
-      this.fb.group({
-        id: [null],
-        name: ['', Validators.required],
-        color: ['#10B981', Validators.required],
-      }),
-    );
-  }
-
-  protected removeStatus(index: number): void {
-    this.statusesFormArray.removeAt(index);
-  }
-
-  protected addUserWithRole(): void {
-    const currentUserEmail = this.authService.getCurrentUserEmail();
-    const notSelfValidator = (control: FormControl): { selfEmail: true } | null => {
-      const value = (control.value || '').trim().toLowerCase();
-      if (currentUserEmail && value && value === currentUserEmail.trim().toLowerCase()) {
-        return { selfEmail: true };
-      }
-      return null;
-    };
-    const group = this.fb.group({
-      email: ['', [Validators.required, Validators.email, notSelfValidator as any]],
-      role: ['', [Validators.required]],
-    });
-    group
-      .get('email')
-      ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe(value => {
-        if (currentUserEmail && value?.trim().toLowerCase() === currentUserEmail.trim().toLowerCase()) {
-          this.notificationService.showNotification(
-            this.translateService.instant('Project.cannotAddYourself'),
-            NotificationTypeEnum.Error,
-          );
-        }
-      });
-    this.usersWithRolesFormArray.push(group);
-  }
-
-  protected removeUserWithRole(index: number): void {
-    const userControl = this.usersWithRolesFormArray.at(index);
-    const userEmail = userControl.get('email')?.value;
-    const currentUserEmail = this.authService.getCurrentUserEmail();
-
-    if (userEmail === currentUserEmail) {
-      this.notificationService.showNotification(
-        this.translateService.instant('Project.cannotRemoveYourself'),
-        NotificationTypeEnum.Error,
-      );
-      return;
-    }
-
-    this.usersWithRolesFormArray.removeAt(index);
-  }
-
-  protected isCurrentUser(index: number): boolean {
-    const userControl = this.usersWithRolesFormArray.at(index);
-    const userEmail = userControl.get('email')?.value;
-    const currentUserEmail = this.authService.getCurrentUserEmail();
-    if (!userEmail || !currentUserEmail) return false;
-    return String(userEmail).trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
-  }
-
-  protected onImageSaved(event: { file: File; preview: string | null }): void {
-    this.selectedIconFile = event.file;
-    this.iconRemoved = false;
-  }
-
-  protected onCroppingChange(isCropping: boolean): void {
-    this.isCropping = isCropping;
-  }
-
-  protected onImageRemoved(): void {
-    this.selectedIconFile = null;
-    this.iconRemoved = true;
-  }
-
-  protected onSubmit(): void {
-    if (this.projectForm.invalid || this.isSubmitting || this.isCropping) return;
-
-    this.isSubmitting = true;
-    this.fieldErrors = {};
-
-    const formData = this.buildProjectFormData(this.projectForm.getRawValue());
-    this.submitProjectForm(formData);
-  }
-
-  private buildProjectFormData(formValue: any): FormData {
-    const formData = new FormData();
-
-    formData.append('name', formValue.name);
-    if (formValue.description) {
-      formData.append('description', formValue.description);
-    }
-    formData.append('isPublic', String(formValue.isPublic || false));
-    if (formValue.typeId) {
-      formData.append('typeId', formValue.typeId);
-    }
-
-    formData.append('categories', JSON.stringify(this.serializeNameColorItems(formValue.categories, '#3B82F6')));
-    formData.append('statuses', JSON.stringify(this.serializeNameColorItems(formValue.statuses, '#10B981')));
-
-    this.appendUsersWithRoles(formData, formValue.usersWithRoles);
-    this.appendUserEmails(formData, formValue.userEmails);
-    this.appendIcon(formData);
-
-    return formData;
-  }
-
-  private appendUsersWithRoles(formData: FormData, usersWithRoles: unknown): void {
-    if (!Array.isArray(usersWithRoles)) return;
-
-    const payload = usersWithRoles
-      .filter((userWithRole: any) => userWithRole.email?.trim())
-      .map((userWithRole: any) => ({
-        email: userWithRole.email.trim(),
-        role: userWithRole.role,
-      }));
-
-    formData.append('usersWithRoles', JSON.stringify(payload));
-  }
-
-  private appendUserEmails(formData: FormData, userEmails: unknown): void {
-    if (!Array.isArray(userEmails)) return;
-
-    userEmails
-      .filter((userEmail: any) => userEmail.email?.trim())
-      .forEach((userEmail: any) => {
-        formData.append('userEmails', userEmail.email.trim());
-      });
-  }
-
-  private appendIcon(formData: FormData): void {
-    const hadIcon = !!this.currentProject?.icon?.url;
-    if (this.selectedIconFile) {
-      formData.append('icon', this.selectedIconFile);
-      return;
-    }
-
-    if (hadIcon && this.iconRemoved) {
-      formData.append('icon', 'null');
-    }
-  }
-
   private submitProjectForm(formData: FormData): void {
     if (this.isEditMode && this.projectId) {
       this.projectsService
@@ -897,9 +901,5 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       this.fieldErrors['usersWithRoles'] = [errorMessage];
     }
     this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
-  }
-
-  protected cancel(): void {
-    this.router.navigate(['/projects']).then();
   }
 }
