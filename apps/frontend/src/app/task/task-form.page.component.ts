@@ -530,7 +530,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   }
 
   private initializeForm(): void {
-    this.fb.group({
+    this.taskForm = this.fb.group({
       description: ['', [Validators.required]],
       additionalDescription: [''],
       priceEstimation: [0],
