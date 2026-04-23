@@ -1,4 +1,296 @@
-@use '@angular/material' as mat;
+/* Keep browser controls aligned with the active app theme. */
+:root {
+  color-scheme: light;
+}
+
+/* Angular Material token baseline for light mode (and non-dark overlays). */
+:root,
+.cdk-overlay-container {
+  --app-control-radius: 12px;
+  --app-elevation-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
+
+  --app-table-header-bg: var(--color-background-secondary);
+  --app-table-header-text: var(--color-text-primary);
+  --app-table-border: var(--color-border-primary);
+  --app-table-border-soft: var(--color-background-secondary);
+  --app-table-cell-text: var(--color-text-primary);
+  --app-table-row-bg: var(--color-surface-primary);
+  --app-table-row-even-bg: var(--color-background-secondary);
+  --app-table-row-hover-bg: color-mix(in srgb, var(--color-primary-50) 75%, var(--color-surface-primary));
+  --app-table-row-even-hover-bg: color-mix(in srgb, var(--color-primary-100) 75%, var(--color-background-secondary));
+  --app-table-muted-text: var(--color-text-secondary);
+  --app-table-loading-text: var(--color-text-secondary);
+  --app-table-state-text: var(--color-text-secondary);
+  --app-table-state-bg: transparent;
+  --app-table-state-border: transparent;
+  --app-table-overlay-bg: rgba(255, 255, 255, 0.88);
+  --app-table-accent: var(--color-primary-500);
+  --app-table-accent-hover: var(--color-primary-600);
+  --app-table-accent-active: var(--color-primary-700);
+  --app-table-accent-hover-bg: color-mix(in srgb, var(--app-table-accent) 12%, transparent);
+  --app-table-accent-active-bg: color-mix(in srgb, var(--app-table-accent) 18%, transparent);
+
+  --app-table-action-primary-fg: #f97316;
+  --app-table-action-primary-bg: #fff7ed;
+  --app-table-action-primary-hover-fg: #ea580c;
+  --app-table-action-primary-hover-bg: #ffedd5;
+  --app-table-action-secondary-fg: #6b7280;
+  --app-table-action-secondary-bg: #f9fafb;
+  --app-table-action-secondary-hover-fg: #374151;
+  --app-table-action-secondary-hover-bg: #f9fafb;
+  --app-table-action-danger-fg: #ef4444;
+  --app-table-action-danger-bg: #fef2f2;
+  --app-table-action-danger-hover-fg: #dc2626;
+  --app-table-action-danger-hover-bg: #fee2e2;
+  --app-table-action-success-fg: #10b981;
+  --app-table-action-success-bg: #ecfdf5;
+  --app-table-action-success-hover-fg: #059669;
+  --app-table-action-success-hover-bg: #d1fae5;
+  --app-table-action-warning-fg: #f59e0b;
+  --app-table-action-warning-bg: #fffbeb;
+  --app-table-action-warning-hover-fg: #d97706;
+  --app-table-action-warning-hover-bg: #fef3c7;
+
+  --app-table-priority-high-bg: #fef2f2;
+  --app-table-priority-high-hover-bg: #fee2e2;
+  --app-table-priority-low-bg: #eff6ff;
+  --app-table-priority-low-hover-bg: #dbeafe;
+
+  --mat-form-field-container-height: 56px;
+  --mat-form-field-container-vertical-padding: 16px;
+  --mat-input-text-line-height: 1.5rem;
+
+  --mdc-outlined-text-field-container-color: var(--color-surface-primary);
+  --mdc-outlined-text-field-outline-color: var(--color-border-primary);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-border-secondary);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary-500);
+  --mdc-outlined-text-field-caret-color: var(--color-primary-500);
+  --mdc-outlined-text-field-input-text-color: var(--color-text-primary);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--color-text-muted);
+  --mdc-outlined-text-field-label-text-color: var(--color-text-secondary);
+  --mdc-outlined-text-field-hover-label-text-color: var(--color-text-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-primary-500);
+  --mdc-outlined-text-field-container-shape: var(--app-control-radius);
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-focus-outline-width: 2px;
+
+  --mat-form-field-container-text-color: var(--color-text-primary);
+  --mat-form-field-container-text-placeholder-color: var(--color-text-muted);
+  --mat-form-field-focus-select-arrow-color: var(--color-primary-500);
+  --mat-form-field-enabled-select-arrow-color: var(--color-text-secondary);
+  --mat-form-field-disabled-select-arrow-color: var(--color-text-muted);
+  --mat-form-field-subscript-text-color: var(--color-text-secondary);
+
+  --mat-select-enabled-trigger-text-color: var(--color-text-primary);
+  --mat-select-trigger-text-line-height: 1.5rem;
+  --mat-select-enabled-arrow-color: var(--color-text-secondary);
+  --mat-select-focused-arrow-color: var(--color-primary-500);
+  --mat-select-panel-background-color: var(--color-surface-primary);
+  --mat-select-panel-text-color: var(--color-text-primary);
+
+  --mat-option-label-text-color: var(--color-text-primary);
+  --mat-option-selected-state-label-text-color: var(--color-primary-600);
+  --mat-option-hover-state-layer-color: color-mix(in srgb, var(--color-surface-secondary) 80%, transparent);
+  --mat-option-focus-state-layer-color: color-mix(in srgb, var(--color-surface-secondary) 80%, transparent);
+
+  --mat-menu-container-color: var(--color-surface-primary);
+  --mat-menu-item-label-text-color: var(--color-text-primary);
+  --mat-tooltip-container-color: var(--color-neutral-700);
+  --mat-tooltip-supporting-text-color: var(--color-dark-text-primary);
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Angular Material v21 dark mode using component tokens (docs-recommended path). */
+.dark,
+.cdk-overlay-container.dark {
+  --app-elevation-soft: 0 12px 28px rgba(2, 6, 23, 0.45);
+
+  --app-table-header-bg: var(--color-dark-background-secondary);
+  --app-table-header-text: var(--color-dark-text-secondary);
+  --app-table-border: var(--color-dark-border-primary);
+  --app-table-border-soft: var(--color-dark-border-primary);
+  --app-table-cell-text: var(--color-dark-text-primary);
+  --app-table-row-bg: #1f2937;
+  --app-table-row-even-bg: #273446;
+  --app-table-row-hover-bg: color-mix(in srgb, var(--color-primary-900) 65%, #1f2937);
+  --app-table-row-even-hover-bg: color-mix(in srgb, var(--color-primary-800) 65%, #273446);
+  --app-table-muted-text: var(--color-dark-text-secondary);
+  --app-table-loading-text: var(--color-dark-text-secondary);
+  --app-table-state-text: var(--color-dark-text-secondary);
+  --app-table-state-bg: var(--app-table-row-even-bg);
+  --app-table-state-border: var(--app-table-border);
+  --app-table-overlay-bg: rgba(17, 24, 39, 0.88);
+  --app-table-accent: var(--color-primary-400);
+  --app-table-accent-hover: var(--color-primary-300);
+  --app-table-accent-active: var(--color-primary-200);
+  --app-table-accent-hover-bg: color-mix(in srgb, var(--app-table-accent) 18%, transparent);
+  --app-table-accent-active-bg: color-mix(in srgb, var(--app-table-accent) 24%, transparent);
+
+  --app-table-action-primary-fg: #fdba74;
+  --app-table-action-primary-bg: #9a3412;
+  --app-table-action-primary-hover-fg: #fed7aa;
+  --app-table-action-primary-hover-bg: #7c2d12;
+  --app-table-action-secondary-fg: #d1d5db;
+  --app-table-action-secondary-bg: #374151;
+  --app-table-action-secondary-hover-fg: #e5e7eb;
+  --app-table-action-secondary-hover-bg: #374151;
+  --app-table-action-danger-fg: #fca5a5;
+  --app-table-action-danger-bg: #991b1b;
+  --app-table-action-danger-hover-fg: #fecaca;
+  --app-table-action-danger-hover-bg: #7f1d1d;
+  --app-table-action-success-fg: #6ee7b7;
+  --app-table-action-success-bg: #065f46;
+  --app-table-action-success-hover-fg: #a7f3d0;
+  --app-table-action-success-hover-bg: #064e3b;
+  --app-table-action-warning-fg: #fcd34d;
+  --app-table-action-warning-bg: #92400e;
+  --app-table-action-warning-hover-fg: #fde68a;
+  --app-table-action-warning-hover-bg: #78350f;
+
+  --app-table-priority-high-bg: #7f1d1d;
+  --app-table-priority-high-hover-bg: #991b1b;
+  --app-table-priority-low-bg: #1e3a8a;
+  --app-table-priority-low-hover-bg: #1e40af;
+
+  --mat-form-field-container-height: 56px;
+  --mat-form-field-container-vertical-padding: 16px;
+  --mat-input-text-line-height: 1.5rem;
+
+  --mdc-outlined-text-field-container-color: var(--color-dark-surface-primary);
+  --mdc-outlined-text-field-outline-color: var(--color-dark-border-primary);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-dark-border-secondary);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary-500);
+  --mdc-outlined-text-field-caret-color: var(--color-primary-500);
+  --mdc-outlined-text-field-input-text-color: var(--color-dark-text-primary);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--color-dark-text-muted);
+  --mdc-outlined-text-field-label-text-color: var(--color-dark-text-secondary);
+  --mdc-outlined-text-field-hover-label-text-color: var(--color-dark-text-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-primary-500);
+  --mdc-outlined-text-field-container-shape: var(--app-control-radius);
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-focus-outline-width: 2px;
+
+  --mat-form-field-container-text-color: var(--color-dark-text-primary);
+  --mat-form-field-container-text-placeholder-color: var(--color-dark-text-muted);
+  --mat-form-field-hover-state-layer-opacity: 0;
+  --mat-form-field-focus-select-arrow-color: var(--color-primary-500);
+  --mat-form-field-enabled-select-arrow-color: var(--color-dark-text-secondary);
+  --mat-form-field-disabled-select-arrow-color: var(--color-dark-text-muted);
+  --mat-form-field-subscript-text-color: var(--color-dark-text-secondary);
+
+  --mat-select-enabled-trigger-text-color: var(--color-dark-text-primary);
+  --mat-select-trigger-text-line-height: 1.5rem;
+  --mat-select-enabled-arrow-color: var(--color-dark-text-secondary);
+  --mat-select-focused-arrow-color: var(--color-primary-500);
+  --mat-select-panel-background-color: var(--color-dark-surface-primary);
+  --mat-select-panel-text-color: var(--color-dark-text-primary);
+
+  --mat-option-label-text-color: var(--color-dark-text-primary);
+  --mat-option-selected-state-label-text-color: var(--color-primary-400);
+  --mat-option-hover-state-layer-color: color-mix(in srgb, var(--color-dark-surface-secondary) 70%, transparent);
+  --mat-option-focus-state-layer-color: color-mix(in srgb, var(--color-dark-surface-secondary) 70%, transparent);
+
+  --mat-menu-container-color: var(--color-dark-surface-primary);
+  --mat-menu-item-label-text-color: var(--color-dark-text-primary);
+  --mat-tooltip-container-color: var(--color-dark-surface-primary);
+  --mat-tooltip-supporting-text-color: var(--color-dark-text-primary);
+}
+
+/* Checkbox theme tokens shared by page and overlays. */
+:root,
+.cdk-overlay-container,
+.dark,
+.cdk-overlay-container.dark {
+  --mdc-checkbox-selected-icon-color: var(--color-primary-500);
+  --mdc-checkbox-selected-hover-icon-color: var(--color-primary-600);
+  --mdc-checkbox-selected-pressed-icon-color: var(--color-primary-700);
+  --mdc-checkbox-selected-focus-icon-color: var(--color-primary-500);
+  --mdc-checkbox-selected-checkmark-color: #ffffff;
+}
+
+/* Fallbacks for edge cases where MDC tokens are not fully respected. */
+.cdk-overlay-container.dark .mat-mdc-select-panel,
+.cdk-overlay-container.dark .mat-mdc-autocomplete-panel {
+  background-color: var(--color-dark-surface-primary);
+  color: var(--color-dark-text-primary);
+}
+
+.cdk-overlay-container.dark .mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--color-dark-text-primary);
+}
+
+.dark .mat-mdc-form-field .mdc-floating-label,
+.dark .mat-mdc-form-field .mat-mdc-select-placeholder {
+  color: var(--color-dark-text-secondary);
+}
+
+/* Ensure select value and floating label keep Material default spacing. */
+.mat-mdc-form-field .mat-mdc-form-field-infix {
+  min-height: var(--mat-form-field-container-height, 56px);
+}
+
+.mat-mdc-form-field .mat-mdc-select-trigger,
+.mat-mdc-form-field .mat-mdc-select-value-text {
+  line-height: var(--mat-select-trigger-text-line-height, 1.5rem);
+}
+
+.mat-mdc-form-field .mat-mdc-input-element,
+.mat-mdc-form-field textarea.mat-mdc-input-element {
+  line-height: var(--mat-input-text-line-height, 1.5rem);
+}
+
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  border-radius: var(--app-control-radius);
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-table-accent) 15%, transparent);
+}
+
+.cdk-overlay-container .mat-mdc-select-panel,
+.cdk-overlay-container .mat-mdc-autocomplete-panel {
+  border: 1px solid var(--app-table-border);
+  border-radius: calc(var(--app-control-radius) - 2px);
+  box-shadow: var(--app-elevation-soft);
+}
+
+.cdk-overlay-container .mat-mdc-option {
+  min-height: 40px;
+}
+
+.dark
+  .mat-mdc-checkbox
+  .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate)
+  ~ .mdc-checkbox__background,
+.cdk-overlay-container.dark
+  .mat-mdc-checkbox
+  .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate)
+  ~ .mdc-checkbox__background {
+  border-color: var(--color-dark-border-secondary);
+}
+
+.dark .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
+.dark .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background,
+.cdk-overlay-container.dark .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
+.cdk-overlay-container.dark
+  .mat-mdc-checkbox
+  .mdc-checkbox__native-control:enabled:indeterminate
+  ~ .mdc-checkbox__background {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+}
+
+.cdk-overlay-container.dark .mat-mdc-menu-panel,
+.cdk-overlay-container.dark .mat-mdc-tooltip {
+  color: var(--color-dark-text-primary);
+  background-color: var(--color-dark-surface-primary);
+}
 
 .success-snackbar,
 .error-snackbar,
