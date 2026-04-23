@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsString, ValidateNested } from 'class-validator';
 import { TranslationDto } from '../../common/dtos/translation.dto';
 
 export class CreateProjectCategoryDto {
@@ -13,8 +13,4 @@ export class CreateProjectCategoryDto {
   @ApiProperty({ description: 'The color of the category' })
   @IsString()
   public readonly color: string;
-
-  @ApiProperty({ description: 'The project ID' })
-  @IsNumber()
-  public readonly projectId: number;
 }

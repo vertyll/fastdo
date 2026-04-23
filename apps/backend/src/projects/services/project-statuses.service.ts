@@ -42,10 +42,10 @@ export class ProjectStatusesService {
     });
   }
 
-  public async create(createProjectStatusDto: CreateProjectStatusDto): Promise<ProjectStatus> {
+  public async create(projectId: number, createProjectStatusDto: CreateProjectStatusDto): Promise<ProjectStatus> {
     const status = this.projectStatusRepository.create({
       color: createProjectStatusDto.color,
-      project: { id: createProjectStatusDto.projectId } as any,
+      project: { id: projectId } as any,
     });
 
     const savedStatus = await this.projectStatusRepository.save(status);

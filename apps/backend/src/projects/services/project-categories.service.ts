@@ -42,10 +42,10 @@ export class ProjectCategoriesService {
     });
   }
 
-  public async create(createProjectCategoryDto: CreateProjectCategoryDto): Promise<ProjectCategory> {
+  public async create(projectId: number, createProjectCategoryDto: CreateProjectCategoryDto): Promise<ProjectCategory> {
     const category = this.projectCategoryRepository.create({
       color: createProjectCategoryDto.color,
-      project: { id: createProjectCategoryDto.projectId } as any,
+      project: { id: projectId } as any,
     });
 
     const savedCategory = await this.projectCategoryRepository.save(category);

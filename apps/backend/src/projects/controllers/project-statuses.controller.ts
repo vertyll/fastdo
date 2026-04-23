@@ -40,8 +40,7 @@ export class ProjectStatusesController {
     @Param('projectId') projectId: string,
     @Body() createStatusDto: CreateProjectStatusDto,
   ): Promise<ProjectStatus> {
-    createStatusDto.projectId = +projectId;
-    return this.projectStatusService.create(createStatusDto);
+    return this.projectStatusService.create(+projectId, createStatusDto);
   }
 
   @Put(':statusId')

@@ -40,8 +40,7 @@ export class ProjectCategoriesController {
     @Param('projectId') projectId: string,
     @Body() createCategoryDto: CreateProjectCategoryDto,
   ): Promise<ProjectCategory> {
-    createCategoryDto.projectId = +projectId;
-    return this.projectCategoryService.create(createCategoryDto);
+    return this.projectCategoryService.create(+projectId, createCategoryDto);
   }
 
   @Put(':categoryId')
