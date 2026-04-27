@@ -210,66 +210,54 @@
   --mdc-checkbox-selected-checkmark-color: #ffffff;
 }
 
+/*
+ * Snack bar variants — colors/shape configured via `mat.snack-bar-overrides`
+ * in `material-theme.scss` (official Angular Material API).
+ * Here we only handle layout/typography (text transform, weight, width)
+ * which is not exposed via Material tokens.
+ */
 .success-snackbar,
 .error-snackbar,
 .info-snackbar {
-  text-align: center !important;
-  top: 0 !important;
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  width: 90% !important;
-  max-width: 600px !important;
-
-  .mdc-snackbar__surface,
-  .mat-mdc-snack-bar-label {
-    text-transform: uppercase !important;
-    font-weight: 600 !important;
-    color: white !important;
-    border-radius: 10px !important;
-    font-size: 15px !important;
-    word-break: break-word !important;
-    white-space: normal !important;
-  }
-
-  .mdc-button__label {
-    color: yellow !important;
-    text-transform: uppercase !important;
-    font-weight: 700 !important;
-    font-size: 17px !important;
-  }
+  width: 90%;
+  max-width: 600px;
 }
 
-.success-snackbar .mdc-snackbar__surface,
-.success-snackbar .mat-mdc-snack-bar-label {
-  background-color: var(--color-success-600) !important;
-}
-
-.error-snackbar .mdc-snackbar__surface,
-.error-snackbar .mat-mdc-snack-bar-label {
-  background-color: var(--color-danger-600) !important;
-}
-
-.info-snackbar .mdc-snackbar__surface,
+.success-snackbar .mat-mdc-snack-bar-label,
+.error-snackbar .mat-mdc-snack-bar-label,
 .info-snackbar .mat-mdc-snack-bar-label {
-  background-color: var(--color-neutral-600) !important;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 15px;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.success-snackbar .mat-mdc-snack-bar-action .mdc-button__label,
+.error-snackbar .mat-mdc-snack-bar-action .mdc-button__label,
+.info-snackbar .mat-mdc-snack-bar-action .mdc-button__label {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 17px;
 }
 
 @media (max-width: 600px) {
   .success-snackbar,
   .error-snackbar,
   .info-snackbar {
-    width: 95% !important;
+    width: 95%;
+  }
 
-    .mdc-snackbar__surface,
-    .mat-mdc-snack-bar-label {
-      font-size: 14px !important;
-    }
+  .success-snackbar .mat-mdc-snack-bar-label,
+  .error-snackbar .mat-mdc-snack-bar-label,
+  .info-snackbar .mat-mdc-snack-bar-label {
+    font-size: 14px;
+  }
 
-    .mdc-button__label {
-      font-size: 15px !important;
-    }
+  .success-snackbar .mat-mdc-snack-bar-action .mdc-button__label,
+  .error-snackbar .mat-mdc-snack-bar-action .mdc-button__label,
+  .info-snackbar .mat-mdc-snack-bar-action .mdc-button__label {
+    font-size: 15px;
   }
 }

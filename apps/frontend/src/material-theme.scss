@@ -42,3 +42,38 @@ $dark-theme: mat.define-theme(
 .dark {
   @include mat.all-component-colors($dark-theme);
 }
+
+// Snack bar variants — configured via official `mat.snack-bar-overrides` mixin.
+// See: https://material.angular.dev/components/snack-bar/styling
+.success-snackbar {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--color-success-600),
+      supporting-text-color: #ffffff,
+      button-color: #ffeb3b,
+      container-shape: 10px,
+    )
+  );
+}
+
+.error-snackbar {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--color-danger-600),
+      supporting-text-color: #ffffff,
+      button-color: #ffeb3b,
+      container-shape: 10px,
+    )
+  );
+}
+
+.info-snackbar {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--color-neutral-600),
+      supporting-text-color: #ffffff,
+      button-color: #ffeb3b,
+      container-shape: 10px,
+    )
+  );
+}

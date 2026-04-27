@@ -7,11 +7,19 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-textarea',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
   template: `
-    <mat-form-field appearance="outline" class="w-full">
+    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
       @if (label()) {
         <mat-label>{{ label() }}</mat-label>
       }
-      <textarea matInput [id]="id()" [formControl]="control()" [placeholder]="placeholder()" [rows]="rows()"></textarea>
+      <textarea
+        matInput
+        [id]="id()"
+        [formControl]="control()"
+        [placeholder]="placeholder()"
+        [rows]="rows()"
+        [readonly]="readonly()"
+        [disabledInteractive]="disabledInteractive()"
+      ></textarea>
     </mat-form-field>
   `,
   styles: [
@@ -32,4 +40,6 @@ export class TextareaComponent {
   public readonly placeholder = input<string>('');
   public readonly rows = input<number>(3);
   public readonly label = input<string>('');
+  public readonly readonly = input<boolean>(false);
+  public readonly disabledInteractive = input<boolean>(false);
 }

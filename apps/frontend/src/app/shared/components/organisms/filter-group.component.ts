@@ -26,76 +26,73 @@ import { CheckSelectComponent } from '../molecules/check-select.component';
 import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
 import { InputFieldComponent } from '../molecules/input-field.component';
 import { SelectFieldComponent } from '../molecules/select-field.component';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {
+  heroAdjustmentsHorizontal,
+  heroChevronDown,
+  heroChevronUp,
+  heroFunnel,
+  heroXMark,
+} from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-filter-group',
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    InputFieldComponent,
+    SelectFieldComponent,
+    CheckSelectComponent,
+    EditableMultiSelectComponent,
+    NgIconComponent,
+  ],
+  providers: [
+    provideIcons({
+      heroFunnel,
+      heroChevronDown,
+      heroChevronUp,
+      heroAdjustmentsHorizontal,
+      heroXMark,
+    }),
+  ],
+  standalone: true,
   template: `
     <div>
-      <form [formGroup]="form" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          @for (filter of filters().slice(0, mobileFilterToggleHidden() ? 2 : 4); track $index) {
-            <div>
-              @switch (filter.type) {
-                @case (FilterType.Text) {
-                  <app-input-field
-                    [control]="getFormControl(filter.formControlName)"
-                    [id]="filter.formControlName"
-                    [label]="translateService.instant(filter.labelKey)"
-                    [type]="FilterType.Text"
-                  />
-                }
-                @case (FilterType.Number) {
-                  <app-input-field
-                    [control]="getFormControl(filter.formControlName)"
-                    [id]="filter.formControlName"
-                    [label]="translateService.instant(filter.labelKey)"
-                    [type]="FilterType.Number"
-                  />
-                }
-                @case (FilterType.Date) {
-                  <app-input-field
-                    [control]="getFormControl(filter.formControlName)"
-                    [id]="filter.formControlName"
-                    [label]="translateService.instant(filter.labelKey)"
-                    [type]="FilterType.Date"
-                  />
-                }
-                @case (FilterType.Select) {
-                  <app-select-field
-                    [control]="getFormControl(filter.formControlName)"
-                    [id]="filter.formControlName"
-                    [label]="translateService.instant(filter.labelKey)"
-                    [options]="filter.options || []"
-                  />
-                }
-                @case (FilterType.CheckSelect) {
-                  <app-check-select
-                    [control]="getFormControl(filter.formControlName)"
-                    [id]="filter.formControlName"
-                    [label]="translateService.instant(filter.labelKey)"
-                    [options]="filter.options || []"
-                  />
-                }
-                @case (FilterType.EditableMultiSelect) {
-                  <app-editable-multi-select
-                    [formControlName]="filter.formControlName"
-                    [id]="filter.formControlName"
-                    [dataArray]="filter.multiselectOptions || []"
-                    [maxSelectedItems]="filter.maxSelectedItems !== undefined ? filter.maxSelectedItems : undefined"
-                    [minTermLength]="filter.minTermLength || 1"
-                    [allowAddTag]="filter.allowAddTag || false"
-                    (search)="onFilterSearch($event, filter)"
-                    [placeholder]="translateService.instant(filter.labelKey)"
-                  />
-                }
-              }
-            </div>
-          }
+      @if (collapsible()) {
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2 text-text-primary dark:text-dark-text-primary font-medium">
+            <ng-icon name="heroFunnel" size="20" class="text-text-secondary dark:text-dark-text-secondary"></ng-icon>
+            {{ 'Filters.title' | translate }}
+            @if (filledFilters().length > 0) {
+              <span class="bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full">{{
+                filledFilters().length
+              }}</span>
+            }
+            @if (totalResults() !== undefined) {
+              <span class="text-sm font-normal text-text-secondary dark:text-dark-text-secondary ml-2">
+                ({{ totalResults() }} {{ 'Basic.results' | translate }})
+              </span>
+            }
+          </div>
+          <button
+            type="button"
+            (click)="toggleExpand()"
+            class="text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary transition-colors cursor-pointer p-1 rounded-md hover:bg-background-primary dark:hover:bg-dark-background-primary"
+          >
+            @if (isExpanded()) {
+              <ng-icon name="heroChevronUp" size="20"></ng-icon>
+            } @else {
+              <ng-icon name="heroChevronDown" size="20"></ng-icon>
+            }
+          </button>
         </div>
-        @if (filters().length > 4) {
+      }
+
+      @if (!collapsible() || isExpanded()) {
+        <form [formGroup]="form" class="space-y-4" [class.mt-4]="collapsible()">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            @for (filter of filters().slice(4); let i = $index; track i) {
-              <div [class.hidden]="!showAllFilters()">
+            @for (filter of filters().slice(0, mobileFilterToggleHidden() ? 2 : 4); track $index) {
+              <div>
                 @switch (filter.type) {
                   @case (FilterType.Text) {
                     <app-input-field
@@ -153,24 +150,97 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
               </div>
             }
           </div>
-          <div class="text-center">
-            <button
-              type="button"
-              (click)="toggleFilters()"
-              class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer mb-4"
-              [attr.aria-label]="
-                showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate)
-              "
-            >
-              {{ showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate) }}
-            </button>
-          </div>
-        }
-      </form>
+          @if (filters().length > 4) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              @for (filter of filters().slice(4); let i = $index; track i) {
+                <div [class.hidden]="!showAllFilters()">
+                  @switch (filter.type) {
+                    @case (FilterType.Text) {
+                      <app-input-field
+                        [control]="getFormControl(filter.formControlName)"
+                        [id]="filter.formControlName"
+                        [label]="translateService.instant(filter.labelKey)"
+                        [type]="FilterType.Text"
+                      />
+                    }
+                    @case (FilterType.Number) {
+                      <app-input-field
+                        [control]="getFormControl(filter.formControlName)"
+                        [id]="filter.formControlName"
+                        [label]="translateService.instant(filter.labelKey)"
+                        [type]="FilterType.Number"
+                      />
+                    }
+                    @case (FilterType.Date) {
+                      <app-input-field
+                        [control]="getFormControl(filter.formControlName)"
+                        [id]="filter.formControlName"
+                        [label]="translateService.instant(filter.labelKey)"
+                        [type]="FilterType.Date"
+                      />
+                    }
+                    @case (FilterType.Select) {
+                      <app-select-field
+                        [control]="getFormControl(filter.formControlName)"
+                        [id]="filter.formControlName"
+                        [label]="translateService.instant(filter.labelKey)"
+                        [options]="filter.options || []"
+                      />
+                    }
+                    @case (FilterType.CheckSelect) {
+                      <app-check-select
+                        [control]="getFormControl(filter.formControlName)"
+                        [id]="filter.formControlName"
+                        [label]="translateService.instant(filter.labelKey)"
+                        [options]="filter.options || []"
+                      />
+                    }
+                    @case (FilterType.EditableMultiSelect) {
+                      <app-editable-multi-select
+                        [formControlName]="filter.formControlName"
+                        [id]="filter.formControlName"
+                        [dataArray]="filter.multiselectOptions || []"
+                        [maxSelectedItems]="filter.maxSelectedItems !== undefined ? filter.maxSelectedItems : undefined"
+                        [minTermLength]="filter.minTermLength || 1"
+                        [allowAddTag]="filter.allowAddTag || false"
+                        (searched)="onFilterSearch($event, filter)"
+                        [placeholder]="translateService.instant(filter.labelKey)"
+                      />
+                    }
+                  }
+                </div>
+              }
+            </div>
+            <div class="flex items-center justify-start mt-2">
+              <button
+                type="button"
+                (click)="toggleFilters()"
+                class="flex items-center gap-1.5 text-sm font-medium text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer transition-colors"
+                [attr.aria-label]="
+                  showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate)
+                "
+              >
+                @if (showAllFilters()) {
+                  <ng-icon name="heroChevronUp" size="16"></ng-icon>
+                } @else {
+                  <ng-icon name="heroChevronDown" size="16"></ng-icon>
+                }
+                {{
+                  showAllFilters() ? ('Filters.showLessFilters' | translate) : ('Filters.showMoreFilters' | translate)
+                }}
+              </button>
+            </div>
+          }
+        </form>
+      }
+
       @if (filledFilters().length) {
-        <div class="mb-4">
-          <p class="text-sm text-text-secondary-light dark:text-dark-text-primary">
-            <b>{{ 'Filters.filtersSet' | translate }}: </b>
+        <div class="mt-3">
+          <p
+            class="text-sm text-text-secondary-light dark:text-dark-text-primary flex items-center gap-2 flex-wrap m-0"
+          >
+            <ng-icon name="heroAdjustmentsHorizontal" size="16"></ng-icon>
+            <b>{{ 'Filters.filtersSet' | translate }}:</b>
             @for (filter of filledFilters(); track $index) {
               <span class="mr-2">
                 {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{ filter.value }})
@@ -179,10 +249,11 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
             <button
               type="button"
               (click)="clearFilters()"
-              class="text-link-primary hover:text-link-hover dark:text-link-dark-primary dark:hover:text-link-dark-hover cursor-pointer border-0 bg-transparent p-0"
+              class="ml-2 inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer border-0 bg-transparent p-0 font-semibold"
               [attr.aria-label]="'Filters.clearFilters' | translate"
             >
-              <b>{{ 'Filters.clearFilters' | translate }}</b>
+              <ng-icon name="heroXMark" size="16" class="text-red-600 dark:text-red-400"></ng-icon>
+              {{ 'Filters.clearFilters' | translate }}
             </button>
           </p>
         </div>
@@ -200,23 +271,19 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
       }
     `,
   ],
-  imports: [
-    TranslateModule,
-    ReactiveFormsModule,
-    EditableMultiSelectComponent,
-    InputFieldComponent,
-    SelectFieldComponent,
-    CheckSelectComponent,
-  ],
 })
-export class FilterGroupComponent<T extends Record<string, any>>
-  implements OnInit, AfterViewInit, OnDestroy, OnChanges
-{
-  public readonly type = input.required<string>();
+export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   public readonly filters = input<FilterMetadata[]>([]);
+  public readonly type = input<string>('');
+  public readonly scope = input<string>('');
+  public readonly mobileFilterToggleHidden = signal<boolean>(false);
+  public readonly collapsible = input<boolean>(false);
+  public readonly totalResults = input<number | undefined>(undefined);
 
-  public readonly filterChange = output<T>();
+  public readonly filterChange = output<T>(); // Emit values directly instead of strictly state reliance
   public readonly filterSearch = output<{ term: string; filter: string }>();
+
+  public readonly isExpanded = signal<boolean>(true);
 
   protected form!: FormGroup;
   private readonly formChangeSubscriptions: Subscription[] = [];
@@ -225,7 +292,6 @@ export class FilterGroupComponent<T extends Record<string, any>>
   protected readonly filledFilters = signal<FilterValue[]>([]);
   protected readonly showAllFilters = signal<boolean>(false);
 
-  protected readonly mobileFilterToggleHidden = signal<boolean>(false);
   protected readonly translateService = inject(TranslateService);
   private readonly store = inject(Store);
   private readonly router = inject(Router);
@@ -261,12 +327,16 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.unsubscribeAll();
   }
 
+  public toggleExpand(): void {
+    this.isExpanded.update(v => !v);
+  }
+
   protected getLabelKeyForFilter(formControlName: string): string {
     const filter = this.filters().find(f => f.formControlName === formControlName);
     return filter?.labelKey ?? formControlName;
   }
 
-  protected onFilterSearch(event: any, filter: FilterMetadata): void {
+  protected onFilterSearch(event: { term: string }, filter: FilterMetadata): void {
     this.filterSearch.emit({
       term: event.term,
       filter: filter.formControlName,
@@ -274,7 +344,11 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   protected clearFilters(): void {
-    this.resetFormAndNavigate();
+    if (this.scope()) {
+      this.store.dispatch(new ClearFilter({ type: this.scope() }));
+    }
+    this.form.reset();
+    this.filterChange.emit({} as T);
   }
 
   protected toggleFilters(): void {
@@ -312,48 +386,56 @@ export class FilterGroupComponent<T extends Record<string, any>>
   }
 
   private initFilters(): void {
-    const subscription = this.form.valueChanges.pipe(debounceTime(350)).subscribe(async value => {
-      const isInInitialState = this.checkIfInInitialState(value);
-      const urlParamsNotInForm = await this.getUrlParamsNotInForm();
-      const formValues = this.getFormValues(value);
+    const subscription = this.form.valueChanges
+      .pipe(debounceTime(350))
+      .subscribe(async (value: Record<string, unknown>) => {
+        const isInInitialState = this.checkIfInInitialState(value);
+        const urlParamsNotInForm = await this.getUrlParamsNotInForm();
+        const formValues = this.getFormValues(value);
 
-      if (isInInitialState) {
-        this.handleInitialState(formValues, urlParamsNotInForm);
-      } else {
-        this.handleNonInitialState(formValues, urlParamsNotInForm);
-      }
-    });
+        if (isInInitialState) {
+          this.handleInitialState(formValues, urlParamsNotInForm);
+        } else {
+          this.handleNonInitialState(formValues, urlParamsNotInForm);
+        }
+      });
 
     this.formChangeSubscriptions.push(subscription);
   }
 
-  private checkIfInInitialState(value: T): boolean {
+  private checkIfInInitialState(value: Record<string, unknown>): boolean {
     const defaultValues = this.filtersService.createDefaultFormValues(this.filters());
     return Object.entries(value).every(([key, val]) => this.equalsDefaultValues(key, val, defaultValues));
   }
 
-  private async getUrlParamsNotInForm(): Promise<Record<string, any>> {
+  private async getUrlParamsNotInForm(): Promise<Record<string, unknown>> {
     const queryParams = await firstValueFrom(this.route.queryParams);
     const formControlNames = Object.keys(this.filtersService.createDefaultFormValues(this.filters()));
     return Object.fromEntries(Object.entries(queryParams).filter(([key]) => !formControlNames.includes(key)));
   }
 
-  private getFormValues(value: T): Record<string, any> {
+  private getFormValues(value: Record<string, unknown>): Record<string, unknown> {
     const defaultFormValues = this.filtersService.createDefaultFormValues(this.filters());
-    return Object.fromEntries(Object.keys(defaultFormValues).map(key => [key, value[key] || '']));
+    return Object.fromEntries(Object.keys(defaultFormValues).map(key => [key, value[key] ?? '']));
   }
 
-  private handleNonInitialState(formValues: Record<string, any>, urlParamsNotInForm: Record<string, any>): void {
+  private handleNonInitialState(
+    formValues: Record<string, unknown>,
+    urlParamsNotInForm: Record<string, unknown>,
+  ): void {
     this.store.dispatch(new SavePartial({ type: this.type(), value: formValues }));
     this.updateUrlAndEmitChanges(formValues, urlParamsNotInForm);
   }
 
-  private handleInitialState(formValues: Record<string, any>, urlParamsNotInForm: Record<string, any>): void {
+  private handleInitialState(formValues: Record<string, unknown>, urlParamsNotInForm: Record<string, unknown>): void {
     this.store.dispatch(new ClearPartial({ type: this.type(), keys: Object.keys(formValues) }));
     this.updateUrlAndEmitChanges(this.filtersService.createDefaultFormValues(this.filters()), urlParamsNotInForm);
   }
 
-  private updateUrlAndEmitChanges(formValues: Record<string, any>, urlParamsNotInForm: Record<string, any>): void {
+  private updateUrlAndEmitChanges(
+    formValues: Record<string, unknown>,
+    urlParamsNotInForm: Record<string, unknown>,
+  ): void {
     this.router
       .navigate(['.'], {
         relativeTo: this.route,
@@ -373,7 +455,7 @@ export class FilterGroupComponent<T extends Record<string, any>>
     this.updateFilledFilters();
   }
 
-  private createFilterComponentFormValues(queryParams: Record<string, any>): Record<string, any> {
+  private createFilterComponentFormValues(queryParams: Record<string, unknown>): Record<string, unknown> {
     const defaultFormValues = this.filtersService.createDefaultFormValues(this.filters());
     return Object.entries(defaultFormValues).reduce(
       (acc, [key, defaultValue]) => {
@@ -381,18 +463,20 @@ export class FilterGroupComponent<T extends Record<string, any>>
         acc[key] = this.getFilterValue(filter, queryParams[key], defaultValue);
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, unknown>,
     );
   }
 
-  private getFilterValue(filter: FilterMetadata | undefined, queryParamValue: any, defaultValue: any): any {
+  private getFilterValue(filter: FilterMetadata | undefined, queryParamValue: unknown, defaultValue: unknown): unknown {
     if (filter?.type === FilterTypeEnum.EditableMultiSelect) {
       return this.getMultiSelectValue(queryParamValue);
     }
-    return typeof defaultValue === 'number' ? Number.parseInt(queryParamValue) : queryParamValue || defaultValue;
+    return typeof defaultValue === 'number'
+      ? Number.parseInt(queryParamValue as string)
+      : (queryParamValue ?? defaultValue);
   }
 
-  private getMultiSelectValue(value: any): number[] {
+  private getMultiSelectValue(value: unknown): number[] {
     if (!value) return [];
     if (Array.isArray(value)) {
       return value.map(Number);
@@ -403,15 +487,17 @@ export class FilterGroupComponent<T extends Record<string, any>>
     return [];
   }
 
-  private emitFormValueChange(formValue: Record<string, any>): void {
+  private emitFormValueChange(formValue: Record<string, unknown>): void {
     this.filterChange.emit({ ...this.form.value, ...formValue } as T);
   }
 
-  private equalsDefaultValues(key: string, value: any, defaultFormValues: Record<string, any>): boolean {
-    return Array.isArray(value) ? this.arrayEquals(value, defaultFormValues[key]) : value == defaultFormValues[key];
+  private equalsDefaultValues(key: string, value: unknown, defaultFormValues: Record<string, unknown>): boolean {
+    return Array.isArray(value)
+      ? this.arrayEquals(value, defaultFormValues[key] as unknown[])
+      : value == defaultFormValues[key];
   }
 
-  private arrayEquals(arr1: any[], arr2: any[]): boolean {
+  private arrayEquals(arr1: unknown[], arr2: unknown[]): boolean {
     return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
   }
 
@@ -423,14 +509,16 @@ export class FilterGroupComponent<T extends Record<string, any>>
       .filter(([key, value]) => {
         const filterMetadata = this.filters().find(f => f.formControlName === key);
         const isDefaultValue = this.equalsDefaultValues(key, value, defaultValues);
-        return filterMetadata && value !== '' && !isDefaultValue;
+        const isEmpty =
+          value === '' || value === null || value === undefined || (Array.isArray(value) && value.length === 0);
+        return filterMetadata && !isEmpty && !isDefaultValue;
       })
       .map(([key, value]) => this.createFilterValue(key, value));
 
     this.filledFilters.set(newFilledFilters);
   }
 
-  private createFilterValue(key: string, value: any): FilterValue {
+  private createFilterValue(key: string, value: unknown): FilterValue {
     const filterMetadata = this.filters().find(f => f.formControlName === key);
 
     if (Array.isArray(value) && filterMetadata?.type === FilterTypeEnum.EditableMultiSelect) {
@@ -444,32 +532,18 @@ export class FilterGroupComponent<T extends Record<string, any>>
     return { id: key, value: this.translateOptionValue(options, value) };
   }
 
-  private getMultiSelectNames(filterMetadata: FilterMetadata, value: any[]): string {
+  private getMultiSelectNames(filterMetadata: FilterMetadata, value: unknown[]): string {
     return value
       .map(id => {
         const option = filterMetadata.multiselectOptions?.find(opt => opt.id === id);
-        return option ? option.name : id;
+        return option ? option.name : String(id);
       })
       .join(', ');
   }
 
-  private translateOptionValue(options: { value: any; label: string }[], value: any): string {
+  private translateOptionValue(options: { value: unknown; label: string }[], value: unknown): string {
     const foundOption = options.find(option => option.value == value);
-    return foundOption ? this.translateService.instant(foundOption.label) : value;
-  }
-
-  private resetFormAndNavigate(): void {
-    this.filledFilters.set([]);
-
-    this.form.reset(this.filtersService.createDefaultFormValues(this.filters()));
-    this.store.dispatch(new ClearFilter({ type: this.type() }));
-    this.router
-      .navigate(['.'], {
-        relativeTo: this.route,
-        queryParams: {},
-        replaceUrl: true,
-      })
-      .then(() => this.emitFormValueChange({}));
+    return foundOption ? this.translateService.instant(foundOption.label) : String(value);
   }
 
   private unsubscribeAll(): void {

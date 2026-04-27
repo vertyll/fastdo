@@ -58,9 +58,12 @@
     "fileSizeExceeded": "File \"{{name}}\" exceeds maximum size of {{size}}",
     "fileDuplicate": "File \"{{name}}\" is already selected",
     "noResults": "No results found",
-    "none": "None"
+    "none": "None",
+    "results": "results",
+    "totalResults": "Total results"
   },
   "Filters": {
+    "title": "Filters",
     "search": "Search",
     "sortBy": "Sort by",
     "orderBy": "Order by",

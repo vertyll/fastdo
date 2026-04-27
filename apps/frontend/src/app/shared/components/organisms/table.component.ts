@@ -35,6 +35,8 @@ import { ThemeService } from '../../services/theme.service';
 import { ImageComponent } from './image.component';
 import { SpinnerComponent } from '../atoms/spinner.component';
 import { ThemeEnum } from '../../enums/theme.enum';
+import { FilterGroupComponent } from './filter-group.component';
+import { PaginatorComponent } from '../atoms/paginator.component';
 
 /**
  * Table configuration reference
@@ -119,7 +121,7 @@ export interface TableRow {
 export interface TableConfig {
   /** Columns rendered in the table, in order. */
   columns: TableColumn[];
-  /** Row-level actions rendered in the sticky actions column. */
+  /** Row-level actions rendered in the sticky column. */
   actions?: TableAction[];
   /** Adds a leading checkbox column for row selection. */
   selectable?: boolean;
@@ -141,6 +143,16 @@ export interface TableConfig {
   loadingMore?: boolean;
   /** Function returning extra CSS class(es) for a given row. */
   rowClassFunction?: (row: any) => string;
+  /** Integrated filter definitions (empty/undefined disables integrated filters). */
+  filters?: any[];
+  /** Identifier type for the integrated filters to load saved state */
+  filterType?: string;
+  /** Identifier scope for the integrated filters to clear state */
+  filterScope?: string;
+  /** Shows the collapsible toggle for integrated filters */
+  collapsibleFilters?: boolean;
+  /** Enables integrated pagination (requires pagination state input). */
+  integratedPagination?: boolean;
 }
 
 @Component({
@@ -157,6 +169,8 @@ export interface TableConfig {
     TranslateModule,
     CustomDatePipe,
     SpinnerComponent,
+    FilterGroupComponent,
+    PaginatorComponent,
   ],
   providers: [
     provideIcons({
@@ -171,198 +185,244 @@ export interface TableConfig {
     }),
   ],
   template: `
-    @if (loading() && !data().length) {
-      <div class="state-overlay">
-        <app-spinner />
-        <span>{{ 'Basic.loading' | translate }}</span>
-      </div>
-    } @else if (!data().length) {
-      <div class="state-overlay no-data-state">
-        <p>
-          {{ noResultsMessage() | translate }}
-        </p>
-      </div>
-    } @else {
-      <div
-        #tableScrollContainer
-        class="table-container dark:border-dark-border-primary border-border-primary border"
-        [class.mobile-view]="isMobile()"
-        [class.dark]="isDarkMode()"
-        [class.is-scrolled-x]="isScrolledX()"
-        [class.is-at-end-x]="isAtEndX()"
-        [ngStyle]="getTableContainerStyle()"
-        (scroll)="onTableScroll($event)"
-      >
-        <table mat-table [dataSource]="data()" class="mat-elevation-z1 responsive-table">
-          @if (config().selectable) {
-            <ng-container matColumnDef="select">
-              <th mat-header-cell *matHeaderCellDef class="select-column">
-                <mat-checkbox
-                  (change)="toggleSelectAll($event)"
-                  [checked]="isAllSelected()"
-                  [indeterminate]="isIndeterminate()"
-                  color="primary"
-                ></mat-checkbox>
-              </th>
-              <td mat-cell *matCellDef="let row" class="select-cell">
-                <mat-checkbox
-                  (change)="toggleSelection(row)"
-                  (click)="$event.stopPropagation()"
-                  [checked]="isSelected(row)"
-                  color="primary"
-                ></mat-checkbox>
-              </td>
-            </ng-container>
-          }
-          @for (column of config().columns; track column.key) {
-            <ng-container [matColumnDef]="column.key">
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-                [class]="getHeaderClass(column)"
-                [style.min-width]="getColumnWidth(column)"
-              >
-                {{ column.label | translate }}
-                @if (column.sortable && config().sortable) {
-                  <button
-                    (click)="sort(column.key)"
-                    class="sort-button"
-                    [attr.aria-label]="('Table.sortBy' | translate) + ' ' + (column.label | translate)"
-                  >
-                    @if (currentSort?.column === column.key) {
-                      @if (currentSort?.direction === 'asc') {
-                        <ng-icon name="heroArrowUp" size="12"></ng-icon>
-                      } @else {
-                        <ng-icon name="heroArrowDown" size="12"></ng-icon>
-                      }
-                    } @else {
-                      <ng-icon name="heroArrowsUpDown" size="12"></ng-icon>
-                    }
-                  </button>
-                }
-              </th>
-              <td mat-cell *matCellDef="let row" [class]="getCellClass(column)" [attr.data-column]="column.key">
-                @switch (column.type) {
-                  @case ('text') {
-                    @if (column.truncate) {
-                      <div
-                        class="text-cell"
-                        [class.expandable]="shouldShowExpandButton(row, column.key, column)"
-                        [ngStyle]="getTextCellStyle(column)"
-                      >
-                        <div
-                          class="text-content truncated"
-                          [class.expanded]="isTextExpanded(row, column.key)"
-                          [style.--max-lines]="getMaxLines(column)"
-                          [title]="getValue(row, column.key)"
-                          [attr.data-truncate-key]="getRowId(row) + '__' + column.key"
-                        >
-                          {{ getDisplayedText(row, column) }}
-                        </div>
-                        @if (isExpandable(column) && shouldShowExpandButton(row, column.key, column)) {
-                          <span
-                            (click)="toggleTextExpansion(row, column.key, $event)"
-                            (keydown.enter)="toggleTextExpansion(row, column.key, $event)"
-                            (keydown.space)="toggleTextExpansion(row, column.key, $event); $event.preventDefault()"
-                            class="expand-link"
-                            role="button"
-                            tabindex="0"
-                            [attr.aria-label]="
-                              isTextExpanded(row, column.key)
-                                ? ('Basic.showLess' | translate)
-                                : ('Basic.showMore' | translate)
-                            "
-                          >
-                            {{
-                              isTextExpanded(row, column.key)
-                                ? ('Basic.showLess' | translate)
-                                : ('Basic.showMore' | translate)
-                            }}
-                          </span>
-                        }
-                      </div>
-                    } @else {
-                      <span class="simple-text">{{ getValue(row, column.key) || '-' }}</span>
-                    }
-                  }
-                  @case ('boolean') {
-                    <span class="boolean-cell">{{
-                      getValue(row, column.key) ? ('Basic.yes' | translate) : ('Basic.no' | translate)
-                    }}</span>
-                  }
-                  @case ('date') {
-                    <span class="date-cell">{{ (getValue(row, column.key) | customDate) || '-' }}</span>
-                  }
-                  @case ('image') {
-                    <div class="image-cell">
-                      <app-image
-                        [initialUrl]="getValue(row, column.key)"
-                        format="square"
-                        size="sm"
-                        mode="preview"
-                        (click)="$event.stopPropagation(); projectImageClick.emit(row)"
-                      />
-                    </div>
-                  }
-                  @case ('custom') {
-                    <div class="custom-cell">
-                      <ng-container
-                        *ngTemplateOutlet="
-                          getCustomTemplate(column.customTemplate);
-                          context: { $implicit: row, column: column }
-                        "
-                      ></ng-container>
-                    </div>
-                  }
-                }
-              </td>
-            </ng-container>
-          }
-          @if (config().actions?.length) {
-            <ng-container matColumnDef="actions" stickyEnd>
-              <th mat-header-cell *matHeaderCellDef class="actions-header actions-sticky">
-                {{ 'Basic.actions' | translate }}
-              </th>
-              <td mat-cell *matCellDef="let row" class="actions-cell actions-sticky">
-                <div class="actions-container">
-                  @for (action of config().actions; track action.key) {
-                    @if (isActionVisible(action, row)) {
-                      <button
-                        [disabled]="isActionDisabled(action, row)"
-                        (click)="$event.stopPropagation(); executeAction(action.key, row)"
-                        [class]="getActionButtonClass(action)"
-                        [attr.aria-label]="action.label | translate"
-                      >
-                        @if (action.icon) {
-                          <ng-icon [name]="action.icon" size="1.125rem" />
+    <div
+      class="table-wrapper flex flex-col gap-0 rounded-lg border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-sm overflow-hidden"
+    >
+      @if (config().filters?.length) {
+        <div
+          class="table-filters border-b border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary px-4 py-3"
+        >
+          <app-filter-group
+            [filters]="config().filters || []"
+            [type]="config().filterType || ''"
+            [scope]="config().filterScope || ''"
+            [collapsible]="config().collapsibleFilters ?? true"
+            [totalResults]="config().integratedPagination || config().infiniteScroll ? undefined : total()"
+            (filterChange)="filterChange.emit($event)"
+          />
+        </div>
+      }
+
+      @if (loading() && !data().length) {
+        <div class="state-overlay static! border-b border-border-primary dark:border-dark-border-primary min-h-75">
+          <app-spinner />
+          <span>{{ 'Basic.loading' | translate }}</span>
+        </div>
+      } @else if (!data().length) {
+        <div
+          class="state-overlay no-data-state static! border-b border-border-primary dark:border-dark-border-primary min-h-75"
+        >
+          <p>
+            {{ noResultsMessage() | translate }}
+          </p>
+        </div>
+      } @else {
+        <div
+          #tableScrollContainer
+          class="table-container"
+          [class.mobile-view]="isMobile()"
+          [class.dark]="isDarkMode()"
+          [class.is-scrolled-x]="isScrolledX()"
+          [class.is-at-end-x]="isAtEndX()"
+          [ngStyle]="getTableContainerStyle()"
+          (scroll)="onTableScroll($event)"
+        >
+          <table mat-table [dataSource]="data()" class="responsive-table w-full">
+            @if (config().selectable) {
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef class="select-column">
+                  <mat-checkbox
+                    (change)="toggleSelectAll($event)"
+                    [checked]="isAllSelected()"
+                    [indeterminate]="isIndeterminate()"
+                    color="primary"
+                  ></mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row" class="select-cell">
+                  <mat-checkbox
+                    (change)="toggleSelection(row)"
+                    (click)="$event.stopPropagation()"
+                    [checked]="isSelected(row)"
+                    color="primary"
+                  ></mat-checkbox>
+                </td>
+              </ng-container>
+            }
+            @for (column of config().columns; track column.key) {
+              <ng-container [matColumnDef]="column.key">
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  [class]="getHeaderClass(column)"
+                  [style.min-width]="getColumnWidth(column)"
+                >
+                  {{ column.label | translate }}
+                  @if (column.sortable && config().sortable) {
+                    <button
+                      (click)="sort(column.key)"
+                      class="sort-button"
+                      [attr.aria-label]="('Table.sortBy' | translate) + ' ' + (column.label | translate)"
+                    >
+                      @if (currentSort?.column === column.key) {
+                        @if (currentSort?.direction === 'asc') {
+                          <ng-icon name="heroArrowUp" size="12"></ng-icon>
                         } @else {
-                          <span>{{ action.label | translate }}</span>
+                          <ng-icon name="heroArrowDown" size="12"></ng-icon>
                         }
-                      </button>
+                      } @else {
+                        <ng-icon name="heroArrowsUpDown" size="12"></ng-icon>
+                      }
+                    </button>
+                  }
+                </th>
+                <td mat-cell *matCellDef="let row" [class]="getCellClass(column)" [attr.data-column]="column.key">
+                  @switch (column.type) {
+                    @case ('text') {
+                      @if (column.truncate) {
+                        <div
+                          class="text-cell"
+                          [class.expandable]="shouldShowExpandButton(row, column.key, column)"
+                          [ngStyle]="getTextCellStyle(column)"
+                        >
+                          <div
+                            class="text-content truncated"
+                            [class.expanded]="isTextExpanded(row, column.key)"
+                            [style.--max-lines]="getMaxLines(column)"
+                            [title]="getValue(row, column.key)"
+                            [attr.data-truncate-key]="getRowId(row) + '__' + column.key"
+                          >
+                            {{ getDisplayedText(row, column) }}
+                          </div>
+                          @if (isExpandable(column) && shouldShowExpandButton(row, column.key, column)) {
+                            <span
+                              (click)="toggleTextExpansion(row, column.key, $event)"
+                              (keydown.enter)="toggleTextExpansion(row, column.key, $event)"
+                              (keydown.space)="toggleTextExpansion(row, column.key, $event); $event.preventDefault()"
+                              class="expand-link"
+                              role="button"
+                              tabindex="0"
+                              [attr.aria-label]="
+                                isTextExpanded(row, column.key)
+                                  ? ('Basic.showLess' | translate)
+                                  : ('Basic.showMore' | translate)
+                              "
+                            >
+                              {{
+                                isTextExpanded(row, column.key)
+                                  ? ('Basic.showLess' | translate)
+                                  : ('Basic.showMore' | translate)
+                              }}
+                            </span>
+                          }
+                        </div>
+                      } @else {
+                        <span class="simple-text">{{ getValue(row, column.key) || '-' }}</span>
+                      }
+                    }
+                    @case ('boolean') {
+                      <span class="boolean-cell">{{
+                        getValue(row, column.key) ? ('Basic.yes' | translate) : ('Basic.no' | translate)
+                      }}</span>
+                    }
+                    @case ('date') {
+                      <span class="date-cell">{{ (getValue(row, column.key) | customDate) || '-' }}</span>
+                    }
+                    @case ('image') {
+                      <div class="image-cell">
+                        <app-image
+                          [initialUrl]="getValue(row, column.key)"
+                          format="square"
+                          size="sm"
+                          mode="preview"
+                          (click)="$event.stopPropagation(); projectImageClick.emit(row)"
+                        />
+                      </div>
+                    }
+                    @case ('custom') {
+                      <div class="custom-cell">
+                        <ng-container
+                          *ngTemplateOutlet="
+                            getCustomTemplate(column.customTemplate);
+                            context: { $implicit: row, column: column }
+                          "
+                        ></ng-container>
+                      </div>
                     }
                   }
-                </div>
-              </td>
-            </ng-container>
-          }
+                </td>
+              </ng-container>
+            }
+            @if (config().actions?.length) {
+              <ng-container matColumnDef="actions" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef class="actions-header actions-sticky">
+                  {{ 'Basic.actions' | translate }}
+                </th>
+                <td mat-cell *matCellDef="let row" class="actions-cell actions-sticky">
+                  <div class="actions-container">
+                    @for (action of config().actions; track action.key) {
+                      @if (isActionVisible(action, row)) {
+                        <button
+                          [disabled]="isActionDisabled(action, row)"
+                          (click)="$event.stopPropagation(); executeAction(action.key, row)"
+                          [class]="getActionButtonClass(action)"
+                          [attr.aria-label]="action.label | translate"
+                        >
+                          @if (action.icon) {
+                            <ng-icon [name]="action.icon" size="1.125rem" />
+                          } @else {
+                            <span>{{ action.label | translate }}</span>
+                          }
+                        </button>
+                      }
+                    }
+                  </div>
+                </td>
+              </ng-container>
+            }
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: displayedColumns"
-            [class]="getRowClass(row)"
-            (click)="onRowClick(row)"
-          ></tr>
-        </table>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [class]="getRowClass(row)"
+              (click)="onRowClick(row)"
+            ></tr>
+          </table>
+        </div>
+      }
 
-        @if (config().infiniteScroll && config().loadingMore && data().length > 0) {
-          <div class="loading-more-overlay">
-            <div class="loading-more-content">
-              <app-spinner />
-              <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
-            </div>
-          </div>
-        }
+      @if (config().integratedPagination) {
+        <div
+          class="table-pagination bg-background-secondary dark:bg-dark-background-secondary border-t border-border-primary dark:border-dark-border-primary px-4 py-1"
+        >
+          <app-paginator
+            [total]="total()"
+            [pageSize]="pageSize()"
+            [currentPage]="currentPage()"
+            [pageSizeOptions]="pageSizeOptions()"
+            (pageChange)="pageChange.emit($event)"
+          />
+        </div>
+      } @else if (config().infiniteScroll) {
+        <div
+          class="table-pagination bg-background-secondary dark:bg-dark-background-secondary border-t border-border-primary dark:border-dark-border-primary px-4 py-1"
+        >
+          <app-paginator
+            [showOnlyTotal]="true"
+            [total]="total()"
+            [pageSize]="pageSize()"
+            [currentPage]="currentPage()"
+          />
+        </div>
+      }
+    </div>
+
+    @if (config().infiniteScroll && config().loadingMore) {
+      <div class="loading-more-overlay">
+        <div class="loading-more-content">
+          <app-spinner />
+          <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
+        </div>
       </div>
     }
   `,
@@ -395,7 +455,6 @@ export interface TableConfig {
         width: 100%;
         overflow-y: auto;
         overflow-x: auto;
-        border-radius: 0.5rem;
         position: relative;
       }
 
@@ -825,6 +884,10 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   public readonly initialSort = input<{ column: string; direction: 'asc' | 'desc' } | null>(null);
   public readonly height = input<string | null>(null);
   public readonly noResultsMessage = input<string>('Basic.noResults');
+  public readonly total = input<number>(0);
+  public readonly pageSize = input<number>(10);
+  public readonly currentPage = input<number>(0);
+  public readonly pageSizeOptions = input<number[]>([10, 25, 50, 100]);
 
   public readonly selectionChange = output<any[]>();
   public readonly actionClick = output<{ action: string; row: any }>();
@@ -832,7 +895,11 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   public readonly rowClick = output<any>();
   public readonly projectImageClick = output<any>();
   public readonly loadMore = output<void>();
+  public readonly filterChange = output<any>();
+  public readonly pageChange = output<any>();
 
+  @ContentChild('customHeader', { static: false })
+  public readonly customHeaderTemplate?: TemplateRef<any>;
   @ContentChild('customTemplate')
   public readonly customTemplate!: TemplateRef<any>;
 

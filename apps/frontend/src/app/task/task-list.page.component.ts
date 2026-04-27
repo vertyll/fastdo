@@ -1,11 +1,24 @@
-import { AfterViewInit, Component, computed, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  TemplateRef,
+  ViewChild,
+  DestroyRef,
+} from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, EMPTY, map, Observable, switchMap } from 'rxjs';
+import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ProjectCategoryService } from 'src/app/project/data-access/project-category.service';
+import { ProjectStatusService } from 'src/app/project/data-access/project-status.service';
+import { ProjectUserRoleService } from 'src/app/project/data-access/project-user-role.service';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ButtonRoleEnum } from 'src/app/shared/enums/modal.enum';
 import { NotificationTypeEnum } from 'src/app/shared/enums/notification.enum';
@@ -15,21 +28,21 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { TableColumn, TableComponent, TableConfig } from '../shared/components/organisms/table.component';
-import { TasksListFiltersConfig } from '../shared/defs/filter.defs';
+import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from '../shared/defs/filter.defs';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { GetAllTasksSearchParams, Task, TaskPriorityCodeEnum } from './defs/task.defs';
 import { getContrastColor } from '../shared/utils/color.utils';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
+import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
-import { TasksListFiltersComponent } from './ui/task-list-filters.component';
 import { PlatformService } from '../shared/services/platform.service';
 import { MOBILE_BREAKPOINT } from '../app.contansts';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-task-list-page',
   imports: [
-    TasksListFiltersComponent,
     TableComponent,
     TranslateModule,
     ButtonComponent,
@@ -67,7 +80,6 @@ import { MOBILE_BREAKPOINT } from '../app.contansts';
           {{ 'Task.addTask' | translate }}
         </app-button>
       </div>
-      <app-tasks-list-filters (filtersChange)="handleFiltersChange($event)" />
 
       <!-- Templates definition outside of @switch -->
       <ng-template #statusTemplate let-task>
@@ -130,9 +142,14 @@ import { MOBILE_BREAKPOINT } from '../app.contansts';
         <app-table
           [data]="tasksStateService.tasks()"
           [config]="tableConfig()"
-          [loading]="tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0"
+          [total]="tasksStateService.pagination().total"
+          [loading]="
+            (tasksStateService.state() === listStateValue.LOADING && tasksStateService.tasks().length === 0) ||
+            isFiltersLoading()
+          "
           [customTemplates]="customTemplates()"
           [initialSort]="currentSort()"
+          (filterChange)="handleFiltersChange($event)"
           (loadMore)="handleLoadMore()"
           (rowClick)="handleTaskClick($event)"
           (actionClick)="handleActionClick($event)"
@@ -153,7 +170,12 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   protected readonly listStateValue = LOADING_STATE_VALUE;
 
+  private readonly destroyRef = inject(DestroyRef);
   private readonly tasksService = inject(TasksService);
+  private readonly taskPriorityService = inject(TaskPriorityService);
+  private readonly projectStatusService = inject(ProjectStatusService);
+  private readonly projectCategoryService = inject(ProjectCategoryService);
+  private readonly projectUserRoleService = inject(ProjectUserRoleService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
@@ -164,11 +186,17 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected readonly platformService = inject(PlatformService);
   protected readonly tasksStateService = inject(TasksStateService);
 
+  protected isFiltersLoading = signal(true);
   protected projectId = signal<string | null>(null);
   protected projectName = signal<string>('');
   protected projectIsPublic = signal<boolean>(false);
   protected selectedTasks = signal<Task[]>([]);
   protected customTemplates = signal<{ [key: string]: TemplateRef<any> }>({});
+
+  private prioritiesRaw: any[] = [];
+  private statusesRaw: any[] = [];
+  private categoriesRaw: any[] = [];
+
   protected currentSearchParams = signal<GetAllTasksSearchParams>({
     q: '',
     sortBy: 'dateCreation',
@@ -190,6 +218,9 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   protected readonly tableConfig = computed<TableConfig>(() => ({
     columns: this.getTableColumns(),
+    filters: TASKS_LIST_FILTERS,
+    filterType: 'tasks',
+    collapsibleFilters: true,
     actions: [
       {
         key: 'view',
@@ -222,6 +253,9 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.initializeTaskList();
+    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.refreshLocalizedOptionsForCurrentLang();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -357,6 +391,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
           this.projectId.set(projectId);
           if (projectId) {
             this.loadProjectName(projectId);
+            this.loadInitialFilterData(Number(projectId));
           }
           const searchParams = getAllTasksSearchParams({
             q: '',
@@ -381,6 +416,74 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       this.projectName.set(project.data.name);
       this.projectIsPublic.set(project.data.isPublic);
     });
+  }
+
+  private loadInitialFilterData(projectId: number): void {
+    this.isFiltersLoading.set(true);
+
+    const priorities$ = this.taskPriorityService.getAll().pipe(
+      catchError(err => {
+        console.error('Error fetching task priorities:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
+      catchError(err => {
+        console.error('Error fetching project statuses:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
+      catchError(err => {
+        console.error('Error fetching project categories:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
+      catchError(err => {
+        console.error('Error fetching users in project:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    forkJoin({ priorities: priorities$, statuses: statuses$, categories: categories$, users: users$ })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ priorities, statuses, categories, users }) => {
+        this.prioritiesRaw = priorities.data || [];
+        this.statusesRaw = statuses.data || [];
+        this.categoriesRaw = categories.data || [];
+
+        const userFilter = TASKS_LIST_FILTERS.find(filter => filter.formControlName === 'assignedUserIds');
+        if (userFilter) {
+          userFilter.multiselectOptions = (users.data || []).map((user: any) => ({
+            id: user.user.id,
+            name: user.user.email,
+          }));
+        }
+
+        this.refreshLocalizedOptionsForCurrentLang();
+        this.isFiltersLoading.set(false);
+      });
+  }
+
+  private refreshLocalizedOptionsForCurrentLang(): void {
+    const lang = this.translateService.getCurrentLang() || 'pl';
+    this.updateLocalizedOptions('priorityIds', this.prioritiesRaw, lang);
+    this.updateLocalizedOptions('statusIds', this.statusesRaw, lang);
+    this.updateLocalizedOptions('categoryIds', this.categoriesRaw, lang);
+  }
+
+  private updateLocalizedOptions(formControlName: string, items: any[], lang: string): void {
+    const filter = TASKS_LIST_FILTERS.find(item => item.formControlName === formControlName);
+    if (!filter) return;
+
+    filter.multiselectOptions = (items || []).map((item: any) => ({
+      id: item.id,
+      name: item.translations?.find((t: any) => t.lang === lang)?.name,
+    }));
   }
 
   private getAllTasks(searchParams: GetAllTasksSearchParams): Observable<void> {

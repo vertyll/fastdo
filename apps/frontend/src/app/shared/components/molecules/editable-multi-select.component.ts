@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-editable-multi-select',
   imports: [FormsModule, MatFormFieldModule, MatSelectModule, TranslateModule],
   template: `
-    <mat-form-field appearance="outline" class="w-full">
+    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
       <mat-label>{{ placeholder() }}</mat-label>
       <mat-select
         [id]="id()"
@@ -44,7 +44,7 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
   public readonly placeholder = input<string>('');
   public readonly isFloating = input<boolean>(true);
 
-  public readonly searched = output();
+  public readonly searched = output<{ term: string }>();
 
   protected selectValue: any;
 

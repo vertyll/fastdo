@@ -6,7 +6,6 @@ import { heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicon
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
-import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { TableComponent, TableConfig, TableRow } from '../shared/components/organisms/table.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
@@ -16,15 +15,15 @@ import { ProjectRoleEnum } from '../shared/enums/project-role.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { PaginationMeta } from '../shared/defs/api-response.defs';
-import { PaginationParams, ProjectListFiltersConfig } from '../shared/defs/filter.defs';
+import { PaginationParams, ProjectListFiltersConfig, PROJECT_LIST_FILTERS } from '../shared/defs/filter.defs';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { GetAllProjectsSearchParams } from './defs/project.defs';
-import { TranslationItem } from '../shared/defs/common.defs';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
-import { ProjectsListFiltersComponent } from './ui/project-list-filters.component';
 import { MOBILE_BREAKPOINT } from '../app.contansts';
+import { ProjectTypeService } from './data-access/project-type.service';
+import { TranslatableOptionItem, TranslationItem } from '../shared/defs/common.defs';
 
 interface ProjectTypeData {
   code?: string;
@@ -45,15 +44,7 @@ interface ProjectListItem {
 
 @Component({
   selector: 'app-project-list-page',
-  imports: [
-    ProjectsListFiltersComponent,
-    TranslateModule,
-    ErrorMessageComponent,
-    TitleComponent,
-    ButtonComponent,
-    PaginatorComponent,
-    TableComponent,
-  ],
+  imports: [TranslateModule, ErrorMessageComponent, TitleComponent, ButtonComponent, TableComponent],
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <div class="flex flex-row items-center justify-between">
@@ -62,7 +53,6 @@ interface ProjectListItem {
           {{ 'Project.addProject' | translate }}
         </app-button>
       </div>
-      <app-projects-list-filters (filtersChange)="handleFiltersChange($event)" />
     </div>
     <div>
       @switch (projectsStateService.state()) {
@@ -72,14 +62,13 @@ interface ProjectListItem {
               [data]="tableRows"
               [config]="tableConfig"
               [customTemplates]="customTemplates"
-              [loading]="projectsStateService.state() === listStateValue.LOADING"
-              (actionClick)="onActionClick($event)"
-              (rowClick)="onRowClick($event)"
-            />
-            <app-paginator
+              [loading]="projectsStateService.state() === listStateValue.LOADING || isFiltersLoading"
               [total]="projectsStateService.pagination().total"
               [pageSize]="projectsStateService.pagination().pageSize"
               [currentPage]="projectsStateService.pagination().page"
+              (actionClick)="onActionClick($event)"
+              (rowClick)="onRowClick($event)"
+              (filterChange)="handleFiltersChange($event)"
               (pageChange)="handlePageChange($event)"
             />
           </div>
@@ -111,6 +100,7 @@ interface ProjectListItem {
 export class ProjectListPageComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly projectsService = inject(ProjectsService);
+  private readonly projectTypeService = inject(ProjectTypeService);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
@@ -123,10 +113,16 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   @ViewChild('projectUserRoleTemplate')
   public readonly projectUserRoleTemplate!: TemplateRef<any>;
 
+  protected isFiltersLoading = true;
   protected tableRows: TableRow[] = [];
   private rawProjects: ProjectListItem[] = [];
+  private projectTypesRaw: TranslatableOptionItem[] = [];
 
   protected tableConfig: TableConfig = {
+    filters: PROJECT_LIST_FILTERS,
+    filterType: 'projects',
+    integratedPagination: true,
+    collapsibleFilters: true,
     columns: [
       {
         key: 'image',
@@ -232,8 +228,10 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   protected customTemplates: { [key: string]: TemplateRef<any> } = {};
 
   ngOnInit(): void {
+    this.getProjectTypes();
     this.getAllProjects();
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.updateProjectTypeOptionsForCurrentLang();
       if (this.rawProjects.length > 0) {
         this.tableRows = this.mapProjectsToTableRows(this.rawProjects);
       }
@@ -275,9 +273,44 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.getAllProjects(searchParams);
   }
 
-  protected handleFiltersChange(filters: ProjectListFiltersConfig): void {
-    const searchParams = getAllProjectsSearchParams(filters);
+  protected handleFiltersChange(filters: any): void {
+    if (Object.keys(filters).length === 0) return; // Prevent double call on initial reset if needed; handleFiltersChange receives values
+    const searchParams = getAllProjectsSearchParams(filters as ProjectListFiltersConfig);
     this.getAllProjects(searchParams);
+  }
+
+  private getProjectTypes(): void {
+    this.projectTypeService.getAll().subscribe({
+      next: types => {
+        this.projectTypesRaw = types.data || [];
+        this.updateProjectTypeOptionsForCurrentLang();
+        this.isFiltersLoading = false;
+      },
+      error: err => {
+        console.error('Error fetching project types:', err);
+        this.isFiltersLoading = false;
+      },
+    });
+  }
+
+  private updateProjectTypeOptionsForCurrentLang(): void {
+    const lang = this.translateService.getCurrentLang() || 'pl';
+    const typeFilter = PROJECT_LIST_FILTERS.find(filter => filter.formControlName === 'typeIds');
+    if (!typeFilter) return;
+
+    typeFilter.multiselectOptions = (this.projectTypesRaw || []).map(item => ({
+      id: item.id,
+      name: this.getLocalizedName(item, lang),
+    }));
+  }
+
+  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
+    return (
+      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
+      item.translations?.[0]?.name ||
+      item.name ||
+      ''
+    );
   }
 
   protected onActionClick(event: { action: string; row: TableRow }): void {
