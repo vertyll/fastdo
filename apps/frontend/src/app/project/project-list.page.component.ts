@@ -279,40 +279,6 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.getAllProjects(searchParams);
   }
 
-  private getProjectTypes(): void {
-    this.projectTypeService.getAll().subscribe({
-      next: types => {
-        this.projectTypesRaw = types.data || [];
-        this.updateProjectTypeOptionsForCurrentLang();
-        this.isFiltersLoading = false;
-      },
-      error: err => {
-        console.error('Error fetching project types:', err);
-        this.isFiltersLoading = false;
-      },
-    });
-  }
-
-  private updateProjectTypeOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    const typeFilter = PROJECT_LIST_FILTERS.find(filter => filter.formControlName === 'typeIds');
-    if (!typeFilter) return;
-
-    typeFilter.multiselectOptions = (this.projectTypesRaw || []).map(item => ({
-      id: item.id,
-      name: this.getLocalizedName(item, lang),
-    }));
-  }
-
-  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
-    return (
-      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
-      item.translations?.[0]?.name ||
-      item.name ||
-      ''
-    );
-  }
-
   protected onActionClick(event: { action: string; row: TableRow }): void {
     const { action, row } = event;
     const rowId = this.getRowId(row);
@@ -367,6 +333,40 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
         },
       ],
     });
+  }
+
+  private getProjectTypes(): void {
+    this.projectTypeService.getAll().subscribe({
+      next: types => {
+        this.projectTypesRaw = types.data || [];
+        this.updateProjectTypeOptionsForCurrentLang();
+        this.isFiltersLoading = false;
+      },
+      error: err => {
+        console.error('Error fetching project types:', err);
+        this.isFiltersLoading = false;
+      },
+    });
+  }
+
+  private updateProjectTypeOptionsForCurrentLang(): void {
+    const lang = this.translateService.getCurrentLang() || 'pl';
+    const typeFilter = PROJECT_LIST_FILTERS.find(filter => filter.formControlName === 'typeIds');
+    if (!typeFilter) return;
+
+    typeFilter.multiselectOptions = (this.projectTypesRaw || []).map(item => ({
+      id: item.id,
+      name: this.getLocalizedName(item, lang),
+    }));
+  }
+
+  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
+    return (
+      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
+      item.translations?.[0]?.name ||
+      item.name ||
+      ''
+    );
   }
 
   private mapProjectsToTableRows(projects: ProjectListItem[]): TableRow[] {

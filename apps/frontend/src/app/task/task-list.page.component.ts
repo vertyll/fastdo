@@ -280,90 +280,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     return this.translateService.instant('Project.tasksVisibilityInfo');
   }
 
-  private getTableColumns(): TableColumn[] {
-    return [
-      {
-        key: 'id',
-        label: 'Task.id',
-        type: 'text',
-        sortable: true,
-        width: '6rem',
-        priority: 1,
-        align: 'center',
-        verticalAlign: 'middle',
-      },
-      {
-        key: 'description',
-        label: 'Task.description',
-        type: 'text',
-        align: 'center',
-        verticalAlign: 'middle',
-        sortable: true,
-        truncate: { maxLines: 2, maxChars: 100 },
-        priority: 2,
-      },
-      {
-        key: 'status',
-        label: 'Task.status',
-        type: 'custom',
-        customTemplate: 'status',
-        sortable: false,
-        align: 'center',
-        verticalAlign: 'middle',
-        width: '8rem',
-        priority: 3,
-      },
-      {
-        key: 'assignedUsers',
-        label: 'Task.assignedUsers',
-        type: 'custom',
-        customTemplate: 'assignedUsers',
-        sortable: false,
-        align: 'center',
-        verticalAlign: 'middle',
-        width: '12rem',
-        priority: 4,
-        hideOn: 'mobile',
-      },
-      {
-        key: 'dateCreation',
-        label: 'Task.dateCreation',
-        type: 'date',
-        sortable: true,
-        hideOn: 'mobile',
-        align: 'center',
-        verticalAlign: 'middle',
-        width: '12rem',
-        priority: 5,
-      },
-      {
-        key: 'dateModification',
-        label: 'Task.dateModification',
-        type: 'date',
-        sortable: true,
-        hideOn: 'mobile',
-        align: 'center',
-        verticalAlign: 'middle',
-        width: '12rem',
-        priority: 6,
-      },
-    ];
-  }
-
-  private getRowClassByPriority(task: Task): string {
-    if (!task.priority) return '';
-
-    switch (task.priority.code) {
-      case TaskPriorityCodeEnum.HIGH:
-        return 'priority-high';
-      case TaskPriorityCodeEnum.LOW:
-        return 'priority-low';
-      case TaskPriorityCodeEnum.MEDIUM:
-      default:
-        return '';
-    }
-  }
-
   protected handleFiltersChange(filters: TasksListFiltersConfig): void {
     const searchParams = getAllTasksSearchParams({
       ...filters,
@@ -380,140 +296,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       console.error('No projectId available for adding task');
       this.router.navigate(['/projects']).then();
     }
-  }
-
-  private initializeTaskList(): void {
-    this.route.params
-      .pipe(
-        map(params => params['id']),
-        distinctUntilChanged(),
-        switchMap(projectId => {
-          this.projectId.set(projectId);
-          if (projectId) {
-            this.loadProjectName(projectId);
-            this.loadInitialFilterData(Number(projectId));
-          }
-          const searchParams = getAllTasksSearchParams({
-            q: '',
-            sortBy: 'dateCreation',
-            orderBy: 'desc',
-            createdFrom: '',
-            createdTo: '',
-            updatedFrom: '',
-            updatedTo: '',
-            page: 0,
-            pageSize: 10,
-          });
-          this.currentSearchParams.set(searchParams);
-          return this.getAllTasks(searchParams);
-        }),
-      )
-      .subscribe();
-  }
-
-  private loadProjectName(projectId: string): void {
-    this.projectsService.getProjectById(+projectId).subscribe(project => {
-      this.projectName.set(project.data.name);
-      this.projectIsPublic.set(project.data.isPublic);
-    });
-  }
-
-  private loadInitialFilterData(projectId: number): void {
-    this.isFiltersLoading.set(true);
-
-    const priorities$ = this.taskPriorityService.getAll().pipe(
-      catchError(err => {
-        console.error('Error fetching task priorities:', err);
-        return of({ data: [] } as any);
-      }),
-    );
-
-    const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
-      catchError(err => {
-        console.error('Error fetching project statuses:', err);
-        return of({ data: [] } as any);
-      }),
-    );
-
-    const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
-      catchError(err => {
-        console.error('Error fetching project categories:', err);
-        return of({ data: [] } as any);
-      }),
-    );
-
-    const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
-      catchError(err => {
-        console.error('Error fetching users in project:', err);
-        return of({ data: [] } as any);
-      }),
-    );
-
-    forkJoin({ priorities: priorities$, statuses: statuses$, categories: categories$, users: users$ })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ priorities, statuses, categories, users }) => {
-        this.prioritiesRaw = priorities.data || [];
-        this.statusesRaw = statuses.data || [];
-        this.categoriesRaw = categories.data || [];
-
-        const userFilter = TASKS_LIST_FILTERS.find(filter => filter.formControlName === 'assignedUserIds');
-        if (userFilter) {
-          userFilter.multiselectOptions = (users.data || []).map((user: any) => ({
-            id: user.user.id,
-            name: user.user.email,
-          }));
-        }
-
-        this.refreshLocalizedOptionsForCurrentLang();
-        this.isFiltersLoading.set(false);
-      });
-  }
-
-  private refreshLocalizedOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    this.updateLocalizedOptions('priorityIds', this.prioritiesRaw, lang);
-    this.updateLocalizedOptions('statusIds', this.statusesRaw, lang);
-    this.updateLocalizedOptions('categoryIds', this.categoriesRaw, lang);
-  }
-
-  private updateLocalizedOptions(formControlName: string, items: any[], lang: string): void {
-    const filter = TASKS_LIST_FILTERS.find(item => item.formControlName === formControlName);
-    if (!filter) return;
-
-    filter.multiselectOptions = (items || []).map((item: any) => ({
-      id: item.id,
-      name: item.translations?.find((t: any) => t.lang === lang)?.name,
-    }));
-  }
-
-  private getAllTasks(searchParams: GetAllTasksSearchParams): Observable<void> {
-    const projectId = this.projectId();
-    if (!projectId) {
-      this.tasksStateService.setTaskList([]);
-      return EMPTY;
-    }
-
-    // Reset state for new search
-    this.tasksStateService.resetState();
-
-    return this.tasksService.getAllByProjectId(projectId, searchParams).pipe(
-      map(response => {
-        const tasks = response.data || { items: [], pagination: { total: 0, page: 0, pageSize: 10, totalPages: 0 } };
-        this.tasksStateService.setTaskList(tasks.items);
-        this.tasksStateService.setPagination(tasks.pagination);
-      }),
-      catchError(err => {
-        if (err.error?.message) {
-          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.getAllError'),
-            NotificationTypeEnum.Error,
-          );
-        }
-        return EMPTY;
-      }),
-    );
   }
 
   protected handleLoadMore(): void {
@@ -652,31 +434,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private performBatchDelete(selectedTasks: Task[]): void {
-    const taskIds = selectedTasks.map(task => task.id);
-    this.tasksService.batchDelete(taskIds).subscribe({
-      next: () => {
-        this.notificationService.showNotification(
-          this.translateService.instant('Task.batchDeleteSuccess', { count: selectedTasks.length }),
-          NotificationTypeEnum.Success,
-        );
-        this.selectedTasks.set([]);
-        const currentParams = this.currentSearchParams();
-        this.getAllTasks(currentParams).subscribe();
-      },
-      error: (err: any) => {
-        if (err.error?.message) {
-          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.batchDeleteError'),
-            NotificationTypeEnum.Error,
-          );
-        }
-      },
-    });
-  }
-
   protected getStatusName(status: any): string {
     if (!status) return '';
 
@@ -707,5 +464,247 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
 
     return category.name || `Category #${category.id}`;
+  }
+
+  private getTableColumns(): TableColumn[] {
+    return [
+      {
+        key: 'id',
+        label: 'Task.id',
+        type: 'text',
+        sortable: true,
+        width: '6rem',
+        priority: 1,
+        align: 'center',
+        verticalAlign: 'middle',
+      },
+      {
+        key: 'description',
+        label: 'Task.description',
+        type: 'text',
+        align: 'center',
+        verticalAlign: 'middle',
+        sortable: true,
+        truncate: { maxLines: 2, maxChars: 100 },
+        priority: 2,
+      },
+      {
+        key: 'status',
+        label: 'Task.status',
+        type: 'custom',
+        customTemplate: 'status',
+        sortable: false,
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '8rem',
+        priority: 3,
+      },
+      {
+        key: 'assignedUsers',
+        label: 'Task.assignedUsers',
+        type: 'custom',
+        customTemplate: 'assignedUsers',
+        sortable: false,
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '12rem',
+        priority: 4,
+        hideOn: 'mobile',
+      },
+      {
+        key: 'dateCreation',
+        label: 'Task.dateCreation',
+        type: 'date',
+        sortable: true,
+        hideOn: 'mobile',
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '12rem',
+        priority: 5,
+      },
+      {
+        key: 'dateModification',
+        label: 'Task.dateModification',
+        type: 'date',
+        sortable: true,
+        hideOn: 'mobile',
+        align: 'center',
+        verticalAlign: 'middle',
+        width: '12rem',
+        priority: 6,
+      },
+    ];
+  }
+
+  private getRowClassByPriority(task: Task): string {
+    if (!task.priority) return '';
+
+    switch (task.priority.code) {
+      case TaskPriorityCodeEnum.HIGH:
+        return 'priority-high';
+      case TaskPriorityCodeEnum.LOW:
+        return 'priority-low';
+      case TaskPriorityCodeEnum.MEDIUM:
+      default:
+        return '';
+    }
+  }
+
+  private initializeTaskList(): void {
+    this.route.params
+      .pipe(
+        map(params => params['id']),
+        distinctUntilChanged(),
+        switchMap(projectId => {
+          this.projectId.set(projectId);
+          if (projectId) {
+            this.loadProjectName(projectId);
+            this.loadInitialFilterData(Number(projectId));
+          }
+          const searchParams = getAllTasksSearchParams({
+            q: '',
+            sortBy: 'dateCreation',
+            orderBy: 'desc',
+            createdFrom: '',
+            createdTo: '',
+            updatedFrom: '',
+            updatedTo: '',
+            page: 0,
+            pageSize: 10,
+          });
+          this.currentSearchParams.set(searchParams);
+          return this.getAllTasks(searchParams);
+        }),
+      )
+      .subscribe();
+  }
+
+  private loadProjectName(projectId: string): void {
+    this.projectsService.getProjectById(+projectId).subscribe(project => {
+      this.projectName.set(project.data.name);
+      this.projectIsPublic.set(project.data.isPublic);
+    });
+  }
+
+  private loadInitialFilterData(projectId: number): void {
+    this.isFiltersLoading.set(true);
+
+    const priorities$ = this.taskPriorityService.getAll().pipe(
+      catchError(err => {
+        console.error('Error fetching task priorities:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
+      catchError(err => {
+        console.error('Error fetching project statuses:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
+      catchError(err => {
+        console.error('Error fetching project categories:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
+      catchError(err => {
+        console.error('Error fetching users in project:', err);
+        return of({ data: [] } as any);
+      }),
+    );
+
+    forkJoin({ priorities: priorities$, statuses: statuses$, categories: categories$, users: users$ })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ priorities, statuses, categories, users }) => {
+        this.prioritiesRaw = priorities.data || [];
+        this.statusesRaw = statuses.data || [];
+        this.categoriesRaw = categories.data || [];
+
+        const userFilter = TASKS_LIST_FILTERS.find(filter => filter.formControlName === 'assignedUserIds');
+        if (userFilter) {
+          userFilter.multiselectOptions = (users.data || []).map((user: any) => ({
+            id: user.user.id,
+            name: user.user.email,
+          }));
+        }
+
+        this.refreshLocalizedOptionsForCurrentLang();
+        this.isFiltersLoading.set(false);
+      });
+  }
+
+  private refreshLocalizedOptionsForCurrentLang(): void {
+    const lang = this.translateService.getCurrentLang() || 'pl';
+    this.updateLocalizedOptions('priorityIds', this.prioritiesRaw, lang);
+    this.updateLocalizedOptions('statusIds', this.statusesRaw, lang);
+    this.updateLocalizedOptions('categoryIds', this.categoriesRaw, lang);
+  }
+
+  private updateLocalizedOptions(formControlName: string, items: any[], lang: string): void {
+    const filter = TASKS_LIST_FILTERS.find(item => item.formControlName === formControlName);
+    if (!filter) return;
+
+    filter.multiselectOptions = (items || []).map((item: any) => ({
+      id: item.id,
+      name: item.translations?.find((t: any) => t.lang === lang)?.name,
+    }));
+  }
+
+  private getAllTasks(searchParams: GetAllTasksSearchParams): Observable<void> {
+    const projectId = this.projectId();
+    if (!projectId) {
+      this.tasksStateService.setTaskList([]);
+      return EMPTY;
+    }
+
+    this.tasksStateService.resetState();
+
+    return this.tasksService.getAllByProjectId(projectId, searchParams).pipe(
+      map(response => {
+        const tasks = response.data || { items: [], pagination: { total: 0, page: 0, pageSize: 10, totalPages: 0 } };
+        this.tasksStateService.setTaskList(tasks.items);
+        this.tasksStateService.setPagination(tasks.pagination);
+      }),
+      catchError(err => {
+        if (err.error?.message) {
+          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
+        } else {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.getAllError'),
+            NotificationTypeEnum.Error,
+          );
+        }
+        return EMPTY;
+      }),
+    );
+  }
+
+  private performBatchDelete(selectedTasks: Task[]): void {
+    const taskIds = selectedTasks.map(task => task.id);
+    this.tasksService.batchDelete(taskIds).subscribe({
+      next: () => {
+        this.notificationService.showNotification(
+          this.translateService.instant('Task.batchDeleteSuccess', { count: selectedTasks.length }),
+          NotificationTypeEnum.Success,
+        );
+        this.selectedTasks.set([]);
+        const currentParams = this.currentSearchParams();
+        this.getAllTasks(currentParams).subscribe();
+      },
+      error: (err: any) => {
+        if (err.error?.message) {
+          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
+        } else {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.batchDeleteError'),
+            NotificationTypeEnum.Error,
+          );
+        }
+      },
+    });
   }
 }
