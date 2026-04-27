@@ -16,7 +16,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
   imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, TitleComponent, InputFieldComponent],
   template: `
     <div
-      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-surface-primary dark:bg-dark-surface-primary"
+      class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-surface-primary dark:bg-dark-surface-primary"
     >
       <app-title [text]="'Auth.resetPassword' | translate"></app-title>
       <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()" class="mt-4">
@@ -26,24 +26,16 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
             [control]="getControl('password')"
             [type]="'password'"
             [id]="'password'"
+            [errorMessage]="passwordErrors[0] || ''"
           ></app-input-field>
           <app-input-field
             [label]="'Auth.confirmNewPassword' | translate"
             [control]="getControl('confirmPassword')"
             [type]="'password'"
             [id]="'confirmPassword'"
+            [errorMessage]="confirmPasswordError"
           ></app-input-field>
         </div>
-
-        @if (passwordMismatch) {
-          <app-error-message [customMessage]="'Auth.passwordDoNotMatch' | translate" />
-        }
-
-        @if (passwordErrors.length > 0) {
-          @for (error of passwordErrors; track error) {
-            <app-error-message [customMessage]="error" />
-          }
-        }
 
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
@@ -72,6 +64,7 @@ export class ResetPasswordComponent implements OnInit {
   protected passwordMismatch: boolean = false;
   protected passwordErrors: string[] = [];
   protected errorMessage: string | null = null;
+  protected confirmPasswordError: string = '';
 
   private token: string | null = null;
 
@@ -130,6 +123,14 @@ export class ResetPasswordComponent implements OnInit {
     this.checkPasswords();
     this.errorMessage = null;
     this.passwordErrors = this.getPasswordErrors();
+    const confirmControl = this.resetPasswordForm.get('confirmPassword');
+    if (confirmControl?.hasError('required')) {
+      this.confirmPasswordError = this.translateService.instant('FormValidationMessage.required');
+    } else if (this.passwordMismatch && confirmControl?.value) {
+      this.confirmPasswordError = this.translateService.instant('Auth.passwordDoNotMatch');
+    } else {
+      this.confirmPasswordError = '';
+    }
   }
 
   private checkPasswords(): void {

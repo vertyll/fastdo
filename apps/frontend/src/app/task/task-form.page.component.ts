@@ -66,22 +66,21 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
         </div>
       } @else {
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
-          <div class="relative">
+          <div>
             <app-textarea-field
               id="description"
               [control]="descriptionControl"
               [label]="'Task.taskDescription' | translate"
+              [errorMessage]="'FormValidationMessage.required' | translate"
             />
-            <app-error-message [input]="descriptionControl" />
           </div>
 
-          <div class="relative">
+          <div>
             <app-textarea-field
               id="additionalDescription"
               [control]="additionalDescriptionControl"
               [label]="'Task.additionalDescription' | translate"
             />
-            <app-error-message [input]="additionalDescriptionControl" />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

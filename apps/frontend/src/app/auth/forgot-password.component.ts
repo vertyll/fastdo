@@ -25,7 +25,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
   ],
   template: `
     <div
-      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
+      class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.forgotPassword' | translate"></app-title>
       <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()" class="mt-4">
@@ -34,13 +34,8 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
           [control]="getFormControl('email')"
           [type]="'email'"
           [id]="'email'"
+          [errorMessage]="getEmailErrorMessage()"
         ></app-input-field>
-
-        @if (emailErrors.length > 0) {
-          @for (error of emailErrors; track error) {
-            <app-error-message [customMessage]="error" />
-          }
-        }
 
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
@@ -110,6 +105,18 @@ export class ForgotPasswordComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.forgotPasswordForm.get(name) as FormControl;
+  }
+
+  protected getEmailErrorMessage(): string {
+    const control = this.forgotPasswordForm.get('email');
+    if (!control?.touched) return '';
+    if (control.hasError('required')) {
+      return this.translateService.instant('Auth.emailRequired');
+    }
+    if (control.hasError('email')) {
+      return this.translateService.instant('Auth.emailInvalid');
+    }
+    return '';
   }
 
   private initializeForm(): void {

@@ -113,6 +113,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                       [type]="'email'"
                       [control]="getFormControl('email')"
                       [label]="'Profile.email' | translate"
+                      [errorMessage]="getEmailErrorMessage()"
                     />
                   </div>
 
@@ -122,12 +123,8 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                       [type]="'password'"
                       [control]="getFormControl('password')"
                       [label]="'Profile.password' | translate"
+                      [errorMessage]="getPasswordErrorMessage('password')"
                     />
-                    @if (passwordErrors.length > 0) {
-                      @for (error of passwordErrors; track error) {
-                        <app-error-message [customMessage]="error" />
-                      }
-                    }
                   </div>
 
                   <div>
@@ -136,12 +133,8 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                       [type]="'password'"
                       [control]="getFormControl('newPassword')"
                       [label]="'Profile.newPassword' | translate"
+                      [errorMessage]="getPasswordErrorMessage('newPassword')"
                     />
-                    @if (newPasswordErrors.length > 0) {
-                      @for (error of newPasswordErrors; track error) {
-                        <app-error-message [customMessage]="error" />
-                      }
-                    }
                   </div>
 
                   <div>
@@ -150,12 +143,8 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                       [type]="'password'"
                       [control]="getFormControl('confirmNewPassword')"
                       [label]="'Profile.confirmNewPassword' | translate"
+                      [errorMessage]="getConfirmNewPasswordErrorMessage()"
                     />
-                    @if (confirmNewPasswordErrors.length > 0) {
-                      @for (error of confirmNewPasswordErrors; track error) {
-                        <app-error-message [customMessage]="error" />
-                      }
-                    }
 
                     @if (stateService.error()) {
                       <app-error-message [customMessage]="stateService.error()?.message" />
@@ -302,6 +291,35 @@ export class UserProfileComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.profileForm.get(name) as FormControl;
+  }
+
+  protected getEmailErrorMessage(): string {
+    const control = this.profileForm?.get('email');
+    if (!control || !control.touched) return '';
+    if (control.hasError('required')) return this.translateService.instant('Auth.emailRequired');
+    if (control.hasError('email')) return this.translateService.instant('Auth.emailInvalid');
+    return '';
+  }
+
+  protected getPasswordErrorMessage(controlName: string): string {
+    const control = this.profileForm?.get(controlName);
+    if (!control || !control.touched) return '';
+    if (control.hasError('required')) return this.translateService.instant('Auth.passwordRequired');
+    if (control.hasError('minlength')) return this.translateService.instant('Auth.passwordMinLength');
+    if (control.hasError('uppercase')) return this.translateService.instant('Auth.passwordUppercase');
+    if (control.hasError('specialCharacter')) return this.translateService.instant('Auth.passwordSpecialCharacter');
+    return '';
+  }
+
+  protected getConfirmNewPasswordErrorMessage(): string {
+    const control = this.profileForm?.get('confirmNewPassword');
+    if (!control || !control.touched) return '';
+    const newPassword = this.profileForm.get('newPassword')?.value;
+    const confirmNewPassword = control.value;
+    if (newPassword && newPassword !== confirmNewPassword) {
+      return this.translateService.instant('Auth.passwordDoNotMatch');
+    }
+    return '';
   }
 
   private initializeForm(): void {

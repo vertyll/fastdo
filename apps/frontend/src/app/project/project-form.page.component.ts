@@ -79,7 +79,12 @@ interface NameColorFormItem {
         </div>
       } @else {
         <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
-          <app-input-field [control]="nameControl" id="name" [label]="'Project.name' | translate" />
+          <app-input-field
+            [control]="nameControl"
+            id="name"
+            [label]="'Project.name' | translate"
+            [errorMessage]="getRequiredOrMinLengthError(nameControl)"
+          />
 
           <div class="relative mt-6">
             <app-textarea-field
@@ -140,6 +145,7 @@ interface NameColorFormItem {
                         [control]="getCategoryNameControl($index)"
                         [id]="'category-name-' + $index"
                         [label]="'Project.categoryName' | translate"
+                        [errorMessage]="getRequiredOrMinLengthError(getCategoryNameControl($index))"
                       />
                     </div>
                     <div class="flex flex-col justify-end pb-1">
@@ -188,6 +194,7 @@ interface NameColorFormItem {
                         [control]="getStatusNameControl($index)"
                         [id]="'status-name-' + $index"
                         [label]="'Project.statusName' | translate"
+                        [errorMessage]="getRequiredOrMinLengthError(getStatusNameControl($index))"
                       />
                     </div>
                     <div class="flex flex-col justify-end pb-1">
@@ -244,6 +251,7 @@ interface NameColorFormItem {
                       [id]="'user-email-' + $index"
                       [label]="'Project.userEmailPlaceholder' | translate"
                       type="email"
+                      [errorMessage]="getEmailFieldError(getUserEmailControl($index))"
                     />
                   </div>
                   <div class="flex-1 sm:w-48 sm:flex-none">
@@ -469,6 +477,32 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
   protected cancel(): void {
     this.router.navigate(['/projects']).then();
+  }
+
+  protected getRequiredOrMinLengthError(control: FormControl): string {
+    if (!control || !control.touched) return '';
+    if (control.hasError('required')) {
+      return this.translateService.instant('FormValidationMessage.required');
+    }
+    if (control.hasError('minlength')) {
+      const requiredLength = control.errors?.['minlength']?.requiredLength;
+      return this.translateService.instant('FormValidationMessage.minLength', { minLength: requiredLength });
+    }
+    return '';
+  }
+
+  protected getEmailFieldError(control: FormControl): string {
+    if (!control || !control.touched) return '';
+    if (control.hasError('required')) {
+      return this.translateService.instant('FormValidationMessage.required');
+    }
+    if (control.hasError('email')) {
+      return this.translateService.instant('FormValidationMessage.email');
+    }
+    if (control.hasError('selfEmail')) {
+      return this.translateService.instant('Project.cannotAddYourself');
+    }
+    return '';
   }
 
   protected get projectTypeOptions(): Array<{ value: number; label: string }> {

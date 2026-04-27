@@ -24,7 +24,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
   ],
   template: `
     <div
-      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
+      class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.login' | translate"></app-title>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-4">
@@ -34,12 +34,14 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
             [control]="getFormControl('email')"
             [type]="'email'"
             [id]="'email'"
+            [errorMessage]="getErrorMessage('email')"
           ></app-input-field>
           <app-input-field
             [label]="'Auth.password' | translate"
             [control]="getFormControl('password')"
             [type]="'password'"
             [id]="'password'"
+            [errorMessage]="'FormValidationMessage.required' | translate"
           ></app-input-field>
         </div>
         @if (errorMessage) {
@@ -105,6 +107,17 @@ export class LoginComponent implements OnInit {
 
   protected getFormControl(name: string): FormControl {
     return this.loginForm.get(name) as FormControl;
+  }
+
+  protected getErrorMessage(name: string): string {
+    const control = this.getFormControl(name);
+    if (control.hasError('required')) {
+      return this.translateService.instant('FormValidationMessage.required');
+    }
+    if (control.hasError('email')) {
+      return this.translateService.instant('FormValidationMessage.email');
+    }
+    return '';
   }
 
   private initializeForm(): void {

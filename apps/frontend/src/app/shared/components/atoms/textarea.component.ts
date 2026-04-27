@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -19,7 +20,10 @@ import { MatInputModule } from '@angular/material/input';
         [rows]="rows()"
         [readonly]="readonly()"
         [disabledInteractive]="disabledInteractive()"
+        [errorStateMatcher]="errorStateMatcher() ?? defaultErrorStateMatcher"
       ></textarea>
+      <ng-content select="mat-hint" />
+      <ng-content select="mat-error" />
     </mat-form-field>
   `,
   styles: [
@@ -42,4 +46,9 @@ export class TextareaComponent {
   public readonly label = input<string>('');
   public readonly readonly = input<boolean>(false);
   public readonly disabledInteractive = input<boolean>(false);
+  public readonly errorStateMatcher = input<ErrorStateMatcher | null>(null);
+
+  protected readonly defaultErrorStateMatcher: ErrorStateMatcher = {
+    isErrorState: control => !!(control && control.invalid && (control.dirty || control.touched)),
+  };
 }

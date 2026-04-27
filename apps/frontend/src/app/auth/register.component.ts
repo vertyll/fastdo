@@ -30,7 +30,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
   ],
   template: `
     <div
-      class="max-w-md mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
+      class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.register' | translate"></app-title>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-4">
@@ -40,18 +40,21 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
             [control]="getControl('email')"
             [type]="'email'"
             [id]="'email'"
+            [errorMessage]="getEmailErrorMessage()"
           ></app-input-field>
           <app-input-field
             [label]="'Auth.password' | translate"
             [control]="getControl('password')"
             [type]="'password'"
             [id]="'password'"
+            [errorMessage]="getPasswordErrorMessage()"
           ></app-input-field>
           <app-input-field
             [label]="'Auth.confirmPassword' | translate"
             [control]="getControl('confirmPassword')"
             [type]="'password'"
             [id]="'confirmPassword'"
+            [errorMessage]="getConfirmPasswordErrorMessage()"
           ></app-input-field>
         </div>
 
@@ -95,22 +98,6 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
           }
         </div>
 
-        @if (emailErrors.length > 0) {
-          @for (error of emailErrors; track error) {
-            <app-error-message [customMessage]="error" />
-          }
-        }
-
-        @if (passwordMismatch) {
-          <app-error-message [customMessage]="'Auth.passwordDoNotMatch' | translate" />
-        }
-
-        @if (passwordErrors.length > 0) {
-          @for (error of passwordErrors; track error) {
-            <app-error-message [customMessage]="error" />
-          }
-        }
-
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
         }
@@ -146,12 +133,55 @@ export class RegisterComponent implements OnInit {
   protected termsErrors: string[] = [];
   protected privacyPolicyErrors: string[] = [];
   protected errorMessage: string | null = null;
+  protected confirmPasswordError: string = '';
 
   ngOnInit(): void {
     this.initializeForm();
     this.registerForm.valueChanges.subscribe(() => {
       this.updateFormErrors();
     });
+  }
+
+  protected getEmailErrorMessage(): string {
+    const control = this.registerForm.get('email');
+    if (!control?.touched) return '';
+    if (control.hasError('required')) {
+      return this.translateService.instant('Auth.emailRequired');
+    }
+    if (control.hasError('email')) {
+      return this.translateService.instant('Auth.emailInvalid');
+    }
+    return '';
+  }
+
+  protected getPasswordErrorMessage(): string {
+    const control = this.registerForm.get('password');
+    if (!control?.touched) return '';
+    if (control.hasError('required')) {
+      return this.translateService.instant('Auth.passwordRequired');
+    }
+    if (control.hasError('minlength')) {
+      return this.translateService.instant('Auth.passwordMinLength');
+    }
+    if (control.hasError('uppercase')) {
+      return this.translateService.instant('Auth.passwordUppercase');
+    }
+    if (control.hasError('specialCharacter')) {
+      return this.translateService.instant('Auth.passwordSpecialCharacter');
+    }
+    return '';
+  }
+
+  protected getConfirmPasswordErrorMessage(): string {
+    const control = this.registerForm.get('confirmPassword');
+    if (!control?.touched) return '';
+    if (control.hasError('required')) {
+      return this.translateService.instant('FormValidationMessage.required');
+    }
+    if (this.passwordMismatch && control.value) {
+      return this.translateService.instant('Auth.passwordDoNotMatch');
+    }
+    return '';
   }
 
   protected getControl(name: string): FormControl {
@@ -203,6 +233,14 @@ export class RegisterComponent implements OnInit {
     this.emailErrors = this.getEmailErrors();
     this.termsErrors = this.getTermsErrors();
     this.privacyPolicyErrors = this.getPrivacyPolicyErrors();
+    const confirmControl = this.registerForm.get('confirmPassword');
+    if (confirmControl?.hasError('required')) {
+      this.confirmPasswordError = this.translateService.instant('FormValidationMessage.required');
+    } else if (this.passwordMismatch && confirmControl?.value) {
+      this.confirmPasswordError = this.translateService.instant('Auth.passwordDoNotMatch');
+    } else {
+      this.confirmPasswordError = '';
+    }
   }
 
   private checkPasswords(): void {
