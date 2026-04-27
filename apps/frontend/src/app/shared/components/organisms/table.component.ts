@@ -908,6 +908,9 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   private intersectionObserver?: IntersectionObserver;
   private previousDataLength = 0;
   private shouldPreserveScroll = false;
+  private userHasScrolled = false;
+  private scrollListenerAttached = false;
+  private infiniteScrollContainer: HTMLElement | null = null;
 
   protected readonly isScrolledX = signal(false);
   protected readonly isAtEndX = signal(true);
@@ -944,6 +947,11 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   ngOnDestroy(): void {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
+    }
+    if (this.infiniteScrollContainer && this.scrollListenerAttached) {
+      this.infiniteScrollContainer.removeEventListener('scroll', this.onInfiniteScrollContainerScroll);
+      this.scrollListenerAttached = false;
+      this.infiniteScrollContainer = null;
     }
   }
 
@@ -1298,15 +1306,23 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       return;
     }
 
-    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
+    const tableContainer = this.elementRef.nativeElement.querySelector('.table-container') as HTMLElement | null;
     if (!tableContainer) return;
 
     this.intersectionObserver = new IntersectionObserver(
       entries => {
         const target = entries[0];
-        if (target.isIntersecting && !this.config().loadingMore) {
-          this.loadMore.emit();
+        if (!target.isIntersecting || this.config().loadingMore) {
+          return;
         }
+        // Avoid auto-firing on initial render when the user hasn't scrolled yet.
+        // Without this guard, if the first page fits inside the container the
+        // last row is immediately considered visible and `loadMore` would be
+        // emitted right after the initial load, effectively doubling the page size.
+        if (!this.userHasScrolled) {
+          return;
+        }
+        this.loadMore.emit();
       },
       {
         threshold: 0.1,
@@ -1314,6 +1330,18 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
         root: tableContainer, // Use table container as root instead of viewport
       },
     );
+
+    // Track whether the user has actually scrolled the container at least once.
+    // We also use the scroll event as a fallback: when the first page fits in
+    // the container the last row is permanently visible, so IntersectionObserver
+    // would never fire again after the initial (suppressed) emission. Watching
+    // `scroll` ensures we still trigger `loadMore` once the user reaches the
+    // bottom of the list.
+    if (!this.scrollListenerAttached) {
+      tableContainer.addEventListener('scroll', this.onInfiniteScrollContainerScroll);
+      this.scrollListenerAttached = true;
+      this.infiniteScrollContainer = tableContainer;
+    }
 
     // Observe the last row when it exists
     setTimeout(() => {
@@ -1323,6 +1351,22 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       }
     }, 100);
   }
+
+  private readonly onInfiniteScrollContainerScroll = (): void => {
+    const el = this.infiniteScrollContainer;
+    if (!el) return;
+
+    if (el.scrollTop > 0) {
+      this.userHasScrolled = true;
+    }
+
+    if (this.config().loadingMore) return;
+
+    const distanceFromBottom = el.scrollHeight - (el.scrollTop + el.clientHeight);
+    if (distanceFromBottom <= 50 && this.userHasScrolled) {
+      this.loadMore.emit();
+    }
+  };
 
   private getActionColorClass(color?: string): string {
     switch (color) {
