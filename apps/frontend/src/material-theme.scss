@@ -84,37 +84,62 @@ $dark-theme: mat.define-theme(
   );
 }
 
-// Snack bar variants — configured via official `mat.snack-bar-overrides` mixin.
-// See: https://material.angular.dev/components/snack-bar/styling
-.success-snackbar {
-  @include mat.snack-bar-overrides(
-    (
-      container-color: var(--color-success-600),
-      supporting-text-color: #ffffff,
-      button-color: #ffeb3b,
-      container-shape: 10px,
-    )
-  );
+.mat-mdc-snack-bar-container.success-snackbar {
+  --mdc-snackbar-container-color: #059669;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffeb3b;
+  --mdc-snackbar-container-shape: 10px;
+
+  .mdc-snackbar__surface {
+    background-color: #059669 !important;
+    border-radius: 10px !important;
+  }
+  .mdc-snackbar__label,
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+  }
+  .mat-mdc-snack-bar-action,
+  .mat-mdc-snack-bar-action .mdc-button__label {
+    color: #ffeb3b !important;
+  }
 }
 
-.error-snackbar {
-  @include mat.snack-bar-overrides(
-    (
-      container-color: var(--color-danger-600),
-      supporting-text-color: #ffffff,
-      button-color: #ffeb3b,
-      container-shape: 10px,
-    )
-  );
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #dc2626;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffeb3b;
+  --mdc-snackbar-container-shape: 10px;
+
+  .mdc-snackbar__surface {
+    background-color: #dc2626 !important;
+    border-radius: 10px !important;
+  }
+  .mdc-snackbar__label,
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+  }
+  .mat-mdc-snack-bar-action,
+  .mat-mdc-snack-bar-action .mdc-button__label {
+    color: #ffeb3b !important;
+  }
 }
 
-.info-snackbar {
-  @include mat.snack-bar-overrides(
-    (
-      container-color: var(--color-neutral-600),
-      supporting-text-color: #ffffff,
-      button-color: #ffeb3b,
-      container-shape: 10px,
-    )
-  );
+.mat-mdc-snack-bar-container.info-snackbar {
+  --mdc-snackbar-container-color: #4b5563;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffeb3b;
+  --mdc-snackbar-container-shape: 10px;
+
+  .mdc-snackbar__surface {
+    background-color: #4b5563 !important;
+    border-radius: 10px !important;
+  }
+  .mdc-snackbar__label,
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+  }
+  .mat-mdc-snack-bar-action,
+  .mat-mdc-snack-bar-action .mdc-button__label {
+    color: #ffeb3b !important;
+  }
 }
