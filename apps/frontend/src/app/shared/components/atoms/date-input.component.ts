@@ -1,19 +1,19 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { InputType } from '../../defs/components.defs';
 
 @Component({
-  selector: 'app-input',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  selector: 'app-date-input',
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule],
   template: `
     <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
       <mat-label>{{ label() }}</mat-label>
       <input
         matInput
-        [type]="type()"
+        [matDatepicker]="picker"
         [formControl]="control()"
         [id]="id()"
         [placeholder]="placeholder()"
@@ -21,6 +21,8 @@ import { InputType } from '../../defs/components.defs';
         [disabledInteractive]="disabledInteractive()"
         [errorStateMatcher]="errorStateMatcher() ?? defaultErrorStateMatcher"
       />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
       <ng-content select="mat-hint" />
       <ng-content select="mat-error" />
     </mat-form-field>
@@ -37,10 +39,9 @@ import { InputType } from '../../defs/components.defs';
     `,
   ],
 })
-export class InputComponent {
+export class DateInputComponent {
   public readonly control = input.required<FormControl>();
   public readonly id = input.required<string>();
-  public readonly type = input<InputType>('text');
   public readonly placeholder = input('');
   public readonly label = input<string>('');
   public readonly readonly = input<boolean>(false);

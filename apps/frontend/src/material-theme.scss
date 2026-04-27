@@ -37,10 +37,51 @@ $dark-theme: mat.define-theme(
 
 :root {
   @include mat.all-component-themes($light-theme);
+
+  // Form field — filled appearance (light)
+  // Tokens: https://material.angular.dev/components/form-field/styling
+  @include mat.form-field-overrides(
+    (
+      filled-container-color: #e0e2ec,
+      filled-focus-active-indicator-color: var(--mat-sys-primary),
+      filled-active-indicator-color: var(--mat-sys-on-surface-variant),
+      filled-input-text-color: var(--mat-sys-on-surface),
+      filled-label-text-color: var(--mat-sys-on-surface-variant),
+      filled-input-text-placeholder-color: var(--mat-sys-on-surface-variant),
+    )
+  );
+
+  // Datepicker — light
+  @include mat.datepicker-overrides(
+    (
+      calendar-container-background-color: #e0e2ec,
+      calendar-container-text-color: var(--mat-sys-on-surface),
+    )
+  );
 }
 
 .dark {
   @include mat.all-component-colors($dark-theme);
+
+  // Form field — filled appearance (dark)
+  @include mat.form-field-overrides(
+    (
+      filled-container-color: #44474e,
+      filled-focus-active-indicator-color: var(--mat-sys-primary),
+      filled-active-indicator-color: var(--mat-sys-on-surface-variant),
+      filled-input-text-color: var(--mat-sys-on-surface),
+      filled-label-text-color: var(--mat-sys-on-surface-variant),
+      filled-input-text-placeholder-color: var(--mat-sys-on-surface-variant),
+    )
+  );
+
+  // Datepicker — dark
+  @include mat.datepicker-overrides(
+    (
+      calendar-container-background-color: #44474e,
+      calendar-container-text-color: var(--mat-sys-on-surface),
+    )
+  );
 }
 
 // Snack bar variants — configured via official `mat.snack-bar-overrides` mixin.

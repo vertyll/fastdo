@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-editable-multi-select',
   imports: [FormsModule, MatFormFieldModule, MatSelectModule, TranslateModule],
   template: `
-    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+    <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
       <mat-label>{{ placeholder() }}</mat-label>
       <mat-select
         [id]="id()"

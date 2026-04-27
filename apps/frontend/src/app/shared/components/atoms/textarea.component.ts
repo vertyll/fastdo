@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-textarea',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
   template: `
-    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+    <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
       @if (label()) {
         <mat-label>{{ label() }}</mat-label>
       }

@@ -74,6 +74,20 @@
   --mdc-outlined-text-field-outline-width: 1px;
   --mdc-outlined-text-field-focus-outline-width: 2px;
 
+  /* Filled text-field — light theme. */
+  --mdc-filled-text-field-container-color: #e0e2ec;
+  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, #e0e2ec 60%, transparent);
+  --mdc-filled-text-field-container-shape: var(--app-control-radius);
+  --mdc-filled-text-field-caret-color: var(--color-primary-500);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--color-primary-500);
+  --mdc-filled-text-field-hover-active-indicator-color: var(--color-border-secondary);
+  --mdc-filled-text-field-active-indicator-color: var(--color-border-primary);
+  --mdc-filled-text-field-input-text-color: var(--color-text-primary);
+  --mdc-filled-text-field-input-text-placeholder-color: var(--color-text-muted);
+  --mdc-filled-text-field-label-text-color: var(--color-text-secondary);
+  --mdc-filled-text-field-hover-label-text-color: var(--color-text-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--color-primary-500);
+
   --mat-form-field-container-text-color: var(--color-text-primary);
   --mat-form-field-container-text-placeholder-color: var(--color-text-muted);
   --mat-form-field-focus-select-arrow-color: var(--color-primary-500);
@@ -85,7 +99,7 @@
   --mat-select-trigger-text-line-height: 1.5rem;
   --mat-select-enabled-arrow-color: var(--color-text-secondary);
   --mat-select-focused-arrow-color: var(--color-primary-500);
-  --mat-select-panel-background-color: var(--color-surface-primary);
+  --mat-select-panel-background-color: var(--color-surface-secondary);
   --mat-select-panel-text-color: var(--color-text-primary);
 
   --mat-option-label-text-color: var(--color-text-primary);
@@ -93,7 +107,7 @@
   --mat-option-hover-state-layer-color: color-mix(in srgb, var(--color-surface-secondary) 80%, transparent);
   --mat-option-focus-state-layer-color: color-mix(in srgb, var(--color-surface-secondary) 80%, transparent);
 
-  --mat-menu-container-color: var(--color-surface-primary);
+  --mat-menu-container-color: var(--color-surface-secondary);
   --mat-menu-item-label-text-color: var(--color-text-primary);
   --mat-tooltip-container-color: var(--color-neutral-700);
   --mat-tooltip-supporting-text-color: var(--color-dark-text-primary);
@@ -172,6 +186,19 @@
   --mdc-outlined-text-field-outline-width: 1px;
   --mdc-outlined-text-field-focus-outline-width: 2px;
 
+  /* Filled text-field  */
+  --mdc-filled-text-field-container-color: #44474e;
+  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, #44474e 60%, transparent);
+  --mdc-filled-text-field-container-shape: var(--app-control-radius);
+  --mdc-filled-text-field-caret-color: var(--color-primary-500);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--color-primary-500);
+  --mdc-filled-text-field-hover-active-indicator-color: var(--color-dark-border-secondary);
+  --mdc-filled-text-field-active-indicator-color: var(--color-dark-border-primary);
+  --mdc-filled-text-field-input-text-color: var(--color-dark-text-primary);
+  --mdc-filled-text-field-input-text-placeholder-color: var(--color-dark-text-muted);
+  --mdc-filled-text-field-label-text-color: var(--color-dark-text-secondary);
+  --mdc-filled-text-field-hover-label-text-color: var(--color-dark-text-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--color-primary-500);
   --mat-form-field-container-text-color: var(--color-dark-text-primary);
   --mat-form-field-container-text-placeholder-color: var(--color-dark-text-muted);
   --mat-form-field-hover-state-layer-opacity: 0;
@@ -184,7 +211,7 @@
   --mat-select-trigger-text-line-height: 1.5rem;
   --mat-select-enabled-arrow-color: var(--color-dark-text-secondary);
   --mat-select-focused-arrow-color: var(--color-primary-500);
-  --mat-select-panel-background-color: var(--color-dark-surface-primary);
+  --mat-select-panel-background-color: var(--color-dark-surface-secondary);
   --mat-select-panel-text-color: var(--color-dark-text-primary);
 
   --mat-option-label-text-color: var(--color-dark-text-primary);
@@ -192,7 +219,7 @@
   --mat-option-hover-state-layer-color: color-mix(in srgb, var(--color-dark-surface-secondary) 70%, transparent);
   --mat-option-focus-state-layer-color: color-mix(in srgb, var(--color-dark-surface-secondary) 70%, transparent);
 
-  --mat-menu-container-color: var(--color-dark-surface-primary);
+  --mat-menu-container-color: var(--color-dark-surface-secondary);
   --mat-menu-item-label-text-color: var(--color-dark-text-primary);
   --mat-tooltip-container-color: var(--color-dark-surface-primary);
   --mat-tooltip-supporting-text-color: var(--color-dark-text-primary);

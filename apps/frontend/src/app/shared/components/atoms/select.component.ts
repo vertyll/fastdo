@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-select',
   imports: [ReactiveFormsModule, TranslatePipe, MatFormFieldModule, MatSelectModule],
   template: `
-    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+    <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
       @if (label()) {
         <mat-label>{{ label() }}</mat-label>
       }

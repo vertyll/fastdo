@@ -17,17 +17,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  heroArrowDown,
-  heroArrowUp,
-  heroArrowsUpDown,
-  heroCalendar,
-  heroEye,
-  heroPencil,
-  heroTrash,
-  heroXMark,
-} from '@ng-icons/heroicons/outline';
+import { heroCalendar, heroEye, heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslateModule } from '@ngx-translate/core';
 import { CustomDatePipe } from '../../pipes/custom-date.pipe';
 import { PlatformService } from '../../services/platform.service';
@@ -161,6 +153,7 @@ export interface TableConfig {
   imports: [
     CommonModule,
     MatTableModule,
+    MatSortModule,
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
@@ -179,9 +172,6 @@ export interface TableConfig {
       heroPencil,
       heroEye,
       heroTrash,
-      heroArrowUp,
-      heroArrowDown,
-      heroArrowsUpDown,
     }),
   ],
   template: `
@@ -227,7 +217,15 @@ export interface TableConfig {
           [ngStyle]="getTableContainerStyle()"
           (scroll)="onTableScroll($event)"
         >
-          <table mat-table [dataSource]="data()" class="responsive-table w-full">
+          <table
+            mat-table
+            matSort
+            [matSortActive]="currentSort?.column || ''"
+            [matSortDirection]="currentSort?.direction || ''"
+            (matSortChange)="onMatSortChange($event)"
+            [dataSource]="data()"
+            class="responsive-table w-full"
+          >
             @if (config().selectable) {
               <ng-container matColumnDef="select">
                 <th mat-header-cell *matHeaderCellDef class="select-column">
@@ -255,25 +253,10 @@ export interface TableConfig {
                   *matHeaderCellDef
                   [class]="getHeaderClass(column)"
                   [style.min-width]="getColumnWidth(column)"
+                  [mat-sort-header]="column.sortable && config().sortable ? column.key : ''"
+                  [disabled]="!(column.sortable && config().sortable)"
                 >
                   {{ column.label | translate }}
-                  @if (column.sortable && config().sortable) {
-                    <button
-                      (click)="sort(column.key)"
-                      class="sort-button"
-                      [attr.aria-label]="('Table.sortBy' | translate) + ' ' + (column.label | translate)"
-                    >
-                      @if (currentSort?.column === column.key) {
-                        @if (currentSort?.direction === 'asc') {
-                          <ng-icon name="heroArrowUp" size="12"></ng-icon>
-                        } @else {
-                          <ng-icon name="heroArrowDown" size="12"></ng-icon>
-                        }
-                      } @else {
-                        <ng-icon name="heroArrowsUpDown" size="12"></ng-icon>
-                      }
-                    </button>
-                  }
                 </th>
                 <td mat-cell *matCellDef="let row" [class]="getCellClass(column)" [attr.data-column]="column.key">
                   @switch (column.type) {
@@ -492,6 +475,16 @@ export interface TableConfig {
 
       .header-left {
         text-align: left;
+      }
+
+      .header-center ::ng-deep .mat-sort-header-container {
+        justify-content: center;
+      }
+      .header-right ::ng-deep .mat-sort-header-container {
+        justify-content: flex-end;
+      }
+      .header-left ::ng-deep .mat-sort-header-container {
+        justify-content: flex-start;
       }
 
       .mat-mdc-header-row {
@@ -1164,33 +1157,17 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     return this.selection.length > 0 && this.selection.length < this.data().length;
   }
 
-  protected sort(column: string): void {
+  protected onMatSortChange(sort: Sort): void {
     if (!this.config().sortable) return;
 
-    let direction: 'asc' | 'desc' | null;
-
-    if (this.currentSort?.column === column) {
-      // Cycling through: asc -> desc -> null (default)
-      if (this.currentSort.direction === 'asc') {
-        direction = 'desc';
-      } else if (this.currentSort.direction === 'desc') {
-        direction = null; // Reset to default
-      } else {
-        direction = 'asc';
-      }
-    } else {
-      // First click on new column starts with asc
-      direction = 'asc';
-    }
-
-    if (direction === null) {
-      // Reset to default sort
+    if (!sort.direction || !sort.active) {
       this.currentSort = null;
-      this.sortChange.emit({ column: '', direction: 'desc' }); // Default sort
-    } else {
-      this.currentSort = { column, direction };
-      this.sortChange.emit({ column, direction });
+      this.sortChange.emit({ column: '', direction: 'desc' });
+      return;
     }
+
+    this.currentSort = { column: sort.active, direction: sort.direction };
+    this.sortChange.emit(this.currentSort);
   }
 
   protected getCustomTemplate(templateName?: string): TemplateRef<any> | null {

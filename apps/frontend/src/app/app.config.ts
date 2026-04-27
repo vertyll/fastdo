@@ -6,7 +6,6 @@ import {
   provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -22,11 +21,11 @@ import { FiltersState } from './shared/store/filter/filter.state';
 import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
 import { ThemeService } from './shared/services/theme.service';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideAnimationsAsync(),
     provideHttpClient(
       withInterceptors([apiKeyInterceptor, authInterceptor, errorInterceptor, languageInterceptor]),
       withFetch(),
@@ -46,5 +45,6 @@ export const appConfig: ApplicationConfig = {
         subscriptSizing: 'dynamic',
       },
     },
+    provideNativeDateAdapter(),
   ],
 };

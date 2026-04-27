@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-check-select',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule],
   template: `
-    <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+    <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
       <mat-label>{{ label() }}</mat-label>
       <mat-select [id]="id()" multiple [value]="selectedValues()" (selectionChange)="onSelectionChange($event.value)">
         @for (option of translatedOptions(); track option.value) {

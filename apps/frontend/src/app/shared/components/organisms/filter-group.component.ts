@@ -24,6 +24,7 @@ import { FiltersSelectors } from '../../store/filter/filter.selectors';
 import { FilterMetadata, FilterValue } from '../../defs/filter.defs';
 import { CheckSelectComponent } from '../molecules/check-select.component';
 import { EditableMultiSelectComponent } from '../molecules/editable-multi-select.component';
+import { DateFieldComponent } from '../molecules/date-field.component';
 import { InputFieldComponent } from '../molecules/input-field.component';
 import { SelectFieldComponent } from '../molecules/select-field.component';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -42,6 +43,7 @@ import {
     TranslateModule,
     InputFieldComponent,
     SelectFieldComponent,
+    DateFieldComponent,
     CheckSelectComponent,
     EditableMultiSelectComponent,
     NgIconComponent,
@@ -111,11 +113,10 @@ import {
                     />
                   }
                   @case (FilterType.Date) {
-                    <app-input-field
+                    <app-date-field
                       [control]="getFormControl(filter.formControlName)"
                       [id]="filter.formControlName"
                       [label]="translateService.instant(filter.labelKey)"
-                      [type]="FilterType.Date"
                     />
                   }
                   @case (FilterType.Select) {
@@ -172,11 +173,10 @@ import {
                       />
                     }
                     @case (FilterType.Date) {
-                      <app-input-field
+                      <app-date-field
                         [control]="getFormControl(filter.formControlName)"
                         [id]="filter.formControlName"
                         [label]="translateService.instant(filter.labelKey)"
-                        [type]="FilterType.Date"
                       />
                     }
                     @case (FilterType.Select) {
@@ -416,7 +416,25 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
 
   private getFormValues(value: Record<string, unknown>): Record<string, unknown> {
     const defaultFormValues = this.filtersService.createDefaultFormValues(this.filters());
-    return Object.fromEntries(Object.keys(defaultFormValues).map(key => [key, value[key] ?? '']));
+    return Object.fromEntries(
+      Object.keys(defaultFormValues).map(key => {
+        const filter = this.filters().find(f => f.formControlName === key);
+        const raw = value[key] ?? '';
+        if (filter?.type === FilterTypeEnum.Date && raw) {
+          return [key, this.formatDateOnly(raw)];
+        }
+        return [key, raw];
+      }),
+    );
+  }
+
+  private formatDateOnly(value: unknown): string {
+    const date = value instanceof Date ? value : new Date(value as string);
+    if (isNaN(date.getTime())) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   private handleNonInitialState(
@@ -470,6 +488,10 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
   private getFilterValue(filter: FilterMetadata | undefined, queryParamValue: unknown, defaultValue: unknown): unknown {
     if (filter?.type === FilterTypeEnum.EditableMultiSelect) {
       return this.getMultiSelectValue(queryParamValue);
+    }
+    if (filter?.type === FilterTypeEnum.Date && queryParamValue) {
+      const d = new Date(queryParamValue as string);
+      return isNaN(d.getTime()) ? (defaultValue ?? null) : d;
     }
     return typeof defaultValue === 'number'
       ? Number.parseInt(queryParamValue as string)
@@ -526,6 +548,10 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
         id: key,
         value: this.getMultiSelectNames(filterMetadata, value),
       };
+    }
+
+    if (filterMetadata?.type === FilterTypeEnum.Date && value) {
+      return { id: key, value: this.formatDateOnly(value) };
     }
 
     const options = filterMetadata?.options ?? [];
