@@ -430,7 +430,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
 
   private formatDateOnly(value: unknown): string {
     const date = value instanceof Date ? value : new Date(value as string);
-    if (Number.isNaN.getTime())) return '';
+    if (Number.isNaN(date.getTime())) return '';
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
