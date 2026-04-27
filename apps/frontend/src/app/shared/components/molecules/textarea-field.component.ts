@@ -13,7 +13,7 @@ import { TextareaComponent } from '../atoms/textarea.component';
       [id]="id()"
       [rows]="rows()"
       [placeholder]="placeholder()"
-      [label]="label()"
+      [label]="label() || ''"
       [readonly]="readonly()"
       [disabledInteractive]="disabledInteractive()"
       [errorStateMatcher]="errorStateMatcher()"
@@ -30,7 +30,7 @@ import { TextareaComponent } from '../atoms/textarea.component';
 export class TextareaFieldComponent {
   public readonly control = input.required<FormControl>();
   public readonly id = input.required<string>();
-  public readonly label = input.required<string>();
+  public readonly label = input<string>();
   public readonly placeholder = input<string>('');
   public readonly rows = input<number>(3);
   public readonly isFloating = input<boolean>(true);

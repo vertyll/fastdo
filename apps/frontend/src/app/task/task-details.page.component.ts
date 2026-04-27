@@ -22,9 +22,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
-import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
-import { TextareaComponent } from '../shared/components/atoms/textarea.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
@@ -35,6 +33,7 @@ import { NotificationService } from '../shared/services/notification.service';
 import { getContrastColor } from '../shared/utils/color.utils';
 import { TasksService } from './data-access/task.service';
 import { Task, TaskComment } from './defs/task.defs';
+import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 
 @Component({
   selector: 'app-task-details',
@@ -47,10 +46,9 @@ import { Task, TaskComment } from './defs/task.defs';
     CustomDatePipe,
     FileUploadComponent,
     ImageComponent,
-    ErrorMessageComponent,
     ButtonComponent,
-    TextareaComponent,
     SpinnerComponent,
+    TextareaFieldComponent,
   ],
   providers: [
     provideIcons({
@@ -179,13 +177,13 @@ import { Task, TaskComment } from './defs/task.defs';
 
                 <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="mb-8">
                   <div class="mb-3">
-                    <app-textarea
+                    <app-textarea-field
                       id="commentContent"
                       [control]="contentControl"
                       [placeholder]="'Task.commentPlaceholder' | translate"
                       [rows]="4"
-                    ></app-textarea>
-                    <app-error-message [input]="contentControl" />
+                      [errorMessage]="'FormValidationMessage.required' | translate"
+                    ></app-textarea-field>
                   </div>
                   <div class="mb-4">
                     <app-file-upload
@@ -223,12 +221,13 @@ import { Task, TaskComment } from './defs/task.defs';
                             <div class="space-y-2">
                               @if (editingCommentControl) {
                                 <div class="mb-3">
-                                  <app-textarea
+                                  <app-textarea-field
                                     id="editingCommentContent"
                                     [control]="editingCommentControl"
                                     [placeholder]="'Task.commentPlaceholder' | translate"
                                     [rows]="3"
-                                  ></app-textarea>
+                                    [errorMessage]="'FormValidationMessage.required' | translate"
+                                  ></app-textarea-field>
                                 </div>
                               }
                               <div class="mb-4">
