@@ -8,14 +8,12 @@ import { LinkComponent } from '../atoms/link.component';
   imports: [TranslateModule, RouterLink, LinkComponent],
   template: `
     <footer
-      class="bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-4 text-center text-sm"
+      class="bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-4 text-center text-sm flex flex-col"
     >
       &copy; {{ currentYear }} {{ 'Footer.text' | translate }}
-      |
       <app-link [routerLink]="['/terms']">
         {{ 'Footer.terms' | translate }}
       </app-link>
-      |
       <app-link [routerLink]="['/privacy-policy']">
         {{ 'Footer.privacyPolicy' | translate }}
       </app-link>

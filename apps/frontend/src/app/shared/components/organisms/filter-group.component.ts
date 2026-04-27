@@ -61,7 +61,7 @@ import {
   template: `
     <div>
       @if (collapsible()) {
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-2 text-text-primary dark:text-dark-text-primary font-medium">
             <ng-icon name="heroFunnel" size="20" class="text-text-secondary dark:text-dark-text-secondary"></ng-icon>
             {{ 'Filters.title' | translate }}
@@ -79,7 +79,7 @@ import {
           <button
             type="button"
             (click)="toggleExpand()"
-            class="text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary transition-colors cursor-pointer p-1 rounded-md hover:bg-background-primary dark:hover:bg-dark-background-primary"
+            class="text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary transition-colors cursor-pointer p-1 rounded-md hover:bg-background-primary dark:hover:bg-dark-background-primary flex"
           >
             @if (isExpanded()) {
               <ng-icon name="heroChevronUp" size="20"></ng-icon>
@@ -211,7 +211,7 @@ import {
                 </div>
               }
             </div>
-            <div class="flex items-center justify-start mt-2">
+            <div class="flex items-center justify-start">
               <button
                 type="button"
                 (click)="toggleFilters()"
@@ -430,7 +430,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
 
   private formatDateOnly(value: unknown): string {
     const date = value instanceof Date ? value : new Date(value as string);
-    if (isNaN(date.getTime())) return '';
+    if (Number.isNaN.getTime())) return '';
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
@@ -491,7 +491,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
     }
     if (filter?.type === FilterTypeEnum.Date && queryParamValue) {
       const d = new Date(queryParamValue as string);
-      return isNaN(d.getTime()) ? (defaultValue ?? null) : d;
+      return Number.isNaN(d.getTime()) ? (defaultValue ?? null) : d;
     }
     return typeof defaultValue === 'number'
       ? Number.parseInt(queryParamValue as string)
