@@ -188,7 +188,11 @@
 
   /* Filled text-field  */
   --mdc-filled-text-field-container-color: var(--color-dark-surface-variant);
-  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, var(--color-dark-surface-variant) 60%, transparent);
+  --mdc-filled-text-field-disabled-container-color: color-mix(
+    in srgb,
+    var(--color-dark-surface-variant) 60%,
+    transparent
+  );
   --mdc-filled-text-field-container-shape: var(--app-control-radius);
   --mdc-filled-text-field-caret-color: var(--color-primary-500);
   --mdc-filled-text-field-focus-active-indicator-color: var(--color-primary-500);
