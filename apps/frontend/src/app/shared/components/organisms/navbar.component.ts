@@ -12,6 +12,7 @@ import {
   heroListBullet,
   heroSquares2x2,
   heroUserCircle,
+  heroArrowRightOnRectangle,
 } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
@@ -46,6 +47,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       heroChevronDown,
       heroChevronUp,
       heroBell,
+      heroArrowRightOnRectangle,
     }),
   ],
   styles: [
@@ -301,7 +303,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .profile-dropdown {
-        @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+        @apply absolute right-0 top-full mt-1 w-32 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       }
 
       .language-option {
@@ -458,20 +460,28 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
 
           <div class="hidden md:flex items-center space-x-4">
             <div class="relative">
-              <button class="profile-button" (click)="toggleProfileDropdown($event)">
-                <span>{{ 'Navbar.profile' | translate }}</span>
+              <button class="profile-button gap-1" (click)="toggleProfileDropdown($event)">
+                <span>Menu</span>
                 <ng-icon [name]="profileDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
               </button>
 
               @if (profileDropdownOpen) {
                 <div class="profile-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
-                  <button class="auth-button" (click)="router.navigate(['/user-profile'])">
-                    <span class="hover:text-link-hover dark:hover:text-link-dark-hover">
+                  <button
+                    class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary hover:text-link-hover dark:hover:text-link-dark-hover"
+                    (click)="router.navigate(['/user-profile'])"
+                  >
+                    <ng-icon name="heroUserCircle" size="16"></ng-icon>
+                    <span>
                       {{ 'Navbar.profile' | translate }}
                     </span>
                   </button>
-                  <button class="auth-button" (click)="logout()">
-                    <span class="hover:text-danger-600 dark:hover:text-danger-300">
+                  <button
+                    class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
+                    (click)="logout()"
+                  >
+                    <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
+                    <span>
                       {{ 'Basic.logout' | translate }}
                     </span>
                   </button>
@@ -599,13 +609,14 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
             <div class="border-t border-border-primary dark:border-dark-border-primary mt-1">
               <button
                 (click)="navigateToProfileAndCloseMenu()"
-                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
+                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left flex items-center"
               >
-                {{ 'Navbar.profile' | translate }}
+                <ng-icon name="heroUserCircle" size="16"></ng-icon>
+                <span>{{ 'Navbar.profile' | translate }}</span>
               </button>
               <button
                 (click)="navigateToNotificationSettingsAndCloseMenu()"
-                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left"
+                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left flex items-center"
               >
                 <div class="flex items-center justify-between w-full">
                   <div class="flex items-center space-x-2">
@@ -621,9 +632,10 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               </button>
               <button
                 (click)="logout()"
-                class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left"
+                class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left flex items-center"
               >
-                {{ 'Basic.logout' | translate }}
+                <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
+                <span>{{ 'Basic.logout' | translate }}</span>
               </button>
             </div>
           </div>
