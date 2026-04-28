@@ -242,14 +242,12 @@ import {
             <ng-icon name="heroAdjustmentsHorizontal" size="16"></ng-icon>
             <b>{{ 'Filters.filtersSet' | translate }}:</b>
             @for (filter of filledFilters(); track $index) {
-              <span class="mr-2">
-                {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{ filter.value }})
-              </span>
+              <span> {{ translateService.instant(getLabelKeyForFilter(filter.id)) }}: ({{ filter.value }}) </span>
             }
             <button
               type="button"
               (click)="clearFilters()"
-              class="ml-2 inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer border-0 bg-transparent p-0 font-semibold"
+              class="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer border-0 bg-transparent p-0 font-semibold"
               [attr.aria-label]="'Filters.clearFilters' | translate"
             >
               <ng-icon name="heroXMark" size="16" class="text-red-600 dark:text-red-400"></ng-icon>
