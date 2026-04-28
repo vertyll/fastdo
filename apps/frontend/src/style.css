@@ -102,6 +102,7 @@
   --color-surface-primary: #ffffff;
   --color-surface-secondary: #f9fafb;
   --color-surface-elevated: #ffffff;
+  --color-surface-variant: #e0e2ec;
 
   /* Border */
   --color-border-primary: #e5e7eb;
@@ -123,6 +124,7 @@
   --color-dark-surface-primary: #374151;
   --color-dark-surface-secondary: #4b5563;
   --color-dark-surface-elevated: #374151;
+  --color-dark-surface-variant: #44474e;
   --color-dark-border-primary: #4b5563;
   --color-dark-border-secondary: #6b7280;
   --color-dark-link-primary: #38bdf8;

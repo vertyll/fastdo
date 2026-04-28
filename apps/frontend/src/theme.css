@@ -75,8 +75,8 @@
   --mdc-outlined-text-field-focus-outline-width: 2px;
 
   /* Filled text-field — light theme. */
-  --mdc-filled-text-field-container-color: #e0e2ec;
-  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, #e0e2ec 60%, transparent);
+  --mdc-filled-text-field-container-color: var(--color-surface-variant);
+  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, var(--color-surface-variant) 60%, transparent);
   --mdc-filled-text-field-container-shape: var(--app-control-radius);
   --mdc-filled-text-field-caret-color: var(--color-primary-500);
   --mdc-filled-text-field-focus-active-indicator-color: var(--color-primary-500);
@@ -187,8 +187,8 @@
   --mdc-outlined-text-field-focus-outline-width: 2px;
 
   /* Filled text-field  */
-  --mdc-filled-text-field-container-color: #44474e;
-  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, #44474e 60%, transparent);
+  --mdc-filled-text-field-container-color: var(--color-dark-surface-variant);
+  --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, var(--color-dark-surface-variant) 60%, transparent);
   --mdc-filled-text-field-container-shape: var(--app-control-radius);
   --mdc-filled-text-field-caret-color: var(--color-primary-500);
   --mdc-filled-text-field-focus-active-indicator-color: var(--color-primary-500);
