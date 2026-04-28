@@ -2,10 +2,11 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "rootDir": "./",
     "paths": {
-      "@ui/*": ["src/app/shared/ui/*"]
+      "src/*": ["./src/*"],
+      "@ui/*": ["./src/app/shared/ui/*"]
     },
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
