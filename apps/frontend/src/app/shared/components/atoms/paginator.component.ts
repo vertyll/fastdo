@@ -101,11 +101,15 @@ import { PaginationParams } from '../../defs/filter.defs';
             </div>
           </div>
 
-          <span class="flex items-center h-8 md:h-9 text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap">
+          <span
+            class="flex items-center h-8 md:h-9 text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap"
+          >
             {{ getRangeLabel(currentPage(), pageSize(), total()) }}
           </span>
 
-          <span class="flex items-center h-8 md:h-9 text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap">
+          <span
+            class="flex items-center h-8 md:h-9 text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap"
+          >
             {{ 'Basic.totalResults' | translate }}: <b class="ml-1">{{ total() }}</b>
           </span>
         </div>
