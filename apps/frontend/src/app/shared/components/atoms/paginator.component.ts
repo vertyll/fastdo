@@ -73,7 +73,7 @@ import { PaginationParams } from '../../defs/filter.defs';
           </button>
         </div>
 
-        <div class="flex flex-col md:flex-row md:items-center gap-3 order-2 items-start w-full">
+        <div class="flex flex-col md:flex-row md:items-center gap-3 order-2 items-start w-full md:w-auto">
           <div class="flex items-center h-8 md:h-9 gap-2">
             <label for="page-size-select" class="text-sm text-text-secondary dark:text-dark-text-secondary"
               >{{ 'Paginator.itemsPerPage' | translate }}:</label
