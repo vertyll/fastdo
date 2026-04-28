@@ -1,31 +1,51 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, booleanAttribute } from '@angular/core'; // <-- Dodaj booleanAttribute
+import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+
+export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon';
 
 @Component({
   selector: 'app-button',
-  imports: [TranslateModule],
+  standalone: true,
+  imports: [CommonModule, TranslateModule, MatButtonModule],
   template: `
-    <button [type]="type()" (click)="clicked.emit($event)" [disabled]="disabled()" [class]="getButtonClass()">
+    <ng-template #contentTemplate>
       <ng-content></ng-content>
-    </button>
+    </ng-template>
+
+    @if (variant() === 'basic') {
+      <button mat-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+        <span class="flex items-center justify-center gap-2">
+          <ng-container *ngTemplateOutlet="contentTemplate" />
+        </span>
+      </button>
+    } @else if (variant() === 'stroked') {
+      <button mat-stroked-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+        <span class="flex items-center justify-center gap-2">
+          <ng-container *ngTemplateOutlet="contentTemplate" />
+        </span>
+      </button>
+    } @else if (variant() === 'icon') {
+      <button mat-icon-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+        <span class="flex items-center justify-center">
+          <ng-container *ngTemplateOutlet="contentTemplate" />
+        </span>
+      </button>
+    } @else {
+      <button mat-flat-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+        <span class="flex items-center justify-center gap-2">
+          <ng-container *ngTemplateOutlet="contentTemplate" />
+        </span>
+      </button>
+    }
   `,
 })
 export class ButtonComponent {
-  public readonly type = input<'button' | 'submit'>('button');
-  public readonly disabled = input<boolean | undefined>(false);
-  public readonly cssClass = input<string>('');
+  public readonly type = input<'button' | 'submit' | 'reset'>('button');
 
+  public readonly disabled = input(false, { transform: booleanAttribute });
+
+  public readonly variant = input<ButtonVariant>('flat');
   public readonly clicked = output<Event>();
-
-  protected getButtonClass(): string {
-    const baseClasses =
-      'px-4 py-2 rounded-lg focus:outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
-    const customClasses = this.cssClass();
-
-    if (customClasses) {
-      return `${baseClasses} ${customClasses}`;
-    }
-
-    return `${baseClasses} bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700`;
-  }
 }

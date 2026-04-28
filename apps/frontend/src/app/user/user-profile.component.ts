@@ -16,6 +16,7 @@ import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -29,6 +30,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
     CommonModule,
     ImageComponent,
     InputFieldComponent,
+    ButtonComponent,
   ],
   providers: [provideIcons({ heroUserCircle })],
   template: `
@@ -49,12 +51,9 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                   <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     {{ 'Profile.myProfile' | translate }}
                   </h2>
-                  <button
-                    class="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200"
-                    (click)="toggleEdit()"
-                  >
+                  <app-button (click)="toggleEdit()">
                     {{ 'Profile.edit' | translate }}
-                  </button>
+                  </app-button>
                 </div>
 
                 <div [ngClass]="{ 'profile-info': !isMobile(), 'profile-info-mobile': isMobile() }">
@@ -77,20 +76,15 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
                     {{ 'Basic.edit' | translate }}
                   </h2>
                   <div class="flex justify-end space-x-4">
-                    <button
-                      type="button"
-                      class="px-4 py-2 border border-border-primary dark:border-dark-border-primary rounded-md text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
-                      (click)="toggleEdit()"
-                    >
+                    <app-button type="button" (click)="toggleEdit()" variant="stroked">
                       {{ 'Basic.cancel' | translate }}
-                    </button>
-                    <button
+                    </app-button>
+                    <app-button
                       type="submit"
-                      class="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
                       [disabled]="!profileForm.valid || stateService.state() === LOADING_STATE_VALUE.LOADING"
                     >
                       {{ 'Basic.save' | translate }}
-                    </button>
+                    </app-button>
                   </div>
                 </div>
 

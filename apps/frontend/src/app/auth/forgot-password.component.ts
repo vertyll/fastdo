@@ -10,6 +10,7 @@ import { ToastPositionEnum } from '../shared/enums/toast-position.enum';
 import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-forgot-password',
@@ -22,13 +23,14 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
     TitleComponent,
     RouterLink,
     InputFieldComponent,
+    ButtonComponent,
   ],
   template: `
     <div
       class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.forgotPassword' | translate"></app-title>
-      <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()" class="mt-4">
+      <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()" class="mt-4 flex gap-2 flex-col">
         <app-input-field
           [label]="'Auth.email' | translate"
           [control]="getFormControl('email')"
@@ -41,12 +43,9 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
           <app-error-message [customMessage]="errorMessage" />
         }
 
-        <button
-          type="submit"
-          class="mt-4 submit-button w-full py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
-        >
+        <app-button type="submit">
           {{ 'Auth.sendResetLink' | translate }}
-        </button>
+        </app-button>
 
         <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkTypeEnum.Default">
           {{ 'Auth.backToLogin' | translate }}

@@ -11,6 +11,7 @@ import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { EmailChangeService } from './data-access/email-change.service';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-login',
@@ -21,13 +22,14 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
     LinkComponent,
     TitleComponent,
     InputFieldComponent,
+    ButtonComponent,
   ],
   template: `
     <div
       class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-background-primary dark:bg-dark-background-primary"
     >
       <app-title [text]="'Auth.login' | translate"></app-title>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-4">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-4 gap-2 flex flex-col">
         <div class="flex flex-col gap-4">
           <app-input-field
             [label]="'Auth.email' | translate"
@@ -47,12 +49,9 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
         @if (errorMessage) {
           <app-error-message [customMessage]="errorMessage" />
         }
-        <button
-          type="submit"
-          class="submit-button w-full py-2 mt-4 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
-        >
+        <app-button type="submit">
           {{ 'Auth.loginButton' | translate }}
-        </button>
+        </app-button>
         <app-link class="mt-4 block" [routerLink]="['/register']" [linkType]="LinkTypeEnum.Default">{{
           'Auth.dontHaveAccount' | translate
         }}</app-link>

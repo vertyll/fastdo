@@ -9,11 +9,19 @@ import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, ErrorMessageComponent, TitleComponent, InputFieldComponent],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    ErrorMessageComponent,
+    TitleComponent,
+    InputFieldComponent,
+    ButtonComponent,
+  ],
   template: `
     <div
       class="max-w-xl mx-auto p-6 border border-border-primary dark:border-dark-border-primary rounded-lg shadow-md mt-10 bg-surface-primary dark:bg-dark-surface-primary"
@@ -41,12 +49,9 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
           <app-error-message [customMessage]="errorMessage" />
         }
 
-        <button
-          type="submit"
-          class="submit-button w-full py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:bg-primary-700 dark:focus:ring-primary-800 transition-colors duration-200"
-        >
+        <app-button type="submit">
           {{ 'Auth.resetPasswordButton' | translate }}
-        </button>
+        </app-button>
       </form>
     </div>
   `,

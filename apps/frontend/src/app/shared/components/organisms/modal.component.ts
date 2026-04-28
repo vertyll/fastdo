@@ -150,12 +150,16 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
         </div>
 
         <div
-          class="px-6 py-4 border-t border-border-primary dark:border-dark-border-primary flex justify-end space-x-2 shrink-0"
+          class="px-6 py-4 border-t border-border-primary dark:border-dark-border-primary flex justify-between space-x-2 shrink-0"
         >
           @for (button of modalService.modal().options?.buttons; track button.role) {
             @switch (button.role) {
               @case (ButtonRole.Cancel) {
-                <app-button (click)="closeModal(button)" [disabled]="modalService.modal().options?.loading">
+                <app-button
+                  (click)="closeModal(button)"
+                  [disabled]="modalService.modal().options?.loading"
+                  variant="stroked"
+                >
                   {{ button.text }}
                 </app-button>
               }

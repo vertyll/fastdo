@@ -297,7 +297,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
           }
 
           <div class="flex justify-between items-center pt-6">
-            <app-button type="button" (click)="onCancel()">
+            <app-button type="button" (click)="onCancel()" variant="stroked">
               {{ 'Basic.cancel' | translate }}
             </app-button>
 

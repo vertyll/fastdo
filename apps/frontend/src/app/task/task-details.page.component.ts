@@ -80,20 +80,14 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
 
           @if (task()) {
             <div class="flex items-center gap-2">
-              <button
-                (click)="editTask()"
-                class="flex items-center gap-2 px-4 py-2 bg-primary-500 dark:bg-primary-600 text-white rounded-md hover:bg-primary-600 dark:hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 transition-colors duration-200 shadow-sm"
-              >
+              <app-button (click)="editTask()">
                 <ng-icon name="heroPencil" size="16"></ng-icon>
                 <span>{{ 'Basic.edit' | translate }}</span>
-              </button>
-              <button
-                (click)="deleteTask()"
-                class="flex items-center gap-2 px-4 py-2 bg-danger-500 dark:bg-danger-600 text-white rounded-md hover:bg-danger-600 dark:hover:bg-danger-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-danger-500 transition-colors duration-200 shadow-sm"
-              >
+              </app-button>
+              <app-button (click)="deleteTask()">
                 <ng-icon name="heroTrash" size="16"></ng-icon>
                 <span>{{ 'Basic.delete' | translate }}</span>
-              </button>
+              </app-button>
             </div>
           }
         </header>
@@ -195,11 +189,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                     />
                   </div>
                   <div class="flex justify-end">
-                    <button
-                      type="submit"
-                      [disabled]="commentForm.invalid || submittingComment()"
-                      class="flex items-center gap-2 px-6 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
-                    >
+                    <app-button type="submit" [disabled]="commentForm.invalid || submittingComment()">
                       <ng-icon name="heroPaperAirplane" size="16"></ng-icon>
                       <span>
                         @if (submittingComment()) {
@@ -208,7 +198,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                           {{ 'Task.addComment' | translate }}
                         }
                       </span>
-                    </button>
+                    </app-button>
                   </div>
                 </form>
 
@@ -276,18 +266,10 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                                 }
                               </div>
                               <div class="flex gap-2">
-                                <app-button
-                                  type="button"
-                                  (clicked)="onSaveEditComment()"
-                                  [cssClass]="'px-4 py-1.5 bg-info-600 text-white rounded-md hover:bg-info-700 text-sm font-semibold transition-colors'"
-                                >
+                                <app-button type="button" (clicked)="onSaveEditComment()">
                                   {{ 'Task.saveComment' | translate }}
                                 </app-button>
-                                <app-button
-                                  type="button"
-                                  (clicked)="onCancelEditComment()"
-                                  [cssClass]="'px-4 py-1.5 bg-neutral-500 text-white rounded-md hover:bg-neutral-600 text-sm font-semibold transition-colors'"
-                                >
+                                <app-button type="button" (clicked)="onCancelEditComment()">
                                   {{ 'Basic.cancel' | translate }}
                                 </app-button>
                               </div>

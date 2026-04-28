@@ -13,6 +13,7 @@ import { ToastService } from '../shared/services/toast.service';
 import { AuthService } from './data-access/auth.service';
 import { PasswordValidator } from './validators/password.validator';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-register',
@@ -27,6 +28,7 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
     RouterLink,
     CheckboxComponent,
     InputFieldComponent,
+    ButtonComponent,
   ],
   template: `
     <div
@@ -102,12 +104,9 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
           <app-error-message [customMessage]="errorMessage" />
         }
 
-        <button
-          type="submit"
-          class="submit-button w-full py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
-        >
+        <app-button type="submit">
           {{ 'Auth.registerButton' | translate }}
-        </button>
+        </app-button>
 
         <app-link class="mt-4 block" [routerLink]="['/login']" [linkType]="LinkTypeEnum.Default">
           {{ 'Auth.alreadyHaveAccount' | translate }}

@@ -304,7 +304,7 @@ interface NameColorFormItem {
           </div>
 
           <div class="flex justify-between items-center pt-6">
-            <app-button type="button" (click)="cancel()">
+            <app-button type="button" (click)="cancel()" variant="stroked">
               {{ 'Basic.cancel' | translate }}
             </app-button>
 

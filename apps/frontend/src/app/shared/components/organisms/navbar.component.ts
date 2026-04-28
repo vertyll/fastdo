@@ -24,6 +24,7 @@ import { NavModule, NavSection } from '../../defs/config.defs';
 import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 import { ToastComponent } from '../atoms/toast.component';
 import { NotificationDropdownComponent } from './notification-dropdown.component';
+import { ButtonComponent } from '../atoms/button.component';
 
 @Component({
   selector: 'app-navbar',
@@ -35,6 +36,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
     ThemeSwitcherComponent,
     ToastComponent,
     NotificationDropdownComponent,
+    ButtonComponent,
   ],
   viewProviders: [
     provideIcons({
@@ -167,19 +169,11 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
       }
 
       .auth-section {
-        @apply md:flex items-center space-x-4 hidden;
+        @apply md:flex items-center hidden;
       }
 
       .auth-button {
         @apply px-3 py-1.5 rounded-md transition-colors duration-200 text-sm font-medium;
-      }
-
-      .login-button {
-        @apply text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 transition-colors duration-200 dark:hover:bg-dark-surface-secondary;
-      }
-
-      .register-button {
-        @apply bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200;
       }
 
       .menu-button {
@@ -402,12 +396,12 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
               }
             </div>
             <div class="auth-section">
-              <button class="auth-button login-button" (click)="router.navigate(['/login'])">
+              <app-button class="auth-button" (click)="router.navigate(['/login'])">
                 {{ 'Basic.login' | translate }}
-              </button>
-              <button class="auth-button register-button" (click)="router.navigate(['/register'])">
+              </app-button>
+              <app-button class="auth-button" (click)="router.navigate(['/register'])">
                 {{ 'Basic.register' | translate }}
-              </button>
+              </app-button>
             </div>
             <div
               class="hamburger-icon"
