@@ -2,6 +2,8 @@ import { AfterViewInit, Component, OnDestroy, OnInit, inject, signal } from '@an
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroTrash } from '@ng-icons/heroicons/outline';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { AuthService } from '../auth/data-access/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
@@ -47,8 +49,16 @@ interface NameColorFormItem {
     HasProjectPermissionDirective,
     TextareaFieldComponent,
     SpinnerComponent,
+    NgIconComponent,
+  ],
+  providers: [
+    provideIcons({
+      heroTrash,
+    }),
   ],
   styles: `
+    @reference "../../style.css";
+
     input[type='color'] {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -59,12 +69,10 @@ interface NameColorFormItem {
       padding: 0;
     }
     input[type='color']::-webkit-color-swatch {
-      border: none;
-      border-radius: 0.375rem;
+      @apply border border-border-primary dark:border-dark-border-primary rounded-full shadow-sm;
     }
     input[type='color']::-moz-color-swatch {
-      border: none;
-      border-radius: 0.375rem;
+      @apply border border-border-primary dark:border-dark-border-primary rounded-full shadow-sm;
     }
   `,
   template: `
@@ -156,7 +164,7 @@ interface NameColorFormItem {
                         type="color"
                         [id]="'category-color-' + $index"
                         [formControl]="getCategoryColorControl($index)"
-                        class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
+                        class="w-11 h-11 cursor-pointer border-0 p-0 overflow-hidden outline-none hover:scale-105 transition-transform"
                         [title]="'Project.selectColor' | translate"
                       />
                     </div>
@@ -164,9 +172,11 @@ interface NameColorFormItem {
                   <button
                     type="button"
                     (click)="removeCategory($index)"
-                    class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
+                    class="p-2.5 text-danger-600 hover:text-danger-800 dark:text-danger-500 dark:hover:text-danger-400 rounded-md transition-colors"
+                    [title]="'Basic.remove' | translate"
+                    [attr.aria-label]="'Basic.remove' | translate"
                   >
-                    {{ 'Basic.remove' | translate }}
+                    <ng-icon name="heroTrash" size="20"></ng-icon>
                   </button>
                 </div>
               }
@@ -205,7 +215,7 @@ interface NameColorFormItem {
                         type="color"
                         [id]="'status-color-' + $index"
                         [formControl]="getStatusColorControl($index)"
-                        class="w-12 h-11 rounded-md cursor-pointer border-0 p-0 overflow-hidden shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
+                        class="w-11 h-11 cursor-pointer border-0 p-0 overflow-hidden outline-none hover:scale-105 transition-transform"
                         [title]="'Project.selectColor' | translate"
                       />
                     </div>
@@ -213,9 +223,11 @@ interface NameColorFormItem {
                   <button
                     type="button"
                     (click)="removeStatus($index)"
-                    class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900"
+                    class="p-2.5 text-danger-600 hover:text-danger-800 dark:text-danger-500 dark:hover:text-danger-400 rounded-md transition-colors"
+                    [title]="'Basic.remove' | translate"
+                    [attr.aria-label]="'Basic.remove' | translate"
                   >
-                    {{ 'Basic.remove' | translate }}
+                    <ng-icon name="heroTrash" size="20"></ng-icon>
                   </button>
                 </div>
               }
@@ -266,7 +278,7 @@ interface NameColorFormItem {
                   <button
                     type="button"
                     (click)="removeUserWithRole($index)"
-                    class="px-3 py-2 text-danger-600 hover:text-danger-800 rounded-md dark:hover:text-danger-900 self-start sm:self-auto sm:mb-1"
+                    class="p-2.5 text-danger-600 hover:text-danger-800 dark:text-danger-500 dark:hover:text-danger-400 rounded-md transition-colors self-start sm:self-end sm:mb-1"
                     [disabled]="isCurrentUser($index)"
                     [class.opacity-50]="isCurrentUser($index)"
                     [class.cursor-not-allowed]="isCurrentUser($index)"
@@ -275,8 +287,9 @@ interface NameColorFormItem {
                         ? ('Project.cannotRemoveYourself' | translate)
                         : ('Basic.remove' | translate)
                     "
+                    [attr.aria-label]="'Basic.remove' | translate"
                   >
-                    {{ 'Basic.remove' | translate }}
+                    <ng-icon name="heroTrash" size="20"></ng-icon>
                   </button>
                 </div>
               }
