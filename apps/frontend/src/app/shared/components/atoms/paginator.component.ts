@@ -26,7 +26,7 @@ import { PaginationParams } from '../../defs/filter.defs';
   ],
   template: `
     <div
-      class="flex flex-col items-start gap-2 md:flex-row md:items-center md:flex-wrap py-1 md:px-1 rounded-none border-0 bg-transparent"
+      class="flex flex-col items-start gap-3 md:flex-row md:items-center md:flex-wrap py-1 md:px-1 rounded-none border-0 bg-transparent"
     >
       @if (showOnlyTotal()) {
         <span
@@ -73,38 +73,40 @@ import { PaginationParams } from '../../defs/filter.defs';
           </button>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 order-2">
-          <label for="page-size-select" class="text-sm text-text-secondary dark:text-dark-text-secondary"
-            >{{ 'Paginator.itemsPerPage' | translate }}:</label
-          >
-          <div class="relative">
-            <select
-              id="page-size-select"
-              [ngModel]="pageSize()"
-              (ngModelChange)="onPageSizeChange($event)"
-              class="block w-20 appearance-none rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary hover:dark:bg-dark-background-primary py-1.5 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        <div class="flex flex-col md:flex-row md:items-center gap-3 order-2 items-start w-full">
+          <div class="flex items-center h-8 md:h-9 gap-2">
+            <label for="page-size-select" class="text-sm text-text-secondary dark:text-dark-text-secondary"
+              >{{ 'Paginator.itemsPerPage' | translate }}:</label
             >
-              @for (size of pageSizeOptions(); track size) {
-                <option [value]="size">{{ size }}</option>
-              }
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-              <svg
-                class="h-4 w-4 text-text-secondary dark:text-dark-text-secondary"
-                viewBox="0 0 20 20"
-                stroke="currentColor"
+            <div class="relative h-8 md:h-9">
+              <select
+                id="page-size-select"
+                [ngModel]="pageSize()"
+                (ngModelChange)="onPageSizeChange($event)"
+                class="block h-full w-20 appearance-none rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary hover:dark:bg-dark-background-primary py-1 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <path d="M7 7l3 3 3-3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
+                @for (size of pageSizeOptions(); track size) {
+                  <option [value]="size">{{ size }}</option>
+                }
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                <svg
+                  class="h-4 w-4 text-text-secondary dark:text-dark-text-secondary"
+                  viewBox="0 0 20 20"
+                  stroke="currentColor"
+                >
+                  <path d="M7 7l3 3 3-3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
             </div>
           </div>
 
-          <span class="text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap">
+          <span class="flex items-center h-8 md:h-9 text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap">
             {{ getRangeLabel(currentPage(), pageSize(), total()) }}
           </span>
 
-          <span class="text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap ml-2">
-            · {{ 'Basic.totalResults' | translate }}: <b>{{ total() }}</b>
+          <span class="flex items-center h-8 md:h-9 text-sm text-text-secondary dark:text-dark-text-secondary whitespace-nowrap">
+            {{ 'Basic.totalResults' | translate }}: <b class="ml-1">{{ total() }}</b>
           </span>
         </div>
       }
