@@ -25,7 +25,7 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
-import { DropdownComponent } from '../shared/components/atoms/dropdown.component';
+import { DropdownComponent, DropdownMenuDirective } from '../shared/components/atoms/dropdown.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
@@ -53,6 +53,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
     SpinnerComponent,
     TextareaFieldComponent,
     BackButtonComponent,
+    DropdownMenuDirective,
   ],
   providers: [
     provideIcons({
@@ -83,27 +84,25 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </app-button>
 
-              <div
-                dropdownMenu
-                class="w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-              >
+              <ng-container *appDropdownMenu>
                 <button
                   type="button"
-                  class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
+                  class="text-left flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
                   (click)="editTask(); closeDropdown()"
                 >
                   <ng-icon name="heroPencil" size="16"></ng-icon>
                   <span>{{ 'Basic.edit' | translate }}</span>
                 </button>
+
                 <button
                   type="button"
-                  class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
+                  class="text-left flex items-center gap-2 px-3 py-2 text-sm text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
                   (click)="deleteTask(); closeDropdown()"
                 >
                   <ng-icon name="heroTrash" size="16"></ng-icon>
                   <span>{{ 'Basic.delete' | translate }}</span>
                 </button>
-              </div>
+              </ng-container>
             </app-dropdown>
           }
         </header>

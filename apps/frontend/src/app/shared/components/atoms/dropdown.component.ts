@@ -12,7 +12,18 @@ import {
   ViewChild,
   afterNextRender,
   Injector,
+  ContentChild,
+  Directive,
+  TemplateRef,
 } from '@angular/core';
+
+@Directive({
+  selector: '[appDropdownMenu]',
+  standalone: true,
+})
+export class DropdownMenuDirective {
+  public templateRef = inject(TemplateRef<any>);
+}
 
 const activeDropdownRegistry = signal<DropdownComponent | null>(null);
 
@@ -35,7 +46,7 @@ const activeDropdownRegistry = signal<DropdownComponent | null>(null);
       }
 
       .dropdown-menu {
-        @apply min-w-max z-[9999] outline-none focus:outline-none;
+        @apply z-[9999] outline-none focus:outline-none;
         position: fixed;
         visibility: hidden;
         animation: dropdown-enter 200ms ease-out forwards;
@@ -72,14 +83,14 @@ const activeDropdownRegistry = signal<DropdownComponent | null>(null);
       @if (isOpen()) {
         <div
           #dropdownMenu
-          class="dropdown-menu"
+          class="dropdown-menu flex flex-col items-stretch bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
           [class.position-ready]="isPositionReady()"
           tabindex="-1"
           role="menu"
           (click)="$event.stopPropagation()"
           (keydown)="$event.stopPropagation()"
         >
-          <ng-content select="[dropdownMenu]"></ng-content>
+          <ng-container *ngTemplateOutlet="menuDirective?.templateRef || null"></ng-container>
         </div>
       }
     </div>
@@ -90,6 +101,8 @@ export class DropdownComponent implements OnDestroy {
 
   public readonly isOpen = signal(false);
   public isPositionReady = signal(false);
+
+  @ContentChild(DropdownMenuDirective) public menuDirective?: DropdownMenuDirective;
 
   @ViewChild('dropdownMenu') private readonly dropdownMenuRef?: ElementRef<HTMLElement>;
 
@@ -161,7 +174,11 @@ export class DropdownComponent implements OnDestroy {
         if (!menuEl) return;
 
         const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
+
+        menuEl.style.minWidth = `${triggerRect.width}px`;
+
         const menuRect = menuEl.getBoundingClientRect();
+
         const vw = window.innerWidth;
         const vh = window.innerHeight;
 

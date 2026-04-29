@@ -14,12 +14,12 @@ import { NotificationStateService } from '../../services/notification-state.serv
 import { NotificationService } from '../../services/notification.service';
 import { NotificationDto } from '../../defs/notification.defs';
 import { SpinnerComponent } from '../atoms/spinner.component';
-import { DropdownComponent } from '../atoms/dropdown.component'; // Pamiętaj o poprawnym imporcie
+import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component'; // Pamiętaj o poprawnym imporcie
 
 @Component({
   selector: 'app-notification-dropdown',
   standalone: true,
-  imports: [NgIconComponent, TranslateModule, SpinnerComponent, DropdownComponent],
+  imports: [NgIconComponent, TranslateModule, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
   viewProviders: [
     provideIcons({
       heroBell,
@@ -52,10 +52,7 @@ import { DropdownComponent } from '../atoms/dropdown.component'; // Pamiętaj o 
         }
       </button>
 
-      <div
-        dropdownMenu
-        class="notification-dropdown-panel w-[calc(100vw-2rem)] sm:w-96 md:w-80 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-2 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-      >
+      <div *appDropdownMenu class="w-[calc(100vw-2rem)] sm:w-96 md:w-80 py-2">
         <div
           class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary"
         >

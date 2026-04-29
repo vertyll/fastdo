@@ -24,7 +24,7 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 import { ToastComponent } from '../atoms/toast.component';
 import { NotificationDropdownComponent } from './notification-dropdown.component';
 import { ButtonComponent } from '../atoms/button.component';
-import { DropdownComponent } from '../atoms/dropdown.component';
+import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
 import { configNavModules } from 'src/app/config/config.nav.modules';
 
 @Component({
@@ -39,6 +39,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
     NotificationDropdownComponent,
     ButtonComponent,
     DropdownComponent,
+    DropdownMenuDirective,
   ],
   viewProviders: [
     provideIcons({
@@ -199,7 +200,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
       }
 
       .language-option {
-        @apply px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
+        @apply block px-4 py-2 text-left text-sm text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary;
       }
 
       .language-option.active {
@@ -247,10 +248,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              <div
-                dropdownMenu
-                class="w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-              >
+              <ng-container *appDropdownMenu>
                 @for (lang of languages; track lang) {
                   <button
                     class="language-option"
@@ -260,7 +258,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                     {{ lang.toUpperCase() }}
                   </button>
                 }
-              </div>
+              </ng-container>
             </app-dropdown>
 
             <div class="auth-section">
@@ -277,17 +275,14 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                 <button class="menu-button" dropdownTrigger aria-label="Toggle menu">
                   <ng-icon name="heroBars4" size="24"></ng-icon>
                 </button>
-                <div
-                  dropdownMenu
-                  class="w-48 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-                >
-                  <button class="mobile-module-item w-full text-left" (click)="navigateToLoginPage()">
+                <ng-container *appDropdownMenu>
+                  <button class="mobile-module-item text-left" (click)="navigateToLoginPage()">
                     {{ 'Basic.login' | translate }}
                   </button>
-                  <button class="mobile-module-item w-full text-left" (click)="navigateToRegisterPage()">
+                  <button class="mobile-module-item text-left" (click)="navigateToRegisterPage()">
                     {{ 'Basic.register' | translate }}
                   </button>
-                </div>
+                </ng-container>
               </app-dropdown>
             </div>
           </div>
@@ -321,12 +316,9 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              <div
-                dropdownMenu
-                class="w-40 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-              >
+              <ng-container *appDropdownMenu>
                 <button
-                  class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary hover:text-link-hover dark:hover:text-link-dark-hover"
+                  class="auth-button text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary hover:text-link-hover dark:hover:text-link-dark-hover"
                   (click)="navigateToProfile()"
                 >
                   <ng-icon name="heroUserCircle" size="16"></ng-icon>
@@ -335,7 +327,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                   </span>
                 </button>
                 <button
-                  class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
+                  class="auth-button text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
                   (click)="logout()"
                 >
                   <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
@@ -343,7 +335,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                     {{ 'Basic.logout' | translate }}
                   </span>
                 </button>
-              </div>
+              </ng-container>
             </app-dropdown>
             <app-notification-dropdown
               [isMobileContext]="false"
@@ -357,10 +349,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              <div
-                dropdownMenu
-                class="w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-              >
+              <ng-container *appDropdownMenu>
                 @for (lang of languages; track lang) {
                   <button
                     class="language-option"
@@ -370,7 +359,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                     {{ lang.toUpperCase() }}
                   </button>
                 }
-              </div>
+              </ng-container>
             </app-dropdown>
           </div>
 
@@ -381,10 +370,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              <div
-                dropdownMenu
-                class="w-56 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-              >
+              <ng-container *appDropdownMenu>
                 @for (module of modules(); track module.id) {
                   <div
                     class="mobile-module-item"
@@ -432,7 +418,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                     <span>{{ 'Basic.logout' | translate }}</span>
                   </button>
                 </div>
-              </div>
+              </ng-container>
             </app-dropdown>
 
             <div class="relative flex flex-row items-center space-x-1">
@@ -448,20 +434,17 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                   <ng-icon name="heroChevronDown" size="16"></ng-icon>
                 </button>
 
-                <div
-                  dropdownMenu
-                  class="w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
-                >
+                <ng-container *appDropdownMenu>
                   @for (lang of languages; track lang) {
                     <button
-                      class="mobile-module-item w-full text-left"
+                      class="mobile-module-item text-left"
                       [class.active]="getCurrentLanguage() === lang.toUpperCase()"
                       (click)="selectLanguage(lang)"
                     >
                       {{ lang.toUpperCase() }}
                     </button>
                   }
-                </div>
+                </ng-container>
               </app-dropdown>
             </div>
           </div>

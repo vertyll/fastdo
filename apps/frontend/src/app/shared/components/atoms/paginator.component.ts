@@ -10,13 +10,13 @@ import {
 } from '@ng-icons/heroicons/solid';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PaginationParams } from '../../defs/filter.defs';
-import { DropdownComponent } from 'src/app/shared/components/atoms/dropdown.component';
+import { DropdownComponent, DropdownMenuDirective } from 'src/app/shared/components/atoms/dropdown.component';
 import { DEFAULT_PAGE_SIZE } from 'src/app/app.contansts';
 
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [FormsModule, NgIconComponent, TranslatePipe, DropdownComponent],
+  imports: [FormsModule, NgIconComponent, TranslatePipe, DropdownComponent, DropdownMenuDirective],
   providers: [
     provideIcons({
       heroChevronDoubleLeftSolid,
@@ -95,20 +95,17 @@ import { DEFAULT_PAGE_SIZE } from 'src/app/app.contansts';
                 </svg>
               </div>
 
-              <div
-                dropdownMenu
-                class="rounded-md border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-lg overflow-hidden"
-              >
+              <ng-container *appDropdownMenu>
                 @for (size of pageSizeOptions(); track size) {
                   <button
                     (click)="onPageSizeChange(size)"
-                    class="block w-full px-4 py-2 text-left text-sm text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
+                    class="block px-4 py-2 text-left text-sm text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
                     [class.font-semibold]="size === pageSize()"
                   >
                     {{ size }}
                   </button>
                 }
-              </div>
+              </ng-container>
             </app-dropdown>
           </div>
 
