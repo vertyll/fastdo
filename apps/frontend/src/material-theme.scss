@@ -42,7 +42,6 @@ $dark-theme: mat.define-theme(
   // Tokens: https://material.angular.dev/components/form-field/styling
   @include mat.form-field-overrides(
     (
-      filled-container-color: var(--color-surface-variant),
       filled-focus-active-indicator-color: var(--mat-sys-primary),
       filled-active-indicator-color: var(--mat-sys-on-surface-variant),
       filled-input-text-color: var(--mat-sys-on-surface),
@@ -54,7 +53,6 @@ $dark-theme: mat.define-theme(
   // Datepicker — light
   @include mat.datepicker-overrides(
     (
-      calendar-container-background-color: var(--color-surface-variant),
       calendar-container-text-color: var(--mat-sys-on-surface),
     )
   );
@@ -66,7 +64,6 @@ $dark-theme: mat.define-theme(
   // Form field — filled appearance (dark)
   @include mat.form-field-overrides(
     (
-      filled-container-color: var(--color-dark-surface-variant),
       filled-focus-active-indicator-color: var(--mat-sys-primary),
       filled-active-indicator-color: var(--mat-sys-on-surface-variant),
       filled-input-text-color: var(--mat-sys-on-surface),
@@ -78,68 +75,34 @@ $dark-theme: mat.define-theme(
   // Datepicker — dark
   @include mat.datepicker-overrides(
     (
-      calendar-container-background-color: var(--color-dark-surface-variant),
       calendar-container-text-color: var(--mat-sys-on-surface),
     )
   );
 }
 
-.mat-mdc-snack-bar-container.success-snackbar {
-  --mdc-snackbar-container-color: var(--color-success-600);
-  --mdc-snackbar-supporting-text-color: #ffffff;
-  --mat-snack-bar-button-color: var(--color-warning-300);
-  --mdc-snackbar-container-shape: 10px;
-
-  .mdc-snackbar__surface {
-    background-color: var(--color-success-600) !important;
-    border-radius: 10px !important;
-  }
-  .mdc-snackbar__label,
-  .mat-mdc-snack-bar-label {
-    color: #ffffff !important;
-  }
-  .mat-mdc-snack-bar-action,
-  .mat-mdc-snack-bar-action .mdc-button__label {
-    color: var(--color-warning-300) !important;
-  }
+.success-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #059669,
+    supporting-text-color: #ffffff,
+    button-color: #fcd34d,
+    container-shape: 10px,
+  ));
 }
 
-.mat-mdc-snack-bar-container.error-snackbar {
-  --mdc-snackbar-container-color: var(--color-danger-600);
-  --mdc-snackbar-supporting-text-color: #ffffff;
-  --mat-snack-bar-button-color: var(--color-warning-300);
-  --mdc-snackbar-container-shape: 10px;
-
-  .mdc-snackbar__surface {
-    background-color: var(--color-danger-600) !important;
-    border-radius: 10px !important;
-  }
-  .mdc-snackbar__label,
-  .mat-mdc-snack-bar-label {
-    color: #ffffff !important;
-  }
-  .mat-mdc-snack-bar-action,
-  .mat-mdc-snack-bar-action .mdc-button__label {
-    color: var(--color-warning-300) !important;
-  }
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #dc2626,
+    supporting-text-color: #ffffff,
+    button-color: #fcd34d,
+    container-shape: 10px,
+  ));
 }
 
-.mat-mdc-snack-bar-container.info-snackbar {
-  --mdc-snackbar-container-color: var(--color-neutral-600);
-  --mdc-snackbar-supporting-text-color: #ffffff;
-  --mat-snack-bar-button-color: var(--color-warning-300);
-  --mdc-snackbar-container-shape: 10px;
-
-  .mdc-snackbar__surface {
-    background-color: var(--color-neutral-600) !important;
-    border-radius: 10px !important;
-  }
-  .mdc-snackbar__label,
-  .mat-mdc-snack-bar-label {
-    color: #ffffff !important;
-  }
-  .mat-mdc-snack-bar-action,
-  .mat-mdc-snack-bar-action .mdc-button__label {
-    color: var(--color-warning-300) !important;
-  }
+.info-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #4b5563,
+    supporting-text-color: #ffffff,
+    button-color: #fcd34d,
+    container-shape: 10px,
+  ));
 }
