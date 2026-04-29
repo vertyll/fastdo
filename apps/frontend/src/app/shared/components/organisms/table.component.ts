@@ -175,7 +175,7 @@ export interface TableConfig {
   ],
   template: `
     <div
-      class="table-wrapper flex flex-col gap-0 rounded-lg border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-sm overflow-hidden"
+      class="table-wrapper relative flex flex-col gap-0 rounded-lg border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-sm overflow-hidden"
     >
       @if (config().filters?.length) {
         <div
