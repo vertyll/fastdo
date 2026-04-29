@@ -46,7 +46,6 @@ import { ModalService } from '../../services/modal.service';
       }
     </div>
   `,
-  standalone: true,
 })
 export class RemoveItemButtonComponent {
   private readonly modalService = inject(ModalService);

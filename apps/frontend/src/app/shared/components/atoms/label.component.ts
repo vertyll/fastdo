@@ -3,7 +3,6 @@ import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-label',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <label

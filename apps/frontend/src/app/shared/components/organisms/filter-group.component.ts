@@ -57,7 +57,6 @@ import {
       heroXMark,
     }),
   ],
-  standalone: true,
   template: `
     <div>
       @if (collapsible()) {

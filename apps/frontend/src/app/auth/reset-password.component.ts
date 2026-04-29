@@ -13,7 +13,6 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-reset-password',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

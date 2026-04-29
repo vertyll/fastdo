@@ -14,7 +14,6 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-forgot-password',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

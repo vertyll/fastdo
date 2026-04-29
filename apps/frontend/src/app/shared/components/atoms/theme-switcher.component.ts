@@ -8,7 +8,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-theme-switcher',
-  standalone: true,
   imports: [CommonModule, NgIconComponent, TranslatePipe],
   providers: [provideIcons({ heroSun, heroMoon })],
   template: `

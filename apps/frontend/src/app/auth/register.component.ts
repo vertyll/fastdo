@@ -17,7 +17,6 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-register',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

@@ -4,7 +4,6 @@ import { TruncateTextPipe } from '../../pipes/truncate-text.pipe';
 
 @Component({
   selector: 'app-title',
-  standalone: true,
   imports: [MatTooltipModule, TruncateTextPipe],
   template: `
     <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">

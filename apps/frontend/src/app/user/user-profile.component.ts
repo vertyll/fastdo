@@ -20,7 +20,6 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 
 @Component({
   selector: 'app-user-profile',
-  standalone: true,
   imports: [
     TranslateModule,
     ReactiveFormsModule,
@@ -289,7 +288,7 @@ export class UserProfileComponent implements OnInit {
 
   protected getEmailErrorMessage(): string {
     const control = this.profileForm?.get('email');
-    if (!control || !control.touched) return '';
+    if (!control?.touched) return '';
     if (control.hasError('required')) return this.translateService.instant('Auth.emailRequired');
     if (control.hasError('email')) return this.translateService.instant('Auth.emailInvalid');
     return '';
@@ -297,7 +296,7 @@ export class UserProfileComponent implements OnInit {
 
   protected getPasswordErrorMessage(controlName: string): string {
     const control = this.profileForm?.get(controlName);
-    if (!control || !control.touched) return '';
+    if (!control?.touched) return '';
     if (control.hasError('required')) return this.translateService.instant('Auth.passwordRequired');
     if (control.hasError('minlength')) return this.translateService.instant('Auth.passwordMinLength');
     if (control.hasError('uppercase')) return this.translateService.instant('Auth.passwordUppercase');
@@ -307,7 +306,7 @@ export class UserProfileComponent implements OnInit {
 
   protected getConfirmNewPasswordErrorMessage(): string {
     const control = this.profileForm?.get('confirmNewPassword');
-    if (!control || !control.touched) return '';
+    if (!control?.touched) return '';
     const newPassword = this.profileForm.get('newPassword')?.value;
     const confirmNewPassword = control.value;
     if (newPassword && newPassword !== confirmNewPassword) {

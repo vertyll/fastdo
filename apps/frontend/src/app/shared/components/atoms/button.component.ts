@@ -7,7 +7,6 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon';
 
 @Component({
   selector: 'app-button',
-  standalone: true,
   imports: [CommonModule, TranslateModule, MatButtonModule],
   template: `
     <ng-template #contentTemplate>

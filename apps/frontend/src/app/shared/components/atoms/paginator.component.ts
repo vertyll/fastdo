@@ -15,7 +15,6 @@ import { DEFAULT_PAGE_SIZE } from 'src/app/app.contansts';
 
 @Component({
   selector: 'app-paginator',
-  standalone: true,
   imports: [FormsModule, NgIconComponent, TranslatePipe, DropdownComponent, DropdownMenuDirective],
   providers: [
     provideIcons({

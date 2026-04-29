@@ -2,7 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroChevronUp } from '@ng-icons/heroicons/outline';
 import { TranslatePipe } from '@ngx-translate/core';
-import { SCROLL_TO_TOP_THRESHOLD } from '../../../app.contansts';
+import { SCROLL_TO_TOP_THRESHOLD } from 'src/app/app.contansts';
 
 @Component({
   selector: 'app-scroll-to-top',

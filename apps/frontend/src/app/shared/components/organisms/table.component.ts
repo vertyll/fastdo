@@ -149,7 +149,6 @@ export interface TableConfig {
 
 @Component({
   selector: 'app-table',
-  standalone: true,
   imports: [
     CommonModule,
     MatTableModule,

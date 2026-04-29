@@ -23,7 +23,6 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 
 @Component({
   selector: 'app-image',
-  standalone: true,
   imports: [CommonModule, NgIconComponent, TranslatePipe, ButtonComponent],
   providers: [provideIcons({ heroCamera, heroUserCircle, heroEye, heroXMark })],
   template: `

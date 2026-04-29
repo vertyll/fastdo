@@ -13,7 +13,6 @@ import { TitleComponent } from '../atoms/title.component';
 
 @Component({
   selector: 'app-notification-settings',
-  standalone: true,
   imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
   template: `
     <div class="max-w-2xl mx-auto">

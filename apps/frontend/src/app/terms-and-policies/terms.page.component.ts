@@ -7,12 +7,10 @@ import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { TermsAndPolicyService } from './data-access/terms-and-policy.service';
 import { TermsAndPolicyStateService } from './data-access/terms-and-policy.state.service';
-import { LegalSectionEnum } from './defs/terms-and-policies.defs';
-import { Section, SectionTranslation } from './defs/terms-and-policies.defs';
+import { LegalSectionEnum, Section, SectionTranslation } from './defs/terms-and-policies.defs';
 
 @Component({
   selector: 'app-terms-page',
-  standalone: true,
   imports: [TranslateModule, SpinnerComponent, ErrorMessageComponent, DatePipe],
   template: `
     @switch (stateService.state()) {

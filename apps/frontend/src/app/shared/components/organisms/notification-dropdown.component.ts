@@ -18,7 +18,6 @@ import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.comp
 
 @Component({
   selector: 'app-notification-dropdown',
-  standalone: true,
   imports: [NgIconComponent, TranslateModule, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
   viewProviders: [
     provideIcons({

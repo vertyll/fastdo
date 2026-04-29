@@ -19,7 +19,6 @@ import {
 
 @Directive({
   selector: '[appDropdownMenu]',
-  standalone: true,
 })
 export class DropdownMenuDirective {
   public templateRef = inject(TemplateRef<any>);
@@ -29,7 +28,6 @@ const activeDropdownRegistry = signal<DropdownComponent | null>(null);
 
 @Component({
   selector: 'app-dropdown',
-  standalone: true,
   imports: [CommonModule],
   styles: [
     `

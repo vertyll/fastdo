@@ -31,7 +31,6 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
 
 @Component({
   selector: 'app-task-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
