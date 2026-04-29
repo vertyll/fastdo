@@ -824,7 +824,7 @@ export interface TableConfig {
 
       .loading-more-overlay {
         position: absolute;
-        bottom: 0;
+        bottom: 30px;
         left: 0;
         right: 0;
         background: var(--app-table-overlay-bg);
