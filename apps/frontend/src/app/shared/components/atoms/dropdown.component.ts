@@ -35,38 +35,20 @@ const activeDropdownRegistry = signal<DropdownComponent | null>(null);
       }
 
       .dropdown-menu {
-        @apply absolute min-w-max z-[100] outline-none focus:outline-none;
+        @apply min-w-max z-[9999] outline-none focus:outline-none;
+        position: fixed;
         visibility: hidden;
+        animation: dropdown-enter 200ms ease-out forwards;
       }
 
       .dropdown-menu.position-ready {
         visibility: visible;
       }
 
-      .dropdown-menu.align-left {
-        left: 0;
-      }
-      .dropdown-menu.align-right {
-        right: 0;
-      }
-
-      .dropdown-menu.align-top {
-        bottom: 100%;
-        margin-bottom: 0.25rem;
-      }
-      .dropdown-menu.align-bottom {
-        top: 100%;
-        margin-top: 0.25rem;
-      }
-
-      .dropdown-menu {
-        animation: dropdown-enter 200ms ease-out forwards;
-      }
-
       @keyframes dropdown-enter {
         from {
           opacity: 0;
-          transform: translateY(-10px);
+          transform: translateY(-6px);
         }
         to {
           opacity: 1;
@@ -91,13 +73,7 @@ const activeDropdownRegistry = signal<DropdownComponent | null>(null);
         <div
           #dropdownMenu
           class="dropdown-menu"
-          [ngClass]="{
-            'align-left': !isRightAligned() && !isCentered(),
-            'align-right': isRightAligned() && !isCentered(),
-            'align-top': isTopAligned(),
-            'align-bottom': !isTopAligned(),
-            'position-ready': isPositionReady(),
-          }"
+          [class.position-ready]="isPositionReady()"
           tabindex="-1"
           role="menu"
           (click)="$event.stopPropagation()"
@@ -113,9 +89,6 @@ export class DropdownComponent implements OnDestroy {
   public closeSignal = input<number>();
 
   public readonly isOpen = signal(false);
-  public isRightAligned = signal(false);
-  public isTopAligned = signal(false);
-  public isCentered = signal(false);
   public isPositionReady = signal(false);
 
   @ViewChild('dropdownMenu') private readonly dropdownMenuRef?: ElementRef<HTMLElement>;
@@ -154,7 +127,6 @@ export class DropdownComponent implements OnDestroy {
   public close(): void {
     this.isOpen.set(false);
     this.isPositionReady.set(false);
-    this.isCentered.set(false);
 
     if (activeDropdownRegistry() === this) {
       activeDropdownRegistry.set(null);
@@ -181,51 +153,38 @@ export class DropdownComponent implements OnDestroy {
   }
 
   private calculatePosition(): void {
-    const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    this.applyHorizontalPosition(triggerRect, viewportWidth, 300);
-    this.isTopAligned.set(triggerRect.bottom > viewportHeight / 2);
     this.isPositionReady.set(false);
 
     afterNextRender(
       () => {
         const menuEl = this.dropdownMenuRef?.nativeElement;
-        if (!menuEl) {
-          this.isPositionReady.set(true);
-          return;
-        }
+        if (!menuEl) return;
 
-        const actualWidth = menuEl.getBoundingClientRect().width;
-        this.applyHorizontalPosition(triggerRect, viewportWidth, actualWidth);
+        const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
+        const menuRect = menuEl.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
 
-        if (this.isCentered()) {
-          const centerOffset = viewportWidth / 2 - triggerRect.left - actualWidth / 2;
-          menuEl.style.left = `${centerOffset}px`;
+        const spaceBelow = vh - triggerRect.bottom;
+        const openUpward = spaceBelow < menuRect.height && triggerRect.top > spaceBelow;
+        const top = openUpward ? triggerRect.top - menuRect.height - 4 : triggerRect.bottom + 4;
+
+        menuEl.style.top = `${top}px`;
+
+        const fitsFromLeft = triggerRect.left + menuRect.width <= vw;
+        const fitsFromRight = triggerRect.right - menuRect.width >= 0;
+
+        if (!fitsFromLeft && !fitsFromRight) {
+          menuEl.style.left = `${(vw - menuRect.width) / 2}px`;
+        } else if (fitsFromLeft) {
+          menuEl.style.left = `${triggerRect.left}px`;
         } else {
-          menuEl.style.left = '';
+          menuEl.style.left = `${triggerRect.right - menuRect.width}px`;
         }
 
         this.isPositionReady.set(true);
       },
       { injector: this.injector },
     );
-  }
-
-  private applyHorizontalPosition(triggerRect: DOMRect, viewportWidth: number, menuWidth: number): void {
-    const overflowsRight = triggerRect.left + menuWidth > viewportWidth;
-    const overflowsLeft = triggerRect.right - menuWidth < 0;
-
-    if (overflowsRight && overflowsLeft) {
-      this.isCentered.set(true);
-      this.isRightAligned.set(false);
-    } else if (overflowsRight) {
-      this.isCentered.set(false);
-      this.isRightAligned.set(true);
-    } else {
-      this.isCentered.set(false);
-      this.isRightAligned.set(false);
-    }
   }
 }
