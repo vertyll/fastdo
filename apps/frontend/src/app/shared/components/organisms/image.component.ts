@@ -14,8 +14,8 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe } from '@ngx-translate/core';
 import Cropper from 'cropperjs';
-import { environment } from '../../../../environments/environment';
 import { ButtonComponent } from 'src/app/shared/components/atoms/button.component';
+import { environment } from 'src/environments/environment';
 
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';

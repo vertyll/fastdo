@@ -18,6 +18,18 @@ export default tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.name='effect']:not(MethodDefinition[kind='constructor'] *)",
+          message: "Angular signals 'effect()' must be initialized inside the constructor to ensure proper injection context and consistent architecture.",
+        },
+        {
+          selector: "CallExpression[callee.name='effect'] > ArrowFunctionExpression > BlockStatement[body.length>1]",
+          message: "Don't put complex logic inside effect(). Extract it to a private method (e.g., effect(() => this.handleChanges())).",
+        },
+      ],
+
       'prettier/prettier': 'error',
 
       '@angular-eslint/directive-selector': [
