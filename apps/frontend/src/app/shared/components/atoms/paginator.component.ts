@@ -9,13 +9,14 @@ import {
   heroChevronRightSolid,
 } from '@ng-icons/heroicons/solid';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { DEFAULT_PAGE_SIZE } from '../../../app.contansts';
 import { PaginationParams } from '../../defs/filter.defs';
+import { DropdownComponent } from 'src/app/shared/components/atoms/dropdown.component';
+import { DEFAULT_PAGE_SIZE } from 'src/app/app.contansts';
 
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [FormsModule, NgIconComponent, TranslatePipe],
+  imports: [FormsModule, NgIconComponent, TranslatePipe, DropdownComponent],
   providers: [
     provideIcons({
       heroChevronDoubleLeftSolid,
@@ -75,21 +76,16 @@ import { PaginationParams } from '../../defs/filter.defs';
 
         <div class="flex flex-col md:flex-row md:items-center gap-3 order-2 items-start w-full md:w-auto">
           <div class="flex items-center h-8 md:h-9 gap-2">
-            <label for="page-size-select" class="text-sm text-text-secondary dark:text-dark-text-secondary"
-              >{{ 'Paginator.itemsPerPage' | translate }}:</label
-            >
-            <div class="relative h-8 md:h-9">
-              <select
-                id="page-size-select"
-                [ngModel]="pageSize()"
-                (ngModelChange)="onPageSizeChange($event)"
-                class="block h-full w-20 appearance-none rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary hover:dark:bg-dark-background-primary py-1 pl-3 pr-8 text-text-primary dark:text-dark-text-primary focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            <span class="text-sm text-text-secondary dark:text-dark-text-secondary">
+              {{ 'Paginator.itemsPerPage' | translate }}:
+            </span>
+
+            <app-dropdown>
+              <div
+                dropdownTrigger
+                class="inline-flex items-center gap-1.5 h-8 md:h-9 px-3 rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary hover:bg-background-primary dark:hover:bg-dark-background-primary text-sm text-text-primary dark:text-dark-text-primary"
               >
-                @for (size of pageSizeOptions(); track size) {
-                  <option [value]="size">{{ size }}</option>
-                }
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                {{ pageSize() }}
                 <svg
                   class="h-4 w-4 text-text-secondary dark:text-dark-text-secondary"
                   viewBox="0 0 20 20"
@@ -98,7 +94,22 @@ import { PaginationParams } from '../../defs/filter.defs';
                   <path d="M7 7l3 3 3-3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
               </div>
-            </div>
+
+              <div
+                dropdownMenu
+                class="rounded-md border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-lg overflow-hidden"
+              >
+                @for (size of pageSizeOptions(); track size) {
+                  <button
+                    (click)="onPageSizeChange(size)"
+                    class="block w-full px-4 py-2 text-left text-sm text-text-primary dark:text-dark-text-primary hover:bg-background-secondary dark:hover:bg-dark-background-secondary"
+                    [class.font-semibold]="size === pageSize()"
+                  >
+                    {{ size }}
+                  </button>
+                }
+              </div>
+            </app-dropdown>
           </div>
 
           <span
@@ -161,38 +172,26 @@ export class PaginatorComponent {
 
   protected onFirstPage(): void {
     if (this.currentPage() !== 0) {
-      this.pageChange.emit({
-        page: 0,
-        pageSize: this.pageSize(),
-      });
+      this.pageChange.emit({ page: 0, pageSize: this.pageSize() });
     }
   }
 
   protected onPreviousPage(): void {
     if (this.currentPage() > 0) {
-      this.pageChange.emit({
-        page: this.currentPage() - 1,
-        pageSize: this.pageSize(),
-      });
+      this.pageChange.emit({ page: this.currentPage() - 1, pageSize: this.pageSize() });
     }
   }
 
   protected onNextPage(): void {
     if (!this.isLastPage() && this.total() > 0) {
-      this.pageChange.emit({
-        page: this.currentPage() + 1,
-        pageSize: this.pageSize(),
-      });
+      this.pageChange.emit({ page: this.currentPage() + 1, pageSize: this.pageSize() });
     }
   }
 
   protected onLastPage(): void {
     const lastPage = Math.ceil(this.total() / this.pageSize()) - 1;
     if (this.currentPage() !== lastPage && lastPage >= 0) {
-      this.pageChange.emit({
-        page: lastPage,
-        pageSize: this.pageSize(),
-      });
+      this.pageChange.emit({ page: lastPage, pageSize: this.pageSize() });
     }
   }
 
