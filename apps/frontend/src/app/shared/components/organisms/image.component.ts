@@ -56,16 +56,16 @@ export type ImageSize = 'sm' | 'md' | 'lg';
             (click)="$event.preventDefault(); $event.stopPropagation(); fileInput.click()"
             [attr.aria-label]="'Image.uploadImage' | translate"
           >
-            <ng-icon name="heroCamera" size="20" class="text-text-primary dark:text-dark-text-primary" />
+            <ng-icon name="heroCamera" size="18" class="text-text-primary dark:text-dark-text-primary" />
           </button>
           @if (previewUrl()) {
             <button
-              class="absolute flex bottom-3 right-14 bg-red-500 hover:bg-red-600 rounded-full p-2 shadow-md  transition-colors duration-200"
+              class="absolute flex bottom-3 right-13 bg-red-500 hover:bg-red-600 rounded-full p-2 shadow-md  transition-colors duration-200"
               (click)="$event.preventDefault(); $event.stopPropagation(); removeImage()"
               [attr.aria-label]="'Image.removeImage' | translate"
               [title]="'Image.removeImage' | translate"
             >
-              <ng-icon name="heroXMark" size="20" class="text-white" />
+              <ng-icon name="heroXMark" size="18" class="text-white" />
             </button>
           }
         }
@@ -118,11 +118,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
             </div>
 
             <div class="flex justify-end mt-4 space-x-3">
-              <app-button
-                (click)="closeCropper()"
-                [attr.aria-label]="'Basic.cancel' | translate"
-                variant="stroked"
-              >
+              <app-button (click)="closeCropper()" [attr.aria-label]="'Basic.cancel' | translate" variant="stroked">
                 {{ 'Basic.cancel' | translate }}
               </app-button>
               <app-button
