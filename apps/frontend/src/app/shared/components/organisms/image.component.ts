@@ -15,6 +15,7 @@ import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroic
 import { TranslatePipe } from '@ngx-translate/core';
 import Cropper from 'cropperjs';
 import { environment } from '../../../../environments/environment';
+import { ButtonComponent } from 'src/app/shared/components/atoms/button.component';
 
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';
@@ -23,7 +24,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
 @Component({
   selector: 'app-image',
   standalone: true,
-  imports: [CommonModule, NgIconComponent, TranslatePipe],
+  imports: [CommonModule, NgIconComponent, TranslatePipe, ButtonComponent],
   providers: [provideIcons({ heroCamera, heroUserCircle, heroEye, heroXMark })],
   template: `
     <div class="relative">
@@ -117,21 +118,20 @@ export type ImageSize = 'sm' | 'md' | 'lg';
             </div>
 
             <div class="flex justify-end mt-4 space-x-3">
-              <button
+              <app-button
                 (click)="closeCropper()"
-                class="px-4 py-2 text-text-primary dark:text-dark-text-primary bg-neutral-200 dark:bg-neutral-700 rounded-md hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors duration-200"
                 [attr.aria-label]="'Basic.cancel' | translate"
+                variant="stroked"
               >
                 {{ 'Basic.cancel' | translate }}
-              </button>
-              <button
+              </app-button>
+              <app-button
                 (click)="save()"
                 [disabled]="isSaving()"
-                class="px-4 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors duration-200 disabled:opacity-50"
                 [attr.aria-label]="isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate)"
               >
                 {{ isSaving() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
-              </button>
+              </app-button>
             </div>
           </div>
         </div>

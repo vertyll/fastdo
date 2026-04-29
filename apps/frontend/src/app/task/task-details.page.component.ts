@@ -34,6 +34,7 @@ import { getContrastColor } from '../shared/utils/color.utils';
 import { TasksService } from './data-access/task.service';
 import { Task, TaskComment } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
+import { BackButtonComponent } from '../shared/components/molecules/back-button.component';
 
 @Component({
   selector: 'app-task-details',
@@ -49,6 +50,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
     ButtonComponent,
     SpinnerComponent,
     TextareaFieldComponent,
+    BackButtonComponent,
   ],
   providers: [
     provideIcons({
@@ -69,14 +71,8 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
   template: `
     <div class="min-h-screen">
       <div class="container mx-auto max-w-7xl">
-        <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-          <button
-            (click)="goBack()"
-            class="flex items-center gap-2 text-text-primary dark:text-dark-text-primary hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors duration-200"
-          >
-            <ng-icon name="heroArrowLeft" size="20"></ng-icon>
-            <span>{{ 'Basic.back' | translate }}</span>
-          </button>
+        <header class="flex flex-row items-start justify-between gap-4 mb-6">
+          <app-back-button (clicked)="goBack()"></app-back-button>
 
           @if (task()) {
             <div class="flex items-center gap-2">
@@ -101,7 +97,7 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
             <div class="lg:col-span-2 space-y-6">
               <div class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border">
                 <h1
-                  class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4"
+                  class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4 wrap-break-word"
                 >
                   {{ task()!.description }}
                 </h1>
@@ -111,7 +107,9 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                     <h2 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">
                       {{ 'Task.additionalDescription' | translate }}
                     </h2>
-                    <p class="text-text-primary dark:text-dark-text-primary leading-relaxed">
+                    <p
+                      class="text-text-primary dark:text-dark-text-primary leading-relaxed wrap-break-word whitespace-pre-wrap"
+                    >
                       {{ task()!.additionalDescription }}
                     </p>
                   </div>
@@ -266,17 +264,17 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                                 }
                               </div>
                               <div class="flex gap-2">
+                                <app-button type="button" (clicked)="onCancelEditComment()" variant="stroked">
+                                  {{ 'Basic.cancel' | translate }}
+                                </app-button>
                                 <app-button type="button" (clicked)="onSaveEditComment()">
                                   {{ 'Task.saveComment' | translate }}
-                                </app-button>
-                                <app-button type="button" (clicked)="onCancelEditComment()">
-                                  {{ 'Basic.cancel' | translate }}
                                 </app-button>
                               </div>
                             </div>
                           } @else {
                             <div class="group">
-                              <div class="flex justify-between items-center mb-1">
+                              <div class="flex justify-between items-center">
                                 <span class="font-semibold text-text-primary dark:text-dark-text-primary">
                                   {{ comment.author.email }}
                                 </span>
@@ -301,15 +299,19 @@ import { TextareaFieldComponent } from '../shared/components/molecules/textarea-
                                   }
                                 </div>
                               </div>
-                              <div class="flex flex-wrap gap-2 mt-1">
-                                <span class="text-xs text-text-muted dark:text-dark-text-muted">
-                                  {{ 'Task.dateCreation' | translate }}:
-                                  {{ comment.dateCreation | customDate: 'dd.MM.yyyy HH:mm' }}
-                                </span>
-                                <span class="text-xs text-text-muted dark:text-dark-text-muted">
-                                  {{ 'Task.dateModification' | translate }}:
-                                  {{ (comment.dateModification | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
-                                </span>
+                              <div class="flex flex-wrap flex-col">
+                                <div>
+                                  <span class="text-xs text-text-muted dark:text-dark-text-muted">
+                                    {{ 'Task.dateCreation' | translate }}:
+                                    {{ comment.dateCreation | customDate: 'dd.MM.yyyy HH:mm' }}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span class="text-xs text-text-muted dark:text-dark-text-muted">
+                                    {{ 'Task.dateModification' | translate }}:
+                                    {{ (comment.dateModification | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
+                                  </span>
+                                </div>
                               </div>
                               <p class="text-text-primary dark:text-dark-text-primary wrap-break-word">
                                 {{ comment.content }}

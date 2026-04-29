@@ -58,7 +58,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         <div class="flex gap-2 items-center">
           <app-title
             [text]="('Task.project' | translate) + ' : ' + projectName()"
-            [limit]="platformService.isMobile() ? 6 : null"
+            [limit]="platformService.isMobile() ? 6 : 48"
           />
           @if (projectIsPublic()) {
             <button
