@@ -397,16 +397,16 @@ export interface TableConfig {
           />
         </div>
       }
-    </div>
 
-    @if (config().infiniteScroll && config().loadingMore) {
-      <div class="loading-more-overlay">
-        <div class="loading-more-content">
-          <app-spinner />
-          <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
+      @if (config().infiniteScroll && config().loadingMore) {
+        <div class="loading-more-overlay">
+          <div class="loading-more-content">
+            <app-spinner />
+            <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
+          </div>
         </div>
-      </div>
-    }
+      }
+    </div>
   `,
   styles: [
     `
