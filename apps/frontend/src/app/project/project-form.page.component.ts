@@ -493,7 +493,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected getRequiredOrMinLengthError(control: FormControl): string {
-    if (!control || !control.touched) return '';
+    if (!control?.touched) return '';
     if (control.hasError('required')) {
       return this.translateService.instant('FormValidationMessage.required');
     }
@@ -505,7 +505,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected getEmailFieldError(control: FormControl): string {
-    if (!control || !control.touched) return '';
+    if (!control?.touched) return '';
     if (control.hasError('required')) {
       return this.translateService.instant('FormValidationMessage.required');
     }

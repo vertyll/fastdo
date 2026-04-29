@@ -49,6 +49,6 @@ export class DateInputComponent {
   public readonly errorStateMatcher = input<ErrorStateMatcher | null>(null);
 
   protected readonly defaultErrorStateMatcher: ErrorStateMatcher = {
-    isErrorState: control => !!(control && control.invalid && (control.dirty || control.touched)),
+    isErrorState: control => !!(control?.invalid && (control.dirty || control.touched)),
   };
 }
