@@ -2,8 +2,9 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import { defineConfig } from 'eslint/config'; // Importujemy nowy helper
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ['.angular/**', 'dist/**', 'node_modules/**', '.vscode/**', 'coverage/**'],
   },
@@ -120,3 +121,4 @@ export default tseslint.config(
     },
   },
 );
+

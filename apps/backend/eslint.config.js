@@ -35,19 +35,10 @@ module.exports = [
       'no-unused-disable-directives': 'off',
 
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-parameter-properties': 'off',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
-      ],
       '@typescript-eslint/no-explicit-any': 'off',
       // "@typescript-eslint/ban-types": "off",
       // "@typescript-eslint/no-inferrable-types": "off",
