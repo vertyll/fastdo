@@ -166,12 +166,7 @@ export class InfoPanelComponent {
   private readonly browserSection = viewChild<ElementRef>('browserSection');
 
   constructor() {
-    effect(() => {
-      const sectionName = this.expandedSection();
-      if (sectionName) {
-        setTimeout(() => this.scrollToSection(sectionName), 50);
-      }
-    });
+    effect(() => this.handleExpandedSection());
   }
 
   protected toggleSection(section: string): void {
@@ -190,6 +185,13 @@ export class InfoPanelComponent {
 
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
+    }
+  }
+
+  private handleExpandedSection(): void {
+    const sectionName = this.expandedSection();
+    if (sectionName) {
+      setTimeout(() => this.scrollToSection(sectionName), 50);
     }
   }
 }

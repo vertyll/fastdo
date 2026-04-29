@@ -190,16 +190,8 @@ export class ImageComponent implements OnDestroy {
   }
 
   constructor() {
-    effect(() => {
-      const url = this.initialUrl();
-      if (url) {
-        this.previewUrl.set(this.getFullImageUrl(url));
-      }
-    });
-
-    effect(() => {
-      this.croppingChange.emit(this.showCropper());
-    });
+    effect(() => this.handleInitialUrlChange());
+    effect(() => this.handleCroppingChange());
   }
 
   ngOnDestroy(): void {
@@ -333,5 +325,16 @@ export class ImageComponent implements OnDestroy {
     } finally {
       this.isSaving.set(false);
     }
+  }
+
+  private handleInitialUrlChange(): void {
+    const url = this.initialUrl();
+    if (url) {
+      this.previewUrl.set(this.getFullImageUrl(url));
+    }
+  }
+
+  private handleCroppingChange(): void {
+    this.croppingChange.emit(this.showCropper());
   }
 }

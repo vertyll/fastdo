@@ -17,7 +17,6 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { configNavModules } from '../../../config/config.nav.modules';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NavModule, NavSection } from '../../defs/config.defs';
@@ -25,6 +24,8 @@ import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
 import { ToastComponent } from '../atoms/toast.component';
 import { NotificationDropdownComponent } from './notification-dropdown.component';
 import { ButtonComponent } from '../atoms/button.component';
+import { DropdownComponent } from '../atoms/dropdown.component';
+import { configNavModules } from 'src/app/config/config.nav.modules';
 
 @Component({
   selector: 'app-navbar',
@@ -37,6 +38,7 @@ import { ButtonComponent } from '../atoms/button.component';
     ToastComponent,
     NotificationDropdownComponent,
     ButtonComponent,
+    DropdownComponent,
   ],
   viewProviders: [
     provideIcons({
@@ -57,7 +59,6 @@ import { ButtonComponent } from '../atoms/button.component';
       @reference "../../../../style.css";
 
       /* ── Animation keyframes ── */
-
       @keyframes dropdown-enter {
         from {
           opacity: 0;
@@ -80,74 +81,7 @@ import { ButtonComponent } from '../atoms/button.component';
         }
       }
 
-      @keyframes overlay-enter {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes overlay-leave {
-        from {
-          opacity: 1;
-        }
-        to {
-          opacity: 0;
-        }
-      }
-
-      @keyframes mobile-nav-enter {
-        from {
-          opacity: 0;
-          transform: translateY(-100%);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes mobile-nav-leave {
-        from {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        to {
-          opacity: 0;
-          transform: translateY(-100%);
-        }
-      }
-
-      /* ── Animation classes applied by animate.enter / animate.leave ── */
-
-      .anim-dropdown-enter {
-        animation: dropdown-enter 200ms ease-out forwards;
-      }
-
-      .anim-dropdown-leave {
-        animation: dropdown-leave 200ms ease-in forwards;
-      }
-
-      .anim-overlay-enter {
-        animation: overlay-enter 200ms ease-out forwards;
-      }
-
-      .anim-overlay-leave {
-        animation: overlay-leave 200ms ease-in forwards;
-      }
-
-      .anim-mobile-nav-enter {
-        animation: mobile-nav-enter 300ms ease-out forwards;
-      }
-
-      .anim-mobile-nav-leave {
-        animation: mobile-nav-leave 300ms ease-in forwards;
-      }
-
       /* ── Component styles ── */
-
       .top-nav {
         @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary z-50 px-2.5 transition-colors duration-200;
       }
@@ -178,34 +112,6 @@ import { ButtonComponent } from '../atoms/button.component';
 
       .menu-button {
         @apply flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary relative transition-colors duration-200;
-      }
-
-      .menu-button.active {
-        @apply bg-primary-50 dark:bg-primary-900/50 text-primary-500 dark:text-primary-400 transition-colors duration-200;
-      }
-
-      .mobile-menu {
-        @apply fixed inset-0 z-50 md:hidden;
-      }
-
-      .mobile-menu-overlay {
-        @apply fixed inset-0 bg-black/30;
-      }
-
-      .mobile-menu-content {
-        @apply absolute w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-        position: absolute;
-        top: 3.5rem;
-        left: 4rem;
-      }
-
-      .mobile-menu-content.language-menu {
-        @apply absolute w-24 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-        position: absolute;
-        top: 3rem;
-        right: 0.5rem;
-        left: auto;
-        z-index: 60;
       }
 
       .mobile-module-item {
@@ -292,52 +198,12 @@ import { ButtonComponent } from '../atoms/button.component';
         @apply flex items-center space-x-1 px-3 py-1.5 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-sm font-medium text-text-primary dark:text-dark-text-primary transition-colors duration-200 relative;
       }
 
-      .language-dropdown {
-        @apply absolute right-0 top-full mt-1 w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-      }
-
-      .profile-dropdown {
-        @apply absolute right-0 top-full mt-1 w-32 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200;
-      }
-
       .language-option {
         @apply px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary cursor-pointer w-full text-left transition-colors duration-200;
       }
 
       .language-option.active {
         @apply text-primary-500 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 transition-colors duration-200;
-      }
-
-      .hamburger-icon {
-        @apply md:hidden w-6 h-6 flex flex-col justify-center items-center cursor-pointer relative z-50;
-      }
-
-      .hamburger-line {
-        @apply w-6 h-0.5 bg-text-secondary dark:bg-dark-text-secondary transition-all duration-300;
-      }
-
-      .hamburger-line:not(:last-child) {
-        @apply mb-1.5;
-      }
-
-      .hamburger-active .hamburger-line:nth-child(1) {
-        @apply transform rotate-45 translate-y-2;
-      }
-
-      .hamburger-active .hamburger-line:nth-child(2) {
-        @apply opacity-0;
-      }
-
-      .hamburger-active .hamburger-line:nth-child(3) {
-        @apply transform -rotate-45 -translate-y-2;
-      }
-
-      .mobile-nav-menu {
-        @apply md:hidden fixed inset-0 bg-background-primary dark:bg-dark-background-primary pt-20 transition-all duration-300 z-40 flex flex-col items-center gap-2;
-      }
-
-      .mobile-nav-item {
-        @apply text-center text-xl font-medium text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 py-2;
       }
 
       @media (max-width: 768px) {
@@ -375,26 +241,28 @@ import { ButtonComponent } from '../atoms/button.component';
           </span>
           <div class="flex items-center space-x-4">
             <app-theme-switcher />
-            <div class="relative">
-              <button class="language-button" (click)="toggleLanguageDropdown($event)">
+            <app-dropdown [closeSignal]="closeNotificationDropdown()">
+              <button class="language-button" dropdownTrigger>
                 <span>{{ getCurrentLanguage() }}</span>
-                <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+                <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              @if (languageDropdownOpen) {
-                <div class="language-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
-                  @for (lang of languages; track lang) {
-                    <button
-                      class="language-option"
-                      [class.active]="getCurrentLanguage() === lang.toUpperCase()"
-                      (click)="selectLanguage(lang)"
-                    >
-                      {{ lang.toUpperCase() }}
-                    </button>
-                  }
-                </div>
-              }
-            </div>
+              <div
+                dropdownMenu
+                class="w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+              >
+                @for (lang of languages; track lang) {
+                  <button
+                    class="language-option"
+                    [class.active]="getCurrentLanguage() === lang.toUpperCase()"
+                    (click)="selectLanguage(lang)"
+                  >
+                    {{ lang.toUpperCase() }}
+                  </button>
+                }
+              </div>
+            </app-dropdown>
+
             <div class="auth-section">
               <app-button class="auth-button" (click)="router.navigate(['/login'])">
                 {{ 'Basic.login' | translate }}
@@ -403,34 +271,28 @@ import { ButtonComponent } from '../atoms/button.component';
                 {{ 'Basic.register' | translate }}
               </app-button>
             </div>
-            <div
-              class="hamburger-icon"
-              [class.hamburger-active]="mobileMenuOpen"
-              (click)="toggleMobileMenu()"
-              (keydown.enter)="toggleMobileMenu()"
-              (keydown.space)="toggleMobileMenu(); $event.preventDefault()"
-              role="button"
-              tabindex="0"
-              [attr.aria-label]="'Navbar.toggleMenu' | translate"
-            >
-              <span class="hamburger-line"></span>
-              <span class="hamburger-line"></span>
-              <span class="hamburger-line"></span>
+
+            <div class="md:hidden">
+              <app-dropdown [closeSignal]="closeNotificationDropdown()">
+                <button class="menu-button" dropdownTrigger aria-label="Toggle menu">
+                  <ng-icon name="heroBars4" size="24"></ng-icon>
+                </button>
+                <div
+                  dropdownMenu
+                  class="w-48 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+                >
+                  <button class="mobile-module-item w-full text-left" (click)="navigateToLoginPage()">
+                    {{ 'Basic.login' | translate }}
+                  </button>
+                  <button class="mobile-module-item w-full text-left" (click)="navigateToRegisterPage()">
+                    {{ 'Basic.register' | translate }}
+                  </button>
+                </div>
+              </app-dropdown>
             </div>
           </div>
         </div>
       </nav>
-
-      @if (mobileMenuOpen) {
-        <div class="mobile-nav-menu" animate.enter="anim-mobile-nav-enter" animate.leave="anim-mobile-nav-leave">
-          <button class="mobile-nav-item w-full" (click)="navigateToLoginPage()">
-            {{ 'Basic.login' | translate }}
-          </button>
-          <button class="mobile-nav-item w-full" (click)="navigateToRegisterPage()">
-            {{ 'Basic.register' | translate }}
-          </button>
-        </div>
-      }
     } @else {
       <nav class="top-nav">
         <div class="nav-content">
@@ -453,52 +315,146 @@ import { ButtonComponent } from '../atoms/button.component';
           </div>
 
           <div class="hidden md:flex items-center space-x-4">
-            <div class="relative">
-              <button class="profile-button gap-1" (click)="toggleProfileDropdown($event)">
+            <app-dropdown [closeSignal]="closeNotificationDropdown()">
+              <button class="profile-button gap-1" dropdownTrigger>
                 <span>Menu</span>
-                <ng-icon [name]="profileDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+                <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              @if (profileDropdownOpen) {
-                <div class="profile-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
-                  <button
-                    class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary hover:text-link-hover dark:hover:text-link-dark-hover"
-                    (click)="router.navigate(['/user-profile'])"
-                  >
-                    <ng-icon name="heroUserCircle" size="16"></ng-icon>
-                    <span>
-                      {{ 'Navbar.profile' | translate }}
-                    </span>
-                  </button>
-                  <button
-                    class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
-                    (click)="logout()"
-                  >
-                    <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
-                    <span>
-                      {{ 'Basic.logout' | translate }}
-                    </span>
-                  </button>
-                </div>
-              }
-            </div>
+              <div
+                dropdownMenu
+                class="w-40 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+              >
+                <button
+                  class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary hover:text-link-hover dark:hover:text-link-dark-hover"
+                  (click)="navigateToProfile()"
+                >
+                  <ng-icon name="heroUserCircle" size="16"></ng-icon>
+                  <span>
+                    {{ 'Navbar.profile' | translate }}
+                  </span>
+                </button>
+                <button
+                  class="auth-button w-full text-left flex items-center gap-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300"
+                  (click)="logout()"
+                >
+                  <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
+                  <span>
+                    {{ 'Basic.logout' | translate }}
+                  </span>
+                </button>
+              </div>
+            </app-dropdown>
             <app-notification-dropdown
               [isMobileContext]="false"
               [isMobileMenuOpen]="false"
               [closeSignal]="closeNotificationDropdown()"
             />
             <app-theme-switcher />
-            <div class="relative">
-              <button class="language-button" (click)="toggleLanguageDropdown($event)">
+            <app-dropdown [closeSignal]="closeNotificationDropdown()">
+              <button class="language-button" dropdownTrigger>
                 <span>{{ getCurrentLanguage() }}</span>
-                <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
+                <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
-              @if (languageDropdownOpen) {
-                <div class="language-dropdown" animate.enter="anim-dropdown-enter" animate.leave="anim-dropdown-leave">
+              <div
+                dropdownMenu
+                class="w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+              >
+                @for (lang of languages; track lang) {
+                  <button
+                    class="language-option"
+                    [class.active]="getCurrentLanguage() === lang.toUpperCase()"
+                    (click)="selectLanguage(lang)"
+                  >
+                    {{ lang.toUpperCase() }}
+                  </button>
+                }
+              </div>
+            </app-dropdown>
+          </div>
+
+          <div class="flex md:hidden w-full justify-between">
+            <app-dropdown [closeSignal]="closeNotificationDropdown()">
+              <button class="menu-button" dropdownTrigger>
+                <span>Menu</span>
+                <ng-icon name="heroChevronDown" size="16"></ng-icon>
+              </button>
+
+              <div
+                dropdownMenu
+                class="w-56 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+              >
+                @for (module of modules(); track module.id) {
+                  <div
+                    class="mobile-module-item"
+                    [class.active]="currentModule() === module.id"
+                    (click)="selectModule(module)"
+                    (keydown.enter)="selectModule(module)"
+                    (keydown.space)="selectModule(module); $event.preventDefault()"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="module.title | translate"
+                  >
+                    <ng-icon [name]="module.icon" size="20"></ng-icon>
+                    <span>{{ module.title | translate }}</span>
+                  </div>
+                }
+                <div class="border-t border-border-primary dark:border-dark-border-primary mt-1">
+                  <button
+                    (click)="navigateToProfile()"
+                    class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left flex items-center"
+                  >
+                    <ng-icon name="heroUserCircle" size="16"></ng-icon>
+                    <span>{{ 'Navbar.profile' | translate }}</span>
+                  </button>
+                  <button
+                    (click)="navigateToNotificationSettings()"
+                    class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left flex items-center"
+                  >
+                    <div class="flex items-center justify-between w-full">
+                      <div class="flex items-center space-x-2">
+                        <ng-icon name="heroBell" size="16"></ng-icon>
+                        <span>{{ 'Notifications.title' | translate }}</span>
+                      </div>
+                      @if (unreadNotificationCount() > 0) {
+                        <span class="counter-badge">
+                          {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
+                        </span>
+                      }
+                    </div>
+                  </button>
+                  <button
+                    (click)="logout()"
+                    class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left flex items-center"
+                  >
+                    <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
+                    <span>{{ 'Basic.logout' | translate }}</span>
+                  </button>
+                </div>
+              </div>
+            </app-dropdown>
+
+            <div class="relative flex flex-row items-center space-x-1">
+              <app-notification-dropdown
+                [isMobileContext]="true"
+                [isMobileMenuOpen]="false"
+                [closeSignal]="closeNotificationDropdown()"
+              />
+              <app-theme-switcher />
+              <app-dropdown [closeSignal]="closeNotificationDropdown()">
+                <button class="menu-button" dropdownTrigger>
+                  <span>{{ getCurrentLanguage() }}</span>
+                  <ng-icon name="heroChevronDown" size="16"></ng-icon>
+                </button>
+
+                <div
+                  dropdownMenu
+                  class="w-24 bg-background-primary dark:bg-dark-background-primary shadow-lg rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+                >
                   @for (lang of languages; track lang) {
                     <button
-                      class="language-option"
+                      class="mobile-module-item w-full text-left"
                       [class.active]="getCurrentLanguage() === lang.toUpperCase()"
                       (click)="selectLanguage(lang)"
                     >
@@ -506,135 +462,11 @@ import { ButtonComponent } from '../atoms/button.component';
                     </button>
                   }
                 </div>
-              }
-            </div>
-          </div>
-          <div class="flex md:hidden w-full justify-between">
-            <button class="menu-button" (click)="toggleMenu()">
-              <span>Menu</span>
-              <ng-icon [name]="menuOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
-            </button>
-            <div class="relative flex flex-row items-center space-x-1">
-              <app-notification-dropdown
-                [isMobileContext]="true"
-                [isMobileMenuOpen]="mobileMenuOpen"
-                [closeSignal]="closeNotificationDropdown()"
-              />
-              <app-theme-switcher />
-              <button class="menu-button" (click)="toggleLanguageDropdown($event)">
-                <span>{{ getCurrentLanguage() }}</span>
-                <ng-icon [name]="languageDropdownOpen ? 'heroChevronUp' : 'heroChevronDown'" size="16"></ng-icon>
-              </button>
-
-              @if (languageDropdownOpen) {
-                <div
-                  class="mobile-menu"
-                  (click)="closeLanguageDropdown()"
-                  (keydown.escape)="closeLanguageDropdown()"
-                  role="dialog"
-                  aria-modal="true"
-                  tabindex="-1"
-                >
-                  <div
-                    class="mobile-menu-overlay"
-                    animate.enter="anim-overlay-enter"
-                    animate.leave="anim-overlay-leave"
-                  ></div>
-                  <div
-                    class="mobile-menu-content language-menu"
-                    (click)="$event.stopPropagation()"
-                    (keydown.escape)="$event.stopPropagation()"
-                    role="menu"
-                    tabindex="-1"
-                    animate.enter="anim-dropdown-enter"
-                    animate.leave="anim-dropdown-leave"
-                  >
-                    @for (lang of languages; track lang) {
-                      <button
-                        class="mobile-module-item w-full text-left"
-                        [class.active]="getCurrentLanguage() === lang.toUpperCase()"
-                        (click)="selectLanguage(lang)"
-                      >
-                        {{ lang.toUpperCase() }}
-                      </button>
-                    }
-                  </div>
-                </div>
-              }
+              </app-dropdown>
             </div>
           </div>
         </div>
       </nav>
-
-      @if (menuOpen) {
-        <div
-          class="mobile-menu"
-          (click)="closeMenu()"
-          (keydown.escape)="closeMenu()"
-          role="dialog"
-          aria-modal="true"
-          tabindex="-1"
-        >
-          <div class="mobile-menu-overlay" animate.enter="anim-overlay-enter" animate.leave="anim-overlay-leave"></div>
-          <div
-            class="mobile-menu-content"
-            (click)="$event.stopPropagation()"
-            (keydown.escape)="$event.stopPropagation()"
-            role="menu"
-            tabindex="-1"
-            animate.enter="anim-dropdown-enter"
-            animate.leave="anim-dropdown-leave"
-          >
-            @for (module of modules(); track module.id) {
-              <div
-                class="mobile-module-item"
-                [class.active]="currentModule() === module.id"
-                (click)="selectModuleAndCloseMenu(module)"
-                (keydown.enter)="selectModuleAndCloseMenu(module)"
-                (keydown.space)="selectModuleAndCloseMenu(module); $event.preventDefault()"
-                role="button"
-                tabindex="0"
-                [attr.aria-label]="module.title | translate"
-              >
-                <ng-icon [name]="module.icon" size="20"></ng-icon>
-                <span>{{ module.title | translate }}</span>
-              </div>
-            }
-            <div class="border-t border-border-primary dark:border-dark-border-primary mt-1">
-              <button
-                (click)="navigateToProfileAndCloseMenu()"
-                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left flex items-center"
-              >
-                <ng-icon name="heroUserCircle" size="16"></ng-icon>
-                <span>{{ 'Navbar.profile' | translate }}</span>
-              </button>
-              <button
-                (click)="navigateToNotificationSettingsAndCloseMenu()"
-                class="mobile-module-item text-text-primary dark:text-dark-text-primary hover:text-text-primary dark:hover:text-dark-text-primary w-full text-left flex items-center"
-              >
-                <div class="flex items-center justify-between w-full">
-                  <div class="flex items-center space-x-2">
-                    <ng-icon name="heroBell" size="16"></ng-icon>
-                    <span>{{ 'Notifications.title' | translate }}</span>
-                  </div>
-                  @if (unreadNotificationCount() > 0) {
-                    <span class="counter-badge">
-                      {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
-                    </span>
-                  }
-                </div>
-              </button>
-              <button
-                (click)="logout()"
-                class="mobile-module-item text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 w-full text-left flex items-center"
-              >
-                <ng-icon name="heroArrowRightOnRectangle" size="16"></ng-icon>
-                <span>{{ 'Basic.logout' | translate }}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      }
 
       <nav class="side-nav">
         <div class="side-nav-content">
@@ -716,11 +548,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly currentSection = signal<string>('');
   protected readonly unreadNotificationCount = this.notificationStateService.unreadCount;
 
-  protected menuOpen: boolean = false;
-  protected mobileMenuOpen: boolean = false;
   protected showAllSections: boolean = false;
-  protected languageDropdownOpen: boolean = false;
-  protected profileDropdownOpen: boolean = false;
   protected readonly languages: string[] = ['pl', 'en'];
   protected readonly closeNotificationDropdown = signal<number>(0);
 
@@ -733,58 +561,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeNavigation();
     this.notificationStateService.refreshNotifications();
-
-    document.addEventListener('click', this.handleOutsideClick);
   }
 
   ngOnDestroy(): void {
     this.routerSubscription?.unsubscribe();
-    document.removeEventListener('click', this.handleOutsideClick);
-  }
-
-  protected toggleMobileMenu(): void {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
-    if (this.languageDropdownOpen) {
-      this.closeLanguageDropdown();
-    }
   }
 
   protected getCurrentLanguage(): string {
     return this.translateService.getCurrentLang().toUpperCase();
   }
 
-  protected toggleLanguageDropdown(event: Event): void {
-    event.stopPropagation();
-    this.languageDropdownOpen = !this.languageDropdownOpen;
-    if (this.languageDropdownOpen) {
-      this.profileDropdownOpen = false;
-      this.closeNotificationDropdown.set(Date.now());
-    }
-  }
-
-  protected closeLanguageDropdown = (): void => {
-    this.languageDropdownOpen = false;
-    document.removeEventListener('click', this.closeLanguageDropdown);
-  };
-
-  protected toggleProfileDropdown(event: Event): void {
-    event.stopPropagation();
-    this.profileDropdownOpen = !this.profileDropdownOpen;
-    if (this.profileDropdownOpen) {
-      this.languageDropdownOpen = false;
-      this.closeNotificationDropdown.set(Date.now());
-    }
-  }
-
-  protected closeProfileDropdown = (): void => {
-    this.profileDropdownOpen = false;
-    document.removeEventListener('click', this.closeProfileDropdown);
-  };
-
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
     this.localStorageService.set('selected_language', lang);
-    this.languageDropdownOpen = false;
+    this.closeNotificationDropdown.set(Date.now());
   }
 
   protected updateVisibleSections(): void {
@@ -811,6 +601,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.currentSection.set(defaultSection.id);
 
     this.router.navigate([module.route]).then();
+    this.closeNotificationDropdown.set(Date.now()); // Zamknięcie dropdowna po nawigacji
   }
 
   protected selectSection(section: NavSection): void {
@@ -818,38 +609,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate([section.route]).then();
   }
 
-  protected selectModuleAndCloseMenu(module: NavModule): void {
-    this.selectModule(module);
-    this.closeMenu();
-  }
-
-  protected navigateToProfileAndCloseMenu(): void {
+  protected navigateToProfile(): void {
     this.router.navigate(['/user-profile']).then();
-    this.closeMenu();
+    this.closeNotificationDropdown.set(Date.now());
   }
 
-  protected navigateToNotificationSettingsAndCloseMenu(): void {
+  protected navigateToNotificationSettings(): void {
     this.router.navigate(['/notification-settings']).then();
-    this.closeMenu();
-  }
-
-  protected toggleMenu(): void {
-    this.menuOpen = !this.menuOpen;
-    if (this.menuOpen) {
-      this.closeNotificationDropdown.set(Date.now());
-    }
-  }
-
-  protected closeMenu(): void {
-    this.menuOpen = false;
+    this.closeNotificationDropdown.set(Date.now());
   }
 
   protected logout(): void {
     this.authService.logout();
     this.router.navigate(['/']).then();
-    if (this.menuOpen) {
-      this.closeMenu();
-    }
+    this.closeNotificationDropdown.set(Date.now());
   }
 
   protected navigateToHomePage(): void {
@@ -857,11 +630,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected navigateToLoginPage(): void {
-    this.router.navigate(['/login']).then(() => (this.mobileMenuOpen = false));
+    this.router.navigate(['/login']).then(() => this.closeNotificationDropdown.set(Date.now()));
   }
 
   protected navigateToRegisterPage(): void {
-    this.router.navigate(['/register']).then(() => (this.mobileMenuOpen = false));
+    this.router.navigate(['/register']).then(() => this.closeNotificationDropdown.set(Date.now()));
   }
 
   private initializeNavigation(): void {
@@ -899,16 +672,4 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.currentSection.set(activeModule.sections[0].id);
     }
   }
-
-  private readonly handleOutsideClick = (event: MouseEvent): void => {
-    const target = event.target as HTMLElement;
-
-    if (this.languageDropdownOpen && !target.closest('.language-button')) {
-      this.languageDropdownOpen = false;
-    }
-
-    if (this.profileDropdownOpen && !target.closest('.profile-button')) {
-      this.profileDropdownOpen = false;
-    }
-  };
 }

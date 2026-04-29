@@ -141,24 +141,7 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   protected readonly isSubmitting = signal(false);
 
   constructor() {
-    effect(() => {
-      const settings = this.notificationStateService.settings();
-      if (settings && this.settingsForm) {
-        this.settingsForm.patchValue(
-          {
-            appNotifications: settings.appNotifications,
-            emailNotifications: settings.emailNotifications,
-            projectInvitations: settings.projectInvitations,
-            taskAssignments: settings.taskAssignments,
-            taskComments: settings.taskComments,
-            taskStatusChanges: settings.taskStatusChanges,
-            projectUpdates: settings.projectUpdates,
-            systemNotifications: settings.systemNotifications,
-          },
-          { emitEvent: false },
-        );
-      }
-    });
+    effect(() => this.handleSettingsChange());
   }
 
   ngOnInit(): void {
@@ -215,6 +198,26 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+
+  private handleSettingsChange(): void {
+    const settings = this.notificationStateService.settings();
+
+    if (settings && this.settingsForm) {
+      this.settingsForm.patchValue(
+        {
+          appNotifications: settings.appNotifications,
+          emailNotifications: settings.emailNotifications,
+          projectInvitations: settings.projectInvitations,
+          taskAssignments: settings.taskAssignments,
+          taskComments: settings.taskComments,
+          taskStatusChanges: settings.taskStatusChanges,
+          projectUpdates: settings.projectUpdates,
+          systemNotifications: settings.systemNotifications,
+        },
+        { emitEvent: false },
+      );
+    }
   }
 
   private initializeForm(): void {

@@ -199,13 +199,7 @@ export class ModalComponent {
   public form: FormGroup = new FormGroup({});
 
   constructor() {
-    effect(() => {
-      const modalConfig = this.modalService.modal();
-      if (modalConfig) {
-        this.initializeForm(modalConfig);
-        this.initializeDynamicComponents(modalConfig);
-      }
-    });
+    effect(() => this.handleModalConfigChange());
   }
 
   protected getFormControl(name: string): FormControl {
@@ -244,6 +238,14 @@ export class ModalComponent {
           await this.handleButtonAction(saveButton);
         }
       }
+    }
+  }
+
+  private handleModalConfigChange(): void {
+    const modalConfig = this.modalService.modal();
+    if (modalConfig) {
+      this.initializeForm(modalConfig);
+      this.initializeDynamicComponents(modalConfig);
     }
   }
 

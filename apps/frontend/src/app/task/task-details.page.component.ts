@@ -25,6 +25,7 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
+import { DropdownComponent } from '../shared/components/atoms/dropdown.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { NotificationTypeEnum } from '../shared/enums/notification.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
@@ -48,6 +49,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
     FileUploadComponent,
     ImageComponent,
     ButtonComponent,
+    DropdownComponent,
     SpinnerComponent,
     TextareaFieldComponent,
     BackButtonComponent,
@@ -75,16 +77,34 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
           <app-back-button (clicked)="goBack()"></app-back-button>
 
           @if (task()) {
-            <div class="flex items-center gap-2">
-              <app-button (click)="editTask()">
-                <ng-icon name="heroPencil" size="16"></ng-icon>
-                <span>{{ 'Basic.edit' | translate }}</span>
+            <app-dropdown [closeSignal]="closeDropdownSignal()">
+              <app-button variant="stroked" type="button" dropdownTrigger>
+                <span>{{ 'Basic.actions' | translate }}</span>
+                <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </app-button>
-              <app-button (click)="deleteTask()">
-                <ng-icon name="heroTrash" size="16"></ng-icon>
-                <span>{{ 'Basic.delete' | translate }}</span>
-              </app-button>
-            </div>
+
+              <div
+                dropdownMenu
+                class="w-48 bg-surface-primary dark:bg-dark-surface-primary shadow-medium rounded-md py-1 border border-border-primary dark:border-dark-border-primary transition-colors duration-200"
+              >
+                <button
+                  type="button"
+                  class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
+                  (click)="editTask(); closeDropdown()"
+                >
+                  <ng-icon name="heroPencil" size="16"></ng-icon>
+                  <span>{{ 'Basic.edit' | translate }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
+                  (click)="deleteTask(); closeDropdown()"
+                >
+                  <ng-icon name="heroTrash" size="16"></ng-icon>
+                  <span>{{ 'Basic.delete' | translate }}</span>
+                </button>
+              </div>
+            </app-dropdown>
           }
         </header>
 
@@ -578,6 +598,8 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   protected readonly submittingComment = signal(false);
   protected readonly commentAttachments = signal<FileUploadItem[]>([]);
 
+  protected readonly closeDropdownSignal = signal(0);
+
   protected readonly maxAttachmentsLimit = 4;
 
   protected editingCommentId: number | null = null;
@@ -609,6 +631,10 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  protected closeDropdown(): void {
+    this.closeDropdownSignal.set(Date.now());
   }
 
   protected goBack(): void {

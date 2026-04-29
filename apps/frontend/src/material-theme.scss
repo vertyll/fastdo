@@ -81,28 +81,34 @@ $dark-theme: mat.define-theme(
 }
 
 .success-snackbar {
-  @include mat.snack-bar-overrides((
-    container-color: #059669,
-    supporting-text-color: #ffffff,
-    button-color: #fcd34d,
-    container-shape: 10px,
-  ));
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #059669,
+      supporting-text-color: #ffffff,
+      button-color: #fcd34d,
+      container-shape: 10px,
+    )
+  );
 }
 
 .error-snackbar {
-  @include mat.snack-bar-overrides((
-    container-color: #dc2626,
-    supporting-text-color: #ffffff,
-    button-color: #fcd34d,
-    container-shape: 10px,
-  ));
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #dc2626,
+      supporting-text-color: #ffffff,
+      button-color: #fcd34d,
+      container-shape: 10px,
+    )
+  );
 }
 
 .info-snackbar {
-  @include mat.snack-bar-overrides((
-    container-color: #4b5563,
-    supporting-text-color: #ffffff,
-    button-color: #fcd34d,
-    container-shape: 10px,
-  ));
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #4b5563,
+      supporting-text-color: #ffffff,
+      button-color: #fcd34d,
+      container-shape: 10px,
+    )
+  );
 }

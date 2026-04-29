@@ -916,32 +916,8 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   protected readonly isAtEndX = signal(true);
 
   constructor(private readonly elementRef: ElementRef) {
-    effect(() => {
-      const currentData = this.data();
-      const config = this.config();
-      const currentDataLength = currentData.length;
-
-      if (currentDataLength > this.previousDataLength && config.loadingMore) {
-        this.shouldPreserveScroll = true;
-      }
-
-      if (config.infiniteScroll) {
-        if (currentDataLength > 0 && !this.intersectionObserver) {
-          setTimeout(() => this.initializeInfiniteScroll(), 0);
-        } else if (this.intersectionObserver) {
-          this.updateInfiniteScrollObserver();
-        }
-      }
-
-      this.previousDataLength = currentDataLength;
-    });
-
-    effect(() => {
-      const initialSort = this.initialSort();
-      if (initialSort) {
-        this.currentSort = initialSort;
-      }
-    });
+    effect(() => this.handleDataAndScrollChange());
+    effect(() => this.handleInitialSortChange());
   }
 
   ngOnDestroy(): void {
@@ -1222,6 +1198,33 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     }
 
     return baseClass;
+  }
+
+  private handleDataAndScrollChange(): void {
+    const currentData = this.data();
+    const config = this.config();
+    const currentDataLength = currentData.length;
+
+    if (currentDataLength > this.previousDataLength && config.loadingMore) {
+      this.shouldPreserveScroll = true;
+    }
+
+    if (config.infiniteScroll) {
+      if (currentDataLength > 0 && !this.intersectionObserver) {
+        setTimeout(() => this.initializeInfiniteScroll(), 0);
+      } else if (this.intersectionObserver) {
+        this.updateInfiniteScrollObserver();
+      }
+    }
+
+    this.previousDataLength = currentDataLength;
+  }
+
+  private handleInitialSortChange(): void {
+    const initialSort = this.initialSort();
+    if (initialSort) {
+      this.currentSort = initialSort;
+    }
   }
 
   private updateOverflowState(): void {

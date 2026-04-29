@@ -61,14 +61,7 @@ export class NotificationStateService {
   public readonly autoRefreshSignal = toSignal(this.autoRefresh$, { initialValue: null });
 
   constructor() {
-    effect(() => {
-      if (this.authService.isLoggedIn()) {
-        this.loadNotifications().subscribe();
-        this.loadSettings().subscribe();
-      } else {
-        this.resetState();
-      }
-    });
+    effect(() => this.handleAuthStateChange());
 
     this.subscribeToWebSocketEvents();
   }
@@ -128,6 +121,15 @@ export class NotificationStateService {
 
   public removeNotificationByInvitationId(invitationId: number): void {
     this.filterNotifications(n => n.data?.invitationId !== invitationId);
+  }
+
+  private handleAuthStateChange(): void {
+    if (this.authService.isLoggedIn()) {
+      this.loadNotifications().subscribe();
+      this.loadSettings().subscribe();
+    } else {
+      this.resetState();
+    }
   }
 
   private subscribeToWebSocketEvents(): void {

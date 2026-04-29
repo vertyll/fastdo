@@ -301,9 +301,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
   protected readonly FilterType = FilterTypeEnum;
 
   constructor() {
-    effect(() => {
-      this.mobileFilterToggleHidden.set(this.platformService.isMobile());
-    });
+    effect(() => this.handleMobileFilterVisibility());
   }
 
   ngOnInit(): void {
@@ -355,6 +353,10 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
 
   protected getFormControl(name: string): FormControl {
     return this.form.get(name) as FormControl;
+  }
+
+  private handleMobileFilterVisibility(): void {
+    this.mobileFilterToggleHidden.set(this.platformService.isMobile());
   }
 
   private updateFilters(): void {

@@ -41,28 +41,8 @@ export class NotificationWebSocketService {
   public readonly events$ = this.eventsSubject.asObservable();
 
   constructor() {
-    effect(() => {
-      const isLoggedIn = this.authStateService.isLoggedIn();
-      const token = this.authStateService.getToken();
-
-      if (isLoggedIn && token) {
-        this.connect();
-      } else {
-        this.disconnect();
-      }
-    });
-
-    effect(() => {
-      const token = this.authStateService.getToken();
-      const isLoggedIn = this.authStateService.isLoggedIn();
-
-      if (isLoggedIn && token && this.socket?.connected) {
-        const currentSocketToken = this.socket._currentToken;
-        if (currentSocketToken && currentSocketToken !== token) {
-          this.reconnectWithNewToken();
-        }
-      }
-    });
+    effect(() => this.handleAuthConnectionChange());
+    effect(() => this.handleTokenSync());
   }
 
   public connect(): void {
@@ -133,6 +113,29 @@ export class NotificationWebSocketService {
         this.reconnectWithNewToken();
       }
     }, 1000);
+  }
+
+  private handleAuthConnectionChange(): void {
+    const isLoggedIn = this.authStateService.isLoggedIn();
+    const token = this.authStateService.getToken();
+
+    if (isLoggedIn && token) {
+      this.connect();
+    } else {
+      this.disconnect();
+    }
+  }
+
+  private handleTokenSync(): void {
+    const token = this.authStateService.getToken();
+    const isLoggedIn = this.authStateService.isLoggedIn();
+
+    if (isLoggedIn && token && this.socket?.connected) {
+      const currentSocketToken = this.socket._currentToken;
+      if (currentSocketToken && currentSocketToken !== token) {
+        this.reconnectWithNewToken();
+      }
+    }
   }
 
   private createSocket(token: string): TokenAwareSocket {
