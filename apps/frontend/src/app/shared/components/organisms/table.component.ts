@@ -175,7 +175,7 @@ export interface TableConfig {
   ],
   template: `
     <div
-      class="table-wrapper relative flex flex-col gap-0 rounded-lg border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-sm overflow-hidden"
+      class="table-wrapper flex flex-col gap-0 rounded-lg border border-border-primary dark:border-dark-border-primary bg-background-primary dark:bg-dark-background-primary shadow-sm overflow-hidden"
     >
       @if (config().filters?.length) {
         <div
@@ -195,7 +195,6 @@ export interface TableConfig {
       @if (loading() && !data().length) {
         <div class="state-overlay static! border-b border-border-primary dark:border-dark-border-primary min-h-75">
           <app-spinner />
-          <span>{{ 'Basic.loading' | translate }}</span>
         </div>
       } @else if (!data().length) {
         <div
@@ -370,6 +369,19 @@ export interface TableConfig {
               (click)="onRowClick(row)"
             ></tr>
           </table>
+          @if (config().infiniteScroll && config().loadingMore) {
+            <div
+              class="loading-more-overlay"
+              role="button"
+              tabindex="0"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+            >
+              <div class="loading-more-content">
+                <app-spinner />
+              </div>
+            </div>
+          }
         </div>
       }
 
@@ -395,15 +407,6 @@ export interface TableConfig {
             [pageSize]="pageSize()"
             [currentPage]="currentPage()"
           />
-        </div>
-      }
-
-      @if (config().infiniteScroll && config().loadingMore) {
-        <div class="loading-more-overlay">
-          <div class="loading-more-content">
-            <app-spinner />
-            <span class="loading-more-text">{{ 'Basic.loadingMore' | translate }}</span>
-          </div>
         </div>
       }
     </div>
@@ -823,14 +826,14 @@ export interface TableConfig {
       }
 
       .loading-more-overlay {
-        position: absolute;
-        bottom: 30px;
+        position: sticky;
+        bottom: 0;
         left: 0;
         right: 0;
         background: var(--app-table-overlay-bg);
         backdrop-filter: blur(2px);
         z-index: 10;
-        pointer-events: none;
+        pointer-events: auto;
       }
 
       .loading-more-content {
