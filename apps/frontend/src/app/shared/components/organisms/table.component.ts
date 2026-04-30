@@ -647,7 +647,7 @@ export interface TableConfig {
         top: 0;
         left: 0;
         bottom: 0;
-        width: 1px;
+        width: 1.5px;
         background-color: var(--app-table-border);
         opacity: 0;
         transition: opacity 0.2s ease;
@@ -668,8 +668,8 @@ export interface TableConfig {
         pointer-events: none;
       }
 
-      .table-container.is-scrolled-x:not(.is-at-end-x) .actions-sticky::before,
-      .table-container.is-scrolled-x:not(.is-at-end-x) .actions-sticky::after {
+      .table-container:not(.is-at-end-x) .actions-sticky::before,
+      .table-container:not(.is-at-end-x) .actions-sticky::after {
         opacity: 1;
       }
 
