@@ -1,4 +1,4 @@
-## Project Overview 
+## Project Assumptions
 
 A web application for managing projects and tasks for specific projects. The application consists of a monorepo containing separate back-end and front-end applications.
 
