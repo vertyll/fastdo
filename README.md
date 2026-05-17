@@ -56,12 +56,11 @@ A web application for managing projects and tasks for specific projects. The app
 
 ## Screenshots
 
-![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-49-54%20Rejestracja.png)
-![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-52-27%20Projekty.png)
-![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-52-38%20Zadania.png)
-![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-54-46%20Profil%20u%C5%BCytkownika.png)
-![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-56-38%20Zadania.png)
-![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/Screenshot%202025-02-09%20at%2012-57-08%20Zadania.png)
+![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot1.png)
+![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot2.png)
+![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot3.png)
+![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot4.png)
+![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot5.png)
 
 ## Installation Instructions
 
