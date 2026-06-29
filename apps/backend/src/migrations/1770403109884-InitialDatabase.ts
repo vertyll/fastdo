@@ -4,6 +4,7 @@ export class InitialDatabase1770403109884 implements MigrationInterface {
     public name = 'InitialDatabase1770403109884'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
         await queryRunner.query(`CREATE TABLE "refresh_token" ("id" SERIAL NOT NULL, "token" character varying NOT NULL, "date_expiration" TIMESTAMP NOT NULL, "user_id" integer, CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_c31d0a2f38e6e99110df62ab0a" ON "refresh_token" ("token") `);
         await queryRunner.query(`CREATE INDEX "IDX_14386e3c0d0a6281df77e1e2e7" ON "refresh_token" ("date_expiration") `);
