@@ -18,20 +18,7 @@ concurrency:
 
 jobs:
   format-check:
-    name: ${{ matrix.name }}
     runs-on: ubuntu-24.04
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: Frontend
-            directory: apps/frontend
-            lockfile: apps/frontend/package-lock.json
-
-          - name: Backend
-            directory: apps/backend
-            lockfile: apps/backend/package-lock.json
 
     steps:
       - name: Checkout repository
@@ -41,13 +28,21 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: ${{ matrix.lockfile }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10
+          cache: true
+          cache_dependency_path: pnpm-lock.yaml
 
       - name: Install dependencies
-        working-directory: ${{ matrix.directory }}
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Check formatting
-        working-directory: ${{ matrix.directory }}
-        run: npm run format:check
+      - name: Check frontend formatting
+        working-directory: apps/frontend
+        run: pnpm run format:check
+
+      - name: Check backend formatting
+        working-directory: apps/backend
+        run: pnpm run format:check
