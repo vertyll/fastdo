@@ -65,9 +65,8 @@ A web application for managing projects and tasks for specific projects. The app
 
 ## Installation Instructions
 
-- Download the project to your local environment
-- run:
-
+1. Download the project to your local environment
+2. Run:
 ```bash
 pnpm install
 # or
@@ -81,27 +80,31 @@ npm install
 >
 > In the front-end structure, define your API address in the `environment.ts` file
 
-If you want to run the project locally:
+### If you want to run the project locally:
 
-- Check if you have a database running, the project uses `PostgreSQL` database
-- run:
+> [!IMPORTANT]
+> Check if you have a database running, the project uses `PostgreSQL` database
 
+Then run:
 ```bash
 pnpm run dev
 # or
 npm run dev
 ```
 
-If you want to run the infrastructure in Docker containers:
-- copy the `.env.docker.dev.example` file to `.env` in the main project directory
-- run:
+### If you want to run the infrastructure in Docker containers:
 
+> [!IMPORTANT]
+> Copy the `.env.docker.dev.example` file to `.env` in the main project directory
+
+Then run:
 ```bash
 docker-compose -f docker-compose.dev.yml --env-file .env up -d
 ```
 
-By default:
-- the back-end application should be available at [http://localhost:3000](http://localhost:3000)
-- the front-end application should be available at [http://localhost:4200](http://localhost:4200)
+> [!NOTE]
+> By default:
+> - the back-end application should be available at [http://localhost:3000](http://localhost:3000)
+> - the front-end application should be available at [http://localhost:4200](http://localhost:4200)
 
 Paste the addresses into your web browser.
