@@ -49,10 +49,11 @@ A web application for managing projects and tasks for specific projects. The app
 
 ### Other:
 - Turborepo for script automation and monorepo structure management
-- ESLint and Dprint for static code analysis and maintaining consistent code quality
+- ESLint and Prettier for static code analysis and maintaining consistent code quality
 - Docker for development environment
 
-> **Note:** During application development, SOLID principles, DRY, composition over inheritance, dependency injection, design patterns, architectural patterns, testing, and other good programming practices were applied.
+> [!NOTE]
+> During application development, SOLID principles, DRY, composition over inheritance, dependency injection, design patterns, architectural patterns, testing, and other good programming practices were applied.
 
 ## Screenshots
 
@@ -73,11 +74,14 @@ pnpm install
 npm install
 ```
 
-> **Note:** at this point, all dependencies needed to run the project will be installed and .env files will be created in the back-end structure
-- In the created .env files, define your own API keys and configuration data.
-- In the front-end structure, define your API address in the `environment.ts` file
+> [!IMPORTANT]
+> At this point, all dependencies needed to run the project will be installed and .env files will be created in the back-end structure
+>
+> In the created .env files, define your own API keys and configuration data.
+>
+> In the front-end structure, define your API address in the `environment.ts` file
 
-`If you want to run the project locally:`
+If you want to run the project locally:
 
 - Check if you have a database running, the project uses `PostgreSQL` database
 - run:
@@ -88,7 +92,7 @@ pnpm run dev
 npm run dev
 ```
 
-`If you want to run the infrastructure in Docker containers:`
+If you want to run the infrastructure in Docker containers:
 - copy the `.env.docker.dev.example` file to `.env` in the main project directory
 - run:
 
