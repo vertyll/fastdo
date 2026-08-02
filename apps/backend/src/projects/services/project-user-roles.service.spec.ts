@@ -216,7 +216,7 @@ describe('ProjectUserRolesService', () => {
 
       const result = await service.getUserRoleInProject(1, 1);
 
-      expect(result).toBe(null);
+      expect(result).toBeNull();
     });
   });
 
@@ -246,7 +246,7 @@ describe('ProjectUserRolesService', () => {
 
       const result = await service.getUserRoleCodeInProject(1, 1);
 
-      expect(result).toBe(null);
+      expect(result).toBeNull();
     });
   });
 
