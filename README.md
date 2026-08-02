@@ -66,7 +66,7 @@ A web application for managing projects and tasks for specific projects. The app
 
 ## Installation Instructions
 
-1. Download the project to your local environment
+1. Download the project to your local environment.
 2. Run:
     ```bash
     pnpm install
@@ -86,7 +86,7 @@ A web application for managing projects and tasks for specific projects. The app
 
 > [!IMPORTANT]
 >
-> Check if you have a database running, the project uses `PostgreSQL` database
+> Check if you have a database running, the project uses `PostgreSQL` database.
 
 Then run:
 ```bash
@@ -99,7 +99,7 @@ npm run dev
 
 > [!IMPORTANT]
 >
-> Copy the `.env.docker.dev.example` file to `.env` in the main project directory
+> Copy the `.env.docker.dev.example` file to `.env` in the main project directory.
 
 Then run:
 ```bash
@@ -109,7 +109,7 @@ docker-compose -f docker-compose.dev.yml --env-file .env up -d
 > [!NOTE]
 >
 > By default:
-> - the back-end application should be available at [http://localhost:3000](http://localhost:3000)
-> - the front-end application should be available at [http://localhost:4200](http://localhost:4200)
+> - The back-end application should be available at [http://localhost:3000](http://localhost:3000).
+> - The front-end application should be available at [http://localhost:4200](http://localhost:4200).
 
 Paste the addresses into your web browser.
