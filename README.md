@@ -1,60 +1,69 @@
 ## Project Assumptions
 
-A web application for managing projects and tasks for specific projects. The application consists of a monorepo containing separate back-end and front-end applications.
+A web application for managing projects and tasks for specific projects. The application consists of a monorepo 
+containing separate back-end and front-end applications.
 
 ## Link: https://fastdo.vertyll.dev
-## Swagger: https://api.fastdo.vertyll.dev/api#/ 
+## Swagger: https://api.fastdo.vertyll.dev/api#/
 
 ## Technology Stack
 
 ### Back-end:
-- NestJS (Fastify adapter)
-- TypeORM
-- PostgreSQL
-- Jest
-- OpenAPI (Swagger)
+
+- NestJS (Fastify adapter).
+- TypeORM.
+- PostgreSQL.
+- Jest.
+- OpenAPI (Swagger).
 
 ### Front-end:
-- Angular
-- RxJS
-- NGXS
-- Tailwind CSS
+
+- Angular.
+- RxJS.
+- NGXS.
+- Tailwind CSS.
 
 ### Authentication:
-- JWT authentication – the application uses JWT tokens for user authentication and includes a token refresh mechanism (http only secure cookie)
-- the application allows logging in on multiple devices simultaneously
+
+- JWT authentication – the application uses JWT tokens for user authentication and includes a token refresh mechanism
+(http only secure cookie).
+- The application allows logging in on multiple devices simultaneously.
 
 ### Back-end Core:
-- the application includes an exception handling mechanism
-- the application includes a logging mechanism
-- the application is fully translated into English and Polish
-- the application includes an email sending mechanism, separate for dev and prod (strategy pattern)
-- the application includes a file handling mechanism (strategy pattern)
-- the application includes a recurring task handling mechanism (cron)
-- the application uses WebSockets for real-time notifications
-- the application has separate environments for dev and prod
-- the application has a separate configuration file
-- the application includes RBAC (Role Based Access Control)
-- the application includes CLS (Continuation Local Storage)
-- API documentation is written using OpenAPI (Swagger)
-- and many other features that can be found in the application code
+
+- The application includes an exception handling mechanism.
+- The application includes a logging mechanism.
+- The application is fully translated into English and Polish.
+- The application includes an email sending mechanism, separate for dev and prod (strategy pattern).
+- The application includes a file handling mechanism (strategy pattern).
+- The application includes a recurring task handling mechanism (cron).
+- The application uses WebSockets for real-time notifications.
+- The application has separate environments for dev and prod.
+- The application has a separate configuration file.
+- The application includes RBAC (Role Based Access Control).
+- The application includes CLS (Continuation Local Storage).
+- API documentation is written using OpenAPI (Swagger).
+- And many other features that can be found in the application code.
 
 ### Front-end Core:
-- the application includes a state management system using NGXS
-- the application is fully translated into English and Polish
-- the application includes custom Tailwind CSS theme with dark/light mode support
-- components are fully reusable, written according to DRY principles and using Atomic Design methodology
-- the application is written according to new Angular standards – including the use of signals
-- and many other features that can be found in the application code
+
+- The application includes a state management system using NGXS.
+- The application is fully translated into English and Polish.
+- The application includes custom Tailwind CSS theme with dark/light mode support.
+- Components are fully reusable, written according to DRY principles and using Atomic Design methodology.
+- The application is written according to new Angular standards – including the use of signals.
+- And many other features that can be found in the application code.
 
 ### Other:
-- Turborepo for script automation and monorepo structure management
-- ESLint and Prettier for static code analysis and maintaining consistent code quality
-- Docker for development environment
+
+- Turborepo for script automation and monorepo structure management.
+- ESLint and Prettier for static code analysis and maintaining consistent code quality.
+- Docker for development environment.
 
 > [!NOTE]
 >
-> During application development, SOLID principles, DRY, composition over inheritance, dependency injection, design patterns, architectural patterns, testing, and other good programming practices were applied.
+> During application development, SOLID principles, DRY, composition over inheritance, dependency injection, 
+> design patterns, architectural patterns, testing, and other good programming practices were applied.
 
 ## Screenshots
 
@@ -76,7 +85,8 @@ A web application for managing projects and tasks for specific projects. The app
 
 > [!IMPORTANT]
 >
-> At this point, all dependencies needed to run the project will be installed and `.env` files will be created in the back-end structure.
+> At this point, all dependencies needed to run the project will be installed and `.env` files will be created in the 
+> back-end structure.
 >
 > In the created `.env` files, define your own API keys and configuration data.
 >
