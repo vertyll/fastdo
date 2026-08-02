@@ -53,6 +53,7 @@ A web application for managing projects and tasks for specific projects. The app
 - Docker for development environment
 
 > [!NOTE]
+>
 > During application development, SOLID principles, DRY, composition over inheritance, dependency injection, design patterns, architectural patterns, testing, and other good programming practices were applied.
 
 ## Screenshots
@@ -74,6 +75,7 @@ npm install
 ```
 
 > [!IMPORTANT]
+>
 > At this point, all dependencies needed to run the project will be installed and .env files will be created in the back-end structure
 >
 > In the created .env files, define your own API keys and configuration data.
@@ -83,6 +85,7 @@ npm install
 ### If you want to run the project locally:
 
 > [!IMPORTANT]
+>
 > Check if you have a database running, the project uses `PostgreSQL` database
 
 Then run:
@@ -95,6 +98,7 @@ npm run dev
 ### If you want to run the infrastructure in Docker containers:
 
 > [!IMPORTANT]
+>
 > Copy the `.env.docker.dev.example` file to `.env` in the main project directory
 
 Then run:
@@ -103,6 +107,7 @@ docker-compose -f docker-compose.dev.yml --env-file .env up -d
 ```
 
 > [!NOTE]
+>
 > By default:
 > - the back-end application should be available at [http://localhost:3000](http://localhost:3000)
 > - the front-end application should be available at [http://localhost:4200](http://localhost:4200)
