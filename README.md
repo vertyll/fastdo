@@ -68,19 +68,19 @@ A web application for managing projects and tasks for specific projects. The app
 
 1. Download the project to your local environment
 2. Run:
-```bash
-pnpm install
-# or
-npm install
-```
+    ```bash
+    pnpm install
+    # or
+    npm install
+    ```
 
 > [!IMPORTANT]
 >
-> At this point, all dependencies needed to run the project will be installed and .env files will be created in the back-end structure
+> At this point, all dependencies needed to run the project will be installed and `.env` files will be created in the back-end structure.
 >
-> In the created .env files, define your own API keys and configuration data.
+> In the created `.env` files, define your own API keys and configuration data.
 >
-> In the front-end structure, define your API address in the `environment.ts` file
+> In the front-end structure, define your API address in the `environment.ts` file.
 
 ### If you want to run the project locally:
 
