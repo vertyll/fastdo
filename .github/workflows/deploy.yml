@@ -37,7 +37,6 @@ jobs:
             build-args: |
               BACKEND_URL=https://api.fastdo.vertyll.dev
               DOMAIN=fastdo.vertyll.dev
-              API_KEY=${{ secrets.API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -73,10 +72,12 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: linux/arm64
           target: production
-          build-args: ${{ matrix.build-args }}
           push: ${{ github.ref_type == 'tag' }}
           tags: |
             ${{ env.REGISTRY }}/${{ matrix.image }}:${{ steps.vars.outputs.version }}
             ${{ env.REGISTRY }}/${{ matrix.image }}:latest
           cache-from: type=gha,scope=${{ matrix.cache-scope }}
           cache-to: type=gha,mode=max,scope=${{ matrix.cache-scope }}
+          build-args: |
+            ${{ matrix.build-args }}
+            API_KEY=${{ secrets.API_KEY }}
