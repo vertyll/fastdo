@@ -37,6 +37,7 @@ jobs:
             build-args: |
               BACKEND_URL=https://api.fastdo.vertyll.dev
               DOMAIN=fastdo.vertyll.dev
+              API_KEY=${{ secrets.API_KEY }}
 
     steps:
       - name: Checkout repository
