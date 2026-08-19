@@ -80,4 +80,5 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.cache-scope }}
           build-args: |
             ${{ matrix.build-args }}
+          secrets: |
             API_KEY=${{ secrets.API_KEY }}

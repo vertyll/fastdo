@@ -18,7 +18,6 @@ FROM base AS build
 # Build arguments for environment
 ARG BACKEND_URL=http://localhost:3000
 ARG DOMAIN=localhost:4200
-ARG API_KEY=dev-api-key
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/frontend/package.json ./apps/frontend/
@@ -27,7 +26,9 @@ RUN pnpm install --frozen-lockfile
 COPY apps/frontend ./apps/frontend
 
 # Create production environment file
-RUN echo "export const environment = { \
+RUN --mount=type=secret,id=API_KEY \
+  API_KEY=$(cat /run/secrets/API_KEY) && \
+  echo "export const environment = { \
   production: true, \
   backendUrl: '${BACKEND_URL}', \
   domain: '${DOMAIN}', \
@@ -50,8 +51,6 @@ COPY apps/frontend/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/apps/frontend/dist/frontend/browser /usr/share/nginx/html
 
 # Create nginx cache and runtime directories
-
-# Tworzenie katalogów cache, run oraz ustawianie uprawnień w jednej instrukcji RUN
 RUN mkdir -p /var/cache/nginx/client_temp \
   /var/cache/nginx/proxy_temp \
   /var/cache/nginx/fastcgi_temp \
