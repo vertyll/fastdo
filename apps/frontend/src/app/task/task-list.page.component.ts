@@ -248,8 +248,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.initializeTaskList();
-    // Reference-data names are resolved server-side from `x-lang`, so a
-    // language switch means refetching the filter options.
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const projectId = this.projectId();
       if (projectId) {

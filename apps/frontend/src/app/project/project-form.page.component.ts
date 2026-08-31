@@ -674,7 +674,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       description: formValue.description || null,
       isPublic: formValue.isPublic ?? false,
       typeId: formValue.typeId || null,
-      // `undefined` means the icon was not touched, so the stored one stands.
       ...(this.iconFileId === undefined ? {} : { iconFileId: this.iconFileId }),
     };
 
@@ -725,7 +724,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       );
     }
 
-    // A membership is not assigned, it is offered: the invitee has to accept.
     const alreadyMember = new Set((this.currentProject?.members ?? []).map(member => member.email.toLowerCase()));
     for (const invite of formValue.usersWithRoles ?? []) {
       const email = invite.email?.trim();
@@ -898,7 +896,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
 
     const currentUserEmail = this.authService.getCurrentUserEmail();
     this.currentProject.members.forEach(member => {
-      // The owner cannot demote or remove themselves, so their row is read-only.
       const isSelf = !!currentUserEmail && member.email.trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
       this.usersWithRolesFormArray.push(
         this.fb.group({

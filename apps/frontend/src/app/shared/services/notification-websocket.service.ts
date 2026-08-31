@@ -105,7 +105,6 @@ export class NotificationWebSocketService {
     this.eventsSubject.next({ type: 'disconnected' });
   }
 
-  /** `https://host` → `wss://host/ws/notifications`, and `http` → `ws` for local work. */
   private brokerUrl(): string {
     const url = new URL('/ws/notifications', environment.apiUrl);
     url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';

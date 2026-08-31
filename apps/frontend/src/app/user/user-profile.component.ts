@@ -237,7 +237,6 @@ export class UserProfileComponent implements OnInit {
         lastName: this.profileForm.value.lastName,
         phoneNumber: this.profileForm.value.phoneNumber || null,
         address: this.profileForm.value.address || null,
-        // `undefined` means the avatar was not touched, so the stored one stands.
         ...(pending === undefined ? {} : { avatarFileId: pending }),
       })
       .subscribe({
