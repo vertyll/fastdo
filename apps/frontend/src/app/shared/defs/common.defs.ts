@@ -1,16 +1,8 @@
 export interface SimpleNameItem {
-  id: number;
+  id: string;
   name: string;
 }
 
-export interface TranslationItem {
-  lang: string;
-  name?: string;
-}
-
-export interface TranslatableOptionItem {
-  id: number;
-  name?: string;
+export interface OptionItem extends SimpleNameItem {
   code?: string;
-  translations?: TranslationItem[];
 }

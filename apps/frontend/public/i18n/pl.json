@@ -1,10 +1,6 @@
 {
   "PageTitles": {
     "home": "Strona główna",
-    "login": "Logowanie",
-    "register": "Rejestracja",
-    "forgotPassword": "Zapomniałem hasła",
-    "resetPassword": "Resetowanie hasła",
     "terms": "Regulamin",
     "privacyPolicy": "Polityka prywatności",
     "dashboard": "Panel",
@@ -89,21 +85,7 @@
   "Auth": {
     "login": "Logowanie",
     "email": "Email",
-    "password": "Hasło",
-    "loginButton": "Zaloguj",
-    "dontHaveAccount": "Nie masz konta? Zarejestruj się",
-    "unknownLoginError": "Wystąpił błąd podczas logowania",
     "register": "Rejestracja",
-    "confirmPassword": "Potwierdź hasło",
-    "passwordDoNotMatch": "Hasła nie są takie same",
-    "registerButton": "Zarejestruj",
-    "alreadyHaveAccount": "Masz już konto? Zaloguj się",
-    "unknownRegisterError": "Wystąpił błąd podczas rejestracji",
-    "registerSuccess": "Rejestracja zakończona sukcesem, potwierdź swój email",
-    "passwordRequired": "Hasło jest wymagane.",
-    "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków.",
-    "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",
-    "passwordSpecialCharacter": "Hasło musi zawierać co najmniej jeden znak specjalny.",
     "emailRequired": "Email jest wymagany.",
     "emailInvalid": "Email musi być prawidłowym adresem email.",
     "emailConfirmed": "Email został potwierdzony",
@@ -113,10 +95,6 @@
     "privacyPolicyLink": "Polityka prywatności",
     "termsRequired": "Regulamin jest wymagany.",
     "privacyPolicyRequired": "Polityka prywatności jest wymagana.",
-    "resetLinkSent": "Link do resetowania hasła został wysłany na Twój email",
-    "forgotPassword": "Zapomniałeś hasła?",
-    "sendResetLink": "Wyślij link do resetowania hasła",
-    "backToLogin": "Powrót do logowania",
     "resetPassword": "Resetuj hasło",
     "newPassword": "Nowe hasło",
     "confirmNewPassword": "Potwierdź nowe hasło",
@@ -125,7 +103,12 @@
     "unknownError": "Wystąpił nieznany błąd",
     "emailChanged": "Email został zmieniony",
     "invalidEmailToken": "Nieprawidłowy token email",
-    "invalidEmailChangeToken": "Nieprawidłowy token zmiany email"
+    "invalidEmailChangeToken": "Nieprawidłowy token zmiany email",
+    "signInWithKeycloak": "Zaloguj się",
+    "signInHint": "Logowanie odbywa się na stronie dostawcy tożsamości.",
+    "signOut": "Wyloguj się",
+    "managePassword": "Zmień hasło",
+    "manageTwoFactor": "Uwierzytelnianie dwuskładnikowe"
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",
@@ -365,7 +348,65 @@
     "privacyPolicy": "Polityka prywatności",
     "version": "Wersja",
     "effectiveDate": "Data wejścia w życie",
-    "lastModified": "Ostatnia modyfikacja"
+    "lastModified": "Ostatnia modyfikacja",
+    "lastModifiedDate": "31.08.2026",
+    "termsSections": [
+      {
+        "title": "1. Postanowienia ogólne",
+        "content": "Regulamin określa zasady korzystania z aplikacji FastDo. Rozpoczęcie korzystania z aplikacji oznacza akceptację niniejszego regulaminu."
+      },
+      {
+        "title": "2. Konto użytkownika",
+        "content": "Uwierzytelnianie odbywa się przez zewnętrznego dostawcę tożsamości. Użytkownik odpowiada za zachowanie poufności swoich danych logowania.",
+        "items": [
+          "Jedno konto przypada na jeden adres e-mail.",
+          "Konto jest imienne i nie może być udostępniane osobom trzecim."
+        ]
+      },
+      {
+        "title": "3. Zakres usługi",
+        "content": "Aplikacja służy do prowadzenia projektów i zadań. Usługa świadczona jest w modelu „tak jak jest”, bez gwarancji ciągłości działania."
+      },
+      {
+        "title": "4. Odpowiedzialność",
+        "content": "Użytkownik odpowiada za treści, które umieszcza w aplikacji, oraz za skutki udostępnienia ich innym uczestnikom projektu."
+      },
+      {
+        "title": "5. Zmiany regulaminu",
+        "content": "O zmianach regulaminu użytkownicy są informowani z wyprzedzeniem. Dalsze korzystanie z aplikacji po wejściu zmian w życie oznacza ich akceptację."
+      }
+    ],
+    "privacyPolicySections": [
+      {
+        "title": "1. Administrator danych",
+        "content": "Administratorem danych osobowych przetwarzanych w aplikacji FastDo jest właściciel serwisu."
+      },
+      {
+        "title": "2. Zakres przetwarzanych danych",
+        "content": "Przetwarzamy wyłącznie dane niezbędne do świadczenia usługi.",
+        "items": [
+          "Adres e-mail oraz imię i nazwisko z konta.",
+          "Treści projektów, zadań i komentarzy.",
+          "Pliki dodane przez użytkownika."
+        ]
+      },
+      {
+        "title": "3. Cel i podstawa przetwarzania",
+        "content": "Dane przetwarzane są w celu świadczenia usługi na podstawie umowy zawartej przez akceptację regulaminu."
+      },
+      {
+        "title": "4. Prawa użytkownika",
+        "content": "Użytkownik ma prawo dostępu do swoich danych, ich sprostowania, usunięcia oraz przeniesienia.",
+        "items": [
+          "Żądanie usunięcia konta realizujemy niezwłocznie.",
+          "Kopię danych udostępniamy na wniosek."
+        ]
+      },
+      {
+        "title": "5. Okres przechowywania",
+        "content": "Dane przechowujemy przez czas istnienia konta oraz przez okres wymagany przepisami po jego usunięciu."
+      }
+    ]
   },
   "Profile": {
     "myProfile": "Mój profil",

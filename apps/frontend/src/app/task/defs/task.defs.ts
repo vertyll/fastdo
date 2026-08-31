@@ -1,86 +1,110 @@
-import { File } from '../../core/defs/core.defs';
-import { ProjectCategory, ProjectStatus } from '../../project/defs/project.defs';
-import { ProjectRole } from '../../shared/defs/entities.defs';
+import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
+import { TaskPriorityEnum } from '../../shared/enums/task-priority.enum';
 
 export type Task = {
-  id: number;
+  id: string;
+  projectId: string;
   description: string;
-  additionalDescription?: string;
-  priceEstimation: number; // 0-100 where 100 = 1 hour
-  workedTime: number; // 0-100 where 100 = 1 hour
-  accessRole?: ProjectRole;
-  dateCreation: string;
-  dateModification: string;
-  project?: TaskProject | null;
-  assignedUsers: TaskUser[];
-  createdBy: TaskUser;
-  priority: TaskPriority;
-  categories: ProjectCategory[];
-  status?: ProjectStatus | null;
-  attachments: File[];
-  comments: TaskComment[];
+  additionalDescription: string | null;
+  priority: TaskPriorityEnum;
+  priceEstimation: number;
+  workedTime: number;
+  statusId: string | null;
+  categoryIds: string[];
+  assigneeIds: string[];
+  accessRoleId: string | null;
+  attachmentIds: string[];
+  createdBy: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  version: number | null;
 };
 
-export type TaskProject = {
-  id: number;
+export type TaskUserView = {
+  id: string;
+  displayName: string;
+  avatarFileId: string | null;
+};
+
+export type TaskCategoryView = {
+  id: string;
   name: string;
-  categories: ProjectCategory[];
-  statuses: ProjectStatus[];
-};
-
-export type TaskUser = {
-  id: number;
-  email: string;
-};
-
-export type TaskPriority = {
-  id: number;
-  name: string;
+  nameLanguage: string;
   color: string;
-  code: TaskPriorityCodeEnum;
+};
+
+export type TaskListItem = {
+  id: string;
+  projectId: string;
+  description: string;
+  priority: TaskPriorityEnum;
+  statusId: string | null;
+  statusName: string | null;
+  statusColor: string | null;
+  categories: TaskCategoryView[];
+  assignees: TaskUserView[];
+  commentCount: number;
+  workedTime: number;
+  createdAt: string;
+  version: number | null;
+};
+
+export type TaskDetails = {
+  task: Task;
+  statusName: string | null;
+  categories: TaskCategoryView[];
+  assignees: TaskUserView[];
+  comments: TaskComment[];
+  permissions: ProjectRolePermissionEnum[];
 };
 
 export type TaskComment = {
-  id: number;
+  id: string;
+  taskId: string;
+  author: TaskUserView;
   content: string;
-  dateCreation: string;
-  dateModification: string;
-  author: TaskUser;
-  attachments: File[];
+  attachmentIds: string[];
+  createdAt: string;
+  updatedAt: string;
+  version: number | null;
 };
 
-export enum TaskPriorityCodeEnum {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-}
-
-export type TaskPayload = {
+export type CreateTaskPayload = {
   description: string;
-  additionalDescription?: string;
+  additionalDescription?: string | null;
+  priority: TaskPriorityEnum;
+  statusId?: string | null;
+  categoryIds?: string[];
+  assigneeIds?: string[];
   priceEstimation?: number;
-  workedTime?: number;
-  accessRoleId?: number;
-  projectId: number;
-  priorityId?: number;
-  categoryIds?: number[];
-  statusId?: number;
-  assignedUserIds?: number[];
+  accessRoleId?: string | null;
   attachmentIds?: string[];
 };
 
+export type UpdateTaskPayload = CreateTaskPayload;
+
+export type CreateCommentPayload = {
+  content: string;
+  attachmentIds?: string[];
+};
+
+export enum TaskSortFieldEnum {
+  CREATED_AT = 'CREATED_AT',
+  UPDATED_AT = 'UPDATED_AT',
+  PRIORITY = 'PRIORITY',
+  DESCRIPTION = 'DESCRIPTION',
+}
+
 export type GetAllTasksSearchParams = {
-  q: string;
-  sortBy: 'dateCreation' | 'dateModification' | 'description' | 'id';
-  orderBy: 'desc' | 'asc';
-  priorityIds?: number[];
-  categoryIds?: number[];
-  statusIds?: number[];
-  assignedUserIds?: number[];
-  createdFrom?: string;
-  createdTo?: string;
-  updatedFrom?: string;
-  updatedTo?: string;
+  searchTerm?: string;
+  statusId?: string;
+  categoryId?: string;
+  assigneeId?: string;
+  priority?: TaskPriorityEnum;
+  onlyActive?: boolean;
+  sortBy?: TaskSortFieldEnum;
+  sortDescending?: boolean;
   page?: number;
-  pageSize?: number;
+  size?: number;
 };

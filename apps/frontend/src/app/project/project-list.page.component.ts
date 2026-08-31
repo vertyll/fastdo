@@ -9,7 +9,7 @@ import { ErrorMessageComponent } from '../shared/components/atoms/error.message.
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { TableComponent, TableConfig, TableRow } from '../shared/components/organisms/table.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
-import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
 import { ProjectRoleEnum } from '../shared/enums/project-role.enum';
 import { ModalService } from '../shared/services/modal.service';
@@ -23,24 +23,7 @@ import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { MOBILE_BREAKPOINT } from '../app.contansts';
 import { ProjectTypeService } from './data-access/project-type.service';
-import { TranslatableOptionItem, TranslationItem } from '../shared/defs/common.defs';
-
-interface ProjectTypeData {
-  code?: string;
-  translations?: TranslationItem[];
-}
-
-interface ProjectListItem {
-  id: number;
-  name: string;
-  description?: string;
-  isPublic: boolean;
-  dateCreation?: number | string;
-  dateModification?: number | string;
-  icon?: { url?: string | null } | null;
-  permissions?: ProjectRolePermissionEnum[];
-  type?: ProjectTypeData;
-}
+import { ProjectListItem, ProjectType } from './defs/project.defs';
 
 @Component({
   selector: 'app-project-list-page',
@@ -116,7 +99,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   protected isFiltersLoading = true;
   protected tableRows: TableRow[] = [];
   private rawProjects: ProjectListItem[] = [];
-  private projectTypesRaw: TranslatableOptionItem[] = [];
+  private projectTypesRaw: ProjectType[] = [];
 
   protected tableConfig: TableConfig = {
     filters: PROJECT_LIST_FILTERS,
@@ -231,7 +214,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.getProjectTypes();
     this.getAllProjects();
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.updateProjectTypeOptionsForCurrentLang();
+      this.updateProjectTypeOptions();
       if (this.rawProjects.length > 0) {
         this.tableRows = this.mapProjectsToTableRows(this.rawProjects);
       }
@@ -248,11 +231,11 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     await this.router.navigate(['/projects/new']);
   }
 
-  protected async navigateToEditProject(projectId: number): Promise<void> {
+  protected async navigateToEditProject(projectId: string): Promise<void> {
     await this.router.navigate(['/projects/edit', projectId]);
   }
 
-  protected async navigateToProjectTasks(projectId: number): Promise<void> {
+  protected async navigateToProjectTasks(projectId: string): Promise<void> {
     await this.router.navigate(['/projects', projectId, 'tasks']);
   }
 
@@ -291,7 +274,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
         this.navigateToEditProject(rowId).then();
         break;
       case 'delete':
-        this.deleteProject(rowId);
+        this.deleteProject(rowId, this.getRowVersion(row));
         break;
       case 'tasks':
         this.navigateToProjectTasks(rowId).then();
@@ -303,7 +286,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.navigateToProjectTasks(this.getRowId(row)).then();
   }
 
-  protected deleteProject(id: number): void {
+  protected deleteProject(id: string, version: number | null): void {
     this.modalService.present({
       title: this.translateService.instant('Basic.deleteTitle'),
       message: this.translateService.instant('Basic.confirmDelete'),
@@ -317,14 +300,14 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
           role: ButtonRoleEnum.Ok,
           text: this.translateService.instant('Basic.delete'),
           handler: () => {
-            this.projectsService.delete(id).subscribe({
+            this.projectsService.delete(id, version).subscribe({
               error: err => {
                 this.notifyWithFallback(err, 'Project.deleteError');
               },
               complete: () => {
                 this.notificationService.showNotification(
                   this.translateService.instant('Project.deleteSuccess'),
-                  NotificationTypeEnum.Success,
+                  ToastTypeEnum.Success,
                 );
                 this.getAllProjects();
               },
@@ -339,7 +322,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.projectTypeService.getAll().subscribe({
       next: types => {
         this.projectTypesRaw = types.data || [];
-        this.updateProjectTypeOptionsForCurrentLang();
+        this.updateProjectTypeOptions();
         this.isFiltersLoading = false;
       },
       error: err => {
@@ -349,71 +332,51 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private updateProjectTypeOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    const typeFilter = PROJECT_LIST_FILTERS.find(filter => filter.formControlName === 'typeIds');
+  private updateProjectTypeOptions(): void {
+    const typeFilter = PROJECT_LIST_FILTERS.find(filter => filter.formControlName === 'typeId');
     if (!typeFilter) return;
 
-    typeFilter.multiselectOptions = (this.projectTypesRaw || []).map(item => ({
-      id: item.id,
-      name: this.getLocalizedName(item, lang),
-    }));
-  }
-
-  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
-    return (
-      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
-      item.translations?.[0]?.name ||
-      item.name ||
-      ''
-    );
+    typeFilter.options = this.projectTypesRaw.map(type => ({ value: type.id, label: type.name }));
   }
 
   private mapProjectsToTableRows(projects: ProjectListItem[]): TableRow[] {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    return projects.map(project => {
-      const typeName = this.getLocalizedTypeName(project.type, lang);
+    const typeNames = new Map(this.projectTypesRaw.map(type => [type.id, type.name]));
 
-      return {
-        id: project.id,
-        name: project.name,
-        description: project.description,
-        isPublic: project.isPublic,
-        dateCreation: project.dateCreation,
-        dateModification: project.dateModification,
-        type: typeName,
-        image: project.icon?.url || null,
-        permissions: project.permissions,
-      };
-    });
-  }
-
-  private getLocalizedTypeName(type: ProjectTypeData | undefined, lang: string): string {
-    if (type?.translations) {
-      const found = type.translations.find((translation: TranslationItem) => translation.lang === lang);
-      return found?.name || type.translations[0]?.name || type.code || '';
-    }
-
-    return type?.code || '';
+    return projects.map(project => ({
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      isPublic: project.isPublic,
+      dateCreation: project.createdAt,
+      type: project.typeId ? (typeNames.get(project.typeId) ?? '') : '',
+      image: project.iconFileId,
+      memberCount: project.memberCount,
+      version: project.version,
+    }));
   }
 
   private notifyWithFallback(error: unknown, fallbackKey: string): void {
     const message = (error as { error?: { message?: string } })?.error?.message;
     this.notificationService.showNotification(
       message || this.translateService.instant(fallbackKey),
-      NotificationTypeEnum.Error,
+      ToastTypeEnum.Error,
     );
   }
 
-  private getRowId(row: TableRow): number {
-    return Number(row['id']);
+  private getRowId(row: TableRow): string {
+    return String(row['id']);
+  }
+
+  private getRowVersion(row: TableRow): number | null {
+    const version = row['version'];
+    return typeof version === 'number' ? version : null;
   }
 
   private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
     this.projectsService.getAll(searchParams).subscribe({
       next: response => {
         if (response?.data?.items) {
-          const items = response.data.items as ProjectListItem[];
+          const items = response.data.items;
           this.rawProjects = items;
           this.tableRows = this.mapProjectsToTableRows(items);
         }

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectUserRoleApiService } from './project-user-role.api.service';
 import { ApiResponse } from 'src/app/shared/defs/api-response.defs';
-import { ProjectUserRole } from '../defs/project.defs';
+import { ProjectMember } from '../defs/project.defs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ import { ProjectUserRole } from '../defs/project.defs';
 export class ProjectUserRoleService {
   private readonly httpService = inject(ProjectUserRoleApiService);
 
-  public getUsersInProject(projectId: number): Observable<ApiResponse<ProjectUserRole[]>> {
+  public getUsersInProject(projectId: string): Observable<ApiResponse<ProjectMember[]>> {
     return this.httpService.getUsersInProject(projectId);
   }
 }

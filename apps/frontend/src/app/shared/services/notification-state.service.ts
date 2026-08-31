@@ -1,106 +1,69 @@
 import { DestroyRef, Injectable, computed, effect, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, filter, interval, Observable, of, OperatorFunction, startWith, switchMap, tap } from 'rxjs';
-import { AuthService } from '../../auth/data-access/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable, OperatorFunction, catchError, map, of, tap } from 'rxjs';
+import { AuthStateService } from '../../auth/data-access/auth.state.service';
 import {
   NotificationDto,
   NotificationSettingsDto,
   NotificationWsEvent,
   UpdateNotificationSettingsDto,
 } from '../defs/notification.defs';
-import { NotificationStatusEnum } from '../enums/notification-status.enum';
 import { NotificationApiService } from './notification-api.service';
 import { NotificationWebSocketService } from './notification-websocket.service';
-
-const AUTO_REFRESH_INTERVAL_MS = 30_000;
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationStateService {
   private readonly notificationApiService = inject(NotificationApiService);
-  private readonly authService = inject(AuthService);
+  private readonly authStateService = inject(AuthStateService);
   private readonly webSocketService = inject(NotificationWebSocketService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _notifications = signal<NotificationDto[]>([]);
   private readonly _settings = signal<NotificationSettingsDto | null>(null);
+  private readonly _unreadCount = signal<number>(0);
   private readonly _loading = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
-  private readonly _webSocketConnected = signal<boolean>(false);
-  private readonly _notificationRead = signal<number | null>(null);
-  private readonly _notificationDeleted = signal<number | null>(null);
 
   public readonly notifications = this._notifications.asReadonly();
   public readonly settings = this._settings.asReadonly();
+  public readonly unreadCount = this._unreadCount.asReadonly();
   public readonly loading = this._loading.asReadonly();
   public readonly error = this._error.asReadonly();
-  public readonly webSocketConnected = this._webSocketConnected.asReadonly();
-  public readonly notificationRead = this._notificationRead.asReadonly();
-  public readonly notificationDeleted = this._notificationDeleted.asReadonly();
-
-  public readonly unreadCount = computed(() => {
-    const notifications = this._notifications();
-    return Array.isArray(notifications)
-      ? notifications.filter(n => n.status === NotificationStatusEnum.UNREAD).length
-      : 0;
-  });
-
-  // Auto-refresh notifications every 30 seconds (only when WebSocket is not connected AND user is logged in)
-  private readonly autoRefresh$ = interval(AUTO_REFRESH_INTERVAL_MS).pipe(
-    startWith(0),
-    filter(() => this.authService.isLoggedIn()),
-    switchMap(() => {
-      if (this._webSocketConnected()) {
-        return of(null);
-      }
-      return this.loadNotifications().pipe(catchError(() => of(null)));
-    }),
-  );
-
-  public readonly autoRefreshSignal = toSignal(this.autoRefresh$, { initialValue: null });
+  public readonly webSocketConnected = computed(() => this.webSocketService.connectionStatus() === 'connected');
 
   constructor() {
-    effect(() => this.handleAuthStateChange());
+    effect(() => (this.authStateService.isLoggedIn() ? this.load() : this.resetState()));
 
-    this.subscribeToWebSocketEvents();
+    this.webSocketService.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => this.handleWsEvent(event));
   }
 
-  public markAsRead(id: number): Observable<any> {
-    return this.notificationApiService.markAsRead(id).pipe(
-      tap(() => this.updateNotifications(n => (n.id === id ? { ...n, status: NotificationStatusEnum.READ } : n))),
-      this.handleError('Error marking notification as read:', 'Failed to mark notification as read'),
-    );
-  }
-
-  public markAllAsRead(): Observable<any> {
-    return this.notificationApiService.markAllAsRead().pipe(
-      tap(() => this.updateNotifications(n => ({ ...n, status: NotificationStatusEnum.READ }))),
-      this.handleError('Error marking all notifications as read:', 'Failed to mark all notifications as read'),
-    );
-  }
-
-  public deleteNotification(id: number): Observable<any> {
-    return this.notificationApiService.deleteNotification(id).pipe(
-      tap(() => this.filterNotifications(n => n.id !== id)),
-      this.handleError('Error deleting notification:', 'Failed to delete notification'),
-    );
-  }
-
-  public clearAllNotifications(): Observable<any> {
-    return this.notificationApiService.clearAllNotifications().pipe(
-      tap(() => this._notifications.set([])),
-      this.handleError('Error clearing all notifications:', 'Failed to clear all notifications'),
-    );
-  }
-
-  public updateSettings(settings: UpdateNotificationSettingsDto): Observable<any> {
-    return this.notificationApiService.updateSettings(settings).pipe(
-      tap(updatedSettings => {
-        if (updatedSettings) {
-          this._settings.set(updatedSettings);
-        }
+  public markAsRead(id: string): Observable<number | null> {
+    return this.notificationApiService.markAsRead([id]).pipe(
+      tap(() => {
+        this.updateNotifications(n => (n.id === id ? { ...n, isRead: true } : n));
+        this.refreshUnreadCount();
       }),
+      this.onError('Error marking notification as read:', 'Failed to mark notification as read'),
+    );
+  }
+
+  public markAllAsRead(): Observable<number | null> {
+    return this.notificationApiService.markAllAsRead().pipe(
+      tap(() => {
+        this.updateNotifications(n => ({ ...n, isRead: true }));
+        this._unreadCount.set(0);
+      }),
+      this.onError('Error marking all notifications as read:', 'Failed to mark all notifications as read'),
+    );
+  }
+
+  public updateSettings(settings: UpdateNotificationSettingsDto): Observable<NotificationSettingsDto> {
+    return this.notificationApiService.updateSettings(settings, this._settings()?.version ?? null).pipe(
+      tap(updated => this._settings.set(updated)),
       catchError(error => {
         console.error('Error updating notification settings:', error);
         this._error.set('Failed to update notification settings');
@@ -110,79 +73,66 @@ export class NotificationStateService {
   }
 
   public refreshNotifications(): void {
-    if (this.authService.isLoggedIn()) {
+    if (this.authStateService.isLoggedIn()) {
       this.loadNotifications().subscribe();
     }
   }
 
-  public removeNotificationById(id: number): void {
-    this.filterNotifications(n => n.id !== id);
-  }
-
-  public removeNotificationByInvitationId(invitationId: number): void {
-    this.filterNotifications(n => n.data?.invitationId !== invitationId);
-  }
-
-  private handleAuthStateChange(): void {
-    if (this.authService.isLoggedIn()) {
-      this.loadNotifications().subscribe();
-      this.loadSettings().subscribe();
-    } else {
-      this.resetState();
-    }
-  }
-
-  private subscribeToWebSocketEvents(): void {
-    this.webSocketService.events$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(event => this.handleWsEvent(event));
+  private load(): void {
+    this.loadNotifications().subscribe();
+    this.loadSettings().subscribe();
+    this.refreshUnreadCount();
   }
 
   private handleWsEvent(event: NotificationWsEvent): void {
     switch (event.type) {
+      case 'notification-received':
+        if (event.notification) {
+          this.prepend(event.notification);
+        }
+        return;
+      case 'unread-count':
+        if (event.unread !== undefined) {
+          this._unreadCount.set(event.unread);
+        }
+        return;
       case 'connected':
-        this._webSocketConnected.set(true);
+        this.refreshNotifications();
+        this.refreshUnreadCount();
         return;
       case 'disconnected':
-        this._webSocketConnected.set(false);
-        return;
-      case 'notification-refresh':
-        this.refreshNotifications();
-        return;
-      case 'notification-read':
-        if (event.payload?.notificationId) {
-          this._notificationRead.set(event.payload.notificationId);
-        }
-        return;
-      case 'notification-deleted':
-        if (event.payload?.notificationId) {
-          this._notificationDeleted.set(event.payload.notificationId);
-        }
         return;
     }
+  }
+
+  private prepend(notification: NotificationDto): void {
+    this._notifications.update(current =>
+      current.some(n => n.id === notification.id) ? current : [notification, ...current],
+    );
+  }
+
+  private refreshUnreadCount(): void {
+    if (!this.authStateService.isLoggedIn()) {
+      return;
+    }
+    this.notificationApiService
+      .getUnreadCount()
+      .pipe(catchError(() => of(this._unreadCount())))
+      .subscribe(unread => this._unreadCount.set(unread));
   }
 
   private updateNotifications(mapper: (n: NotificationDto) => NotificationDto): void {
-    const current = this._notifications();
-    if (Array.isArray(current)) {
-      this._notifications.set(current.map(mapper));
-    }
-  }
-
-  private filterNotifications(predicate: (n: NotificationDto) => boolean): void {
-    const current = this._notifications();
-    if (Array.isArray(current)) {
-      this._notifications.set(current.filter(predicate));
-    }
+    this._notifications.update(current => current.map(mapper));
   }
 
   private resetState(): void {
     this._notifications.set([]);
     this._settings.set(null);
+    this._unreadCount.set(0);
     this._error.set(null);
   }
 
-  private handleError<T>(logMessage: string, userMessage: string): OperatorFunction<T, T | null> {
+  private onError<T>(logMessage: string, userMessage: string): OperatorFunction<T, T | null> {
     return catchError<T, Observable<null>>((error: unknown) => {
       console.error(logMessage, error);
       this._error.set(userMessage);
@@ -191,7 +141,7 @@ export class NotificationStateService {
   }
 
   private loadNotifications(): Observable<NotificationDto[]> {
-    if (!this.authService.isLoggedIn()) {
+    if (!this.authStateService.isLoggedIn()) {
       return of([]);
     }
 
@@ -199,23 +149,21 @@ export class NotificationStateService {
     this._error.set(null);
 
     return this.notificationApiService.getNotifications().pipe(
+      map(page => page.items),
       catchError(error => {
         console.error('Error loading notifications:', error);
         this._error.set('Failed to load notifications');
-        this._loading.set(false);
         return of([]);
       }),
-      switchMap(notifications => {
-        const notificationArray = Array.isArray(notifications) ? notifications : [];
-        this._notifications.set(notificationArray);
+      tap(notifications => {
+        this._notifications.set(notifications);
         this._loading.set(false);
-        return of(notificationArray);
       }),
     );
   }
 
-  private loadSettings(): Observable<any> {
-    if (!this.authService.isLoggedIn()) {
+  private loadSettings(): Observable<NotificationSettingsDto | null> {
+    if (!this.authStateService.isLoggedIn()) {
       return of(null);
     }
 
@@ -225,10 +173,7 @@ export class NotificationStateService {
         this._error.set('Failed to load settings');
         return of(null);
       }),
-      switchMap(settings => {
-        this._settings.set(settings);
-        return of(settings);
-      }),
+      tap(settings => this._settings.set(settings)),
     );
   }
 }

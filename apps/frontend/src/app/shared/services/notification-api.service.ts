@@ -1,44 +1,59 @@
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ApiResponse } from '../defs/api-response.defs';
-import { NotificationDto, NotificationSettingsDto, UpdateNotificationSettingsDto } from '../defs/notification.defs';
+import { ApiPaginatedResponse, ApiResponse } from '../defs/api-response.defs';
+import {
+  NotificationDto,
+  NotificationSettingsDto,
+  UnreadCountDto,
+  UpdateNotificationSettingsDto,
+} from '../defs/notification.defs';
 import { HttpApiService } from './http-api.service';
+
+const NOTIFICATIONS = '/notifications';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationApiService extends HttpApiService {
-  public getNotifications(): Observable<NotificationDto[]> {
+  public getNotifications(page = 0, size = 20): Observable<ApiPaginatedResponse<NotificationDto>> {
+    const params = new HttpParams().set('page', page).set('size', size);
     return this.http
-      .get<ApiResponse<NotificationDto[]>>(`${this.baseUrl}/notifications/me`)
+      .get<ApiResponse<ApiPaginatedResponse<NotificationDto>>>(`${this.baseUrl}${NOTIFICATIONS}`, { params })
       .pipe(map(response => response.data));
   }
 
-  public markAsRead(id: number): Observable<void> {
-    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/${id}/notifications/read`, {}).pipe(map(() => void 0));
+  public getUnreadCount(): Observable<number> {
+    return this.http
+      .get<ApiResponse<UnreadCountDto>>(`${this.baseUrl}${NOTIFICATIONS}/unread-count`)
+      .pipe(map(response => response.data.unread));
   }
 
-  public markAllAsRead(): Observable<void> {
-    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/notifications/me/read-all`, {}).pipe(map(() => void 0));
+  public markAsRead(ids: string[]): Observable<number> {
+    return this.http
+      .post<ApiResponse<number>>(`${this.baseUrl}${NOTIFICATIONS}/mark-read`, { notificationIds: ids })
+      .pipe(map(response => response.data));
   }
 
-  public clearAllNotifications(): Observable<void> {
-    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/notifications/me/clear-all`).pipe(map(() => void 0));
-  }
-
-  public deleteNotification(id: number): Observable<void> {
-    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/notifications/${id}`).pipe(map(() => void 0));
+  public markAllAsRead(): Observable<number> {
+    return this.http
+      .post<ApiResponse<number>>(`${this.baseUrl}${NOTIFICATIONS}/mark-all-read`, {})
+      .pipe(map(response => response.data));
   }
 
   public getSettings(): Observable<NotificationSettingsDto> {
     return this.http
-      .get<ApiResponse<NotificationSettingsDto>>(`${this.baseUrl}/notifications/settings`)
+      .get<ApiResponse<NotificationSettingsDto>>(`${this.baseUrl}${NOTIFICATIONS}/settings`)
       .pipe(map(response => response.data));
   }
 
-  public updateSettings(settings: UpdateNotificationSettingsDto): Observable<NotificationSettingsDto> {
+  public updateSettings(
+    settings: UpdateNotificationSettingsDto,
+    version: number | null,
+  ): Observable<NotificationSettingsDto> {
+    const headers = version === null ? undefined : new HttpHeaders({ 'If-Match': `W/"${version}"` });
     return this.http
-      .patch<ApiResponse<NotificationSettingsDto>>(`${this.baseUrl}/notifications/settings`, settings)
+      .put<ApiResponse<NotificationSettingsDto>>(`${this.baseUrl}${NOTIFICATIONS}/settings`, settings, { headers })
       .pipe(map(response => response.data));
   }
 }

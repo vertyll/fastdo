@@ -21,7 +21,7 @@ import { ProjectStatusService } from 'src/app/project/data-access/project-status
 import { ProjectUserRoleService } from 'src/app/project/data-access/project-user-role.service';
 import { ProjectsService } from 'src/app/project/data-access/project.service';
 import { ButtonRoleEnum } from 'src/app/shared/enums/modal.enum';
-import { NotificationTypeEnum } from 'src/app/shared/enums/notification.enum';
+import { ToastTypeEnum } from 'src/app/shared/enums/toast-type.enum';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
@@ -30,10 +30,11 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 import { TableColumn, TableComponent, TableConfig } from '../shared/components/organisms/table.component';
 import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from '../shared/defs/filter.defs';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
-import { GetAllTasksSearchParams, Task, TaskPriorityCodeEnum } from './defs/task.defs';
+import { ProjectCategory, ProjectMember, ProjectStatus } from '../project/defs/project.defs';
+import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
+import { GetAllTasksSearchParams, TaskListItem, TaskSortFieldEnum } from './defs/task.defs';
 import { getContrastColor } from '../shared/utils/color.utils';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
-import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { PlatformService } from '../shared/services/platform.service';
@@ -172,7 +173,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly tasksService = inject(TasksService);
-  private readonly taskPriorityService = inject(TaskPriorityService);
   private readonly projectStatusService = inject(ProjectStatusService);
   private readonly projectCategoryService = inject(ProjectCategoryService);
   private readonly projectUserRoleService = inject(ProjectUserRoleService);
@@ -190,29 +190,24 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected projectId = signal<string | null>(null);
   protected projectName = signal<string>('');
   protected projectIsPublic = signal<boolean>(false);
-  protected selectedTasks = signal<Task[]>([]);
+  protected selectedTasks = signal<TaskListItem[]>([]);
   protected customTemplates = signal<{ [key: string]: TemplateRef<any> }>({});
 
-  private prioritiesRaw: any[] = [];
-  private statusesRaw: any[] = [];
-  private categoriesRaw: any[] = [];
-
   protected currentSearchParams = signal<GetAllTasksSearchParams>({
-    q: '',
-    sortBy: 'dateCreation',
-    orderBy: 'desc',
+    sortBy: TaskSortFieldEnum.CREATED_AT,
+    sortDescending: true,
     page: 0,
-    pageSize: 10,
+    size: 10,
   });
 
   protected currentSort = computed(() => {
     const params = this.currentSearchParams();
-    if (params.sortBy === 'dateCreation' && params.orderBy === 'desc') {
+    if (params.sortBy === TaskSortFieldEnum.CREATED_AT && params.sortDescending) {
       return null;
     }
     return {
-      column: params.sortBy,
-      direction: params.orderBy,
+      column: params.sortBy ?? TaskSortFieldEnum.CREATED_AT,
+      direction: (params.sortDescending ? 'desc' : 'asc') as 'asc' | 'desc',
     };
   });
 
@@ -248,13 +243,18 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     hover: true,
     striped: true,
     responsiveBreakpoint: MOBILE_BREAKPOINT,
-    rowClassFunction: (row: Task) => this.getRowClassByPriority(row),
+    rowClassFunction: (row: TaskListItem) => this.getRowClassByPriority(row),
   }));
 
   ngOnInit(): void {
     this.initializeTaskList();
+    // Reference-data names are resolved server-side from `x-lang`, so a
+    // language switch means refetching the filter options.
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.refreshLocalizedOptionsForCurrentLang();
+      const projectId = this.projectId();
+      if (projectId) {
+        this.loadInitialFilterData(projectId);
+      }
     });
   }
 
@@ -320,11 +320,11 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
           catchError(err => {
             this.tasksStateService.setLoadingMore(false);
             if (err.error?.message) {
-              this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
+              this.notificationService.showNotification(err.error.message, ToastTypeEnum.Error);
             } else {
               this.notificationService.showNotification(
                 this.translateService.instant('Task.loadMoreError'),
-                NotificationTypeEnum.Error,
+                ToastTypeEnum.Error,
               );
             }
             return EMPTY;
@@ -366,10 +366,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
               text: this.translateService.instant('Basic.delete'),
               role: ButtonRoleEnum.Reject,
               handler: () => {
-                this.tasksService.delete(event.row.id).subscribe(() => {
+                this.tasksService.delete(String(event.row.id), this.rowVersion(event.row)).subscribe(() => {
                   this.notificationService.showNotification(
                     this.translateService.instant('Task.deleteSuccess'),
-                    NotificationTypeEnum.Success,
+                    ToastTypeEnum.Success,
                   );
                 });
                 return true;
@@ -382,28 +382,25 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   }
 
   protected handleSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
-    const sortByMapping: { [key: string]: string } = {
-      dateCreation: 'dateCreation',
-      dateModification: 'dateModification',
-      description: 'description',
-      id: 'id',
+    const sortable: Record<string, TaskSortFieldEnum> = {
+      dateCreation: TaskSortFieldEnum.CREATED_AT,
+      dateModification: TaskSortFieldEnum.UPDATED_AT,
+      description: TaskSortFieldEnum.DESCRIPTION,
+      priority: TaskSortFieldEnum.PRIORITY,
     };
 
-    const backendSortBy = event.column === '' ? 'dateCreation' : sortByMapping[event.column] || 'dateCreation';
-
-    const currentParams = this.currentSearchParams();
-    const searchParams = {
-      ...currentParams,
-      sortBy: backendSortBy as 'dateCreation' | 'dateModification' | 'description' | 'id',
-      orderBy: event.direction,
-      page: 0, // Reset to first page when sorting
+    const searchParams: GetAllTasksSearchParams = {
+      ...this.currentSearchParams(),
+      sortBy: sortable[event.column] ?? TaskSortFieldEnum.CREATED_AT,
+      sortDescending: event.direction === 'desc',
+      page: 0,
     };
 
     this.currentSearchParams.set(searchParams);
     this.getAllTasks(searchParams).subscribe();
   }
 
-  protected handleSelectionChange(selectedTasks: Task[]): void {
+  protected handleSelectionChange(selectedTasks: TaskListItem[]): void {
     this.selectedTasks.set(selectedTasks);
   }
 
@@ -536,15 +533,16 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  private getRowClassByPriority(task: Task): string {
-    if (!task.priority) return '';
+  private rowVersion(row: { version?: unknown }): number | null {
+    return typeof row.version === 'number' ? row.version : null;
+  }
 
-    switch (task.priority.code) {
-      case TaskPriorityCodeEnum.HIGH:
+  private getRowClassByPriority(task: TaskListItem): string {
+    switch (task.priority) {
+      case TaskPriorityEnum.HIGH:
         return 'priority-high';
-      case TaskPriorityCodeEnum.LOW:
+      case TaskPriorityEnum.LOW:
         return 'priority-low';
-      case TaskPriorityCodeEnum.MEDIUM:
       default:
         return '';
     }
@@ -559,16 +557,11 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
           this.projectId.set(projectId);
           if (projectId) {
             this.loadProjectName(projectId);
-            this.loadInitialFilterData(Number(projectId));
+            this.loadInitialFilterData(projectId);
           }
           const searchParams = getAllTasksSearchParams({
-            q: '',
-            sortBy: 'dateCreation',
-            orderBy: 'desc',
-            createdFrom: '',
-            createdTo: '',
-            updatedFrom: '',
-            updatedTo: '',
+            sortBy: TaskSortFieldEnum.CREATED_AT,
+            sortDescending: true,
             page: 0,
             pageSize: 10,
           });
@@ -580,78 +573,63 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   }
 
   private loadProjectName(projectId: string): void {
-    this.projectsService.getProjectById(+projectId).subscribe(project => {
+    this.projectsService.getProjectById(projectId).subscribe(project => {
       this.projectName.set(project.data.name);
       this.projectIsPublic.set(project.data.isPublic);
     });
   }
 
-  private loadInitialFilterData(projectId: number): void {
+  private loadInitialFilterData(projectId: string): void {
     this.isFiltersLoading.set(true);
 
-    const priorities$ = this.taskPriorityService.getAll().pipe(
-      catchError(err => {
-        console.error('Error fetching task priorities:', err);
-        return of({ data: [] } as any);
-      }),
-    );
-
     const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
+      map(response => response.data ?? []),
       catchError(err => {
         console.error('Error fetching project statuses:', err);
-        return of({ data: [] } as any);
+        return of([] as ProjectStatus[]);
       }),
     );
 
     const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
+      map(response => response.data ?? []),
       catchError(err => {
         console.error('Error fetching project categories:', err);
-        return of({ data: [] } as any);
+        return of([] as ProjectCategory[]);
       }),
     );
 
     const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
+      map(response => response.data ?? []),
       catchError(err => {
         console.error('Error fetching users in project:', err);
-        return of({ data: [] } as any);
+        return of([] as ProjectMember[]);
       }),
     );
 
-    forkJoin({ priorities: priorities$, statuses: statuses$, categories: categories$, users: users$ })
+    forkJoin({ statuses: statuses$, categories: categories$, users: users$ })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ priorities, statuses, categories, users }) => {
-        this.prioritiesRaw = priorities.data || [];
-        this.statusesRaw = statuses.data || [];
-        this.categoriesRaw = categories.data || [];
-
-        const userFilter = TASKS_LIST_FILTERS.find(filter => filter.formControlName === 'assignedUserIds');
-        if (userFilter) {
-          userFilter.multiselectOptions = (users.data || []).map((user: any) => ({
-            id: user.user.id,
-            name: user.user.email,
-          }));
-        }
-
-        this.refreshLocalizedOptionsForCurrentLang();
+      .subscribe(({ statuses, categories, users }) => {
+        this.setFilterOptions(
+          'statusId',
+          statuses.map(status => ({ value: status.id, label: status.name })),
+        );
+        this.setFilterOptions(
+          'categoryId',
+          categories.map(category => ({ value: category.id, label: category.name })),
+        );
+        this.setFilterOptions(
+          'assigneeId',
+          users.map(member => ({ value: member.userId, label: member.displayName || member.email })),
+        );
         this.isFiltersLoading.set(false);
       });
   }
 
-  private refreshLocalizedOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    this.updateLocalizedOptions('priorityIds', this.prioritiesRaw, lang);
-    this.updateLocalizedOptions('statusIds', this.statusesRaw, lang);
-    this.updateLocalizedOptions('categoryIds', this.categoriesRaw, lang);
-  }
-
-  private updateLocalizedOptions(formControlName: string, items: any[], lang: string): void {
+  private setFilterOptions(formControlName: string, options: Array<{ value: string; label: string }>): void {
     const filter = TASKS_LIST_FILTERS.find(item => item.formControlName === formControlName);
-    if (!filter) return;
-
-    filter.multiselectOptions = (items || []).map((item: any) => ({
-      id: item.id,
-      name: item.translations?.find((t: any) => t.lang === lang)?.name,
-    }));
+    if (filter) {
+      filter.options = options;
+    }
   }
 
   private getAllTasks(searchParams: GetAllTasksSearchParams): Observable<void> {
@@ -665,17 +643,20 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
     return this.tasksService.getAllByProjectId(projectId, searchParams).pipe(
       map(response => {
-        const tasks = response.data || { items: [], pagination: { total: 0, page: 0, pageSize: 10, totalPages: 0 } };
+        const tasks = response.data || {
+          items: [],
+          pagination: { total: 0, page: 0, pageSize: 10, totalPages: 0, hasMore: false },
+        };
         this.tasksStateService.setTaskList(tasks.items);
         this.tasksStateService.setPagination(tasks.pagination);
       }),
       catchError(err => {
         if (err.error?.message) {
-          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
+          this.notificationService.showNotification(err.error.message, ToastTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.getAllError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
         }
         return EMPTY;
@@ -683,13 +664,13 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     );
   }
 
-  private performBatchDelete(selectedTasks: Task[]): void {
+  private performBatchDelete(selectedTasks: TaskListItem[]): void {
     const taskIds = selectedTasks.map(task => task.id);
     this.tasksService.batchDelete(taskIds).subscribe({
       next: () => {
         this.notificationService.showNotification(
           this.translateService.instant('Task.batchDeleteSuccess', { count: selectedTasks.length }),
-          NotificationTypeEnum.Success,
+          ToastTypeEnum.Success,
         );
         this.selectedTasks.set([]);
         const currentParams = this.currentSearchParams();
@@ -697,11 +678,11 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         if (err.error?.message) {
-          this.notificationService.showNotification(err.error.message, NotificationTypeEnum.Error);
+          this.notificationService.showNotification(err.error.message, ToastTypeEnum.Error);
         } else {
           this.notificationService.showNotification(
             this.translateService.instant('Task.batchDeleteError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
         }
       },

@@ -1,4 +1,7 @@
+import { ProjectSortFieldEnum } from '../../project/defs/project.defs';
+import { TaskSortFieldEnum } from '../../task/defs/task.defs';
 import { FilterTypeEnum } from '../enums/filter-type.enum';
+import { TaskPriorityEnum } from '../enums/task-priority.enum';
 
 export interface FilterMap {
   [type: string]: FilterModel;
@@ -28,30 +31,25 @@ export type FilterModel = {
 };
 
 export type TasksListFiltersConfig = {
-  q?: string;
-  priorityIds?: number[];
-  categoryIds?: number[];
-  statusIds?: number[];
-  assignedUserIds?: number[];
-  sortBy?: 'dateCreation' | 'dateModification' | 'description' | 'id';
-  orderBy?: 'asc' | 'desc';
-  createdFrom?: string;
-  createdTo?: string;
-  updatedFrom?: string;
-  updatedTo?: string;
+  searchTerm?: string;
+  priority?: TaskPriorityEnum;
+  categoryId?: string;
+  statusId?: string;
+  assigneeId?: string;
+  onlyActive?: boolean;
+  sortBy?: TaskSortFieldEnum;
+  sortDescending?: boolean;
 };
 
 export interface ProjectListFiltersConfig {
-  q: string;
-  sortBy: 'dateCreation' | 'dateModification' | 'name';
-  orderBy: 'asc' | 'desc';
-  createdFrom: string;
-  createdTo: string;
-  updatedFrom: string;
-  updatedTo: string;
-  typeIds: number[];
-  page: number;
-  pageSize: number;
+  searchTerm?: string;
+  typeId?: string;
+  onlyActive?: boolean;
+  includePublic?: boolean;
+  sortBy?: ProjectSortFieldEnum;
+  sortDescending?: boolean;
+  page?: number;
+  pageSize?: number;
 }
 
 export type PaginationParams = {
@@ -62,126 +60,92 @@ export type PaginationParams = {
 export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
   {
     type: FilterTypeEnum.Text,
-    formControlName: 'q',
+    formControlName: 'searchTerm',
     labelKey: 'Filters.search',
   },
   {
-    type: FilterTypeEnum.EditableMultiSelect,
-    formControlName: 'typeIds',
+    type: FilterTypeEnum.Select,
+    formControlName: 'typeId',
     labelKey: 'Filters.projectTypes',
-    multiselectOptions: [],
+    options: [],
   },
   {
     type: FilterTypeEnum.Select,
     formControlName: 'sortBy',
     labelKey: 'Filters.sortBy',
-    defaultValue: 'dateCreation',
+    defaultValue: ProjectSortFieldEnum.CREATED_AT,
     options: [
-      { value: 'dateCreation', label: 'Filters.createdFrom' },
-      { value: 'dateModification', label: 'Filters.updatedFrom' },
-      { value: 'name', label: 'Filters.sortByName' },
+      { value: ProjectSortFieldEnum.CREATED_AT, label: 'Filters.createdFrom' },
+      { value: ProjectSortFieldEnum.UPDATED_AT, label: 'Filters.updatedFrom' },
+      { value: ProjectSortFieldEnum.NAME, label: 'Filters.sortByName' },
     ],
   },
   {
     type: FilterTypeEnum.Select,
-    formControlName: 'orderBy',
+    formControlName: 'sortDescending',
     labelKey: 'Filters.orderBy',
-    defaultValue: 'desc',
+    defaultValue: true,
     options: [
-      { value: 'desc', label: 'Filters.orderByDesc' },
-      { value: 'asc', label: 'Filters.orderByAsc' },
+      { value: true, label: 'Filters.orderByDesc' },
+      { value: false, label: 'Filters.orderByAsc' },
     ],
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'createdFrom',
-    labelKey: 'Filters.createdFrom',
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'createdTo',
-    labelKey: 'Filters.createdTo',
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'updatedFrom',
-    labelKey: 'Filters.updatedFrom',
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'updatedTo',
-    labelKey: 'Filters.updatedTo',
   },
 ];
 
 export const TASKS_LIST_FILTERS: FilterMetadata[] = [
   {
     type: FilterTypeEnum.Text,
-    formControlName: 'q',
+    formControlName: 'searchTerm',
     labelKey: 'Filters.search',
   },
   {
-    type: FilterTypeEnum.EditableMultiSelect,
-    formControlName: 'priorityIds',
+    type: FilterTypeEnum.Select,
+    formControlName: 'priority',
     labelKey: 'Filters.priorities',
-    multiselectOptions: [],
+    options: [
+      { value: TaskPriorityEnum.LOW, label: 'Task.priorityLow' },
+      { value: TaskPriorityEnum.MEDIUM, label: 'Task.priorityMedium' },
+      { value: TaskPriorityEnum.HIGH, label: 'Task.priorityHigh' },
+    ],
   },
   {
-    type: FilterTypeEnum.EditableMultiSelect,
-    formControlName: 'categoryIds',
+    type: FilterTypeEnum.Select,
+    formControlName: 'categoryId',
     labelKey: 'Filters.categories',
-    multiselectOptions: [],
+    options: [],
   },
   {
-    type: FilterTypeEnum.EditableMultiSelect,
-    formControlName: 'statusIds',
+    type: FilterTypeEnum.Select,
+    formControlName: 'statusId',
     labelKey: 'Filters.statuses',
-    multiselectOptions: [],
+    options: [],
   },
   {
-    type: FilterTypeEnum.EditableMultiSelect,
-    formControlName: 'assignedUserIds',
+    type: FilterTypeEnum.Select,
+    formControlName: 'assigneeId',
     labelKey: 'Filters.assignedUsers',
-    multiselectOptions: [],
+    options: [],
   },
   {
     type: FilterTypeEnum.Select,
     formControlName: 'sortBy',
     labelKey: 'Filters.sortBy',
-    defaultValue: 'dateCreation',
+    defaultValue: TaskSortFieldEnum.CREATED_AT,
     options: [
-      { value: 'dateCreation', label: 'Filters.createdFrom' },
-      { value: 'dateModification', label: 'Filters.updatedFrom' },
+      { value: TaskSortFieldEnum.CREATED_AT, label: 'Filters.createdFrom' },
+      { value: TaskSortFieldEnum.UPDATED_AT, label: 'Filters.updatedFrom' },
+      { value: TaskSortFieldEnum.PRIORITY, label: 'Filters.priorities' },
+      { value: TaskSortFieldEnum.DESCRIPTION, label: 'Filters.search' },
     ],
   },
   {
     type: FilterTypeEnum.Select,
-    formControlName: 'orderBy',
+    formControlName: 'sortDescending',
     labelKey: 'Filters.orderBy',
-    defaultValue: 'desc',
+    defaultValue: true,
     options: [
-      { value: 'desc', label: 'Filters.orderByDesc' },
-      { value: 'asc', label: 'Filters.orderByAsc' },
+      { value: true, label: 'Filters.orderByDesc' },
+      { value: false, label: 'Filters.orderByAsc' },
     ],
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'createdFrom',
-    labelKey: 'Filters.createdFrom',
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'createdTo',
-    labelKey: 'Filters.createdTo',
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'updatedFrom',
-    labelKey: 'Filters.updatedFrom',
-  },
-  {
-    type: FilterTypeEnum.Date,
-    formControlName: 'updatedTo',
-    labelKey: 'Filters.updatedTo',
   },
 ];

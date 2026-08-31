@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroDocument, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { ProjectCategoryService } from '../project/data-access/project-category.service';
 import { ProjectRoleService } from '../project/data-access/project-role.service';
 import { ProjectStatusService } from '../project/data-access/project-status.service';
@@ -19,14 +19,16 @@ import { InputFieldComponent } from '../shared/components/molecules/input-field.
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
-import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { NotificationService } from '../shared/services/notification.service';
-import { TaskPriorityService } from './data-access/task-priority.service';
 import { TasksService } from './data-access/task.service';
-import { TaskPayload } from './defs/task.defs';
+import { CreateTaskPayload, UpdateTaskPayload } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
-import { SimpleNameItem, TranslationItem, TranslatableOptionItem } from '../shared/defs/common.defs';
+import { SimpleNameItem } from '../shared/defs/common.defs';
+import { errorKeyOf, fieldErrorsOf } from '../shared/utils/api-error.utils';
+import { FileApiService } from '../file/data-access/file.api.service';
+import { StoredFile } from '../file/defs/file.defs';
 import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.utils';
 
 @Component({
@@ -182,14 +184,13 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                   @for (attachment of existingAttachments(); track attachment.id) {
                     <div
                       class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-neutral-200 dark:border-neutral-700 transition-opacity duration-200"
-                      [class.opacity-50]="attachment._markedForDelete"
                     >
                       <div class="flex items-center gap-3 flex-1 min-w-0">
                         <!-- Icon/Image -->
                         <div class="shrink-0">
-                          @if (isImage(attachment.filename)) {
+                          @if (isImage(attachment.originalName)) {
                             <app-image
-                              [initialUrl]="attachment.url || null"
+                              [initialUrl]="'/files/' + attachment.id"
                               [mode]="'preview'"
                               [format]="'square'"
                               [size]="'sm'"
@@ -206,7 +207,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                             {{ attachment.originalName }}
                           </p>
                           <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                            {{ formatFileSize(attachment.size) }}
+                            {{ formatFileSize(attachment.sizeBytes) }}
                           </p>
                         </div>
                       </div>
@@ -216,23 +217,10 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                         <button
                           type="button"
                           (click)="removeExistingAttachment(attachment)"
-                          class="p-1 rounded-md outline-none border-none"
-                          [ngClass]="
-                            attachment._markedForDelete
-                              ? 'text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100'
-                              : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
-                          "
-                          [title]="
-                            attachment._markedForDelete ? ('Basic.undo' | translate) : ('Basic.delete' | translate)
-                          "
+                          class="p-1 rounded-md outline-none border-none text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+                          [title]="'Basic.delete' | translate"
                         >
-                          @if (!attachment._markedForDelete) {
-                            <ng-icon name="heroTrash" size="16"></ng-icon>
-                          }
-
-                          @if (attachment._markedForDelete) {
-                            <ng-icon name="heroArrowLeft" size="16"></ng-icon>
-                          }
+                          <ng-icon name="heroTrash" size="16"></ng-icon>
                         </button>
                       </div>
                     </div>
@@ -321,13 +309,13 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
   private readonly projectsApiService = inject(ProjectsApiService);
-  private readonly taskPriorityService = inject(TaskPriorityService);
   private readonly projectCategoryService = inject(ProjectCategoryService);
   private readonly projectRoleService = inject(ProjectRoleService);
   private readonly projectStatusService = inject(ProjectStatusService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly fileApiService = inject(FileApiService);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -337,18 +325,16 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   public readonly submitting = signal(false);
   public readonly error = signal<string | null>(null);
 
-  public readonly prioritiesRaw = signal<TranslatableOptionItem[]>([]);
-  public readonly categoriesRaw = signal<TranslatableOptionItem[]>([]);
-  public readonly statusesRaw = signal<TranslatableOptionItem[]>([]);
-  public readonly accessRolesRaw = signal<TranslatableOptionItem[]>([]);
-  public readonly priorities = signal<SimpleNameItem[]>([]);
+  public readonly priorities = signal<SimpleNameItem[]>(
+    Object.values(TaskPriorityEnum).map(priority => ({ id: priority, name: `Task.priority${priority}` })),
+  );
   public readonly categories = signal<SimpleNameItem[]>([]);
   public readonly statuses = signal<SimpleNameItem[]>([]);
   public readonly accessRoles = signal<SimpleNameItem[]>([]);
   public readonly projectUsers = signal<SimpleNameItem[]>([]);
   public readonly attachments = signal<FileUploadItem[]>([]);
-  public readonly existingAttachments = signal<any[]>([]);
-  public readonly attachmentsToDelete = signal<string[]>([]);
+  public readonly existingAttachments = signal<StoredFile[]>([]);
+  public readonly taskVersion = signal<number | null>(null);
 
   protected readonly maxAttachmentsLimit = 4;
   protected readonly formatFileSize = formatFileSizeUtil;
@@ -384,24 +370,24 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     return this.taskForm.get('accessRole') as FormControl;
   }
 
-  public get priorityOptions(): Array<{ value: number; label: string }> {
+  public get priorityOptions(): Array<{ value: string; label: string }> {
     return this.priorities().map(item => ({
       value: item.id,
-      label: item.name,
+      label: this.translateService.instant(item.name),
     }));
   }
 
-  public get statusOptions(): Array<{ value: number | null; label: string }> {
+  public get statusOptions(): Array<{ value: string | null; label: string }> {
     return [
       { value: null, label: this.translateService.instant('Basic.none') },
-      ...this.statuses().map(s => ({ value: s.id, label: s.name })),
+      ...this.statuses().map(status => ({ value: status.id, label: status.name })),
     ];
   }
 
-  public get accessRoleOptions(): Array<{ value: number | null; label: string }> {
+  public get accessRoleOptions(): Array<{ value: string | null; label: string }> {
     return [
       { value: null, label: this.translateService.instant('Basic.none') },
-      ...this.accessRoles().map(r => ({ value: r.id, label: r.name })),
+      ...this.accessRoles().map(role => ({ value: role.id, label: role.name })),
     ];
   }
 
@@ -438,18 +424,10 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.error.set(null);
   }
 
-  protected removeExistingAttachment(attachment: any): void {
-    if (attachment._markedForDelete) {
-      attachment._markedForDelete = false;
-      this.attachmentsToDelete.update(toDelete => toDelete.filter(id => id !== attachment.id));
-    } else {
-      attachment._markedForDelete = true;
-      this.attachmentsToDelete.update(toDelete => [...toDelete, attachment.id]);
-    }
-    this.existingAttachments.set([...this.existingAttachments()]);
+  protected removeExistingAttachment(file: StoredFile): void {
+    this.existingAttachments.update(files => files.filter(item => item.id !== file.id));
 
-    const totalAttachments = this.getTotalAttachments();
-    if (totalAttachments <= this.maxAttachmentsLimit) {
+    if (this.getTotalAttachments() <= this.maxAttachmentsLimit) {
       this.error.set(null);
     }
   }
@@ -500,24 +478,48 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const taskData: TaskPayload = {
+    const payload: CreateTaskPayload = {
       description: formValue.description,
-      additionalDescription: formValue.additionalDescription || undefined,
-      priceEstimation: formValue.priceEstimation || undefined,
-      workedTime: formValue.workedTime || undefined,
-      accessRoleId: formValue.accessRole || undefined,
-      priorityId: formValue.priorityId || undefined,
+      additionalDescription: formValue.additionalDescription || null,
+      priority: formValue.priority ?? TaskPriorityEnum.MEDIUM,
+      priceEstimation: formValue.priceEstimation || 0,
+      accessRoleId: formValue.accessRole || null,
       categoryIds: Array.isArray(formValue.categoryIds) ? formValue.categoryIds : [],
-      statusId: formValue.statusId || undefined,
-      assignedUserIds: Array.isArray(formValue.assignedUserIds) ? formValue.assignedUserIds : [],
-      projectId: +currentProjectId,
+      statusId: formValue.statusId || null,
+      assigneeIds: Array.isArray(formValue.assignedUserIds) ? formValue.assignedUserIds : [],
+      attachmentIds: this.allAttachmentIds(),
     };
 
     if (currentTaskId) {
-      this.updateTask(+currentTaskId, taskData);
+      this.updateTask(currentTaskId, payload);
     } else {
-      this.createTask(taskData);
+      this.createTask(currentProjectId, payload);
     }
+  }
+
+  private loadAttachmentMetadata(fileIds: string[]): void {
+    if (fileIds.length === 0) {
+      this.existingAttachments.set([]);
+      return;
+    }
+
+    forkJoin(
+      fileIds.map(fileId =>
+        this.fileApiService.getFile(fileId).pipe(
+          map(response => response.data),
+          catchError(() => of(null)),
+        ),
+      ),
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(files => this.existingAttachments.set(files.filter((file): file is StoredFile => file !== null)));
+  }
+
+  private allAttachmentIds(): string[] {
+    const uploaded = this.attachments()
+      .map(item => item.id)
+      .filter((id): id is string => !!id);
+    return [...this.existingAttachments().map(file => file.id), ...uploaded];
   }
 
   protected onCancel(): void {
@@ -536,7 +538,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       priceEstimation: [0],
       workedTime: [0],
       accessRole: [null],
-      priorityId: [null],
+      priority: [null],
       statusId: [null],
       projectId: [null],
       categoryIds: [[]],
@@ -551,7 +553,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.taskId.set(taskIdParam);
 
     if (projectIdParam) {
-      this.taskForm.patchValue({ projectId: +projectIdParam });
+      this.taskForm.patchValue({ projectId: projectIdParam });
     }
   }
 
@@ -559,49 +561,29 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     this.taskForm.patchValue({
       accessRole: null,
       statusId: null,
-      priorityId: null,
+      priority: TaskPriorityEnum.MEDIUM,
     });
   }
 
   private setupLanguageSubscription(): void {
     this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.updateOptionsForCurrentLang();
+      this.loadOptions();
     });
   }
 
   private loadOptions(): void {
     const currentProjectId = this.projectId();
 
-    this.taskPriorityService
-      .getAll()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: prioritiesRes => {
-          this.prioritiesRaw.set(prioritiesRes.data || []);
-          this.updateOptionsForCurrentLang();
-          const currentPriority = this.taskForm.get('priorityId')?.value;
-          if (currentPriority == null) {
-            const mediumPriorityRaw = (prioritiesRes.data || []).find(
-              (item: TranslatableOptionItem) => item.code === TaskPriorityEnum.MEDIUM,
-            );
-            if (mediumPriorityRaw) {
-              this.taskForm.patchValue({ priorityId: mediumPriorityRaw.id });
-            }
-          }
-        },
-        error: error => {
-          console.error('Error loading priorities:', error);
-          this.error.set(this.translateService.instant('Task.loadError'));
-        },
-      });
+    if (this.taskForm.get('priority')?.value == null) {
+      this.taskForm.patchValue({ priority: TaskPriorityEnum.MEDIUM });
+    }
 
     this.projectRoleService
       .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: accessRolesRes => {
-          this.accessRolesRaw.set(accessRolesRes.data || []);
-          this.updateOptionsForCurrentLang();
+          this.accessRoles.set((accessRolesRes.data ?? []).map(role => ({ id: role.id, name: role.name })));
         },
         error: error => {
           console.error('Error loading access roles:', error);
@@ -611,12 +593,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
     if (currentProjectId) {
       this.projectCategoryService
-        .getByProjectId(+currentProjectId)
+        .getByProjectId(currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: categoriesRes => {
-            this.categoriesRaw.set(categoriesRes.data || []);
-            this.updateOptionsForCurrentLang();
+            this.categories.set((categoriesRes.data ?? []).map(category => ({ id: category.id, name: category.name })));
           },
           error: error => {
             console.error('Error loading categories:', error);
@@ -625,12 +606,11 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         });
 
       this.projectStatusService
-        .getByProjectId(+currentProjectId)
+        .getByProjectId(currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: statusesRes => {
-            this.statusesRaw.set(statusesRes.data || []);
-            this.updateOptionsForCurrentLang();
+            this.statuses.set((statusesRes.data ?? []).map(status => ({ id: status.id, name: status.name })));
           },
           error: error => {
             console.error('Error loading statuses:', error);
@@ -639,11 +619,13 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         });
 
       this.projectsApiService
-        .getProjectUsers(+currentProjectId)
+        .getProjectMembers(currentProjectId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: usersRes => {
-            this.projectUsers.set(usersRes.data || []);
+            this.projectUsers.set(
+              (usersRes.data ?? []).map(member => ({ id: member.userId, name: member.displayName || member.email })),
+            );
           },
           error: error => {
             console.error('Error loading project users:', error);
@@ -653,7 +635,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
       const taskIdParam = this.taskId();
       if (taskIdParam) {
-        this.loadTaskData(+taskIdParam);
+        this.loadTaskData(taskIdParam);
       } else {
         this.loading.set(false);
       }
@@ -662,49 +644,36 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadTaskData(taskId: number): void {
+  private loadTaskData(taskId: string): void {
     this.tasksService
       .getOne(taskId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
-          const data = response.data;
-          let priorityId = data.priority?.id ?? null;
-          if (!data.priority) {
-            const mediumPriority = this.prioritiesRaw().find(p => p.code === TaskPriorityEnum.MEDIUM);
-            if (mediumPriority) {
-              priorityId = mediumPriority.id;
-            }
-          }
+          const details = response.data;
+          const task = details.task;
+          this.taskVersion.set(task.version);
           this.taskForm.patchValue({
-            description: data.description,
-            additionalDescription: data.additionalDescription || '',
-            priceEstimation: data.priceEstimation || 0,
-            workedTime: data.workedTime || 0,
-            accessRole: data.accessRole?.id || null,
-            priorityId,
-            statusId: data.status?.id || null,
-            categoryIds: data.categories?.map((c: any) => c.id) || [],
-            assignedUserIds: data.assignedUsers?.map((u: any) => u.id) || [],
+            description: task.description,
+            additionalDescription: task.additionalDescription || '',
+            priceEstimation: task.priceEstimation || 0,
+            workedTime: task.workedTime || 0,
+            accessRole: task.accessRoleId || null,
+            priority: task.priority,
+            statusId: task.statusId || null,
+            categoryIds: task.categoryIds ?? [],
+            assignedUserIds: task.assigneeIds ?? [],
           });
 
-          const assignedUsers = data.assignedUsers || [];
-          const currentProjectUsers = this.projectUsers();
-          const missingUsers = assignedUsers
-            .filter((u: any) => !currentProjectUsers.some((pu: any) => pu.id === u.id))
-            .map((u: any) => ({
-              id: u.id,
-              name: u.email || u.name || String(u.id),
-              ...u,
-            }));
-          if (missingUsers.length > 0) {
-            this.projectUsers.set([...currentProjectUsers, ...missingUsers]);
+          const known = new Set(this.projectUsers().map(user => user.id));
+          const missing = details.assignees
+            .filter(assignee => !known.has(assignee.id))
+            .map(assignee => ({ id: assignee.id, name: assignee.displayName }));
+          if (missing.length > 0) {
+            this.projectUsers.set([...this.projectUsers(), ...missing]);
           }
 
-          if (data.attachments && data.attachments.length > 0) {
-            this.existingAttachments.set(data.attachments);
-          }
-
+          this.loadAttachmentMetadata(task.attachmentIds ?? []);
           this.loading.set(false);
         },
         error: error => {
@@ -715,143 +684,52 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private createTask(taskData: TaskPayload): void {
-    const formData = this.buildTaskFormData(taskData);
-
+  private createTask(projectId: string, payload: CreateTaskPayload): void {
     this.tasksService
-      .addWithFiles(formData)
+      .add(projectId, payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
           this.notificationService.showNotification(
             this.translateService.instant('Task.addSuccess'),
-            NotificationTypeEnum.Success,
+            ToastTypeEnum.Success,
           );
-
-          const newTaskId = response?.data?.id;
-          const currentProjectId = this.projectId();
-
-          if (newTaskId && currentProjectId) {
-            this.router.navigate(['/projects', currentProjectId, 'tasks', 'details', newTaskId]).then();
-          } else if (currentProjectId) {
-            this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
-          }
+          this.router.navigate(['/projects', projectId, 'tasks', 'details', response.data.id]).then();
         },
-        error: error => {
-          this.handleSubmissionError(error);
-        },
-        complete: () => {
-          this.submitting.set(false);
-        },
+        error: (error: unknown) => this.handleSubmissionError(error),
+        complete: () => this.submitting.set(false),
       });
   }
 
-  private updateTask(taskId: number, taskData: TaskPayload): void {
-    const { projectId: _projectId, ...updateData } = taskData;
-    const formData = this.buildTaskFormData(updateData, true);
-
+  private updateTask(taskId: string, payload: UpdateTaskPayload): void {
     this.tasksService
-      .updateWithFiles(taskId, formData)
+      .update(taskId, payload, this.taskVersion())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
           this.notificationService.showNotification(
             this.translateService.instant('Task.updateSuccess'),
-            NotificationTypeEnum.Success,
+            ToastTypeEnum.Success,
           );
-
-          const updatedTask = response?.data;
-          const projectIdToUse = updatedTask?.project?.id || this.projectId();
-          const taskIdToUse = updatedTask?.id || taskId;
-
-          if (projectIdToUse && taskIdToUse) {
-            this.router.navigate(['/projects', projectIdToUse, 'tasks', 'details', taskIdToUse]).then();
-          } else {
-            this.router.navigate(['/projects']).then();
-          }
+          const task = response.data;
+          this.router.navigate(['/projects', task.projectId, 'tasks', 'details', task.id]).then();
         },
-        error: error => {
-          this.handleSubmissionError(error);
-        },
-        complete: () => {
-          this.submitting.set(false);
-        },
+        error: (error: unknown) => this.handleSubmissionError(error),
+        complete: () => this.submitting.set(false),
       });
   }
 
-  private buildTaskFormData(taskData: Partial<TaskPayload>, includeAttachmentsToDelete = false): FormData {
-    const formData = new FormData();
-
-    Object.keys(taskData).forEach(key => {
-      const value = (taskData as any)[key];
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          formData.append(key, JSON.stringify(value));
-        } else {
-          formData.append(key, value.toString());
-        }
-      }
-    });
-
-    this.attachments().forEach(attachment => {
-      formData.append('attachments', attachment.file);
-    });
-
-    if (includeAttachmentsToDelete) {
-      const attachmentsToDelete = this.attachmentsToDelete();
-      if (attachmentsToDelete.length > 0) {
-        formData.append('attachmentsToDelete', JSON.stringify(attachmentsToDelete));
-      }
-    }
-
-    return formData;
-  }
-
-  private handleSubmissionError(error: any): void {
-    const messages = error?.error?.errors?.message ?? [];
-    if (Array.isArray(messages) && messages.length > 0) {
-      Object.keys(this.fieldErrors).forEach(key => delete this.fieldErrors[key]);
-      messages.forEach((errObj: any) => {
-        if (errObj.field && Array.isArray(errObj.errors)) {
-          this.fieldErrors[errObj.field] = errObj.errors;
-        }
-      });
-      this.cdr.markForCheck();
+  private handleSubmissionError(error: unknown): void {
+    const fieldErrors = fieldErrorsOf(error);
+    if (Object.keys(fieldErrors).length > 0) {
+      this.fieldErrors = fieldErrors;
       this.error.set(null);
+      this.cdr.markForCheck();
     } else {
-      const errorMessage =
-        error?.error?.errors?.error ||
-        error?.error?.message ||
-        error?.message ||
-        this.translateService.instant('Task.unknownError');
-      this.error.set(errorMessage);
-      this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+      const message = this.translateService.instant(errorKeyOf(error) ?? 'Task.unknownError');
+      this.error.set(message);
+      this.notificationService.showNotification(message, ToastTypeEnum.Error);
     }
     this.submitting.set(false);
-  }
-
-  private updateOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-
-    this.priorities.set(this.mapToLocalizedSelectOptions(this.prioritiesRaw(), lang));
-    this.categories.set(this.mapToLocalizedSelectOptions(this.categoriesRaw(), lang));
-    this.statuses.set(this.mapToLocalizedSelectOptions(this.statusesRaw(), lang));
-    this.accessRoles.set(this.mapToLocalizedSelectOptions(this.accessRolesRaw(), lang));
-  }
-
-  private mapToLocalizedSelectOptions(items: TranslatableOptionItem[], lang: string): SimpleNameItem[] {
-    return (items || []).map(item => ({
-      id: item.id,
-      name: this.getLocalizedName(item, lang),
-    }));
-  }
-
-  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
-    return (
-      item.translations?.find((t: TranslationItem) => t.lang === lang)?.name ||
-      item.translations?.[0]?.name ||
-      item.name ||
-      ''
-    );
   }
 }

@@ -7,7 +7,7 @@ import { UserApiService } from './user.api.service';
 export class UserStateService {
   private readonly apiService = inject(UserApiService);
 
-  private readonly userSignal = signal<User>({} as User);
+  private readonly userSignal = signal<User | null>(null);
 
   public user = computed(() => this.userSignal());
   public state = computed(() => {
@@ -23,7 +23,7 @@ export class UserStateService {
   });
   public error = computed(() => this.apiService.$error());
 
-  public setUser(projects: User): void {
-    this.userSignal.set(projects);
+  public setUser(user: User): void {
+    this.userSignal.set(user);
   }
 }

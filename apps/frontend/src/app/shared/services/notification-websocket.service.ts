@@ -1,238 +1,114 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { Socket, io } from 'socket.io-client';
+import { DestroyRef, Injectable, effect, inject, signal } from '@angular/core';
+import { Client, IMessage } from '@stomp/stompjs';
+import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../auth/data-access/auth.service';
 import { AuthStateService } from '../../auth/data-access/auth.state.service';
-import { NotificationWsEvent, NotificationWsEventType } from '../defs/notification.defs';
+import { NotificationDto, NotificationWsEvent } from '../defs/notification.defs';
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
 
-interface TokenAwareSocket extends Socket {
-  _currentToken?: string;
-}
-
-const SOCKET_OPTIONS = {
-  transports: ['websocket', 'polling'] as string[],
-  autoConnect: true,
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-  timeout: 10000,
-  forceNew: true,
-};
-
-const AUTH_ERROR_KEYWORDS = ['Authentication', 'Invalid', 'Unauthorized'];
+const NOTIFICATIONS_DESTINATION = '/user/queue/notifications';
+const UNREAD_DESTINATION = '/user/queue/notifications.unread';
+const RECONNECT_DELAY_MS = 5_000;
+const HEARTBEAT_MS = 10_000;
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationWebSocketService {
-  private readonly authService = inject(AuthService);
   private readonly authStateService = inject(AuthStateService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  private socket: TokenAwareSocket | null = null;
-  private readonly connectionStatus = signal<ConnectionStatus>('disconnected');
-  private readonly connectionSubject = new BehaviorSubject<boolean>(false);
+  private client: Client | null = null;
+
+  private readonly status = signal<ConnectionStatus>('disconnected');
   private readonly eventsSubject = new Subject<NotificationWsEvent>();
 
-  public readonly connectionStatus$ = this.connectionStatus.asReadonly();
-  public readonly isConnected$ = this.connectionSubject.asObservable();
+  public readonly connectionStatus = this.status.asReadonly();
   public readonly events$ = this.eventsSubject.asObservable();
 
   constructor() {
-    effect(() => this.handleAuthConnectionChange());
-    effect(() => this.handleTokenSync());
+    effect(() => (this.authStateService.isLoggedIn() ? this.connect() : this.disconnect()));
+    this.destroyRef.onDestroy(() => this.disconnect());
   }
 
-  public connect(): void {
-    if (this.socket?.connected) {
+  public isConnected(): boolean {
+    return this.client?.connected ?? false;
+  }
+
+  private connect(): void {
+    if (this.client) {
       return;
     }
 
-    const token = this.authStateService.getToken();
-    if (!token) {
-      return;
-    }
+    this.status.set('connecting');
 
-    this.connectionStatus.set('connecting');
-    this.socket = this.createSocket(token);
-    this.setupEventListeners();
+    const client = new Client({
+      brokerURL: this.brokerUrl(),
+      reconnectDelay: RECONNECT_DELAY_MS,
+      heartbeatIncoming: HEARTBEAT_MS,
+      heartbeatOutgoing: HEARTBEAT_MS,
+      onConnect: () => {
+        this.status.set('connected');
+        this.eventsSubject.next({ type: 'connected' });
+        client.subscribe(NOTIFICATIONS_DESTINATION, message => this.onNotification(message));
+        client.subscribe(UNREAD_DESTINATION, message => this.onUnreadCount(message));
+      },
+      onWebSocketClose: () => this.markDisconnected(),
+      onStompError: frame => {
+        console.error('STOMP error:', frame.headers['message'], frame.body);
+        this.markDisconnected();
+      },
+    });
+
+    this.client = client;
+    client.activate();
   }
 
-  public disconnect(): void {
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
+  private disconnect(): void {
+    const client = this.client;
+    this.client = null;
+    if (client) {
+      void client.deactivate();
     }
     this.markDisconnected();
   }
 
-  public isConnected(): boolean {
-    return this.socket?.connected ?? false;
-  }
-
-  public emit(event: string, data?: any): void {
-    if (this.socket?.connected) {
-      this.socket.emit(event, data);
-    } else {
-      console.warn('WebSocket not connected, cannot emit event:', event);
+  private onNotification(message: IMessage): void {
+    const notification = this.parse<NotificationDto>(message);
+    if (notification) {
+      this.eventsSubject.next({ type: 'notification-received', notification });
     }
   }
 
-  public on(event: string): Observable<any> {
-    return new Observable(observer => {
-      if (!this.socket) {
-        observer.error('WebSocket not connected');
-        return;
-      }
-
-      this.socket.on(event, data => observer.next(data));
-
-      return () => {
-        this.socket?.off(event);
-      };
-    });
-  }
-
-  public reconnect(): void {
-    this.disconnect();
-    setTimeout(() => this.connect(), 1000);
-  }
-
-  public updateToken(newToken: string): void {
-    if (!this.socket?.connected) {
-      return;
-    }
-
-    this.socket._currentToken = newToken;
-    this.socket.emit('update_auth', { token: `Bearer ${newToken}` });
-
-    setTimeout(() => {
-      if (this.socket?._currentToken === newToken) {
-        this.reconnectWithNewToken();
-      }
-    }, 1000);
-  }
-
-  private handleAuthConnectionChange(): void {
-    const isLoggedIn = this.authStateService.isLoggedIn();
-    const token = this.authStateService.getToken();
-
-    if (isLoggedIn && token) {
-      this.connect();
-    } else {
-      this.disconnect();
+  private onUnreadCount(message: IMessage): void {
+    const payload = this.parse<{ unread: number }>(message);
+    if (payload) {
+      this.eventsSubject.next({ type: 'unread-count', unread: payload.unread });
     }
   }
 
-  private handleTokenSync(): void {
-    const token = this.authStateService.getToken();
-    const isLoggedIn = this.authStateService.isLoggedIn();
-
-    if (isLoggedIn && token && this.socket?.connected) {
-      const currentSocketToken = this.socket._currentToken;
-      if (currentSocketToken && currentSocketToken !== token) {
-        this.reconnectWithNewToken();
-      }
+  private parse<T>(message: IMessage): T | null {
+    try {
+      return JSON.parse(message.body) as T;
+    } catch {
+      console.error('Unreadable notification frame:', message.body);
+      return null;
     }
-  }
-
-  private createSocket(token: string): TokenAwareSocket {
-    const socket = io(`${environment.backendUrl}/notifications`, {
-      query: {
-        token,
-        auth: `Bearer ${token}`,
-      },
-      extraHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-      ...SOCKET_OPTIONS,
-    }) as TokenAwareSocket;
-
-    socket._currentToken = token;
-    return socket;
-  }
-
-  private setupEventListeners(): void {
-    if (!this.socket) return;
-
-    this.socket.on('connect', () => this.markConnected());
-    this.socket.on('disconnect', () => this.markDisconnected());
-
-    this.socket.on('connect_error', error => {
-      console.error('WebSocket connection error:', error);
-      this.markDisconnected();
-      if (this.isAuthErrorMessage(error?.message)) {
-        this.handleAuthError();
-      }
-    });
-
-    this.socket.on('connection_error', data => {
-      console.error('Server connection error:', data);
-      this.markDisconnected();
-      if (this.isAuthErrorMessage(data?.message)) {
-        this.handleAuthError();
-      } else {
-        this.disconnect();
-      }
-    });
-
-    this.socket.on('token_expired', () => this.handleAuthError());
-    this.socket.on('token_warning', () => this.handleAuthError());
-
-    this.socket.on('update_auth_response', data => {
-      if (!data?.success) {
-        console.warn('WebSocket auth update failed:', data?.message);
-        this.handleAuthError();
-      }
-    });
-
-    this.socket.on('notification.created', () => this.emitEvent('notification-refresh'));
-    this.socket.on('notification.read', data => this.emitEvent('notification-refresh', data));
-    this.socket.on('notification.updated', () => this.emitEvent('notification-refresh'));
-  }
-
-  private markConnected(): void {
-    this.connectionStatus.set('connected');
-    this.connectionSubject.next(true);
-    this.emitEvent('connected');
   }
 
   private markDisconnected(): void {
-    this.connectionStatus.set('disconnected');
-    this.connectionSubject.next(false);
-    this.emitEvent('disconnected');
-  }
-
-  private isAuthErrorMessage(message?: string): boolean {
-    if (!message) return false;
-    return AUTH_ERROR_KEYWORDS.some(keyword => message.includes(keyword));
-  }
-
-  private reconnectWithNewToken(): void {
-    this.disconnect();
-    setTimeout(() => this.connect(), 500);
-  }
-
-  private handleAuthError(): void {
-    if (this.authService.isTokenValid()) {
-      setTimeout(() => this.reconnectWithNewToken(), 1000);
+    if (this.status() === 'disconnected') {
       return;
     }
-
-    this.authService.refreshToken().subscribe({
-      next: () => {
-        setTimeout(() => this.reconnectWithNewToken(), 500);
-      },
-      error: err => {
-        console.error('Token refresh failed:', err);
-        this.disconnect();
-      },
-    });
+    this.status.set('disconnected');
+    this.eventsSubject.next({ type: 'disconnected' });
   }
 
-  private emitEvent(type: NotificationWsEventType, payload?: NotificationWsEvent['payload']): void {
-    this.eventsSubject.next({ type, payload });
+  /** `https://host` → `wss://host/ws/notifications`, and `http` → `ws` for local work. */
+  private brokerUrl(): string {
+    const url = new URL('/ws/notifications', environment.apiUrl);
+    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    return url.toString();
   }
 }

@@ -20,7 +20,9 @@
             "outputPath": "dist/frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["@angular/localize/init"],
+            "polyfills": [
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "css",
             "assets": [
@@ -33,8 +35,17 @@
                 "input": "src"
               }
             ],
-            "styles": ["src/material-theme.scss", "src/theme.css", "src/style.css", "node_modules/cropperjs/dist/cropper.css"],
-            "scripts": []
+            "styles": [
+              "src/material-theme.scss",
+              "src/theme.css",
+              "src/style.css",
+              "node_modules/cropperjs/dist/cropper.css"
+            ],
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "@stomp/stompjs",
+              "cropperjs"
+            ]
           },
           "configurations": {
             "production": {
@@ -84,7 +95,9 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": ["@angular/localize/init"],
+            "polyfills": [
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "css",
             "assets": [
@@ -93,14 +106,22 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/material-theme.scss", "src/theme.css", "src/style.css", "node_modules/cropperjs/dist/cropper.css"],
+            "styles": [
+              "src/material-theme.scss",
+              "src/theme.css",
+              "src/style.css",
+              "node_modules/cropperjs/dist/cropper.css"
+            ],
             "scripts": []
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }

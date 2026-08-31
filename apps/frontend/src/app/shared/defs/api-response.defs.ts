@@ -1,10 +1,7 @@
 export interface ApiResponse<T> {
   data: T;
-  statusCode: number;
-  timestamp: string;
-  path: string;
-  method: string;
   message: string;
+  timestamp: string;
 }
 
 export interface ApiPaginatedResponse<T> {
@@ -17,5 +14,5 @@ export type PaginationMeta = {
   page: number;
   pageSize: number;
   totalPages: number;
-  hasMore?: boolean;
+  hasMore: boolean;
 };

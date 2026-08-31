@@ -1,33 +1,23 @@
-import { Component, DestroyRef, effect, inject, input, computed, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
+import { heroBell, heroBellAlert, heroCog6Tooth } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, catchError, finalize, of } from 'rxjs';
-import { ProjectsApiService } from 'src/app/project/data-access/project.api.service';
-import { ButtonRoleEnum } from '../../enums/modal.enum';
-import { NotificationStatusEnum } from '../../enums/notification-status.enum';
-import { NotificationTypeEnum } from '../../enums/notification.enum';
-import { ModalService } from '../../services/modal.service';
+import { catchError, finalize, of } from 'rxjs';
+import { ProjectsApiService } from '../../../project/data-access/project.api.service';
+import { NotificationDto } from '../../defs/notification.defs';
+import { NotificationTypeEnum } from '../../enums/notification-type.enum';
+import { ToastTypeEnum } from '../../enums/toast-type.enum';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
-import { NotificationDto } from '../../defs/notification.defs';
+import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
 import { SpinnerComponent } from '../atoms/spinner.component';
-import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component'; // Pamiętaj o poprawnym imporcie
 
 @Component({
   selector: 'app-notification-dropdown',
   imports: [NgIconComponent, TranslateModule, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
-  viewProviders: [
-    provideIcons({
-      heroBell,
-      heroBellAlert,
-      heroTrash,
-      heroCog6Tooth,
-      heroXMark,
-    }),
-  ],
+  viewProviders: [provideIcons({ heroBell, heroBellAlert, heroCog6Tooth })],
   template: `
     <app-dropdown [closeSignal]="dropdownCloseTrigger()">
       <button
@@ -62,19 +52,17 @@ import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.comp
             <div
               class="w-2 h-2 rounded-full"
               [class]="webSocketConnected() ? 'bg-success-500' : 'bg-danger-500'"
-              [title]="webSocketConnected() ? 'Connected' : 'Disconnected'"
+              [title]="(webSocketConnected() ? 'Notifications.live' : 'Notifications.offline') | translate"
             ></div>
           </div>
-          <div class="flex items-center space-x-2">
-            @if (unreadCount() > 0) {
-              <button
-                class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
-                (click)="markAllAsRead()"
-              >
-                {{ 'Notifications.markAllRead' | translate }}
-              </button>
-            }
-          </div>
+          @if (unreadCount() > 0) {
+            <button
+              class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+              (click)="markAllAsRead()"
+            >
+              {{ 'Notifications.markAllRead' | translate }}
+            </button>
+          }
         </div>
 
         <div class="max-h-96 overflow-y-auto">
@@ -85,7 +73,7 @@ import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.comp
           } @else {
             @for (notification of notifications(); track notification.id) {
               <div
-                class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 transition-colors duration-200 group"
+                class="px-4 py-3 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary border-b border-border-primary dark:border-dark-border-primary last:border-b-0 transition-colors duration-200"
               >
                 <div class="flex items-start justify-between">
                   <div
@@ -95,113 +83,62 @@ import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.comp
                     (keydown.space)="markAsRead(notification); $event.preventDefault()"
                     role="button"
                     tabindex="0"
-                    [attr.aria-label]="
-                      ('Notifications.markAsRead' | translate) + ': ' + getTranslation(notification).title
-                    "
+                    [attr.aria-label]="'Notifications.markAsRead' | translate"
                   >
-                    <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
-                      {{ getTranslation(notification).title }}
-                    </h4>
-                    <p class="text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
-                      {{ getTranslation(notification).message }}
+                    <p class="text-sm text-text-primary dark:text-dark-text-primary">
+                      {{ notification.messageKey | translate: notification.params }}
                     </p>
 
-                    @if (
-                      notification.type === 'project_invitation' &&
-                      notification.data?.invitationId &&
-                      (notification.status === NotificationStatusEnum.UNREAD ||
-                        notification.status === NotificationStatusEnum.READ) &&
-                      notification.data?.invitationStatus === 'pending' &&
-                      notification.isLatestPendingInvitation
-                    ) {
-                      <div class="flex flex-col md:flex-row gap-2 mt-2 items-start md:items-center">
-                        <span class="text-xs text-primary-600 dark:text-primary-400 font-semibold">
-                          {{ 'ProjectInvitation.projectInfo' | translate }}
-                          <span class="font-bold">#{{ notification.data.projectId }}</span>
-                        </span>
-                        <div class="flex gap-2 mt-1 md:mt-0">
-                          <button
-                            class="px-3 py-1 rounded-md text-xs font-semibold bg-primary-500 hover:bg-primary-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                            [disabled]="invitationLoading() === notification.data.invitationId"
-                            (click)="
-                              $event.stopPropagation(); acceptInvitation(notification.data.invitationId, notification)
-                            "
-                          >
-                            @if (invitationLoading() === notification.data.invitationId) {
-                              <app-spinner />
-                            } @else {
-                              {{ 'Basic.accept' | translate }}
-                            }
-                          </button>
-                          <button
-                            class="px-3 py-1 rounded-md text-xs font-semibold bg-danger-500 hover:bg-danger-600 text-white shadow transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-danger-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                            [disabled]="invitationLoading() === notification.data.invitationId"
-                            (click)="
-                              $event.stopPropagation(); rejectInvitation(notification.data.invitationId, notification)
-                            "
-                          >
-                            @if (invitationLoading() === notification.data.invitationId) {
-                              <app-spinner />
-                            } @else {
-                              {{ 'Basic.delete' | translate }}
-                            }
-                          </button>
-                        </div>
+                    @if (isAnswerableInvitation(notification)) {
+                      <div class="flex gap-2 mt-2">
+                        <button
+                          class="px-3 py-1 rounded-md text-xs font-semibold bg-primary-500 hover:bg-primary-600 text-white shadow transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                          [disabled]="invitationLoading() === notification.subjectId"
+                          (click)="$event.stopPropagation(); acceptInvitation(notification)"
+                        >
+                          @if (invitationLoading() === notification.subjectId) {
+                            <app-spinner />
+                          } @else {
+                            {{ 'Basic.accept' | translate }}
+                          }
+                        </button>
+                        <button
+                          class="px-3 py-1 rounded-md text-xs font-semibold bg-danger-500 hover:bg-danger-600 text-white shadow transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                          [disabled]="invitationLoading() === notification.subjectId"
+                          (click)="$event.stopPropagation(); rejectInvitation(notification)"
+                        >
+                          @if (invitationLoading() === notification.subjectId) {
+                            <app-spinner />
+                          } @else {
+                            {{ 'Basic.reject' | translate }}
+                          }
+                        </button>
                       </div>
                     }
+
                     <span class="text-xs text-text-secondary dark:text-dark-text-secondary mt-2 block">
                       {{ formatDate(notification.createdAt) }}
                     </span>
                   </div>
 
-                  <div class="flex items-center space-x-2 ml-2">
-                    @if (notification.status === NotificationStatusEnum.UNREAD) {
-                      <div class="w-2 h-2 bg-primary-500 rounded-full shrink-0"></div>
-                    }
-                    <button
-                      class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      (click)="deleteNotification(notification, $event)"
-                      [title]="'Notifications.delete' | translate"
-                    >
-                      <ng-icon name="heroXMark" size="14" />
-                    </button>
-                  </div>
+                  @if (!notification.isRead) {
+                    <div class="w-2 h-2 bg-primary-500 rounded-full shrink-0 ml-2 mt-1"></div>
+                  }
                 </div>
               </div>
             }
           }
         </div>
 
-        @if (notifications().length > 0) {
-          <div
-            class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary flex items-center justify-between"
+        <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
+          <button
+            class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 mx-auto"
+            (click)="navigateToSettings()"
           >
-            <button
-              class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
-              (click)="navigateToSettings()"
-            >
-              <ng-icon name="heroCog6Tooth" size="14" />
-              <span>{{ 'Notifications.settings' | translate }}</span>
-            </button>
-            <button
-              class="p-1 text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900"
-              (click)="clearAllNotifications()"
-              [title]="'Notifications.clearAll' | translate"
-            >
-              <ng-icon name="heroTrash" size="16" />
-            </button>
-          </div>
-        } @else {
-          <div class="px-4 py-2 border-t border-border-primary dark:border-dark-border-primary text-center">
-            <button
-              class="flex items-center space-x-1 text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 mx-auto"
-              (click)="navigateToSettings()"
-            >
-              <ng-icon name="heroCog6Tooth" size="14" />
-              <span>{{ 'Notifications.settings' | translate }}</span>
-            </button>
-          </div>
-        }
+            <ng-icon name="heroCog6Tooth" size="14" />
+            <span>{{ 'Notifications.settings' | translate }}</span>
+          </button>
+        </div>
       </div>
     </app-dropdown>
   `,
@@ -209,63 +146,46 @@ import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.comp
 export class NotificationDropdownComponent {
   private readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
-  private readonly modalService = inject(ModalService);
+  private readonly translateService = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly projectsApi = inject(ProjectsApiService);
   private readonly destroyRef = inject(DestroyRef);
-
-  private readonly cancelInvitationRequests$ = new Subject<void>();
-
-  protected readonly NotificationStatusEnum = NotificationStatusEnum;
 
   public readonly isMobileContext = input<boolean>(false);
   public readonly isMobileMenuOpen = input<boolean>(false);
   public readonly closeSignal = input<number>(0);
 
-  protected dropdownCloseTrigger = signal<number>(0);
+  protected readonly dropdownCloseTrigger = signal<number>(0);
+  protected readonly invitationLoading = signal<string | null>(null);
 
-  protected invitationLoading = signal<number | null>(null);
-  protected readonly notifications = computed(() => {
-    const all = this.notificationStateService.notifications();
-    const latestInvitationMap = new Map<number, NotificationDto>();
-    for (const n of all) {
-      if (n.type === 'project_invitation' && n.data?.invitationId && n.data?.invitationStatus === 'pending') {
-        const id = n.data.invitationId;
-        const prev = latestInvitationMap.get(id);
-        const nDate = new Date(n.data.invitationDateUpdated || n.updatedAt || n.createdAt);
-        const prevDate = prev ? new Date(prev.data.invitationDateUpdated || prev.updatedAt || prev.createdAt) : null;
-        if (!prev || !prevDate || nDate > prevDate) {
-          latestInvitationMap.set(id, n);
-        }
-      }
-    }
-    return all.map(n => {
-      if (n.type === 'project_invitation' && n.data?.invitationId && n.data?.invitationStatus === 'pending') {
-        const latest = latestInvitationMap.get(n.data.invitationId);
-        return { ...n, isLatestPendingInvitation: latest?.id === n.id };
-      }
-      return n;
-    });
-  });
+  protected readonly notifications = this.notificationStateService.notifications;
   protected readonly unreadCount = this.notificationStateService.unreadCount;
   protected readonly webSocketConnected = this.notificationStateService.webSocketConnected;
 
-  protected currentLang: string = 'pl';
+  private readonly newestInvitationNotificationIds = computed(() => {
+    const newest = new Map<string, NotificationDto>();
+    for (const notification of this.notifications()) {
+      if (notification.type !== NotificationTypeEnum.PROJECT_INVITATION || !notification.subjectId) {
+        continue;
+      }
+      const previous = newest.get(notification.subjectId);
+      if (!previous || notification.createdAt > previous.createdAt) {
+        newest.set(notification.subjectId, notification);
+      }
+    }
+    return new Set([...newest.values()].map(notification => notification.id));
+  });
 
-  constructor(private readonly translateService: TranslateService) {
-    this.currentLang = this.translateService.getCurrentLang() || 'pl';
-    this.translateService.onLangChange.subscribe(event => {
-      this.currentLang = event.lang;
-    });
-    effect(() => this.listenNotificationSignals());
+  constructor() {
     effect(() => this.handleExternalCloseSignal());
   }
 
-  protected getTranslation(notification: NotificationDto): { title: string; message: string } {
-    if (notification.translations && notification.translations.length > 0) {
-      return notification.translations.find(t => t.language.code === this.currentLang) || notification.translations[0];
-    }
-    return { title: '', message: '' };
+  protected isAnswerableInvitation(notification: NotificationDto): boolean {
+    return (
+      notification.type === NotificationTypeEnum.PROJECT_INVITATION &&
+      notification.subjectId !== null &&
+      this.newestInvitationNotificationIds().has(notification.id)
+    );
   }
 
   protected onTriggerClick(): void {
@@ -274,106 +194,25 @@ export class NotificationDropdownComponent {
 
   protected closeDropdown(): void {
     this.dropdownCloseTrigger.set(Date.now());
-    this.cancelInvitationRequests$.next();
   }
 
   protected markAsRead(notification: NotificationDto): void {
-    if (notification.status === NotificationStatusEnum.UNREAD) {
-      this.notificationStateService
-        .markAsRead(notification.id)
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          catchError(error => {
-            console.error('Error marking notification as read:', error);
-            return of(null);
-          }),
-        )
-        .subscribe();
+    if (notification.isRead) {
+      return;
     }
+    this.notificationStateService.markAsRead(notification.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   protected markAllAsRead(): void {
-    this.notificationStateService
-      .markAllAsRead()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(error => {
-          console.error('Error marking all notifications as read:', error);
-          this.notificationService.showNotification(
-            this.translateService.instant('Notifications.markAllReadError'),
-            NotificationTypeEnum.Error,
-          );
-          return of(null);
-        }),
-      )
-      .subscribe();
+    this.notificationStateService.markAllAsRead().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
-  protected clearAllNotifications(): void {
-    this.modalService.present({
-      title: this.translateService.instant('Notifications.clearAll'),
-      message: this.translateService.instant('Notifications.confirmClearAll'),
-      buttons: [
-        {
-          role: ButtonRoleEnum.Cancel,
-          text: this.translateService.instant('Basic.cancel'),
-        },
-        {
-          role: ButtonRoleEnum.Ok,
-          text: this.translateService.instant('Basic.delete'),
-          handler: () => {
-            this.notificationStateService
-              .clearAllNotifications()
-              .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                catchError(error => {
-                  console.error('Error clearing notifications:', error);
-                  this.notificationService.showNotification(
-                    this.translateService.instant('Notifications.clearError'),
-                    NotificationTypeEnum.Error,
-                  );
-                  return of(null);
-                }),
-              )
-              .subscribe(result => {
-                if (result) {
-                  this.notificationService.showNotification(
-                    this.translateService.instant('Notifications.clearedAll'),
-                    NotificationTypeEnum.Success,
-                  );
-                }
-              });
-            return true;
-          },
-        },
-      ],
-    });
+  protected acceptInvitation(notification: NotificationDto): void {
+    this.answerInvitation(notification, true);
   }
 
-  protected deleteNotification(notification: NotificationDto, event: Event): void {
-    event.stopPropagation();
-
-    this.notificationStateService
-      .deleteNotification(notification.id)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(error => {
-          console.error('Error deleting notification:', error);
-          this.notificationService.showNotification(
-            this.translateService.instant('Notifications.clearError'),
-            NotificationTypeEnum.Error,
-          );
-          return of(null);
-        }),
-      )
-      .subscribe(result => {
-        if (result) {
-          this.notificationService.showNotification(
-            this.translateService.instant('Basic.deleteTitle') + ': ' + this.getTranslation(notification).title,
-            NotificationTypeEnum.Success,
-          );
-        }
-      });
+  protected rejectInvitation(notification: NotificationDto): void {
+    this.answerInvitation(notification, false);
   }
 
   protected navigateToSettings(): void {
@@ -381,127 +220,44 @@ export class NotificationDropdownComponent {
     this.router.navigate(['/notification-settings']).then();
   }
 
-  protected formatDate(date: Date | string): string {
-    if (!date) return '';
-    const d = new Date(date);
-    if (Number.isNaN(d.getTime())) return '';
-    const now = new Date();
-    const diffInMs = now.getTime() - d.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-
-    if (diffInMinutes < 1) {
-      return this.translateService.instant('Notifications.timeNow');
-    } else if (diffInMinutes < 60) {
-      return this.translateService.instant('Notifications.timeMinutesAgo', { minutes: diffInMinutes });
-    } else if (diffInHours < 24) {
-      return this.translateService.instant('Notifications.timeHoursAgo', { hours: diffInHours });
-    } else if (diffInDays < 7) {
-      return this.translateService.instant('Notifications.timeDaysAgo', { days: diffInDays });
-    } else {
-      const locale = this.translateService.getCurrentLang() || 'pl';
-      return d.toLocaleDateString(locale);
-    }
+  protected formatDate(value: string): string {
+    return new Date(value).toLocaleString(this.translateService.getCurrentLang() || 'pl');
   }
 
-  protected acceptInvitation(invitationId: number, notification: NotificationDto): void {
+  private answerInvitation(notification: NotificationDto, accept: boolean): void {
+    const invitationId = notification.subjectId;
+    if (!invitationId) {
+      return;
+    }
+
     this.invitationLoading.set(invitationId);
-    this.projectsApi
-      .acceptInvitation({ invitationId })
+    const request$ = accept
+      ? this.projectsApi.acceptInvitation({ invitationId })
+      : this.projectsApi.rejectInvitation({ invitationId });
+
+    request$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          this.invitationLoading.set(null);
-        }),
         catchError(error => {
-          console.error('Error accepting invitation:', error);
           this.notificationService.showNotification(
-            this.translateService.instant('ProjectInvitation.acceptError'),
-            NotificationTypeEnum.Error,
+            this.translateService.instant('ProjectInvitation.responseError'),
+            ToastTypeEnum.Error,
           );
+          console.error('Invitation response failed:', error);
           return of(null);
         }),
+        finalize(() => this.invitationLoading.set(null)),
       )
-      .subscribe(result => {
-        if (result) {
-          this.notificationService.showNotification(
-            this.translateService.instant('ProjectInvitation.acceptSuccess'),
-            NotificationTypeEnum.Success,
-          );
-          this.notificationStateService
-            .deleteNotification(notification.id)
-            .pipe(
-              takeUntilDestroyed(this.destroyRef),
-              catchError(error => {
-                console.error('Error deleting notification:', error);
-                return of(null);
-              }),
-            )
-            .subscribe(() => {
-              this.notificationStateService.refreshNotifications();
-              this.closeDropdown();
-            });
+      .subscribe(response => {
+        if (response) {
+          this.notificationStateService.refreshNotifications();
         }
       });
-  }
-
-  protected rejectInvitation(invitationId: number, notification: NotificationDto): void {
-    this.invitationLoading.set(invitationId);
-    this.projectsApi
-      .rejectInvitation({ invitationId })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          this.invitationLoading.set(null);
-        }),
-        catchError(error => {
-          console.error('Error rejecting invitation:', error);
-          this.notificationService.showNotification(
-            this.translateService.instant('ProjectInvitation.rejectError'),
-            NotificationTypeEnum.Error,
-          );
-          return of(null);
-        }),
-      )
-      .subscribe(result => {
-        if (result) {
-          this.notificationService.showNotification(
-            this.translateService.instant('ProjectInvitation.rejectSuccess'),
-            NotificationTypeEnum.Success,
-          );
-          this.notificationStateService
-            .deleteNotification(notification.id)
-            .pipe(
-              takeUntilDestroyed(this.destroyRef),
-              catchError(error => {
-                console.error('Error deleting notification:', error);
-                return of(null);
-              }),
-            )
-            .subscribe(() => {
-              this.notificationStateService.refreshNotifications();
-              this.closeDropdown();
-            });
-        }
-      });
-  }
-
-  private listenNotificationSignals(): void {
-    const readId = this.notificationStateService.notificationRead();
-    if (readId) {
-      this.notificationStateService.removeNotificationById(readId);
-    }
-    const deletedId = this.notificationStateService.notificationDeleted();
-    if (deletedId) {
-      this.notificationStateService.removeNotificationById(deletedId);
-    }
   }
 
   private handleExternalCloseSignal(): void {
-    const signalValue = this.closeSignal();
-    if (signalValue > 0) {
-      this.closeDropdown();
+    if (this.closeSignal() > 0) {
+      this.dropdownCloseTrigger.set(this.closeSignal());
     }
   }
 }

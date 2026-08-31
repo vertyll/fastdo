@@ -11,13 +11,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
-import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { languageInterceptor } from './core/interceptors/language.interceptor';
 import { TranslatedTitleStrategy } from './core/strategies/translated-title.strategy';
 import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
+import { AuthService } from './auth/data-access/auth.service';
 import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
 import { ThemeService } from './shared/services/theme.service';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
@@ -26,18 +26,17 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideHttpClient(
-      withInterceptors([apiKeyInterceptor, authInterceptor, errorInterceptor, languageInterceptor]),
-      withFetch(),
-    ),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, languageInterceptor]), withFetch()),
     provideRouter(routes, withComponentInputBinding()),
     { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
     provideStore([FiltersState], ngxsConfig),
     importProvidersFrom(TranslateModule.forRoot()),
     ...provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
     provideAppInitializer(() => {
+      const session$ = inject(AuthService).loadSession();
       inject(NotificationWebSocketService);
       inject(ThemeService);
+      return session$;
     }),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

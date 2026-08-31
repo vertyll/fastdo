@@ -1,19 +1,20 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LOADING_STATE_VALUE } from 'src/app/shared/defs/list-state.defs';
 import { PaginationMeta } from '../../shared/defs/api-response.defs';
-import { Project } from '../defs/project.defs';
+import { Project, ProjectListItem } from '../defs/project.defs';
 import { ProjectsApiService } from './project.api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsStateService {
   private readonly apiService = inject(ProjectsApiService);
 
-  private readonly projectsSignal = signal<Project[]>([]);
+  private readonly projectsSignal = signal<ProjectListItem[]>([]);
   private readonly paginationSignal = signal<PaginationMeta>({
     total: 0,
     page: 0,
     pageSize: 10,
     totalPages: 0,
+    hasMore: false,
   });
 
   public projects = computed(() => this.projectsSignal());
@@ -34,21 +35,40 @@ export class ProjectsStateService {
   public error = computed(() => this.apiService.$error());
   public readonly pagination = this.paginationSignal.asReadonly();
 
-  public setProjectList(projects: Project[]): void {
+  public setProjectList(projects: ProjectListItem[]): void {
     this.projectsSignal.set(projects);
   }
 
   public addProject(project: Project): void {
-    this.projectsSignal.update(projects => [...projects, project]);
+    this.projectsSignal.update(projects => [...projects, this.toListItem(project)]);
   }
 
   public updateProject(updatedProject: Project): void {
     this.projectsSignal.update(projects =>
-      projects.map(project => (project.id === updatedProject.id ? updatedProject : project)),
+      projects.map(project =>
+        project.id === updatedProject.id
+          ? { ...this.toListItem(updatedProject), memberCount: project.memberCount }
+          : project,
+      ),
     );
   }
 
-  public removeProject(projectId: Project['id']): void {
+  private toListItem(project: Project): ProjectListItem {
+    return {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      isPublic: project.isPublic,
+      isActive: project.isActive,
+      iconFileId: project.iconFileId,
+      typeId: project.typeId,
+      memberCount: 0,
+      createdAt: project.createdAt,
+      version: project.version,
+    };
+  }
+
+  public removeProject(projectId: string): void {
     this.projectsSignal.update(projects => projects.filter(project => project.id !== projectId));
   }
 

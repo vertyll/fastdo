@@ -144,7 +144,7 @@ export type ImageSize = 'sm' | 'md' | 'lg';
   encapsulation: ViewEncapsulation.None,
 })
 export class ImageComponent implements OnDestroy {
-  private readonly baseUrl = environment.backendUrl;
+  private readonly baseUrl = environment.apiUrl;
 
   public readonly mode = input<ImageMode>('view');
   public readonly format = input<ImageFormat>('circle');

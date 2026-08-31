@@ -1,19 +1,20 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LOADING_STATE_VALUE } from 'src/app/shared/defs/list-state.defs';
 import { PaginationMeta } from '../../shared/defs/api-response.defs';
-import { Task } from '../defs/task.defs';
+import { TaskListItem } from '../defs/task.defs';
 import { TasksApiService } from './task.api.service';
 
 @Injectable({ providedIn: 'root' })
 export class TasksStateService {
   private readonly apiService = inject(TasksApiService);
 
-  private readonly tasksSignal = signal<Task[]>([]);
+  private readonly tasksSignal = signal<TaskListItem[]>([]);
   private readonly paginationSignal = signal<PaginationMeta>({
     total: 0,
     page: 0,
     pageSize: 10,
     totalPages: 0,
+    hasMore: false,
   });
   private readonly hasMoreSignal = signal(true);
   private readonly isLoadingMoreSignal = signal(false);
@@ -35,30 +36,29 @@ export class TasksStateService {
   public readonly hasMore = this.hasMoreSignal.asReadonly();
   public readonly isLoadingMore = this.isLoadingMoreSignal.asReadonly();
 
-  public setTaskList(tasks: Task[]): void {
+  public setTaskList(tasks: TaskListItem[]): void {
     this.tasksSignal.set(tasks);
   }
 
-  public appendTaskList(tasks: Task[]): void {
+  public appendTaskList(tasks: TaskListItem[]): void {
     this.tasksSignal.update(currentTasks => [...currentTasks, ...tasks]);
   }
 
-  public addTask(task: Task): void {
+  public addTask(task: TaskListItem): void {
     this.tasksSignal.update(tasks => [...tasks, task]);
   }
 
-  public updateTask(updatedTask: Task): void {
+  public updateTask(updatedTask: TaskListItem): void {
     this.tasksSignal.update(tasks => tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)));
   }
 
-  public removeTask(taskId: Task['id']): void {
+  public removeTask(taskId: string): void {
     this.tasksSignal.update(tasks => tasks.filter(task => task.id !== taskId));
   }
 
   public setPagination(pagination: PaginationMeta): void {
     this.paginationSignal.set(pagination);
-    const hasMore = pagination.hasMore ?? pagination.page < pagination.totalPages - 1;
-    this.hasMoreSignal.set(hasMore);
+    this.hasMoreSignal.set(pagination.hasMore);
   }
 
   public setLoadingMore(loading: boolean): void {
@@ -72,6 +72,7 @@ export class TasksStateService {
       page: 0,
       pageSize: 10,
       totalPages: 0,
+      hasMore: false,
     });
     this.hasMoreSignal.set(true);
     this.isLoadingMoreSignal.set(false);

@@ -24,18 +24,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Backend
-            image: vertyll/fastdo-backend
-            dockerfile: ./apps/backend/Dockerfile
-            cache-scope: backend
-            build-args: ""
-
           - name: Frontend
             image: vertyll/fastdo-frontend
             dockerfile: ./apps/frontend/Dockerfile
             cache-scope: frontend
             build-args: |
-              BACKEND_URL=https://api.fastdo.vertyll.dev
+              API_URL=https://api.veds.vertyll.dev
               DOMAIN=fastdo.vertyll.dev
 
     steps:
@@ -80,5 +74,3 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.cache-scope }}
           build-args: |
             ${{ matrix.build-args }}
-          secrets: |
-            API_KEY=${{ secrets.API_KEY }}

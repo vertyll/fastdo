@@ -1,7 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/defs/api-response.defs';
-import { GetAllProjectsSearchParams, Project } from '../defs/project.defs';
+import {
+  CreateProjectPayload,
+  GetAllProjectsSearchParams,
+  Project,
+  ProjectDetails,
+  ProjectListItem,
+  UpdateProjectPayload,
+} from '../defs/project.defs';
 import { ProjectsApiService } from './project.api.service';
 import { ProjectsStateService } from './project.state.service';
 
@@ -12,7 +19,9 @@ export class ProjectsService {
   private readonly httpService = inject(ProjectsApiService);
   private readonly state = inject(ProjectsStateService);
 
-  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiResponse<ApiPaginatedResponse<Project>>> {
+  public getAll(
+    searchParams?: GetAllProjectsSearchParams,
+  ): Observable<ApiResponse<ApiPaginatedResponse<ProjectListItem>>> {
     return this.httpService.getAll(searchParams).pipe(
       tap(response => {
         if (response.data) {
@@ -23,43 +32,29 @@ export class ProjectsService {
     );
   }
 
-  public delete(projectId: number): Observable<ApiResponse<void>> {
-    return this.httpService.delete(projectId).pipe(
-      tap(() => {
-        this.state.removeProject(projectId);
-      }),
-    );
+  public delete(projectId: string, version: number | null): Observable<ApiResponse<void>> {
+    return this.httpService.delete(projectId, version).pipe(tap(() => this.state.removeProject(projectId)));
   }
 
-  public update(projectId: number, name: string): Observable<ApiResponse<Project>> {
-    return this.httpService.update(projectId, name).pipe(
-      tap(response => {
-        this.state.updateProject(response.data);
-      }),
-    );
+  public update(
+    projectId: string,
+    payload: UpdateProjectPayload,
+    version: number | null,
+  ): Observable<ApiResponse<Project>> {
+    return this.httpService
+      .update(projectId, payload, version)
+      .pipe(tap(response => this.state.updateProject(response.data)));
   }
 
-  public updateFull(projectId: number, formData: FormData): Observable<ApiResponse<Project>> {
-    return this.httpService.updateFull(projectId, formData).pipe(
-      tap(response => {
-        this.state.updateProject(response.data);
-      }),
-    );
+  public add(payload: CreateProjectPayload): Observable<ApiResponse<Project>> {
+    return this.httpService.add(payload).pipe(tap(response => this.state.addProject(response.data)));
   }
 
-  public add(formData: FormData): Observable<ApiResponse<Project>> {
-    return this.httpService.add(formData).pipe(
-      tap(response => {
-        this.state.addProject(response.data);
-      }),
-    );
-  }
-
-  public getProjectById(projectId: number): Observable<ApiResponse<Project>> {
+  public getProjectById(projectId: string): Observable<ApiResponse<Project>> {
     return this.httpService.getById(projectId);
   }
 
-  public getProjectByIdWithDetails(projectId: number, lang?: string): Observable<ApiResponse<Project>> {
-    return this.httpService.getByIdWithDetails(projectId, lang);
+  public getProjectByIdWithDetails(projectId: string): Observable<ApiResponse<ProjectDetails>> {
+    return this.httpService.getByIdWithDetails(projectId);
   }
 }

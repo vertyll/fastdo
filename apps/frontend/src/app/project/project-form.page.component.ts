@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash } from '@ng-icons/heroicons/outline';
-import { Subject, forkJoin, takeUntil } from 'rxjs';
+import { Observable, Subject, forkJoin, map, of, switchMap, takeUntil } from 'rxjs';
 import { AuthService } from '../auth/data-access/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
@@ -14,26 +14,48 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
 import { SelectFieldComponent } from '../shared/components/molecules/select-field.component';
 import { ImageComponent } from '../shared/components/organisms/image.component';
-import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
 import { NotificationService } from '../shared/services/notification.service';
 import { ProjectCategoryService } from './data-access/project-category.service';
 import { ProjectRoleService } from './data-access/project-role.service';
 import { ProjectStatusService } from './data-access/project-status.service';
 import { ProjectTypeService } from './data-access/project-type.service';
+import { ProjectCategoryApiService } from './data-access/project-category.api.service';
+import { ProjectStatusApiService } from './data-access/project-status.api.service';
+import { ProjectsApiService } from './data-access/project.api.service';
 import { ProjectsService } from './data-access/project.service';
-import { ProjectsStateService } from './data-access/project.state.service';
-import { Project } from './defs/project.defs';
+import {
+  ProjectCategory,
+  ProjectDetails,
+  ProjectRole,
+  ProjectStatus,
+  ProjectType,
+  Translation,
+} from './defs/project.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
-import { TranslatableOptionItem, TranslationItem } from '../shared/defs/common.defs';
-
-type LocalizedOptionItem = TranslatableOptionItem & { name: string };
+import { FileUploadService } from '../file/data-access/file-upload.service';
+import { FileScopeEnum } from '../file/defs/file.defs';
+import { errorKeyOf, fieldErrorsOf } from '../shared/utils/api-error.utils';
 
 interface NameColorFormItem {
-  id?: number;
+  id?: string;
   name?: string;
   color?: string;
 }
+
+interface ProjectFormValue {
+  name: string;
+  description?: string | null;
+  typeId?: string | null;
+  isPublic?: boolean;
+  categories?: NameColorFormItem[];
+  statuses?: NameColorFormItem[];
+  usersWithRoles?: Array<{ email?: string; role?: string }>;
+}
+
+const DEFAULT_CATEGORY_COLOR = '#3B82F6';
+const DEFAULT_STATUS_COLOR = '#10B981';
 
 @Component({
   selector: 'app-project-form-page',
@@ -124,7 +146,7 @@ interface NameColorFormItem {
               {{ 'Project.icon' | translate }}
             </span>
             <app-image
-              [initialUrl]="currentProject?.icon?.url ?? null"
+              [initialUrl]="iconUrl"
               mode="edit"
               size="md"
               format="square"
@@ -387,7 +409,10 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   private readonly projectRoleService = inject(ProjectRoleService);
   private readonly projectStatusService = inject(ProjectStatusService);
   private readonly projectCategoryService = inject(ProjectCategoryService);
-  private readonly projectsStateService = inject(ProjectsStateService);
+  private readonly projectsApi = inject(ProjectsApiService);
+  private readonly projectCategoryApi = inject(ProjectCategoryApiService);
+  private readonly projectStatusApi = inject(ProjectStatusApiService);
+  private readonly fileUploadService = inject(FileUploadService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly authService = inject(AuthService);
@@ -397,28 +422,23 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   protected readonly ProjectRolePermissionEnum = ProjectRolePermissionEnum;
 
   protected projectForm!: FormGroup;
-  protected projectTypesRaw: TranslatableOptionItem[] = [];
-  protected projectStatusesRaw: TranslatableOptionItem[] = [];
-  protected projectCategoriesRaw: TranslatableOptionItem[] = [];
-  protected projectRolesRaw: TranslatableOptionItem[] = [];
-  protected projectTypes: LocalizedOptionItem[] = [];
-  protected projectStatuses: LocalizedOptionItem[] = [];
-  protected projectCategories: LocalizedOptionItem[] = [];
-  protected projectRoles: LocalizedOptionItem[] = [];
+  protected projectTypes: ProjectType[] = [];
+  protected projectStatuses: ProjectStatus[] = [];
+  protected projectCategories: ProjectCategory[] = [];
+  protected projectRoles: ProjectRole[] = [];
   protected isSubmitting: boolean = false;
   protected readonly loading = signal(true);
   protected isEditMode: boolean = false;
-  protected projectId: number | null = null;
-  protected currentProject: Project | null = null;
-  protected selectedIconFile: File | null = null;
-  protected iconRemoved: boolean = false;
+  protected projectId: string | null = null;
+  protected currentProject: ProjectDetails | null = null;
+  protected iconFileId: string | null | undefined = undefined;
+  protected isUploadingIcon: boolean = false;
   protected isCropping: boolean = false;
   protected fieldErrors: Record<string, string[]> = {};
 
   ngOnInit(): void {
     this.checkEditMode();
     this.initializeForm();
-    this.loadCurrentUser();
     this.loadAllOptions();
     this.subscribeToLanguageChanges();
   }
@@ -518,18 +538,17 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return '';
   }
 
-  protected get projectTypeOptions(): Array<{ value: number; label: string }> {
-    return this.projectTypes.map(type => ({
-      value: type.id,
-      label: type.name,
-    }));
+  protected get iconUrl(): string | null {
+    const fileId = this.iconFileId === undefined ? this.currentProject?.project.iconFileId : this.iconFileId;
+    return fileId ? `/files/${fileId}` : null;
   }
 
-  protected get projectRoleOptions(): Array<{ value: number; label: string }> {
-    return this.projectRoles.map(role => ({
-      value: role.id,
-      label: role.name,
-    }));
+  protected get projectTypeOptions(): Array<{ value: string; label: string }> {
+    return this.projectTypes.map(type => ({ value: type.id, label: type.name }));
+  }
+
+  protected get projectRoleOptions(): Array<{ value: string; label: string }> {
+    return this.projectRoles.map(role => ({ value: role.id, label: role.name }));
   }
 
   protected addCategory(): void {
@@ -580,7 +599,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
         if (currentUserEmail && value?.trim().toLowerCase() === currentUserEmail.trim().toLowerCase()) {
           this.notificationService.showNotification(
             this.translateService.instant('Project.cannotAddYourself'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
         }
       });
@@ -595,7 +614,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     if (userEmail === currentUserEmail) {
       this.notificationService.showNotification(
         this.translateService.instant('Project.cannotRemoveYourself'),
-        NotificationTypeEnum.Error,
+        ToastTypeEnum.Error,
       );
       return;
     }
@@ -612,8 +631,24 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected onImageSaved(event: { file: File; preview: string | null }): void {
-    this.selectedIconFile = event.file;
-    this.iconRemoved = false;
+    this.isUploadingIcon = true;
+    this.fileUploadService
+      .upload(event.file, FileScopeEnum.PROJECT_ICON, this.projectId ?? undefined)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: stored => {
+          this.iconFileId = stored.id;
+          this.isUploadingIcon = false;
+        },
+        error: error => {
+          console.error('Icon upload failed:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Project.iconUploadError'),
+            ToastTypeEnum.Error,
+          );
+          this.isUploadingIcon = false;
+        },
+      });
   }
 
   protected onCroppingChange(isCropping: boolean): void {
@@ -621,82 +656,102 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected onImageRemoved(): void {
-    this.selectedIconFile = null;
-    this.iconRemoved = true;
+    this.iconFileId = null;
   }
 
   protected onSubmit(): void {
-    if (this.projectForm.invalid || this.isSubmitting || this.isCropping) return;
+    if (this.projectForm.invalid || this.isSubmitting || this.isCropping || this.isUploadingIcon) return;
 
     this.isSubmitting = true;
     this.fieldErrors = {};
 
-    const formData = this.buildProjectFormData(this.projectForm.getRawValue());
-    this.submitProjectForm(formData);
+    this.submitProjectForm(this.projectForm.getRawValue());
   }
 
-  private buildProjectFormData(formValue: any): FormData {
-    const formData = new FormData();
+  private submitProjectForm(formValue: ProjectFormValue): void {
+    const payload = {
+      name: formValue.name,
+      description: formValue.description || null,
+      isPublic: formValue.isPublic ?? false,
+      typeId: formValue.typeId || null,
+      // `undefined` means the icon was not touched, so the stored one stands.
+      ...(this.iconFileId === undefined ? {} : { iconFileId: this.iconFileId }),
+    };
 
-    formData.append('name', formValue.name);
-    if (formValue.description) {
-      formData.append('description', formValue.description);
-    }
-    formData.append('isPublic', String(formValue.isPublic || false));
-    if (formValue.typeId) {
-      formData.append('typeId', formValue.typeId);
-    }
+    const save$ =
+      this.isEditMode && this.projectId
+        ? this.projectsService.update(this.projectId, payload, this.currentProject?.project.version ?? null)
+        : this.projectsService.add(payload);
 
-    formData.append('categories', JSON.stringify(this.serializeNameColorItems(formValue.categories, '#3B82F6')));
-    formData.append('statuses', JSON.stringify(this.serializeNameColorItems(formValue.statuses, '#10B981')));
-
-    this.appendUsersWithRoles(formData, formValue.usersWithRoles);
-    this.appendUserEmails(formData, formValue.userEmails);
-    this.appendIcon(formData);
-
-    return formData;
-  }
-
-  private appendUsersWithRoles(formData: FormData, usersWithRoles: unknown): void {
-    if (!Array.isArray(usersWithRoles)) return;
-
-    const payload = usersWithRoles
-      .filter((userWithRole: any) => userWithRole.email?.trim())
-      .map((userWithRole: any) => ({
-        email: userWithRole.email.trim(),
-        role: userWithRole.role,
-      }));
-
-    formData.append('usersWithRoles', JSON.stringify(payload));
-  }
-
-  private appendUserEmails(formData: FormData, userEmails: unknown): void {
-    if (!Array.isArray(userEmails)) return;
-
-    userEmails
-      .filter((userEmail: any) => userEmail.email?.trim())
-      .forEach((userEmail: any) => {
-        formData.append('userEmails', userEmail.email.trim());
+    save$
+      .pipe(
+        switchMap(response => {
+          const projectId = response.data.id;
+          return this.saveReferenceData(projectId, formValue).pipe(map(() => response));
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: () => {
+          const key = this.isEditMode ? 'Project.updateSuccess' : 'Project.addSuccess';
+          this.notificationService.showNotification(this.translateService.instant(key), ToastTypeEnum.Success);
+          this.router.navigate(['/projects']).then();
+          this.isSubmitting = false;
+        },
+        error: (error: unknown) => this.handleSubmitError(error, this.isEditMode),
       });
   }
 
-  private appendIcon(formData: FormData): void {
-    const hadIcon = !!this.currentProject?.icon?.url;
-    if (this.selectedIconFile) {
-      formData.append('icon', this.selectedIconFile);
-      return;
+  private saveReferenceData(projectId: string, formValue: ProjectFormValue): Observable<unknown> {
+    const writes: Observable<unknown>[] = [];
+
+    for (const item of this.namedColorItems(formValue.categories, DEFAULT_CATEGORY_COLOR)) {
+      const existing = this.projectCategories.find(category => category.id === item.id);
+      const payload = { color: item.color, translations: this.translationsFor(item.name), isActive: true };
+      writes.push(
+        existing
+          ? this.projectCategoryApi.update(projectId, existing.id, payload, existing.version)
+          : this.projectCategoryApi.create(projectId, payload),
+      );
     }
 
-    if (hadIcon && this.iconRemoved) {
-      formData.append('icon', 'null');
+    for (const item of this.namedColorItems(formValue.statuses, DEFAULT_STATUS_COLOR)) {
+      const existing = this.projectStatuses.find(status => status.id === item.id);
+      const payload = { color: item.color, translations: this.translationsFor(item.name), isActive: true };
+      writes.push(
+        existing
+          ? this.projectStatusApi.update(projectId, existing.id, payload, existing.version)
+          : this.projectStatusApi.create(projectId, payload),
+      );
     }
+
+    // A membership is not assigned, it is offered: the invitee has to accept.
+    const alreadyMember = new Set((this.currentProject?.members ?? []).map(member => member.email.toLowerCase()));
+    for (const invite of formValue.usersWithRoles ?? []) {
+      const email = invite.email?.trim();
+      if (email && !alreadyMember.has(email.toLowerCase())) {
+        writes.push(this.projectsApi.invite(projectId, email, invite.role || null));
+      }
+    }
+
+    return writes.length === 0 ? of(null) : forkJoin(writes);
+  }
+
+  private translationsFor(name: string): Translation[] {
+    return this.translateService.getLangs().map(language => ({ language, name }));
+  }
+
+  private namedColorItems(items: NameColorFormItem[] | undefined, defaultColor: string): Required<NameColorFormItem>[] {
+    return (items ?? [])
+      .filter(item => item.name?.trim())
+      .map(item => ({ id: item.id ?? '', name: item.name!.trim(), color: item.color || defaultColor }));
   }
 
   private checkEditMode(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      this.projectId = +id;
+      this.projectId = id;
     }
   }
 
@@ -715,7 +770,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   private subscribeToLanguageChanges(): void {
     this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-        this.updateOptionsForCurrentLang();
+        this.loadAllOptions();
       },
       error: error => {
         console.error('Error handling language change:', error);
@@ -734,9 +789,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: responses => {
-          this.projectTypesRaw = responses.types.data || [];
-          this.projectRolesRaw = responses.roles.data || [];
-          this.updateOptionsForCurrentLang();
+          this.projectTypes = responses.types.data || [];
+          this.projectRoles = responses.roles.data || [];
 
           if (this.isEditMode && this.projectId) {
             this.loadProjectSpecificData();
@@ -748,7 +802,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
           console.error('Error loading project options:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
           this.loading.set(false);
         },
@@ -768,67 +822,26 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: responses => {
-          this.projectStatusesRaw = responses.statuses.data || [];
-          this.projectCategoriesRaw = responses.categories.data || [];
-          this.updateOptionsForCurrentLang();
+          this.projectStatuses = responses.statuses.data || [];
+          this.projectCategories = responses.categories.data || [];
           this.loadProject();
         },
         error: error => {
           console.error('Error loading project-specific data:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
           this.loading.set(false);
         },
       });
   }
 
-  private updateOptionsForCurrentLang(): void {
-    const lang = this.translateService.getCurrentLang() || 'pl';
-    this.projectTypes = this.mapToLocalizedOptions(this.projectTypesRaw, lang);
-    this.projectRoles = this.mapToLocalizedOptions(this.projectRolesRaw, lang);
-    this.projectStatuses = this.mapToLocalizedOptions(this.projectStatusesRaw, lang);
-    this.projectCategories = this.mapToLocalizedOptions(this.projectCategoriesRaw, lang);
-  }
-
-  private mapToLocalizedOptions(items: TranslatableOptionItem[], lang: string): LocalizedOptionItem[] {
-    return (items || []).map(item => ({
-      ...item,
-      name: this.getLocalizedName(item, lang),
-    }));
-  }
-
-  private getLocalizedName(item: TranslatableOptionItem, lang: string): string {
-    return (
-      item.translations?.find((translation: TranslationItem) => translation.lang === lang)?.name ||
-      item.translations?.[0]?.name ||
-      ''
-    );
-  }
-
-  private serializeNameColorItems(
-    items: unknown,
-    defaultColor: string,
-  ): Array<{ id?: number; name: string; color: string }> {
-    if (!Array.isArray(items)) return [];
-
-    return (items as NameColorFormItem[])
-      .filter(item => item.name?.trim())
-      .map(item => ({
-        ...(item.id ? { id: item.id } : {}),
-        name: item.name!.trim(),
-        color: item.color || defaultColor,
-      }));
-  }
-
   private loadProject(): void {
     if (!this.projectId) return;
 
-    const currentLang = this.translateService.getCurrentLang() || 'pl';
-
     this.projectsService
-      .getProjectByIdWithDetails(this.projectId, currentLang)
+      .getProjectByIdWithDetails(this.projectId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
@@ -840,7 +853,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
           console.error('Error loading project:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Project.loadError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
           this.loading.set(false);
           this.router.navigate(['/projects']).then();
@@ -851,11 +864,12 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   private populateForm(): void {
     if (!this.currentProject) return;
 
+    const project = this.currentProject.project;
     this.projectForm.patchValue({
-      name: this.currentProject.name,
-      description: this.currentProject.description || '',
-      typeId: this.currentProject.type?.id || '',
-      isPublic: this.currentProject.isPublic,
+      name: project.name,
+      description: project.description || '',
+      typeId: project.typeId || '',
+      isPublic: project.isPublic,
     });
 
     if (this.currentProject.categories) {
@@ -882,88 +896,29 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       });
     }
 
-    if (this.currentProject.projectUserRoles) {
-      const currentUserEmail = this.authService.getCurrentUserEmail();
-      this.currentProject.projectUserRoles.forEach(projectUserRole => {
-        const isSelf =
-          !!currentUserEmail &&
-          projectUserRole.user.email.trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
-        this.usersWithRolesFormArray.push(
-          this.fb.group({
-            email: [{ value: projectUserRole.user.email, disabled: isSelf }, [Validators.required, Validators.email]],
-            role: [{ value: projectUserRole.projectRole.id, disabled: isSelf }, Validators.required],
-          }),
-        );
-      });
-    }
-  }
-
-  private loadCurrentUser(): void {
     const currentUserEmail = this.authService.getCurrentUserEmail();
-    if (!currentUserEmail) {
-      console.warn('No current user email found in JWT token');
-    }
+    this.currentProject.members.forEach(member => {
+      // The owner cannot demote or remove themselves, so their row is read-only.
+      const isSelf = !!currentUserEmail && member.email.trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
+      this.usersWithRolesFormArray.push(
+        this.fb.group({
+          email: [{ value: member.email, disabled: isSelf }, [Validators.required, Validators.email]],
+          role: [{ value: member.roleId, disabled: isSelf }, Validators.required],
+        }),
+      );
+    });
   }
 
-  private submitProjectForm(formData: FormData): void {
-    if (this.isEditMode && this.projectId) {
-      this.projectsService
-        .updateFull(this.projectId, formData)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            const successMessage = this.translateService.instant('Project.updateSuccess');
-            this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
-            this.router.navigate(['/projects']).then();
-            this.isSubmitting = false;
-          },
-          error: error => this.handleSubmitError(error, true),
-          complete: () => {
-            this.isSubmitting = false;
-          },
-        });
-      return;
-    }
-
-    this.projectsService
-      .add(formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: response => {
-          this.projectsStateService.addProject(response.data);
-          const successMessage = this.translateService.instant('Project.addSuccess');
-          this.notificationService.showNotification(successMessage, NotificationTypeEnum.Success);
-          this.router.navigate(['/projects']).then();
-          this.isSubmitting = false;
-        },
-        error: error => this.handleSubmitError(error, false),
-        complete: () => {
-          this.isSubmitting = false;
-        },
-      });
-  }
-
-  private handleSubmitError(error: any, isUpdate: boolean): void {
+  private handleSubmitError(error: unknown, isUpdate: boolean): void {
     this.isSubmitting = false;
-    if (error?.error?.errors?.message && Array.isArray(error.error.errors.message)) {
-      this.fieldErrors = {};
-      error.error.errors.message.forEach((errObj: any) => {
-        if (errObj.field && Array.isArray(errObj.errors)) {
-          this.fieldErrors[errObj.field] = errObj.errors;
-        }
-      });
+
+    const fieldErrors = fieldErrorsOf(error);
+    if (Object.keys(fieldErrors).length > 0) {
+      this.fieldErrors = fieldErrors;
       return;
     }
 
-    const errorMessage =
-      error.error?.message || this.translateService.instant(isUpdate ? 'Project.updateError' : 'Project.addError');
-    if (
-      typeof errorMessage === 'string' &&
-      errorMessage.toLowerCase().includes('user') &&
-      errorMessage.toLowerCase().includes('not found')
-    ) {
-      this.fieldErrors['usersWithRoles'] = [errorMessage];
-    }
-    this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+    const key = errorKeyOf(error) ?? (isUpdate ? 'Project.updateError' : 'Project.addError');
+    this.notificationService.showNotification(this.translateService.instant(key), ToastTypeEnum.Error);
   }
 }

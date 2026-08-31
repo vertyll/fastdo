@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, catchError, finalize, of, takeUntil } from 'rxjs';
-import { NotificationTypeEnum } from '../../enums/notification.enum';
+import { catchError, finalize, of } from 'rxjs';
+import { NotificationTypeEnum } from '../../enums/notification-type.enum';
+import { ToastTypeEnum } from '../../enums/toast-type.enum';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
-import { UpdateNotificationSettingsDto } from '../../defs/notification.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { CheckboxComponent } from '../atoms/checkbox.component';
 import { SpinnerComponent } from '../atoms/spinner.component';
@@ -16,236 +16,113 @@ import { TitleComponent } from '../atoms/title.component';
   imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
   template: `
     <div class="max-w-2xl mx-auto">
-      <app-title [text]="'Notifications.settings' | translate"></app-title>
+      <app-title [text]="'Notifications.settings' | translate" />
 
-      @if (notificationStateService.settings()) {
-        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
-          <div class="space-y-4">
-            <!-- App Notifications -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label for="appNotifications" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                  {{ 'Notifications.appNotifications' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('appNotifications')" [id]="'appNotifications'" />
-            </div>
+      @if (notificationStateService.settings(); as settings) {
+        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-6">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                <th class="py-2">{{ 'Notifications.type' | translate }}</th>
+                <th class="py-2 w-24 text-center">{{ 'Notifications.appNotifications' | translate }}</th>
+                <th class="py-2 w-24 text-center">{{ 'Notifications.emailNotifications' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (type of settings.availableTypes; track type) {
+                <tr class="border-t border-border-primary dark:border-dark-border-primary">
+                  <td class="py-3 text-sm font-medium">
+                    {{ 'Notifications.types.' + type | translate }}
+                  </td>
+                  <td class="py-3 text-center">
+                    <app-checkbox [control]="control('app', type)" [id]="'app-' + type" />
+                  </td>
+                  <td class="py-3 text-center">
+                    <app-checkbox [control]="control('email', type)" [id]="'email-' + type" />
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
 
-            <!-- Email Notifications -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label
-                  for="emailNotifications"
-                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                >
-                  {{ 'Notifications.emailNotifications' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('emailNotifications')" [id]="'emailNotifications'" />
-            </div>
-
-            <!-- Project Invitations -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label
-                  for="projectInvitations"
-                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                >
-                  {{ 'Notifications.projectInvitations' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('projectInvitations')" [id]="'projectInvitations'" />
-            </div>
-
-            <!-- Task Assignments -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label for="taskAssignments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                  {{ 'Notifications.taskAssignments' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('taskAssignments')" [id]="'taskAssignments'" />
-            </div>
-
-            <!-- Task Comments -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label for="taskComments" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                  {{ 'Notifications.taskComments' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('taskComments')" [id]="'taskComments'" />
-            </div>
-
-            <!-- Task Status Changes -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label
-                  for="taskStatusChanges"
-                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                >
-                  {{ 'Notifications.taskStatusChanges' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('taskStatusChanges')" [id]="'taskStatusChanges'" />
-            </div>
-
-            <!-- Project Updates -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label for="projectUpdates" class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                  {{ 'Notifications.projectUpdates' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('projectUpdates')" [id]="'projectUpdates'" />
-            </div>
-
-            <!-- System Notifications -->
-            <div class="flex items-center justify-between">
-              <div>
-                <label
-                  for="systemNotifications"
-                  class="text-sm font-medium text-text-primary dark:text-dark-text-primary"
-                >
-                  {{ 'Notifications.systemNotifications' | translate }}
-                </label>
-              </div>
-              <app-checkbox [control]="getControl('systemNotifications')" [id]="'systemNotifications'" />
-            </div>
-          </div>
-
-          <!-- Buttons -->
-          <div class="flex justify-end gap-4 pt-6">
-            <app-button type="submit" [disabled]="settingsForm.invalid || isSubmitting()">
-              {{ isSubmitting() ? ('Basic.saving' | translate) : ('Basic.save' | translate) }}
+          <div class="flex gap-2">
+            <app-button type="submit" [disabled]="saving()">
+              {{ 'Basic.save' | translate }}
             </app-button>
+            <app-button type="button" (click)="reset()">{{ 'Basic.cancel' | translate }}</app-button>
           </div>
         </form>
       } @else {
-        <div class="flex justify-center py-10">
+        <div class="flex justify-center items-center h-48">
           <app-spinner />
         </div>
       }
     </div>
   `,
 })
-export class NotificationSettingsComponent implements OnInit, OnDestroy {
+export class NotificationSettingsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  protected readonly notificationStateService = inject(NotificationStateService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
-  private readonly destroy$ = new Subject<void>();
 
-  protected settingsForm!: FormGroup;
-  protected readonly isSubmitting = signal(false);
+  protected readonly notificationStateService = inject(NotificationStateService);
+  protected readonly saving = signal(false);
 
-  constructor() {
-    effect(() => this.handleSettingsChange());
-  }
+  protected settingsForm: FormGroup = this.fb.group({});
+
+  private readonly availableTypes = computed(() => this.notificationStateService.settings()?.availableTypes ?? []);
 
   ngOnInit(): void {
-    this.initializeForm();
-    this.loadSettings();
+    this.reset();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  protected control(channel: 'app' | 'email', type: NotificationTypeEnum): FormControl {
+    const name = `${channel}:${type}`;
+    let control = this.settingsForm.get(name) as FormControl | null;
+    if (!control) {
+      control = this.fb.control(false);
+      this.settingsForm.addControl(name, control);
+    }
+    return control;
   }
 
-  protected getControl(name: string): FormControl {
-    return this.settingsForm.get(name) as FormControl;
-  }
-
-  protected onSubmit(): void {
-    if (this.settingsForm.invalid || this.isSubmitting()) {
+  protected reset(): void {
+    const settings = this.notificationStateService.settings();
+    if (!settings) {
       return;
     }
 
-    this.isSubmitting.set(true);
+    for (const type of settings.availableTypes) {
+      this.control('app', type).setValue(!settings.mutedTypes.includes(type));
+      this.control('email', type).setValue(settings.emailEnabledTypes.includes(type));
+    }
+  }
 
-    const formValue = this.settingsForm.value;
-    const updateData: UpdateNotificationSettingsDto = {
-      appNotifications: formValue.appNotifications,
-      emailNotifications: formValue.emailNotifications,
-      projectInvitations: formValue.projectInvitations,
-      taskAssignments: formValue.taskAssignments,
-      taskComments: formValue.taskComments,
-      taskStatusChanges: formValue.taskStatusChanges,
-      projectUpdates: formValue.projectUpdates,
-      systemNotifications: formValue.systemNotifications,
-    };
+  protected onSubmit(): void {
+    const types = this.availableTypes();
+    const mutedTypes = types.filter(type => !this.control('app', type).value);
+    const emailEnabledTypes = types.filter(type => this.control('email', type).value && !mutedTypes.includes(type));
 
+    this.saving.set(true);
     this.notificationStateService
-      .updateSettings(updateData)
+      .updateSettings({ mutedTypes, emailEnabledTypes })
       .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.isSubmitting.set(false)),
-        catchError((error: any) => {
-          const errorMessage = error.error?.message || this.translateService.instant('Notifications.settingsError');
-          this.notificationService.showNotification(errorMessage, NotificationTypeEnum.Error);
+        catchError(() => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Notifications.settingsUpdateError'),
+            ToastTypeEnum.Error,
+          );
           return of(null);
         }),
+        finalize(() => this.saving.set(false)),
       )
-      .subscribe({
-        next: result => {
-          if (result !== null) {
-            this.notificationService.showNotification(
-              this.translateService.instant('Notifications.settingsUpdated'),
-              NotificationTypeEnum.Success,
-            );
-          }
-        },
+      .subscribe(settings => {
+        if (settings) {
+          this.notificationService.showNotification(
+            this.translateService.instant('Notifications.settingsUpdated'),
+            ToastTypeEnum.Success,
+          );
+        }
       });
-  }
-
-  private handleSettingsChange(): void {
-    const settings = this.notificationStateService.settings();
-
-    if (settings && this.settingsForm) {
-      this.settingsForm.patchValue(
-        {
-          appNotifications: settings.appNotifications,
-          emailNotifications: settings.emailNotifications,
-          projectInvitations: settings.projectInvitations,
-          taskAssignments: settings.taskAssignments,
-          taskComments: settings.taskComments,
-          taskStatusChanges: settings.taskStatusChanges,
-          projectUpdates: settings.projectUpdates,
-          systemNotifications: settings.systemNotifications,
-        },
-        { emitEvent: false },
-      );
-    }
-  }
-
-  private initializeForm(): void {
-    this.settingsForm = this.fb.group({
-      appNotifications: [true],
-      emailNotifications: [true],
-      projectInvitations: [true],
-      taskAssignments: [true],
-      taskComments: [true],
-      taskStatusChanges: [true],
-      projectUpdates: [true],
-      systemNotifications: [true],
-    });
-  }
-
-  private loadSettings(): void {
-    const settings = this.notificationStateService.settings();
-
-    if (settings) {
-      this.settingsForm.patchValue({
-        appNotifications: settings.appNotifications,
-        emailNotifications: settings.emailNotifications,
-        projectInvitations: settings.projectInvitations,
-        taskAssignments: settings.taskAssignments,
-        taskComments: settings.taskComments,
-        taskStatusChanges: settings.taskStatusChanges,
-        projectUpdates: settings.projectUpdates,
-        systemNotifications: settings.systemNotifications,
-      });
-    }
   }
 }

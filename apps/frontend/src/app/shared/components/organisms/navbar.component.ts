@@ -262,11 +262,8 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
             </app-dropdown>
 
             <div class="auth-section">
-              <app-button class="auth-button" (click)="router.navigate(['/login'])">
-                {{ 'Basic.login' | translate }}
-              </app-button>
-              <app-button class="auth-button" (click)="router.navigate(['/register'])">
-                {{ 'Basic.register' | translate }}
+              <app-button class="auth-button" (click)="signIn()">
+                {{ 'Auth.signInWithKeycloak' | translate }}
               </app-button>
             </div>
 
@@ -276,11 +273,8 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
                   <ng-icon name="heroBars4" size="24"></ng-icon>
                 </button>
                 <ng-container *appDropdownMenu>
-                  <button class="mobile-module-item text-left" (click)="navigateToLoginPage()">
-                    {{ 'Basic.login' | translate }}
-                  </button>
-                  <button class="mobile-module-item text-left" (click)="navigateToRegisterPage()">
-                    {{ 'Basic.register' | translate }}
+                  <button class="mobile-module-item text-left" (click)="signIn()">
+                    {{ 'Auth.signInWithKeycloak' | translate }}
                   </button>
                 </ng-container>
               </app-dropdown>
@@ -602,22 +596,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.closeNotificationDropdown.set(Date.now());
   }
 
+  protected signIn(): void {
+    this.authService.login();
+  }
+
   protected logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/']).then();
-    this.closeNotificationDropdown.set(Date.now());
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/']).then();
+      this.closeNotificationDropdown.set(Date.now());
+    });
   }
 
   protected navigateToHomePage(): void {
     this.router.navigate(['/']).then();
-  }
-
-  protected navigateToLoginPage(): void {
-    this.router.navigate(['/login']).then(() => this.closeNotificationDropdown.set(Date.now()));
-  }
-
-  protected navigateToRegisterPage(): void {
-    this.router.navigate(['/register']).then(() => this.closeNotificationDropdown.set(Date.now()));
   }
 
   private initializeNavigation(): void {

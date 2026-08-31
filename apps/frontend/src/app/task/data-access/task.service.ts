@@ -1,7 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, tap } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/defs/api-response.defs';
-import { GetAllTasksSearchParams, Task } from '../defs/task.defs';
+import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
+import {
+  CreateCommentPayload,
+  CreateTaskPayload,
+  GetAllTasksSearchParams,
+  Task,
+  TaskComment,
+  TaskDetails,
+  TaskListItem,
+  UpdateTaskPayload,
+} from '../defs/task.defs';
 import { TasksApiService } from './task.api.service';
 import { TasksStateService } from './task.state.service';
 
@@ -15,7 +25,7 @@ export class TasksService {
   public getAllByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
-  ): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+  ): Observable<ApiResponse<ApiPaginatedResponse<TaskListItem>>> {
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap(response => {
         if (response.data) {
@@ -29,7 +39,7 @@ export class TasksService {
   public loadMoreByProjectId(
     projectId: string,
     searchParams: GetAllTasksSearchParams,
-  ): Observable<ApiResponse<ApiPaginatedResponse<Task>>> {
+  ): Observable<ApiResponse<ApiPaginatedResponse<TaskListItem>>> {
     this.state.setLoadingMore(true);
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap(response => {
@@ -39,64 +49,64 @@ export class TasksService {
         }
         this.state.setLoadingMore(false);
       }),
-      catchError((error: any) => {
+      catchError((error: unknown) => {
         this.state.setLoadingMore(false);
         throw error;
       }),
     );
   }
 
-  public delete(taskId: number): Observable<ApiResponse<void>> {
-    return this.httpService.delete(taskId).pipe(
-      tap(() => {
-        this.state.removeTask(taskId);
-      }),
-    );
+  public getPermissions(projectId: string): Observable<ApiResponse<ProjectRolePermissionEnum[]>> {
+    return this.httpService.getPermissions(projectId);
   }
 
-  public batchDelete(taskIds: number[]): Observable<ApiResponse<void>> {
-    return this.httpService.batchDelete(taskIds).pipe(
-      tap(() => {
-        taskIds.forEach(taskId => {
-          this.state.removeTask(taskId);
-        });
-      }),
-    );
+  public delete(taskId: string, version: number | null): Observable<ApiResponse<void>> {
+    return this.httpService.delete(taskId, version).pipe(tap(() => this.state.removeTask(taskId)));
   }
 
-  public addWithFiles(formData: FormData): Observable<ApiResponse<Task>> {
-    return this.httpService.addWithFiles(formData).pipe(
-      tap(response => {
-        this.state.addTask(response.data);
-      }),
-    );
+  public batchDelete(taskIds: string[]): Observable<ApiResponse<number>> {
+    return this.httpService
+      .batchDelete(taskIds)
+      .pipe(tap(() => taskIds.forEach(taskId => this.state.removeTask(taskId))));
   }
 
-  public updateWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<Task>> {
-    return this.httpService.updateWithFiles(taskId, formData).pipe(
-      tap(response => {
-        this.state.updateTask(response.data);
-      }),
-    );
+  public add(projectId: string, payload: CreateTaskPayload): Observable<ApiResponse<Task>> {
+    return this.httpService.add(projectId, payload);
   }
 
-  public getOne(taskId: number): Observable<ApiResponse<Task>> {
+  public update(taskId: string, payload: UpdateTaskPayload, version: number | null): Observable<ApiResponse<Task>> {
+    return this.httpService.update(taskId, payload, version);
+  }
+
+  public changeStatus(taskId: string, statusId: string | null, version: number | null): Observable<ApiResponse<Task>> {
+    return this.httpService.changeStatus(taskId, statusId, version);
+  }
+
+  public logWork(taskId: string, hundredthsOfHour: number): Observable<ApiResponse<Task>> {
+    return this.httpService.logWork(taskId, hundredthsOfHour);
+  }
+
+  public getOne(taskId: string): Observable<ApiResponse<TaskDetails>> {
     return this.httpService.getOne(taskId);
   }
 
-  public remove(taskId: number): Observable<ApiResponse<void>> {
-    return this.delete(taskId);
+  public getComments(taskId: string): Observable<ApiResponse<TaskComment[]>> {
+    return this.httpService.getComments(taskId);
   }
 
-  public deleteComment(commentId: number): Observable<ApiResponse<void>> {
+  public createComment(taskId: string, payload: CreateCommentPayload): Observable<ApiResponse<TaskComment>> {
+    return this.httpService.createComment(taskId, payload);
+  }
+
+  public updateComment(
+    commentId: string,
+    content: string,
+    version: number | null,
+  ): Observable<ApiResponse<TaskComment>> {
+    return this.httpService.updateComment(commentId, content, version);
+  }
+
+  public deleteComment(commentId: string): Observable<ApiResponse<void>> {
     return this.httpService.deleteComment(commentId);
-  }
-
-  public createCommentWithFiles(taskId: number, formData: FormData): Observable<ApiResponse<any>> {
-    return this.httpService.createCommentWithFiles(taskId, formData);
-  }
-
-  public updateCommentWithFiles(commentId: number, formData: FormData): Observable<ApiResponse<any>> {
-    return this.httpService.updateCommentWithFiles(commentId, formData);
   }
 }

@@ -1,55 +1,38 @@
-import { Language } from 'src/app/core/defs/core.defs';
-import { NotificationStatusEnum } from '../enums/notification-status.enum';
+import { NotificationTypeEnum } from '../enums/notification-type.enum';
 
 export interface NotificationDto {
-  id: number;
-  type: string;
-  data?: any;
-  status: NotificationStatusEnum;
-  createdAt: Date;
-  updatedAt: Date;
-  translations: NotificationTranslation[];
-  isLatestPendingInvitation?: boolean;
-}
-
-export interface NotificationTranslation {
-  id: number;
-  title: string;
-  message: string;
-  language: Language;
+  id: string;
+  type: NotificationTypeEnum;
+  messageKey: string;
+  params: Record<string, string>;
+  projectId: string | null;
+  subjectId: string | null;
+  isRead: boolean;
+  readAt: string | null;
+  createdAt: string;
+  version: number | null;
 }
 
 export interface NotificationSettingsDto {
-  id: number;
-  appNotifications: boolean;
-  emailNotifications: boolean;
-  projectInvitations: boolean;
-  taskAssignments: boolean;
-  taskComments: boolean;
-  taskStatusChanges: boolean;
-  projectUpdates: boolean;
-  systemNotifications: boolean;
-}
-
-export type NotificationWsEventType =
-  | 'connected'
-  | 'disconnected'
-  | 'notification-refresh'
-  | 'notification-read'
-  | 'notification-deleted';
-
-export interface NotificationWsEvent {
-  type: NotificationWsEventType;
-  payload?: { notificationId?: number; [key: string]: any };
+  mutedTypes: NotificationTypeEnum[];
+  emailEnabledTypes: NotificationTypeEnum[];
+  availableTypes: NotificationTypeEnum[];
+  version: number | null;
 }
 
 export interface UpdateNotificationSettingsDto {
-  appNotifications?: boolean;
-  emailNotifications?: boolean;
-  projectInvitations?: boolean;
-  taskAssignments?: boolean;
-  taskComments?: boolean;
-  taskStatusChanges?: boolean;
-  projectUpdates?: boolean;
-  systemNotifications?: boolean;
+  mutedTypes: NotificationTypeEnum[];
+  emailEnabledTypes: NotificationTypeEnum[];
+}
+
+export interface UnreadCountDto {
+  unread: number;
+}
+
+export type NotificationWsEventType = 'connected' | 'disconnected' | 'notification-received' | 'unread-count';
+
+export interface NotificationWsEvent {
+  type: NotificationWsEventType;
+  notification?: NotificationDto;
+  unread?: number;
 }

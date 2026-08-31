@@ -9,7 +9,6 @@ export const MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT: number = 992;
 export const DEFAULT_PAGE_SIZE: number[] = [5, 10, 25, 50, 100];
 
 // Keys
-export const ACCESS_TOKEN_KEY: string = 'access_token';
 export const THEME_KEY: string = 'theme';
 
 // Headers
@@ -23,5 +22,5 @@ export const COOKIE_ACCEPTED_VALUE: string = 'true';
 // Scroll
 export const SCROLL_TO_TOP_THRESHOLD: number = 300;
 
-// Buffer
-export const DEFAULT_BUFFER_TIME: number = 60 * 1000;
+// Session
+export const SESSION_ENDPOINT: string = '/auth/session';

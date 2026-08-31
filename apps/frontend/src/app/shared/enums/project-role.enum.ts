@@ -1,5 +1,5 @@
 export enum ProjectRoleEnum {
-  MANAGER = 'manager',
-  CLIENT = 'client',
-  MEMBER = 'member',
+  MANAGER = 'MANAGER',
+  CLIENT = 'CLIENT',
+  MEMBER = 'MEMBER',
 }

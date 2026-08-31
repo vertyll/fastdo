@@ -52,7 +52,7 @@ export class LayoutComponent implements OnInit {
     if (allRoles.length === 0) return userRoleCodes.join(', ');
 
     const translatedRoles = userRoleCodes.map(roleCode => {
-      const role = allRoles.find(r => r.code === roleCode);
+      const role = allRoles.find(r => r.name === roleCode);
       return role?.name || roleCode;
     });
 
@@ -63,8 +63,6 @@ export class LayoutComponent implements OnInit {
   protected browserInfo: string = '';
 
   ngOnInit(): void {
-    this.authService.initializeAuth();
-
     if (this.isLoggedIn()) {
       this.loadRoles();
     }

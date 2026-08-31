@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { inject, signal } from '@angular/core';
 import { Observable, catchError, EMPTY, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -12,7 +12,11 @@ export abstract class HttpApiService {
   public readonly $error = signal<FetchingError | null>(null);
 
   protected get baseUrl(): string {
-    return `${environment.backendUrl}/api`;
+    return environment.apiUrl;
+  }
+
+  protected ifMatch(version: number | null | undefined): HttpHeaders | undefined {
+    return version === null || version === undefined ? undefined : new HttpHeaders({ 'If-Match': `W/"${version}"` });
   }
 
   protected withLoadingState<T>(source$: Observable<T>): Observable<T> {

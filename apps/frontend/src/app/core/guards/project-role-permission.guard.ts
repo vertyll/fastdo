@@ -18,14 +18,7 @@ export class ProjectRolePermissionGuard implements CanActivate {
     return this.projectsService.getProjectByIdWithDetails(projectId).pipe(
       map(response => {
         const permissions = response.data?.permissions ?? [];
-        const isPublic = response.data?.isPublic;
-        if (
-          permissions.includes(requiredPermission) ||
-          (isPublic && requiredPermission === ProjectRolePermissionEnum.SHOW_TASKS)
-        ) {
-          return true;
-        }
-        return this.router.createUrlTree(['/projects']);
+        return permissions.includes(requiredPermission) ? true : this.router.createUrlTree(['/projects']);
       }),
     );
   }

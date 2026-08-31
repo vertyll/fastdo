@@ -1,22 +1,19 @@
-import { PaginationParams, TasksListFiltersConfig } from 'src/app/shared/defs/filter.defs';
-import { GetAllTasksSearchParams } from '../defs/task.defs';
+import { PaginationParams, TasksListFiltersConfig } from '../../shared/defs/filter.defs';
+import { GetAllTasksSearchParams, TaskSortFieldEnum } from '../defs/task.defs';
 
 export function getAllTasksSearchParams(
   params: Partial<TasksListFiltersConfig & PaginationParams>,
 ): GetAllTasksSearchParams {
   return {
-    q: params.q || '',
-    priorityIds: params.priorityIds || [],
-    categoryIds: params.categoryIds || [],
-    statusIds: params.statusIds || [],
-    assignedUserIds: params.assignedUserIds || [],
-    sortBy: params.sortBy || 'dateCreation',
-    orderBy: params.orderBy || 'desc',
-    createdFrom: params.createdFrom || '',
-    createdTo: params.createdTo || '',
-    updatedFrom: params.updatedFrom || '',
-    updatedTo: params.updatedTo || '',
-    page: params.page || 0,
-    pageSize: params.pageSize || 10,
+    ...(params.searchTerm ? { searchTerm: params.searchTerm } : {}),
+    ...(params.priority ? { priority: params.priority } : {}),
+    ...(params.categoryId ? { categoryId: params.categoryId } : {}),
+    ...(params.statusId ? { statusId: params.statusId } : {}),
+    ...(params.assigneeId ? { assigneeId: params.assigneeId } : {}),
+    onlyActive: params.onlyActive ?? true,
+    sortBy: params.sortBy ?? TaskSortFieldEnum.CREATED_AT,
+    sortDescending: params.sortDescending ?? true,
+    page: params.page ?? 0,
+    size: params.pageSize ?? 10,
   };
 }

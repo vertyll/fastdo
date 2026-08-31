@@ -1,75 +1,154 @@
-import { ProjectRolePermissionEnum } from 'src/app/shared/enums/project-role-permission.enum';
-import { File } from '../../core/defs/core.defs';
+import { ProjectRoleEnum } from '../../shared/enums/project-role.enum';
+import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
 
 export type Project = {
-  id: number;
+  id: string;
   name: string;
-  description?: string;
+  description: string | null;
   isPublic: boolean;
-  icon?: File | null;
   isActive: boolean;
-  dateCreation: number;
-  dateModification: number;
-  type?: ProjectType;
-  categories?: ProjectCategory[];
-  statuses?: ProjectStatus[];
-  projectUserRoles?: ProjectUserRole[];
+  typeId: string | null;
+  iconFileId: string | null;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+  version: number | null;
   isExpanded?: boolean;
   editMode?: boolean;
-  permissions?: ProjectRolePermissionEnum[];
 };
 
-export type ProjectType = {
-  id: number;
+export type ProjectListItem = {
+  id: string;
   name: string;
-  description?: string;
+  description: string | null;
+  isPublic: boolean;
   isActive: boolean;
+  iconFileId: string | null;
+  typeId: string | null;
+  memberCount: number;
+  createdAt: string;
+  version: number | null;
+};
+
+export type ProjectDetails = {
+  project: Project;
+  type: ProjectType | null;
+  members: ProjectMember[];
+  categories: ProjectCategory[];
+  statuses: ProjectStatus[];
+  permissions: ProjectRolePermissionEnum[];
+  currentUserId: string;
+};
+
+export enum ProjectTypeCodeEnum {
+  TICKETS = 'TICKETS',
+  BACKLOG = 'BACKLOG',
+}
+
+export type ProjectType = {
+  id: string;
+  code: ProjectTypeCodeEnum;
+  name: string;
+  description: string | null;
+  isActive: boolean;
+  version: number | null;
+};
+
+export type Translation = {
+  language: string;
+  name: string;
+  description?: string | null;
 };
 
 export type ProjectCategory = {
-  id: number;
+  id: string;
+  projectId: string;
   name: string;
-  description?: string;
+  nameLanguage: string;
   color: string;
   isActive: boolean;
+  translations: Translation[];
+  version: number | null;
 };
 
 export type ProjectStatus = {
-  id: number;
+  id: string;
+  projectId: string;
   name: string;
-  description?: string;
+  nameLanguage: string;
   color: string;
   isActive: boolean;
+  translations: Translation[];
+  version: number | null;
 };
 
-export type ProjectUserRole = {
-  id: number;
-  user: ProjectUserRoleUser;
-  projectRole: ProjectUserRoleRole;
-  dateAssigned?: string;
-};
-
-export type ProjectUserRoleRole = {
-  id: number;
-  code: string;
+export type ProjectRole = {
+  id: string;
+  code: ProjectRoleEnum;
   name: string;
-  description?: string;
+  description: string | null;
+  permissions: ProjectRolePermissionEnum[];
+  isActive: boolean;
+  version: number | null;
 };
 
-export type ProjectUserRoleUser = {
-  id: number;
+export type ProjectMember = {
+  id: string;
+  projectId: string;
+  userId: string;
   email: string;
+  displayName: string;
+  avatarFileId: string | null;
+  roleId: string;
+  roleCode: ProjectRoleEnum;
+  roleName: string;
+  assignedAt: string;
+  version: number | null;
 };
+
+export enum InvitationStatusEnum {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  EXPIRED = 'EXPIRED',
+}
+
+export type ProjectInvitation = {
+  id: string;
+  projectId: string;
+  projectName: string | null;
+  inviteeEmail: string;
+  inviterId: string;
+  roleId: string;
+  status: InvitationStatusEnum;
+  expiresAt: string;
+  createdAt: string;
+  version: number | null;
+};
+
+export type CreateProjectPayload = {
+  name: string;
+  description?: string | null;
+  isPublic: boolean;
+  typeId?: string | null;
+  iconFileId?: string | null;
+};
+
+export type UpdateProjectPayload = CreateProjectPayload;
+
+export enum ProjectSortFieldEnum {
+  NAME = 'NAME',
+  CREATED_AT = 'CREATED_AT',
+  UPDATED_AT = 'UPDATED_AT',
+}
 
 export type GetAllProjectsSearchParams = {
-  q: string;
-  sortBy: 'dateCreation' | 'name' | 'dateModification';
-  orderBy: 'desc' | 'asc';
-  createdFrom?: string;
-  createdTo?: string;
-  updatedFrom?: string;
-  updatedTo?: string;
-  typeIds?: number[];
+  searchTerm?: string;
+  typeId?: string;
+  onlyActive?: boolean;
+  includePublic?: boolean;
+  sortBy?: ProjectSortFieldEnum;
+  sortDescending?: boolean;
   page?: number;
-  pageSize?: number;
+  size?: number;
 };

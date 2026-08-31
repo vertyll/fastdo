@@ -1,19 +1,17 @@
-import { PaginationParams, ProjectListFiltersConfig } from 'src/app/shared/defs/filter.defs';
-import { GetAllProjectsSearchParams } from '../defs/project.defs';
+import { PaginationParams, ProjectListFiltersConfig } from '../../shared/defs/filter.defs';
+import { GetAllProjectsSearchParams, ProjectSortFieldEnum } from '../defs/project.defs';
 
 export function getAllProjectsSearchParams(
   params: Partial<ProjectListFiltersConfig & PaginationParams>,
 ): GetAllProjectsSearchParams {
   return {
-    q: params.q || '',
-    sortBy: params.sortBy || 'dateCreation',
-    orderBy: params.orderBy || 'desc',
-    typeIds: params.typeIds || [],
-    createdFrom: params.createdFrom || '',
-    createdTo: params.createdTo || '',
-    updatedFrom: params.updatedFrom || '',
-    updatedTo: params.updatedTo || '',
-    page: params.page || 0,
-    pageSize: params.pageSize || 10,
+    ...(params.searchTerm ? { searchTerm: params.searchTerm } : {}),
+    ...(params.typeId ? { typeId: params.typeId } : {}),
+    onlyActive: params.onlyActive ?? true,
+    includePublic: params.includePublic ?? true,
+    sortBy: params.sortBy ?? ProjectSortFieldEnum.CREATED_AT,
+    sortDescending: params.sortDescending ?? true,
+    page: params.page ?? 0,
+    size: params.pageSize ?? 10,
   };
 }

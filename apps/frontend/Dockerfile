@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile
 FROM base AS build
 
 # Build arguments for environment
-ARG BACKEND_URL=http://localhost:3000
+ARG API_URL=http://localhost:8080
 ARG DOMAIN=localhost:4200
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -26,16 +26,12 @@ RUN pnpm install --frozen-lockfile
 COPY apps/frontend ./apps/frontend
 
 # Create production environment file
-RUN --mount=type=secret,id=API_KEY \
-  API_KEY=$(cat /run/secrets/API_KEY) && \
-  echo "export const environment = { \
+RUN echo "export const environment = { \
   production: true, \
-  backendUrl: '${BACKEND_URL}', \
+  apiUrl: '${API_URL}', \
   domain: '${DOMAIN}', \
-  apiKey: '${API_KEY}', \
   defaultLanguage: 'pl', \
-  availableLanguages: ['pl', 'en'], \
-  refreshToken: { bufferTime: 60000 } \
+  availableLanguages: ['pl', 'en'] \
   };" > apps/frontend/src/environments/environment.prod.ts
 
 # Build the application

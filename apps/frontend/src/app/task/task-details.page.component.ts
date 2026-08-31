@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -18,22 +18,26 @@ import {
   heroUserGroup,
 } from '@ng-icons/heroicons/outline';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { jwtDecode } from 'jwt-decode';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
-import { ImageComponent } from '../shared/components/organisms/image.component';
+import { ProjectsService } from '../project/data-access/project.service';
+import { FileApiService } from '../file/data-access/file.api.service';
+import { FileUploadService } from '../file/data-access/file-upload.service';
+import { FileScopeEnum } from '../file/defs/file.defs';
+import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
+import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { DropdownComponent, DropdownMenuDirective } from '../shared/components/atoms/dropdown.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
-import { NotificationTypeEnum } from '../shared/enums/notification.enum';
+import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { getContrastColor } from '../shared/utils/color.utils';
 import { TasksService } from './data-access/task.service';
-import { Task, TaskComment } from './defs/task.defs';
+import { TaskComment, TaskDetails } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 import { BackButtonComponent } from '../shared/components/molecules/back-button.component';
 
@@ -47,7 +51,6 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
     FormsModule,
     CustomDatePipe,
     FileUploadComponent,
-    ImageComponent,
     ButtonComponent,
     DropdownComponent,
     SpinnerComponent,
@@ -118,10 +121,10 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                 <h1
                   class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4 wrap-break-word"
                 >
-                  {{ task()!.description }}
+                  {{ task()!.task.description }}
                 </h1>
 
-                @if (task()!.additionalDescription) {
+                @if (task()!.task.additionalDescription) {
                   <div>
                     <h2 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">
                       {{ 'Task.additionalDescription' | translate }}
@@ -129,45 +132,33 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                     <p
                       class="text-text-primary dark:text-dark-text-primary leading-relaxed wrap-break-word whitespace-pre-wrap"
                     >
-                      {{ task()!.additionalDescription }}
+                      {{ task()!.task.additionalDescription }}
                     </p>
                   </div>
                 }
               </div>
 
-              @if (task()?.attachments && task()!.attachments.length > 0) {
+              @if (taskAttachments().length > 0) {
                 <div class="dark:border-dark-border-primary border-border-primary border rounded-lg shadow-soft p-6">
                   <h3 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
                     {{ 'Task.attachments' | translate }}
                   </h3>
                   <div class="flex flex-wrap justify-center items-center -m-2">
-                    @for (attachment of task()!.attachments; track attachment.id) {
+                    @for (attachment of taskAttachments(); track attachment.id) {
                       <div class="w-1/2 md:w-1/4 p-2 flex justify-center">
                         <div
                           class="group relative overflow-hidden rounded-lg border border-border-primary dark:border-dark-border-primary transition-shadow duration-200 hover:shadow-md"
                         >
-                          @if (isImage(attachment.filename || attachment.originalName)) {
-                            <div class="w-full h-32 flex items-center justify-center">
-                              <app-image
-                                [initialUrl]="attachment.url || null"
-                                mode="preview"
-                                format="square"
-                                size="lg"
-                                class="w-full h-full object-cover cursor-pointer"
-                              />
-                            </div>
-                          } @else {
-                            <a
-                              [href]="attachment.url"
-                              target="_blank"
-                              class="flex flex-col items-center justify-center gap-2 p-3 bg-neutral-100 dark:bg-neutral-800 h-32 text-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
-                            >
-                              <ng-icon name="heroDocument" size="32" class="text-primary-500"></ng-icon>
-                              <span class="text-xs text-text-secondary dark:text-dark-text-secondary break-all">{{
-                                attachment.filename || attachment.originalName
-                              }}</span>
-                            </a>
-                          }
+                          <button
+                            type="button"
+                            (click)="downloadAttachment(attachment.id)"
+                            class="flex flex-col items-center justify-center gap-2 p-3 bg-neutral-100 dark:bg-neutral-800 h-32 w-full text-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
+                          >
+                            <ng-icon name="heroDocument" size="32" class="text-primary-500"></ng-icon>
+                            <span class="text-xs text-text-secondary dark:text-dark-text-secondary break-all">{{
+                              attachment.name
+                            }}</span>
+                          </button>
                         </div>
                       </div>
                     }
@@ -247,10 +238,9 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                                 />
                               </div>
                               <div class="flex flex-wrap gap-2 mb-2">
-                                @for (att of editingCommentExistingAttachments; track att.id) {
+                                @for (att of editingCommentExistingAttachments; track att) {
                                   <div
-                                    class="relative flex items-center border border-border-primary dark:border-dark-border-primary rounded-lg px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 shadow-sm transition-all duration-200 group w-full mb-2"
-                                    [class.opacity-50]="att._markedForDelete"
+                                    class="relative flex items-center border border-border-primary dark:border-dark-border-primary rounded-lg px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 shadow-sm transition-all duration-200 w-full mb-2"
                                   >
                                     <ng-icon
                                       name="heroDocument"
@@ -259,25 +249,15 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                                     ></ng-icon>
                                     <span
                                       class="text-xs font-medium text-text-primary dark:text-dark-text-primary break-all flex-1 truncate"
-                                      >{{ att.originalName || att.filename }}</span
+                                      >{{ attachmentName(att) }}</span
                                     >
                                     <button
                                       type="button"
-                                      (click)="markAttachmentForDelete(att)"
-                                      class="ml-2 p-1 rounded-md outline-none border-none transition-colors duration-150 shrink-0"
-                                      [ngClass]="
-                                        att._markedForDelete
-                                          ? 'text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100'
-                                          : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
-                                      "
+                                      (click)="detachFromComment(att)"
+                                      class="ml-2 p-1 rounded-md outline-none border-none shrink-0 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+                                      [title]="'Basic.delete' | translate"
                                     >
-                                      @if (att._markedForDelete) {
-                                        <ng-icon name="heroTrash" size="16" class="align-middle"></ng-icon>
-                                      }
-
-                                      @if (!att._markedForDelete) {
-                                        <ng-icon name="heroArrowLeft" size="16" class="align-middle"></ng-icon>
-                                      }
+                                      <ng-icon name="heroTrash" size="16" class="align-middle"></ng-icon>
                                     </button>
                                   </div>
                                 }
@@ -295,7 +275,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                             <div class="group">
                               <div class="flex justify-between items-center">
                                 <span class="font-semibold text-text-primary dark:text-dark-text-primary">
-                                  {{ comment.author.email }}
+                                  {{ comment.author.displayName }}
                                 </span>
                                 <div class="flex items-center gap-1">
                                   @if (canDeleteComment(comment)) {
@@ -322,13 +302,13 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                                 <div>
                                   <span class="text-xs text-text-muted dark:text-dark-text-muted">
                                     {{ 'Task.dateCreation' | translate }}:
-                                    {{ comment.dateCreation | customDate: 'dd.MM.yyyy HH:mm' }}
+                                    {{ comment.createdAt | customDate: 'dd.MM.yyyy HH:mm' }}
                                   </span>
                                 </div>
                                 <div>
                                   <span class="text-xs text-text-muted dark:text-dark-text-muted">
                                     {{ 'Task.dateModification' | translate }}:
-                                    {{ (comment.dateModification | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
+                                    {{ (comment.updatedAt | customDate: 'dd.MM.yyyy HH:mm') || '-' }}
                                   </span>
                                 </div>
                               </div>
@@ -336,39 +316,20 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                                 {{ comment.content }}
                               </p>
 
-                              @if (comment.attachments && comment.attachments.length > 0) {
+                              @if (comment.attachmentIds.length > 0) {
                                 <div class="flex flex-wrap justify-start -m-1 mt-2">
-                                  @for (attachment of comment.attachments; track attachment.id) {
+                                  @for (attachment of comment.attachmentIds; track attachment) {
                                     <div class="w-1/2 sm:w-1/3 md:w-1/4 p-1">
-                                      <div class="relative overflow-hidden rounded-md w-full">
-                                        @if (isImage(attachment.filename || attachment.originalName)) {
-                                          <div class="w-full overflow-hidden rounded-md">
-                                            <app-image
-                                              [initialUrl]="attachment.url || null"
-                                              mode="preview"
-                                              format="square"
-                                              size="md"
-                                              class="w-full h-full object-cover cursor-pointer"
-                                            />
-                                          </div>
-                                        } @else {
-                                          <a
-                                            [href]="attachment.url"
-                                            target="_blank"
-                                            class="flex items-center gap-2 p-2 bg-neutral-100 dark:bg-neutral-800 rounded-md h-20 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
-                                          >
-                                            <ng-icon
-                                              name="heroDocument"
-                                              size="20"
-                                              class="text-blue-500 shrink-0"
-                                            ></ng-icon>
-                                            <span
-                                              class="text-xs text-text-primary dark:text-dark-text-primary truncate"
-                                              >{{ attachment.filename || attachment.originalName }}</span
-                                            >
-                                          </a>
-                                        }
-                                      </div>
+                                      <button
+                                        type="button"
+                                        (click)="downloadAttachment(attachment)"
+                                        class="flex items-center gap-2 p-2 w-full bg-neutral-100 dark:bg-neutral-800 rounded-md h-20 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
+                                      >
+                                        <ng-icon name="heroDocument" size="20" class="text-blue-500 shrink-0"></ng-icon>
+                                        <span class="text-xs text-text-primary dark:text-dark-text-primary truncate">{{
+                                          attachmentName(attachment)
+                                        }}</span>
+                                      </button>
                                     </div>
                                   }
                                 </div>
@@ -393,7 +354,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
               <div
                 class="rounded-lg shadow-soft p-6 space-y-6 dark:border-dark-border-primary border-border-primary border"
               >
-                @if (task()?.status) {
+                @if (task()?.statusName) {
                   <div class="flex items-start gap-4">
                     <ng-icon
                       name="heroExclamationTriangle"
@@ -405,16 +366,19 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                         {{ 'Task.status' | translate }}
                       </h4>
                       <div class="flex items-center gap-2 mt-1">
-                        <div class="w-3 h-3 rounded-full" [style.background-color]="task()?.status?.color"></div>
+                        <div
+                          class="w-3 h-3 rounded-full"
+                          [style.background-color]="task()?.task?.statusId ? statusColor() : null"
+                        ></div>
                         <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">
-                          {{ getTranslatedName(task()?.status) }}
+                          {{ task()?.statusName }}
                         </p>
                       </div>
                     </div>
                   </div>
                 }
 
-                @if (task()!.priority) {
+                @if (task()!.task.priority) {
                   <div class="flex items-start gap-4">
                     <ng-icon
                       name="heroFlag"
@@ -426,16 +390,16 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                         {{ 'Task.priority' | translate }}
                       </h4>
                       <div class="flex items-center gap-2 mt-1">
-                        <div class="w-3 h-3 rounded-full" [style.background-color]="task()!.priority.color"></div>
+                        <div class="w-3 h-3 rounded-full" [style.background-color]="priorityColor()"></div>
                         <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">
-                          {{ getTranslatedName(task()!.priority) }}
+                          {{ 'Task.priority' + task()!.task.priority | translate }}
                         </p>
                       </div>
                     </div>
                   </div>
                 }
 
-                @if (task()?.project) {
+                @if (projectName()) {
                   <div class="flex items-start gap-4">
                     <ng-icon
                       name="heroFolder"
@@ -449,7 +413,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                       <p
                         class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1 wrap-break-word"
                       >
-                        {{ task()?.project?.name }}
+                        {{ projectName() }}
                       </p>
                     </div>
                   </div>
@@ -466,10 +430,10 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                       {{ 'Task.timeTracking' | translate }}
                     </h4>
                     <div class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1">
-                      <span [title]="'Task.workedTime' | translate">{{ formatHours(task()!.workedTime) }}</span>
+                      <span [title]="'Task.workedTime' | translate">{{ formatHours(task()!.task.workedTime) }}</span>
                       <span class="mx-1 text-text-muted dark:text-dark-text-muted font-normal">/</span>
                       <span [title]="'Task.priceEstimation' | translate">{{
-                        formatHours(task()!.priceEstimation)
+                        formatHours(task()!.task.priceEstimation)
                       }}</span>
                     </div>
                   </div>
@@ -488,11 +452,11 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                     <div class="text-sm text-text-primary dark:text-dark-text-primary mt-1 space-y-1">
                       <p>
                         <span class="font-semibold">{{ 'Task.created' | translate }}:</span>
-                        {{ task()!.dateCreation | customDate: 'dd.MM.yyyy' }}
+                        {{ task()!.task.createdAt | customDate: 'dd.MM.yyyy' }}
                       </p>
                       <p>
                         <span class="font-semibold">{{ 'Task.modified' | translate }}:</span>
-                        {{ (task()!.dateModification | customDate: 'dd.MM.yyyy') || '-' }}
+                        {{ (task()!.task.updatedAt | customDate: 'dd.MM.yyyy') || '-' }}
                       </p>
                     </div>
                   </div>
@@ -511,18 +475,18 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                     <div class="mt-2 space-y-2 text-sm">
                       <p class="font-semibold text-text-primary dark:text-dark-text-primary wrap-break-word">
                         {{ 'Task.createdBy' | translate }}:
-                        <span class="font-normal">{{ task()!.createdBy.email }}</span>
+                        <span class="font-normal">{{ createdByName() }}</span>
                       </p>
 
                       <h5 class="font-semibold text-text-primary dark:text-dark-text-primary pt-1">
                         {{ 'Task.assignedUsers' | translate }}:
                       </h5>
-                      @if (task()!.assignedUsers && task()!.assignedUsers.length > 0) {
+                      @if (task()!.assignees.length > 0) {
                         <div class="flex flex-wrap gap-2">
-                          @for (user of task()!.assignedUsers; track user.id) {
+                          @for (user of task()!.assignees; track user.id) {
                             <span
                               class="bg-primary-100 text-primary-800 dark:bg-primary-900/50 dark:text-primary-300 px-2 py-1 rounded-full text-xs font-medium"
-                              >{{ user.email }}</span
+                              >{{ user.displayName }}</span
                             >
                           }
                         </div>
@@ -592,7 +556,18 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authStateService = inject(AuthStateService);
 
-  protected readonly task = signal<Task | null>(null);
+  private readonly fileUploadService = inject(FileUploadService);
+  private readonly fileApiService = inject(FileApiService);
+  private readonly projectsService = inject(ProjectsService);
+
+  protected readonly task = signal<TaskDetails | null>(null);
+
+  private readonly fileNames = signal<Record<string, string>>({});
+
+  protected readonly taskAttachments = computed(() => {
+    const names = this.fileNames();
+    return (this.task()?.task.attachmentIds ?? []).map(id => ({ id, name: names[id] ?? id }));
+  });
   protected readonly loading = signal(true);
   protected readonly submittingComment = signal(false);
   protected readonly commentAttachments = signal<FileUploadItem[]>([]);
@@ -601,10 +576,11 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected readonly maxAttachmentsLimit = 4;
 
-  protected editingCommentId: number | null = null;
+  protected editingCommentId: string | null = null;
+  protected editingCommentVersion: number | null = null;
   protected editingCommentContent: string = '';
   protected editingCommentAttachments: FileUploadItem[] = [];
-  protected editingCommentExistingAttachments: any[] = [];
+  protected editingCommentExistingAttachments: string[] = [];
   protected editingCommentControl: FormControl | null = null;
 
   private readonly destroy$ = new Subject<void>();
@@ -661,9 +637,9 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected editTask(): void {
     const task = this.task();
-    const projectId = task?.project?.id || this.route.snapshot.paramMap.get('id');
+    const projectId = task?.task.projectId ?? this.route.snapshot.paramMap.get('id');
     if (task && projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.id]).then();
+      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.task.id]).then();
     }
   }
 
@@ -693,32 +669,24 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     this.submittingComment.set(true);
     const content = this.commentForm.get('content')?.value;
 
-    const formData = new FormData();
-    formData.append('content', content);
-
-    const attachments = this.commentAttachments();
-    attachments.forEach(attachment => {
-      formData.append('attachments', attachment.file);
-    });
-
     this.tasksService
-      .createCommentWithFiles(+this.taskId(), formData)
+      .createComment(this.taskId(), { content, attachmentIds: this.commentAttachmentIds })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.notificationService.showNotification(
             this.translateService.instant('Task.commentAdded'),
-            NotificationTypeEnum.Success,
+            ToastTypeEnum.Success,
           );
           this.commentForm.reset();
           this.commentAttachments.set([]);
           this.loadTask();
         },
-        error: (error: any) => {
+        error: (error: unknown) => {
           console.error('Error adding comment:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Task.commentError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
           this.submittingComment.set(false);
         },
@@ -730,6 +698,31 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected onCommentFilesChange(files: FileUploadItem[]): void {
     this.commentAttachments.set(files);
+    this.uploadPendingAttachments(files);
+  }
+
+  private uploadPendingAttachments(files: FileUploadItem[]): void {
+    for (const item of files.filter(file => !file.id)) {
+      this.fileUploadService
+        .upload(item.file, FileScopeEnum.TASK_ATTACHMENT, this.taskId())
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: stored => (item.id = stored.id),
+          error: error => {
+            console.error('Attachment upload failed:', error);
+            this.notificationService.showNotification(
+              this.translateService.instant('Task.attachmentUploadError'),
+              ToastTypeEnum.Error,
+            );
+          },
+        });
+    }
+  }
+
+  private get commentAttachmentIds(): string[] {
+    return this.commentAttachments()
+      .map(item => item.id)
+      .filter((id): id is string => !!id);
   }
 
   protected isImage(filename: string): boolean {
@@ -738,17 +731,19 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     return imageExtensions.some(ext => filename.toLowerCase().endsWith(ext));
   }
 
-  protected onEditComment(commentId: number, content: string): void {
+  protected onEditComment(commentId: string, content: string): void {
     this.editingCommentControl = new FormControl(content, [Validators.required, Validators.minLength(1)]);
     this.editingCommentId = commentId;
     this.editingCommentContent = content;
-    const comment = this.task()?.comments?.find(c => c.id === commentId);
-    this.editingCommentExistingAttachments = comment?.attachments ? [...comment.attachments] : [];
+    const comment = this.task()?.comments.find(item => item.id === commentId);
+    this.editingCommentVersion = comment?.version ?? null;
+    this.editingCommentExistingAttachments = comment ? [...comment.attachmentIds] : [];
     this.editingCommentAttachments = [];
   }
 
   protected onCancelEditComment(): void {
     this.editingCommentId = null;
+    this.editingCommentVersion = null;
     this.editingCommentControl = null;
     this.editingCommentContent = '';
     this.editingCommentAttachments = [];
@@ -767,28 +762,23 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       formData.append('attachments', file.file);
     });
 
-    const deletedIds = this.editingCommentExistingAttachments.filter(a => a._markedForDelete).map(a => a.id);
-    if (deletedIds.length > 0) {
-      formData.append('attachmentsToDelete', JSON.stringify(deletedIds));
-    }
-
     this.tasksService
-      .updateCommentWithFiles(this.editingCommentId, formData)
+      .updateComment(this.editingCommentId, this.editingCommentControl.value ?? '', this.editingCommentVersion)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.notificationService.showNotification(
             this.translateService.instant('Task.commentUpdated'),
-            NotificationTypeEnum.Success,
+            ToastTypeEnum.Success,
           );
           this.onCancelEditComment();
           this.loadTask();
         },
-        error: error => {
+        error: (error: unknown) => {
           console.error('Error updating comment:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Task.commentUpdateError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
         },
         complete: () => {},
@@ -804,18 +794,14 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   protected canDeleteComment(comment: TaskComment): boolean {
-    const token = this.authStateService.getToken();
-    if (!token) return false;
-
-    try {
-      const decoded: any = jwtDecode(token);
-      return decoded.sub === comment.author.id;
-    } catch {
-      return false;
+    const userId = this.authStateService.userId();
+    if (userId && comment.author.id === userId) {
+      return true;
     }
+    return (this.task()?.permissions ?? []).includes(ProjectRolePermissionEnum.MANAGE_TASKS);
   }
 
-  protected onDeleteComment(commentId: number): void {
+  protected onDeleteComment(commentId: string): void {
     this.modalService.present({
       title: this.translateService.instant('Basic.deleteTitle'),
       message: this.translateService.instant('Task.deleteCommentConfirm'),
@@ -835,7 +821,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
                 next: () => {
                   this.notificationService.showNotification(
                     this.translateService.instant('Task.commentDeleted'),
-                    NotificationTypeEnum.Success,
+                    ToastTypeEnum.Success,
                   );
                   this.loadTask();
                   return true;
@@ -844,7 +830,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
                   console.error('Error deleting comment:', error);
                   this.notificationService.showNotification(
                     this.translateService.instant('Task.commentDeleteError'),
-                    NotificationTypeEnum.Error,
+                    ToastTypeEnum.Error,
                   );
                   return false;
                 },
@@ -867,25 +853,112 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     return obj.name || '';
   }
 
+  protected readonly projectName = signal<string>('');
+
+  protected readonly createdByName = computed(() => {
+    const details = this.task();
+    if (!details) {
+      return '';
+    }
+    const author = details.assignees.find(user => user.id === details.task.createdBy);
+    return author?.displayName ?? details.task.createdBy;
+  });
+
+  protected attachmentName(fileId: string): string {
+    return this.fileNames()[fileId] ?? fileId;
+  }
+
+  protected downloadAttachment(fileId: string): void {
+    this.fileApiService
+      .requestDownload(fileId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => window.open(response.data.downloadUrl, '_blank'),
+        error: error => {
+          console.error('Download failed:', error);
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.downloadError'),
+            ToastTypeEnum.Error,
+          );
+        },
+      });
+  }
+
+  protected detachFromComment(fileId: string): void {
+    this.editingCommentExistingAttachments = this.editingCommentExistingAttachments.filter(id => id !== fileId);
+  }
+
+  protected statusColor(): string | null {
+    return null;
+  }
+
+  protected priorityColor(): string {
+    switch (this.task()?.task.priority) {
+      case TaskPriorityEnum.HIGH:
+        return '#ef4444';
+      case TaskPriorityEnum.LOW:
+        return '#22c55e';
+      default:
+        return '#eab308';
+    }
+  }
+
   protected getContrastColor(backgroundColor: string): string {
     return getContrastColor(backgroundColor);
+  }
+
+  private loadProjectName(projectId: string): void {
+    this.projectsService
+      .getProjectById(projectId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => this.projectName.set(response.data.name),
+        error: () => this.projectName.set(''),
+      });
+  }
+
+  private loadFileNames(details: TaskDetails): void {
+    const ids = new Set<string>([
+      ...details.task.attachmentIds,
+      ...details.comments.flatMap(comment => comment.attachmentIds),
+    ]);
+    const unknown = [...ids].filter(id => !this.fileNames()[id]);
+    if (unknown.length === 0) {
+      return;
+    }
+
+    forkJoin(
+      unknown.map(id =>
+        this.fileApiService.getFile(id).pipe(
+          map(response => [id, response.data.originalName] as const),
+          catchError(() => of(null)),
+        ),
+      ),
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(entries => {
+        const resolved = Object.fromEntries(entries.filter((entry): entry is readonly [string, string] => !!entry));
+        this.fileNames.update(current => ({ ...current, ...resolved }));
+      });
   }
 
   private loadTask(): void {
     this.loading.set(true);
     this.tasksService
-      .getOne(+this.taskId())
+      .getOne(this.taskId())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
           this.task.set(response.data);
+          this.loadFileNames(response.data);
+          this.loadProjectName(response.data.task.projectId);
           this.loading.set(false);
         },
         error: error => {
           console.error('Error loading task:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Task.loadError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
           this.loading.set(false);
         },
@@ -895,13 +968,13 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   private confirmDelete(): void {
     this.tasksService
-      .remove(+this.taskId())
+      .delete(this.taskId(), this.task()?.task.version ?? null)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.notificationService.showNotification(
             this.translateService.instant('Task.deleteSuccess'),
-            NotificationTypeEnum.Success,
+            ToastTypeEnum.Success,
           );
           const projectId = this.route.snapshot.paramMap.get('id');
           if (projectId) {
@@ -910,11 +983,11 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
             this.router.navigate(['/projects']).then();
           }
         },
-        error: error => {
+        error: (error: unknown) => {
           console.error('Error deleting task:', error);
           this.notificationService.showNotification(
             this.translateService.instant('Task.deleteError'),
-            NotificationTypeEnum.Error,
+            ToastTypeEnum.Error,
           );
         },
         complete: () => {},

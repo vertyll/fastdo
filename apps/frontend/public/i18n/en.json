@@ -1,10 +1,6 @@
 {
   "PageTitles": {
     "home": "Home",
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot password",
-    "resetPassword": "Reset password",
     "terms": "Terms",
     "privacyPolicy": "Privacy policy",
     "dashboard": "Dashboard",
@@ -89,21 +85,7 @@
   "Auth": {
     "login": "Login",
     "email": "Email",
-    "password": "Password",
-    "loginButton": "Login",
-    "dontHaveAccount": "Don't have an account? Register",
-    "unknownLoginError": "An error occurred during login",
     "register": "Register",
-    "confirmPassword": "Confirm password",
-    "passwordDoNotMatch": "Passwords do not match",
-    "registerButton": "Register",
-    "alreadyHaveAccount": "Already have an account? Login",
-    "unknownRegisterError": "An error occurred during registration",
-    "registerSuccess": "Registration successful, please confirm your email",
-    "passwordRequired": "Password is required.",
-    "passwordMinLength": "Password must be at least 8 characters long.",
-    "passwordUppercase": "Password must contain at least one uppercase letter.",
-    "passwordSpecialCharacter": "Password must contain at least one special character.",
     "emailRequired": "Email is required.",
     "emailInvalid": "Email must be a valid email address.",
     "emailConfirmed": "Email confirmed",
@@ -113,10 +95,6 @@
     "privacyPolicyLink": "Privacy policy",
     "termsRequired": "Terms are required.",
     "privacyPolicyRequired": "Privacy policy is required.",
-    "resetLinkSent": "Password reset link sent",
-    "forgotPassword": "Forgot password?",
-    "sendResetLink": "Send reset link",
-    "backToLogin": "Back to login",
     "resetPassword": "Reset password",
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
@@ -125,7 +103,12 @@
     "unknownError": "An unknown error occurred",
     "emailChanged": "Email changed",
     "invalidEmailToken": "Invalid email token",
-    "invalidEmailChangeToken": "Invalid email change token"
+    "invalidEmailChangeToken": "Invalid email change token",
+    "signInWithKeycloak": "Sign in",
+    "signInHint": "Sign-in happens on the identity provider's page.",
+    "signOut": "Sign out",
+    "managePassword": "Change password",
+    "manageTwoFactor": "Two-factor authentication"
   },
   "Dashboard": {
     "title": "Welcome to our application",
@@ -365,7 +348,65 @@
     "privacyPolicy": "Privacy policy",
     "version": "Version",
     "effectiveDate": "Effective Date",
-    "lastModified": "Last Modified"
+    "lastModified": "Last Modified",
+    "lastModifiedDate": "31 August 2026",
+    "termsSections": [
+      {
+        "title": "1. General provisions",
+        "content": "These terms set out how FastDo may be used. Using the application means accepting them."
+      },
+      {
+        "title": "2. User account",
+        "content": "Authentication is handled by an external identity provider. You are responsible for keeping your sign-in details confidential.",
+        "items": [
+          "One account per e-mail address.",
+          "Accounts are personal and must not be shared."
+        ]
+      },
+      {
+        "title": "3. Scope of the service",
+        "content": "The application is for running projects and tasks. It is provided as-is, with no guarantee of uninterrupted availability."
+      },
+      {
+        "title": "4. Responsibility",
+        "content": "You are responsible for the content you put into the application and for the consequences of sharing it with other project members."
+      },
+      {
+        "title": "5. Changes to these terms",
+        "content": "Users are notified of changes in advance. Continuing to use the application after they take effect means accepting them."
+      }
+    ],
+    "privacyPolicySections": [
+      {
+        "title": "1. Data controller",
+        "content": "The owner of the service is the controller of the personal data processed in FastDo."
+      },
+      {
+        "title": "2. What is processed",
+        "content": "Only the data needed to provide the service is processed.",
+        "items": [
+          "The e-mail address and name on the account.",
+          "Project, task and comment content.",
+          "Files you upload."
+        ]
+      },
+      {
+        "title": "3. Purpose and legal basis",
+        "content": "Data is processed to provide the service, on the basis of the agreement formed by accepting these terms."
+      },
+      {
+        "title": "4. Your rights",
+        "content": "You may access, correct, erase and export your data.",
+        "items": [
+          "Account deletion requests are acted on without delay.",
+          "A copy of your data is provided on request."
+        ]
+      },
+      {
+        "title": "5. Retention",
+        "content": "Data is kept for as long as the account exists, and afterwards only for the period the law requires."
+      }
+    ]
   },
   "Profile": {
     "myProfile": "My profile",

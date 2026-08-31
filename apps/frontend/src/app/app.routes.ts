@@ -1,10 +1,6 @@
 import { Routes } from '@angular/router';
-import { ForgotPasswordComponent } from './auth/forgot-password.component';
-import { LoginComponent } from './auth/login.component';
-import { RegisterComponent } from './auth/register.component';
-import { ResetPasswordComponent } from './auth/reset-password.component';
-import { AuthGuard } from './core/guards/auth.guard';
-import { GuestGuard } from './core/guards/guest.guard';
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 import { ProjectRolePermissionGuard } from './core/guards/project-role-permission.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
@@ -25,28 +21,7 @@ export const routes: Routes = [
     component: HomeComponent,
     title: 'PageTitles.home',
     pathMatch: 'full',
-  },
-  {
-    path: 'login',
-    title: 'PageTitles.login',
-    component: LoginComponent,
-    canActivate: [GuestGuard],
-  },
-  {
-    path: 'register',
-    title: 'PageTitles.register',
-    component: RegisterComponent,
-    canActivate: [GuestGuard],
-  },
-  {
-    path: 'forgot-password',
-    title: 'PageTitles.forgotPassword',
-    component: ForgotPasswordComponent,
-  },
-  {
-    path: 'reset-password',
-    title: 'PageTitles.resetPassword',
-    component: ResetPasswordComponent,
+    canActivate: [guestGuard],
   },
   {
     path: 'terms',
@@ -62,7 +37,7 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     title: 'PageTitles.dashboard',
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'projects',
@@ -107,19 +82,19 @@ export const routes: Routes = [
         title: 'PageTitles.editTask',
       },
     ],
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'user-profile',
     title: 'PageTitles.userProfile',
     component: UserProfileComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'notification-settings',
     title: 'PageTitles.notificationSettings',
     component: NotificationSettingsComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: '**',

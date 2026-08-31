@@ -1,48 +1,26 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { RoleEnum } from '../../shared/enums/role.enum';
-import { AuthState } from '../defs/auth.defs';
-import { ACCESS_TOKEN_KEY } from '../../app.contansts';
+import { AuthState, Session } from '../defs/auth.defs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthStateService {
-  private readonly authState = signal<AuthState>({
-    isLoggedIn: !!localStorage.getItem(ACCESS_TOKEN_KEY),
-    roles: null,
-  });
+  private readonly state = signal<AuthState>({ session: null, resolved: false });
 
-  private readonly token = signal<string | null>(localStorage.getItem(ACCESS_TOKEN_KEY));
+  public readonly session = computed(() => this.state().session);
+  public readonly isLoggedIn = computed(() => this.state().session !== null);
+  public readonly roles = computed<RoleEnum[]>(() => this.state().session?.roles ?? []);
+  public readonly email = computed(() => this.state().session?.email ?? null);
+  public readonly userId = computed(() => this.state().session?.userId ?? null);
 
-  public readonly isLoggedIn = computed(() => this.authState().isLoggedIn);
-  public readonly roles = computed(() => this.authState().roles);
+  public readonly resolved = computed(() => this.state().resolved);
 
-  public getToken(): string | null {
-    return this.token();
-  }
-
-  public setToken(token: string | null): void {
-    if (token) {
-      localStorage.setItem(ACCESS_TOKEN_KEY, token);
-    } else {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-    }
-    this.token.set(token);
-  }
-
-  public setLoggedIn(isLoggedIn: boolean): void {
-    this.authState.update(state => ({ ...state, isLoggedIn }));
-  }
-
-  public setRoles(roles: RoleEnum[] | null): void {
-    this.authState.update(state => ({ ...state, roles }));
+  public setSession(session: Session | null): void {
+    this.state.set({ session, resolved: true });
   }
 
   public clear(): void {
-    this.setToken(null);
-    this.authState.set({
-      isLoggedIn: false,
-      roles: null,
-    });
+    this.setSession(null);
   }
 }
