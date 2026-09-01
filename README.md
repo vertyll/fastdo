@@ -1,6 +1,6 @@
 ## Project Assumptions
 
-A web application for managing projects and their tasks. The repository holds the front end only — the back end is
+A web application for managing projects and their tasks. The repository holds the front-end only — the back end is
 [VEDS](https://github.com/vertyll/veds), a Kotlin microservice system, and everything this application needs reaches
 it through the VEDS API gateway.
 
