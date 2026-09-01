@@ -48,11 +48,11 @@
     "yes": "Tak",
     "selectFiles": "Wybierz pliki",
     "selectedFiles": "Wybrane pliki",
-    "maxFiles": "Maksymalnie {{count}} plików",
-    "maxFileSize": "Maksymalny rozmiar pliku: {{size}}",
-    "maxFilesExceeded": "Maksymalnie {{count}} plików dozwolonych",
-    "fileSizeExceeded": "Plik \"{{name}}\" przekracza maksymalny rozmiar {{size}}",
-    "fileDuplicate": "Plik \"{{name}}\" jest już wybrany",
+    "maxFiles": "Maksymalnie {count, plural, one{# plik} few{# pliki} many{# plików} other{# pliku}}",
+    "maxFileSize": "Maksymalny rozmiar pliku: {size}",
+    "maxFilesExceeded": "Maksymalnie {count, plural, one{# plik dozwolony} few{# pliki dozwolone} many{# plików dozwolonych} other{# pliku dozwolonego}}",
+    "fileSizeExceeded": "Plik \"{name}\" przekracza maksymalny rozmiar {size}",
+    "fileDuplicate": "Plik \"{name}\" jest już wybrany",
     "noResults": "Brak wyników",
     "none": "Brak",
     "results": "wyników",
@@ -195,8 +195,8 @@
     "deleteSuccess": "Zadanie zostało usunięte",
     "deleteConfirm": "Czy na pewno chcesz usunąć to zadanie?",
     "deleteSelected": "Usuń zaznaczone",
-    "batchDeleteConfirm": "Czy na pewno chcesz usunąć {{count}} zadań?",
-    "batchDeleteSuccess": "Pomyślnie usunięto {{count}} zadań",
+    "batchDeleteConfirm": "Czy na pewno chcesz usunąć {count, plural, one{# zadanie} few{# zadania} many{# zadań} other{# zadania}}?",
+    "batchDeleteSuccess": "Pomyślnie usunięto {count, plural, one{# zadanie} few{# zadania} many{# zadań} other{# zadania}}",
     "batchDeleteError": "Wystąpił błąd podczas usuwania zadań",
     "updateError": "Wystąpił błąd podczas aktualizacji zadania",
     "updateSuccess": "Zadanie zostało zaktualizowane",
@@ -269,8 +269,8 @@
     "attachments": "Załączniki",
     "existingAttachments": "Istniejące załączniki",
     "addNewAttachments": "Dodaj nowe załączniki",
-    "maxAttachmentsNote": "Maksymalnie {{max}} załączników dozwolonych. Obecnie: {{current}}",
-    "maxAttachmentsError": "Przekroczono limit {{max}} załączników",
+    "maxAttachmentsNote": "Maksymalnie {max} załączników dozwolonych. Obecnie: {current}",
+    "maxAttachmentsError": "Przekroczono limit {max} załączników",
     "attachmentsLimitExceeded": "Usuń niektóre załączniki, aby móc zapisać zadanie",
     "timeTracking": "Śledzenie czasu",
     "dates": "Daty",
@@ -323,12 +323,12 @@
   },
   "FormValidationMessage": {
     "required": "To pole jest wymagane",
-    "minLength": "To pole musi mieć co najmniej {minLength} znaków",
+    "minLength": "To pole musi mieć co najmniej {minLength, plural, one{# znak} few{# znaki} many{# znaków} other{# znaku}}",
     "email": "To pole musi być prawidłowym adresem email",
     "password": "To pole musi zawierać co najmniej jedną wielką literę, cyfrę i znak specjalny",
     "min": "Wartość musi być większa lub równa {minValue}",
     "max": "Wartość musi być mniejsza lub równa {maxValue}",
-    "maxLength": "To pole może mieć maksymalnie {maxLength} znaków",
+    "maxLength": "To pole może mieć maksymalnie {maxLength, plural, one{# znak} few{# znaki} many{# znaków} other{# znaku}}",
     "passwordMatch": "Hasła muszą się zgadzać",
     "pattern": "To pole musi spełniać określony wzorzec",
     "mismatchingPasswords": "Hasła nie są zgodne"
@@ -340,7 +340,7 @@
     "nextPage": "Następna strona",
     "previousPage": "Poprzednia strona",
     "page1Of1": "Strona 1 z 1",
-    "pageXOfY": "Strona {{page}} z {{amountPages}}",
+    "pageXOfY": "Strona {page} z {amountPages}",
     "paginatorAriaLabel": "Wybierz stronę"
   },
   "TermsAndPolicies": {
@@ -428,7 +428,7 @@
   },
   "Validation": {
     "required": "To pole jest wymagane",
-    "minLength": "To pole musi mieć co najmniej {{length}} znaków"
+    "minLength": "To pole musi mieć co najmniej {length} znaków"
   },
   "Notifications": {
     "title": "Powiadomienia",
@@ -451,9 +451,9 @@
     "settingsUpdated": "Ustawienia powiadomień zostały zaktualizowane",
     "settingsError": "Błąd podczas aktualizacji ustawień powiadomień",
     "timeNow": "Teraz",
-    "timeMinutesAgo": "{{minutes}} min temu",
-    "timeHoursAgo": "{{hours}} godz. temu",
-    "timeDaysAgo": "{{days}} dni temu"
+    "timeMinutesAgo": "{minutes} min temu",
+    "timeHoursAgo": "{hours} godz. temu",
+    "timeDaysAgo": "{days} dni temu"
   },
   "ProjectInvitation": {
     "actionPrompt": "Czy chcesz dołączyć do projektu?",

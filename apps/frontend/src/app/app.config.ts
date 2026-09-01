@@ -7,13 +7,14 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateCompiler, provideTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { languageInterceptor } from './core/interceptors/language.interceptor';
+import { BackendCatalogueLoader } from './core/i18n/backend-catalogue.loader';
 import { TranslatedTitleStrategy } from './core/strategies/translated-title.strategy';
 import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
@@ -31,7 +32,8 @@ export const appConfig: ApplicationConfig = {
     { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
     provideStore([FiltersState], ngxsConfig),
     importProvidersFrom(TranslateModule.forRoot()),
-    ...provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
+    provideTranslateLoader(BackendCatalogueLoader),
+    provideTranslateCompiler(TranslateMessageFormatCompiler),
     provideAppInitializer(() => {
       const session$ = inject(AuthService).loadSession();
       inject(NotificationWebSocketService);

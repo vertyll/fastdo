@@ -48,11 +48,11 @@
     "yes": "Yes",
     "selectFiles": "Select Files",
     "selectedFiles": "Selected Files",
-    "maxFiles": "Max {{count}} files",
-    "maxFileSize": "Max file size: {{size}}",
-    "maxFilesExceeded": "Maximum {{count}} files allowed",
-    "fileSizeExceeded": "File \"{{name}}\" exceeds maximum size of {{size}}",
-    "fileDuplicate": "File \"{{name}}\" is already selected",
+    "maxFiles": "Max {count, plural, one{# file} other{# files}}",
+    "maxFileSize": "Max file size: {size}",
+    "maxFilesExceeded": "Maximum {count, plural, one{# file} other{# files}} allowed",
+    "fileSizeExceeded": "File \"{name}\" exceeds maximum size of {size}",
+    "fileDuplicate": "File \"{name}\" is already selected",
     "noResults": "No results found",
     "none": "None",
     "results": "results",
@@ -195,8 +195,8 @@
     "deleteSuccess": "Task deleted successfully",
     "deleteConfirm": "Are you sure you want to delete this task?",
     "deleteSelected": "Delete selected",
-    "batchDeleteConfirm": "Are you sure you want to delete {{count}} tasks?",
-    "batchDeleteSuccess": "Successfully deleted {{count}} tasks",
+    "batchDeleteConfirm": "Are you sure you want to delete {count, plural, one{# task} other{# tasks}}?",
+    "batchDeleteSuccess": "Successfully deleted {count, plural, one{# task} other{# tasks}}",
     "batchDeleteError": "An error occurred while deleting tasks",
     "updateError": "An error occurred while updating the task",
     "updateSuccess": "Task updated successfully",
@@ -269,8 +269,8 @@
     "attachments": "Attachments",
     "existingAttachments": "Existing attachments",
     "addNewAttachments": "Add new attachments",
-    "maxAttachmentsNote": "Maximum {{max}} attachments allowed. Current: {{current}}",
-    "maxAttachmentsError": "Maximum {{max}} attachments limit exceeded",
+    "maxAttachmentsNote": "Maximum {max} attachments allowed. Current: {current}",
+    "maxAttachmentsError": "Maximum {max} attachments limit exceeded",
     "attachmentsLimitExceeded": "Remove some attachments to save the task",
     "timeTracking": "Time tracking",
     "dates": "Dates",
@@ -323,12 +323,12 @@
   },
   "FormValidationMessage": {
     "required": "This field is required",
-    "minLength": "This field must be at least {minLength} characters long",
+    "minLength": "This field must be at least {minLength, plural, one{# character} other{# characters}} long",
     "email": "This field must be a valid email address",
     "password": "This field must contain at least one uppercase letter, one number, and one special character",
     "min": "Value must be greater than or equal to {minValue}",
     "max": "Value must be less than or equal to {maxValue}",
-    "maxLength": "This field can be at most {maxLength} characters long",
+    "maxLength": "This field can be at most {maxLength, plural, one{# character} other{# characters}} long",
     "passwordMatch": "Passwords must match",
     "pattern": "This field must match the specified pattern",
     "mismatchingPasswords": "Passwords do not match"
@@ -340,7 +340,7 @@
     "nextPage": "Next Page",
     "previousPage": "Previous Page",
     "page1Of1": "Page 1 of 1",
-    "pageXOfY": "Page {{page}} of {{amountPages}}",
+    "pageXOfY": "Page {page} of {amountPages}",
     "paginatorAriaLabel": "Select page"
   },
   "TermsAndPolicies": {
@@ -428,7 +428,7 @@
   },
   "Validation": {
     "required": "This field is required",
-    "minLength": "This field must be at least {{length}} characters long"
+    "minLength": "This field must be at least {length} characters long"
   },
   "Notifications": {
     "title": "Notifications",
@@ -451,9 +451,9 @@
     "settingsUpdated": "Notification settings have been updated",
     "settingsError": "Error updating notification settings",
     "timeNow": "Now",
-    "timeMinutesAgo": "{{minutes}} min ago",
-    "timeHoursAgo": "{{hours}} hours ago",
-    "timeDaysAgo": "{{days}} days ago"
+    "timeMinutesAgo": "{minutes} min ago",
+    "timeHoursAgo": "{hours} hours ago",
+    "timeDaysAgo": "{days} days ago"
   },
   "ProjectInvitation": {
     "actionPrompt": "Do you want to join the project?",
