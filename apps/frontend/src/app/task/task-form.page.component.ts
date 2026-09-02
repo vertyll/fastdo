@@ -74,19 +74,21 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
       } @else {
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-6">
           <div>
-            <app-textarea-field
-              id="description"
-              [control]="descriptionControl"
-              [label]="'Task.taskDescription' | translate"
+            <app-input-field
+              id="name"
+              [control]="nameControl"
+              [label]="'Task.name' | translate"
+              [placeholder]="'Task.namePlaceholder' | translate"
               [errorMessage]="'FormValidationMessage.required' | translate"
             />
           </div>
 
           <div>
             <app-textarea-field
-              id="additionalDescription"
-              [control]="additionalDescriptionControl"
-              [label]="'Task.additionalDescription' | translate"
+              id="description"
+              [control]="descriptionControl"
+              [label]="'Task.description' | translate"
+              [placeholder]="'Task.descriptionPlaceholder' | translate"
             />
           </div>
 
@@ -342,12 +344,12 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   protected taskForm!: FormGroup;
   protected fieldErrors: Record<string, string[]> = {};
 
-  public get descriptionControl(): FormControl {
-    return this.taskForm.get('description') as FormControl;
+  public get nameControl(): FormControl {
+    return this.taskForm.get('name') as FormControl;
   }
 
-  public get additionalDescriptionControl(): FormControl {
-    return this.taskForm.get('additionalDescription') as FormControl;
+  public get descriptionControl(): FormControl {
+    return this.taskForm.get('description') as FormControl;
   }
 
   public get priceEstimationControl(): FormControl {
@@ -479,8 +481,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     }
 
     const payload: CreateTaskPayload = {
-      description: formValue.description,
-      additionalDescription: formValue.additionalDescription || null,
+      name: formValue.name,
+      description: formValue.description || null,
       priority: formValue.priority ?? TaskPriorityEnum.MEDIUM,
       priceEstimation: formValue.priceEstimation || 0,
       accessRoleId: formValue.accessRole || null,
@@ -533,8 +535,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
 
   private initializeForm(): void {
     this.taskForm = this.fb.group({
-      description: ['', [Validators.required]],
-      additionalDescription: [''],
+      name: ['', [Validators.required]],
+      description: [''],
       priceEstimation: [0],
       workedTime: [0],
       accessRole: [null],
@@ -654,8 +656,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
           const task = details.task;
           this.taskVersion.set(task.version);
           this.taskForm.patchValue({
-            description: task.description,
-            additionalDescription: task.additionalDescription || '',
+            name: task.name,
+            description: task.description || '',
             priceEstimation: task.priceEstimation || 0,
             workedTime: task.workedTime || 0,
             accessRole: task.accessRoleId || null,

@@ -122,18 +122,18 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                 <h1
                   class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4 wrap-break-word"
                 >
-                  {{ task()!.task.description }}
+                  {{ task()!.task.name }}
                 </h1>
 
-                @if (task()!.task.additionalDescription) {
+                @if (task()!.task.description) {
                   <div>
                     <h2 class="text-lg font-semibold text-text-secondary dark:text-dark-text-secondary mb-2">
-                      {{ 'Task.additionalDescription' | translate }}
+                      {{ 'Task.description' | translate }}
                     </h2>
                     <p
                       class="text-text-primary dark:text-dark-text-primary leading-relaxed wrap-break-word whitespace-pre-wrap"
                     >
-                      {{ task()!.task.additionalDescription }}
+                      {{ task()!.task.description }}
                     </p>
                   </div>
                 }

@@ -75,8 +75,8 @@ export const PROJECT_LIST_FILTERS: FilterMetadata[] = [
     labelKey: 'Filters.sortBy',
     defaultValue: ProjectSortFieldEnum.CREATED_AT,
     options: [
-      { value: ProjectSortFieldEnum.CREATED_AT, label: 'Filters.createdFrom' },
-      { value: ProjectSortFieldEnum.UPDATED_AT, label: 'Filters.updatedFrom' },
+      { value: ProjectSortFieldEnum.CREATED_AT, label: 'Filters.sortByCreatedAt' },
+      { value: ProjectSortFieldEnum.UPDATED_AT, label: 'Filters.sortByUpdatedAt' },
       { value: ProjectSortFieldEnum.NAME, label: 'Filters.sortByName' },
     ],
   },
@@ -132,10 +132,10 @@ export const TASKS_LIST_FILTERS: FilterMetadata[] = [
     labelKey: 'Filters.sortBy',
     defaultValue: TaskSortFieldEnum.CREATED_AT,
     options: [
-      { value: TaskSortFieldEnum.CREATED_AT, label: 'Filters.createdFrom' },
-      { value: TaskSortFieldEnum.UPDATED_AT, label: 'Filters.updatedFrom' },
-      { value: TaskSortFieldEnum.PRIORITY, label: 'Filters.priorities' },
-      { value: TaskSortFieldEnum.DESCRIPTION, label: 'Filters.search' },
+      { value: TaskSortFieldEnum.CREATED_AT, label: 'Filters.sortByCreatedAt' },
+      { value: TaskSortFieldEnum.UPDATED_AT, label: 'Filters.sortByUpdatedAt' },
+      { value: TaskSortFieldEnum.PRIORITY, label: 'Filters.sortByPriority' },
+      { value: TaskSortFieldEnum.NAME, label: 'Filters.sortByName' },
     ],
   },
   {

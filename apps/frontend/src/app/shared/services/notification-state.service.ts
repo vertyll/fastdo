@@ -61,6 +61,26 @@ export class NotificationStateService {
     );
   }
 
+  public dismiss(id: string): Observable<number | null> {
+    return this.notificationApiService.dismiss([id]).pipe(
+      tap(() => {
+        this._notifications.update(current => current.filter(n => n.id !== id));
+        this.refreshUnreadCount();
+      }),
+      this.onError('Error dismissing notification:', 'Failed to dismiss notification'),
+    );
+  }
+
+  public dismissAll(): Observable<number | null> {
+    return this.notificationApiService.dismissAll().pipe(
+      tap(() => {
+        this._notifications.set([]);
+        this._unreadCount.set(0);
+      }),
+      this.onError('Error dismissing all notifications:', 'Failed to dismiss all notifications'),
+    );
+  }
+
   public updateSettings(settings: UpdateNotificationSettingsDto): Observable<NotificationSettingsDto> {
     return this.notificationApiService.updateSettings(settings, this._settings()?.version ?? null).pipe(
       tap(updated => this._settings.set(updated)),

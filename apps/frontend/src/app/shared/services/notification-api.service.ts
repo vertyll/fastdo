@@ -41,6 +41,18 @@ export class NotificationApiService extends HttpApiService {
       .pipe(map(response => response.data));
   }
 
+  public dismiss(ids: string[]): Observable<number> {
+    return this.http
+      .post<ApiResponse<number>>(`${this.baseUrl}${NOTIFICATIONS}/dismiss`, { notificationIds: ids })
+      .pipe(map(response => response.data));
+  }
+
+  public dismissAll(): Observable<number> {
+    return this.http
+      .post<ApiResponse<number>>(`${this.baseUrl}${NOTIFICATIONS}/dismiss-all`, {})
+      .pipe(map(response => response.data));
+  }
+
   public getSettings(): Observable<NotificationSettingsDto> {
     return this.http
       .get<ApiResponse<NotificationSettingsDto>>(`${this.baseUrl}${NOTIFICATIONS}/settings`)

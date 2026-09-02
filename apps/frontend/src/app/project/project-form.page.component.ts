@@ -118,7 +118,7 @@ const DEFAULT_STATUS_COLOR = '#10B981';
 
           <div class="relative mt-6">
             <app-textarea-field
-              id="additionalDescription"
+              id="description"
               [control]="descriptionControl"
               [label]="'Project.description' | translate"
             />

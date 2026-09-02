@@ -399,7 +399,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       number: TaskSortFieldEnum.CREATED_AT,
       dateCreation: TaskSortFieldEnum.CREATED_AT,
       dateModification: TaskSortFieldEnum.UPDATED_AT,
-      description: TaskSortFieldEnum.DESCRIPTION,
+      name: TaskSortFieldEnum.NAME,
       priority: TaskSortFieldEnum.PRIORITY,
     };
 
@@ -477,8 +477,8 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         verticalAlign: 'middle',
       },
       {
-        key: 'description',
-        label: 'Task.description',
+        key: 'name',
+        label: 'Task.name',
         type: 'text',
         align: 'center',
         verticalAlign: 'middle',

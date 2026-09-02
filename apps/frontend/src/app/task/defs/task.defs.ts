@@ -5,8 +5,8 @@ export type Task = {
   id: string;
   projectId: string;
   number: number;
-  description: string;
-  additionalDescription: string | null;
+  name: string;
+  description: string | null;
   priority: TaskPriorityEnum;
   priceEstimation: number;
   workedTime: number;
@@ -39,7 +39,7 @@ export type TaskListItem = {
   id: string;
   projectId: string;
   number: number;
-  description: string;
+  name: string;
   priority: TaskPriorityEnum;
   statusId: string | null;
   statusName: string | null;
@@ -74,8 +74,8 @@ export type TaskComment = {
 };
 
 export type CreateTaskPayload = {
-  description: string;
-  additionalDescription?: string | null;
+  name: string;
+  description?: string | null;
   priority: TaskPriorityEnum;
   statusId?: string | null;
   categoryIds?: string[];
@@ -96,7 +96,7 @@ export enum TaskSortFieldEnum {
   CREATED_AT = 'CREATED_AT',
   UPDATED_AT = 'UPDATED_AT',
   PRIORITY = 'PRIORITY',
-  DESCRIPTION = 'DESCRIPTION',
+  NAME = 'NAME',
 }
 
 export type GetAllTasksSearchParams = {
