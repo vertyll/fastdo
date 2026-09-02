@@ -83,7 +83,6 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
         </app-button>
       </div>
 
-      <!-- Templates definition outside of @switch -->
       <ng-template #statusTemplate let-task>
         <div class="flex items-center justify-center">
           @if (task.statusName) {

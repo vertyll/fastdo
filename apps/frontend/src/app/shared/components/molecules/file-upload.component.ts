@@ -21,7 +21,6 @@ export interface FileUploadItem {
   viewProviders: [provideIcons({ heroDocument, heroTrash, heroXMark })],
   template: `
     <div class="space-y-4">
-      <!-- File Input -->
       <div class="flex items-center gap-2">
         <app-button type="button" (click)="fileInput.click()" [disabled]="disabled()">
           {{ 'Basic.selectFiles' | translate }}
@@ -41,7 +40,6 @@ export interface FileUploadItem {
         }
       </div>
 
-      <!-- File List -->
       @if (files().length > 0) {
         <div class="space-y-2">
           <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -74,7 +72,6 @@ export interface FileUploadItem {
         </div>
       }
 
-      <!-- Error Messages -->
       @if (errors().length > 0) {
         <div class="space-y-1">
           @for (error of errors(); track $index) {
@@ -83,7 +80,6 @@ export interface FileUploadItem {
         </div>
       }
 
-      <!-- File Size Limit Info -->
       @if (maxSizeBytes() > 0) {
         <div class="text-xs text-neutral-500 dark:text-neutral-400">
           {{ 'Basic.maxFileSize' | translate: { size: formatFileSize(maxSizeBytes()) } }}

@@ -67,6 +67,21 @@ Three conventions are worth knowing before adding a call:
 - **Files are references.** Uploads go straight to object storage on a signed URL and only the file id reaches the
   service that owns the record — see `FileUploadService`.
 
+### The shared table
+
+`TableComponent` carries three rules that look like defects until you know why they are there.
+
+- **A clamped cell does not overflow.** When a column sets `maxChars`, the cell's `max-width` becomes `${maxChars}ch`,
+  so the text always fits horizontally and DOM overflow measurement reports nothing. The text is still cut by
+  `line-clamp`, so the "show more" toggle is decided by the character count, not by measurement. Measuring is only
+  correct for columns without `maxChars`, and never while the cell is expanded.
+- **Infinite scroll must ignore its first sighting.** The observer watches the last row. When the first page fits
+  inside the container that row is visible immediately, so an unguarded observer emits `loadMore` right after the
+  initial load and silently doubles the page size. The first emission is suppressed until the user has scrolled.
+- **The scroll listener is not redundant with the observer.** When the first page fits, the last row stays
+  permanently visible and `IntersectionObserver` never fires again after that suppressed emission. Watching `scroll`
+  is what still reaches page two.
+
 ### Other:
 
 - Turborepo for script automation and monorepo structure management.

@@ -168,13 +168,11 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
             }
           </div>
 
-          <!-- File Attachments -->
           <div class="space-y-4">
             <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100">
               {{ 'Task.attachments' | translate }}
             </h3>
 
-            <!-- Existing Attachments -->
             @if (existingAttachments().length > 0) {
               <div class="space-y-2">
                 <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -186,7 +184,6 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                       class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-neutral-200 dark:border-neutral-700 transition-opacity duration-200"
                     >
                       <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <!-- Icon/Image -->
                         <div class="shrink-0">
                           @if (isImage(attachment.originalName)) {
                             <app-image
@@ -201,7 +198,6 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                           }
                         </div>
 
-                        <!-- Tekst -->
                         <div class="min-w-0 flex-1">
                           <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
                             {{ attachment.originalName }}
@@ -212,7 +208,6 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                         </div>
                       </div>
 
-                      <!-- Delete/Undo Button -->
                       <div class="flex items-center gap-2">
                         <button
                           type="button"
@@ -229,7 +224,6 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
               </div>
             }
 
-            <!-- New Attachments Upload -->
             <div class="space-y-2">
               @if (taskId()) {
                 <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">

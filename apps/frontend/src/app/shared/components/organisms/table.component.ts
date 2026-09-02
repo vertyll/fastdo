@@ -934,19 +934,15 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked(): void {
-    // Preserve scroll position after view is updated when loading more
     if (this.shouldPreserveScroll) {
       this.shouldPreserveScroll = false;
-      // Small delay to ensure the new rows are rendered
       setTimeout(() => {
         this.preserveScrollPosition();
       }, 0);
     }
 
-    // Recalculate horizontal scroll state (e.g. after data/layout changes).
     this.updateHorizontalScrollState();
 
-    // Detect real text overflow to decide whether `show more` button should appear.
     this.updateOverflowState();
   }
 
@@ -1075,24 +1071,20 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     const text = this.getValue(row, columnKey);
     if (!text) return false;
 
-    // Always show button when user expanded the text (so they can collapse it back).
     if (this.isTextExpanded(row, columnKey)) return true;
 
-    // Hard rule: if maxChars is configured and text exceeds it, always show toggle.
-    // (DOM overflow measurement is unreliable here, because max-width is set to `${maxChars}ch`,
-    // so the text physically fits — but it IS clamped by line-clamp, so user needs the button.)
     const { maxChars } = column.truncate;
     if (maxChars && text.length > maxChars) return true;
 
-    // Otherwise: real DOM overflow measurement (set in ngAfterViewChecked).
-    const key = `${this.getRowId(row)}__${columnKey}`;
-    const measured = this.overflowMap().get(key);
+    const measured = this.overflowMap().get(`${this.getRowId(row)}__${columnKey}`);
     if (measured !== undefined) return measured;
 
-    // Fallback heuristic for the very first render, before measurement happens.
-    const maxLines = this.getMaxLines(column);
-    const approximateCharsPerLine = this.isMobile() ? 20 : 60;
-    return text.length > maxLines * approximateCharsPerLine;
+    return this.exceedsEstimatedLineBudget(text, column);
+  }
+
+  private exceedsEstimatedLineBudget(text: string, column: TableColumn): boolean {
+    const charsPerLine = this.isMobile() ? 20 : 60;
+    return text.length > this.getMaxLines(column) * charsPerLine;
   }
 
   protected getTextCellStyle(column: TableColumn): { [key: string]: string } {
@@ -1243,7 +1235,6 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
     nodes.forEach(el => {
       const key = el.dataset['truncateKey'];
       if (!key) return;
-      // When element is in expanded state, we can't measure clamp overflow — keep previous value.
       if (el.classList.contains('expanded')) {
         const prevVal = prev.get(key) ?? true;
         next.set(key, prevVal);
@@ -1281,7 +1272,6 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   private preserveScrollPosition(): void {
     const tableContainer = this.elementRef.nativeElement.querySelector('.table-container');
     if (tableContainer) {
-      // Keep the scroll position slightly adjusted to account for new content
       const currentScrollTop = tableContainer.scrollTop;
       if (currentScrollTop > 0) {
         tableContainer.scrollTop = currentScrollTop;
@@ -1294,10 +1284,8 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       return;
     }
 
-    // Disconnect from previous observation
     this.intersectionObserver.disconnect();
 
-    // Re-observe the new last row
     setTimeout(() => {
       const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
       if (lastRow) {
@@ -1320,10 +1308,6 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
         if (!target.isIntersecting || this.config().loadingMore) {
           return;
         }
-        // Avoid auto-firing on initial render when the user hasn't scrolled yet.
-        // Without this guard, if the first page fits inside the container the
-        // last row is immediately considered visible and `loadMore` would be
-        // emitted right after the initial load, effectively doubling the page size.
         if (!this.userHasScrolled) {
           return;
         }
@@ -1332,23 +1316,16 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
       {
         threshold: 0.1,
         rootMargin: '50px',
-        root: tableContainer, // Use table container as root instead of viewport
+        root: tableContainer,
       },
     );
 
-    // Track whether the user has actually scrolled the container at least once.
-    // We also use the scroll event as a fallback: when the first page fits in
-    // the container the last row is permanently visible, so IntersectionObserver
-    // would never fire again after the initial (suppressed) emission. Watching
-    // `scroll` ensures we still trigger `loadMore` once the user reaches the
-    // bottom of the list.
     if (!this.scrollListenerAttached) {
       tableContainer.addEventListener('scroll', this.onInfiniteScrollContainerScroll);
       this.scrollListenerAttached = true;
       this.infiniteScrollContainer = tableContainer;
     }
 
-    // Observe the last row when it exists
     setTimeout(() => {
       const lastRow = this.elementRef.nativeElement.querySelector('.mat-mdc-row:last-child');
       if (lastRow) {

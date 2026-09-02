@@ -62,7 +62,6 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
       }
     </div>
 
-    <!-- Custom template for current user role -->
     <ng-template #projectUserRoleTemplate let-row>
       <div>
         <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">

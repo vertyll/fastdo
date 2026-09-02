@@ -27,7 +27,6 @@ export type ImageSize = 'sm' | 'md' | 'lg';
   providers: [provideIcons({ heroCamera, heroUserCircle, heroEye, heroXMark })],
   template: `
     <div class="relative">
-      <!-- Base Image Container -->
       <div [ngClass]="getContainerClasses()">
         @if (previewUrl()) {
           <img
@@ -71,7 +70,6 @@ export type ImageSize = 'sm' | 'md' | 'lg';
         <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" accept="image/jpeg,image/png" />
       </div>
 
-      <!-- Preview Modal -->
       @if (showPreviewModal()) {
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-1111 p-4">
           <div class="bg-background-primary dark:bg-dark-background-primary rounded-lg p-6 w-full max-w-2xl">
@@ -92,7 +90,6 @@ export type ImageSize = 'sm' | 'md' | 'lg';
         </div>
       }
 
-      <!-- Cropper Modal -->
       @if (showCropper()) {
         <div
           class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
