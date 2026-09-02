@@ -1,12 +1,12 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule, MatSelectChange } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-editable-multi-select',
-  imports: [FormsModule, MatFormFieldModule, MatSelectModule, TranslateModule],
+  imports: [FormsModule, MatFormFieldModule, MatSelectModule, TranslatePipe],
   template: `
     <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
       <mat-label>{{ placeholder() }}</mat-label>
@@ -26,6 +26,7 @@ import { TranslateModule } from '@ngx-translate/core';
       </mat-select>
     </mat-form-field>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

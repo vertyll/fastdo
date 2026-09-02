@@ -1,13 +1,13 @@
 import { Component, inject, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCheck, heroTrash, heroUser, heroXMark } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonRoleEnum } from '../../enums/modal.enum';
 import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-remove-item-button',
-  imports: [NgIconComponent, TranslateModule],
+  imports: [NgIconComponent, TranslatePipe],
   viewProviders: [provideIcons({ heroTrash, heroUser, heroCheck, heroXMark })],
   template: `
     <div class="relative">

@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { LegalDocumentComponent } from './legal-document.component';
 
 @Component({
   selector: 'app-privacy-policy-page',
-  imports: [TranslateModule, LegalDocumentComponent],
+  imports: [LegalDocumentComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-legal-document
       titleKey="TermsAndPolicies.privacyPolicy"

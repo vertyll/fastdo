@@ -12,6 +12,7 @@ import {
   input,
   output,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -20,7 +21,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroEye, heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CustomDatePipe } from '../../pipes/custom-date.pipe';
 import { PlatformService } from '../../services/platform.service';
 import { ThemeService } from '../../services/theme.service';
@@ -158,7 +159,7 @@ export interface TableConfig {
     MatIconModule,
     ImageComponent,
     NgIconComponent,
-    TranslateModule,
+    TranslatePipe,
     CustomDatePipe,
     SpinnerComponent,
     FilterGroupComponent,
@@ -411,6 +412,7 @@ export interface TableConfig {
       }
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       .mat-mdc-header-cell.mat-mdc-table-sticky,

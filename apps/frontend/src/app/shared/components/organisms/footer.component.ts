@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LinkComponent } from '../atoms/link.component';
 
 @Component({
   selector: 'app-footer',
-  imports: [TranslateModule, RouterLink, LinkComponent],
+  imports: [TranslatePipe, RouterLink, LinkComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <footer
       class="bg-background-secondary dark:bg-dark-background-secondary text-text-primary dark:text-dark-text-primary p-4 text-center text-sm flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4"

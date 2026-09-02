@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [TranslateModule],
+  imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ``,
 })
 export class DashboardComponent {}

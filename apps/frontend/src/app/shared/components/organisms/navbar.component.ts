@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -14,7 +14,7 @@ import {
   heroUserCircle,
   heroArrowRightOnRectangle,
 } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { LocalStorageService } from '../../services/local-storage.service';
@@ -26,12 +26,13 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
 import { ButtonComponent } from '../atoms/button.component';
 import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
 import { configNavModules } from 'src/app/config/config.nav.modules';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
   imports: [
     NgIconComponent,
-    TranslateModule,
+    TranslatePipe,
     CommonModule,
     RouterOutlet,
     ThemeSwitcherComponent,
@@ -225,6 +226,7 @@ import { configNavModules } from 'src/app/config/config.nav.modules';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (!authService.isLoggedIn()) {
       <nav class="top-nav">
@@ -545,7 +547,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected getCurrentLanguage(): string {
-    return this.translateService.getCurrentLang().toUpperCase();
+    return (this.translateService.getCurrentLang() || environment.defaultLanguage).toUpperCase();
   }
 
   protected selectLanguage(lang: string): void {

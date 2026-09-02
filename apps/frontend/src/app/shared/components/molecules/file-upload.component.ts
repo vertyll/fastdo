@@ -1,7 +1,16 @@
-import { Component, ElementRef, ViewChild, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  inject,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../atoms/button.component';
 import { ErrorMessageComponent } from '../atoms/error.message.component';
 import { formatFileSize as formatFileSizeUtil } from '../../utils/file-size.utils';
@@ -17,8 +26,9 @@ export interface FileUploadItem {
 
 @Component({
   selector: 'app-file-upload',
-  imports: [NgIconComponent, TranslateModule, ButtonComponent, ErrorMessageComponent],
+  imports: [NgIconComponent, TranslatePipe, ButtonComponent, ErrorMessageComponent],
   viewProviders: [provideIcons({ heroDocument, heroTrash, heroXMark })],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-4">
       <div class="flex items-center gap-2">

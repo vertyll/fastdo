@@ -1,13 +1,13 @@
 import { Component, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InputType } from '../../defs/components.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { InputComponent } from '../atoms/input.component';
 
 @Component({
   selector: 'app-submit-text',
-  imports: [InputComponent, ButtonComponent, ReactiveFormsModule, TranslateModule],
+  imports: [InputComponent, ButtonComponent, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="flex items-center gap-4">
       <app-input

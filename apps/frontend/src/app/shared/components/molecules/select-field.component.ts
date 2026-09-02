@@ -1,10 +1,11 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SelectFilterComponent } from '../atoms/select.component';
 
 @Component({
   selector: 'app-select-field',
   imports: [ReactiveFormsModule, SelectFilterComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-select
       [control]="control()"

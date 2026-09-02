@@ -73,7 +73,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
           }
 
           @if (modalService.modal().options?.message) {
-            <p [innerHTML]="modalService.modal().options?.message" class="mb-4"></p>
+            <p [innerHTML]="$safeNavigationMigration(modalService.modal().options?.message)" class="mb-4"></p>
           }
 
           <ng-container appAdHost></ng-container>
@@ -143,7 +143,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
               }
 
               @if (modalService.modal().options?.error) {
-                <app-error-message [customMessage]="modalService.modal().options?.error" />
+                <app-error-message [customMessage]="$safeNavigationMigration(modalService.modal().options?.error)" />
               }
             </form>
           }
@@ -157,7 +157,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
               @case (ButtonRole.Cancel) {
                 <app-button
                   (click)="closeModal(button)"
-                  [disabled]="modalService.modal().options?.loading"
+                  [disabled]="$safeNavigationMigration(modalService.modal().options?.loading)"
                   variant="stroked"
                 >
                   {{ button.text }}
@@ -167,7 +167,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                 <app-button
                   type="submit"
                   (click)="saveModal(button)"
-                  [disabled]="modalService.modal().options?.loading"
+                  [disabled]="$safeNavigationMigration(modalService.modal().options?.loading)"
                 >
                   {{ button.text }}
                 </app-button>
@@ -176,7 +176,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
                 <app-button
                   type="button"
                   (click)="saveModal(button)"
-                  [disabled]="modalService.modal().options?.loading"
+                  [disabled]="$safeNavigationMigration(modalService.modal().options?.loading)"
                 >
                   {{ button.text }}
                 </app-button>

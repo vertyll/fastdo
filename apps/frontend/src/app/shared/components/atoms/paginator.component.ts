@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, output } from '@angular/core';
+import { Component, DestroyRef, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -24,6 +24,7 @@ import { DEFAULT_PAGE_SIZE } from 'src/app/app.contansts';
       heroChevronDoubleRightSolid,
     }),
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div
       class="flex flex-col items-start gap-3 md:flex-row md:items-center md:flex-wrap py-1 md:px-1 rounded-none border-0 bg-transparent"

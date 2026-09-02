@@ -8,12 +8,13 @@ import {
   TemplateRef,
   ViewChild,
   DestroyRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ProjectCategoryService } from 'src/app/project/data-access/project-category.service';
@@ -46,7 +47,7 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
   selector: 'app-task-list-page',
   imports: [
     TableComponent,
-    TranslateModule,
+    TranslatePipe,
     ButtonComponent,
     TitleComponent,
     MatTooltipModule,
@@ -54,6 +55,7 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
     NgIconComponent,
   ],
   viewProviders: [provideIcons({ heroInformationCircle, heroTrash })],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
@@ -138,7 +140,7 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
       </ng-template>
 
       @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
-        <app-error-message [customMessage]="tasksStateService.error()?.message" />
+        <app-error-message [customMessage]="$safeNavigationMigration(tasksStateService.error()?.message)" />
       } @else {
         <app-table
           [data]="tasksStateService.tasks()"

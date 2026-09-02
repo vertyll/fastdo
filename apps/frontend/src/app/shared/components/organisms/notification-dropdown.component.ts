@@ -1,9 +1,9 @@
-import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBell, heroBellAlert, heroCog6Tooth } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ProjectsApiService } from '../../../project/data-access/project.api.service';
 import { NotificationDto } from '../../defs/notification.defs';
@@ -16,8 +16,9 @@ import { SpinnerComponent } from '../atoms/spinner.component';
 
 @Component({
   selector: 'app-notification-dropdown',
-  imports: [NgIconComponent, TranslateModule, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
+  imports: [NgIconComponent, TranslatePipe, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
   viewProviders: [provideIcons({ heroBell, heroBellAlert, heroCog6Tooth })],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-dropdown [closeSignal]="dropdownCloseTrigger()">
       <button

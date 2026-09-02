@@ -1,8 +1,8 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
 import { heroUserCircle } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../auth/data-access/auth.service';
 import { FileUploadService } from '../file/data-access/file-upload.service';
 import { FileScopeEnum } from '../file/defs/file.defs';
@@ -20,7 +20,7 @@ import { UserStateService } from './data-access/user.state.service';
 @Component({
   selector: 'app-user-profile',
   imports: [
-    TranslateModule,
+    TranslatePipe,
     ReactiveFormsModule,
     SpinnerComponent,
     ErrorMessageComponent,
@@ -30,6 +30,7 @@ import { UserStateService } from './data-access/user.state.service';
     ButtonComponent,
   ],
   providers: [provideIcons({ heroUserCircle })],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @switch (stateService.state()) {
       @case (LOADING_STATE_VALUE.LOADING) {
@@ -38,7 +39,7 @@ import { UserStateService } from './data-access/user.state.service';
         </div>
       }
       @case (LOADING_STATE_VALUE.ERROR) {
-        <app-error-message [customMessage]="stateService.error()?.message" />
+        <app-error-message [customMessage]="$safeNavigationMigration(stateService.error()?.message)" />
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
         @if (user(); as profile) {

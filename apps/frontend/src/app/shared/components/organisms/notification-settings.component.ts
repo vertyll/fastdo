@@ -1,6 +1,6 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { NotificationTypeEnum } from '../../enums/notification-type.enum';
 import { ToastTypeEnum } from '../../enums/toast-type.enum';
@@ -13,7 +13,8 @@ import { TitleComponent } from '../atoms/title.component';
 
 @Component({
   selector: 'app-notification-settings',
-  imports: [ReactiveFormsModule, TranslateModule, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="max-w-2xl mx-auto">
       <app-title [text]="'Notifications.settings' | translate" />

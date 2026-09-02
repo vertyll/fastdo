@@ -1,9 +1,18 @@
-import { AfterViewInit, Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import { heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
@@ -27,7 +36,7 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
 
 @Component({
   selector: 'app-project-list-page',
-  imports: [TranslateModule, ErrorMessageComponent, TitleComponent, ButtonComponent, TableComponent],
+  imports: [TranslatePipe, ErrorMessageComponent, TitleComponent, ButtonComponent, TableComponent],
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <div class="flex flex-row items-center justify-between">
@@ -57,7 +66,7 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
           </div>
         }
         @case (listStateValue.ERROR) {
-          <app-error-message [customMessage]="projectsStateService.error()?.message" />
+          <app-error-message [customMessage]="$safeNavigationMigration(projectsStateService.error()?.message)" />
         }
       }
     </div>
@@ -70,6 +79,7 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
       </div>
     </ng-template>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   viewProviders: [
     provideIcons({
       heroCalendar,

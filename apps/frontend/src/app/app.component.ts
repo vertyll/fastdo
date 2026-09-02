@@ -1,8 +1,8 @@
 import { registerLocaleData } from '@angular/common';
 import localeEn from '@angular/common/locales/en';
 import localePl from '@angular/common/locales/pl';
-import { Component, inject } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../environments/environment';
 import { ModalComponent } from './shared/components/organisms/modal.component';
 import { LayoutComponent } from './shared/components/templates/layout.component';
@@ -10,7 +10,8 @@ import { LocalStorageService } from './shared/services/local-storage.service';
 
 @Component({
   selector: 'app-root',
-  imports: [LayoutComponent, TranslateModule, ModalComponent],
+  imports: [LayoutComponent, ModalComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-layout>
       <app-modal />

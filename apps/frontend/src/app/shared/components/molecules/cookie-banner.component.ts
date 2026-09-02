@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { getCookie, setCookie } from '../../utils/cookies';
 import { ButtonComponent } from '../atoms/button.component';
 import { COOKIE_ACCEPTED_VALUE, COOKIE_EXPIRATION_DAYS, COOKIE_NAME } from '../../../app.contansts';
 
 @Component({
   selector: 'app-cookie-banner',
-  imports: [TranslateModule, ButtonComponent],
+  imports: [TranslatePipe, ButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (showBanner) {
       <div class="fixed bottom-0 left-0 right-0 bg-neutral-900 p-4 shadow-md z-50">

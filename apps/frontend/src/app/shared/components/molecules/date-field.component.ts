@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,7 @@ import { DateInputComponent } from '../atoms/date-input.component';
 @Component({
   selector: 'app-date-field',
   imports: [DateInputComponent, MatFormFieldModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-date-input
       [control]="control()"

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -17,7 +17,7 @@ import {
   heroTrash,
   heroUserGroup,
 } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
@@ -45,7 +45,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
   selector: 'app-task-details',
   imports: [
     CommonModule,
-    TranslateModule,
+    TranslatePipe,
     NgIcon,
     ReactiveFormsModule,
     FormsModule,
@@ -74,6 +74,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
       heroFlag,
     }),
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="min-h-screen">
       <div class="container mx-auto max-w-7xl">

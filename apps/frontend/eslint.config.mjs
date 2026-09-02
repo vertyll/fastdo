@@ -2,7 +2,7 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import { defineConfig } from 'eslint/config'; // Importujemy nowy helper
+import { defineConfig } from 'eslint/config';
 
 export default defineConfig(
   {
@@ -52,9 +52,9 @@ export default defineConfig(
       '@angular-eslint/prefer-inject': 'off',
       '@angular-eslint/no-output-on-prefix': 'warn',
       '@angular-eslint/no-output-native': 'warn',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       '@angular-eslint/use-lifecycle-interface': 'error',
       '@angular-eslint/contextual-lifecycle': 'error',
-      '@angular-eslint/no-conflicting-lifecycle': 'error',
       '@angular-eslint/no-input-rename': 'error',
       '@angular-eslint/no-output-rename': 'error',
 

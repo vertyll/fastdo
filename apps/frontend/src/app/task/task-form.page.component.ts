@@ -1,10 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroDocument, heroTrash } from '@ng-icons/heroicons/outline';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { ProjectCategoryService } from '../project/data-access/project-category.service';
 import { ProjectRoleService } from '../project/data-access/project-role.service';
@@ -36,7 +44,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     ButtonComponent,
     TitleComponent,
     EditableMultiSelectComponent,
@@ -56,6 +64,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
       heroArrowLeft,
     }),
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="max-w-4xl mx-auto">
       <app-title

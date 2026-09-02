@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ErrorPipe } from '../../pipes/error.pipe';
 import { ValidationService } from '../../services/validation.service';
@@ -6,6 +6,7 @@ import { ValidationService } from '../../services/validation.service';
 @Component({
   selector: 'app-error-message',
   imports: [ErrorPipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (input() && input()!.invalid && (input()!.touched || input()!.dirty)) {
       <p class="text-danger-500">

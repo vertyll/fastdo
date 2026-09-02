@@ -10,10 +10,11 @@ import {
   input,
   output,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subscription, debounceTime, firstValueFrom } from 'rxjs';
 import { FilterTypeEnum } from '../../enums/filter-type.enum';
@@ -40,7 +41,7 @@ import {
   selector: 'app-filter-group',
   imports: [
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     InputFieldComponent,
     SelectFieldComponent,
     DateFieldComponent,
@@ -257,6 +258,7 @@ import {
       }
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host {

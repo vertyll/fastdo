@@ -1,11 +1,12 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LegalSection } from './defs/terms-and-policies.defs';
 
 @Component({
   selector: 'app-legal-document',
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="max-w-4xl mx-auto">
       <div class="mb-8">

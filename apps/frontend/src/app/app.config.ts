@@ -1,13 +1,7 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import {
-  ApplicationConfig,
-  importProvidersFrom,
-  inject,
-  provideAppInitializer,
-  provideZonelessChangeDetection,
-} from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
-import { provideTranslateCompiler, provideTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { provideTranslateCompiler, provideTranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
@@ -31,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
     provideStore([FiltersState], ngxsConfig),
-    importProvidersFrom(TranslateModule.forRoot()),
+    provideTranslateService(),
     provideTranslateLoader(BackendCatalogueLoader),
     provideTranslateCompiler(TranslateMessageFormatCompiler),
     provideAppInitializer(() => {
