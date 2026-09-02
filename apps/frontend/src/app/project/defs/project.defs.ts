@@ -13,6 +13,7 @@ export type Project = {
   createdAt: string;
   updatedAt: string;
   version: number | null;
+  permissions: ProjectRolePermissionEnum[];
   isExpanded?: boolean;
   editMode?: boolean;
 };

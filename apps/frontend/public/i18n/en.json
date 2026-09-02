@@ -56,7 +56,9 @@
     "noResults": "No results found",
     "none": "None",
     "results": "results",
-    "totalResults": "Total results"
+    "totalResults": "Total results",
+    "reject": "Reject",
+    "view": "View"
   },
   "Filters": {
     "title": "Filters",
@@ -176,7 +178,8 @@
     "id": "ID",
     "status": "Status",
     "noStatus": "No status",
-    "tasksVisibilityInfo": "In a public project, by default, a user can see all tasks that do not have a specific role assigned. The creator of a public project can assign roles to users, including the manager role. The manager can see all tasks. The creator of a task can see their own task. If a user has the client role, they can see all tasks except those assigned to managers. A team member can see tasks assigned to their role."
+    "tasksVisibilityInfo": "In a public project, by default, a user can see all tasks that do not have a specific role assigned. The creator of a public project can assign roles to users, including the manager role. The manager can see all tasks. The creator of a task can see their own task. If a user has the client role, they can see all tasks except those assigned to managers. A team member can see tasks assigned to their role.",
+    "iconUploadError": "An error occurred while uploading the project icon"
   },
   "ProjectRole": {
     "manager": "Manager",
@@ -275,7 +278,15 @@
     "timeTracking": "Time tracking",
     "dates": "Dates",
     "people": "People",
-    "deleteTitle": "Delete task"
+    "deleteTitle": "Delete task",
+    "attachmentUploadError": "An error occurred while uploading the attachment",
+    "downloadError": "An error occurred while downloading the file",
+    "getAllError": "An error occurred while loading the tasks",
+    "loadMoreError": "An error occurred while loading more tasks",
+    "notFoundMessage": "Task not found",
+    "priorityLow": "Low",
+    "priorityMedium": "Medium",
+    "priorityHigh": "High"
   },
   "CookiesBanner": {
     "text": "This site uses cookies to improve your experience. By using our site, you agree to our use of cookies."
@@ -418,7 +429,13 @@
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
     "updateSuccess": "Profile updated successfully",
-    "updateError": "An error occurred while updating the profile"
+    "updateError": "An error occurred while updating the profile",
+    "address": "Address",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "name": "Name",
+    "phoneNumber": "Phone number",
+    "security": "Security"
   },
   "Image": {
     "cutPhoto": "Cut photo",
@@ -453,7 +470,11 @@
     "timeNow": "Now",
     "timeMinutesAgo": "{minutes} min ago",
     "timeHoursAgo": "{hours} hours ago",
-    "timeDaysAgo": "{days} days ago"
+    "timeDaysAgo": "{days} days ago",
+    "live": "Live",
+    "offline": "Offline",
+    "type": "Type",
+    "settingsUpdateError": "An error occurred while saving the notification settings"
   },
   "ProjectInvitation": {
     "actionPrompt": "Do you want to join the project?",
@@ -461,6 +482,7 @@
     "acceptError": "Failed to join the project.",
     "rejectSuccess": "You have rejected the project invitation.",
     "rejectError": "Failed to reject the invitation.",
-    "projectInfo": "Invitation to project: "
+    "projectInfo": "Invitation to project: ",
+    "responseError": "An error occurred while responding to the invitation"
   }
 }

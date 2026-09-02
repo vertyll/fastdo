@@ -55,6 +55,7 @@ export type TaskDetails = {
   statusName: string | null;
   categories: TaskCategoryView[];
   assignees: TaskUserView[];
+  createdBy: TaskUserView | null;
   comments: TaskComment[];
   permissions: ProjectRolePermissionEnum[];
 };

@@ -256,6 +256,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       const projectId = this.projectId();
       if (projectId) {
         this.loadInitialFilterData(projectId);
+        this.getAllTasks(this.currentSearchParams()).subscribe();
       }
     });
   }

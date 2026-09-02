@@ -56,7 +56,9 @@
     "noResults": "Brak wyników",
     "none": "Brak",
     "results": "wyników",
-    "totalResults": "Łącznie wyników"
+    "totalResults": "Łącznie wyników",
+    "reject": "Odrzuć",
+    "view": "Podgląd"
   },
   "Filters": {
     "title": "Filtry",
@@ -176,7 +178,8 @@
     "id": "ID",
     "status": "Status",
     "noStatus": "Brak statusu",
-    "tasksVisibilityInfo": "W publicznym projekcie domyślnie użytkownik widzi wszystkie zadania, które nie mają przypisanej konkretnej roli. Twórca publicznego projektu może nadawać użytkownikom role, w tym rolę menedżera. Menedżer widzi wszystkie zadania. Twórca zadania widzi swoje zadanie. Jeżeli mamy rolę klienta to widzi on wszystkie zadania prócz tych przypisanych do menedżerów. Członek zespołu widzi zadania przypisane do swojej roli lub te, które roli przypisanej nie mają."
+    "tasksVisibilityInfo": "W publicznym projekcie domyślnie użytkownik widzi wszystkie zadania, które nie mają przypisanej konkretnej roli. Twórca publicznego projektu może nadawać użytkownikom role, w tym rolę menedżera. Menedżer widzi wszystkie zadania. Twórca zadania widzi swoje zadanie. Jeżeli mamy rolę klienta to widzi on wszystkie zadania prócz tych przypisanych do menedżerów. Członek zespołu widzi zadania przypisane do swojej roli lub te, które roli przypisanej nie mają.",
+    "iconUploadError": "Wystąpił błąd podczas przesyłania ikony projektu"
   },
   "ProjectRole": {
     "manager": "Menedżer",
@@ -275,7 +278,15 @@
     "timeTracking": "Śledzenie czasu",
     "dates": "Daty",
     "people": "Osoby",
-    "deleteTitle": "Usuń zadanie"
+    "deleteTitle": "Usuń zadanie",
+    "attachmentUploadError": "Wystąpił błąd podczas przesyłania załącznika",
+    "downloadError": "Wystąpił błąd podczas pobierania pliku",
+    "getAllError": "Wystąpił błąd podczas pobierania zadań",
+    "loadMoreError": "Wystąpił błąd podczas pobierania kolejnych zadań",
+    "notFoundMessage": "Nie znaleziono zadania",
+    "priorityLow": "Niski",
+    "priorityMedium": "Średni",
+    "priorityHigh": "Wysoki"
   },
   "CookiesBanner": {
     "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."
@@ -418,7 +429,13 @@
     "newPassword": "Nowe hasło",
     "confirmNewPassword": "Potwierdź nowe hasło",
     "updateSuccess": "Profil został zaktualizowany",
-    "updateError": "Wystąpił błąd podczas aktualizacji profilu"
+    "updateError": "Wystąpił błąd podczas aktualizacji profilu",
+    "address": "Adres",
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "name": "Imię i nazwisko",
+    "phoneNumber": "Numer telefonu",
+    "security": "Bezpieczeństwo"
   },
   "Image": {
     "cutPhoto": "Przytnij zdjęcie",
@@ -453,7 +470,11 @@
     "timeNow": "Teraz",
     "timeMinutesAgo": "{minutes} min temu",
     "timeHoursAgo": "{hours} godz. temu",
-    "timeDaysAgo": "{days} dni temu"
+    "timeDaysAgo": "{days} dni temu",
+    "live": "Na żywo",
+    "offline": "Brak połączenia",
+    "type": "Typ",
+    "settingsUpdateError": "Wystąpił błąd podczas zapisywania ustawień powiadomień"
   },
   "ProjectInvitation": {
     "actionPrompt": "Czy chcesz dołączyć do projektu?",
@@ -461,6 +482,7 @@
     "acceptError": "Nie udało się dołączyć do projektu.",
     "rejectSuccess": "Odrzuciłeś zaproszenie do projektu.",
     "rejectError": "Nie udało się odrzucić zaproszenia.",
-    "projectInfo": "Zaproszenie do projektu: "
+    "projectInfo": "Zaproszenie do projektu: ",
+    "responseError": "Wystąpił błąd podczas odpowiadania na zaproszenie"
   }
 }

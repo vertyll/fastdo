@@ -65,6 +65,7 @@ export class ProjectsStateService {
       memberCount: 0,
       createdAt: project.createdAt,
       version: project.version,
+      permissions: project.permissions,
     };
   }
 

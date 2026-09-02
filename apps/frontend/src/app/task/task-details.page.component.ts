@@ -392,7 +392,7 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
                       <div class="flex items-center gap-2 mt-1">
                         <div class="w-3 h-3 rounded-full" [style.background-color]="priorityColor()"></div>
                         <p class="text-md font-semibold text-text-primary dark:text-dark-text-primary">
-                          {{ 'Task.priority' + task()!.task.priority | translate }}
+                          {{ priorityLabel() | translate }}
                         </p>
                       </div>
                     </div>
@@ -855,13 +855,22 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected readonly projectName = signal<string>('');
 
+  protected readonly priorityLabel = computed(() => {
+    const priority = this.task()?.task.priority;
+    const labels: Record<string, string> = {
+      LOW: 'Task.priorityLow',
+      MEDIUM: 'Task.priorityMedium',
+      HIGH: 'Task.priorityHigh',
+    };
+    return priority ? labels[priority] : '';
+  });
+
   protected readonly createdByName = computed(() => {
     const details = this.task();
     if (!details) {
       return '';
     }
-    const author = details.assignees.find(user => user.id === details.task.createdBy);
-    return author?.displayName ?? details.task.createdBy;
+    return details.createdBy?.displayName ?? '';
   });
 
   protected attachmentName(fileId: string): string {
