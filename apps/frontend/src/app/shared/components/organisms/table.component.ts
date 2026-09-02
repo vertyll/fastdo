@@ -311,7 +311,7 @@ export interface TableConfig {
                     @case ('image') {
                       <div class="image-cell">
                         <app-image
-                          [initialUrl]="getValue(row, column.key)"
+                          [fileId]="getValue(row, column.key)"
                           format="square"
                           size="sm"
                           mode="preview"

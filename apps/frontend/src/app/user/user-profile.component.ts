@@ -57,7 +57,7 @@ import { UserStateService } from './data-access/user.state.service';
 
               @if (!isEditing()) {
                 <div class="flex flex-col sm:flex-row gap-6">
-                  <app-image [initialUrl]="avatarUrl()" mode="preview" size="md" format="circle" />
+                  <app-image [fileId]="avatarUrl()" mode="preview" size="md" format="circle" />
                   <dl class="space-y-2">
                     <dt class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
                       {{ 'Profile.name' | translate }}
@@ -94,7 +94,7 @@ import { UserStateService } from './data-access/user.state.service';
               } @else {
                 <form [formGroup]="profileForm" (ngSubmit)="save()" class="space-y-4">
                   <app-image
-                    [initialUrl]="avatarUrl()"
+                    [fileId]="avatarUrl()"
                     mode="edit"
                     size="md"
                     format="circle"
@@ -169,8 +169,7 @@ export class UserProfileComponent implements OnInit {
   private readonly pendingAvatarFileId = signal<string | null | undefined>(undefined);
 
   protected readonly avatarUrl = computed(() => {
-    const fileId = this.user()?.avatarFileId;
-    return fileId ? `/files/${fileId}` : null;
+    return this.user()?.avatarFileId ?? null;
   });
 
   protected controlOf(name: string): FormControl {

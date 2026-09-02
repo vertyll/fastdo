@@ -1,21 +1,25 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   ElementRef,
   OnDestroy,
   ViewChild,
   ViewEncapsulation,
   effect,
+  inject,
   input,
   output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe } from '@ngx-translate/core';
 import Cropper from 'cropperjs';
 import { ButtonComponent } from 'src/app/shared/components/atoms/button.component';
 import { environment } from 'src/environments/environment';
+import { FileApiService } from '../../../file/data-access/file.api.service';
 
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';
@@ -152,6 +156,12 @@ const CROPPER_TEMPLATE =
   `,
   styles: [
     `
+      cropper-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
       .cropper-format-circle cropper-selection {
         border-radius: 50%;
         overflow: hidden;
@@ -162,11 +172,14 @@ const CROPPER_TEMPLATE =
 })
 export class ImageComponent implements OnDestroy {
   private readonly baseUrl = environment.apiUrl;
+  private readonly fileApi = inject(FileApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   public readonly mode = input<ImageMode>('view');
   public readonly format = input<ImageFormat>('circle');
   public readonly size = input<ImageSize>('md');
   public readonly initialUrl = input<string | null>(null);
+  public readonly fileId = input<string | null>(null);
 
   public readonly imageSaved = output<{ file: File; preview: string | null }>();
   public readonly croppingChange = output<boolean>();
@@ -197,6 +210,7 @@ export class ImageComponent implements OnDestroy {
 
   constructor() {
     effect(() => this.handleInitialUrlChange());
+    effect(() => this.handleFileIdChange());
     effect(() => this.handleCroppingChange());
   }
 
@@ -219,7 +233,7 @@ export class ImageComponent implements OnDestroy {
     if (!url) return null;
     if (url.startsWith('data:') || url.startsWith('blob:')) return url;
 
-    return url.startsWith('http') ? url : `${this.baseUrl}/${url}`;
+    return url.startsWith('http') ? url : `${this.baseUrl}/${url.replace(/^\//, '')}`;
   }
 
   protected getContainerClasses(): string {
@@ -334,6 +348,16 @@ export class ImageComponent implements OnDestroy {
     } finally {
       this.isSaving.set(false);
     }
+  }
+
+  private handleFileIdChange(): void {
+    const fileId = this.fileId();
+    if (!fileId) return;
+
+    this.fileApi
+      .requestDownload(fileId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: response => this.previewUrl.set(response.data.downloadUrl) });
   }
 
   private handleInitialUrlChange(): void {

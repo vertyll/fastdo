@@ -146,7 +146,7 @@ const DEFAULT_STATUS_COLOR = '#10B981';
               {{ 'Project.icon' | translate }}
             </span>
             <app-image
-              [initialUrl]="iconUrl"
+              [fileId]="iconFileIdValue"
               mode="edit"
               size="md"
               format="square"
@@ -538,9 +538,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return '';
   }
 
-  protected get iconUrl(): string | null {
-    const fileId = this.iconFileId === undefined ? this.currentProject?.project.iconFileId : this.iconFileId;
-    return fileId ? `/files/${fileId}` : null;
+  protected get iconFileIdValue(): string | null {
+    return this.iconFileId === undefined ? (this.currentProject?.project.iconFileId ?? null) : this.iconFileId;
   }
 
   protected get projectTypeOptions(): Array<{ value: string; label: string }> {
