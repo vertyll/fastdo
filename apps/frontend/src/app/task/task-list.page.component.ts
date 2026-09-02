@@ -40,6 +40,7 @@ import { TasksStateService } from './data-access/task.state.service';
 import { PlatformService } from '../shared/services/platform.service';
 import { MOBILE_BREAKPOINT } from '../app.contansts';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
 
 @Component({
   selector: 'app-task-list-page',
@@ -188,6 +189,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   protected isFiltersLoading = signal(true);
   protected projectId = signal<string | null>(null);
+  protected taskPermissions = signal<string[]>([]);
   protected projectName = signal<string>('');
   protected projectIsPublic = signal<boolean>(false);
   protected selectedTasks = signal<TaskListItem[]>([]);
@@ -228,12 +230,14 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         label: 'Basic.edit',
         icon: 'heroPencil',
         color: 'secondary',
+        visible: () => this.taskPermissions().includes(ProjectRolePermissionEnum.MANAGE_TASKS),
       },
       {
         key: 'delete',
         label: 'Basic.delete',
         icon: 'heroTrash',
         color: 'danger',
+        visible: () => this.taskPermissions().includes(ProjectRolePermissionEnum.MANAGE_TASKS),
       },
     ],
     selectable: true,
@@ -532,6 +536,13 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private loadTaskPermissions(projectId: string): void {
+    this.tasksService
+      .getPermissions(projectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(response => this.taskPermissions.set(response.data ?? []));
+  }
+
   private initializeTaskList(): void {
     this.route.params
       .pipe(
@@ -542,6 +553,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
           if (projectId) {
             this.loadProjectName(projectId);
             this.loadInitialFilterData(projectId);
+            this.loadTaskPermissions(projectId);
           }
           const searchParams = getAllTasksSearchParams({
             sortBy: TaskSortFieldEnum.CREATED_AT,
