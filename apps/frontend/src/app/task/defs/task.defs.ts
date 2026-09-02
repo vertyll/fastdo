@@ -4,6 +4,7 @@ import { TaskPriorityEnum } from '../../shared/enums/task-priority.enum';
 export type Task = {
   id: string;
   projectId: string;
+  number: number;
   description: string;
   additionalDescription: string | null;
   priority: TaskPriorityEnum;
@@ -37,6 +38,7 @@ export type TaskCategoryView = {
 export type TaskListItem = {
   id: string;
   projectId: string;
+  number: number;
   description: string;
   priority: TaskPriorityEnum;
   statusId: string | null;

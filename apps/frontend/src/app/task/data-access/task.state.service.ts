@@ -46,6 +46,7 @@ export class TasksStateService {
 
   public addTask(task: TaskListItem): void {
     this.tasksSignal.update(tasks => [...tasks, task]);
+    this.adjustTotal(1);
   }
 
   public updateTask(updatedTask: TaskListItem): void {
@@ -54,6 +55,18 @@ export class TasksStateService {
 
   public removeTask(taskId: string): void {
     this.tasksSignal.update(tasks => tasks.filter(task => task.id !== taskId));
+    this.adjustTotal(-1);
+  }
+
+  private adjustTotal(delta: number): void {
+    this.paginationSignal.update(pagination => {
+      const total = Math.max(0, pagination.total + delta);
+      return {
+        ...pagination,
+        total,
+        totalPages: pagination.pageSize > 0 ? Math.ceil(total / pagination.pageSize) : pagination.totalPages,
+      };
+    });
   }
 
   public setPagination(pagination: PaginationMeta): void {

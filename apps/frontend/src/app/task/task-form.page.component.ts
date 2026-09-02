@@ -59,7 +59,13 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
   template: `
     <div class="max-w-4xl mx-auto">
       <app-title
-        [text]="projectId() ? ('Task.addTaskToProject' | translate) : ('Task.addTask' | translate)"
+        [text]="
+          taskId()
+            ? ('Task.editTask' | translate)
+            : projectId()
+              ? ('Task.addTaskToProject' | translate)
+              : ('Task.addTask' | translate)
+        "
       ></app-title>
       @if (loading()) {
         <div class="flex justify-center items-center min-h-32">

@@ -83,6 +83,10 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
         </app-button>
       </div>
 
+      <ng-template #numberTemplate let-task>
+        <span class="font-mono text-sm text-text-secondary dark:text-dark-text-secondary">#{{ task.number }}</span>
+      </ng-template>
+
       <ng-template #statusTemplate let-task>
         <div class="flex items-center justify-center">
           @if (task.statusName) {
@@ -162,6 +166,9 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
   `,
 })
 export class TaskListPageComponent implements OnInit, AfterViewInit {
+  @ViewChild('numberTemplate', { static: false })
+  public readonly numberTemplate!: TemplateRef<any>;
+
   @ViewChild('statusTemplate', { static: false })
   public readonly statusTemplate!: TemplateRef<any>;
   @ViewChild('categoriesTemplate', { static: false })
@@ -262,6 +269,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     const templates: { [key: string]: TemplateRef<any> } = {};
+
+    if (this.numberTemplate) {
+      templates['number'] = this.numberTemplate;
+    }
 
     if (this.statusTemplate) {
       templates['status'] = this.statusTemplate;
@@ -385,6 +396,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   protected handleSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
     const sortable: Record<string, TaskSortFieldEnum> = {
+      number: TaskSortFieldEnum.CREATED_AT,
       dateCreation: TaskSortFieldEnum.CREATED_AT,
       dateModification: TaskSortFieldEnum.UPDATED_AT,
       description: TaskSortFieldEnum.DESCRIPTION,
@@ -454,11 +466,12 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private getTableColumns(): TableColumn[] {
     return [
       {
-        key: 'id',
+        key: 'number',
         label: 'Task.id',
-        type: 'text',
+        type: 'custom',
+        customTemplate: 'number',
         sortable: true,
-        width: '6rem',
+        width: '5rem',
         priority: 1,
         align: 'center',
         verticalAlign: 'middle',

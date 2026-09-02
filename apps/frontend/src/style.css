@@ -180,5 +180,5 @@
 
 html {
   font-family: system-ui;
-  @apply dark:bg-dark-background-primary dark:text-dark-text-primary;
+  @apply bg-background-primary text-text-primary dark:bg-dark-background-primary dark:text-dark-text-primary;
 }
