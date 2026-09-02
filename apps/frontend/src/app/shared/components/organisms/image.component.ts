@@ -9,7 +9,6 @@ import {
   input,
   output,
   signal,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroCamera, heroEye, heroUserCircle, heroXMark } from '@ng-icons/heroicons/outline';
@@ -21,6 +20,26 @@ import { environment } from 'src/environments/environment';
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';
 export type ImageSize = 'sm' | 'md' | 'lg';
+
+const CROPPER_TEMPLATE =
+  '<cropper-canvas>' +
+  '<cropper-image rotatable scalable skewable translatable></cropper-image>' +
+  '<cropper-shade hidden></cropper-shade>' +
+  '<cropper-handle action="select" plain></cropper-handle>' +
+  '<cropper-selection aspect-ratio="1" initial-coverage="1" movable resizable>' +
+  '<cropper-grid role="grid" bordered covered></cropper-grid>' +
+  '<cropper-crosshair centered></cropper-crosshair>' +
+  '<cropper-handle action="move" theme-color="rgba(255, 255, 255, 0.35)"></cropper-handle>' +
+  '<cropper-handle action="n-resize"></cropper-handle>' +
+  '<cropper-handle action="e-resize"></cropper-handle>' +
+  '<cropper-handle action="s-resize"></cropper-handle>' +
+  '<cropper-handle action="w-resize"></cropper-handle>' +
+  '<cropper-handle action="ne-resize"></cropper-handle>' +
+  '<cropper-handle action="nw-resize"></cropper-handle>' +
+  '<cropper-handle action="se-resize"></cropper-handle>' +
+  '<cropper-handle action="sw-resize"></cropper-handle>' +
+  '</cropper-selection>' +
+  '</cropper-canvas>';
 
 @Component({
   selector: 'app-image',
@@ -133,13 +152,12 @@ export type ImageSize = 'sm' | 'md' | 'lg';
   `,
   styles: [
     `
-      .cropper-format-circle .cropper-view-box,
-      .cropper-format-circle .cropper-face {
+      .cropper-format-circle cropper-selection {
         border-radius: 50%;
+        overflow: hidden;
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class ImageComponent implements OnDestroy {
@@ -173,17 +191,7 @@ export class ImageComponent implements OnDestroy {
         this.cropper.destroy();
       }
 
-      this.cropper = new Cropper(element.nativeElement, {
-        aspectRatio: 1,
-        viewMode: 1,
-        autoCropArea: 1,
-        background: false,
-        responsive: true,
-        scalable: true,
-        zoomable: true,
-        movable: true,
-        rotatable: true,
-      });
+      this.cropper = new Cropper(element.nativeElement, { template: CROPPER_TEMPLATE });
     }
   }
 
@@ -306,7 +314,10 @@ export class ImageComponent implements OnDestroy {
     try {
       this.isSaving.set(true);
 
-      const canvas = this.cropper.getCroppedCanvas();
+      const selection = this.cropper.getCropperSelection();
+      if (!selection) return;
+
+      const canvas = await selection.$toCanvas();
       const blob = await new Promise<Blob>(resolve => {
         canvas.toBlob(b => resolve(b!), 'image/png');
       });

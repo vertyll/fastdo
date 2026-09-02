@@ -1,4 +1,4 @@
-import { Component, input, output, booleanAttribute, ChangeDetectionStrategy } from '@angular/core'; // <-- Dodaj booleanAttribute
+import { Component, input, output, booleanAttribute } from '@angular/core'; // <-- Dodaj booleanAttribute
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -7,7 +7,6 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon';
 @Component({
   selector: 'app-button',
   imports: [CommonModule, MatButtonModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #contentTemplate>
       <ng-content></ng-content>

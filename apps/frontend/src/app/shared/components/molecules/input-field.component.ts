@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,7 +8,6 @@ import { InputComponent } from '../atoms/input.component';
 @Component({
   selector: 'app-input-field',
   imports: [InputComponent, MatFormFieldModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-input
       [type]="type()"

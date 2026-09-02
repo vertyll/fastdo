@@ -2,23 +2,12 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { ProjectRolePermissionGuard } from './core/guards/project-role-permission.guard';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { HomeComponent } from './home/home.component';
-import { ProjectFormPageComponent } from './project/project-form.page.component';
-import { ProjectListPageComponent } from './project/project-list.page.component';
-import { NotificationSettingsComponent } from './shared/components/organisms/notification-settings.component';
 import { ProjectRolePermissionEnum } from './shared/enums/project-role-permission.enum';
-import { TaskDetailsPageComponent } from './task/task-details.page.component';
-import { TaskFormPageComponent } from './task/task-form.page.component';
-import { TaskListPageComponent } from './task/task-list.page.component';
-import { PrivacyPolicyPageComponent } from './terms-and-policies/privacy-policy.page.component';
-import { TermsPageComponent } from './terms-and-policies/terms.page.component';
-import { UserProfileComponent } from './user/user-profile.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent),
     title: 'PageTitles.home',
     pathMatch: 'full',
     canActivate: [guestGuard],
@@ -26,16 +15,17 @@ export const routes: Routes = [
   {
     path: 'terms',
     title: 'PageTitles.terms',
-    component: TermsPageComponent,
+    loadComponent: () => import('./terms-and-policies/terms.page.component').then(m => m.TermsPageComponent),
   },
   {
     path: 'privacy-policy',
     title: 'PageTitles.privacyPolicy',
-    component: PrivacyPolicyPageComponent,
+    loadComponent: () =>
+      import('./terms-and-policies/privacy-policy.page.component').then(m => m.PrivacyPolicyPageComponent),
   },
   {
     path: 'dashboard',
-    component: DashboardComponent,
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     title: 'PageTitles.dashboard',
     canActivate: [authGuard],
   },
@@ -45,40 +35,40 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: ProjectListPageComponent,
+        loadComponent: () => import('./project/project-list.page.component').then(m => m.ProjectListPageComponent),
       },
       {
         path: 'new',
-        component: ProjectFormPageComponent,
+        loadComponent: () => import('./project/project-form.page.component').then(m => m.ProjectFormPageComponent),
         title: 'PageTitles.newProject',
       },
       {
         path: 'edit/:id',
-        component: ProjectFormPageComponent,
+        loadComponent: () => import('./project/project-form.page.component').then(m => m.ProjectFormPageComponent),
         title: 'PageTitles.editProject',
         canActivate: [ProjectRolePermissionGuard],
         data: { requiredPermission: ProjectRolePermissionEnum.EDIT_PROJECT },
       },
       {
         path: ':id/tasks',
-        component: TaskListPageComponent,
+        loadComponent: () => import('./task/task-list.page.component').then(m => m.TaskListPageComponent),
         title: 'PageTitles.projectTasks',
         canActivate: [ProjectRolePermissionGuard],
         data: { requiredPermission: ProjectRolePermissionEnum.SHOW_TASKS },
       },
       {
         path: ':id/tasks/new',
-        component: TaskFormPageComponent,
+        loadComponent: () => import('./task/task-form.page.component').then(m => m.TaskFormPageComponent),
         title: 'PageTitles.newTask',
       },
       {
         path: ':id/tasks/details/:taskId',
-        component: TaskDetailsPageComponent,
+        loadComponent: () => import('./task/task-details.page.component').then(m => m.TaskDetailsPageComponent),
         title: 'PageTitles.taskDetails',
       },
       {
         path: ':id/tasks/edit/:taskId',
-        component: TaskFormPageComponent,
+        loadComponent: () => import('./task/task-form.page.component').then(m => m.TaskFormPageComponent),
         title: 'PageTitles.editTask',
       },
     ],
@@ -87,13 +77,16 @@ export const routes: Routes = [
   {
     path: 'user-profile',
     title: 'PageTitles.userProfile',
-    component: UserProfileComponent,
+    loadComponent: () => import('./user/user-profile.component').then(m => m.UserProfileComponent),
     canActivate: [authGuard],
   },
   {
     path: 'notification-settings',
     title: 'PageTitles.notificationSettings',
-    component: NotificationSettingsComponent,
+    loadComponent: () =>
+      import('./shared/components/organisms/notification-settings.component').then(
+        m => m.NotificationSettingsComponent,
+      ),
     canActivate: [authGuard],
   },
   {

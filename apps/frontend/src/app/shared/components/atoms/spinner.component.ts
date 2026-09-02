@@ -1,11 +1,10 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SpinnerSize } from '../../defs/components.defs';
 
 @Component({
   imports: [MatProgressSpinnerModule],
   selector: 'app-spinner',
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <mat-progress-spinner mode="indeterminate" [diameter]="diameter()" /> `,
 })
 export class SpinnerComponent {

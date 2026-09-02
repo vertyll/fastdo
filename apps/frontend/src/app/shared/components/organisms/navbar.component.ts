@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -226,7 +226,6 @@ import { environment } from '../../../../environments/environment';
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (!authService.isLoggedIn()) {
       <nav class="top-nav">

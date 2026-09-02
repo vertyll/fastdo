@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  DestroyRef,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  inject,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
@@ -79,7 +70,6 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
       </div>
     </ng-template>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   viewProviders: [
     provideIcons({
       heroCalendar,

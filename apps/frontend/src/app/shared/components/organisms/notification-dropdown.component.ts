@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -18,7 +18,6 @@ import { SpinnerComponent } from '../atoms/spinner.component';
   selector: 'app-notification-dropdown',
   imports: [NgIconComponent, TranslatePipe, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
   viewProviders: [provideIcons({ heroBell, heroBellAlert, heroCog6Tooth })],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-dropdown [closeSignal]="dropdownCloseTrigger()">
       <button

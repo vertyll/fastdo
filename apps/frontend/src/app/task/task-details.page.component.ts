@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -74,7 +74,6 @@ import { BackButtonComponent } from '../shared/components/molecules/back-button.
       heroFlag,
     }),
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="min-h-screen">
       <div class="container mx-auto max-w-7xl">

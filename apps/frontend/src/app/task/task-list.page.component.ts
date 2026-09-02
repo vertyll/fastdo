@@ -8,7 +8,6 @@ import {
   TemplateRef,
   ViewChild,
   DestroyRef,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -55,7 +54,6 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
     NgIconComponent,
   ],
   viewProviders: [provideIcons({ heroInformationCircle, heroTrash })],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">

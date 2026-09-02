@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroMoon, heroSun } from '@ng-icons/heroicons/outline';
 import { ThemeService } from '../../services/theme.service';
@@ -10,7 +10,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-theme-switcher',
   imports: [CommonModule, NgIconComponent, TranslatePipe],
   providers: [provideIcons({ heroSun, heroMoon })],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <button
       (click)="toggleTheme()"

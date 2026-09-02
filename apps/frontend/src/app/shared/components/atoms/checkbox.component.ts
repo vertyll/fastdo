@@ -1,11 +1,10 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-checkbox',
   imports: [ReactiveFormsModule, MatCheckboxModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <mat-checkbox [id]="id()" [formControl]="control()" [value]="value()" (change)="onChange($event)"></mat-checkbox>
   `,

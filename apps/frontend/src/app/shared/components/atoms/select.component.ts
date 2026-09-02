@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -24,7 +24,6 @@ import { TranslatePipe } from '@ngx-translate/core';
       </mat-select>
     </mat-form-field>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host {

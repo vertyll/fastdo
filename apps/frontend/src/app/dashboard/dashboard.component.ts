@@ -1,9 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
   imports: [],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: ``,
 })
 export class DashboardComponent {}

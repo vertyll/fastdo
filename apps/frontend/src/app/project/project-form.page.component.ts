@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -97,7 +97,6 @@ const DEFAULT_STATUS_COLOR = '#10B981';
       @apply border border-border-primary dark:border-dark-border-primary rounded-full shadow-sm;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="max-w-2xl mx-auto">
       <app-title

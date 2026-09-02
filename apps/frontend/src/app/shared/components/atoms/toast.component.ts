@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
 import { ToastService } from '../../services/toast.service';
@@ -26,7 +26,6 @@ import { ToastService } from '../../services/toast.service';
       </div>
     }
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   viewProviders: [
     provideIcons({
       heroXMark,

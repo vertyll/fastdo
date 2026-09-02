@@ -1,11 +1,10 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TruncateTextPipe } from '../../pipes/truncate-text.pipe';
 
 @Component({
   selector: 'app-title',
   imports: [MatTooltipModule, TruncateTextPipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
       <span [matTooltip]="limit() !== null && text().length > limit()! ? text() : ''" matTooltipPosition="above">

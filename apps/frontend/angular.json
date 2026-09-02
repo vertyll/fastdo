@@ -20,7 +20,9 @@
             "outputPath": "dist/frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["@angular/localize/init"],
+            "polyfills": [
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "css",
             "assets": [
@@ -36,11 +38,13 @@
             "styles": [
               "src/material-theme.scss",
               "src/theme.css",
-              "src/style.css",
-              "node_modules/cropperjs/dist/cropper.css"
+              "src/style.css"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": ["@stomp/stompjs", "cropperjs"]
+            "allowedCommonJsDependencies": [
+              "@messageformat/core",
+              "@stomp/stompjs"
+            ]
           },
           "configurations": {
             "production": {
@@ -53,12 +57,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1MB",
+                  "maximumWarning": "1.2MB",
                   "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "20kB",
+                  "maximumWarning": "24kB",
                   "maximumError": "40kB"
                 }
               ],
@@ -109,7 +113,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }

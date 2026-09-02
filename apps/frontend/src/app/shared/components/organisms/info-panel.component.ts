@@ -1,4 +1,4 @@
-import { Component, ElementRef, effect, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, effect, input, signal, viewChild } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroArrowRight, heroChevronUp, heroEllipsisHorizontal } from '@ng-icons/heroicons/outline';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -124,7 +124,6 @@ import { TranslatePipe } from '@ngx-translate/core';
       </div>
     }
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host {

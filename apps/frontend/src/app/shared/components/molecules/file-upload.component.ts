@@ -1,13 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  ViewChild,
-  inject,
-  input,
-  output,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, input, output, signal } from '@angular/core';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import { heroDocument, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -28,7 +19,6 @@ export interface FileUploadItem {
   selector: 'app-file-upload',
   imports: [NgIconComponent, TranslatePipe, ButtonComponent, ErrorMessageComponent],
   viewProviders: [provideIcons({ heroDocument, heroTrash, heroXMark })],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-4">
       <div class="flex items-center gap-2">

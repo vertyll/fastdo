@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LinkTypeEnum } from '../../enums/link-type.enum';
 
 @Component({
   selector: 'app-link',
   imports: [RouterLink, RouterLinkActive, CommonModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <a
       [routerLink]="routerLink()"

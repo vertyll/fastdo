@@ -15,7 +15,6 @@ import {
   ContentChild,
   Directive,
   TemplateRef,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 
 @Directive({
@@ -67,7 +66,6 @@ const activeDropdownRegistry = signal<DropdownComponent | null>(null);
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div
       class="dropdown-container"

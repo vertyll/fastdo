@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,7 +7,6 @@ import { TextareaComponent } from '../atoms/textarea.component';
 @Component({
   selector: 'app-textarea-field',
   imports: [TextareaComponent, MatFormFieldModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-textarea
       [control]="control()"

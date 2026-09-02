@@ -1,4 +1,4 @@
-import { Component, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -13,7 +13,6 @@ import { ButtonComponent } from '../atoms/button.component';
       heroArrowLeft,
     }),
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-button variant="basic" (clicked)="clicked.emit()">
       <ng-icon name="heroArrowLeft" size="20"></ng-icon>

@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
@@ -13,7 +13,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-layout',
   imports: [NavbarComponent, CookieBannerComponent, FooterComponent, InfoPanelComponent, ScrollToTopComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="flex flex-col min-h-screen">
       <app-navbar />

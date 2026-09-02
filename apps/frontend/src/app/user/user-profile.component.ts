@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
 import { heroUserCircle } from '@ng-icons/heroicons/outline';
@@ -30,7 +30,6 @@ import { UserStateService } from './data-access/user.state.service';
     ButtonComponent,
   ],
   providers: [provideIcons({ heroUserCircle })],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @switch (stateService.state()) {
       @case (LOADING_STATE_VALUE.LOADING) {

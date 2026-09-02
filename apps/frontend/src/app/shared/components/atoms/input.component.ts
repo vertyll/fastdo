@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,7 +25,6 @@ import { InputType } from '../../defs/components.defs';
       <ng-content select="mat-error" />
     </mat-form-field>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host {
