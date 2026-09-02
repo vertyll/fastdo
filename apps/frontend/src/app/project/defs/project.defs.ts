@@ -28,6 +28,7 @@ export type ProjectListItem = {
   memberCount: number;
   createdAt: string;
   version: number | null;
+  permissions: ProjectRolePermissionEnum[];
 };
 
 export type ProjectDetails = {

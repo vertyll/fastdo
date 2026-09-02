@@ -352,6 +352,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
       image: project.iconFileId,
       memberCount: project.memberCount,
       version: project.version,
+      permissions: project.permissions,
     }));
   }
 
