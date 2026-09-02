@@ -20,7 +20,7 @@ import { SelectFieldComponent } from '../shared/components/molecules/select-fiel
 import { ImageComponent } from '../shared/components/organisms/image.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
-import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
+import { TASK_PRIORITY_LABELS, TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { NotificationService } from '../shared/services/notification.service';
 import { TasksService } from './data-access/task.service';
 import { CreateTaskPayload, UpdateTaskPayload } from './defs/task.defs';
@@ -326,7 +326,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   public readonly error = signal<string | null>(null);
 
   public readonly priorities = signal<SimpleNameItem[]>(
-    Object.values(TaskPriorityEnum).map(priority => ({ id: priority, name: `Task.priority${priority}` })),
+    Object.values(TaskPriorityEnum).map(priority => ({ id: priority, name: TASK_PRIORITY_LABELS[priority] })),
   );
   public readonly categories = signal<SimpleNameItem[]>([]);
   public readonly statuses = signal<SimpleNameItem[]>([]);

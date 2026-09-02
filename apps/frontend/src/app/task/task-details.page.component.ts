@@ -40,6 +40,7 @@ import { TasksService } from './data-access/task.service';
 import { TaskComment, TaskDetails } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 import { BackButtonComponent } from '../shared/components/molecules/back-button.component';
+import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
 
 @Component({
   selector: 'app-task-details',
@@ -857,12 +858,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected readonly priorityLabel = computed(() => {
     const priority = this.task()?.task.priority;
-    const labels: Record<string, string> = {
-      LOW: 'Task.priorityLow',
-      MEDIUM: 'Task.priorityMedium',
-      HIGH: 'Task.priorityHigh',
-    };
-    return priority ? labels[priority] : '';
+    return priority ? TASK_PRIORITY_LABELS[priority] : '';
   });
 
   protected readonly createdByName = computed(() => {

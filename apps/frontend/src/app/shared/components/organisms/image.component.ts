@@ -156,6 +156,10 @@ const CROPPER_TEMPLATE =
   `,
   styles: [
     `
+      app-image {
+        display: block;
+      }
+
       cropper-canvas {
         display: block;
         width: 100%;

@@ -27,6 +27,13 @@ import { InputComponent } from '../atoms/input.component';
       }
     </app-input>
   `,
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class InputFieldComponent {
   public readonly control = input.required<FormControl>();

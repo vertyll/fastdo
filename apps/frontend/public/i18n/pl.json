@@ -474,7 +474,15 @@
     "live": "Na żywo",
     "offline": "Brak połączenia",
     "type": "Typ",
-    "settingsUpdateError": "Wystąpił błąd podczas zapisywania ustawień powiadomień"
+    "settingsUpdateError": "Wystąpił błąd podczas zapisywania ustawień powiadomień",
+    "types": {
+      "PROJECT_INVITATION": "Zaproszenie do projektu",
+      "PROJECT_MEMBER_JOINED": "Nowy członek projektu",
+      "TASK_CREATED": "Nowe zadanie",
+      "TASK_ASSIGNED": "Przypisanie zadania",
+      "TASK_STATUS_CHANGED": "Zmiana statusu zadania",
+      "TASK_COMMENT_ADDED": "Nowy komentarz"
+    }
   },
   "ProjectInvitation": {
     "actionPrompt": "Czy chcesz dołączyć do projektu?",

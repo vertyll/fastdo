@@ -41,7 +41,7 @@ import { SpinnerComponent } from '../atoms/spinner.component';
         }
       </button>
 
-      <div *appDropdownMenu class="w-[calc(100vw-2rem)] sm:w-96 md:w-80 py-2">
+      <div *appDropdownMenu class="w-[calc(100vw-2rem)] sm:w-96 md:w-80 pt-2">
         <div
           class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary"
         >

@@ -474,7 +474,15 @@
     "live": "Live",
     "offline": "Offline",
     "type": "Type",
-    "settingsUpdateError": "An error occurred while saving the notification settings"
+    "settingsUpdateError": "An error occurred while saving the notification settings",
+    "types": {
+      "PROJECT_INVITATION": "Project invitation",
+      "PROJECT_MEMBER_JOINED": "New project member",
+      "TASK_CREATED": "New task",
+      "TASK_ASSIGNED": "Task assigned",
+      "TASK_STATUS_CHANGED": "Task status changed",
+      "TASK_COMMENT_ADDED": "New comment"
+    }
   },
   "ProjectInvitation": {
     "actionPrompt": "Do you want to join the project?",
