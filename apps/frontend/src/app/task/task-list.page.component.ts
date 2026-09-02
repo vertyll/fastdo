@@ -85,13 +85,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       <!-- Templates definition outside of @switch -->
       <ng-template #statusTemplate let-task>
         <div class="flex items-center justify-center">
-          @if (task.status) {
+          @if (task.statusName) {
             <span
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-              [style.background-color]="task.status.color"
-              [style.color]="getContrastColor(task.status.color)"
+              [style.background-color]="task.statusColor"
+              [style.color]="getContrastColor(task.statusColor)"
             >
-              {{ getStatusName(task.status) }}
+              {{ task.statusName }}
             </span>
           } @else {
             <span class="text-sm text-neutral-500 dark:text-neutral-400">-</span>
@@ -121,13 +121,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
       <ng-template #assignedUsersTemplate let-task>
         <div class="flex items-center justify-center">
-          @if (task.assignedUsers && task.assignedUsers.length > 0) {
+          @if (task.assignees && task.assignees.length > 0) {
             <div class="flex flex-wrap gap-1">
-              @for (user of task.assignedUsers; track user.id) {
+              @for (user of task.assignees; track user.id) {
                 <span
                   class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200"
                 >
-                  {{ user.email }}
+                  {{ user.displayName }}
                 </span>
               }
             </div>
@@ -429,20 +429,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  protected getStatusName(status: any): string {
-    if (!status) return '';
-
-    if (status.translations && Array.isArray(status.translations)) {
-      const currentLang = this.translateService.getCurrentLang() || 'pl';
-      const translation = status.translations.find((t: any) => t.lang === currentLang);
-      if (translation?.name) {
-        return translation.name;
-      }
-    }
-
-    return status.name || `Status #${status.id}`;
-  }
-
   protected getContrastColor(backgroundColor: string): string {
     return getContrastColor(backgroundColor);
   }
@@ -507,7 +493,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         hideOn: 'mobile',
       },
       {
-        key: 'dateCreation',
+        key: 'createdAt',
         label: 'Task.dateCreation',
         type: 'date',
         sortable: true,
@@ -518,7 +504,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         priority: 5,
       },
       {
-        key: 'dateModification',
+        key: 'updatedAt',
         label: 'Task.dateModification',
         type: 'date',
         sortable: true,
