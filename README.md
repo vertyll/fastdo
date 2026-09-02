@@ -1,96 +1,59 @@
+<p align="center">
+    <img alt="" src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white">
+    <img alt="" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+    <img alt="" src="https://img.shields.io/badge/RxJS-B7178C?style=for-the-badge&logo=reactivex&logoColor=white">
+    <img alt="" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white">
+    <img alt="" src="https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white">
+</p>
+
 ## Project Assumptions
 
-A web application for managing projects and their tasks. The repository holds the front-end only — the back end is
+A web application for managing projects and their tasks. The repository holds the front end only — the back end is
 [VEDS](https://github.com/vertyll/veds), a Kotlin microservice system, and everything this application needs reaches
 it through the VEDS API gateway.
 
 ## Link: https://fastdo.vertyll.dev
 
-## Architecture
-
-The front end talks to exactly one address: the VEDS **api-gateway**. Services are never called directly, so the
-browser needs no knowledge of how the back end is split up, and the gateway is the only place where authorization,
-CORS and session handling live.
-
-| Concern               | Where it is served from                                                    |
-|-----------------------|----------------------------------------------------------------------------|
-| Sign-in and session   | api-gateway (`/auth/authorize`, `/auth/callback`, `/auth/session`)         |
-| Accounts and roles    | iam-service (`/auth/**`, `/users/**`, `/roles/**`)                         |
-| Projects              | project-service (`/projects/**`, `/project-types/**`, `/project-roles/**`) |
-| Tasks and comments    | task-service (`/tasks/**`)                                                 |
-| Notifications         | notification-service (`/notifications/**`, `/ws/notifications`)            |
-| Files                 | file-service (`/files/**`)                                                 |
-| Translation catalogue | translation-service (`/translations/**`)                                   |
-
 ## Technology Stack
 
-### Front-end:
-
-- Angular.
-- RxJS.
-- NGXS.
-- Tailwind CSS.
+- Angular with standalone components and signals.
+- RxJS for the asynchronous edges, NGXS for cross-cutting state.
+- Tailwind CSS with a custom theme and dark/light mode.
+- `ngx-translate` with an ICU message compiler, English and Polish.
 - `@stomp/stompjs` for the notification WebSocket.
+- Turborepo for task orchestration and caching, ESLint and Prettier for static analysis.
 
-### Authentication
+Components are organized by Atomic Design and the whole interface is translated; reference data arrives already
+translated from the back end.
 
-Authentication is **not** implemented here. VEDS uses the BFF token-handler pattern: the gateway runs the Keycloak
-authorization-code flow with PKCE and keeps the tokens in its own Redis-backed session, handing the browser nothing
-but an `HttpOnly` cookie.
+## Documentation
 
-What follows from that, and is worth knowing before changing anything in `src/app/auth`:
+**New here?** Read [Development Setup](./docs/development-setup.md) to get it running, then
+[Architecture](./docs/architecture.md) for the shape of the application and
+[Authentication](./docs/authentication.md) for why there is no login form.
 
-- **There is no login form.** Signing in is a redirect to `/auth/authorize`; Keycloak collects the credentials.
-- **No token ever reaches JavaScript**, so there is nothing to store, refresh or accidentally log. Requests carry
-  `withCredentials: true` and nothing else.
-- **Registration and password changes happen on Keycloak's pages**, reached through `/auth/authorize?kc_action=…`.
-  The gateway only relays actions it recognizes.
-- The signed-in user is whatever `GET /auth/session` returns — `{ userId, email, roles }`.
+### Getting it running
 
-### Front-end Core:
+- [Development Setup](./docs/development-setup.md) — installing, running against a local VEDS, and building.
 
-- State management with NGXS.
-- Fully translated into English and Polish. Reference data (project types, statuses, categories, roles) arrives
-  already translated: the `x-lang` header decides, and the server resolves it, so the UI never picks a translation.
-- Notifications carry a message key and parameters rather than finished text, so an old notification still renders in
-  whatever language is selected today.
-- Custom Tailwind theme with dark/light mode.
-- Components are reusable and organized by Atomic Design.
+### How the application is built
 
-### Working with the VEDS API
+- [Architecture](./docs/architecture.md) — the single address it talks to, how features are laid out, and how permissions decide what renders.
+- [Authentication](./docs/authentication.md) — the BFF token handler, and why no token ever reaches JavaScript.
 
-Three conventions are worth knowing before adding a call:
+### Working with the back end
 
-- **Envelope.** Every response is `{ data, message, timestamp }`. `message` is a translation key, not a sentence.
-- **Optimistic concurrency.** Anything with a `version` is written back with an `If-Match: W/"<version>"` header;
-  the service refuses the write if the record has moved on. `HttpApiService.ifMatch()` builds it.
-- **Files are references.** Uploads go straight to object storage on a signed URL and only the file id reaches the
-  service that owns the record — see `FileUploadService`.
+- [Calling the VEDS API](./docs/veds-api.md) — the response envelope, error keys, optimistic concurrency and file uploads.
+- [Translations](./docs/translations.md) — the two catalogues, the two tracks, ICU plurals, and why a missing key renders as the key.
 
-### The shared table
+### Shared components
 
-`TableComponent` carries three rules that look like defects until you know why they are there.
-
-- **A clamped cell does not overflow.** When a column sets `maxChars`, the cell's `max-width` becomes `${maxChars}ch`,
-  so the text always fits horizontally and DOM overflow measurement reports nothing. The text is still cut by
-  `line-clamp`, so the "show more" toggle is decided by the character count, not by measurement. Measuring is only
-  correct for columns without `maxChars`, and never while the cell is expanded.
-- **Infinite scroll must ignore its first sighting.** The observer watches the last row. When the first page fits
-  inside the container that row is visible immediately, so an unguarded observer emits `loadMore` right after the
-  initial load and silently doubles the page size. The first emission is suppressed until the user has scrolled.
-- **The scroll listener is not redundant with the observer.** When the first page fits, the last row stays
-  permanently visible and `IntersectionObserver` never fires again after that suppressed emission. Watching `scroll`
-  is what still reaches page two.
-
-### Other:
-
-- Turborepo for script automation and monorepo structure management.
-- ESLint and Prettier for static code analysis and consistent code quality.
+- [The shared table](./docs/shared-table.md) — the three rules in `TableComponent` that look like defects, and how actions are gated.
 
 > [!NOTE]
 >
 > During application development, SOLID principles, DRY, composition over inheritance, dependency injection,
-> design patterns, architectural patterns, testing, and other good programming practices were applied.
+> design patterns and architectural patterns were applied.
 
 ## Screenshots
 
@@ -99,47 +62,3 @@ Three conventions are worth knowing before adding a call:
 ![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot3.png)
 ![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot4.png)
 ![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot5.png)
-
-## Installation Instructions
-
-1. Download the project to your local environment.
-2. Install the dependencies:
-    ```bash
-    pnpm install
-    ```
-
-There is nothing to configure and no `.env` to create: the only setting is the gateway address in
-`apps/frontend/src/environments/environment.ts`, which already points at a local VEDS.
-
-### Running against a local VEDS
-
-The back end is not part of this repository. Start it from the VEDS repository first — its `docker-compose.yml`
-brings up PostgreSQL, Keycloak, Kafka, Redis and object storage, and the services are run from there:
-
-```bash
-docker compose up -d
-```
-
-Then start the front end:
-
-```bash
-pnpm run dev
-```
-
-> [!NOTE]
->
-> By default:
-> - The VEDS api-gateway is available at [http://localhost:8080](http://localhost:8080).
-> - The front-end application is available at [http://localhost:4200](http://localhost:4200).
->
-> The gateway only accepts browser requests from origins listed in its `veds.gateway.cors.allowed-origins`;
-> `http://localhost:4200` is there by default.
-
-### Building
-
-```bash
-pnpm run build
-```
-
-The production bundle takes the gateway address from the `API_URL` build argument (see `apps/frontend/Dockerfile`).
-No secret is baked in — the browser holds no credential of its own.
