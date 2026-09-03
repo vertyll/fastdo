@@ -51,7 +51,7 @@ const TASK_NOTIFICATION_TYPES = new Set([
         }
       </button>
 
-      <div *appDropdownMenu class="w-[calc(100vw-2rem)] sm:w-96 md:w-80 pt-2">
+      <div *appDropdownMenu class="w-[calc(100vw-2rem)] sm:w-[26rem] md:w-[30rem] pt-2">
         <div
           class="flex items-center justify-between px-4 py-2 border-b border-border-primary dark:border-dark-border-primary"
         >
