@@ -88,6 +88,7 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
   `,
   viewProviders: [
     provideIcons({
+      heroArrowPath,
       heroCalendar,
       heroEye,
       heroPencil,

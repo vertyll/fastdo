@@ -14,6 +14,7 @@ import {
   TaskListItem,
   UpdateTaskPayload,
   WorkLogPage,
+  WorkLogVisibility,
 } from '../defs/task.defs';
 import { TasksApiService } from './task.api.service';
 import { TasksStateService } from './task.state.service';
@@ -89,9 +90,9 @@ export class TasksService {
     taskId: string,
     page: number,
     size: number,
-    hidden?: boolean,
+    visibility: WorkLogVisibility,
   ): Observable<ApiResponse<WorkLogPage>> {
-    return this.httpService.getWorkLog(taskId, page, size, hidden);
+    return this.httpService.getWorkLog(taskId, page, size, visibility);
   }
 
   public logWork(taskId: string, payload: WorkLogPayload): Observable<ApiResponse<WorkLogEntry>> {

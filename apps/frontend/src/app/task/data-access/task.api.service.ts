@@ -16,6 +16,7 @@ import {
   TaskListItem,
   UpdateTaskPayload,
   WorkLogPage,
+  WorkLogVisibility,
 } from '../defs/task.defs';
 
 const TASKS = '/tasks';
@@ -111,12 +112,9 @@ export class TasksApiService extends HttpApiService {
     taskId: string,
     page: number,
     size: number,
-    hidden?: boolean,
+    visibility: WorkLogVisibility,
   ): Observable<ApiResponse<WorkLogPage>> {
-    let params = new HttpParams().set('page', page).set('size', size);
-    if (hidden !== undefined) {
-      params = params.set('hidden', hidden);
-    }
+    const params = new HttpParams().set('page', page).set('size', size).set('visibility', visibility);
     return this.withLoadingState(
       this.http.get<ApiResponse<WorkLogPage>>(`${this.baseUrl}${TASKS}/${taskId}/worklog`, { params }),
     );

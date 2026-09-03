@@ -132,6 +132,8 @@ export type GetAllTasksSearchParams = {
   size?: number;
 };
 
+export type WorkLogVisibility = 'ALL' | 'HIDDEN' | 'VISIBLE';
+
 export type WorkLogPage = {
   content: WorkLogEntry[];
   page: number;

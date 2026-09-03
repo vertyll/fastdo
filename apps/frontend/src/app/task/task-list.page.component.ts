@@ -100,7 +100,12 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
       <ng-template #statusTemplate let-task>
         <div class="flex items-center justify-center">
           @if (task.statusName) {
-              <app-badge shape="pill" variant="custom" [background]="task.statusColor" [foreground]="getContrastColor(task.statusColor)">
+            <app-badge
+              shape="pill"
+              variant="custom"
+              [background]="task.statusColor"
+              [foreground]="getContrastColor(task.statusColor)"
+            >
               {{ task.statusName }}
             </app-badge>
           } @else {
@@ -114,7 +119,12 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
           @if (task.categories && task.categories.length > 0) {
             <div class="flex flex-wrap gap-1">
               @for (category of task.categories; track category.id) {
-                  <app-badge shape="pill" variant="custom" [background]="category.color" [foreground]="getContrastColor(category.color)">
+                <app-badge
+                  shape="pill"
+                  variant="custom"
+                  [background]="category.color"
+                  [foreground]="getContrastColor(category.color)"
+                >
                   {{ getCategoryName(category) }}
                 </app-badge>
               }

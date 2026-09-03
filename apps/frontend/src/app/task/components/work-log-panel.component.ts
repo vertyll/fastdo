@@ -15,7 +15,7 @@ import { SpinnerComponent } from '../../shared/components/atoms/spinner.componen
 import { ToastTypeEnum } from '../../shared/enums/toast-type.enum';
 import { NotificationService } from '../../shared/services/notification.service';
 import { TasksService } from '../data-access/task.service';
-import { WorkLogEntry } from '../defs/task.defs';
+import { WorkLogVisibility, WorkLogEntry } from '../defs/task.defs';
 import { formatDuration, parseDuration } from '../utils/duration';
 import { toIsoDay } from '../utils/day';
 
@@ -181,9 +181,9 @@ type DayGroup = {
                     </li>
                   }
                 </ul>
-            @if (loadingMore()) {
-              <div class="flex justify-center py-2"><app-spinner /></div>
-            }
+                @if (loadingMore()) {
+                  <div class="flex justify-center py-2"><app-spinner /></div>
+                }
               </li>
             }
           </ul>
@@ -211,12 +211,12 @@ export class WorkLogPanelComponent implements OnInit {
   private page = 0;
   private total = 0;
 
-  protected readonly visibilityControl = new FormControl<'all' | 'hidden' | 'visible'>('all', { nonNullable: true });
+  protected readonly visibilityControl = new FormControl<WorkLogVisibility>('ALL', { nonNullable: true });
 
   protected readonly visibilityOptions = [
-    { value: 'all', label: 'WorkLog.showAll' },
-    { value: 'visible', label: 'WorkLog.showVisible' },
-    { value: 'hidden', label: 'WorkLog.showHidden' },
+    { value: 'ALL', label: 'WorkLog.showAll' },
+    { value: 'VISIBLE', label: 'WorkLog.showVisible' },
+    { value: 'HIDDEN', label: 'WorkLog.showHidden' },
   ];
   protected readonly saving = signal(false);
   protected readonly editing = signal<WorkLogEntry | null>(null);
@@ -349,7 +349,7 @@ export class WorkLogPanelComponent implements OnInit {
     this.failed.set(false);
     this.page = 0;
     this.tasksService
-      .getWorkLog(this.taskId, 0, PAGE_SIZE, this.hiddenFilter())
+      .getWorkLog(this.taskId, 0, PAGE_SIZE, this.visibilityControl.value)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -363,17 +363,6 @@ export class WorkLogPanelComponent implements OnInit {
           this.failed.set(true);
         },
       });
-  }
-
-  private hiddenFilter(): boolean | undefined {
-    switch (this.visibilityControl.value) {
-      case 'hidden':
-        return true;
-      case 'visible':
-        return false;
-      default:
-        return undefined;
-    }
   }
 
   protected onScroll(event: Event): void {
@@ -391,7 +380,7 @@ export class WorkLogPanelComponent implements OnInit {
 
     this.loadingMore.set(true);
     this.tasksService
-      .getWorkLog(this.taskId, this.page + 1, PAGE_SIZE, this.hiddenFilter())
+      .getWorkLog(this.taskId, this.page + 1, PAGE_SIZE, this.visibilityControl.value)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
