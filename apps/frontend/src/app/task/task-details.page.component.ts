@@ -31,7 +31,7 @@ import { FileApiService } from '../file/data-access/file.api.service';
 import { FileUploadService } from '../file/data-access/file-upload.service';
 import { FileScopeEnum } from '../file/defs/file.defs';
 import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
-import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
+import { TASK_PRIORITY_LABELS, TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { DropdownComponent, DropdownMenuDirective } from '../shared/components/atoms/dropdown.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
@@ -43,7 +43,6 @@ import { TasksService } from './data-access/task.service';
 import { TaskComment, TaskDetails } from './defs/task.defs';
 import { TextareaFieldComponent } from '../shared/components/molecules/textarea-field.component';
 import { BackButtonComponent } from '../shared/components/molecules/back-button.component';
-import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
 
 @Component({
   selector: 'app-task-details',

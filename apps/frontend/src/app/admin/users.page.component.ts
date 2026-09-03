@@ -201,10 +201,10 @@ export class UsersPageComponent implements OnInit {
     });
   }
 
-  private saveRoles(user: AdminUser): boolean {
+  private saveRoles(user: AdminUser): void {
     const changes = this.panel?.collect();
     if (!changes || (!changes.granted.length && !changes.revoked.length)) {
-      return true;
+      return;
     }
 
     concat(
@@ -219,7 +219,5 @@ export class UsersPageComponent implements OnInit {
           this.load();
         },
       });
-
-    return true;
   }
 }

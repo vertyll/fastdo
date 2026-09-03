@@ -1,6 +1,6 @@
 const OPEN = '{';
 const CLOSE = '}';
-const ARGUMENT_NAME = /^[A-Za-z0-9_]+$/;
+const ARGUMENT_NAME = /^\w+$/;
 
 export function argumentsOf(pattern: string): Set<string> {
   const found = new Set<string>();
@@ -56,8 +56,8 @@ export function argumentDrift(defaultValue: string | null, candidate: string): A
 
   const expected = argumentsOf(defaultValue);
   const actual = argumentsOf(candidate);
-  const missing = [...expected].filter(name => !actual.has(name)).sort();
-  const unexpected = [...actual].filter(name => !expected.has(name)).sort();
+  const missing = [...expected].filter(name => !actual.has(name)).sort((a, b) => a.localeCompare(b));
+  const unexpected = [...actual].filter(name => !expected.has(name)).sort((a, b) => a.localeCompare(b));
 
   return missing.length || unexpected.length ? { missing, unexpected } : null;
 }

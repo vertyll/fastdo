@@ -8,7 +8,7 @@ import { AdDirective } from 'src/app/core/directives/ad.directive';
 import { ButtonRoleEnum, ModalInputTypeEnum, ModalSizeEnum } from '../../enums/modal.enum';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { ModalService } from '../../services/modal.service';
-import { ModalConfig } from '../../defs/modal.defs';
+import { ModalConfig, ModalButton } from '../../defs/modal.defs';
 import { ButtonComponent } from '../atoms/button.component';
 import { CheckboxComponent } from '../atoms/checkbox.component';
 import { ErrorMessageComponent } from '../atoms/error.message.component';
@@ -230,9 +230,9 @@ export class ModalComponent {
     }));
   }
 
-  protected closeModal(button: any): void {
-    if (button.handler) {
-      button.handler();
+  protected closeModal(button: ModalButton): void {
+    if (button.handler?.() === false) {
+      return;
     }
     this.modalService.close();
   }

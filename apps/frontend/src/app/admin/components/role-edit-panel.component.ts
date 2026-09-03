@@ -112,7 +112,7 @@ export class RoleEditPanelComponent implements OnInit {
 
   protected readonly nameControl = new FormControl('', {
     nonNullable: true,
-    validators: [Validators.required, Validators.pattern(/^[A-Za-z][A-Za-z0-9_]*$/)],
+    validators: [Validators.required, Validators.pattern(/^[A-Za-z]\w*$/)],
   });
   protected readonly descriptionControl = new FormControl('', { nonNullable: true });
   protected readonly scopeControl = new FormControl<RoleScope>('GLOBAL', { nonNullable: true });

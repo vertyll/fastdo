@@ -19,13 +19,12 @@ import { NotificationService } from '../shared/services/notification.service';
 import { PaginationMeta } from '../shared/defs/api-response.defs';
 import { PaginationParams, ProjectListFiltersConfig, PROJECT_LIST_FILTERS } from '../shared/defs/filter.defs';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
-import { GetAllProjectsSearchParams } from './defs/project.defs';
+import { GetAllProjectsSearchParams, ProjectListItem, ProjectType } from './defs/project.defs';
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
 import { MOBILE_BREAKPOINT } from '../app.contansts';
 import { ProjectTypeService } from './data-access/project-type.service';
-import { ProjectListItem, ProjectType } from './defs/project.defs';
 
 @Component({
   selector: 'app-project-list-page',
