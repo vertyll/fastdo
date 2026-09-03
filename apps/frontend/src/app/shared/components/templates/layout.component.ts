@@ -7,7 +7,6 @@ import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 import { FooterComponent } from '../organisms/footer.component';
 import { InfoPanelComponent } from '../organisms/info-panel.component';
 import { NavbarComponent } from '../organisms/navbar.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-layout',
@@ -49,6 +48,7 @@ export class LayoutComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.isLoggedIn()) {
+      /* empty */
     }
 
     this.updateTime();

@@ -4,7 +4,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, of } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../../shared/components/atoms/checkbox.component';
 import { InputFieldComponent } from '../../shared/components/molecules/input-field.component';
