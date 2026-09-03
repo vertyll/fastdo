@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { inject, signal } from '@angular/core';
-import { Observable, catchError, EMPTY, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FetchingError } from '../defs/list-state.defs';
 
@@ -26,9 +26,9 @@ export abstract class HttpApiService {
 
     return source$.pipe(
       catchError((e: HttpErrorResponse) => {
-        this.$error.set({ message: e.message, status: e.status });
+        this.$error.set({ message: e.error?.message ?? null, status: e.status });
         this.$loading.set(false);
-        return EMPTY;
+        return throwError(() => e);
       }),
       tap(() => {
         this.$loading.set(false);

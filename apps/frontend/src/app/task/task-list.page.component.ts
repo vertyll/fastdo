@@ -144,7 +144,10 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
       </ng-template>
 
       @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
-        <app-error-message [customMessage]="$safeNavigationMigration(tasksStateService.error()?.message)" />
+        <app-error-message
+          [customMessage]="$safeNavigationMigration(tasksStateService.error()?.message)"
+          [fallbackMessage]="'Task.getAllError' | translate"
+        />
       } @else {
         <app-table
           [data]="tasksStateService.tasks()"

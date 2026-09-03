@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ErrorPipe } from '../../pipes/error.pipe';
 import { ValidationService } from '../../services/validation.service';
@@ -16,8 +16,8 @@ import { ValidationService } from '../../services/validation.service';
         }
       </p>
     }
-    @if (customMessage() !== null && customMessage() !== undefined) {
-      <p class="text-danger-500" [innerHtml]="customMessage()"></p>
+    @if (text()) {
+      <p class="text-danger-500" [innerHtml]="text()"></p>
     }
   `,
 })
@@ -25,5 +25,8 @@ export class ErrorMessageComponent {
   protected readonly validation = inject(ValidationService);
 
   public readonly input = input<AbstractControl | null>();
-  public readonly customMessage = input<string | undefined>();
+  public readonly customMessage = input<string | null | undefined>();
+  public readonly fallbackMessage = input<string>('');
+
+  protected readonly text = computed(() => this.customMessage() ?? this.fallbackMessage());
 }
