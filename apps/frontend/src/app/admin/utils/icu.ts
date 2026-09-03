@@ -2,11 +2,6 @@ const OPEN = '{';
 const CLOSE = '}';
 const ARGUMENT_NAME = /^[A-Za-z0-9_]+$/;
 
-/**
- * Names of the arguments an ICU pattern feeds, e.g. `{count}` and `{name}` in
- * `{name} has {count} tasks`. Nested plural and select branches are walked, so
- * `{count, plural, one{# task} other{# tasks}}` yields just `count`.
- */
 export function argumentsOf(pattern: string): Set<string> {
   const found = new Set<string>();
   let depth = 0;
@@ -34,7 +29,6 @@ export function argumentsOf(pattern: string): Set<string> {
   return found;
 }
 
-/** True when every brace is closed in order. */
 export function bracesBalanced(pattern: string): boolean {
   let depth = 0;
   for (const char of pattern) {
@@ -55,10 +49,6 @@ export type ArgumentDrift = {
   unexpected: string[];
 };
 
-/**
- * How a candidate translation departs from the arguments of the shipped default.
- * `null` when they match, or when there is no default to compare against.
- */
 export function argumentDrift(defaultValue: string | null, candidate: string): ArgumentDrift | null {
   if (defaultValue === null) {
     return null;

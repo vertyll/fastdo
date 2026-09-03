@@ -12,12 +12,8 @@ export class UserApiService extends HttpApiService {
     return this.withLoadingState(this.http.get<ApiResponse<User>>(`${this.baseUrl}/auth/me`));
   }
 
-  public updateProfile(
-    userId: number,
-    payload: UpdateProfilePayload,
-    version: number | null,
-  ): Observable<ApiResponse<User>> {
-    return this.http.put<ApiResponse<User>>(`${this.baseUrl}/users/${userId}`, payload, {
+  public updateProfile(payload: UpdateProfilePayload, version: number | null): Observable<ApiResponse<User>> {
+    return this.http.put<ApiResponse<User>>(`${this.baseUrl}/users/me`, payload, {
       headers: this.ifMatch(version),
     });
   }

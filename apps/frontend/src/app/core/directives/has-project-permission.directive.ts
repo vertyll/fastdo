@@ -1,9 +1,8 @@
 import { Directive, OnChanges, OnInit, TemplateRef, ViewContainerRef, inject, input } from '@angular/core';
-import { ProjectRolePermissionEnum } from 'src/app/shared/enums/project-role-permission.enum';
 
 export interface HasProjectPermissionContext {
-  requiredPermissions: ProjectRolePermissionEnum[];
-  userPermissions: ProjectRolePermissionEnum[];
+  requiredPermissions: string[];
+  userPermissions: string[];
 }
 
 @Directive({

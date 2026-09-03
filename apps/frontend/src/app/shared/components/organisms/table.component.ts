@@ -62,47 +62,29 @@ export interface TruncateConfig {
   /** Explicit CSS `max-width` for the cell (e.g. `'24rem'`, `'400px'`).
    *  Takes precedence over `maxChars`. */
   maxWidth?: string;
-  /** Whether the "show more / show less" toggle button is rendered. Defaults to `true`. */
   expandable?: boolean;
 }
 
 export interface TableColumn {
-  /** Property name on the row object whose value is rendered in this column. */
   key: string;
-  /** Translation key used as the column header. */
   label: string;
-  /** Cell renderer type. `custom` delegates rendering to a named template. */
   type: 'text' | 'boolean' | 'date' | 'image' | 'custom';
-  /** Enables clicking on the header to sort by this column. */
   sortable?: boolean;
-  /** Preferred column width, used as a `min-width` hint on the header. */
   width?: string | number;
-  /** Name of a `<ng-template>` passed via content projection (only for `type: 'custom'`). */
   customTemplate?: string;
-  /** Text truncation config. Omit to render full text without a toggle button. */
   truncate?: TruncateConfig;
-  /** Horizontal text alignment inside the cell. */
   align?: 'left' | 'center' | 'right';
-  /** Vertical alignment inside the cell. */
   verticalAlign?: 'top' | 'middle' | 'bottom';
-  /** Hides the column on the given breakpoint and below. */
   hideOn?: 'mobile' | 'tablet';
-  /** Display priority (1 = highest). Lower-priority columns are hidden first on narrow screens. */
   priority?: number;
 }
 
 export interface TableAction {
-  /** Stable identifier emitted via `(action)` when the action is triggered. */
   key: string;
-  /** Translation key used for the tooltip / accessible label. */
   label: string;
-  /** Optional icon name rendered inside the action button. */
   icon?: string;
-  /** Visual variant of the action button. */
   color?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
-  /** Predicate controlling whether the action is rendered for a given row. */
   visible?: (row: any) => boolean;
-  /** Predicate controlling whether the action is disabled for a given row. */
   disabled?: (row: any) => boolean;
 }
 
@@ -111,39 +93,25 @@ export interface TableRow {
 }
 
 export interface TableConfig {
-  /** Columns rendered in the table, in order. */
   columns: TableColumn[];
-  /** Row-level actions rendered in the sticky column. */
   actions?: TableAction[];
-  /** Adds a leading checkbox column for row selection. */
   selectable?: boolean;
   /** Enables header click sorting (per-column sort still requires `column.sortable`). */
   sortable?: boolean;
-  /** Enables pagination controls. */
   paginated?: boolean;
-  /** Alternates background color for even rows (zebra striping). */
   striped?: boolean;
-  /** Highlights the row under the cursor. */
   hover?: boolean;
-  /** Enables horizontal scroll when the content does not fit the container. */
   scrollable?: boolean;
   /** Viewport width (px) below which responsive rules apply. */
   responsiveBreakpoint?: number;
-  /** Enables emitting a `loadMore` event when the user scrolls near the bottom. */
   infiniteScroll?: boolean;
-  /** Shows the inline spinner at the bottom while more rows are being loaded. */
   loadingMore?: boolean;
-  /** Function returning extra CSS class(es) for a given row. */
   rowClassFunction?: (row: any) => string;
   /** Integrated filter definitions (empty/undefined disables integrated filters). */
   filters?: any[];
-  /** Identifier type for the integrated filters to load saved state */
   filterType?: string;
-  /** Identifier scope for the integrated filters to clear state */
   filterScope?: string;
-  /** Shows the collapsible toggle for integrated filters */
   collapsibleFilters?: boolean;
-  /** Enables integrated pagination (requires pagination state input). */
   integratedPagination?: boolean;
 }
 

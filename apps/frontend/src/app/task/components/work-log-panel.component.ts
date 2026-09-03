@@ -90,6 +90,8 @@ type DayGroup = {
       <div class="border-t border-border-primary dark:border-dark-border-primary pt-3">
         @if (loading()) {
           <div class="flex justify-center py-6"><app-spinner /></div>
+        } @else if (failed()) {
+          <p class="py-6 text-center text-sm text-danger-500">{{ 'WorkLog.loadError' | translate }}</p>
         } @else if (groups().length === 0) {
           <p class="py-6 text-center text-sm text-text-secondary dark:text-dark-text-secondary">
             {{ 'WorkLog.empty' | translate }}
@@ -183,6 +185,7 @@ export class WorkLogPanelComponent implements OnInit {
 
   protected readonly entries = signal<WorkLogEntry[]>([]);
   protected readonly loading = signal(true);
+  protected readonly failed = signal(false);
   protected readonly saving = signal(false);
   protected readonly editing = signal<WorkLogEntry | null>(null);
   protected readonly formError = signal<string | null>(null);
@@ -310,15 +313,19 @@ export class WorkLogPanelComponent implements OnInit {
 
   private load(): void {
     this.loading.set(true);
+    this.failed.set(false);
     this.tasksService
       .getWorkLog(this.taskId)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(() => of(null)),
-      )
-      .subscribe(response => {
-        this.loading.set(false);
-        this.entries.set(response?.data ?? []);
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.loading.set(false);
+          this.entries.set(response.data);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.failed.set(true);
+        },
       });
   }
 }

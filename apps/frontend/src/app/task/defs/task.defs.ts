@@ -1,4 +1,3 @@
-import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
 import { TaskPriorityEnum } from '../../shared/enums/task-priority.enum';
 
 export type Task = {
@@ -59,7 +58,7 @@ export type TaskDetails = {
   assignees: TaskUserView[];
   createdBy: TaskUserView | null;
   comments: TaskComment[];
-  permissions: ProjectRolePermissionEnum[];
+  permissions: string[];
   hiddenWorkLogEnabled: boolean;
 };
 

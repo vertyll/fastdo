@@ -570,7 +570,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: accessRolesRes => {
-          this.accessRoles.set((accessRolesRes.data ?? []).map(role => ({ id: role.id, name: role.name })));
+          this.accessRoles.set(accessRolesRes.data.map(role => ({ id: role.id, name: role.name })));
         },
         error: error => {
           console.error('Error loading access roles:', error);
@@ -584,7 +584,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: categoriesRes => {
-            this.categories.set((categoriesRes.data ?? []).map(category => ({ id: category.id, name: category.name })));
+            this.categories.set(categoriesRes.data.map(category => ({ id: category.id, name: category.name })));
           },
           error: error => {
             console.error('Error loading categories:', error);
@@ -597,7 +597,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: statusesRes => {
-            this.statuses.set((statusesRes.data ?? []).map(status => ({ id: status.id, name: status.name })));
+            this.statuses.set(statusesRes.data.map(status => ({ id: status.id, name: status.name })));
           },
           error: error => {
             console.error('Error loading statuses:', error);
@@ -611,7 +611,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         .subscribe({
           next: usersRes => {
             this.projectUsers.set(
-              (usersRes.data ?? []).map(member => ({ id: member.userId, name: member.displayName || member.email })),
+              usersRes.data.map(member => ({ id: member.userId, name: member.displayName || member.email })),
             );
           },
           error: error => {

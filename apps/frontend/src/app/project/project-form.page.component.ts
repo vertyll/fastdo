@@ -51,7 +51,6 @@ interface ProjectFormValue {
   typeId?: string | null;
   isPublic?: boolean;
   hiddenWorkLogEnabled?: boolean;
-  hiddenWorkLogRoles?: string[];
   categories?: NameColorFormItem[];
   statuses?: NameColorFormItem[];
   usersWithRoles?: Array<{ email?: string; role?: string }>;
@@ -151,21 +150,6 @@ const DEFAULT_STATUS_COLOR = '#10B981';
               {{ 'Project.hiddenWorkLogHint' | translate }}
             </p>
 
-            @if (hiddenWorkLogEnabled()) {
-              <div class="mt-3 ml-6 space-y-2">
-                <span class="block text-sm font-medium text-text-primary dark:text-dark-text-primary">
-                  {{ 'Project.hiddenWorkLogRoles' | translate }}
-                </span>
-                @for (role of hiddenWorkLogRoleOptions; track role) {
-                  <app-checkbox
-                    [control]="hiddenWorkLogRoleControl(role)"
-                    [id]="'hiddenWorkLogRole-' + role"
-                    [label]="'ProjectRole.' + role | translate"
-                    (changed)="toggleHiddenWorkLogRole(role)"
-                  />
-                }
-              </div>
-            }
           </div>
 
           <div>
@@ -503,40 +487,14 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return this.projectForm.get('typeId') as FormControl;
   }
 
-  protected readonly hiddenWorkLogRoleOptions = ['MANAGER', 'CLIENT', 'MEMBER'];
-
   protected get hiddenWorkLogEnabledControl(): FormControl {
     return this.projectForm.get('hiddenWorkLogEnabled') as FormControl;
   }
 
   protected readonly hiddenWorkLogEnabled = signal(false);
 
-  private readonly hiddenWorkLogRoleControls = new Map<string, FormControl>();
-
   protected onHiddenWorkLogToggled(checked: boolean): void {
     this.hiddenWorkLogEnabled.set(checked);
-  }
-
-  protected hiddenWorkLogRoleControl(role: string): FormControl {
-    const existing = this.hiddenWorkLogRoleControls.get(role);
-    if (existing) {
-      return existing;
-    }
-    const created = new FormControl(this.selectedHiddenWorkLogRoles().includes(role));
-    this.hiddenWorkLogRoleControls.set(role, created);
-    return created;
-  }
-
-  protected toggleHiddenWorkLogRole(role: string): void {
-    const selected = this.selectedHiddenWorkLogRoles();
-    const next = this.hiddenWorkLogRoleControl(role).value
-      ? [...new Set([...selected, role])]
-      : selected.filter(r => r !== role);
-    this.projectForm.get('hiddenWorkLogRoles')?.setValue(next);
-  }
-
-  private selectedHiddenWorkLogRoles(): string[] {
-    return (this.projectForm.get('hiddenWorkLogRoles')?.value as string[]) ?? [];
   }
 
   protected get isPublicControl(): FormControl {
@@ -608,6 +566,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   protected get projectRoleOptions(): Array<{ value: string; label: string }> {
     return this.projectRoles.map(role => ({ value: role.id, label: role.name }));
   }
+
 
   protected addCategory(): void {
     this.categoriesFormArray.push(
@@ -733,7 +692,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       isPublic: formValue.isPublic ?? false,
       typeId: formValue.typeId || null,
       hiddenWorkLogEnabled: formValue.hiddenWorkLogEnabled ?? false,
-      hiddenWorkLogRoles: formValue.hiddenWorkLogEnabled ? (formValue.hiddenWorkLogRoles ?? []) : [],
       ...(this.iconFileId === undefined ? {} : { iconFileId: this.iconFileId }),
     };
 
@@ -820,7 +778,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       typeId: [''],
       isPublic: [false],
       hiddenWorkLogEnabled: [false],
-      hiddenWorkLogRoles: [[] as string[]],
       categories: this.fb.array([]),
       statuses: this.fb.array([]),
       usersWithRoles: this.fb.array([]),
@@ -931,10 +888,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       typeId: project.typeId || '',
       isPublic: project.isPublic,
       hiddenWorkLogEnabled: project.hiddenWorkLogEnabled,
-      hiddenWorkLogRoles: project.hiddenWorkLogRoles ?? [],
     });
     this.hiddenWorkLogEnabled.set(project.hiddenWorkLogEnabled);
-    (project.hiddenWorkLogRoles ?? []).forEach(role => this.hiddenWorkLogRoleControl(role).setValue(true));
 
     if (this.currentProject.categories) {
       this.currentProject.categories.forEach(category => {

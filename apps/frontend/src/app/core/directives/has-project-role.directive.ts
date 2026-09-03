@@ -1,11 +1,10 @@
 import { Directive, ElementRef, OnChanges, OnInit, Renderer2, inject, input } from '@angular/core';
-import { ProjectRoleEnum } from 'src/app/shared/enums/project-role.enum';
 
 @Directive({
   selector: '[appHasProjectRole]',
 })
 export class HasProjectRoleDirective implements OnInit, OnChanges {
-  public readonly allowedRoles = input.required<ProjectRoleEnum[] | ProjectRoleEnum>({ alias: 'appHasProjectRole' });
+  public readonly allowedRoles = input.required<string[] | string>({ alias: 'appHasProjectRole' });
   public readonly projectUserRole = input<string | undefined>();
 
   private readonly elementRef = inject(ElementRef);
@@ -31,7 +30,7 @@ export class HasProjectRoleDirective implements OnInit, OnChanges {
     }
 
     const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-    const hasRole = roles.includes(userRole as ProjectRoleEnum);
+    const hasRole = roles.includes(userRole);
 
     if (hasRole) {
       this.showElement();

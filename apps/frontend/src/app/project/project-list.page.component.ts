@@ -11,6 +11,7 @@ import { TableComponent, TableConfig, TableRow } from '../shared/components/orga
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
 import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
+import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
 import { ProjectRoleEnum } from '../shared/enums/project-role.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
@@ -179,9 +180,8 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
         label: 'Basic.view',
         icon: 'heroEye',
         color: 'primary',
-        visible: (row: any) => row.isPublic === true || row.permissions?.includes(ProjectRolePermissionEnum.SHOW_TASKS),
-        disabled: (row: any) =>
-          !(row.isPublic === true || row.permissions?.includes(ProjectRolePermissionEnum.SHOW_TASKS)),
+        visible: (row: any) => row.isPublic === true || row.permissions?.includes(TaskPermissionEnum.VIEW_TASKS),
+        disabled: (row: any) => !(row.isPublic === true || row.permissions?.includes(TaskPermissionEnum.VIEW_TASKS)),
       },
       {
         key: 'edit',
@@ -256,7 +256,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   }
 
   protected handleFiltersChange(filters: any): void {
-    if (Object.keys(filters).length === 0) return; // Prevent double call on initial reset if needed; handleFiltersChange receives values
+    if (Object.keys(filters).length === 0) return;
     const searchParams = getAllProjectsSearchParams(filters as ProjectListFiltersConfig);
     this.getAllProjects(searchParams);
   }
@@ -375,11 +375,8 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
     this.projectsService.getAll(searchParams).subscribe({
       next: response => {
-        if (response?.data?.items) {
-          const items = response.data.items;
-          this.rawProjects = items;
-          this.tableRows = this.mapProjectsToTableRows(items);
-        }
+        this.rawProjects = response.data.items;
+        this.tableRows = this.mapProjectsToTableRows(response.data.items);
       },
       error: err => {
         this.notifyWithFallback(err, 'Project.getAllError');

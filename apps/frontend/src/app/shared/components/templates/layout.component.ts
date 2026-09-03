@@ -2,7 +2,6 @@ import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angula
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { RoleService } from 'src/app/role/data-access/role.service';
 import { CookieBannerComponent } from '../molecules/cookie-banner.component';
 import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
 import { FooterComponent } from '../organisms/footer.component';
@@ -38,33 +37,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class LayoutComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly translateService = inject(TranslateService);
-  protected readonly roleService = inject(RoleService);
   protected readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected isLoggedIn = this.authService.isLoggedIn;
   protected userRoles = this.authService.userRoles;
-  protected userRolesString = computed(() => {
-    const userRoleCodes = this.userRoles();
-    if (!userRoleCodes || userRoleCodes.length === 0) return '';
-
-    const allRoles = this.roleService.getRoles();
-    if (allRoles.length === 0) return userRoleCodes.join(', ');
-
-    const translatedRoles = userRoleCodes.map(roleCode => {
-      const role = allRoles.find(r => r.name === roleCode);
-      return role?.name || roleCode;
-    });
-
-    return translatedRoles.join(', ');
-  });
+  protected userRolesString = computed(() => this.userRoles().join(', '));
   protected panelOpen: boolean = false;
   protected currentTime = signal<string>('');
   protected browserInfo: string = '';
 
   ngOnInit(): void {
     if (this.isLoggedIn()) {
-      this.loadRoles();
     }
 
     this.updateTime();
@@ -77,17 +61,6 @@ export class LayoutComponent implements OnInit {
   protected togglePanel = (): void => {
     this.panelOpen = !this.panelOpen;
   };
-
-  private loadRoles(): void {
-    this.roleService
-      .getAllRoles()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        error: error => {
-          console.warn('Failed to load roles:', error);
-        },
-      });
-  }
 
   private updateTime(): void {
     this.currentTime.set(new Date().toLocaleTimeString());

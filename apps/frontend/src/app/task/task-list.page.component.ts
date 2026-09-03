@@ -42,7 +42,7 @@ import { TasksStateService } from './data-access/task.state.service';
 import { PlatformService } from '../shared/services/platform.service';
 import { MOBILE_BREAKPOINT } from '../app.contansts';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
+import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
 
 @Component({
   selector: 'app-task-list-page',
@@ -237,23 +237,24 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       },
       {
         key: 'logWork',
-        icon: 'heroClock',
         label: 'WorkLog.title',
-        color: 'primary',
+        icon: 'heroClock',
+        color: 'secondary',
+        visible: () => this.taskPermissions().includes(TaskPermissionEnum.COMMENT),
       },
       {
         key: 'edit',
         label: 'Basic.edit',
         icon: 'heroPencil',
         color: 'secondary',
-        visible: () => this.taskPermissions().includes(ProjectRolePermissionEnum.MANAGE_TASKS),
+        visible: () => this.taskPermissions().includes(TaskPermissionEnum.MANAGE_TASKS),
       },
       {
         key: 'delete',
         label: 'Basic.delete',
         icon: 'heroTrash',
         color: 'danger',
-        visible: () => this.taskPermissions().includes(ProjectRolePermissionEnum.MANAGE_TASKS),
+        visible: () => this.taskPermissions().includes(TaskPermissionEnum.MANAGE_TASKS),
       },
     ],
     selectable: true,
@@ -590,7 +591,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     this.tasksService
       .getPermissions(projectId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(response => this.taskPermissions.set(response.data ?? []));
+      .subscribe(response => this.taskPermissions.set(response.data));
   }
 
   private initializeTaskList(): void {
@@ -629,7 +630,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     this.isFiltersLoading.set(true);
 
     const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
-      map(response => response.data ?? []),
+      map(response => response.data),
       catchError(err => {
         console.error('Error fetching project statuses:', err);
         return of([] as ProjectStatus[]);
@@ -637,7 +638,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     );
 
     const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
-      map(response => response.data ?? []),
+      map(response => response.data),
       catchError(err => {
         console.error('Error fetching project categories:', err);
         return of([] as ProjectCategory[]);
@@ -645,7 +646,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     );
 
     const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
-      map(response => response.data ?? []),
+      map(response => response.data),
       catchError(err => {
         console.error('Error fetching users in project:', err);
         return of([] as ProjectMember[]);

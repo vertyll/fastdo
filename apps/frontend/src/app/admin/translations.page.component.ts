@@ -6,6 +6,7 @@ import { heroArrowDownTray, heroArrowPath, heroArrowUpTray, heroPencil } from '@
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { BadgeComponent } from '../shared/components/atoms/badge.component';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
@@ -35,6 +36,7 @@ type TranslationFilters = {
     TranslatePipe,
     CustomDatePipe,
     NgIconComponent,
+    BadgeComponent,
     ButtonComponent,
     CheckboxComponent,
     FilterGroupComponent,
@@ -122,6 +124,8 @@ type TranslationFilters = {
 
       @if (loading()) {
         <div class="flex justify-center py-16"><app-spinner /></div>
+      } @else if (failed()) {
+        <p class="py-16 text-center text-danger-500">{{ 'Admin.loadError' | translate }}</p>
       } @else if (keys().length === 0) {
         <p class="py-16 text-center text-text-secondary dark:text-dark-text-secondary">
           {{ 'Admin.noKeys' | translate }}
@@ -167,11 +171,7 @@ type TranslationFilters = {
                     </span>
                     <div class="flex items-center gap-1 justify-end">
                       @if (value.isOverridden) {
-                        <span
-                          class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200"
-                        >
-                          {{ 'Admin.overridden' | translate }}
-                        </span>
+                        <app-badge variant="accent">{{ 'Admin.overridden' | translate }}</app-badge>
                         <app-button
                           variant="icon"
                           [title]="'Admin.restoreDefault' | translate"
@@ -215,6 +215,7 @@ export class TranslationsPageComponent implements OnInit {
 
   protected readonly keys = signal<TranslationKeyDetails[]>([]);
   protected readonly loading = signal(true);
+  protected readonly failed = signal(false);
   protected readonly report = signal<ImportReport | null>(null);
   protected readonly selectedKeys = signal<ReadonlySet<string>>(new Set());
   protected readonly total = signal(0);
@@ -374,6 +375,7 @@ export class TranslationsPageComponent implements OnInit {
 
   protected load(): void {
     this.loading.set(true);
+    this.failed.set(false);
     this.api
       .searchKeys({
         searchTerm: this.filters.searchTerm || undefined,
@@ -382,15 +384,18 @@ export class TranslationsPageComponent implements OnInit {
         page: this.page(),
         size: this.pageSize(),
       })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(() => of(null)),
-      )
-      .subscribe(page => {
-        this.loading.set(false);
-        this.keys.set(page?.items ?? []);
-        this.total.set(page?.pagination?.total ?? 0);
-        this.selectAllControl.setValue(false, { emitEvent: false });
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: page => {
+          this.loading.set(false);
+          this.keys.set(page.items);
+          this.total.set(page.pagination.total);
+          this.selectAllControl.setValue(false, { emitEvent: false });
+        },
+        error: () => {
+          this.loading.set(false);
+          this.failed.set(true);
+        },
       });
   }
 

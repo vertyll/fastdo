@@ -1,5 +1,3 @@
-import { ProjectRoleEnum } from '../../shared/enums/project-role.enum';
-import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
 
 export type Project = {
   id: string;
@@ -13,11 +11,10 @@ export type Project = {
   createdAt: string;
   updatedAt: string;
   version: number | null;
-  permissions: ProjectRolePermissionEnum[];
+  permissions: string[];
   isExpanded?: boolean;
   editMode?: boolean;
   hiddenWorkLogEnabled: boolean;
-  hiddenWorkLogRoles: string[];
 };
 
 export type ProjectListItem = {
@@ -31,7 +28,7 @@ export type ProjectListItem = {
   memberCount: number;
   createdAt: string;
   version: number | null;
-  permissions: ProjectRolePermissionEnum[];
+  permissions: string[];
 };
 
 export type ProjectDetails = {
@@ -40,7 +37,7 @@ export type ProjectDetails = {
   members: ProjectMember[];
   categories: ProjectCategory[];
   statuses: ProjectStatus[];
-  permissions: ProjectRolePermissionEnum[];
+  permissions: string[];
   currentUserId: string;
 };
 
@@ -88,10 +85,10 @@ export type ProjectStatus = {
 
 export type ProjectRole = {
   id: string;
-  code: ProjectRoleEnum;
+  code: string;
   name: string;
   description: string | null;
-  permissions: ProjectRolePermissionEnum[];
+  permissions: string[];
   isActive: boolean;
   version: number | null;
 };
@@ -104,7 +101,8 @@ export type ProjectMember = {
   displayName: string;
   avatarFileId: string | null;
   roleId: string;
-  roleCode: ProjectRoleEnum;
+  roleCode: string;
+  rolePermissions: string[];
   roleName: string;
   assignedAt: string;
   version: number | null;
@@ -137,7 +135,6 @@ export type CreateProjectPayload = {
   typeId?: string | null;
   iconFileId?: string | null;
   hiddenWorkLogEnabled: boolean;
-  hiddenWorkLogRoles: string[];
 };
 
 export type UpdateProjectPayload = CreateProjectPayload;

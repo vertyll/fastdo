@@ -30,7 +30,7 @@ import { ProjectsService } from '../project/data-access/project.service';
 import { FileApiService } from '../file/data-access/file.api.service';
 import { FileUploadService } from '../file/data-access/file-upload.service';
 import { FileScopeEnum } from '../file/defs/file.defs';
-import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permission.enum';
+import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
 import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { DropdownComponent, DropdownMenuDirective } from '../shared/components/atoms/dropdown.component';
 import { ButtonRoleEnum } from '../shared/enums/modal.enum';
@@ -865,7 +865,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     if (userId && comment.author.id === userId) {
       return true;
     }
-    return (this.task()?.permissions ?? []).includes(ProjectRolePermissionEnum.MANAGE_TASKS);
+    return (this.task()?.permissions ?? []).includes(TaskPermissionEnum.MANAGE_TASKS);
   }
 
   protected deleteComment(commentId: string): void {

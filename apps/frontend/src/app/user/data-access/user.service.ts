@@ -22,7 +22,7 @@ export class UserService {
       throw new Error('profile has not been loaded yet');
     }
     return this.httpService
-      .updateProfile(current.id, payload, current.version)
+      .updateProfile(payload, current.version)
       .pipe(tap(response => this.state.setUser(response.data)));
   }
 }

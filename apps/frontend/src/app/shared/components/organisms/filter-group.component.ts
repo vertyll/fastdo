@@ -277,7 +277,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
   public readonly collapsible = input<boolean>(false);
   public readonly totalResults = input<number | undefined>(undefined);
 
-  public readonly filterChange = output<T>(); // Emit values directly instead of strictly state reliance
+  public readonly filterChange = output<T>();
   public readonly filterSearch = output<{ term: string; filter: string }>();
 
   public readonly isExpanded = signal<boolean>(true);

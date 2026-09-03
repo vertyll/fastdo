@@ -43,6 +43,18 @@ export const configNavModules: NavModule[] = [
         icon: 'heroLanguage',
         route: '/admin/translations',
       },
+      {
+        id: 'roles',
+        title: 'Sidebar.roles',
+        icon: 'heroShieldCheck',
+        route: '/admin/roles',
+      },
+      {
+        id: 'users',
+        title: 'Sidebar.users',
+        icon: 'heroUsers',
+        route: '/admin/users',
+      },
     ],
   },
 ];

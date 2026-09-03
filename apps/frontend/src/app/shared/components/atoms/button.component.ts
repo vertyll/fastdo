@@ -13,13 +13,27 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     </ng-template>
 
     @if (variant() === 'basic') {
-      <button mat-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+      <button
+        mat-button
+        [type]="type()"
+        [disabled]="disabled()"
+        [title]="title()"
+        [attr.aria-label]="title() || null"
+        (click)="clicked.emit($event)"
+      >
         <span class="flex items-center justify-center gap-2">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
     } @else if (variant() === 'stroked') {
-      <button mat-stroked-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+      <button
+        mat-stroked-button
+        [type]="type()"
+        [disabled]="disabled()"
+        [title]="title()"
+        [attr.aria-label]="title() || null"
+        (click)="clicked.emit($event)"
+      >
         <span class="flex items-center justify-center gap-2">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
@@ -30,6 +44,8 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
         class="!bg-danger-500 hover:!bg-danger-600 !text-white"
         [type]="type()"
         [disabled]="disabled()"
+        [title]="title()"
+        [attr.aria-label]="title() || null"
         (click)="clicked.emit($event)"
       >
         <span class="flex items-center justify-center gap-2">
@@ -37,13 +53,27 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
         </span>
       </button>
     } @else if (variant() === 'icon') {
-      <button mat-icon-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+      <button
+        mat-icon-button
+        [type]="type()"
+        [disabled]="disabled()"
+        [title]="title()"
+        [attr.aria-label]="title() || null"
+        (click)="clicked.emit($event)"
+      >
         <span class="icon-slot flex items-center justify-center">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
     } @else {
-      <button mat-flat-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
+      <button
+        mat-flat-button
+        [type]="type()"
+        [disabled]="disabled()"
+        [title]="title()"
+        [attr.aria-label]="title() || null"
+        (click)="clicked.emit($event)"
+      >
         <span class="flex items-center justify-center gap-2">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
@@ -65,5 +95,7 @@ export class ButtonComponent {
   public readonly disabled = input(false, { transform: booleanAttribute });
 
   public readonly variant = input<ButtonVariant>('flat');
+
+  public readonly title = input<string>('');
   public readonly clicked = output<Event>();
 }

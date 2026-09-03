@@ -66,12 +66,10 @@ export class TranslationEditPanelComponent implements OnInit {
 
   public targets: EditTarget[] = [];
 
-  /** Handed the live panel so the modal's Save button can read what was typed. */
   public register: ((panel: TranslationEditPanelComponent) => void) | null = null;
 
   protected readonly rows = signal<EditRow[]>([]);
 
-  /** One block per key, so both languages of the same phrase are edited side by side. */
   protected readonly groups = computed<EditGroup[]>(() => {
     const byKey = new Map<string, EditRow[]>();
     for (const row of this.rows()) {

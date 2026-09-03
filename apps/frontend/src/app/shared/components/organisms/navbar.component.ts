@@ -15,6 +15,8 @@ import {
   heroArrowRightOnRectangle,
   heroCog6Tooth,
   heroLanguage,
+  heroShieldCheck,
+  heroUsers,
 } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
@@ -59,6 +61,8 @@ import { environment } from '../../../../environments/environment';
       heroArrowRightOnRectangle,
       heroCog6Tooth,
       heroLanguage,
+      heroShieldCheck,
+      heroUsers,
     }),
   ],
   styles: [
@@ -589,7 +593,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.currentSection.set(defaultSection.id);
 
     this.router.navigate([module.route]).then();
-    this.closeNotificationDropdown.set(Date.now()); // Zamknięcie dropdowna po nawigacji
+    this.closeNotificationDropdown.set(Date.now());
   }
 
   protected selectSection(section: NavSection): void {
