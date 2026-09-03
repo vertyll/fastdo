@@ -149,7 +149,6 @@ const DEFAULT_STATUS_COLOR = '#10B981';
             <p class="mt-1 ml-6 text-xs text-text-secondary dark:text-dark-text-secondary">
               {{ 'Project.hiddenWorkLogHint' | translate }}
             </p>
-
           </div>
 
           <div>
@@ -566,7 +565,6 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   protected get projectRoleOptions(): Array<{ value: string; label: string }> {
     return this.projectRoles.map(role => ({ value: role.id, label: role.name }));
   }
-
 
   protected addCategory(): void {
     this.categoriesFormArray.push(
