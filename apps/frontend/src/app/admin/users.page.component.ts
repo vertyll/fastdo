@@ -14,7 +14,6 @@ import { FilterMetadata, PaginationParams } from '../shared/defs/filter.defs';
 import { FilterTypeEnum } from '../shared/enums/filter-type.enum';
 import { FilterGroupComponent } from '../shared/components/organisms/filter-group.component';
 import { ButtonRoleEnum, ModalSizeEnum } from '../shared/enums/modal.enum';
-import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { UserRolesPanelComponent } from './components/user-roles-panel.component';
@@ -216,15 +215,11 @@ export class UsersPageComponent implements OnInit {
       .subscribe({
         next: () => this.load(),
         error: () => {
-          this.showError('Admin.roleAssignError');
+          this.notificationService.error('Admin.roleAssignError');
           this.load();
         },
       });
 
     return true;
-  }
-
-  private showError(key: string): void {
-    this.notificationService.showNotification(this.translateService.instant(key), ToastTypeEnum.Error);
   }
 }

@@ -17,7 +17,6 @@ import { FilterGroupComponent } from '../shared/components/organisms/filter-grou
 import { FilterMetadata, PaginationParams } from '../shared/defs/filter.defs';
 import { ButtonRoleEnum, ModalSizeEnum } from '../shared/enums/modal.enum';
 import { FilterTypeEnum } from '../shared/enums/filter-type.enum';
-import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { EditTarget, TranslationEditPanelComponent } from './components/translation-edit-panel.component';
@@ -329,7 +328,7 @@ export class TranslationsPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.load(),
-        error: () => this.showError('Admin.saveError'),
+        error: () => this.notificationService.error('Admin.saveError'),
       });
   }
 
@@ -346,7 +345,7 @@ export class TranslationsPageComponent implements OnInit {
           link.click();
           URL.revokeObjectURL(url);
         },
-        error: () => this.showError('Admin.exportError'),
+        error: () => this.notificationService.error('Admin.exportError'),
       });
   }
 
@@ -368,7 +367,7 @@ export class TranslationsPageComponent implements OnInit {
         },
         error: () => {
           input.value = '';
-          this.showError('Admin.importError');
+          this.notificationService.error('Admin.importError');
         },
       });
   }
@@ -439,15 +438,11 @@ export class TranslationsPageComponent implements OnInit {
       .subscribe(results => {
         const failed = results.filter(result => result === null).length;
         if (failed) {
-          this.showError('Admin.saveError');
+          this.notificationService.error('Admin.saveError');
         }
         this.load();
       });
 
     return true;
-  }
-
-  private showError(key: string): void {
-    this.notificationService.showNotification(this.translateService.instant(key), ToastTypeEnum.Error);
   }
 }

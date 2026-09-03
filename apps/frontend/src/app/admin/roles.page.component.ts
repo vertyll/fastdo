@@ -13,7 +13,6 @@ import { FilterGroupComponent } from '../shared/components/organisms/filter-grou
 import { FilterMetadata, PaginationParams } from '../shared/defs/filter.defs';
 import { FilterTypeEnum } from '../shared/enums/filter-type.enum';
 import { ButtonRoleEnum, ModalSizeEnum } from '../shared/enums/modal.enum';
-import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ModalService } from '../shared/services/modal.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { RoleEditPanelComponent } from './components/role-edit-panel.component';
@@ -266,7 +265,7 @@ export class RolesPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.load(),
-        error: () => this.showError('Admin.roleDeleteError'),
+        error: () => this.notificationService.error('Admin.roleDeleteError'),
       });
     return true;
   }
@@ -314,13 +313,9 @@ export class RolesPageComponent implements OnInit {
 
     request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => this.load(),
-      error: () => this.showError('Admin.roleSaveError'),
+      error: () => this.notificationService.error('Admin.roleSaveError'),
     });
 
     return true;
-  }
-
-  private showError(key: string): void {
-    this.notificationService.showNotification(this.translateService.instant(key), ToastTypeEnum.Error);
   }
 }

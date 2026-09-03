@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastTypeEnum } from '../enums/toast-type.enum';
 
 @Injectable({
@@ -7,6 +8,15 @@ import { ToastTypeEnum } from '../enums/toast-type.enum';
 })
 export class NotificationService {
   private readonly snackBar = inject(MatSnackBar);
+  private readonly translateService = inject(TranslateService);
+
+  public error(translationKey: string, params?: Record<string, unknown>): void {
+    this.showNotification(this.translateService.instant(translationKey, params), ToastTypeEnum.Error);
+  }
+
+  public success(translationKey: string, params?: Record<string, unknown>): void {
+    this.showNotification(this.translateService.instant(translationKey, params), ToastTypeEnum.Success);
+  }
 
   public showNotification(
     message: string,
