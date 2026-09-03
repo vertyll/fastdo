@@ -4,8 +4,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { BadgeComponent } from '../../shared/components/atoms/badge.component';
 import { ButtonComponent } from '../../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../../shared/components/atoms/checkbox.component';
+import { SelectFilterComponent } from '../../shared/components/atoms/select.component';
 import { InputFieldComponent } from '../../shared/components/molecules/input-field.component';
 import { TextareaFieldComponent } from '../../shared/components/molecules/textarea-field.component';
 import { DateFieldComponent } from '../../shared/components/molecules/date-field.component';
@@ -16,6 +18,9 @@ import { TasksService } from '../data-access/task.service';
 import { WorkLogEntry } from '../defs/task.defs';
 import { formatDuration, parseDuration } from '../utils/duration';
 import { toIsoDay } from '../utils/day';
+
+const PAGE_SIZE = 20;
+const SCROLL_THRESHOLD_PX = 48;
 
 type DayGroup = {
   day: string;
@@ -29,8 +34,10 @@ type DayGroup = {
     ReactiveFormsModule,
     TranslatePipe,
     NgIconComponent,
+    BadgeComponent,
     ButtonComponent,
     CheckboxComponent,
+    SelectFilterComponent,
     DateFieldComponent,
     InputFieldComponent,
     TextareaFieldComponent,
@@ -63,18 +70,20 @@ type DayGroup = {
         />
 
         @if (hiddenWorkLogEnabled) {
-          <app-checkbox
-            [control]="form.controls.hidden"
-            id="workLogHidden"
-            [label]="'WorkLog.hiddenEntry' | translate"
-          />
+          <div class="py-1">
+            <app-checkbox
+              [control]="form.controls.hidden"
+              id="workLogHidden"
+              [label]="'WorkLog.hiddenEntry' | translate"
+            />
+          </div>
         }
 
         @if (formError()) {
           <p class="text-xs text-danger-500">{{ formError()! | translate }}</p>
         }
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 pt-1">
           <app-button type="submit" [disabled]="saving()">
             {{ (editing() ? 'Basic.save' : 'WorkLog.log') | translate }}
           </app-button>
@@ -86,7 +95,7 @@ type DayGroup = {
         </div>
       </form>
 
-      <div class="border-t border-border-primary dark:border-dark-border-primary pt-3">
+      <div class="border-t border-border-primary dark:border-dark-border-primary pt-4">
         @if (loading()) {
           <div class="flex justify-center py-6"><app-spinner /></div>
         } @else if (failed()) {
@@ -96,10 +105,21 @@ type DayGroup = {
             {{ 'WorkLog.empty' | translate }}
           </p>
         } @else {
-          <p class="text-xs text-text-secondary dark:text-dark-text-secondary mb-2">
-            {{ 'WorkLog.total' | translate }}: <span class="font-semibold">{{ formatted(totalMinutes()) }}</span>
-          </p>
-          <ul class="space-y-4 max-h-80 overflow-y-auto">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <p class="text-xs text-text-secondary dark:text-dark-text-secondary">
+              {{ 'WorkLog.total' | translate }}: <span class="font-semibold">{{ formatted(totalMinutes()) }}</span>
+            </p>
+            @if (hiddenWorkLogEnabled) {
+              <app-select
+                class="w-44"
+                [control]="visibilityControl"
+                id="workLogVisibility"
+                [label]="'WorkLog.show' | translate"
+                [options]="visibilityOptions"
+              />
+            }
+          </div>
+          <ul class="space-y-4 max-h-80 overflow-y-auto" (scroll)="onScroll($event)">
             @for (group of groups(); track group.day) {
               <li>
                 <div class="flex items-baseline justify-between mb-1">
@@ -123,11 +143,9 @@ type DayGroup = {
                           <span class="truncate"
                             >{{ entry.author.displayName }}
                             @if (entry.hidden) {
-                              <span
-                                class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
-                              >
+                              <app-badge class="ml-2">
                                 {{ 'WorkLog.hidden' | translate }}
-                              </span>
+                              </app-badge>
                             }
                           </span>
                         </p>
@@ -163,6 +181,9 @@ type DayGroup = {
                     </li>
                   }
                 </ul>
+            @if (loadingMore()) {
+              <div class="flex justify-center py-2"><app-spinner /></div>
+            }
               </li>
             }
           </ul>
@@ -184,7 +205,19 @@ export class WorkLogPanelComponent implements OnInit {
 
   protected readonly entries = signal<WorkLogEntry[]>([]);
   protected readonly loading = signal(true);
+  protected readonly loadingMore = signal(false);
   protected readonly failed = signal(false);
+
+  private page = 0;
+  private total = 0;
+
+  protected readonly visibilityControl = new FormControl<'all' | 'hidden' | 'visible'>('all', { nonNullable: true });
+
+  protected readonly visibilityOptions = [
+    { value: 'all', label: 'WorkLog.showAll' },
+    { value: 'visible', label: 'WorkLog.showVisible' },
+    { value: 'hidden', label: 'WorkLog.showHidden' },
+  ];
   protected readonly saving = signal(false);
   protected readonly editing = signal<WorkLogEntry | null>(null);
   protected readonly formError = signal<string | null>(null);
@@ -196,7 +229,7 @@ export class WorkLogPanelComponent implements OnInit {
     hidden: new FormControl(false, { nonNullable: true }),
   });
 
-  protected readonly totalMinutes = computed(() => this.entries().reduce((sum, e) => sum + e.minutes, 0));
+  protected readonly totalMinutes = signal(0);
 
   protected readonly groups = computed<DayGroup[]>(() => {
     const byDay = new Map<string, WorkLogEntry[]>();
@@ -213,6 +246,7 @@ export class WorkLogPanelComponent implements OnInit {
   });
 
   public ngOnInit(): void {
+    this.visibilityControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.load());
     this.load();
   }
 
@@ -313,18 +347,61 @@ export class WorkLogPanelComponent implements OnInit {
   private load(): void {
     this.loading.set(true);
     this.failed.set(false);
+    this.page = 0;
     this.tasksService
-      .getWorkLog(this.taskId)
+      .getWorkLog(this.taskId, 0, PAGE_SIZE, this.hiddenFilter())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
           this.loading.set(false);
-          this.entries.set(response.data);
+          this.entries.set(response.data.content);
+          this.total = response.data.totalElements;
+          this.totalMinutes.set(response.data.totalMinutes);
         },
         error: () => {
           this.loading.set(false);
           this.failed.set(true);
         },
+      });
+  }
+
+  private hiddenFilter(): boolean | undefined {
+    switch (this.visibilityControl.value) {
+      case 'hidden':
+        return true;
+      case 'visible':
+        return false;
+      default:
+        return undefined;
+    }
+  }
+
+  protected onScroll(event: Event): void {
+    const list = event.target as HTMLElement;
+    const nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < SCROLL_THRESHOLD_PX;
+    if (nearBottom) {
+      this.loadMore();
+    }
+  }
+
+  private loadMore(): void {
+    if (this.loadingMore() || this.entries().length >= this.total) {
+      return;
+    }
+
+    this.loadingMore.set(true);
+    this.tasksService
+      .getWorkLog(this.taskId, this.page + 1, PAGE_SIZE, this.hiddenFilter())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.loadingMore.set(false);
+          this.page += 1;
+          this.total = response.data.totalElements;
+          this.totalMinutes.set(response.data.totalMinutes);
+          this.entries.update(current => [...current, ...response.data.content]);
+        },
+        error: () => this.loadingMore.set(false),
       });
   }
 }

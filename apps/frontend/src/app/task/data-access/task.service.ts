@@ -13,6 +13,7 @@ import {
   TaskDetails,
   TaskListItem,
   UpdateTaskPayload,
+  WorkLogPage,
 } from '../defs/task.defs';
 import { TasksApiService } from './task.api.service';
 import { TasksStateService } from './task.state.service';
@@ -84,8 +85,13 @@ export class TasksService {
     return this.httpService.changeStatus(taskId, statusId, version);
   }
 
-  public getWorkLog(taskId: string): Observable<ApiResponse<WorkLogEntry[]>> {
-    return this.httpService.getWorkLog(taskId);
+  public getWorkLog(
+    taskId: string,
+    page: number,
+    size: number,
+    hidden?: boolean,
+  ): Observable<ApiResponse<WorkLogPage>> {
+    return this.httpService.getWorkLog(taskId, page, size, hidden);
   }
 
   public logWork(taskId: string, payload: WorkLogPayload): Observable<ApiResponse<WorkLogEntry>> {

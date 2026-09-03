@@ -184,7 +184,7 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                           <button
                             type="button"
                             (click)="downloadAttachment(attachment.id)"
-                            class="flex flex-col items-center justify-center gap-2 p-3 bg-neutral-100 dark:bg-neutral-800 h-32 w-full text-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
+                            class="flex flex-col items-center justify-center gap-2 p-3 bg-background-tertiary dark:bg-dark-background-tertiary h-32 w-full text-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
                           >
                             <ng-icon name="heroDocument" size="32" class="text-primary-500"></ng-icon>
                             <span class="text-xs text-text-secondary dark:text-dark-text-secondary break-all">{{
@@ -272,7 +272,7 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                               <div class="flex flex-wrap gap-2 mb-2">
                                 @for (att of editingCommentExistingAttachments; track att) {
                                   <div
-                                    class="relative flex items-center border border-border-primary dark:border-dark-border-primary rounded-lg px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 shadow-sm transition-all duration-200 w-full mb-2"
+                                    class="relative flex items-center border border-border-primary dark:border-dark-border-primary rounded-lg px-3 py-1.5 bg-background-tertiary dark:bg-dark-background-tertiary shadow-sm transition-all duration-200 w-full mb-2"
                                   >
                                     <ng-icon
                                       name="heroDocument"
@@ -286,7 +286,7 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                                     <button
                                       type="button"
                                       (click)="detachFromComment(att)"
-                                      class="ml-2 p-1 rounded-md outline-none border-none shrink-0 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+                                      class="ml-2 p-1 rounded-md outline-none border-none shrink-0 text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-200"
                                       [title]="'Basic.delete' | translate"
                                     >
                                       <ng-icon name="heroTrash" size="16" class="align-middle"></ng-icon>
@@ -351,9 +351,9 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                                       <button
                                         type="button"
                                         (click)="downloadAttachment(attachment)"
-                                        class="flex items-center gap-2 p-2 w-full bg-neutral-100 dark:bg-neutral-800 rounded-md h-20 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
+                                        class="flex items-center gap-2 p-2 w-full bg-background-tertiary dark:bg-dark-background-tertiary rounded-md h-20 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200"
                                       >
-                                        <ng-icon name="heroDocument" size="20" class="text-blue-500 shrink-0"></ng-icon>
+                                        <ng-icon name="heroDocument" size="20" class="text-info-500 shrink-0"></ng-icon>
                                         <span class="text-xs text-text-primary dark:text-dark-text-primary truncate">{{
                                           attachmentName(attachment)
                                         }}</span>

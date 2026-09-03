@@ -12,7 +12,7 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroClock, heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroArrowPath, heroClock, heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -24,6 +24,7 @@ import { ButtonRoleEnum } from 'src/app/shared/enums/modal.enum';
 import { ToastTypeEnum } from 'src/app/shared/enums/toast-type.enum';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { BadgeComponent } from '../shared/components/atoms/badge.component';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
@@ -54,8 +55,9 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
     MatTooltipModule,
     ErrorMessageComponent,
     NgIconComponent,
+    BadgeComponent,
   ],
-  viewProviders: [provideIcons({ heroInformationCircle, heroTrash, heroClock })],
+  viewProviders: [provideIcons({ heroInformationCircle, heroTrash, heroClock, heroArrowPath })],
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
@@ -71,7 +73,7 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
               class="flex items-center justify-center"
             >
               <span class="flex items-center justify-center w-8.75 h-8.75">
-                <ng-icon [size]="'30'" name="heroInformationCircle" class="text-blue-500" />
+                <ng-icon [size]="'30'" name="heroInformationCircle" class="text-info-500" />
               </span>
             </button>
           }
@@ -80,9 +82,15 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
             ({{ selectedTasks().length }})
           }
         </div>
-        <app-button (click)="navigateToAddTask()">
-          {{ 'Task.addTask' | translate }}
-        </app-button>
+        <div class="flex flex-wrap items-center gap-2">
+          <app-button variant="stroked" (click)="refresh()">
+            <ng-icon name="heroArrowPath" size="16" />
+            {{ 'Basic.refresh' | translate }}
+          </app-button>
+          <app-button (click)="navigateToAddTask()">
+            {{ 'Task.addTask' | translate }}
+          </app-button>
+        </div>
       </div>
 
       <ng-template #numberTemplate let-task>
@@ -92,15 +100,11 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
       <ng-template #statusTemplate let-task>
         <div class="flex items-center justify-center">
           @if (task.statusName) {
-            <span
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-              [style.background-color]="task.statusColor"
-              [style.color]="getContrastColor(task.statusColor)"
-            >
+              <app-badge shape="pill" variant="custom" [background]="task.statusColor" [foreground]="getContrastColor(task.statusColor)">
               {{ task.statusName }}
-            </span>
+            </app-badge>
           } @else {
-            <span class="text-sm text-neutral-500 dark:text-neutral-400">-</span>
+            <span class="text-sm text-text-secondary dark:text-dark-text-secondary">-</span>
           }
         </div>
       </ng-template>
@@ -110,17 +114,13 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
           @if (task.categories && task.categories.length > 0) {
             <div class="flex flex-wrap gap-1">
               @for (category of task.categories; track category.id) {
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-                  [style.background-color]="category.color"
-                  [style.color]="getContrastColor(category.color)"
-                >
+                  <app-badge shape="pill" variant="custom" [background]="category.color" [foreground]="getContrastColor(category.color)">
                   {{ getCategoryName(category) }}
-                </span>
+                </app-badge>
               }
             </div>
           } @else {
-            <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
+            <span class="text-sm text-text-secondary dark:text-dark-text-secondary"> - </span>
           }
         </div>
       </ng-template>
@@ -130,15 +130,13 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
           @if (task.assignees && task.assignees.length > 0) {
             <div class="flex flex-wrap gap-1">
               @for (user of task.assignees; track user.id) {
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200"
-                >
+                <app-badge shape="pill" variant="success">
                   {{ user.displayName }}
-                </span>
+                </app-badge>
               }
             </div>
           } @else {
-            <span class="text-sm text-neutral-500 dark:text-neutral-400"> - </span>
+            <span class="text-sm text-text-secondary dark:text-dark-text-secondary"> - </span>
           }
         </div>
       </ng-template>
@@ -366,6 +364,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     if (projectId) {
       this.router.navigate(['/projects', projectId, 'tasks', 'details', task.id]).then();
     }
+  }
+
+  protected refresh(): void {
+    this.getAllTasks(this.currentSearchParams()).subscribe();
   }
 
   protected openWorkLog(taskId: string): void {
@@ -626,6 +628,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     this.projectsService.getProjectById(projectId).subscribe(project => {
       this.projectName.set(project.data.name);
       this.projectIsPublic.set(project.data.isPublic);
+      this.hiddenWorkLogEnabled.set(project.data.hiddenWorkLogEnabled);
     });
   }
 

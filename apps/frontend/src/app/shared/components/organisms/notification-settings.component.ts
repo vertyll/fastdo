@@ -15,7 +15,7 @@ import { TitleComponent } from '../atoms/title.component';
   selector: 'app-notification-settings',
   imports: [ReactiveFormsModule, TranslatePipe, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
   template: `
-    <div class="max-w-2xl mx-auto">
+    <div class="max-w-3xl mx-auto">
       <app-title [text]="'Notifications.settings' | translate" />
 
       @if (notificationStateService.settings(); as settings) {
@@ -24,10 +24,10 @@ import { TitleComponent } from '../atoms/title.component';
             <thead>
               <tr class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
                 <th class="py-2">{{ 'Notifications.type' | translate }}</th>
-                <th class="px-4 py-2 w-36 text-center align-bottom">
+                <th class="px-4 py-2 w-44 text-center align-bottom whitespace-nowrap">
                   {{ 'Notifications.appNotifications' | translate }}
                 </th>
-                <th class="px-4 py-2 w-36 text-center align-bottom">
+                <th class="px-4 py-2 w-44 text-center align-bottom whitespace-nowrap">
                   {{ 'Notifications.emailNotifications' | translate }}
                 </th>
               </tr>

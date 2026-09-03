@@ -82,7 +82,7 @@ const CROPPER_TEMPLATE =
           </button>
           @if (previewUrl()) {
             <button
-              class="absolute flex bottom-3 right-13 bg-red-500 hover:bg-red-600 rounded-full p-2 shadow-md  transition-colors duration-200"
+              class="absolute flex bottom-3 right-13 bg-danger-500 hover:bg-danger-600 rounded-full p-2 shadow-md  transition-colors duration-200"
               (click)="$event.preventDefault(); $event.stopPropagation(); removeImage()"
               [attr.aria-label]="'Image.removeImage' | translate"
               [title]="'Image.removeImage' | translate"
@@ -209,7 +209,37 @@ export class ImageComponent implements OnDestroy {
       }
 
       this.cropper = new Cropper(element.nativeElement, { template: CROPPER_TEMPLATE });
+      this.keepSelectionInsideImage();
     }
+  }
+
+  private keepSelectionInsideImage(): void {
+    const selection = this.cropper?.getCropperSelection();
+    const image = this.cropper?.getCropperImage();
+    if (!selection || !image) {
+      return;
+    }
+
+    selection.addEventListener('change', (event: Event) => {
+      const next = (event as CustomEvent<{ x: number; y: number; width: number; height: number }>).detail;
+      const bounds = image.getBoundingClientRect();
+      const canvas = selection.parentElement?.getBoundingClientRect();
+      if (!canvas) {
+        return;
+      }
+
+      const left = bounds.left - canvas.left;
+      const top = bounds.top - canvas.top;
+      const outside =
+        next.x < left ||
+        next.y < top ||
+        next.x + next.width > left + bounds.width ||
+        next.y + next.height > top + bounds.height;
+
+      if (outside) {
+        event.preventDefault();
+      }
+    });
   }
 
   constructor() {

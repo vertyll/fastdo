@@ -131,21 +131,21 @@ type TranslationFilters = {
           {{ 'Admin.noKeys' | translate }}
         </p>
       } @else {
-        <div class="grid grid-cols-[3rem_1fr] items-center gap-3 px-4">
+        <div class="px-4">
           <app-checkbox
             class="-ml-[11px]"
             [control]="selectAllControl"
             id="selectAllKeys"
+            [label]="'Admin.selectAll' | translate"
             (changed)="toggleSelectAll($event.checked)"
           />
-          <label for="selectAllKeys" class="text-sm text-text-primary dark:text-dark-text-primary cursor-pointer">
-            {{ 'Admin.selectAll' | translate }}
-          </label>
         </div>
 
         <ul class="space-y-3">
           @for (entry of keys(); track entry.key) {
-            <li class="rounded-md border border-border-primary dark:border-dark-border-primary p-4">
+            <li
+              class="rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary p-4"
+            >
               <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
                 <div class="grid grid-cols-[3rem_1fr] items-center gap-3 min-w-0">
                   <app-checkbox

@@ -10,7 +10,9 @@ import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { PaginatorComponent } from '../shared/components/atoms/paginator.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
-import { PaginationParams } from '../shared/defs/filter.defs';
+import { FilterMetadata, PaginationParams } from '../shared/defs/filter.defs';
+import { FilterTypeEnum } from '../shared/enums/filter-type.enum';
+import { FilterGroupComponent } from '../shared/components/organisms/filter-group.component';
 import { ButtonRoleEnum, ModalSizeEnum } from '../shared/enums/modal.enum';
 import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
 import { ModalService } from '../shared/services/modal.service';
@@ -26,6 +28,7 @@ import { AdminUser, Role } from './defs/role.defs';
     NgIconComponent,
     BadgeComponent,
     ButtonComponent,
+    FilterGroupComponent,
     PaginatorComponent,
     SpinnerComponent,
     TitleComponent,
@@ -42,6 +45,19 @@ import { AdminUser, Role } from './defs/role.defs';
         </app-button>
       </div>
 
+      <div
+        class="rounded-lg border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary px-4 py-3"
+      >
+        <app-filter-group
+          [filters]="filterMetadata"
+          type="users"
+          scope="admin"
+          [collapsible]="true"
+          [totalResults]="total()"
+          (filterChange)="onFilterChange($event)"
+        />
+      </div>
+
       @if (loading()) {
         <div class="flex justify-center py-16"><app-spinner /></div>
       } @else if (failed()) {
@@ -53,7 +69,9 @@ import { AdminUser, Role } from './defs/role.defs';
       } @else {
         <ul class="space-y-3">
           @for (user of users(); track user.id) {
-            <li class="rounded-md border border-border-primary dark:border-dark-border-primary p-4">
+            <li
+              class="rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary p-4"
+            >
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0">
                   <p class="text-sm font-semibold text-text-primary dark:text-dark-text-primary">
@@ -62,9 +80,8 @@ import { AdminUser, Role } from './defs/role.defs';
                   <p class="text-xs text-text-secondary dark:text-dark-text-secondary break-all">{{ user.email }}</p>
                 </div>
 
-                <app-button variant="stroked" (clicked)="editRoles(user)">
+                <app-button variant="icon" [title]="'Admin.manageRoles' | translate" (clicked)="editRoles(user)">
                   <ng-icon name="heroShieldCheck" size="16" />
-                  {{ 'Admin.manageRoles' | translate }}
                 </app-button>
               </div>
 
@@ -103,11 +120,16 @@ export class UsersPageComponent implements OnInit {
   protected readonly users = signal<AdminUser[]>([]);
   protected readonly loading = signal(true);
   protected readonly failed = signal(false);
+
+  protected readonly filterMetadata: FilterMetadata[] = [
+    { type: FilterTypeEnum.Text, formControlName: 'searchTerm', labelKey: 'Admin.searchUsers' },
+  ];
   protected readonly total = signal(0);
   protected readonly page = signal(0);
   protected readonly pageSize = signal(25);
 
   private roles: Role[] = [];
+  private searchTerm: string | undefined;
   private panel: UserRolesPanelComponent | null = null;
 
   public ngOnInit(): void {
@@ -116,6 +138,12 @@ export class UsersPageComponent implements OnInit {
 
   protected displayName(user: AdminUser): string {
     return [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email;
+  }
+
+  protected onFilterChange(values: { searchTerm?: string }): void {
+    this.searchTerm = values.searchTerm?.trim() || undefined;
+    this.page.set(0);
+    this.load();
   }
 
   protected onPageChange(params: PaginationParams): void {
@@ -129,7 +157,7 @@ export class UsersPageComponent implements OnInit {
     this.failed.set(false);
 
     forkJoin({
-      page: this.api.getUsers(this.page(), this.pageSize()),
+      page: this.api.getUsers(this.page(), this.pageSize(), this.searchTerm),
       roles: this.api.getRoles('GLOBAL'),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))

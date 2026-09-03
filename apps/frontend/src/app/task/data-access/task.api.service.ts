@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiPaginatedResponse, ApiResponse } from '../../shared/defs/api-response.defs';
@@ -14,6 +15,7 @@ import {
   TaskDetails,
   TaskListItem,
   UpdateTaskPayload,
+  WorkLogPage,
 } from '../defs/task.defs';
 
 const TASKS = '/tasks';
@@ -105,9 +107,18 @@ export class TasksApiService extends HttpApiService {
     );
   }
 
-  public getWorkLog(taskId: string): Observable<ApiResponse<WorkLogEntry[]>> {
+  public getWorkLog(
+    taskId: string,
+    page: number,
+    size: number,
+    hidden?: boolean,
+  ): Observable<ApiResponse<WorkLogPage>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (hidden !== undefined) {
+      params = params.set('hidden', hidden);
+    }
     return this.withLoadingState(
-      this.http.get<ApiResponse<WorkLogEntry[]>>(`${this.baseUrl}${TASKS}/${taskId}/worklog`),
+      this.http.get<ApiResponse<WorkLogPage>>(`${this.baseUrl}${TASKS}/${taskId}/worklog`, { params }),
     );
   }
 

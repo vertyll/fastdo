@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { provideIcons } from '@ng-icons/core';
-import { heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroArrowPath, heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { BadgeComponent } from '../shared/components/atoms/badge.component';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { ErrorMessageComponent } from '../shared/components/atoms/error.message.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
@@ -28,14 +29,28 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
 
 @Component({
   selector: 'app-project-list-page',
-  imports: [TranslatePipe, ErrorMessageComponent, TitleComponent, ButtonComponent, TableComponent],
+  imports: [
+    TranslatePipe,
+    NgIconComponent,
+    BadgeComponent,
+    ErrorMessageComponent,
+    TitleComponent,
+    ButtonComponent,
+    TableComponent,
+  ],
   template: `
     <div class="flex flex-col mb-6 gap-4">
       <div class="flex flex-row items-center justify-between">
         <app-title [text]="'Project.title' | translate"></app-title>
-        <app-button (click)="navigateToAddProject()">
-          {{ 'Project.addProject' | translate }}
-        </app-button>
+        <div class="flex flex-wrap items-center gap-2">
+          <app-button variant="stroked" (click)="refresh()">
+            <ng-icon name="heroArrowPath" size="16" />
+            {{ 'Basic.refresh' | translate }}
+          </app-button>
+          <app-button (click)="navigateToAddProject()">
+            {{ 'Project.addProject' | translate }}
+          </app-button>
+        </div>
       </div>
     </div>
     <div>
@@ -65,9 +80,9 @@ import { ProjectListItem, ProjectType } from './defs/project.defs';
 
     <ng-template #projectUserRoleTemplate let-row>
       <div>
-        <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <app-badge shape="pill" variant="accent">
           {{ row.projectUserRole }}
-        </span>
+        </app-badge>
       </div>
     </ng-template>
   `,
@@ -255,6 +270,8 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.getAllProjects(searchParams);
   }
 
+  private lastSearchParams: GetAllProjectsSearchParams | undefined;
+
   protected handleFiltersChange(filters: any): void {
     if (Object.keys(filters).length === 0) return;
     const searchParams = getAllProjectsSearchParams(filters as ProjectListFiltersConfig);
@@ -372,7 +389,12 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     return typeof version === 'number' ? version : null;
   }
 
+  protected refresh(): void {
+    this.getAllProjects(this.lastSearchParams);
+  }
+
   private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
+    this.lastSearchParams = searchParams;
     this.projectsService.getAll(searchParams).subscribe({
       next: response => {
         this.rawProjects = response.data.items;

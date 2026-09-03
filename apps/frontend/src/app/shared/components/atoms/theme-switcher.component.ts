@@ -17,7 +17,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       [attr.aria-label]="'Basic.toggleTheme' | translate"
     >
       @if (themeService.currentTheme === ThemeEnum.Dark) {
-        <ng-icon name="heroSun" size="24" class="text-yellow-400" />
+        <ng-icon name="heroSun" size="24" class="text-warning-400" />
       } @else {
         <ng-icon name="heroMoon" size="24" class="text-text-muted dark:text-dark-text-muted" />
       }

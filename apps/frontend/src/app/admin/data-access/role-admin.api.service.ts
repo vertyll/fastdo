@@ -42,8 +42,11 @@ export class RoleAdminApiService extends HttpApiService {
       .pipe(map(() => undefined));
   }
 
-  public getUsers(page: number, size: number): Observable<PagedUsers> {
-    const params = new HttpParams().set('page', page).set('size', size);
+  public getUsers(page: number, size: number, searchTerm?: string): Observable<PagedUsers> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (searchTerm) {
+      params = params.set('searchTerm', searchTerm);
+    }
     return this.http
       .get<ApiResponse<PagedUsers>>(`${this.baseUrl}/users`, { params })
       .pipe(map(response => response.data));

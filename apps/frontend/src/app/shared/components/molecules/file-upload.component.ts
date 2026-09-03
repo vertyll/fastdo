@@ -34,7 +34,7 @@ export interface FileUploadItem {
           class="hidden"
         />
         @if (maxFiles() > 0) {
-          <span class="text-sm text-neutral-500 dark:text-neutral-400">
+          <span class="text-sm text-text-secondary dark:text-dark-text-secondary">
             {{ 'Basic.maxFiles' | translate: { count: maxFiles() } }}
           </span>
         }
@@ -42,19 +42,19 @@ export interface FileUploadItem {
 
       @if (files().length > 0) {
         <div class="space-y-2">
-          <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
             {{ 'Basic.selectedFiles' | translate }}
           </h4>
           <div class="space-y-2">
             @for (fileItem of files(); track fileItem.file.name) {
               <div class="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                 <div class="flex items-center gap-3">
-                  <ng-icon name="heroDocument" class="w-5 h-5 text-blue-500" />
+                  <ng-icon name="heroDocument" class="w-5 h-5 text-info-500" />
                   <div>
-                    <div class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    <div class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                       {{ fileItem.file.name }}
                     </div>
-                    <div class="text-xs text-neutral-500 dark:text-neutral-400">
+                    <div class="text-xs text-text-secondary dark:text-dark-text-secondary">
                       {{ formatFileSize(fileItem.file.size) }}
                     </div>
                   </div>
@@ -62,7 +62,7 @@ export interface FileUploadItem {
                 <button
                   type="button"
                   (click)="removeFile(fileItem)"
-                  class="p-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
+                  class="p-1 text-danger-500 hover:text-danger-700 dark:text-danger-400 dark:hover:text-danger-300 transition-colors duration-200"
                 >
                   <ng-icon name="heroXMark" class="w-4 h-4" />
                 </button>
@@ -81,7 +81,7 @@ export interface FileUploadItem {
       }
 
       @if (maxSizeBytes() > 0) {
-        <div class="text-xs text-neutral-500 dark:text-neutral-400">
+        <div class="text-xs text-text-secondary dark:text-dark-text-secondary">
           {{ 'Basic.maxFileSize' | translate: { size: formatFileSize(maxSizeBytes()) } }}
         </div>
       }

@@ -131,3 +131,11 @@ export type GetAllTasksSearchParams = {
   page?: number;
   size?: number;
 };
+
+export type WorkLogPage = {
+  content: WorkLogEntry[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalMinutes: number;
+};

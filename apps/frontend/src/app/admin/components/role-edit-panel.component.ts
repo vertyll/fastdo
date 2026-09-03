@@ -67,13 +67,15 @@ type ModuleGroup = {
             <p class="text-xs font-semibold uppercase tracking-wide text-text-secondary dark:text-dark-text-secondary">
               {{ group.module }}
             </p>
-            <button
-              type="button"
-              class="text-xs text-primary-600 dark:text-primary-300 hover:underline"
-              (click)="toggleModule(group)"
-            >
-              {{ (allChecked(group) ? 'Admin.clearAll' : 'Admin.selectAll') | translate }}
-            </button>
+            @if (!unrestricted()) {
+              <button
+                type="button"
+                class="text-xs text-primary-600 dark:text-primary-300 hover:underline"
+                (click)="toggleModule(group)"
+              >
+                {{ (allChecked(group) ? 'Admin.clearAll' : 'Admin.selectAll') | translate }}
+              </button>
+            }
           </div>
 
           <div class="space-y-1 pl-3 border-l-2 border-border-primary dark:border-dark-border-primary">
@@ -141,6 +143,7 @@ export class RoleEditPanelComponent implements OnInit {
 
   private showPermissionsFor(scope: RoleScope): void {
     const granted = new Set(this.role?.permissions ?? []);
+    const holdsEverything = this.unrestricted();
 
     this.groups.set(
       this.modules
@@ -151,7 +154,10 @@ export class RoleEditPanelComponent implements OnInit {
             .map(permission => ({
               name: permission.name,
               description: permission.description,
-              control: new FormControl(granted.has(permission.name), { nonNullable: true }),
+              control: new FormControl(
+                { value: holdsEverything || granted.has(permission.name), disabled: holdsEverything },
+                { nonNullable: true },
+              ),
             })),
         }))
         .filter(group => group.rows.length > 0),
@@ -178,10 +184,12 @@ export class RoleEditPanelComponent implements OnInit {
     return {
       name: this.role?.name ?? name,
       description: this.descriptionControl.value.trim() || null,
-      permissions: this.groups()
-        .flatMap(group => group.rows)
-        .filter(row => row.control.value)
-        .map(row => row.name),
+      permissions: this.unrestricted()
+        ? (this.role?.permissions ?? [])
+        : this.groups()
+            .flatMap(group => group.rows)
+            .filter(row => row.control.value)
+            .map(row => row.name),
       scope: this.role?.scope ?? this.scopeControl.value,
     };
   }

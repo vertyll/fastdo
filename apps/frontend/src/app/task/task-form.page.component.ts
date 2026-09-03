@@ -92,19 +92,19 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
             />
           </div>
 
-          <div>
-            <app-input-field
-              [control]="priceEstimationControl"
-              id="priceEstimation"
-              [label]="'Task.priceEstimation' | translate"
-              type="number"
-            />
-            @if (fieldErrors['priceEstimation']) {
-              <app-error-message [customMessage]="fieldErrors['priceEstimation'].join(', ')" />
-            }
-          </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <app-input-field
+                [control]="priceEstimationControl"
+                id="priceEstimation"
+                [label]="'Task.priceEstimation' | translate"
+                type="number"
+              />
+              @if (fieldErrors['priceEstimation']) {
+                <app-error-message [customMessage]="fieldErrors['priceEstimation'].join(', ')" />
+              }
+            </div>
+
             <app-select-field
               [control]="priorityIdControl"
               id="priorityId"
@@ -167,19 +167,19 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
           </div>
 
           <div class="space-y-4">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+            <h3 class="text-lg font-medium text-text-primary dark:text-dark-text-primary">
               {{ 'Task.attachments' | translate }}
             </h3>
 
             @if (existingAttachments().length > 0) {
               <div class="space-y-2">
-                <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                   {{ 'Task.existingAttachments' | translate }}
                 </h4>
                 <div class="flex flex-col gap-3">
                   @for (attachment of existingAttachments(); track attachment.id) {
                     <div
-                      class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-neutral-200 dark:border-neutral-700 transition-opacity duration-200"
+                      class="flex items-center justify-between p-3 bg-background-secondary dark:bg-dark-background-secondary dark:text-dark-text-primary rounded-lg border border-border-primary dark:border-dark-border-primary transition-opacity duration-200"
                     >
                       <div class="flex items-center gap-3 flex-1 min-w-0">
                         <div class="shrink-0">
@@ -192,15 +192,15 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                               class="w-10 h-10 object-cover rounded-md cursor-pointer"
                             />
                           } @else {
-                            <ng-icon name="heroDocument" size="20" class="text-blue-500"></ng-icon>
+                            <ng-icon name="heroDocument" size="20" class="text-info-500"></ng-icon>
                           }
                         </div>
 
                         <div class="min-w-0 flex-1">
-                          <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
+                          <p class="text-sm font-medium text-text-primary dark:text-dark-text-primary truncate">
                             {{ attachment.originalName }}
                           </p>
-                          <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                          <p class="text-xs text-text-secondary dark:text-dark-text-secondary">
                             {{ formatFileSize(attachment.sizeBytes) }}
                           </p>
                         </div>
@@ -210,7 +210,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                         <button
                           type="button"
                           (click)="removeExistingAttachment(attachment)"
-                          class="p-1 rounded-md outline-none border-none text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+                          class="p-1 rounded-md outline-none border-none text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-200"
                           [title]="'Basic.delete' | translate"
                         >
                           <ng-icon name="heroTrash" size="16"></ng-icon>
@@ -224,12 +224,12 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
 
             <div class="space-y-2">
               @if (taskId()) {
-                <h4 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <h4 class="text-sm font-medium text-text-primary dark:text-dark-text-primary">
                   {{ 'Task.addNewAttachments' | translate }}
                 </h4>
               }
               <div
-                [class]="getTotalAttachments() > maxAttachmentsLimit ? 'border-2 border-red-500 rounded-md p-2' : ''"
+                [class]="getTotalAttachments() > maxAttachmentsLimit ? 'border-2 border-danger-500 rounded-md p-2' : ''"
               >
                 <app-file-upload
                   [multiple]="true"
@@ -241,11 +241,11 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
               </div>
               @if (taskId()) {
                 <p
-                  class="text-xs text-neutral-500 dark:text-neutral-400"
+                  class="text-xs text-text-secondary dark:text-dark-text-secondary"
                   [class]="
                     getTotalAttachments() > maxAttachmentsLimit
-                      ? 'text-red-500'
-                      : 'text-neutral-500 dark:text-neutral-400'
+                      ? 'text-danger-500'
+                      : 'text-text-secondary dark:text-dark-text-secondary'
                   "
                 >
                   {{
@@ -259,7 +259,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
                 </p>
               }
               @if (getTotalAttachments() > maxAttachmentsLimit) {
-                <p class="text-xs text-red-500">
+                <p class="text-xs text-danger-500">
                   {{ 'Task.attachmentsLimitExceeded' | translate }}
                 </p>
               }

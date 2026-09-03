@@ -79,7 +79,9 @@ type RoleFilters = {
       } @else {
         <ul class="space-y-3">
           @for (role of visible(); track role.id) {
-            <li class="rounded-md border border-border-primary dark:border-dark-border-primary p-4">
+            <li
+              class="rounded-md border border-border-primary dark:border-dark-border-primary bg-background-secondary dark:bg-dark-background-secondary p-4"
+            >
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0">
                   <div class="flex flex-wrap items-center gap-2">
