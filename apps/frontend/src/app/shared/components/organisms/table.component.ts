@@ -147,6 +147,8 @@ export interface TableConfig {
   integratedPagination?: boolean;
 }
 
+const MOBILE_MAX_COLUMN_REM = 8;
+
 @Component({
   selector: 'app-table',
   imports: [
@@ -457,6 +459,29 @@ export interface TableConfig {
       .actions-header {
         width: 8rem;
         min-width: 8rem;
+      }
+
+      @media (max-width: 767px) {
+        .actions-header {
+          width: 6.5rem;
+          min-width: 6.5rem;
+        }
+
+        .select-column {
+          width: 2.5rem;
+          min-width: 2.5rem;
+        }
+
+        .responsive-table {
+          width: 100%;
+        }
+
+        .responsive-table td,
+        .responsive-table th {
+          max-width: 8rem;
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
       }
 
       :host .mat-mdc-header-cell {
@@ -1039,6 +1064,11 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
         default:
           return this.isMobile() ? '8rem' : 'auto';
       }
+    }
+
+    if (this.isMobile() && typeof column.width === 'string' && column.width.endsWith('rem')) {
+      const configured = Number.parseFloat(column.width);
+      return configured > MOBILE_MAX_COLUMN_REM ? `${MOBILE_MAX_COLUMN_REM}rem` : column.width;
     }
 
     if (typeof column.width === 'number') {

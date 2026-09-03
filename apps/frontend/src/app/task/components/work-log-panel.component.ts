@@ -1,0 +1,324 @@
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroPencil, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { catchError, of } from 'rxjs';
+import { ButtonComponent } from '../../shared/components/atoms/button.component';
+import { CheckboxComponent } from '../../shared/components/atoms/checkbox.component';
+import { InputFieldComponent } from '../../shared/components/molecules/input-field.component';
+import { TextareaFieldComponent } from '../../shared/components/molecules/textarea-field.component';
+import { DateFieldComponent } from '../../shared/components/molecules/date-field.component';
+import { SpinnerComponent } from '../../shared/components/atoms/spinner.component';
+import { ToastTypeEnum } from '../../shared/enums/toast-type.enum';
+import { NotificationService } from '../../shared/services/notification.service';
+import { TasksService } from '../data-access/task.service';
+import { WorkLogEntry } from '../defs/task.defs';
+import { formatDuration, parseDuration } from '../utils/duration';
+import { toIsoDay } from '../utils/day';
+
+type DayGroup = {
+  day: string;
+  totalMinutes: number;
+  entries: WorkLogEntry[];
+};
+
+@Component({
+  selector: 'app-work-log-panel',
+  imports: [
+    ReactiveFormsModule,
+    TranslatePipe,
+    NgIconComponent,
+    ButtonComponent,
+    CheckboxComponent,
+    DateFieldComponent,
+    InputFieldComponent,
+    TextareaFieldComponent,
+    SpinnerComponent,
+  ],
+  viewProviders: [provideIcons({ heroPencil, heroTrash, heroXMark })],
+  template: `
+    <div class="space-y-4 text-left">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr] gap-3">
+          <app-input-field
+            [control]="form.controls.duration"
+            id="workLogDuration"
+            [label]="'WorkLog.duration' | translate"
+            [placeholder]="'WorkLog.durationPlaceholder' | translate"
+          />
+          <app-date-field
+            [control]="form.controls.workedOn"
+            id="workLogWorkedOn"
+            [label]="'WorkLog.workedOn' | translate"
+          />
+        </div>
+
+        <app-textarea-field
+          [control]="form.controls.description"
+          id="workLogDescription"
+          [label]="'WorkLog.description' | translate"
+          [placeholder]="'WorkLog.descriptionPlaceholder' | translate"
+          [rows]="2"
+        />
+
+        @if (hiddenWorkLogEnabled) {
+          <app-checkbox
+            [control]="form.controls.hidden"
+            id="workLogHidden"
+            [label]="'WorkLog.hiddenEntry' | translate"
+          />
+        }
+
+        @if (formError()) {
+          <p class="text-xs text-danger-500">{{ formError()! | translate }}</p>
+        }
+
+        <div class="flex items-center gap-2">
+          <app-button type="submit" [disabled]="saving()">
+            {{ (editing() ? 'Basic.save' : 'WorkLog.log') | translate }}
+          </app-button>
+          @if (editing()) {
+            <app-button type="button" variant="stroked" (clicked)="cancelEdit()">
+              {{ 'Basic.cancel' | translate }}
+            </app-button>
+          }
+        </div>
+      </form>
+
+      <div class="border-t border-border-primary dark:border-dark-border-primary pt-3">
+        @if (loading()) {
+          <div class="flex justify-center py-6"><app-spinner /></div>
+        } @else if (groups().length === 0) {
+          <p class="py-6 text-center text-sm text-text-secondary dark:text-dark-text-secondary">
+            {{ 'WorkLog.empty' | translate }}
+          </p>
+        } @else {
+          <p class="text-xs text-text-secondary dark:text-dark-text-secondary mb-2">
+            {{ 'WorkLog.total' | translate }}: <span class="font-semibold">{{ formatted(totalMinutes()) }}</span>
+          </p>
+          <ul class="space-y-4 max-h-80 overflow-y-auto">
+            @for (group of groups(); track group.day) {
+              <li>
+                <div class="flex items-baseline justify-between mb-1">
+                  <span class="text-xs font-semibold text-text-primary dark:text-dark-text-primary">
+                    {{ formatDay(group.day) }}
+                  </span>
+                  <span class="text-xs text-text-secondary dark:text-dark-text-secondary">
+                    {{ formatted(group.totalMinutes) }}
+                  </span>
+                </div>
+                <ul class="space-y-1">
+                  @for (entry of group.entries; track entry.id) {
+                    <li
+                      class="flex items-start justify-between gap-2 px-2 py-1.5 rounded-md bg-surface-secondary dark:bg-dark-surface-secondary"
+                    >
+                      <div class="min-w-0">
+                        <p
+                          class="grid grid-cols-[3.5rem_1fr] gap-4 text-sm text-text-primary dark:text-dark-text-primary"
+                        >
+                          <span class="font-medium tabular-nums">{{ formatted(entry.minutes) }}</span>
+                          <span class="truncate"
+                            >{{ entry.author.displayName }}
+                            @if (entry.hidden) {
+                              <span
+                                class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+                              >
+                                {{ 'WorkLog.hidden' | translate }}
+                              </span>
+                            }
+                          </span>
+                        </p>
+                        @if (entry.description) {
+                          <p
+                            class="grid grid-cols-[3.5rem_1fr] gap-4 text-xs text-text-secondary dark:text-dark-text-secondary"
+                          >
+                            <span></span>
+                            <span class="break-words">{{ entry.description }}</span>
+                          </p>
+                        }
+                      </div>
+                      @if (canEdit(entry)) {
+                        <div class="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            (click)="startEdit(entry)"
+                            class="p-1 rounded-md text-text-secondary hover:text-primary-500 dark:text-dark-text-secondary"
+                            [attr.aria-label]="'Basic.edit' | translate"
+                          >
+                            <ng-icon name="heroPencil" size="14" />
+                          </button>
+                          <button
+                            type="button"
+                            (click)="remove(entry)"
+                            class="p-1 rounded-md text-text-secondary hover:text-danger-500 dark:text-dark-text-secondary"
+                            [attr.aria-label]="'Basic.delete' | translate"
+                          >
+                            <ng-icon name="heroTrash" size="14" />
+                          </button>
+                        </div>
+                      }
+                    </li>
+                  }
+                </ul>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  `,
+})
+export class WorkLogPanelComponent implements OnInit {
+  private readonly tasksService = inject(TasksService);
+  private readonly translateService = inject(TranslateService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  public taskId!: string;
+  public currentUserId: string | null = null;
+  public hiddenWorkLogEnabled = false;
+  public onChange: (() => void) | null = null;
+
+  protected readonly entries = signal<WorkLogEntry[]>([]);
+  protected readonly loading = signal(true);
+  protected readonly saving = signal(false);
+  protected readonly editing = signal<WorkLogEntry | null>(null);
+  protected readonly formError = signal<string | null>(null);
+
+  protected readonly form = new FormGroup({
+    duration: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    workedOn: new FormControl(new Date(), { nonNullable: true, validators: [Validators.required] }),
+    description: new FormControl('', { nonNullable: true }),
+    hidden: new FormControl(false, { nonNullable: true }),
+  });
+
+  protected readonly totalMinutes = computed(() => this.entries().reduce((sum, e) => sum + e.minutes, 0));
+
+  protected readonly groups = computed<DayGroup[]>(() => {
+    const byDay = new Map<string, WorkLogEntry[]>();
+    for (const entry of this.entries()) {
+      byDay.set(entry.workedOn, [...(byDay.get(entry.workedOn) ?? []), entry]);
+    }
+    return [...byDay.entries()]
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([day, entries]) => ({
+        day,
+        entries,
+        totalMinutes: entries.reduce((sum, e) => sum + e.minutes, 0),
+      }));
+  });
+
+  public ngOnInit(): void {
+    this.load();
+  }
+
+  protected formatted(minutes: number): string {
+    return formatDuration(minutes);
+  }
+
+  protected formatDay(day: string): string {
+    return new Date(day).toLocaleDateString(this.translateService.getCurrentLang() || 'pl', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
+  }
+
+  protected canEdit(entry: WorkLogEntry): boolean {
+    return this.currentUserId !== null && entry.author.id === this.currentUserId;
+  }
+
+  protected startEdit(entry: WorkLogEntry): void {
+    this.editing.set(entry);
+    this.formError.set(null);
+    this.form.setValue({
+      duration: formatDuration(entry.minutes),
+      workedOn: new Date(entry.workedOn),
+      description: entry.description ?? '',
+      hidden: entry.hidden,
+    });
+  }
+
+  protected cancelEdit(): void {
+    this.editing.set(null);
+    this.formError.set(null);
+    this.form.setValue({ duration: '', workedOn: new Date(), description: '', hidden: false });
+  }
+
+  protected submit(): void {
+    const minutes = parseDuration(this.form.controls.duration.value);
+    if (minutes === null) {
+      this.formError.set('WorkLog.durationInvalid');
+      return;
+    }
+
+    this.formError.set(null);
+    this.saving.set(true);
+
+    const payload = {
+      minutes,
+      workedOn: toIsoDay(this.form.controls.workedOn.value),
+      description: this.form.controls.description.value.trim() || null,
+      hidden: this.form.controls.hidden.value,
+    };
+    const entry = this.editing();
+    const request$ = entry
+      ? this.tasksService.updateWorkLogEntry(entry.id, payload, entry.version)
+      : this.tasksService.logWork(this.taskId, payload);
+
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.cancelEdit();
+        this.load();
+        this.onChange?.();
+      },
+      error: error => {
+        this.saving.set(false);
+        this.notificationService.showNotification(
+          this.translateService.instant('WorkLog.saveError'),
+          ToastTypeEnum.Error,
+        );
+        console.error('Work log save failed:', error);
+      },
+    });
+  }
+
+  protected remove(entry: WorkLogEntry): void {
+    this.tasksService
+      .deleteWorkLogEntry(entry.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          if (this.editing()?.id === entry.id) {
+            this.cancelEdit();
+          }
+          this.load();
+          this.onChange?.();
+        },
+        error: error => {
+          this.notificationService.showNotification(
+            this.translateService.instant('WorkLog.deleteError'),
+            ToastTypeEnum.Error,
+          );
+          console.error('Work log delete failed:', error);
+        },
+      });
+  }
+
+  private load(): void {
+    this.loading.set(true);
+    this.tasksService
+      .getWorkLog(this.taskId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(() => of(null)),
+      )
+      .subscribe(response => {
+        this.loading.set(false);
+        this.entries.set(response?.data ?? []);
+      });
+  }
+}

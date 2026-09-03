@@ -92,7 +92,7 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
             />
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
             <app-input-field
               [control]="priceEstimationControl"
               id="priceEstimation"
@@ -101,16 +101,6 @@ import { formatFileSize as formatFileSizeUtil } from '../shared/utils/file-size.
             />
             @if (fieldErrors['priceEstimation']) {
               <app-error-message [customMessage]="fieldErrors['priceEstimation'].join(', ')" />
-            }
-
-            <app-input-field
-              [control]="workedTimeControl"
-              id="workedTime"
-              [label]="'Task.workedTime' | translate"
-              type="number"
-            />
-            @if (fieldErrors['workedTime']) {
-              <app-error-message [customMessage]="fieldErrors['workedTime'].join(', ')" />
             }
           </div>
 
@@ -356,10 +346,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
     return this.taskForm.get('priceEstimation') as FormControl;
   }
 
-  public get workedTimeControl(): FormControl {
-    return this.taskForm.get('workedTime') as FormControl;
-  }
-
   public get priorityIdControl(): FormControl {
     return this.taskForm.get('priorityId') as FormControl;
   }
@@ -538,7 +524,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       name: ['', [Validators.required]],
       description: [''],
       priceEstimation: [0],
-      workedTime: [0],
       accessRole: [null],
       priority: [null],
       statusId: [null],
@@ -659,7 +644,6 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             name: task.name,
             description: task.description || '',
             priceEstimation: task.priceEstimation || 0,
-            workedTime: task.workedTime || 0,
             accessRole: task.accessRoleId || null,
             priority: task.priority,
             statusId: task.statusId || null,

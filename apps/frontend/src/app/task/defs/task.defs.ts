@@ -9,7 +9,7 @@ export type Task = {
   description: string | null;
   priority: TaskPriorityEnum;
   priceEstimation: number;
-  workedTime: number;
+  workedMinutes: number;
   statusId: string | null;
   categoryIds: string[];
   assigneeIds: string[];
@@ -47,7 +47,7 @@ export type TaskListItem = {
   categories: TaskCategoryView[];
   assignees: TaskUserView[];
   commentCount: number;
-  workedTime: number;
+  workedMinutes: number;
   createdAt: string;
   version: number | null;
 };
@@ -60,6 +60,27 @@ export type TaskDetails = {
   createdBy: TaskUserView | null;
   comments: TaskComment[];
   permissions: ProjectRolePermissionEnum[];
+  hiddenWorkLogEnabled: boolean;
+};
+
+export type WorkLogEntry = {
+  id: string;
+  taskId: string;
+  author: TaskUserView;
+  minutes: number;
+  workedOn: string;
+  description: string | null;
+  hidden: boolean;
+  createdAt: string;
+  updatedAt: string;
+  version: number | null;
+};
+
+export type WorkLogPayload = {
+  minutes: number;
+  workedOn: string;
+  description: string | null;
+  hidden: boolean;
 };
 
 export type TaskComment = {

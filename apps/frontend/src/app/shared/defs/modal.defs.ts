@@ -1,4 +1,4 @@
-import { ButtonRoleEnum, ModalInputTypeEnum } from '../enums/modal.enum';
+import { ButtonRoleEnum, ModalInputTypeEnum, ModalSizeEnum } from '../enums/modal.enum';
 import { SimpleNameItem } from './common.defs';
 
 export interface ModalInput<T = any> {
@@ -22,6 +22,7 @@ export interface ModalButton<T = any> {
 
 export interface ModalOptions {
   title: string;
+  size?: ModalSizeEnum;
   message?: string;
   error?: string;
   loading?: boolean;

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { ProjectRolePermissionGuard } from './core/guards/project-role-permission.guard';
@@ -88,6 +89,11 @@ export const routes: Routes = [
         m => m.NotificationSettingsComponent,
       ),
     canActivate: [authGuard],
+  },
+  {
+    path: 'admin/translations',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./admin/translations.page.component').then(m => m.TranslationsPageComponent),
   },
   {
     path: '**',

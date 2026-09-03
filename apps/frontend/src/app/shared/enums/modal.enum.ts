@@ -14,3 +14,10 @@ export enum ModalInputTypeEnum {
   EditableMultiSelect = 'editableMultiSelect',
   DatetimeLocal = 'datetime-local',
 }
+
+export enum ModalSizeEnum {
+  Small = 'sm',
+  Medium = 'md',
+  Large = 'lg',
+  ExtraLarge = 'xl',
+}

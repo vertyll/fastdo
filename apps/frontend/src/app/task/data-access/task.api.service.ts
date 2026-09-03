@@ -9,6 +9,8 @@ import {
   GetAllTasksSearchParams,
   Task,
   TaskComment,
+  WorkLogEntry,
+  WorkLogPayload,
   TaskDetails,
   TaskListItem,
   UpdateTaskPayload,
@@ -65,12 +67,6 @@ export class TasksApiService extends HttpApiService {
     );
   }
 
-  public logWork(taskId: string, hundredthsOfHour: number): Observable<ApiResponse<Task>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<Task>>(`${this.baseUrl}${TASKS}/${taskId}/worklog`, { hundredthsOfHour }),
-    );
-  }
-
   public delete(taskId: string, version: number | null): Observable<ApiResponse<void>> {
     return this.withLoadingState(
       this.http.delete<ApiResponse<void>>(`${this.baseUrl}${TASKS}/${taskId}`, { headers: this.ifMatch(version) }),
@@ -107,6 +103,34 @@ export class TasksApiService extends HttpApiService {
         { headers: this.ifMatch(version) },
       ),
     );
+  }
+
+  public getWorkLog(taskId: string): Observable<ApiResponse<WorkLogEntry[]>> {
+    return this.withLoadingState(
+      this.http.get<ApiResponse<WorkLogEntry[]>>(`${this.baseUrl}${TASKS}/${taskId}/worklog`),
+    );
+  }
+
+  public logWork(taskId: string, payload: WorkLogPayload): Observable<ApiResponse<WorkLogEntry>> {
+    return this.withLoadingState(
+      this.http.post<ApiResponse<WorkLogEntry>>(`${this.baseUrl}${TASKS}/${taskId}/worklog`, payload),
+    );
+  }
+
+  public updateWorkLogEntry(
+    entryId: string,
+    payload: WorkLogPayload,
+    version: number | null,
+  ): Observable<ApiResponse<WorkLogEntry>> {
+    return this.withLoadingState(
+      this.http.put<ApiResponse<WorkLogEntry>>(`${this.baseUrl}${TASKS}/worklog/${entryId}`, payload, {
+        headers: this.ifMatch(version),
+      }),
+    );
+  }
+
+  public deleteWorkLogEntry(entryId: string): Observable<ApiResponse<void>> {
+    return this.withLoadingState(this.http.delete<ApiResponse<void>>(`${this.baseUrl}${TASKS}/worklog/${entryId}`));
   }
 
   public deleteComment(commentId: string): Observable<ApiResponse<void>> {

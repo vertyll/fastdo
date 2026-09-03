@@ -5,7 +5,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AdDirective } from 'src/app/core/directives/ad.directive';
-import { ButtonRoleEnum, ModalInputTypeEnum } from '../../enums/modal.enum';
+import { ButtonRoleEnum, ModalInputTypeEnum, ModalSizeEnum } from '../../enums/modal.enum';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { ModalService } from '../../services/modal.service';
 import { ModalConfig } from '../../defs/modal.defs';
@@ -48,7 +48,8 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
       data-keyboard="true"
     >
       <div
-        class="w-full max-w-lg max-h-[90vh] bg-background-primary rounded-lg shadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-200 overflow-hidden flex flex-col"
+        class="w-full max-h-[90vh] bg-background-primary rounded-lg shadow-lg dark:bg-dark-background-primary dark:text-dark-text-primary transition-colors duration-200 overflow-hidden flex flex-col"
+        [class]="widthClass()"
         role="document"
       >
         <div
@@ -175,6 +176,7 @@ import { SelectFieldComponent } from '../molecules/select-field.component';
               @case (ButtonRole.Reject) {
                 <app-button
                   type="button"
+                  variant="danger"
                   (click)="saveModal(button)"
                   [disabled]="$safeNavigationMigration(modalService.modal().options?.loading)"
                 >
@@ -194,12 +196,26 @@ export class ModalComponent {
   public readonly adHost = viewChild(AdDirective);
 
   protected readonly ButtonRole = ButtonRoleEnum;
+  protected readonly ModalSizeEnum = ModalSizeEnum;
   protected readonly ModalInputType = ModalInputTypeEnum;
 
   public form: FormGroup = new FormGroup({});
 
   constructor() {
     effect(() => this.handleModalConfigChange());
+  }
+
+  protected widthClass(): string {
+    switch (this.modalService.modal().options?.size) {
+      case ModalSizeEnum.Small:
+        return 'max-w-md';
+      case ModalSizeEnum.Large:
+        return 'max-w-2xl';
+      case ModalSizeEnum.ExtraLarge:
+        return 'max-w-4xl';
+      default:
+        return 'max-w-lg';
+    }
   }
 
   protected getFormControl(name: string): FormControl {
@@ -284,14 +300,19 @@ export class ModalComponent {
 
   private initializeDynamicComponents(modalConfig: ModalConfig): void {
     const adHost = this.adHost();
-    if (!adHost || !Array.isArray(modalConfig.options?.components) || !modalConfig.options.components.length) {
+    if (!adHost) {
       return;
     }
 
     const viewContainerRef = adHost.viewContainerRef;
     viewContainerRef.clear();
 
-    modalConfig.options.components.forEach(component => {
+    const components = modalConfig.options?.components;
+    if (!Array.isArray(components) || !components.length) {
+      return;
+    }
+
+    components.forEach(component => {
       const componentRef = viewContainerRef.createComponent<any>(component.component);
       Object.assign(componentRef.instance, component.data);
     });

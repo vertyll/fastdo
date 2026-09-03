@@ -12,7 +12,7 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroClock, heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -35,6 +35,8 @@ import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { GetAllTasksSearchParams, TaskListItem, TaskSortFieldEnum } from './defs/task.defs';
 import { getContrastColor } from '../shared/utils/color.utils';
 import { getAllTasksSearchParams } from './data-access/task-filters.adapter';
+import { AuthStateService } from '../auth/data-access/auth.state.service';
+import { WorkLogPanelComponent } from './components/work-log-panel.component';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { PlatformService } from '../shared/services/platform.service';
@@ -53,7 +55,7 @@ import { ProjectRolePermissionEnum } from '../shared/enums/project-role-permissi
     ErrorMessageComponent,
     NgIconComponent,
   ],
-  viewProviders: [provideIcons({ heroInformationCircle, heroTrash })],
+  viewProviders: [provideIcons({ heroInformationCircle, heroTrash, heroClock })],
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
@@ -187,6 +189,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly modalService = inject(ModalService);
+  private readonly authStateService = inject(AuthStateService);
   private readonly projectsService = inject(ProjectsService);
   private readonly translateService = inject(TranslateService);
 
@@ -198,6 +201,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected taskPermissions = signal<string[]>([]);
   protected projectName = signal<string>('');
   protected projectIsPublic = signal<boolean>(false);
+  protected hiddenWorkLogEnabled = signal<boolean>(false);
   protected selectedTasks = signal<TaskListItem[]>([]);
   protected customTemplates = signal<{ [key: string]: TemplateRef<any> }>({});
 
@@ -229,6 +233,12 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         key: 'view',
         label: 'Basic.view',
         icon: 'heroEye',
+        color: 'primary',
+      },
+      {
+        key: 'logWork',
+        icon: 'heroClock',
+        label: 'WorkLog.title',
         color: 'primary',
       },
       {
@@ -354,6 +364,29 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     }
   }
 
+  protected openWorkLog(taskId: string): void {
+    this.modalService.present({
+      title: this.translateService.instant('WorkLog.title'),
+      components: [
+        {
+          component: WorkLogPanelComponent,
+          data: {
+            taskId,
+            currentUserId: this.authStateService.userId(),
+            hiddenWorkLogEnabled: this.hiddenWorkLogEnabled(),
+            onChange: () => this.getAllTasks(this.currentSearchParams()).subscribe(),
+          },
+        },
+      ],
+      buttons: [
+        {
+          role: ButtonRoleEnum.Cancel,
+          text: this.translateService.instant('Basic.close'),
+        },
+      ],
+    });
+  }
+
   protected handleActionClick(event: { action: string; row: any }): void {
     const projectId = this.projectId();
     if (!projectId) return;
@@ -361,6 +394,9 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     switch (event.action) {
       case 'view':
         this.router.navigate(['/projects', projectId, 'tasks', 'details', event.row.id]).then();
+        break;
+      case 'logWork':
+        this.openWorkLog(event.row.id);
         break;
       case 'edit':
         this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]).then();
@@ -488,6 +524,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       },
       {
         key: 'status',
+        hideOn: 'mobile',
         label: 'Task.status',
         type: 'custom',
         customTemplate: 'status',

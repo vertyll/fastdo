@@ -20,7 +20,10 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { AuthStateService } from '../auth/data-access/auth.state.service';
+import { WorkLogPanelComponent } from './components/work-log-panel.component';
+import { formatDuration } from './utils/duration';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
+import { RemoveItemButtonComponent } from '../shared/components/molecules/remove-item-button.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { FileUploadComponent, FileUploadItem } from '../shared/components/molecules/file-upload.component';
 import { ProjectsService } from '../project/data-access/project.service';
@@ -57,6 +60,7 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
     SpinnerComponent,
     TextareaFieldComponent,
     BackButtonComponent,
+    RemoveItemButtonComponent,
     DropdownMenuDirective,
   ],
   providers: [
@@ -100,6 +104,15 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
 
                 <button
                   type="button"
+                  class="text-left flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-dark-text-primary hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
+                  (click)="openWorkLog(); closeDropdown()"
+                >
+                  <ng-icon name="heroClock" size="16"></ng-icon>
+                  {{ 'WorkLog.title' | translate }}
+                </button>
+
+                <button
+                  type="button"
                   class="text-left flex items-center gap-2 px-3 py-2 text-sm text-danger-500 hover:text-danger-600 dark:text-danger-400 dark:hover:text-danger-300 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
                   (click)="deleteTask(); closeDropdown()"
                 >
@@ -119,11 +132,29 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
           <main class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 animate-fade-in">
             <div class="lg:col-span-2 space-y-6">
               <div class="rounded-lg shadow-soft p-6 dark:border-dark-border-primary border-border-primary border">
-                <h1
-                  class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4 wrap-break-word"
-                >
-                  {{ task()!.task.name }}
-                </h1>
+                <div class="mb-4 border-b border-border-primary dark:border-dark-border-primary pb-4">
+                  <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <span class="font-mono text-sm text-text-secondary dark:text-dark-text-secondary">
+                      #{{ task()!.task.number }}
+                    </span>
+                    @if (task()!.statusName) {
+                      <span
+                        class="px-2 py-0.5 rounded-full text-xs font-semibold bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+                      >
+                        {{ task()!.statusName }}
+                      </span>
+                    }
+                    <span
+                      class="px-2 py-0.5 rounded-full text-xs font-semibold bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+                    >
+                      {{ priorityLabel() | translate }}
+                    </span>
+                  </div>
+
+                  <h1 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary wrap-break-word">
+                    {{ task()!.task.name }}
+                  </h1>
+                </div>
 
                 @if (task()!.task.description) {
                   <div>
@@ -288,14 +319,10 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                                     >
                                       <ng-icon name="heroPencil" size="16"></ng-icon>
                                     </button>
-                                    <button
-                                      type="button"
-                                      (click)="onDeleteComment(comment.id)"
-                                      class="text-danger-600 hover:text-danger-800 p-1 rounded-full hover:bg-danger-100 dark:hover:bg-danger-900/50"
-                                      [title]="'Task.deleteComment' | translate"
-                                    >
-                                      <ng-icon name="heroTrash" size="16"></ng-icon>
-                                    </button>
+                                    <app-remove-item-button
+                                      confirmMessageKey="Task.deleteCommentConfirm"
+                                      (confirm)="deleteComment(comment.id)"
+                                    />
                                   }
                                 </div>
                               </div>
@@ -430,13 +457,20 @@ import { TASK_PRIORITY_LABELS } from '../shared/enums/task-priority.enum';
                     <h4 class="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">
                       {{ 'Task.timeTracking' | translate }}
                     </h4>
-                    <div class="text-md font-semibold text-text-primary dark:text-dark-text-primary mt-1">
-                      <span [title]="'Task.workedTime' | translate">{{ formatHours(task()!.task.workedTime) }}</span>
-                      <span class="mx-1 text-text-muted dark:text-dark-text-muted font-normal">/</span>
-                      <span [title]="'Task.priceEstimation' | translate">{{
-                        formatHours(task()!.task.priceEstimation)
-                      }}</span>
-                    </div>
+                    <dl class="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm">
+                      <dt class="text-text-secondary dark:text-dark-text-secondary">
+                        {{ 'Task.workedTime' | translate }}
+                      </dt>
+                      <dd class="font-semibold text-text-primary dark:text-dark-text-primary">
+                        {{ formatDuration(task()!.task.workedMinutes) }}
+                      </dd>
+                      <dt class="text-text-secondary dark:text-dark-text-secondary">
+                        {{ 'Task.priceEstimation' | translate }}
+                      </dt>
+                      <dd class="font-semibold text-text-primary dark:text-dark-text-primary">
+                        {{ formatHours(task()!.task.priceEstimation) }}
+                      </dd>
+                    </dl>
                   </div>
                 </div>
 
@@ -622,6 +656,38 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected formatDuration(minutes: number): string {
+    return formatDuration(minutes);
+  }
+
+  protected openWorkLog(): void {
+    const taskId = this.task()?.task.id;
+    if (!taskId) {
+      return;
+    }
+
+    this.modalService.present({
+      title: this.translateService.instant('WorkLog.title'),
+      components: [
+        {
+          component: WorkLogPanelComponent,
+          data: {
+            taskId,
+            currentUserId: this.authStateService.userId(),
+            hiddenWorkLogEnabled: this.task()?.hiddenWorkLogEnabled ?? false,
+            onChange: () => this.loadTask(),
+          },
+        },
+      ],
+      buttons: [
+        {
+          role: ButtonRoleEnum.Cancel,
+          text: this.translateService.instant('Basic.close'),
+        },
+      ],
+    });
+  }
+
   protected formatHours(value: number): string {
     if (value === 0) return '0h';
     const hours = Math.floor(value / 100);
@@ -802,45 +868,26 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     return (this.task()?.permissions ?? []).includes(ProjectRolePermissionEnum.MANAGE_TASKS);
   }
 
-  protected onDeleteComment(commentId: string): void {
-    this.modalService.present({
-      title: this.translateService.instant('Basic.deleteTitle'),
-      message: this.translateService.instant('Task.deleteCommentConfirm'),
-      buttons: [
-        {
-          role: ButtonRoleEnum.Cancel,
-          text: this.translateService.instant('Basic.cancel'),
+  protected deleteComment(commentId: string): void {
+    this.tasksService
+      .deleteComment(commentId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.commentDeleted'),
+            ToastTypeEnum.Success,
+          );
+          this.loadTask();
         },
-        {
-          role: ButtonRoleEnum.Ok,
-          text: this.translateService.instant('Basic.delete'),
-          handler: () => {
-            this.tasksService
-              .deleteComment(commentId)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: () => {
-                  this.notificationService.showNotification(
-                    this.translateService.instant('Task.commentDeleted'),
-                    ToastTypeEnum.Success,
-                  );
-                  this.loadTask();
-                  return true;
-                },
-                error: error => {
-                  console.error('Error deleting comment:', error);
-                  this.notificationService.showNotification(
-                    this.translateService.instant('Task.commentDeleteError'),
-                    ToastTypeEnum.Error,
-                  );
-                  return false;
-                },
-                complete: () => {},
-              });
-          },
+        error: error => {
+          this.notificationService.showNotification(
+            this.translateService.instant('Task.commentDeleteError'),
+            ToastTypeEnum.Error,
+          );
+          console.error('Error deleting comment:', error);
         },
-      ],
-    });
+      });
   }
 
   protected getTranslatedName(obj: any): string {

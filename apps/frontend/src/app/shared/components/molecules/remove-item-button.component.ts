@@ -53,6 +53,10 @@ export class RemoveItemButtonComponent {
 
   public readonly mode = input<'modal' | 'inline'>('modal');
 
+  public readonly confirmTitleKey = input<string>('Basic.deleteTitle');
+
+  public readonly confirmMessageKey = input<string>('Basic.confirmDelete');
+
   public readonly confirm = output<void>();
 
   protected removeMode: boolean = false;

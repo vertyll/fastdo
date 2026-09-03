@@ -9,6 +9,7 @@ import { AuthService } from '../auth/data-access/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
+import { ColorInputComponent } from '../shared/components/atoms/color-input.component';
 import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
 import { TitleComponent } from '../shared/components/atoms/title.component';
 import { InputFieldComponent } from '../shared/components/molecules/input-field.component';
@@ -49,6 +50,8 @@ interface ProjectFormValue {
   description?: string | null;
   typeId?: string | null;
   isPublic?: boolean;
+  hiddenWorkLogEnabled?: boolean;
+  hiddenWorkLogRoles?: string[];
   categories?: NameColorFormItem[];
   statuses?: NameColorFormItem[];
   usersWithRoles?: Array<{ email?: string; role?: string }>;
@@ -67,6 +70,7 @@ const DEFAULT_STATUS_COLOR = '#10B981';
     InputFieldComponent,
     SelectFieldComponent,
     CheckboxComponent,
+    ColorInputComponent,
     ImageComponent,
     HasProjectPermissionDirective,
     TextareaFieldComponent,
@@ -134,11 +138,34 @@ const DEFAULT_STATUS_COLOR = '#10B981';
             />
           </div>
 
-          <div class="flex items-center">
-            <app-checkbox [control]="isPublicControl" [id]="'isPublic'" />
-            <label for="isPublic" class="ml-2 block text-sm text-text-primary dark:text-dark-text-primary">
-              {{ 'Project.isPublic' | translate }}
-            </label>
+          <app-checkbox [control]="isPublicControl" [id]="'isPublic'" [label]="'Project.isPublic' | translate" />
+
+          <div>
+            <app-checkbox
+              [control]="hiddenWorkLogEnabledControl"
+              [id]="'hiddenWorkLogEnabled'"
+              [label]="'Project.hiddenWorkLogEnabled' | translate"
+              (changed)="onHiddenWorkLogToggled($event.checked)"
+            />
+            <p class="mt-1 ml-6 text-xs text-text-secondary dark:text-dark-text-secondary">
+              {{ 'Project.hiddenWorkLogHint' | translate }}
+            </p>
+
+            @if (hiddenWorkLogEnabled()) {
+              <div class="mt-3 ml-6 space-y-2">
+                <span class="block text-sm font-medium text-text-primary dark:text-dark-text-primary">
+                  {{ 'Project.hiddenWorkLogRoles' | translate }}
+                </span>
+                @for (role of hiddenWorkLogRoleOptions; track role) {
+                  <app-checkbox
+                    [control]="hiddenWorkLogRoleControl(role)"
+                    [id]="'hiddenWorkLogRole-' + role"
+                    [label]="'ProjectRole.' + role | translate"
+                    (changed)="toggleHiddenWorkLogRole(role)"
+                  />
+                }
+              </div>
+            }
           </div>
 
           <div>
@@ -182,12 +209,10 @@ const DEFAULT_STATUS_COLOR = '#10B981';
                       <label [for]="'category-color-' + $index" class="text-xs mb-1">{{
                         'Project.selectColor' | translate
                       }}</label>
-                      <input
-                        type="color"
+                      <app-color-input
+                        [control]="getCategoryColorControl($index)"
                         [id]="'category-color-' + $index"
-                        [formControl]="getCategoryColorControl($index)"
-                        class="w-11 h-11 cursor-pointer border-0 p-0 overflow-hidden outline-none hover:scale-105 transition-transform"
-                        [title]="'Project.selectColor' | translate"
+                        [label]="'Project.selectColor' | translate"
                       />
                     </div>
                   </div>
@@ -233,12 +258,10 @@ const DEFAULT_STATUS_COLOR = '#10B981';
                       <label [for]="'status-color-' + $index" class="text-xs mb-1">{{
                         'Project.selectColor' | translate
                       }}</label>
-                      <input
-                        type="color"
+                      <app-color-input
+                        [control]="getStatusColorControl($index)"
                         [id]="'status-color-' + $index"
-                        [formControl]="getStatusColorControl($index)"
-                        class="w-11 h-11 cursor-pointer border-0 p-0 overflow-hidden outline-none hover:scale-105 transition-transform"
-                        [title]="'Project.selectColor' | translate"
+                        [label]="'Project.selectColor' | translate"
                       />
                     </div>
                   </div>
@@ -480,6 +503,42 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return this.projectForm.get('typeId') as FormControl;
   }
 
+  protected readonly hiddenWorkLogRoleOptions = ['MANAGER', 'CLIENT', 'MEMBER'];
+
+  protected get hiddenWorkLogEnabledControl(): FormControl {
+    return this.projectForm.get('hiddenWorkLogEnabled') as FormControl;
+  }
+
+  protected readonly hiddenWorkLogEnabled = signal(false);
+
+  private readonly hiddenWorkLogRoleControls = new Map<string, FormControl>();
+
+  protected onHiddenWorkLogToggled(checked: boolean): void {
+    this.hiddenWorkLogEnabled.set(checked);
+  }
+
+  protected hiddenWorkLogRoleControl(role: string): FormControl {
+    const existing = this.hiddenWorkLogRoleControls.get(role);
+    if (existing) {
+      return existing;
+    }
+    const created = new FormControl(this.selectedHiddenWorkLogRoles().includes(role));
+    this.hiddenWorkLogRoleControls.set(role, created);
+    return created;
+  }
+
+  protected toggleHiddenWorkLogRole(role: string): void {
+    const selected = this.selectedHiddenWorkLogRoles();
+    const next = this.hiddenWorkLogRoleControl(role).value
+      ? [...new Set([...selected, role])]
+      : selected.filter(r => r !== role);
+    this.projectForm.get('hiddenWorkLogRoles')?.setValue(next);
+  }
+
+  private selectedHiddenWorkLogRoles(): string[] {
+    return (this.projectForm.get('hiddenWorkLogRoles')?.value as string[]) ?? [];
+  }
+
   protected get isPublicControl(): FormControl {
     return this.projectForm.get('isPublic') as FormControl;
   }
@@ -673,6 +732,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       description: formValue.description || null,
       isPublic: formValue.isPublic ?? false,
       typeId: formValue.typeId || null,
+      hiddenWorkLogEnabled: formValue.hiddenWorkLogEnabled ?? false,
+      hiddenWorkLogRoles: formValue.hiddenWorkLogEnabled ? (formValue.hiddenWorkLogRoles ?? []) : [],
       ...(this.iconFileId === undefined ? {} : { iconFileId: this.iconFileId }),
     };
 
@@ -758,6 +819,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       description: [''],
       typeId: [''],
       isPublic: [false],
+      hiddenWorkLogEnabled: [false],
+      hiddenWorkLogRoles: [[] as string[]],
       categories: this.fb.array([]),
       statuses: this.fb.array([]),
       usersWithRoles: this.fb.array([]),
@@ -867,7 +930,11 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       description: project.description || '',
       typeId: project.typeId || '',
       isPublic: project.isPublic,
+      hiddenWorkLogEnabled: project.hiddenWorkLogEnabled,
+      hiddenWorkLogRoles: project.hiddenWorkLogRoles ?? [],
     });
+    this.hiddenWorkLogEnabled.set(project.hiddenWorkLogEnabled);
+    (project.hiddenWorkLogRoles ?? []).forEach(role => this.hiddenWorkLogRoleControl(role).setValue(true));
 
     if (this.currentProject.categories) {
       this.currentProject.categories.forEach(category => {

@@ -2,22 +2,32 @@ import { Component, DestroyRef, computed, effect, inject, input, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroBell, heroBellAlert, heroCog6Tooth } from '@ng-icons/heroicons/outline';
+import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ProjectsApiService } from '../../../project/data-access/project.api.service';
 import { NotificationDto } from '../../defs/notification.defs';
+import { ButtonRoleEnum } from '../../enums/modal.enum';
 import { NotificationTypeEnum } from '../../enums/notification-type.enum';
 import { ToastTypeEnum } from '../../enums/toast-type.enum';
+import { ModalService } from '../../services/modal.service';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NotificationService } from '../../services/notification.service';
 import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
+import { NotificationDetailsComponent } from '../molecules/notification-details.component';
 import { SpinnerComponent } from '../atoms/spinner.component';
+
+const TASK_NOTIFICATION_TYPES = new Set([
+  NotificationTypeEnum.TASK_CREATED,
+  NotificationTypeEnum.TASK_ASSIGNED,
+  NotificationTypeEnum.TASK_STATUS_CHANGED,
+  NotificationTypeEnum.TASK_COMMENT_ADDED,
+]);
 
 @Component({
   selector: 'app-notification-dropdown',
   imports: [NgIconComponent, TranslatePipe, SpinnerComponent, DropdownComponent, DropdownMenuDirective],
-  viewProviders: [provideIcons({ heroBell, heroBellAlert, heroCog6Tooth })],
+  viewProviders: [provideIcons({ heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark })],
   template: `
     <app-dropdown [closeSignal]="dropdownCloseTrigger()">
       <button
@@ -55,14 +65,24 @@ import { SpinnerComponent } from '../atoms/spinner.component';
               [title]="(webSocketConnected() ? 'Notifications.live' : 'Notifications.offline') | translate"
             ></div>
           </div>
-          @if (unreadCount() > 0) {
-            <button
-              class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
-              (click)="markAllAsRead()"
-            >
-              {{ 'Notifications.markAllRead' | translate }}
-            </button>
-          }
+          <div class="flex items-center space-x-3">
+            @if (unreadCount() > 0) {
+              <button
+                class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+                (click)="markAllAsRead()"
+              >
+                {{ 'Notifications.markAllRead' | translate }}
+              </button>
+            }
+            @if (notifications().length > 0) {
+              <button
+                class="text-xs text-text-secondary hover:text-danger-500 dark:text-dark-text-secondary dark:hover:text-danger-400"
+                (click)="confirmClearAll()"
+              >
+                {{ 'Notifications.clearAll' | translate }}
+              </button>
+            }
+          </div>
         </div>
 
         <div class="max-h-96 overflow-y-auto">
@@ -78,12 +98,12 @@ import { SpinnerComponent } from '../atoms/spinner.component';
                 <div class="flex items-start justify-between">
                   <div
                     class="flex-1 min-w-0 cursor-pointer"
-                    (click)="markAsRead(notification)"
-                    (keydown.enter)="markAsRead(notification)"
-                    (keydown.space)="markAsRead(notification); $event.preventDefault()"
+                    (click)="openDetails(notification)"
+                    (keydown.enter)="openDetails(notification)"
+                    (keydown.space)="openDetails(notification); $event.preventDefault()"
                     role="button"
                     tabindex="0"
-                    [attr.aria-label]="'Notifications.markAsRead' | translate"
+                    [attr.aria-label]="'Notifications.details' | translate"
                   >
                     <p class="text-sm text-text-primary dark:text-dark-text-primary">
                       {{ notification.messageKey | translate: notification.params }}
@@ -121,9 +141,19 @@ import { SpinnerComponent } from '../atoms/spinner.component';
                     </span>
                   </div>
 
-                  @if (!notification.isRead) {
-                    <div class="w-2 h-2 bg-primary-500 rounded-full shrink-0 ml-2 mt-1"></div>
-                  }
+                  <div class="flex items-center shrink-0 ml-2 mt-1 space-x-2">
+                    @if (!notification.isRead) {
+                      <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
+                    }
+                    <button
+                      class="text-text-secondary hover:text-danger-500 dark:text-dark-text-secondary dark:hover:text-danger-400 transition-colors duration-150"
+                      (click)="$event.stopPropagation(); dismiss(notification)"
+                      [title]="'Notifications.dismiss' | translate"
+                      [attr.aria-label]="'Notifications.dismiss' | translate"
+                    >
+                      <ng-icon name="heroXMark" size="16" />
+                    </button>
+                  </div>
                 </div>
               </div>
             }
@@ -149,6 +179,7 @@ export class NotificationDropdownComponent {
   private readonly translateService = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly projectsApi = inject(ProjectsApiService);
+  private readonly modalService = inject(ModalService);
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly isMobileContext = input<boolean>(false);
@@ -205,6 +236,87 @@ export class NotificationDropdownComponent {
 
   protected markAllAsRead(): void {
     this.notificationStateService.markAllAsRead().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  protected dismiss(notification: NotificationDto): void {
+    this.notificationStateService.dismiss(notification.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  protected confirmClearAll(): void {
+    this.modalService.present({
+      title: this.translateService.instant('Notifications.clearAll'),
+      message: this.translateService.instant('Notifications.confirmClearAll'),
+      buttons: [
+        {
+          role: ButtonRoleEnum.Cancel,
+          text: this.translateService.instant('Basic.cancel'),
+        },
+        {
+          role: ButtonRoleEnum.Ok,
+          text: this.translateService.instant('Notifications.clearAll'),
+          handler: () => this.clearAll(),
+        },
+      ],
+    });
+  }
+
+  protected openDetails(notification: NotificationDto): void {
+    this.markAsRead(notification);
+    this.closeDropdown();
+
+    this.modalService.present({
+      title: this.translateService.instant('Notifications.details'),
+      components: [
+        {
+          component: NotificationDetailsComponent,
+          data: { notification, receivedAt: this.formatDate(notification.createdAt) },
+        },
+      ],
+      buttons: [
+        ...(this.routeOf(notification)
+          ? [
+              {
+                role: ButtonRoleEnum.Ok,
+                text: this.translateService.instant('Notifications.goToSubject'),
+                handler: () => this.navigateToSubject(notification),
+              },
+            ]
+          : []),
+        {
+          role: ButtonRoleEnum.Reject,
+          text: this.translateService.instant('Notifications.dismiss'),
+          handler: () => this.dismiss(notification),
+        },
+        {
+          role: ButtonRoleEnum.Cancel,
+          text: this.translateService.instant('Basic.close'),
+        },
+      ],
+    });
+  }
+
+  private clearAll(): void {
+    this.notificationStateService.dismissAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  private navigateToSubject(notification: NotificationDto): void {
+    const route = this.routeOf(notification);
+    if (route) {
+      this.router.navigate(route).then();
+    }
+  }
+
+  private routeOf(notification: NotificationDto): string[] | null {
+    if (!notification.projectId) {
+      return null;
+    }
+    if (TASK_NOTIFICATION_TYPES.has(notification.type) && notification.subjectId) {
+      return ['/projects', notification.projectId, 'tasks', notification.subjectId];
+    }
+    if (notification.type === NotificationTypeEnum.PROJECT_MEMBER_JOINED) {
+      return ['/projects', notification.projectId, 'tasks'];
+    }
+    return null;
   }
 
   protected acceptInvitation(notification: NotificationDto): void {

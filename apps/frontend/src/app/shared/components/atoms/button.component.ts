@@ -1,8 +1,8 @@
-import { Component, input, output, booleanAttribute } from '@angular/core'; // <-- Dodaj booleanAttribute
+import { Component, booleanAttribute, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
-export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon';
+export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
 
 @Component({
   selector: 'app-button',
@@ -24,9 +24,21 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon';
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
+    } @else if (variant() === 'danger') {
+      <button
+        mat-flat-button
+        class="!bg-danger-500 hover:!bg-danger-600 !text-white"
+        [type]="type()"
+        [disabled]="disabled()"
+        (click)="clicked.emit($event)"
+      >
+        <span class="flex items-center justify-center gap-2">
+          <ng-container *ngTemplateOutlet="contentTemplate" />
+        </span>
+      </button>
     } @else if (variant() === 'icon') {
       <button mat-icon-button [type]="type()" [disabled]="disabled()" (click)="clicked.emit($event)">
-        <span class="flex items-center justify-center">
+        <span class="icon-slot flex items-center justify-center">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
@@ -38,6 +50,14 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon';
       </button>
     }
   `,
+  styles: [
+    `
+      .icon-slot ::ng-deep svg {
+        width: 100%;
+        height: 100%;
+      }
+    `,
+  ],
 })
 export class ButtonComponent {
   public readonly type = input<'button' | 'submit' | 'reset'>('button');

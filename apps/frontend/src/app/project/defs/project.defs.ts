@@ -16,6 +16,8 @@ export type Project = {
   permissions: ProjectRolePermissionEnum[];
   isExpanded?: boolean;
   editMode?: boolean;
+  hiddenWorkLogEnabled: boolean;
+  hiddenWorkLogRoles: string[];
 };
 
 export type ProjectListItem = {
@@ -134,6 +136,8 @@ export type CreateProjectPayload = {
   isPublic: boolean;
   typeId?: string | null;
   iconFileId?: string | null;
+  hiddenWorkLogEnabled: boolean;
+  hiddenWorkLogRoles: string[];
 };
 
 export type UpdateProjectPayload = CreateProjectPayload;

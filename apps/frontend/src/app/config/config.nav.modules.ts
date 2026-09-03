@@ -1,4 +1,5 @@
 import { NavModule } from '../shared/defs/config.defs';
+import { RoleEnum } from '../shared/enums/role.enum';
 
 export const configNavModules: NavModule[] = [
   {
@@ -26,6 +27,21 @@ export const configNavModules: NavModule[] = [
         title: 'Sidebar.projects',
         icon: 'heroClipboardDocumentList',
         route: '/projects',
+      },
+    ],
+  },
+  {
+    id: 'admin',
+    title: 'Navbar.admin',
+    icon: 'heroCog6Tooth',
+    route: '/admin/translations',
+    roles: [RoleEnum.Admin],
+    sections: [
+      {
+        id: 'translations',
+        title: 'Sidebar.translations',
+        icon: 'heroLanguage',
+        route: '/admin/translations',
       },
     ],
   },

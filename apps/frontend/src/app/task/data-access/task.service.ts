@@ -8,6 +8,8 @@ import {
   GetAllTasksSearchParams,
   Task,
   TaskComment,
+  WorkLogEntry,
+  WorkLogPayload,
   TaskDetails,
   TaskListItem,
   UpdateTaskPayload,
@@ -82,8 +84,24 @@ export class TasksService {
     return this.httpService.changeStatus(taskId, statusId, version);
   }
 
-  public logWork(taskId: string, hundredthsOfHour: number): Observable<ApiResponse<Task>> {
-    return this.httpService.logWork(taskId, hundredthsOfHour);
+  public getWorkLog(taskId: string): Observable<ApiResponse<WorkLogEntry[]>> {
+    return this.httpService.getWorkLog(taskId);
+  }
+
+  public logWork(taskId: string, payload: WorkLogPayload): Observable<ApiResponse<WorkLogEntry>> {
+    return this.httpService.logWork(taskId, payload);
+  }
+
+  public updateWorkLogEntry(
+    entryId: string,
+    payload: WorkLogPayload,
+    version: number | null,
+  ): Observable<ApiResponse<WorkLogEntry>> {
+    return this.httpService.updateWorkLogEntry(entryId, payload, version);
+  }
+
+  public deleteWorkLogEntry(entryId: string): Observable<ApiResponse<void>> {
+    return this.httpService.deleteWorkLogEntry(entryId);
   }
 
   public getOne(taskId: string): Observable<ApiResponse<TaskDetails>> {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -13,10 +13,13 @@ import {
   heroSquares2x2,
   heroUserCircle,
   heroArrowRightOnRectangle,
+  heroCog6Tooth,
+  heroLanguage,
 } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
+import { AuthStateService } from 'src/app/auth/data-access/auth.state.service';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { NotificationStateService } from '../../services/notification-state.service';
 import { NavModule, NavSection } from '../../defs/config.defs';
@@ -54,6 +57,8 @@ import { environment } from '../../../../environments/environment';
       heroChevronUp,
       heroBell,
       heroArrowRightOnRectangle,
+      heroCog6Tooth,
+      heroLanguage,
     }),
   ],
   styles: [
@@ -85,7 +90,7 @@ import { environment } from '../../../../environments/environment';
 
       /* ── Component styles ── */
       .top-nav {
-        @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary z-50 px-2.5 transition-colors duration-200;
+        @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary sticky top-0 z-50 px-2.5 transition-colors duration-200;
       }
 
       .nav-content {
@@ -181,7 +186,7 @@ import { environment } from '../../../../environments/environment';
       }
 
       .content-wrapper {
-        @apply mx-auto p-6 md:px-8;
+        @apply mx-auto p-6 pb-32 md:px-8 md:pb-28;
       }
 
       .public-nav {
@@ -515,11 +520,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly notificationStateService = inject(NotificationStateService);
 
+  private readonly authStateService = inject(AuthStateService);
+
   private readonly routerSubscription: Subscription;
 
   private readonly defaultModules: NavModule[] = configNavModules;
 
-  protected readonly modules = signal<NavModule[]>(this.defaultModules);
+  protected readonly modules = computed<NavModule[]>(() => {
+    const roles = this.authStateService.roles();
+    return this.defaultModules.filter(module => !module.roles || module.roles.some(role => roles.includes(role)));
+  });
   protected readonly sections = signal<NavSection[]>([]);
   protected readonly visibleSections = signal<NavSection[]>([]);
   protected readonly currentModule = signal<string>('');

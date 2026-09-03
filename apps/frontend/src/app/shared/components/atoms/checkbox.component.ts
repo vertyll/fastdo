@@ -6,13 +6,18 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
   selector: 'app-checkbox',
   imports: [ReactiveFormsModule, MatCheckboxModule],
   template: `
-    <mat-checkbox [id]="id()" [formControl]="control()" [value]="value()" (change)="onChange($event)"></mat-checkbox>
+    <mat-checkbox [id]="id()" [formControl]="control()" [value]="value()" (change)="onChange($event)">
+      @if (label()) {
+        {{ label() }}
+      }
+    </mat-checkbox>
   `,
 })
 export class CheckboxComponent {
   public readonly control = input.required<FormControl>();
   public readonly id = input.required<string>();
   public readonly checked = input(false);
+  public readonly label = input<string>('');
   public readonly value = input<any>();
 
   public readonly changed = output<{
