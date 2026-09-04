@@ -467,6 +467,7 @@
     "isCompleted": "Is completed?",
     "loadError": "Error loading task",
     "loadMoreError": "An error occurred while loading more tasks",
+    "filtersLoadError": "The filters could not be loaded, so some options are missing",
     "maxAttachmentsError": "Maximum {max} attachments limit exceeded",
     "maxAttachmentsNote": "Maximum {max} attachments allowed. Current: {current}",
     "modified": "Updated",

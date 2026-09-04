@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroArrowPath, heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
+import { EMPTY, catchError } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BadgeComponent } from '../shared/components/atoms/badge.component';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
@@ -72,7 +73,7 @@ import { ProjectTypeService } from './data-access/project-type.service';
           </div>
         }
         @case (listStateValue.ERROR) {
-          <app-error-message [messageKey]="$safeNavigationMigration(projectsStateService.error()?.code)" />
+          <app-error-message [messageKey]="projectsStateService.error()?.code" />
         }
       }
     </div>
@@ -316,18 +317,18 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
           role: ButtonRoleEnum.Ok,
           text: this.translateService.instant('Basic.delete'),
           handler: () => {
-            this.projectsService.delete(id, version).subscribe({
-              error: err => {
-                this.notifyWithFallback(err, 'Project.deleteError');
-              },
-              complete: () => {
-                this.notificationService.showNotification(
-                  this.translateService.instant('Project.deleteSuccess'),
-                  ToastTypeEnum.Success,
-                );
-                this.getAllProjects();
-              },
-            });
+            this.projectsService
+              .delete(id, version)
+              .pipe(catchError(() => EMPTY))
+              .subscribe({
+                complete: () => {
+                  this.notificationService.showNotification(
+                    this.translateService.instant('Project.deleteSuccess'),
+                    ToastTypeEnum.Success,
+                  );
+                  this.getAllProjects();
+                },
+              });
           },
         },
       ],
@@ -372,14 +373,6 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     }));
   }
 
-  private notifyWithFallback(error: unknown, fallbackKey: string): void {
-    const message = (error as { error?: { message?: string } })?.error?.message;
-    this.notificationService.showNotification(
-      message || this.translateService.instant(fallbackKey),
-      ToastTypeEnum.Error,
-    );
-  }
-
   private getRowId(row: TableRow): string {
     return String(row['id']);
   }
@@ -395,14 +388,12 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
 
   private getAllProjects(searchParams?: GetAllProjectsSearchParams): void {
     this.lastSearchParams = searchParams;
-    this.projectsService.getAll(searchParams).subscribe({
-      next: response => {
+    this.projectsService
+      .getAll(searchParams)
+      .pipe(catchError(() => EMPTY))
+      .subscribe(response => {
         this.rawProjects = response.items;
         this.tableRows = this.mapProjectsToTableRows(response.items);
-      },
-      error: err => {
-        this.notifyWithFallback(err, 'Project.getAllError');
-      },
-    });
+      });
   }
 }

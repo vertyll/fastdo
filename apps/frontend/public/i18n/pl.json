@@ -467,6 +467,7 @@
     "isCompleted": "Czy zrobione?",
     "loadError": "Błąd podczas ładowania zadania",
     "loadMoreError": "Wystąpił błąd podczas pobierania kolejnych zadań",
+    "filtersLoadError": "Nie udało się wczytać filtrów, więc części opcji brakuje",
     "maxAttachmentsError": "Przekroczono limit {max} załączników",
     "maxAttachmentsNote": "Maksymalnie {max} załączników dozwolonych. Obecnie: {current}",
     "modified": "Zaktualizowano",

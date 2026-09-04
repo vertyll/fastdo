@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { UserService } from 'src/app/user/data-access/user.service';
 import { User, UserStateModel } from 'src/app/user/defs/user.defs';
 import * as UserActions from './user.actions';
+import { errorKeyOf } from '../../utils/api-error.utils';
 
 @State<UserStateModel>({
   name: 'user',
@@ -27,7 +28,7 @@ export class UserState {
         ctx.dispatch(new UserActions.SetUser(response));
       }),
       catchError(error => {
-        ctx.dispatch(new UserActions.SetError(error.error?.message || 'Error fetching user'));
+        ctx.dispatch(new UserActions.SetError(errorKeyOf(error) ?? 'Errors.unexpected'));
         throw error;
       }),
     );
@@ -42,7 +43,7 @@ export class UserState {
         ctx.dispatch(new UserActions.SetUser(response));
       }),
       catchError(error => {
-        ctx.dispatch(new UserActions.SetError(error.error?.message || 'Error updating profile'));
+        ctx.dispatch(new UserActions.SetError(errorKeyOf(error) ?? 'Errors.unexpected'));
         throw error;
       }),
     );

@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroArrowPath, heroClock, heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin, of } from 'rxjs';
+import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ProjectCategoryService } from 'src/app/project/data-access/project-category.service';
 import { ProjectStatusService } from 'src/app/project/data-access/project-status.service';
@@ -31,7 +31,6 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
 import { TableColumn, TableComponent, TableConfig } from '../shared/components/organisms/table.component';
 import { TASKS_LIST_FILTERS, TasksListFiltersConfig } from '../shared/defs/filter.defs';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
-import { ProjectCategory, ProjectMember, ProjectStatus } from '../project/defs/project.defs';
 import { TaskPriorityEnum } from '../shared/enums/task-priority.enum';
 import { GetAllTasksSearchParams, TaskListItem, TaskSortFieldEnum } from './defs/task.defs';
 import { getContrastColor } from '../shared/utils/color.utils';
@@ -151,9 +150,13 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
         </div>
       </ng-template>
 
+      @if (filtersFailed()) {
+        <app-error-message [messageKey]="'Task.filtersLoadError'" />
+      }
+
       @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
         <app-error-message
-          [messageKey]="$safeNavigationMigration(tasksStateService.error()?.code)"
+          [messageKey]="tasksStateService.error()?.code"
           [fallbackMessage]="'Task.getAllError' | translate"
         />
       } @else {
@@ -208,6 +211,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected readonly tasksStateService = inject(TasksStateService);
 
   protected isFiltersLoading = signal(true);
+  protected filtersFailed = signal(false);
   protected projectId = signal<string | null>(null);
   protected taskPermissions = signal<string[]>([]);
   protected projectName = signal<string>('');
@@ -352,16 +356,8 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
       this.tasksService
         .loadMoreByProjectId(projectId, searchParams)
         .pipe(
-          catchError(err => {
+          catchError(() => {
             this.tasksStateService.setLoadingMore(false);
-            if (err.error?.message) {
-              this.notificationService.showNotification(err.error.message, ToastTypeEnum.Error);
-            } else {
-              this.notificationService.showNotification(
-                this.translateService.instant('Task.loadMoreError'),
-                ToastTypeEnum.Error,
-              );
-            }
             return EMPTY;
           }),
         )
@@ -645,43 +641,32 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   private loadInitialFilterData(projectId: string): void {
     this.isFiltersLoading.set(true);
 
-    const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
-      catchError(err => {
-        console.error('Error fetching project statuses:', err);
-        return of([] as ProjectStatus[]);
-      }),
-    );
-
-    const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
-      catchError(err => {
-        console.error('Error fetching project categories:', err);
-        return of([] as ProjectCategory[]);
-      }),
-    );
-
-    const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
-      catchError(err => {
-        console.error('Error fetching users in project:', err);
-        return of([] as ProjectMember[]);
-      }),
-    );
+    const statuses$ = this.projectStatusService.getByProjectId(projectId);
+    const categories$ = this.projectCategoryService.getByProjectId(projectId);
+    const users$ = this.projectUserRoleService.getUsersInProject(projectId);
 
     forkJoin({ statuses: statuses$, categories: categories$, users: users$ })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ statuses, categories, users }) => {
-        this.setFilterOptions(
-          'statusId',
-          statuses.map(status => ({ value: status.id, label: status.name })),
-        );
-        this.setFilterOptions(
-          'categoryId',
-          categories.map(category => ({ value: category.id, label: category.name })),
-        );
-        this.setFilterOptions(
-          'assigneeId',
-          users.map(member => ({ value: member.userId, label: member.displayName || member.email })),
-        );
-        this.isFiltersLoading.set(false);
+      .subscribe({
+        next: ({ statuses, categories, users }) => {
+          this.setFilterOptions(
+            'statusId',
+            statuses.map(status => ({ value: status.id, label: status.name })),
+          );
+          this.setFilterOptions(
+            'categoryId',
+            categories.map(category => ({ value: category.id, label: category.name })),
+          );
+          this.setFilterOptions(
+            'assigneeId',
+            users.map(member => ({ value: member.userId, label: member.displayName || member.email })),
+          );
+          this.isFiltersLoading.set(false);
+        },
+        error: () => {
+          this.filtersFailed.set(true);
+          this.isFiltersLoading.set(false);
+        },
       });
   }
 
@@ -703,24 +688,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
     return this.tasksService.getAllByProjectId(projectId, searchParams).pipe(
       map(response => {
-        const tasks = response || {
-          items: [],
-          pagination: { total: 0, page: 0, pageSize: 10, totalPages: 0, hasMore: false },
-        };
-        this.tasksStateService.setTaskList(tasks.items);
-        this.tasksStateService.setPagination(tasks.pagination);
+        this.tasksStateService.setTaskList(response.items);
+        this.tasksStateService.setPagination(response.pagination);
       }),
-      catchError(err => {
-        if (err.error?.message) {
-          this.notificationService.showNotification(err.error.message, ToastTypeEnum.Error);
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.getAllError'),
-            ToastTypeEnum.Error,
-          );
-        }
-        return EMPTY;
-      }),
+      catchError(() => EMPTY),
     );
   }
 
@@ -736,16 +707,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
         const currentParams = this.currentSearchParams();
         this.getAllTasks(currentParams).subscribe();
       },
-      error: (err: any) => {
-        if (err.error?.message) {
-          this.notificationService.showNotification(err.error.message, ToastTypeEnum.Error);
-        } else {
-          this.notificationService.showNotification(
-            this.translateService.instant('Task.batchDeleteError'),
-            ToastTypeEnum.Error,
-          );
-        }
-      },
+      error: () => this.selectedTasks.set([]),
     });
   }
 }
