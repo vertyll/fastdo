@@ -3,7 +3,7 @@ import localeEn from '@angular/common/locales/en';
 import localePl from '@angular/common/locales/pl';
 import { inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import { LocalStorageService } from '../../shared/services/local-storage.service';
 
 const SELECTED_LANGUAGE_KEY = 'selected_language';
