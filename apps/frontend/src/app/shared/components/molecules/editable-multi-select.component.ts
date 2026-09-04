@@ -14,6 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         [id]="id()"
         [multiple]="multiple()"
         [(ngModel)]="selectValue"
+        [ngModelOptions]="{ standalone: true }"
         (selectionChange)="onSelectChange($event)"
         (openedChange)="onOpenedChange($event)"
       >
