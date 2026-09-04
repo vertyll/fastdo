@@ -3,6 +3,7 @@ import { inject, signal } from '@angular/core';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FetchingError } from '../defs/list-state.defs';
+import { errorKeyOf } from '../utils/api-error.utils';
 
 export abstract class HttpApiService {
   protected readonly http = inject(HttpClient);
@@ -26,7 +27,7 @@ export abstract class HttpApiService {
 
     return source$.pipe(
       catchError((e: HttpErrorResponse) => {
-        this.$error.set({ message: e.error?.message ?? null, status: e.status });
+        this.$error.set({ code: errorKeyOf(e), status: e.status });
         this.$loading.set(false);
         return throwError(() => e);
       }),

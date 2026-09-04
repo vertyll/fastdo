@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectCategoryApiService } from './project-category.api.service';
-import { ApiResponse } from 'src/app/shared/defs/api-response.defs';
 import { ProjectCategory } from '../defs/project.defs';
 
 @Injectable({
@@ -10,7 +9,7 @@ import { ProjectCategory } from '../defs/project.defs';
 export class ProjectCategoryService {
   private readonly httpService = inject(ProjectCategoryApiService);
 
-  public getByProjectId(projectId: string): Observable<ApiResponse<ProjectCategory[]>> {
+  public getByProjectId(projectId: string): Observable<ProjectCategory[]> {
     return this.httpService.getByProjectId(projectId);
   }
 }

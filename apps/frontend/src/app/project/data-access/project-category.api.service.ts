@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../shared/defs/api-response.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 import { ProjectCategory, Translation } from '../defs/project.defs';
 
@@ -18,12 +17,12 @@ export class ProjectCategoryApiService extends HttpApiService {
     return `${this.baseUrl}/projects/${projectId}/categories`;
   }
 
-  public getByProjectId(projectId: string): Observable<ApiResponse<ProjectCategory[]>> {
-    return this.withLoadingState(this.http.get<ApiResponse<ProjectCategory[]>>(this.path(projectId)));
+  public getByProjectId(projectId: string): Observable<ProjectCategory[]> {
+    return this.withLoadingState(this.http.get<ProjectCategory[]>(this.path(projectId)));
   }
 
-  public create(projectId: string, payload: CategoryPayload): Observable<ApiResponse<ProjectCategory>> {
-    return this.http.post<ApiResponse<ProjectCategory>>(this.path(projectId), payload);
+  public create(projectId: string, payload: CategoryPayload): Observable<ProjectCategory> {
+    return this.http.post<ProjectCategory>(this.path(projectId), payload);
   }
 
   public update(
@@ -31,13 +30,13 @@ export class ProjectCategoryApiService extends HttpApiService {
     categoryId: string,
     payload: CategoryPayload,
     version: number | null,
-  ): Observable<ApiResponse<ProjectCategory>> {
-    return this.http.put<ApiResponse<ProjectCategory>>(`${this.path(projectId)}/${categoryId}`, payload, {
+  ): Observable<ProjectCategory> {
+    return this.http.put<ProjectCategory>(`${this.path(projectId)}/${categoryId}`, payload, {
       headers: this.ifMatch(version),
     });
   }
 
-  public delete(projectId: string, categoryId: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.path(projectId)}/${categoryId}`);
+  public delete(projectId: string, categoryId: string): Observable<void> {
+    return this.http.delete<void>(`${this.path(projectId)}/${categoryId}`);
   }
 }

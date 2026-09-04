@@ -354,9 +354,9 @@ export class WorkLogPanelComponent implements OnInit {
       .subscribe({
         next: response => {
           this.loading.set(false);
-          this.entries.set(response.data.content);
-          this.total = response.data.totalElements;
-          this.totalMinutes.set(response.data.totalMinutes);
+          this.entries.set(response.content);
+          this.total = response.totalElements;
+          this.totalMinutes.set(response.totalMinutes);
         },
         error: () => {
           this.loading.set(false);
@@ -386,9 +386,9 @@ export class WorkLogPanelComponent implements OnInit {
         next: response => {
           this.loadingMore.set(false);
           this.page += 1;
-          this.total = response.data.totalElements;
-          this.totalMinutes.set(response.data.totalMinutes);
-          this.entries.update(current => [...current, ...response.data.content]);
+          this.total = response.totalElements;
+          this.totalMinutes.set(response.totalMinutes);
+          this.entries.update(current => [...current, ...response.content]);
         },
         error: () => this.loadingMore.set(false),
       });

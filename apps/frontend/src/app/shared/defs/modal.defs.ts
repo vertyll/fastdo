@@ -17,7 +17,7 @@ export interface ModalInput<T = any> {
 export interface ModalButton<T = any> {
   text: string;
   role: ButtonRoleEnum;
-  handler?: ((inputs: T) => void | boolean) | (() => void | boolean) | Promise<void>;
+  handler?: (inputs?: T) => void | boolean | Promise<void>;
 }
 
 export interface ModalOptions {

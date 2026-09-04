@@ -153,7 +153,7 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
 
       @if (tasksStateService.state() === listStateValue.ERROR && tasksStateService.tasks().length === 0) {
         <app-error-message
-          [customMessage]="$safeNavigationMigration(tasksStateService.error()?.message)"
+          [messageKey]="$safeNavigationMigration(tasksStateService.error()?.code)"
           [fallbackMessage]="'Task.getAllError' | translate"
         />
       } @else {
@@ -606,7 +606,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     this.tasksService
       .getPermissions(projectId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(response => this.taskPermissions.set(response.data));
+      .subscribe(response => this.taskPermissions.set(response));
   }
 
   private initializeTaskList(): void {
@@ -636,9 +636,9 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
   private loadProjectName(projectId: string): void {
     this.projectsService.getProjectById(projectId).subscribe(project => {
-      this.projectName.set(project.data.name);
-      this.projectIsPublic.set(project.data.isPublic);
-      this.hiddenWorkLogEnabled.set(project.data.hiddenWorkLogEnabled);
+      this.projectName.set(project.name);
+      this.projectIsPublic.set(project.isPublic);
+      this.hiddenWorkLogEnabled.set(project.hiddenWorkLogEnabled);
     });
   }
 
@@ -646,7 +646,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     this.isFiltersLoading.set(true);
 
     const statuses$ = this.projectStatusService.getByProjectId(projectId).pipe(
-      map(response => response.data),
       catchError(err => {
         console.error('Error fetching project statuses:', err);
         return of([] as ProjectStatus[]);
@@ -654,7 +653,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     );
 
     const categories$ = this.projectCategoryService.getByProjectId(projectId).pipe(
-      map(response => response.data),
       catchError(err => {
         console.error('Error fetching project categories:', err);
         return of([] as ProjectCategory[]);
@@ -662,7 +660,6 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
     );
 
     const users$ = this.projectUserRoleService.getUsersInProject(projectId).pipe(
-      map(response => response.data),
       catchError(err => {
         console.error('Error fetching users in project:', err);
         return of([] as ProjectMember[]);
@@ -706,7 +703,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
     return this.tasksService.getAllByProjectId(projectId, searchParams).pipe(
       map(response => {
-        const tasks = response.data || {
+        const tasks = response || {
           items: [],
           pagination: { total: 0, page: 0, pageSize: 10, totalPages: 0, hasMore: false },
         };

@@ -25,9 +25,9 @@ describe('BackendCatalogueLoader', () => {
 
     http.expectOne('./i18n/pl.json').flush({ 'Basic.save': 'Zapisz' });
     http.expectOne(`${environment.apiUrl}/translations/pl`).flush({
-      data: { language: 'pl', version: '1', entries: { 'task.not_found': 'Nie znaleziono zadania.' } },
-      message: 'ok',
-      timestamp: '',
+      language: 'pl',
+      version: '1',
+      entries: { 'task.not_found': 'Nie znaleziono zadania.' },
     });
 
     expect(await merged).toEqual({ 'Basic.save': 'Zapisz', 'task.not_found': 'Nie znaleziono zadania.' });
@@ -38,9 +38,9 @@ describe('BackendCatalogueLoader', () => {
 
     http.expectOne('./i18n/pl.json').flush({ 'common.access_denied': 'stary tekst' });
     http.expectOne(`${environment.apiUrl}/translations/pl`).flush({
-      data: { language: 'pl', version: '1', entries: { 'common.access_denied': 'Brak uprawnien.' } },
-      message: 'ok',
-      timestamp: '',
+      language: 'pl',
+      version: '1',
+      entries: { 'common.access_denied': 'Brak uprawnien.' },
     });
 
     expect(await merged).toEqual({ 'common.access_denied': 'Brak uprawnien.' });

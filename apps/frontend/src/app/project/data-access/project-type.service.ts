@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectTypeApiService } from './project-type.api.service';
-import { ApiResponse } from 'src/app/shared/defs/api-response.defs';
 import { ProjectType } from '../defs/project.defs';
 
 @Injectable({
@@ -10,7 +9,7 @@ import { ProjectType } from '../defs/project.defs';
 export class ProjectTypeService {
   private readonly httpService = inject(ProjectTypeApiService);
 
-  public getAll(): Observable<ApiResponse<ProjectType[]>> {
+  public getAll(): Observable<ProjectType[]> {
     return this.httpService.getAll();
   }
 }

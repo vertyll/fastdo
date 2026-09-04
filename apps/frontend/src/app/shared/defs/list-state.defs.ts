@@ -1,4 +1,4 @@
-export type FetchingError = { status: number; message: string | null };
+export type FetchingError = { status: number; code: string | null };
 
 type IdleState = {
   state: LOADING_STATE_VALUE['IDLE'];

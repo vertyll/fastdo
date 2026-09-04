@@ -1,7 +1,7 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
-import { ApiPaginatedResponse, ApiResponse } from '../../shared/defs/api-response.defs';
+import { Observable } from 'rxjs';
+import { ApiPaginatedResponse } from '../../shared/defs/api-response.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 import {
   ImportReport,
@@ -28,30 +28,24 @@ export class TranslationAdminApiService extends HttpApiService {
       params = params.set('onlyMissing', true);
     }
 
-    return this.http
-      .get<ApiResponse<ApiPaginatedResponse<TranslationKeyDetails>>>(`${this.baseUrl}${ADMIN_TRANSLATIONS}/keys`, {
-        params,
-      })
-      .pipe(map(response => response.data));
+    return this.http.get<ApiPaginatedResponse<TranslationKeyDetails>>(`${this.baseUrl}${ADMIN_TRANSLATIONS}/keys`, {
+      params,
+    });
   }
 
   public override(key: string, language: string, value: string, version: number | null): Observable<TranslationValue> {
     const headers = version === null ? undefined : new HttpHeaders({ 'If-Match': `W/"${version}"` });
-    return this.http
-      .put<ApiResponse<TranslationValue>>(
-        `${this.baseUrl}${ADMIN_TRANSLATIONS}/keys/${encodeURIComponent(key)}/languages/${language}`,
-        { value },
-        { headers },
-      )
-      .pipe(map(response => response.data));
+    return this.http.put<TranslationValue>(
+      `${this.baseUrl}${ADMIN_TRANSLATIONS}/keys/${encodeURIComponent(key)}/languages/${language}`,
+      { value },
+      { headers },
+    );
   }
 
   public clearOverride(key: string, language: string): Observable<TranslationValue> {
-    return this.http
-      .delete<ApiResponse<TranslationValue>>(
-        `${this.baseUrl}${ADMIN_TRANSLATIONS}/keys/${encodeURIComponent(key)}/languages/${language}`,
-      )
-      .pipe(map(response => response.data));
+    return this.http.delete<TranslationValue>(
+      `${this.baseUrl}${ADMIN_TRANSLATIONS}/keys/${encodeURIComponent(key)}/languages/${language}`,
+    );
   }
 
   public exportSpreadsheet(): Observable<Blob> {
@@ -61,8 +55,6 @@ export class TranslationAdminApiService extends HttpApiService {
   public importSpreadsheet(file: File): Observable<ImportReport> {
     const body = new FormData();
     body.append('file', file);
-    return this.http
-      .post<ApiResponse<ImportReport>>(`${this.baseUrl}${ADMIN_TRANSLATIONS}/import`, body)
-      .pipe(map(response => response.data));
+    return this.http.post<ImportReport>(`${this.baseUrl}${ADMIN_TRANSLATIONS}/import`, body);
   }
 }

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroDocument, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
+import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
 import { ProjectCategoryService } from '../project/data-access/project-category.service';
 import { ProjectRoleService } from '../project/data-access/project-role.service';
 import { ProjectStatusService } from '../project/data-access/project-status.service';
@@ -491,14 +491,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    forkJoin(
-      fileIds.map(fileId =>
-        this.fileApiService.getFile(fileId).pipe(
-          map(response => response.data),
-          catchError(() => of(null)),
-        ),
-      ),
-    )
+    forkJoin(fileIds.map(fileId => this.fileApiService.getFile(fileId).pipe(catchError(() => of(null)))))
       .pipe(takeUntil(this.destroy$))
       .subscribe(files => this.existingAttachments.set(files.filter((file): file is StoredFile => file !== null)));
   }
@@ -570,7 +563,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: accessRolesRes => {
-          this.accessRoles.set(accessRolesRes.data.map(role => ({ id: role.id, name: role.name })));
+          this.accessRoles.set(accessRolesRes.map(role => ({ id: role.id, name: role.name })));
         },
         error: error => {
           console.error('Error loading access roles:', error);
@@ -584,7 +577,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: categoriesRes => {
-            this.categories.set(categoriesRes.data.map(category => ({ id: category.id, name: category.name })));
+            this.categories.set(categoriesRes.map(category => ({ id: category.id, name: category.name })));
           },
           error: error => {
             console.error('Error loading categories:', error);
@@ -597,7 +590,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: statusesRes => {
-            this.statuses.set(statusesRes.data.map(status => ({ id: status.id, name: status.name })));
+            this.statuses.set(statusesRes.map(status => ({ id: status.id, name: status.name })));
           },
           error: error => {
             console.error('Error loading statuses:', error);
@@ -611,7 +604,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
         .subscribe({
           next: usersRes => {
             this.projectUsers.set(
-              usersRes.data.map(member => ({ id: member.userId, name: member.displayName || member.email })),
+              usersRes.map(member => ({ id: member.userId, name: member.displayName || member.email })),
             );
           },
           error: error => {
@@ -637,7 +630,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
-          const details = response.data;
+          const details = response;
           const task = details.task;
           this.taskVersion.set(task.version);
           this.taskForm.patchValue({
@@ -680,7 +673,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             this.translateService.instant('Task.addSuccess'),
             ToastTypeEnum.Success,
           );
-          this.router.navigate(['/projects', projectId, 'tasks', 'details', response.data.id]).then();
+          this.router.navigate(['/projects', projectId, 'tasks', 'details', response.id]).then();
         },
         error: (error: unknown) => this.handleSubmissionError(error),
         complete: () => this.submitting.set(false),
@@ -697,7 +690,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             this.translateService.instant('Task.updateSuccess'),
             ToastTypeEnum.Success,
           );
-          const task = response.data;
+          const task = response;
           this.router.navigate(['/projects', task.projectId, 'tasks', 'details', task.id]).then();
         },
         error: (error: unknown) => this.handleSubmissionError(error),

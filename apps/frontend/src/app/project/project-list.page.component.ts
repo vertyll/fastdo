@@ -72,7 +72,7 @@ import { ProjectTypeService } from './data-access/project-type.service';
           </div>
         }
         @case (listStateValue.ERROR) {
-          <app-error-message [customMessage]="$safeNavigationMigration(projectsStateService.error()?.message)" />
+          <app-error-message [messageKey]="$safeNavigationMigration(projectsStateService.error()?.code)" />
         }
       }
     </div>
@@ -337,7 +337,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   private getProjectTypes(): void {
     this.projectTypeService.getAll().subscribe({
       next: types => {
-        this.projectTypesRaw = types.data || [];
+        this.projectTypesRaw = types || [];
         this.updateProjectTypeOptions();
         this.isFiltersLoading = false;
       },
@@ -397,8 +397,8 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.lastSearchParams = searchParams;
     this.projectsService.getAll(searchParams).subscribe({
       next: response => {
-        this.rawProjects = response.data.items;
-        this.tableRows = this.mapProjectsToTableRows(response.data.items);
+        this.rawProjects = response.items;
+        this.tableRows = this.mapProjectsToTableRows(response.items);
       },
       error: err => {
         this.notifyWithFallback(err, 'Project.getAllError');

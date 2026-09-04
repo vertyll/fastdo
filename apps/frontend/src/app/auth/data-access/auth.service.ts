@@ -28,7 +28,6 @@ export class AuthService {
 
   public loadSession(): Observable<Session | null> {
     return this.authApiService.session().pipe(
-      map(response => response.data),
       tap(session => this.authStateService.setSession(session)),
       catchError(() => {
         this.authStateService.clear();

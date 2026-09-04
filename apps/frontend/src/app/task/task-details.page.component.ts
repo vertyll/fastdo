@@ -924,7 +924,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       .requestDownload(fileId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: response => window.open(response.data.downloadUrl, '_blank'),
+        next: response => window.open(response.downloadUrl, '_blank'),
         error: error => {
           console.error('Download failed:', error);
           this.notificationService.showNotification(
@@ -963,7 +963,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       .getProjectById(projectId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: response => this.projectName.set(response.data.name),
+        next: response => this.projectName.set(response.name),
         error: () => this.projectName.set(''),
       });
   }
@@ -981,7 +981,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     forkJoin(
       unknown.map(id =>
         this.fileApiService.getFile(id).pipe(
-          map(response => [id, response.data.originalName] as const),
+          map(response => [id, response.originalName] as const),
           catchError(() => of(null)),
         ),
       ),
@@ -1000,9 +1000,9 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
-          this.task.set(response.data);
-          this.loadFileNames(response.data);
-          this.loadProjectName(response.data.task.projectId);
+          this.task.set(response);
+          this.loadFileNames(response);
+          this.loadProjectName(response.task.projectId);
           this.loading.set(false);
         },
         error: error => {

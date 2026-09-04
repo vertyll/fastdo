@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiPaginatedResponse, ApiResponse } from '../../shared/defs/api-response.defs';
+import { ApiPaginatedResponse } from '../../shared/defs/api-response.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
 import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
 import {
@@ -20,60 +20,48 @@ const PROJECTS = '/projects';
   providedIn: 'root',
 })
 export class ProjectsApiService extends HttpApiService {
-  public getAll(
-    searchParams?: GetAllProjectsSearchParams,
-  ): Observable<ApiResponse<ApiPaginatedResponse<ProjectListItem>>> {
+  public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiPaginatedResponse<ProjectListItem>> {
     return this.withLoadingState(
-      this.http.get<ApiResponse<ApiPaginatedResponse<ProjectListItem>>>(`${this.baseUrl}${PROJECTS}`, {
+      this.http.get<ApiPaginatedResponse<ProjectListItem>>(`${this.baseUrl}${PROJECTS}`, {
         params: { ...searchParams },
       }),
     );
   }
 
-  public delete(projectId: string, version: number | null): Observable<ApiResponse<void>> {
+  public delete(projectId: string, version: number | null): Observable<void> {
     return this.withLoadingState(
-      this.http.delete<ApiResponse<void>>(`${this.baseUrl}${PROJECTS}/${projectId}`, {
+      this.http.delete<void>(`${this.baseUrl}${PROJECTS}/${projectId}`, {
         headers: this.ifMatch(version),
       }),
     );
   }
 
-  public update(
-    projectId: string,
-    payload: UpdateProjectPayload,
-    version: number | null,
-  ): Observable<ApiResponse<Project>> {
+  public update(projectId: string, payload: UpdateProjectPayload, version: number | null): Observable<Project> {
     return this.withLoadingState(
-      this.http.put<ApiResponse<Project>>(`${this.baseUrl}${PROJECTS}/${projectId}`, payload, {
+      this.http.put<Project>(`${this.baseUrl}${PROJECTS}/${projectId}`, payload, {
         headers: this.ifMatch(version),
       }),
     );
   }
 
-  public add(payload: CreateProjectPayload): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(this.http.post<ApiResponse<Project>>(`${this.baseUrl}${PROJECTS}`, payload));
+  public add(payload: CreateProjectPayload): Observable<Project> {
+    return this.withLoadingState(this.http.post<Project>(`${this.baseUrl}${PROJECTS}`, payload));
   }
 
-  public getById(projectId: string): Observable<ApiResponse<Project>> {
-    return this.withLoadingState(this.http.get<ApiResponse<Project>>(`${this.baseUrl}${PROJECTS}/${projectId}`));
+  public getById(projectId: string): Observable<Project> {
+    return this.withLoadingState(this.http.get<Project>(`${this.baseUrl}${PROJECTS}/${projectId}`));
   }
 
-  public getByIdWithDetails(projectId: string): Observable<ApiResponse<ProjectDetails>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<ProjectDetails>>(`${this.baseUrl}${PROJECTS}/${projectId}/details`),
-    );
+  public getByIdWithDetails(projectId: string): Observable<ProjectDetails> {
+    return this.withLoadingState(this.http.get<ProjectDetails>(`${this.baseUrl}${PROJECTS}/${projectId}/details`));
   }
 
-  public getProjectMembers(projectId: string): Observable<ApiResponse<ProjectMember[]>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<ProjectMember[]>>(`${this.baseUrl}${PROJECTS}/${projectId}/users`),
-    );
+  public getProjectMembers(projectId: string): Observable<ProjectMember[]> {
+    return this.withLoadingState(this.http.get<ProjectMember[]>(`${this.baseUrl}${PROJECTS}/${projectId}/users`));
   }
 
-  public getMyProjectPermissions(projectId: string): Observable<ApiResponse<ProjectRolePermissionEnum[]>> {
-    return this.http.get<ApiResponse<ProjectRolePermissionEnum[]>>(
-      `${this.baseUrl}${PROJECTS}/${projectId}/users/me/permissions`,
-    );
+  public getMyProjectPermissions(projectId: string): Observable<ProjectRolePermissionEnum[]> {
+    return this.http.get<ProjectRolePermissionEnum[]>(`${this.baseUrl}${PROJECTS}/${projectId}/users/me/permissions`);
   }
 
   public updateMemberRole(
@@ -81,40 +69,34 @@ export class ProjectsApiService extends HttpApiService {
     memberId: string,
     roleId: string,
     version: number | null,
-  ): Observable<ApiResponse<ProjectMember>> {
-    return this.http.put<ApiResponse<ProjectMember>>(
+  ): Observable<ProjectMember> {
+    return this.http.put<ProjectMember>(
       `${this.baseUrl}${PROJECTS}/${projectId}/users/${memberId}`,
       { roleId },
       { headers: this.ifMatch(version) },
     );
   }
 
-  public removeMember(projectId: string, memberId: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}${PROJECTS}/${projectId}/users/${memberId}`);
+  public removeMember(projectId: string, memberId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}${PROJECTS}/${projectId}/users/${memberId}`);
   }
 
-  public invite(projectId: string, email: string, roleId: string | null): Observable<ApiResponse<ProjectInvitation>> {
-    return this.http.post<ApiResponse<ProjectInvitation>>(`${this.baseUrl}${PROJECTS}/${projectId}/invitations`, {
+  public invite(projectId: string, email: string, roleId: string | null): Observable<ProjectInvitation> {
+    return this.http.post<ProjectInvitation>(`${this.baseUrl}${PROJECTS}/${projectId}/invitations`, {
       email,
       roleId,
     });
   }
 
-  public getMyInvitations(): Observable<ApiResponse<ProjectInvitation[]>> {
-    return this.withLoadingState(
-      this.http.get<ApiResponse<ProjectInvitation[]>>(`${this.baseUrl}${PROJECTS}/invitations/me`),
-    );
+  public getMyInvitations(): Observable<ProjectInvitation[]> {
+    return this.withLoadingState(this.http.get<ProjectInvitation[]>(`${this.baseUrl}${PROJECTS}/invitations/me`));
   }
 
-  public acceptInvitation(body: { invitationId: string }): Observable<ApiResponse<void>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<void>>(`${this.baseUrl}${PROJECTS}/invitations/accept`, body),
-    );
+  public acceptInvitation(body: { invitationId: string }): Observable<void> {
+    return this.withLoadingState(this.http.post<void>(`${this.baseUrl}${PROJECTS}/invitations/accept`, body));
   }
 
-  public rejectInvitation(body: { invitationId: string }): Observable<ApiResponse<void>> {
-    return this.withLoadingState(
-      this.http.post<ApiResponse<void>>(`${this.baseUrl}${PROJECTS}/invitations/reject`, body),
-    );
+  public rejectInvitation(body: { invitationId: string }): Observable<void> {
+    return this.withLoadingState(this.http.post<void>(`${this.baseUrl}${PROJECTS}/invitations/reject`, body));
   }
 }

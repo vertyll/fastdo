@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { FileScopeEnum, StoredFile } from '../defs/file.defs';
 import { FileApiService } from './file.api.service';
 
@@ -21,13 +21,11 @@ export class FileUploadService {
         scopeId: scopeId ?? null,
       })
       .pipe(
-        map(response => response.data),
         switchMap(ticket =>
           this.http
             .put(ticket.uploadUrl, file, { headers: { 'Content-Type': file.type }, withCredentials: false })
             .pipe(switchMap(() => this.fileApiService.confirmUpload(ticket.fileId))),
         ),
-        map(response => response.data),
       );
   }
 }

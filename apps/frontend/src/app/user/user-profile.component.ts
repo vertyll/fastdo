@@ -38,7 +38,7 @@ import { UserStateService } from './data-access/user.state.service';
         </div>
       }
       @case (LOADING_STATE_VALUE.ERROR) {
-        <app-error-message [customMessage]="$safeNavigationMigration(stateService.error()?.message)" />
+        <app-error-message [messageKey]="$safeNavigationMigration(stateService.error()?.code)" />
       }
       @case (LOADING_STATE_VALUE.SUCCESS) {
         @if (user(); as profile) {

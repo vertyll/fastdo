@@ -701,7 +701,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     save$
       .pipe(
         switchMap(response => {
-          const projectId = response.data.id;
+          const projectId = response.id;
           return this.saveReferenceData(projectId, formValue).pipe(map(() => response));
         }),
         takeUntil(this.destroy$),
@@ -804,8 +804,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: responses => {
-          this.projectTypes = responses.types.data || [];
-          this.projectRoles = responses.roles.data || [];
+          this.projectTypes = responses.types || [];
+          this.projectRoles = responses.roles || [];
 
           if (this.isEditMode && this.projectId) {
             this.loadProjectSpecificData();
@@ -837,8 +837,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: responses => {
-          this.projectStatuses = responses.statuses.data || [];
-          this.projectCategories = responses.categories.data || [];
+          this.projectStatuses = responses.statuses || [];
+          this.projectCategories = responses.categories || [];
           this.loadProject();
         },
         error: error => {
@@ -860,7 +860,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: response => {
-          this.currentProject = response.data;
+          this.currentProject = response;
           this.populateForm();
           this.loading.set(false);
         },

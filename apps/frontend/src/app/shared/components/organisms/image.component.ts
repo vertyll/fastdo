@@ -391,7 +391,7 @@ export class ImageComponent implements OnDestroy {
     this.fileApi
       .requestDownload(fileId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: response => this.previewUrl.set(response.data.downloadUrl) });
+      .subscribe({ next: response => this.previewUrl.set(response.downloadUrl) });
   }
 
   private handleInitialUrlChange(): void {

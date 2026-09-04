@@ -24,7 +24,7 @@ export class UserState {
 
     return this.userService.getCurrentUser().pipe(
       tap(response => {
-        ctx.dispatch(new UserActions.SetUser(response.data));
+        ctx.dispatch(new UserActions.SetUser(response));
       }),
       catchError(error => {
         ctx.dispatch(new UserActions.SetError(error.error?.message || 'Error fetching user'));
@@ -39,7 +39,7 @@ export class UserState {
 
     return this.userService.updateProfile(payload).pipe(
       tap(response => {
-        ctx.dispatch(new UserActions.SetUser(response.data));
+        ctx.dispatch(new UserActions.SetUser(response));
       }),
       catchError(error => {
         ctx.dispatch(new UserActions.SetError(error.error?.message || 'Error updating profile'));
