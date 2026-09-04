@@ -315,8 +315,8 @@ import { environment } from 'src/environments/environment';
 
           <div class="hidden md:flex items-center space-x-4">
             <app-dropdown [closeSignal]="closeNotificationDropdown()">
-              <button class="profile-button gap-1" dropdownTrigger>
-                <span>Menu</span>
+              <button class="profile-button gap-1" dropdownTrigger [attr.aria-label]="'Navbar.toggleMenu' | translate">
+                <span>{{ 'Navbar.menu' | translate }}</span>
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
@@ -369,8 +369,8 @@ import { environment } from 'src/environments/environment';
 
           <div class="flex md:hidden w-full justify-between">
             <app-dropdown [closeSignal]="closeNotificationDropdown()">
-              <button class="menu-button" dropdownTrigger>
-                <span>Menu</span>
+              <button class="menu-button" dropdownTrigger [attr.aria-label]="'Navbar.toggleMenu' | translate">
+                <span>{{ 'Navbar.menu' | translate }}</span>
                 <ng-icon name="heroChevronDown" size="16"></ng-icon>
               </button>
 
