@@ -43,7 +43,7 @@ translated from the back end.
 
 ### Working with the back end
 
-- [Calling the VEDS API](./docs/veds-api.md) — the response envelope, error keys, optimistic concurrency and file uploads.
+- [Calling the VEDS API](./docs/veds-api.md) — RFC 9457 refusals, where failures are reported, optimistic concurrency and file uploads.
 - [Translations](./docs/translations.md) — the two catalogues, the two tracks, ICU plurals, and why a missing key renders as the key.
 
 ### Shared components
