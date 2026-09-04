@@ -19,7 +19,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import Cropper from 'cropperjs';
 import { ButtonComponent } from 'src/app/shared/components/atoms/button.component';
 import { environment } from 'src/environments/environment';
-import { FileApiService } from '../../../file/data-access/file.api.service';
+import { FileApiService } from 'src/app/file/data-access/file.api.service';
 
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';

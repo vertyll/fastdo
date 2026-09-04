@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { ProjectsService } from '../../project/data-access/project.service';
 
 @Injectable({ providedIn: 'root' })
@@ -14,11 +14,11 @@ export class ProjectRolePermissionGuard implements CanActivate {
   ): Observable<boolean | UrlTree> {
     const projectId = route.params['id'];
     const requiredPermission = route.data.requiredPermission;
+    const deny = (): UrlTree => this.router.createUrlTree(['/projects']);
+
     return this.projectsService.getProjectByIdWithDetails(projectId).pipe(
-      map(response => {
-        const permissions = response?.permissions ?? [];
-        return permissions.includes(requiredPermission) ? true : this.router.createUrlTree(['/projects']);
-      }),
+      map(project => (project.permissions.includes(requiredPermission) ? true : deny())),
+      catchError(() => of(deny())),
     );
   }
 }

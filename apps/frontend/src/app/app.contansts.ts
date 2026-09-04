@@ -21,6 +21,3 @@ export const COOKIE_ACCEPTED_VALUE: string = 'true';
 
 // Scroll
 export const SCROLL_TO_TOP_THRESHOLD: number = 300;
-
-// Session
-export const SESSION_ENDPOINT: string = '/auth/session';

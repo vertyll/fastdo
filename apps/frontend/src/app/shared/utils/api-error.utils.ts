@@ -1,12 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-/**
- * An RFC 9457 problem document, as every service answers a refusal.
- *
- * `code` is the service's own catalogue key, carried as an extension member so a
- * reader looks up its translation without taking `type` apart. `fields` is present
- * only when the request was refused for its contents.
- */
 export interface ProblemDetail {
   type: string;
   title: string;

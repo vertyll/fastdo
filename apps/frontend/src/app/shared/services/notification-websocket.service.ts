@@ -1,7 +1,7 @@
 import { DestroyRef, Injectable, effect, inject, signal } from '@angular/core';
 import { Client, IMessage } from '@stomp/stompjs';
 import { Subject } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import { AuthStateService } from '../../auth/data-access/auth.state.service';
 import { NotificationDto, NotificationWsEvent } from '../defs/notification.defs';
 
@@ -30,10 +30,6 @@ export class NotificationWebSocketService {
   constructor() {
     effect(() => (this.authStateService.isLoggedIn() ? this.connect() : this.disconnect()));
     this.destroyRef.onDestroy(() => this.disconnect());
-  }
-
-  public isConnected(): boolean {
-    return this.client?.connected ?? false;
   }
 
   private connect(): void {

@@ -6,6 +6,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { initializeLanguage } from './core/i18n/language.initializer';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { languageInterceptor } from './core/interceptors/language.interceptor';
 import { BackendCatalogueLoader } from './core/i18n/backend-catalogue.loader';
@@ -29,6 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideTranslateLoader(BackendCatalogueLoader),
     provideTranslateCompiler(TranslateMessageFormatCompiler),
     provideAppInitializer(() => {
+      initializeLanguage();
       const session$ = inject(AuthService).loadSession();
       inject(NotificationWebSocketService);
       inject(ThemeService);

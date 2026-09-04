@@ -328,7 +328,6 @@ export class TranslationsPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.load(),
-        error: () => this.notificationService.error('Admin.saveError'),
       });
   }
 
@@ -345,7 +344,6 @@ export class TranslationsPageComponent implements OnInit {
           link.click();
           URL.revokeObjectURL(url);
         },
-        error: () => this.notificationService.error('Admin.exportError'),
       });
   }
 
@@ -367,7 +365,6 @@ export class TranslationsPageComponent implements OnInit {
         },
         error: () => {
           input.value = '';
-          this.notificationService.error('Admin.importError');
         },
       });
   }

@@ -44,15 +44,6 @@ export class TasksStateService {
     this.tasksSignal.update(currentTasks => [...currentTasks, ...tasks]);
   }
 
-  public addTask(task: TaskListItem): void {
-    this.tasksSignal.update(tasks => [...tasks, task]);
-    this.adjustTotal(1);
-  }
-
-  public updateTask(updatedTask: TaskListItem): void {
-    this.tasksSignal.update(tasks => tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)));
-  }
-
   public removeTask(taskId: string): void {
     this.tasksSignal.update(tasks => tasks.filter(task => task.id !== taskId));
     this.adjustTotal(-1);

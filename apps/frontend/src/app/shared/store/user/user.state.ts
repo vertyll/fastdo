@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Action, State, StateContext } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { UserService } from '../../../user/data-access/user.service';
-import { User, UserStateModel } from '../../../user/defs/user.defs';
+import { UserService } from 'src/app/user/data-access/user.service';
+import { User, UserStateModel } from 'src/app/user/defs/user.defs';
 import * as UserActions from './user.actions';
 
 @State<UserStateModel>({

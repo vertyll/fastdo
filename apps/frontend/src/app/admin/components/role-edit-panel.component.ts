@@ -7,12 +7,6 @@ import { InputFieldComponent } from '../../shared/components/molecules/input-fie
 import { SelectFieldComponent } from '../../shared/components/molecules/select-field.component';
 import { PermissionModule, Role, RoleScope } from '../defs/role.defs';
 
-export type RoleEditData = {
-  role: Role | null;
-  modules: PermissionModule[];
-  register: (panel: RoleEditPanelComponent) => void;
-};
-
 export type RoleEditResult = {
   name: string;
   description: string | null;

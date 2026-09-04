@@ -5,7 +5,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { ProjectsApiService } from '../../../project/data-access/project.api.service';
+import { ProjectsApiService } from 'src/app/project/data-access/project.api.service';
 import { NotificationDto } from '../../defs/notification.defs';
 import { ButtonRoleEnum } from '../../enums/modal.enum';
 import { NotificationTypeEnum } from '../../enums/notification-type.enum';

@@ -82,10 +82,6 @@ export class TasksService {
     return this.httpService.update(taskId, payload, version);
   }
 
-  public changeStatus(taskId: string, statusId: string | null, version: number | null): Observable<Task> {
-    return this.httpService.changeStatus(taskId, statusId, version);
-  }
-
   public getWorkLog(
     taskId: string,
     page: number,
@@ -113,10 +109,6 @@ export class TasksService {
 
   public getOne(taskId: string): Observable<TaskDetails> {
     return this.httpService.getOne(taskId);
-  }
-
-  public getComments(taskId: string): Observable<TaskComment[]> {
-    return this.httpService.getComments(taskId);
   }
 
   public createComment(taskId: string, payload: CreateCommentPayload): Observable<TaskComment> {

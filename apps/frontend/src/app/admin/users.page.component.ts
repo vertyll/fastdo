@@ -15,7 +15,6 @@ import { FilterTypeEnum } from '../shared/enums/filter-type.enum';
 import { FilterGroupComponent } from '../shared/components/organisms/filter-group.component';
 import { ButtonRoleEnum, ModalSizeEnum } from '../shared/enums/modal.enum';
 import { ModalService } from '../shared/services/modal.service';
-import { NotificationService } from '../shared/services/notification.service';
 import { UserRolesPanelComponent } from './components/user-roles-panel.component';
 import { RoleAdminApiService } from './data-access/role-admin.api.service';
 import { AdminUser, Role } from './defs/role.defs';
@@ -112,7 +111,6 @@ import { AdminUser, Role } from './defs/role.defs';
 export class UsersPageComponent implements OnInit {
   private readonly api = inject(RoleAdminApiService);
   private readonly translateService = inject(TranslateService);
-  private readonly notificationService = inject(NotificationService);
   private readonly modalService = inject(ModalService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -214,10 +212,7 @@ export class UsersPageComponent implements OnInit {
       .pipe(toArray(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.load(),
-        error: () => {
-          this.notificationService.error('Admin.roleAssignError');
-          this.load();
-        },
+        error: () => this.load(),
       });
   }
 }

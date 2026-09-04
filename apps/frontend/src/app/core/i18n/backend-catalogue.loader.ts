@@ -2,7 +2,7 @@ import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TranslateLoader } from '@ngx-translate/core';
 import { Observable, catchError, forkJoin, map, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 type Catalogue = Record<string, string>;
 

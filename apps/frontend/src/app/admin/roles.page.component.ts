@@ -14,7 +14,6 @@ import { FilterMetadata, PaginationParams } from '../shared/defs/filter.defs';
 import { FilterTypeEnum } from '../shared/enums/filter-type.enum';
 import { ButtonRoleEnum, ModalSizeEnum } from '../shared/enums/modal.enum';
 import { ModalService } from '../shared/services/modal.service';
-import { NotificationService } from '../shared/services/notification.service';
 import { RoleEditPanelComponent } from './components/role-edit-panel.component';
 import { RoleAdminApiService } from './data-access/role-admin.api.service';
 import { PermissionModule, Role, RoleScope } from './defs/role.defs';
@@ -146,7 +145,6 @@ type RoleFilters = {
 export class RolesPageComponent implements OnInit {
   private readonly api = inject(RoleAdminApiService);
   private readonly translateService = inject(TranslateService);
-  private readonly notificationService = inject(NotificationService);
   private readonly modalService = inject(ModalService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -265,7 +263,6 @@ export class RolesPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.load(),
-        error: () => this.notificationService.error('Admin.roleDeleteError'),
       });
     return true;
   }
@@ -313,7 +310,6 @@ export class RolesPageComponent implements OnInit {
 
     request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => this.load(),
-      error: () => this.notificationService.error('Admin.roleSaveError'),
     });
 
     return true;

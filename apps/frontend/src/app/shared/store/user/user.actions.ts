@@ -1,4 +1,4 @@
-import { User } from '../../../user/defs/user.defs';
+import { User } from 'src/app/user/defs/user.defs';
 
 export class GetCurrentUser {
   public static readonly type = '[User] Get Current User';

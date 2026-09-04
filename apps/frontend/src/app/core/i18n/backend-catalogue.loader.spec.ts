@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import { BackendCatalogueLoader } from './backend-catalogue.loader';
 
 describe('BackendCatalogueLoader', () => {

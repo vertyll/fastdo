@@ -158,6 +158,10 @@
   "EditableMultiSelect": {
     "addTagsAdHoc": "Add tag"
   },
+  "Errors": {
+    "network": "Could not reach the server. Check your connection and try again.",
+    "unexpected": "Something went wrong. Please try again."
+  },
   "Filters": {
     "accessRoles": "Access roles",
     "assignedUsers": "Assigned users",

@@ -4,12 +4,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { CheckboxComponent } from '../../shared/components/atoms/checkbox.component';
 import { AdminUser, Role } from '../defs/role.defs';
 
-export type UserRolesData = {
-  user: AdminUser;
-  roles: Role[];
-  register: (panel: UserRolesPanelComponent) => void;
-};
-
 type RoleRow = {
   name: string;
   description: string | null;

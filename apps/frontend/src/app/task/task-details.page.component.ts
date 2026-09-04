@@ -791,12 +791,6 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
       .filter((id): id is string => !!id);
   }
 
-  protected isImage(filename: string): boolean {
-    if (!filename) return false;
-    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-    return imageExtensions.some(ext => filename.toLowerCase().endsWith(ext));
-  }
-
   protected onEditComment(commentId: string, content: string): void {
     this.editingCommentControl = new FormControl(content, [Validators.required, Validators.minLength(1)]);
     this.editingCommentId = commentId;
@@ -853,10 +847,6 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
 
   protected onEditCommentFilesChange(files: FileUploadItem[]): void {
     this.editingCommentAttachments = files;
-  }
-
-  protected markAttachmentForDelete(attachment: any): void {
-    attachment._markedForDelete = !attachment._markedForDelete;
   }
 
   protected canDeleteComment(comment: TaskComment): boolean {

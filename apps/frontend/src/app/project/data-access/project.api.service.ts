@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiPaginatedResponse } from '../../shared/defs/api-response.defs';
 import { HttpApiService } from '../../shared/services/http-api.service';
-import { ProjectRolePermissionEnum } from '../../shared/enums/project-role-permission.enum';
 import {
   CreateProjectPayload,
   GetAllProjectsSearchParams,
@@ -58,27 +57,6 @@ export class ProjectsApiService extends HttpApiService {
 
   public getProjectMembers(projectId: string): Observable<ProjectMember[]> {
     return this.withLoadingState(this.http.get<ProjectMember[]>(`${this.baseUrl}${PROJECTS}/${projectId}/users`));
-  }
-
-  public getMyProjectPermissions(projectId: string): Observable<ProjectRolePermissionEnum[]> {
-    return this.http.get<ProjectRolePermissionEnum[]>(`${this.baseUrl}${PROJECTS}/${projectId}/users/me/permissions`);
-  }
-
-  public updateMemberRole(
-    projectId: string,
-    memberId: string,
-    roleId: string,
-    version: number | null,
-  ): Observable<ProjectMember> {
-    return this.http.put<ProjectMember>(
-      `${this.baseUrl}${PROJECTS}/${projectId}/users/${memberId}`,
-      { roleId },
-      { headers: this.ifMatch(version) },
-    );
-  }
-
-  public removeMember(projectId: string, memberId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}${PROJECTS}/${projectId}/users/${memberId}`);
   }
 
   public invite(projectId: string, email: string, roleId: string | null): Observable<ProjectInvitation> {

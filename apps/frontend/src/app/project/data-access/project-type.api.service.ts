@@ -10,8 +10,4 @@ export class ProjectTypeApiService extends HttpApiService {
   public getAll(): Observable<ProjectType[]> {
     return this.http.get<ProjectType[]>(`${this.baseUrl}/project-types`);
   }
-
-  public getById(id: string): Observable<ProjectType> {
-    return this.http.get<ProjectType>(`${this.baseUrl}/project-types/${id}`);
-  }
 }

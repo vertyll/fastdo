@@ -31,7 +31,7 @@ import { NotificationDropdownComponent } from './notification-dropdown.component
 import { ButtonComponent } from '../atoms/button.component';
 import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
 import { configNavModules } from 'src/app/config/config.nav.modules';
-import { environment } from '../../../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-navbar',

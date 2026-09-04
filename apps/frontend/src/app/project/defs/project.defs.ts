@@ -136,7 +136,8 @@ export type CreateProjectPayload = {
   hiddenWorkLogEnabled: boolean;
 };
 
-export type UpdateProjectPayload = CreateProjectPayload;
+// Mirrors the back end, which models UpdateProjectRequest separately from CreateProjectRequest.
+export type UpdateProjectPayload = CreateProjectPayload; // NOSONAR
 
 export enum ProjectSortFieldEnum {
   NAME = 'NAME',

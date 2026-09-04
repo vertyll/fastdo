@@ -12,7 +12,6 @@ const HEX_6_REGEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
 const COLOR_BLACK = '#000000';
 const COLOR_WHITE = '#FFFFFF';
 const LUMINANCE_THRESHOLD = 0.5;
-const MAX_COLOR_VALUE = 255;
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const fullHex = hex.replace(HEX_3_REGEX, (_, r, g, b) => r + r + g + g + b + b);
@@ -40,19 +39,4 @@ export function getContrastColor(backgroundColor: string): string {
   const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
 
   return luminance > LUMINANCE_THRESHOLD ? COLOR_BLACK : COLOR_WHITE;
-}
-
-export function addOpacity(color: string, opacity: number = 0.2): string {
-  if (!color) {
-    return color;
-  }
-
-  const fullHex = color.replace(HEX_3_REGEX, (_, r, g, b) => r + r + g + g + b + b);
-  const cleanHex = fullHex.replace('#', '');
-
-  const alpha = Math.round(opacity * MAX_COLOR_VALUE)
-    .toString(16)
-    .padStart(2, '0');
-
-  return `#${cleanHex}${alpha}`;
 }

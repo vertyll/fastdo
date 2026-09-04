@@ -212,10 +212,7 @@ export class UserProfileComponent implements OnInit {
         this.pendingAvatarFileId.set(stored.id);
         this.saving.set(false);
       },
-      error: () => {
-        this.saving.set(false);
-        this.toastService.presentToast(this.translateService.instant('Profile.updateError'), false);
-      },
+      error: () => this.saving.set(false),
     });
   }
 
@@ -245,10 +242,7 @@ export class UserProfileComponent implements OnInit {
           this.pendingAvatarFileId.set(undefined);
           this.toastService.presentToast(this.translateService.instant('Profile.updateSuccess'), true);
         },
-        error: () => {
-          this.saving.set(false);
-          this.toastService.presentToast(this.translateService.instant('Profile.updateError'), false);
-        },
+        error: () => this.saving.set(false),
       });
   }
 

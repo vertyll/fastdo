@@ -56,16 +56,6 @@ export class TasksApiService extends HttpApiService {
     );
   }
 
-  public changeStatus(taskId: string, statusId: string | null, version: number | null): Observable<Task> {
-    return this.withLoadingState(
-      this.http.patch<Task>(
-        `${this.baseUrl}${TASKS}/${taskId}/status`,
-        { statusId },
-        { headers: this.ifMatch(version) },
-      ),
-    );
-  }
-
   public delete(taskId: string, version: number | null): Observable<void> {
     return this.withLoadingState(
       this.http.delete<void>(`${this.baseUrl}${TASKS}/${taskId}`, { headers: this.ifMatch(version) }),
@@ -74,10 +64,6 @@ export class TasksApiService extends HttpApiService {
 
   public batchDelete(taskIds: string[]): Observable<number> {
     return this.withLoadingState(this.http.post<number>(`${this.baseUrl}${TASKS}/batch-delete`, { taskIds }));
-  }
-
-  public getComments(taskId: string): Observable<TaskComment[]> {
-    return this.withLoadingState(this.http.get<TaskComment[]>(`${this.baseUrl}${TASKS}/${taskId}/comments`));
   }
 
   public createComment(taskId: string, payload: CreateCommentPayload): Observable<TaskComment> {

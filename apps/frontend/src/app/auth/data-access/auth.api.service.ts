@@ -7,8 +7,8 @@ import { Session } from '../defs/auth.defs';
   providedIn: 'root',
 })
 export class AuthApiService extends HttpApiService {
-  public session(): Observable<Session> {
-    return this.http.get<Session>(`${this.baseUrl}/auth/session`);
+  public session(): Observable<Session | null> {
+    return this.http.get<Session | null>(`${this.baseUrl}/auth/session`);
   }
 
   public logout(): Observable<void> {

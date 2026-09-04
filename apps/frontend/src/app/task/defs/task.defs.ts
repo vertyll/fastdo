@@ -105,7 +105,8 @@ export type CreateTaskPayload = {
   attachmentIds?: string[];
 };
 
-export type UpdateTaskPayload = CreateTaskPayload;
+// Mirrors the back end, which models UpdateTaskRequest separately from CreateTaskRequest.
+export type UpdateTaskPayload = CreateTaskPayload; // NOSONAR
 
 export type CreateCommentPayload = {
   content: string;

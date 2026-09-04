@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { RoleEnum } from '../../shared/enums/role.enum';
+import { environment } from 'src/environments/environment';
 import { Session } from '../defs/auth.defs';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
@@ -44,19 +43,7 @@ export class AuthService {
     );
   }
 
-  public hasRole(role: RoleEnum): boolean {
-    return this.userRoles().includes(role);
-  }
-
   public getCurrentUserEmail(): string | null {
     return this.authStateService.email();
-  }
-
-  public getCurrentUserId(): string | null {
-    return this.authStateService.userId();
-  }
-
-  public clearAuthState(): void {
-    this.authStateService.clear();
   }
 }

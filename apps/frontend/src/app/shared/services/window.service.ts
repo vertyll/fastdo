@@ -1,4 +1,4 @@
-import { Injectable, Signal, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -10,9 +10,5 @@ export class WindowService {
     window.addEventListener('resize', () => {
       this.windowWidth.set(window.innerWidth);
     });
-  }
-
-  public getWindowWidth(): Signal<number> {
-    return this.windowWidth.asReadonly();
   }
 }

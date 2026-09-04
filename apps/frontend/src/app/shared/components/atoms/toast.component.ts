@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
 import { ToastService } from '../../services/toast.service';
@@ -10,9 +10,7 @@ import { ToastService } from '../../services/toast.service';
   template: `
     @if (toast().visible) {
       <div
-        [class]="
-          toast().position === 'Fixed' ? 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 min-w-50' : 'w-full mb-4'
-        "
+        [class]="positionClass()"
         class="flex items-center justify-between rounded shadow-lg p-4"
         [ngClass]="toast().success ? 'bg-success-500' : 'bg-danger-500'"
       >
@@ -33,9 +31,19 @@ import { ToastService } from '../../services/toast.service';
   ],
 })
 export class ToastComponent {
+  private static readonly POSITION_CLASSES: Record<string, string> = {
+    Fixed: 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 min-w-50',
+    BottomRight: 'fixed bottom-4 right-4 z-50 max-w-100 min-w-75',
+    Relative: 'w-full mb-4',
+  };
+
   private readonly toastService = inject(ToastService);
 
   protected readonly toast = this.toastService.toast;
+
+  protected readonly positionClass = computed(
+    () => ToastComponent.POSITION_CLASSES[this.toast().position] ?? ToastComponent.POSITION_CLASSES['Relative'],
+  );
 
   protected hideToast(): void {
     this.toastService.hideToast();

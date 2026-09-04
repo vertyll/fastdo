@@ -33,14 +33,6 @@ export class PlatformService {
     }
   }
 
-  public updatePlatform(platform: string): void {
-    this.platformSignal.set(platform);
-  }
-
-  public updateIsPlatformBrowser(isBrowser: boolean): void {
-    this.isPlatformBrowserSignal.set(isBrowser);
-  }
-
   private updateIsMobile(): void {
     if (this.isPlatformBrowserSignal()) {
       this.isMobileSignal.set(globalThis.innerWidth < MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT);

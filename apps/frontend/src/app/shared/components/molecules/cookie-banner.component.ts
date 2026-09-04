@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { getCookie, setCookie } from '../../utils/cookies';
 import { ButtonComponent } from '../atoms/button.component';
-import { COOKIE_ACCEPTED_VALUE, COOKIE_EXPIRATION_DAYS, COOKIE_NAME } from '../../../app.contansts';
+import { COOKIE_ACCEPTED_VALUE, COOKIE_EXPIRATION_DAYS, COOKIE_NAME } from 'src/app/app.contansts';
 
 @Component({
   selector: 'app-cookie-banner',

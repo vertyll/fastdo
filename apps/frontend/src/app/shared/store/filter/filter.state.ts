@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { FILTERS_STORAGE_KEY } from '../../../app.contansts';
+import { FILTERS_STORAGE_KEY } from 'src/app/app.contansts';
 import { FilterStateModel } from '../../defs/filter.defs';
 import { ClearFilter, ClearPartial, SavePartial } from './filter.actions';
 

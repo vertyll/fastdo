@@ -10,8 +10,4 @@ export class ProjectRoleApiService extends HttpApiService {
   public getAll(): Observable<ProjectRole[]> {
     return this.withLoadingState(this.http.get<ProjectRole[]>(`${this.baseUrl}/project-roles`));
   }
-
-  public getById(id: string): Observable<ProjectRole> {
-    return this.http.get<ProjectRole>(`${this.baseUrl}/project-roles/${id}`);
-  }
 }

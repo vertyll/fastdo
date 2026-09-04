@@ -1,12 +1,6 @@
-import { registerLocaleData } from '@angular/common';
-import localeEn from '@angular/common/locales/en';
-import localePl from '@angular/common/locales/pl';
-import { Component, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { environment } from '../environments/environment';
+import { Component } from '@angular/core';
 import { ModalComponent } from './shared/components/organisms/modal.component';
 import { LayoutComponent } from './shared/components/templates/layout.component';
-import { LocalStorageService } from './shared/services/local-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -17,38 +11,4 @@ import { LocalStorageService } from './shared/services/local-storage.service';
     </app-layout>
   `,
 })
-export class AppComponent {
-  private readonly selectedLanguageKey = 'selected_language';
-  private readonly availableLanguages: string[] = environment.availableLanguages;
-  private readonly defaultLanguage: string = environment.defaultLanguage;
-
-  private readonly translateService = inject(TranslateService);
-  private readonly localStorageService = inject(LocalStorageService);
-
-  constructor() {
-    this.registerLocales();
-    this.initializeLanguage();
-  }
-
-  private registerLocales(): void {
-    registerLocaleData(localePl, 'pl');
-    registerLocaleData(localeEn, 'en');
-  }
-
-  private initializeLanguage(): void {
-    this.translateService.addLangs(this.availableLanguages);
-    this.translateService.setFallbackLang(this.defaultLanguage);
-
-    const savedLanguage: string = this.localStorageService.get<string>(this.selectedLanguageKey, '');
-    if (savedLanguage && this.availableLanguages.includes(savedLanguage)) {
-      this.translateService.use(savedLanguage);
-      return;
-    }
-
-    const browserLang = this.translateService.getBrowserLang() || '';
-    const matchedLang = this.availableLanguages.includes(browserLang) ? browserLang : this.defaultLanguage;
-
-    this.translateService.use(matchedLang);
-    this.localStorageService.set(this.selectedLanguageKey, matchedLang);
-  }
-}
+export class AppComponent {}
