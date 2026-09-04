@@ -11,10 +11,6 @@ export class ModalService {
 
   public modal = computed(() => this.modalSignal());
 
-  private get currentModal(): ModalConfig {
-    return this.modalSignal();
-  }
-
   private setModal(val: ModalConfig): void {
     this.modalSignal.set(val);
   }

@@ -22,7 +22,6 @@ pnpm-debug.log
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Build outputs
 dist
