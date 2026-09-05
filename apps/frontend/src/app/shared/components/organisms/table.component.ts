@@ -31,27 +31,9 @@ import { FilterGroupComponent } from './filter-group.component';
 import { PaginatorComponent } from '../atoms/paginator.component';
 
 /**
- * Table configuration reference
- * -----------------------------
- *
- * `TableConfig` is the top-level object consumed by `<app-table>`. It describes
- * which columns to render, what row-level actions are available and how the
- * table should behave (sorting, pagination, hover highlighting, horizontal
- * scroll, infinite scroll, etc.).
- *
- * `TableColumn` describes a single column: its key in the row object, the
- * header label (translation key), the cell type and optional presentation
- * hints (width, alignment, responsive visibility, text truncation).
- *
- * `TruncateConfig` is an opt-in object attached to a column: when omitted the
- * cell renders full text with no width limit and no "show more" button; when
- * provided (even as an empty `{}`), text truncation is enabled with sensible
- * defaults — use `maxChars`, `maxLines` or `maxWidth` to tune it and
- * `expandable: false` to hide the toggle button.
- *
- * `TableAction` describes a row-level action rendered in the sticky actions
- * column (view / edit / delete / custom). Use `visible` and `disabled`
- * predicates to control per-row availability.
+ * `TruncateConfig` is opt-in per column: omitted means full text, no width limit
+ * and no toggle; present — an empty `{}` included — turns truncation on. The
+ * rules that look like defects are in `docs/shared-table.md`.
  */
 export interface TruncateConfig {
   /** Maximum number of characters used to size the cell (CSS `ch` unit)

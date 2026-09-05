@@ -47,10 +47,6 @@ export class LayoutComponent implements OnInit {
   protected browserInfo: string = '';
 
   ngOnInit(): void {
-    if (this.isLoggedIn()) {
-      /* empty */
-    }
-
     this.updateTime();
     this.browserInfo = this.getBrowserInfo();
 
