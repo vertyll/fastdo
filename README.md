@@ -48,7 +48,7 @@ translated from the back end.
 
 ### Shared components
 
-- [The shared table](./docs/shared-table.md) — the three rules in `TableComponent` that look like defects, and how actions are gated.
+- [The shared table](./docs/shared-table.md) — the rules in `TableComponent` that look like defects, and how actions are gated.
 
 > [!NOTE]
 >
