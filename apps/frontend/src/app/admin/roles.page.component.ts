@@ -97,7 +97,9 @@ type RoleFilters = {
                     }
                   </div>
                   @if (role.description) {
-                    <p class="mt-1 text-sm text-text-secondary dark:text-dark-text-secondary">{{ role.description }}</p>
+                    <p class="mt-1 text-sm text-text-secondary dark:text-dark-text-secondary">
+                      {{ role.system ? (role.description | translate) : role.description }}
+                    </p>
                   }
                 </div>
 

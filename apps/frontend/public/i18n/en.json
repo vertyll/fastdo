@@ -309,6 +309,7 @@
     "updateSuccess": "Profile updated successfully",
     "updateError": "An error occurred while updating the profile",
     "address": "Address",
+    "language": "Language",
     "firstName": "First name",
     "lastName": "Last name",
     "name": "Name",

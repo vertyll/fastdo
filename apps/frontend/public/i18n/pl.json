@@ -309,6 +309,7 @@
     "updateSuccess": "Profil został zaktualizowany",
     "updateError": "Wystąpił błąd podczas aktualizacji profilu",
     "address": "Adres",
+    "language": "Język",
     "firstName": "Imię",
     "lastName": "Nazwisko",
     "name": "Imię i nazwisko",

@@ -52,7 +52,7 @@ export class EditableMultiSelectComponent implements ControlValueAccessor, Valid
   private touched = false;
 
   public get normalizedDataArray(): Array<{ id: any; name: string }> {
-    return (this.dataArray() ?? []).map(item => {
+    return this.dataArray().map(item => {
       if (typeof item === 'number' || typeof item === 'string') {
         return { id: item, name: String(item) };
       }

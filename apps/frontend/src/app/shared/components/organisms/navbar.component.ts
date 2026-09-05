@@ -32,6 +32,7 @@ import { ButtonComponent } from '../atoms/button.component';
 import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
 import { configNavModules } from 'src/app/config/config.nav.modules';
 import { environment } from 'src/environments/environment';
+import { SUPPORTED_LANGUAGES } from '../../defs/language.defs';
 
 @Component({
   selector: 'app-navbar',
@@ -541,7 +542,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected readonly unreadNotificationCount = this.notificationStateService.unreadCount;
 
   protected showAllSections: boolean = false;
-  protected readonly languages: string[] = ['pl', 'en'];
+  protected readonly languages = SUPPORTED_LANGUAGES;
   protected readonly closeNotificationDropdown = signal<number>(0);
 
   constructor() {
