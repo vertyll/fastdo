@@ -50,11 +50,6 @@ translated from the back end.
 
 - [The shared table](./docs/shared-table.md) — the rules in `TableComponent` that look like defects, and how actions are gated.
 
-> [!NOTE]
->
-> During application development, SOLID principles, DRY, composition over inheritance, dependency injection,
-> design patterns and architectural patterns were applied.
-
 ## Screenshots
 
 ![Project View](https://raw.githubusercontent.com/vertyll/fastdo/refs/heads/main/screenshots/screenshot1.png)
