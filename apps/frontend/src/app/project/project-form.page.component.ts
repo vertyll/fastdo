@@ -755,10 +755,14 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     return this.translateService.getLangs().map(language => ({ language, name }));
   }
 
-  private namedColorItems(items: NameColorFormItem[] | undefined, defaultColor: string): Required<NameColorFormItem>[] {
-    return (items ?? [])
-      .filter(item => item.name?.trim())
-      .map(item => ({ id: item.id ?? '', name: item.name!.trim(), color: item.color || defaultColor }));
+  private namedColorItems(
+    items: NameColorFormItem[] | undefined,
+    defaultColor: string,
+  ): { id?: string; name: string; color: string }[] {
+    return (items ?? []).flatMap(item => {
+      const name = item.name?.trim();
+      return name ? [{ id: item.id, name, color: item.color || defaultColor }] : [];
+    });
   }
 
   private checkEditMode(): void {
