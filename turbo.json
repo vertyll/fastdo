@@ -1,12 +1,9 @@
 {
-  "$schema": "https://v2-10-12.turborepo.dev/schema.json",
+  "$schema": "https://turborepo.com/schema.json",
   "tasks": {
     "build": {
       "dependsOn": [
-        "^build",
-        "format",
-        "lint",
-        "test"
+        "^build"
       ],
       "outputs": [
         "build/**",
@@ -29,6 +26,13 @@
     "format": {
       "dependsOn": [
         "^format"
+      ],
+      "cache": true,
+      "persistent": false
+    },
+    "format:check": {
+      "dependsOn": [
+        "^format:check"
       ],
       "cache": true,
       "persistent": false

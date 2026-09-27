@@ -8,6 +8,7 @@
     "build:frontend": "turbo build --filter=frontend",
     "dev": "turbo dev",
     "format": "turbo format",
+    "format:check": "turbo format:check",
     "lint": "turbo lint",
     "test": "turbo test",
     "test:watch": "turbo test:watch"
