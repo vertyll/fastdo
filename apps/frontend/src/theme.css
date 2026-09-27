@@ -1,9 +1,7 @@
-/* Keep browser controls aligned with the active app theme. */
 :root {
   color-scheme: light;
 }
 
-/* Angular Material token baseline for light mode (and non-dark overlays). */
 :root,
 .cdk-overlay-container {
   --app-control-radius: 12px;
@@ -74,7 +72,6 @@
   --mdc-outlined-text-field-outline-width: 1px;
   --mdc-outlined-text-field-focus-outline-width: 2px;
 
-  /* Filled text-field — light theme. */
   --mdc-filled-text-field-container-color: var(--color-surface-variant);
   --mdc-filled-text-field-disabled-container-color: color-mix(in srgb, var(--color-surface-variant) 60%, transparent);
   --mdc-filled-text-field-container-shape: var(--app-control-radius);
@@ -186,7 +183,6 @@
   --mdc-outlined-text-field-outline-width: 1px;
   --mdc-outlined-text-field-focus-outline-width: 2px;
 
-  /* Filled text-field  */
   --mdc-filled-text-field-container-color: var(--color-dark-surface-variant);
   --mdc-filled-text-field-disabled-container-color: color-mix(
     in srgb,
@@ -229,7 +225,6 @@
   --mat-tooltip-supporting-text-color: var(--color-dark-text-primary);
 }
 
-/* Checkbox theme tokens shared by page and overlays. */
 :root,
 .cdk-overlay-container,
 .dark,

@@ -24,7 +24,7 @@ import { GetAllProjectsSearchParams, ProjectListItem, ProjectType } from './defs
 import { getAllProjectsSearchParams } from './data-access/project-filters.adapter';
 import { ProjectsService } from './data-access/project.service';
 import { ProjectsStateService } from './data-access/project.state.service';
-import { MOBILE_BREAKPOINT } from '../app.contansts';
+import { MOBILE_BREAKPOINT } from '../app.constants';
 import { ProjectTypeService } from './data-access/project-type.service';
 
 @Component({

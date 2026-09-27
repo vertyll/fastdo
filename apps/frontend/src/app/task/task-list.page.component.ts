@@ -40,7 +40,7 @@ import { WorkLogPanelComponent } from './components/work-log-panel.component';
 import { TasksService } from './data-access/task.service';
 import { TasksStateService } from './data-access/task.state.service';
 import { PlatformService } from '../shared/services/platform.service';
-import { MOBILE_BREAKPOINT } from '../app.contansts';
+import { MOBILE_BREAKPOINT } from '../app.constants';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
 

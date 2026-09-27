@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeEnum } from '../enums/theme.enum';
 import { LocalStorageService } from './local-storage.service';
-import { THEME_KEY } from '../../app.contansts';
+import { THEME_KEY } from '../../app.constants';
 
 @Injectable({
   providedIn: 'root',

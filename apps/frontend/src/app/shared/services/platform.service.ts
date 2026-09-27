@@ -3,7 +3,7 @@ import { DestroyRef, Injectable, PLATFORM_ID, inject, signal } from '@angular/co
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT } from '../../app.contansts';
+import { MOBILE_WINDOW_MAX_WIDTH_BREAKPOINT } from '../../app.constants';
 
 @Injectable({
   providedIn: 'root',

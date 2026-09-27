@@ -11,7 +11,7 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PaginationParams } from '../../defs/filter.defs';
 import { DropdownComponent, DropdownMenuDirective } from 'src/app/shared/components/atoms/dropdown.component';
-import { DEFAULT_PAGE_SIZE } from 'src/app/app.contansts';
+import { DEFAULT_PAGE_SIZE } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-paginator',

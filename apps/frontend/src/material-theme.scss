@@ -38,8 +38,6 @@ $dark-theme: mat.define-theme(
 :root {
   @include mat.all-component-themes($light-theme);
 
-  // Form field — filled appearance (light)
-  // Tokens: https://material.angular.dev/components/form-field/styling
   @include mat.form-field-overrides(
     (
       filled-focus-active-indicator-color: var(--mat-sys-primary),
@@ -50,7 +48,6 @@ $dark-theme: mat.define-theme(
     )
   );
 
-  // Datepicker — light
   @include mat.datepicker-overrides(
     (
       calendar-container-text-color: var(--mat-sys-on-surface),
@@ -61,7 +58,6 @@ $dark-theme: mat.define-theme(
 .dark {
   @include mat.all-component-colors($dark-theme);
 
-  // Form field — filled appearance (dark)
   @include mat.form-field-overrides(
     (
       filled-focus-active-indicator-color: var(--mat-sys-primary),
@@ -72,7 +68,6 @@ $dark-theme: mat.define-theme(
     )
   );
 
-  // Datepicker — dark
   @include mat.datepicker-overrides(
     (
       calendar-container-text-color: var(--mat-sys-on-surface),

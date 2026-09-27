@@ -70,7 +70,6 @@ import { SUPPORTED_LANGUAGES } from '../../defs/language.defs';
     `
       @reference "../../../../style.css";
 
-      /* ── Animation keyframes ── */
       @keyframes dropdown-enter {
         from {
           opacity: 0;
@@ -93,7 +92,6 @@ import { SUPPORTED_LANGUAGES } from '../../defs/language.defs';
         }
       }
 
-      /* ── Component styles ── */
       .top-nav {
         @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary sticky top-0 z-50 px-2.5 transition-colors duration-200;
       }

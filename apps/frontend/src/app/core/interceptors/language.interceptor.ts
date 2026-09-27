@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { X_LANG_HEADER } from '../../app.contansts';
+import { X_LANG_HEADER } from '../../app.constants';
 
 export const languageInterceptor: HttpInterceptorFn = (req, next) => {
   const translateService = inject(TranslateService);
