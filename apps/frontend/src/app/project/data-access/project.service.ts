@@ -22,10 +22,8 @@ export class ProjectsService {
   public getAll(searchParams?: GetAllProjectsSearchParams): Observable<ApiPaginatedResponse<ProjectListItem>> {
     return this.httpService.getAll(searchParams).pipe(
       tap(response => {
-        if (response) {
-          this.state.setProjectList(response.items);
-          this.state.setPagination(response.pagination);
-        }
+        this.state.setProjectList(response.items);
+        this.state.setPagination(response.pagination);
       }),
     );
   }

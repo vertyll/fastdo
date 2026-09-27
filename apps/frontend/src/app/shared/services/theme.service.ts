@@ -50,7 +50,7 @@ export class ThemeService {
   private initializeTheme(): void {
     const savedTheme = this.localStorageService.get<ThemeEnum>(THEME_KEY, this.defaultTheme);
 
-    if (savedTheme && Object.values(ThemeEnum).includes(savedTheme)) {
+    if (Object.values(ThemeEnum).includes(savedTheme)) {
       this.setTheme(savedTheme);
       return;
     }

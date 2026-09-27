@@ -11,7 +11,7 @@ export interface ProblemDetail {
 }
 
 function problemOf(error: unknown): ProblemDetail | null {
-  const body = (error as HttpErrorResponse)?.error;
+  const body = (error as Partial<HttpErrorResponse> | null)?.error;
   return body && typeof body === 'object' && typeof body.code === 'string' ? (body as ProblemDetail) : null;
 }
 

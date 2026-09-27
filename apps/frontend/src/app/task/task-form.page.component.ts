@@ -640,8 +640,8 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             accessRole: task.accessRoleId || null,
             priority: task.priority,
             statusId: task.statusId || null,
-            categoryIds: task.categoryIds ?? [],
-            assignedUserIds: task.assigneeIds ?? [],
+            categoryIds: task.categoryIds,
+            assignedUserIds: task.assigneeIds,
           });
 
           const known = new Set(this.projectUsers().map(user => user.id));
@@ -652,7 +652,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             this.projectUsers.set([...this.projectUsers(), ...missing]);
           }
 
-          this.loadAttachmentMetadata(task.attachmentIds ?? []);
+          this.loadAttachmentMetadata(task.attachmentIds);
           this.loading.set(false);
         },
         error: error => {

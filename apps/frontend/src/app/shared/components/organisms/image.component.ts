@@ -202,7 +202,7 @@ export class ImageComponent implements OnDestroy {
   public readonly fileInput!: ElementRef<HTMLInputElement>;
 
   @ViewChild('cropperImage')
-  public set cropperImage(element: ElementRef<HTMLImageElement>) {
+  public set cropperImage(element: ElementRef<HTMLImageElement> | undefined) {
     if (element && this.showCropper()) {
       if (this.cropper) {
         this.cropper.destroy();

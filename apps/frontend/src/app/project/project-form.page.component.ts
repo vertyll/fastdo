@@ -529,7 +529,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected getRequiredOrMinLengthError(control: FormControl): string {
-    if (!control?.touched) return '';
+    if (!control.touched) return '';
     if (control.hasError('required')) {
       return this.translateService.instant('FormValidationMessage.required');
     }
@@ -541,7 +541,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected getEmailFieldError(control: FormControl): string {
-    if (!control?.touched) return '';
+    if (!control.touched) return '';
     if (control.hasError('required')) {
       return this.translateService.instant('FormValidationMessage.required');
     }
@@ -804,8 +804,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: responses => {
-          this.projectTypes = responses.types || [];
-          this.projectRoles = responses.roles || [];
+          this.projectTypes = responses.types;
+          this.projectRoles = responses.roles;
 
           if (this.isEditMode && this.projectId) {
             this.loadProjectSpecificData();
@@ -837,8 +837,8 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: responses => {
-          this.projectStatuses = responses.statuses || [];
-          this.projectCategories = responses.categories || [];
+          this.projectStatuses = responses.statuses;
+          this.projectCategories = responses.categories;
           this.loadProject();
         },
         error: error => {
@@ -889,29 +889,25 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
     });
     this.hiddenWorkLogEnabled.set(project.hiddenWorkLogEnabled);
 
-    if (this.currentProject.categories) {
-      this.currentProject.categories.forEach(category => {
-        this.categoriesFormArray.push(
-          this.fb.group({
-            id: [category.id],
-            name: [category.name || '', Validators.required],
-            color: [category.color || '#3B82F6', Validators.required],
-          }),
-        );
-      });
-    }
+    this.currentProject.categories.forEach(category => {
+      this.categoriesFormArray.push(
+        this.fb.group({
+          id: [category.id],
+          name: [category.name || '', Validators.required],
+          color: [category.color || '#3B82F6', Validators.required],
+        }),
+      );
+    });
 
-    if (this.currentProject.statuses) {
-      this.currentProject.statuses.forEach(status => {
-        this.statusesFormArray.push(
-          this.fb.group({
-            id: [status.id],
-            name: [status.name || '', Validators.required],
-            color: [status.color || '#10B981', Validators.required],
-          }),
-        );
-      });
-    }
+    this.currentProject.statuses.forEach(status => {
+      this.statusesFormArray.push(
+        this.fb.group({
+          id: [status.id],
+          name: [status.name || '', Validators.required],
+          color: [status.color || '#10B981', Validators.required],
+        }),
+      );
+    });
 
     const currentUserEmail = this.authService.getCurrentUserEmail();
     this.currentProject.members.forEach(member => {

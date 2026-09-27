@@ -338,7 +338,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   private getProjectTypes(): void {
     this.projectTypeService.getAll().subscribe({
       next: types => {
-        this.projectTypesRaw = types || [];
+        this.projectTypesRaw = types;
         this.updateProjectTypeOptions();
         this.isFiltersLoading = false;
       },

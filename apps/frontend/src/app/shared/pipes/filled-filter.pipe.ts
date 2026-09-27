@@ -16,11 +16,11 @@ export class FilledFilterPipe implements PipeTransform {
 
     switch (node.nodeName) {
       case this.ION_INPUT_NODE:
-        return (node.firstChild as HTMLInputElement)?.value;
+        return (node.firstChild as HTMLInputElement | null)?.value;
 
       case this.NG_SELECT_NODE:
-        return Array.from(node.querySelectorAll(this.NG_VALUE_LABEL_SELECTOR)).map(
-          (element: unknown) => (element as HTMLElement).innerText?.trim() || '',
+        return Array.from(node.querySelectorAll(this.NG_VALUE_LABEL_SELECTOR)).map((element: unknown) =>
+          (element as HTMLElement).innerText.trim(),
         );
 
       default:

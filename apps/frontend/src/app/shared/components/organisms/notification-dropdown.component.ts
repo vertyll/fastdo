@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, finalize, of } from 'rxjs';
+import { EMPTY, catchError, finalize } from 'rxjs';
 import { ProjectsApiService } from 'src/app/project/data-access/project.api.service';
 import { NotificationDto } from '../../defs/notification.defs';
 import { ButtonRoleEnum } from '../../enums/modal.enum';
@@ -356,15 +356,11 @@ export class NotificationDropdownComponent {
             ToastTypeEnum.Error,
           );
           console.error('Invitation response failed:', error);
-          return of(null);
+          return EMPTY;
         }),
         finalize(() => this.invitationLoading.set(null)),
       )
-      .subscribe(response => {
-        if (response) {
-          this.notificationStateService.refreshNotifications();
-        }
-      });
+      .subscribe(() => this.notificationStateService.refreshNotifications());
   }
 
   private handleExternalCloseSignal(): void {

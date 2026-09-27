@@ -16,19 +16,15 @@ export class HasRoleDirective implements OnInit {
 
   ngOnInit(): void {
     const userRoles = this.authService.userRoles();
-    if (userRoles) {
-      const allowedRoles = this.allowedRoles();
-      const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-      const hasRole = roles.some(role => userRoles.includes(role));
-      if (hasRole && !this.isVisible) {
-        this.viewContainer.createEmbeddedView(this.templateRef);
-        this.isVisible = true;
-      } else if (!hasRole && this.isVisible) {
-        this.viewContainer.clear();
-        this.isVisible = false;
-      }
-    } else {
+    const allowedRoles = this.allowedRoles();
+    const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+    const hasRole = roles.some(role => userRoles.includes(role));
+    if (hasRole && !this.isVisible) {
+      this.viewContainer.createEmbeddedView(this.templateRef);
+      this.isVisible = true;
+    } else if (!hasRole && this.isVisible) {
       this.viewContainer.clear();
+      this.isVisible = false;
     }
   }
 }

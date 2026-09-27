@@ -32,10 +32,8 @@ export class TasksService {
   ): Observable<ApiPaginatedResponse<TaskListItem>> {
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap(response => {
-        if (response) {
-          this.state.setTaskList(response.items);
-          this.state.setPagination(response.pagination);
-        }
+        this.state.setTaskList(response.items);
+        this.state.setPagination(response.pagination);
       }),
     );
   }
@@ -47,10 +45,8 @@ export class TasksService {
     this.state.setLoadingMore(true);
     return this.httpService.getAllByProjectId(projectId, searchParams).pipe(
       tap(response => {
-        if (response) {
-          this.state.appendTaskList(response.items);
-          this.state.setPagination(response.pagination);
-        }
+        this.state.appendTaskList(response.items);
+        this.state.setPagination(response.pagination);
         this.state.setLoadingMore(false);
       }),
       catchError((error: unknown) => {

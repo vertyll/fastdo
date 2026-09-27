@@ -374,7 +374,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
   private loadFiltersFromState(): void {
     const savedFilters = this.store.selectSnapshot(FiltersSelectors.getFiltersByType(this.type()));
 
-    if (savedFilters && Object.keys(savedFilters).length > 0) {
+    if (Object.keys(savedFilters).length > 0) {
       this.form.patchValue(savedFilters, { emitEvent: false });
       this.updateFilledFilters();
     }

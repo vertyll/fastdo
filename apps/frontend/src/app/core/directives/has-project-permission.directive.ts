@@ -26,8 +26,8 @@ export class HasProjectPermissionDirective implements OnInit, OnChanges {
 
   private updateView(): void {
     const ctx = this.context();
-    const userPerms = ctx.userPermissions || [];
-    const required = ctx.requiredPermissions || [];
+    const userPerms = ctx.userPermissions;
+    const required = ctx.requiredPermissions;
     const hasPermission = required.some(p => userPerms.includes(p));
 
     if (hasPermission && !this.isVisible) {

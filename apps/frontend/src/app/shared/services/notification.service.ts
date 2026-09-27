@@ -30,10 +30,8 @@ export class NotificationService {
       panelClass = ['info-snackbar'];
     } else if (type === ToastTypeEnum.Success) {
       panelClass = ['success-snackbar'];
-    } else if (type === ToastTypeEnum.Error) {
-      panelClass = ['error-snackbar'];
     } else {
-      panelClass = ['info'];
+      panelClass = ['error-snackbar'];
     }
 
     this.snackBar.open(message, action, {
