@@ -1,75 +1,33 @@
-# Git
-.git
+### Global / Git ###
+.git/
 .gitignore
-.gitattributes
-
-# Dependencies
-node_modules
-npm-debug.log
-yarn-error.log
-pnpm-debug.log
-
-# Environment files
-.env
-.env.*
-!.env.example
-*.env
-*.env.*
-
-# IDE
-.vscode
-.idea
-*.swp
-*.swo
-*~
-
-# Build outputs
-dist
-build
-.next
-out
-
-# Test files
-coverage
-.nyc_output
-*.spec.ts
-*.spec.js
-*.test.ts
-*.test.js
-**/__tests__
-**/__mocks__
-
-# Logs
-logs
-*.log
-
-# OS
-.DS_Store
-Thumbs.db
-
-# CI/CD
-.github
-.gitlab-ci.yml
-
-# Documentation
-*.md
-!README.md
-docs
-
-# Misc
-.prettierrc
-.eslintrc*
-.editorconfig
-tsconfig.json
-jest.config.js
-
-# Docker
-docker-compose.yml
-docker-compose.*.yml
-Dockerfile
 .dockerignore
+.github/
+README.md
+LICENSE
 
-# Temporary files
-tmp
-temp
-*.tmp
+### Dependencies & build outputs ###
+**/node_modules/
+**/.next/
+**/.nuxt/
+**/.output/
+**/.turbo/
+**/dist/
+**/out/
+**/coverage/
+**/*.tsbuildinfo
+
+### Development & IDEs ###
+**/.idea/
+**/.vscode/
+**/*.log
+**/.env*
+!**/.env.development
+
+### OS ###
+**/.DS_Store
+**/Thumbs.db
+
+### Docker ###
+**/Dockerfile
+**/docker-compose*.yml
