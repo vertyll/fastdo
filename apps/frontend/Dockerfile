@@ -56,9 +56,11 @@ RUN mkdir -p /var/cache/nginx/client_temp \
   && chown -R nginx:nginx /var/cache/nginx /var/run/nginx /usr/share/nginx/html \
   && chmod -R 755 /var/cache/nginx /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1
+
+USER nginx
 
 CMD ["nginx", "-g", "daemon off;"]
