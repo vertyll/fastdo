@@ -20,8 +20,8 @@ env:
   IMAGE_NAME: vertyll/fastdo-frontend
 
 jobs:
-  quality:
-    name: Prettier, ESLint, tests, build
+  lint:
+    name: Lint
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
@@ -46,15 +46,55 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Test
         run: pnpm run test
+
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm run build
 
   image:
-    name: Build and publish
-    needs: quality
+    name: Image
+    needs: [lint, test, build]
     if: github.event_name != 'push' || github.ref_type == 'tag'
     runs-on: ubuntu-24.04-arm
     steps:
