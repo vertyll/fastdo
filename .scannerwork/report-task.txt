@@ -1,0 +1,6 @@
+projectKey=fastdo
+serverUrl=http://127.0.0.1:9500
+serverVersion=26.9.0.129388
+dashboardUrl=http://127.0.0.1:9500/dashboard?id=fastdo
+ceTaskId=0ca994c8-f0e2-4450-bb72-1323fda377a2
+ceTaskUrl=http://127.0.0.1:9500/api/ce/task?id=0ca994c8-f0e2-4450-bb72-1323fda377a2
