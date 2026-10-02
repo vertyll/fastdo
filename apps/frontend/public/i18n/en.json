@@ -517,7 +517,7 @@
     "termsSections": [
       {
         "title": "1. What FastDo is",
-        "content": "FastDo is a demo project Mikołaj Gawron built for learning and as part of his portfolio. It is for running projects and tasks, backed by the VEDS system. The application is free to use."
+        "content": "FastDo is a demo project Mikołaj Gawron built for learning and as part of his portfolio. It is for running projects and tasks. The application is free to use."
       },
       {
         "title": "2. Your account",
@@ -539,7 +539,7 @@
     "privacyPolicySections": [
       {
         "title": "1. Data controller",
-        "content": "The data controller is Mikołaj Gawron, the author of FastDo and the VEDS system, a demo project built for learning and as a portfolio piece. Contact: gawrmiko@gmail.com."
+        "content": "The data controller is Mikołaj Gawron, the author of FastDo, a demo project built for learning and as a portfolio piece. Contact: gawrmiko@gmail.com."
       },
       {
         "title": "2. What we process",

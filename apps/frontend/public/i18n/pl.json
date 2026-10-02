@@ -517,7 +517,7 @@
     "termsSections": [
       {
         "title": "1. Czym jest FastDo",
-        "content": "FastDo to projekt demonstracyjny, który Mikołaj Gawron stworzył w celach nauki i jako część swojego portfolio. Służy do prowadzenia projektów i zadań; jego zapleczem jest system VEDS. Korzystanie z aplikacji jest bezpłatne."
+        "content": "FastDo to projekt demonstracyjny, który Mikołaj Gawron stworzył w celach nauki i jako część swojego portfolio. Służy do prowadzenia projektów i zadań. Korzystanie z aplikacji jest bezpłatne."
       },
       {
         "title": "2. Konto",
@@ -539,7 +539,7 @@
     "privacyPolicySections": [
       {
         "title": "1. Administrator danych",
-        "content": "Administratorem danych jest Mikołaj Gawron, autor FastDo i systemu VEDS, projektu demonstracyjnego stworzonego w celach nauki i portfolio. Kontakt: gawrmiko@gmail.com."
+        "content": "Administratorem danych jest Mikołaj Gawron, autor FastDo, projektu demonstracyjnego stworzonego w celach nauki i portfolio. Kontakt: gawrmiko@gmail.com."
       },
       {
         "title": "2. Jakie dane przetwarzamy",
