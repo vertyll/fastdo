@@ -513,62 +513,57 @@
     "version": "Version",
     "effectiveDate": "Effective Date",
     "lastModified": "Last Modified",
-    "lastModifiedDate": "31 August 2026",
+    "lastModifiedDate": "2 October 2026",
     "termsSections": [
       {
-        "title": "1. General provisions",
-        "content": "These terms set out how FastDo may be used. Using the application means accepting them."
+        "title": "1. What FastDo is",
+        "content": "FastDo is a demo project Mikołaj Gawron built for learning and as part of his portfolio. It is for running projects and tasks, backed by the VEDS system. The application is free to use."
       },
       {
-        "title": "2. User account",
-        "content": "Authentication is handled by an external identity provider. You are responsible for keeping your sign-in details confidential.",
-        "items": [
-          "One account per e-mail address.",
-          "Accounts are personal and must not be shared."
-        ]
+        "title": "2. Your account",
+        "content": "You create and manage your account through Keycloak, a sign-in service running on the author's server. When you sign up you accept these terms and confirm that you have read the privacy policy; the date of acceptance is stored with your account. You are responsible for keeping your sign-in details confidential."
       },
       {
-        "title": "3. Scope of the service",
-        "content": "The application is for running projects and tasks. It is provided as-is, with no guarantee of uninterrupted availability."
+        "title": "3. Content",
+        "content": "You are responsible for what you put into the application — projects, tasks, comments and files — and for sharing it with other project members. Do not enter other people's personal data or anything you would not want stored on the author's server."
       },
       {
-        "title": "4. Responsibility",
-        "content": "You are responsible for the content you put into the application and for the consequences of sharing it with other project members."
+        "title": "4. Availability",
+        "content": "The application is provided as is, with no guarantee that it is available or works correctly. The author may change it, reset its data or shut it down at any time. Accounts and content that break the law or are used for abuse may be removed."
       },
       {
-        "title": "5. Changes to these terms",
-        "content": "Users are notified of changes in advance. Continuing to use the application after they take effect means accepting them."
+        "title": "5. Contact",
+        "content": "Questions and reports: gawrmiko@gmail.com."
       }
     ],
     "privacyPolicySections": [
       {
         "title": "1. Data controller",
-        "content": "The owner of the service is the controller of the personal data processed in FastDo."
+        "content": "The data controller is Mikołaj Gawron, the author of FastDo and the VEDS system, a demo project built for learning and as a portfolio piece. Contact: gawrmiko@gmail.com."
       },
       {
-        "title": "2. What is processed",
-        "content": "Only the data needed to provide the service is processed.",
-        "items": [
-          "The e-mail address and name on the account.",
-          "Project, task and comment content.",
-          "Files you upload."
-        ]
+        "title": "2. What we process",
+        "content": "Your account data (email address, name, and a password stored only as a hash in Keycloak), your roles, and what you enter yourself: projects, invitations and memberships, tasks, comments, work log entries, uploaded files, and notifications with their settings."
       },
       {
         "title": "3. Purpose and legal basis",
-        "content": "Data is processed to provide the service, on the basis of the agreement formed by accepting these terms."
+        "content": "We process the data only to run the application, under Article 6(1)(b) GDPR, that is to provide the service you use."
       },
       {
-        "title": "4. Your rights",
-        "content": "You may access, correct, erase and export your data.",
-        "items": [
-          "Account deletion requests are acted on without delay.",
-          "A copy of your data is provided on request."
-        ]
+        "title": "4. Where the data is and who receives it",
+        "content": "The data is stored in databases on the author's private server in the European Union. It is never sold or shared with anyone else. A project's content is visible to its members. Emails are sent by an external mail provider, which receives only the recipient's address and the message."
       },
       {
         "title": "5. Retention",
-        "content": "Data is kept for as long as the account exists, and afterwards only for the period the law requires."
+        "content": "We keep the data until your account is deleted. As this is a demo project, it may also be deleted earlier, for example when the database is reset."
+      },
+      {
+        "title": "6. Your rights",
+        "content": "You have the right to access, rectify and erase your data, to restrict its processing, to data portability and to object. To exercise them, write to gawrmiko@gmail.com. You also have the right to lodge a complaint with a data protection supervisory authority; in Poland, the President of the Personal Data Protection Office (UODO)."
+      },
+      {
+        "title": "7. Cookies and browser storage",
+        "content": "The application uses only the session cookie it needs for sign-in. Your browser's storage keeps only your chosen language, theme and list filters. There is no analytics and no advertising."
       }
     ]
   },
