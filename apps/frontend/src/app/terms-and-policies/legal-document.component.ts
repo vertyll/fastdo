@@ -23,7 +23,7 @@ import { splitEmails } from '../shared/utils/email-links.utils';
 
             @if (section.content) {
               <p class="text-text-secondary-light dark:text-text-secondary-dark">
-                @for (segment of segments(section.content); track $index) {
+                @for (segment of segments(section.content); track segment.at) {
                   @if (segment.kind === 'email') {
                     <a class="text-primary-600 hover:underline" [href]="'mailto:' + segment.email">{{
                       segment.email
