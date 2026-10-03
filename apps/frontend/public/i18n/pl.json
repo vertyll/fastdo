@@ -513,7 +513,7 @@
     "version": "Wersja",
     "effectiveDate": "Data wejścia w życie",
     "lastModified": "Ostatnia modyfikacja",
-    "lastModifiedDate": "02.10.2026",
+    "lastModifiedDate": "03.10.2026",
     "termsSections": [
       {
         "title": "1. Czym jest FastDo",
@@ -551,7 +551,7 @@
       },
       {
         "title": "4. Gdzie są dane i kto je otrzymuje",
-        "content": "Dane są przechowywane w bazach danych na prywatnym serwerze autora w Unii Europejskiej. Nie są sprzedawane ani udostępniane innym podmiotom. Treści projektu widzą jego uczestnicy. Wiadomości e-mail wysyła zewnętrzny dostawca poczty, który otrzymuje tylko adres odbiorcy i treść wiadomości."
+        "content": "Dane są przechowywane w bazach danych na prywatnym serwerze autora w Unii Europejskiej. Nie są sprzedawane ani udostępniane innym podmiotom. Treści projektu widzą jego uczestnicy. Wiadomości e-mail wysyła zewnętrzny dostawca poczty (Resend), który otrzymuje tylko adres odbiorcy i treść wiadomości i może je przetwarzać poza Europejskim Obszarem Gospodarczym na podstawie standardowych klauzul umownych zatwierdzonych przez Komisję Europejską."
       },
       {
         "title": "5. Okres przechowywania",
@@ -562,7 +562,11 @@
         "content": "Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przeniesienia oraz sprzeciwu. Aby z nich skorzystać, napisz na gawrmiko@gmail.com. Masz też prawo wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych."
       },
       {
-        "title": "7. Pliki cookie i pamięć przeglądarki",
+        "title": "7. Dobrowolność podania danych",
+        "content": "Podanie danych jest dobrowolne, ale bez nich nie da się założyć konta. Nie podejmujemy wobec Ciebie decyzji opartych wyłącznie na zautomatyzowanym przetwarzaniu, w tym profilowania."
+      },
+      {
+        "title": "8. Pliki cookie i pamięć przeglądarki",
         "content": "Aplikacja używa wyłącznie pliku cookie sesji, niezbędnego do logowania. W pamięci przeglądarki zapisuje tylko wybrany język, motyw i filtry list. Nie używamy analityki ani reklam."
       }
     ]

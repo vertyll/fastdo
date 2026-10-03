@@ -2,6 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LegalSection } from './defs/terms-and-policies.defs';
+import { splitEmails } from '../shared/utils/email-links.utils';
 
 @Component({
   selector: 'app-legal-document',
@@ -21,7 +22,17 @@ import { LegalSection } from './defs/terms-and-policies.defs';
             <h2 class="text-xl font-semibold mb-4">{{ section.title }}</h2>
 
             @if (section.content) {
-              <p class="text-text-secondary-light dark:text-text-secondary-dark">{{ section.content }}</p>
+              <p class="text-text-secondary-light dark:text-text-secondary-dark">
+                @for (segment of segments(section.content); track $index) {
+                  @if (segment.kind === 'email') {
+                    <a class="text-primary-600 hover:underline" [href]="'mailto:' + segment.email">{{
+                      segment.email
+                    }}</a>
+                  } @else {
+                    {{ segment.text }}
+                  }
+                }
+              </p>
             }
 
             @if (section.items?.length) {
@@ -44,6 +55,8 @@ export class LegalDocumentComponent {
   public readonly sectionsKey = input.required<string>();
 
   private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
+
+  protected readonly segments = splitEmails;
 
   public readonly sections = computed<LegalSection[]>(() => {
     this.currentLang();
