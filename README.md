@@ -44,7 +44,7 @@ Web application for managing projects and their tasks. The repository holds the 
 - Light and dark theme.
 - Polish and English; reference data arrives already translated from the back-end.
 - Permissions decide what renders.
-- Optimistic concurrency and RFC 9457 errors from the API are handled in one place.
+- Optimistic concurrency and RFC 9457 errors from the back-end are handled in one place.
 - And many other features that can be found in the application code.
 
 ### Other:
