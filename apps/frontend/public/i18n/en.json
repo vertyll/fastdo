@@ -139,7 +139,8 @@
     "language": "Language"
   },
   "CookiesBanner": {
-    "text": "This site uses cookies to improve your experience. By using our site, you agree to our use of cookies."
+    "text": "FastDo uses only the cookies it needs: the sign-in session and remembering this notice. Your language, theme and filters stay in browser storage.",
+    "understood": "Got it"
   },
   "Dashboard": {
     "title": "Welcome to our application",

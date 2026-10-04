@@ -139,7 +139,8 @@
     "language": "Język"
   },
   "CookiesBanner": {
-    "text": "Ta strona używa plików cookie, aby poprawić Twoje doświadczenie. Korzystając z naszej strony, zgadzasz się na wykorzystanie plików cookie."
+    "text": "FastDo używa wyłącznie niezbędnych plików cookie: sesji logowania i zapamiętania tego komunikatu. Język, motyw i filtry zapisuje w pamięci przeglądarki.",
+    "understood": "Rozumiem"
   },
   "Dashboard": {
     "title": "Witamy w naszej aplikacji",

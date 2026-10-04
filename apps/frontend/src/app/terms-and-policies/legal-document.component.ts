@@ -29,7 +29,7 @@ import { splitEmails } from '../shared/utils/email-links.utils';
                       segment.email
                     }}</a>
                   } @else {
-                    {{ segment.text }}
+                    <span>{{ segment.text }}</span>
                   }
                 }
               </p>
