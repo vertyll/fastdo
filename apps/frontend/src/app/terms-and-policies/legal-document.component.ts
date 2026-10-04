@@ -60,7 +60,24 @@ export class LegalDocumentComponent {
 
   public readonly sections = computed<LegalSection[]>(() => {
     this.currentLang();
-    const value = this.translate.instant(this.sectionsKey());
-    return Array.isArray(value) ? value : [];
+    const key = this.sectionsKey();
+    return this.indexes(key).map(index => {
+      const section = `${key}.${index}`;
+      return {
+        title: this.text(`${section}.title`) ?? '',
+        content: this.text(`${section}.content`),
+        items: this.indexes(`${section}.items`).map(item => this.text(`${section}.items.${item}`) ?? ''),
+      };
+    });
   });
+
+  private indexes(key: string): string[] {
+    const value: unknown = this.translate.instant(key);
+    return value !== null && typeof value === 'object' ? Object.keys(value) : [];
+  }
+
+  private text(key: string): string | undefined {
+    const value: unknown = this.translate.instant(key);
+    return typeof value === 'string' && value !== key ? value : undefined;
+  }
 }
