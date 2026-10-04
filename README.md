@@ -36,6 +36,7 @@ Web application for managing projects and their tasks. The repository holds the 
   `HttpOnly` session cookie, so no token ever reaches JavaScript and the application has no login form.
 - **JWT**: the gateway attaches the access token when it forwards a request to a VEDS service; the front-end never sees
   it.
+- **State**: the front-end keeps no token and no session; the session lives in the VEDS gateway, in Redis.
 
 ### Core front-end:
 
