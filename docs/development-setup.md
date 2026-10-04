@@ -29,7 +29,7 @@ pnpm run dev
 | VEDS gateway   | `http://localhost:8080` |
 | This front end | `http://localhost:4200` |
 
-The gateway only accepts browser requests from origins listed in its `veds.gateway.cors.allowed-origins`;
+The gateway only accepts browser requests from origins listed in its `application.gateway.cors.allowed-origins`;
 `http://localhost:4200` is there by default.
 
 ## Build
