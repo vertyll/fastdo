@@ -16,7 +16,8 @@ What follows from that, and is worth knowing before changing anything in `src/ap
 ## Losing the session is a gateway concern
 
 Access tokens are short-lived and the gateway refreshes them behind the cookie. The refresh token is single-use and
-Keycloak revokes the whole session if a spent one is replayed, so the gateway serializes refreshes per session.
+Keycloak revokes the whole session if a spent one is replayed, so the gateway runs one refresh per refresh token,
+across its replicas too.
 
 Nothing in the front end participates in that, and nothing should try to: a 401 means the session is gone, and the
 only correct response is to clear local auth state and let the user sign in again. Retrying the request, or refreshing
