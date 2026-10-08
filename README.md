@@ -30,13 +30,10 @@ Web application for managing projects and their tasks. The repository holds the 
 
 ### Authentication:
 
-- **Identity provider**: Keycloak (realm `veds`) owns every page that touches a credential: sign-up, sign-in, email
-  verification, password reset, two-factor authentication and acceptance of the terms of use.
-- **Pattern**: BFF. The VEDS API gateway signs users in and keeps the tokens on the server; the browser holds only an
-  `HttpOnly` session cookie, so no token ever reaches JavaScript and the application has no login form.
-- **JWT**: the gateway attaches the access token when it forwards a request to a VEDS service; the front-end never sees
-  it.
-- **State**: the front-end keeps no token and no session; the session lives in the VEDS gateway, in Redis.
+- **Identity provider**: Keycloak (realm `veds`); the application has no login form.
+- **Pattern**: BFF; the VEDS API gateway keeps the tokens, the browser holds only a session cookie.
+- **State**: no token or session in the front-end; the session lives in the gateway, in Redis.
+- **Details**: [Authentication](./docs/authentication.md).
 
 ### Core front-end:
 
