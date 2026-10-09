@@ -55,7 +55,7 @@ Web application for managing projects and their tasks. The repository holds the 
 - [Architecture](./docs/architecture.md) – how features are laid out and how permissions decide what renders.
 - [Authentication](./docs/authentication.md) – the BFF token handler.
 - [Calling the VEDS API](./docs/veds-api.md) – errors, optimistic concurrency and file uploads.
-- [Translations](./docs/translations.md) – the two catalogues and ICU plurals.
+- [Translations](./docs/translations.md) – the two catalogs and ICU plurals.
 - [The shared table](./docs/shared-table.md) – the rules in `TableComponent` and how actions are gated.
 
 ## Preview Screenshots

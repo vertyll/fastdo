@@ -6,15 +6,15 @@ The front end talks to exactly one host: the VEDS **api-gateway**. Services are 
 needs no knowledge of how the back end is split up, and the gateway stays the only place where authorization, CORS and
 session handling live.
 
-| Concern               | Served from                                                                |
-|-----------------------|----------------------------------------------------------------------------|
-| Sign-in and session   | api-gateway (`/auth/authorize`, `/auth/callback`, `/auth/session`)         |
-| Accounts and roles    | iam-service (`/auth/**`, `/users/**`, `/roles/**`)                         |
-| Projects              | project-service (`/projects/**`, `/project-types/**`, `/project-roles/**`) |
-| Tasks and comments    | task-service (`/tasks/**`)                                                 |
-| Notifications         | notification-service (`/notifications/**`, `/ws/notifications`)            |
-| Files                 | file-service (`/files/**`)                                                 |
-| Translation catalogue | translation-service (`/translations/**`)                                   |
+| Concern             | Served from                                                                |
+|---------------------|----------------------------------------------------------------------------|
+| Sign-in and session | api-gateway (`/auth/authorize`, `/auth/callback`, `/auth/session`)         |
+| Accounts and roles  | iam-service (`/auth/**`, `/users/**`, `/roles/**`)                         |
+| Projects            | project-service (`/projects/**`, `/project-types/**`, `/project-roles/**`) |
+| Tasks and comments  | task-service (`/tasks/**`)                                                 |
+| Notifications       | notification-service (`/notifications/**`, `/ws/notifications`)            |
+| Files               | file-service (`/files/**`)                                                 |
+| Translation catalog | translation-service (`/translations/**`)                                   |
 
 A component that reaches a service port directly works locally and breaks in the cluster, where only the gateway is
 exposed. `environment.apiUrl` is the single place that address appears.

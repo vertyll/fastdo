@@ -22,13 +22,13 @@ Every service answers a failed call the same way, as `application/problem+json`:
 
 | Member   | What to do with it                                                                   |
 |----------|--------------------------------------------------------------------------------------|
-| `code`   | The service's catalogue key. `errorKeyOf()` reads it; render it through `translate`  |
+| `code`   | The service's catalog key. `errorKeyOf()` reads it; render it through `translate`    |
 | `params` | Interpolation values for that message. `errorParamsOf()` reads it; absent when empty |
 | `fields` | Field name to message key, on a validation refusal only. `fieldErrorsOf()` reads it  |
 | `detail` | Absent by design — the prose belongs to translation-service, which resolves `code`   |
 
 A request rejected before it reached the application — an unknown path, an unsupported method — is still a problem
-document, but carries no `code`: that member names an entry in a service's catalogue, and such a request has none.
+document, but carries no `code`: that member names an entry in a service's catalog, and such a request has none.
 Read `status` for those.
 
 ## One place reports a failed call

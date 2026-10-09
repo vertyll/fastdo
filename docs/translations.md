@@ -1,6 +1,6 @@
 # Translations
 
-## Two sources, one catalogue
+## Two sources, one catalog
 
 `BackendCatalogueLoader` merges what the interface owns with what the back end owns:
 
@@ -17,7 +17,7 @@ labels, without the request **every** back-end key renders as itself, which the 
 `project.invitation.expired` in a toast.
 
 The back end wins on a collision, because it owns the keys it declares. A failed request falls back to an empty
-catalogue rather than an error, so a brief `translation-service` outage costs the back-end messages, not the interface.
+catalog rather than an error, so a brief `translation-service` outage costs the back-end messages, not the interface.
 
 ## Two tracks, and they never mix
 
@@ -36,20 +36,20 @@ A status or category name is text somebody typed, so it has no key to look up; t
 
 ## ICU, single brace
 
-Angular offers two ways to translate and only one can read a catalogue an administrator edits.
+Angular offers two ways to translate and only one can read a catalog an administrator edits.
 
-| Property                | `@angular/localize`   | `ngx-translate`             |
-|-------------------------|-----------------------|-----------------------------|
-| Resolved                | at build time         | at run time                 |
-| ICU plurals             | built in              | needs a `TranslateCompiler` |
-| Changing language       | one bundle per locale | no rebuild                  |
-| Catalogue from a server | not possible          | the normal case             |
+| Property              | `@angular/localize`   | `ngx-translate`             |
+|-----------------------|-----------------------|-----------------------------|
+| Resolved              | at build time         | at run time                 |
+| ICU plurals           | built in              | needs a `TranslateCompiler` |
+| Changing language     | one bundle per locale | no rebuild                  |
+| Catalog from a server | not possible          | the normal case             |
 
-`@angular/localize` freezes the catalogue into the bundle, so a correction would never reach anybody. `ngx-translate`
+`@angular/localize` freezes the catalog into the bundle, so a correction would never reach anybody. `ngx-translate`
 is used for that reason alone, and pays for it by having to add ICU back: its default parser substitutes `{{param}}`
 and does nothing else, so `ngx-translate-messageformat-compiler` is registered as the `TranslateCompiler`.
 
-**Both catalogues are ICU, single brace.** `{{param}}` is `ngx-translate`'s own syntax and the compiler does not read
+**Both catalogs are ICU, single brace.** `{{param}}` is `ngx-translate`'s own syntax and the compiler does not read
 it — under ICU `{{count}}` renders as `{5}`, braces included. One dialect across both sources is what keeps that from
 becoming a per-key accident.
 
@@ -64,7 +64,7 @@ Counted nouns use a plural, because Polish needs four forms:
 Not a fallback. A fallback substitutes another language and the reader assumes the text is finished; a bare
 `Task.priorityMedium` on screen is visible, greppable and names exactly what has to be added.
 
-Every key referenced in code must exist in one of the two catalogues. Nothing enforces that at build time, so it is
+Every key referenced in code must exist in one of the two catalogs. Nothing enforces that at build time, so it is
 worth checking when adding a screen.
 
 > [!NOTE]
