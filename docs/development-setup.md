@@ -11,8 +11,8 @@ There is nothing to configure and no `.env` to create. The only setting is the g
 
 ## Run against a local VEDS
 
-The back end is not part of this repository. Start it from the VEDS repository first — its `docker-compose.local.yml` brings
-up PostgreSQL, Keycloak, Kafka, Redis and object storage, and the services are run from there:
+The back end is not part of this repository. Start it from the VEDS repository first — its `docker-compose.local.yml`
+brings up PostgreSQL, Keycloak, Kafka, Redis and object storage, and the services are run from there:
 
 ```bash
 docker compose -f docker-compose.local.yml up -d
