@@ -1,0 +1,11 @@
+# Standards
+
+The specifications this repository implements or depends on, what for, and where the documentation covers it.
+
+| Standard | Title | Used for | Explained in |
+|---|---|---|---|
+| [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) | Problem Details for HTTP APIs | the error body of every refusal | [Calling the VEDS API: A refusal is an RFC 9457 problem document](docs/veds-api.md#a-refusal-is-an-rfc-9457-problem-document) |
+| [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) | HTTP Semantics | `ETag` and `If-Match` on edits | [Calling the VEDS API: Optimistic concurrency](docs/veds-api.md#optimistic-concurrency) |
+| [ICU MessageFormat](https://unicode-org.github.io/icu/userguide/format_parse/messages/) | ICU MessageFormat | the syntax of every translated message | [Translations: ICU, single brace](docs/translations.md#icu-single-brace) |
+| [STOMP](https://stomp.github.io/stomp-specification-1.2.html) | STOMP 1.2 | notifications pushed from the VEDS gateway | [README.md](README.md) |
+| [Fetch Standard](https://fetch.spec.whatwg.org/) | Fetch Standard (WHATWG) | CORS between this front-end and the gateway | [Development Setup: Run against a local VEDS](docs/development-setup.md#run-against-a-local-veds) |
