@@ -33,7 +33,7 @@ Web application for managing projects and their tasks. The repository holds the 
 - **Identity provider**: Keycloak (realm `veds`); the application has no login form.
 - **Pattern**: BFF; the VEDS API gateway keeps the tokens, the browser holds only a session cookie.
 - **State**: no token or session in the front-end; the session lives in the gateway, in Redis.
-- **Details**: [Authentication](./docs/authentication.md).
+- **Details**: [Authentication](docs/authentication.md).
 
 ### Core front-end:
 
@@ -51,14 +51,9 @@ Web application for managing projects and their tasks. The repository holds the 
 
 ## Documentation
 
-- [Glossary](./GLOSSARY.md) – every term the docs use, and where it is explained.
-- [Standards](./STANDARDS.md) – the RFCs and specifications the code implements or depends on.
-- [Development Setup](./docs/development-setup.md) – installing, running against a local VEDS, and building.
-- [Architecture](./docs/architecture.md) – how features are laid out and how permissions decide what renders.
-- [Authentication](./docs/authentication.md) – the BFF token handler.
-- [Calling the VEDS API](./docs/veds-api.md) – errors, optimistic concurrency and file uploads.
-- [Translations](./docs/translations.md) – the two catalogs and ICU plurals.
-- [The shared table](./docs/shared-table.md) – the rules in `TableComponent` and how actions are gated.
+- [Contents](CONTENTS.md) – every document in the repository, the module it belongs to, and what it covers.
+- [Glossary](GLOSSARY.md) – every term the docs use, and where it is explained.
+- [Standards](STANDARDS.md) – the RFCs and specifications the code implements or depends on.
 
 ## Preview Screenshots
 
