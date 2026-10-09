@@ -57,5 +57,6 @@ Deletion is asynchronous: the record is marked deleted immediately, a sweep remo
 ticket for a deleted file is refused with **409**, but a URL handed out earlier keeps working until it expires.
 
 > [!WARNING]
+>
 > Unknown fields in a request body are ignored rather than rejected. A misspelled field name returns **200** and
 > writes the DTO's default, so a typo looks like a successful no-op. Check the request DTO before inventing a name.

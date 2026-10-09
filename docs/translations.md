@@ -30,6 +30,7 @@ A status or category name is text somebody typed, so it has no key to look up; t
 `x-lang` and returns `statusName` ready to render.
 
 > [!WARNING]
+>
 > Server-resolved text does not change when the user switches language — it was fetched under the old header. A
 > screen showing such text must refetch on `onLangChange`, not merely re-render.
 
@@ -67,5 +68,6 @@ Every key referenced in code must exist in one of the two catalogues. Nothing en
 worth checking when adding a screen.
 
 > [!NOTE]
+>
 > `environment.availableLanguages` is a constant list, while `GET /translations/languages` answers the same question.
 > A language seeded in the back end therefore needs a front-end release to become selectable.

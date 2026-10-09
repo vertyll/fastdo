@@ -40,5 +40,6 @@ visible: (row) => row.permissions?.includes(ProjectRolePermissionEnum.EDIT_PROJE
 ```
 
 > [!WARNING]
+>
 > A row mapping that rebuilds the object field by field must copy `permissions` through. Dropping it makes every
 > action silently disappear rather than fail — the guard reads as "no data" instead of "wrong shape".
