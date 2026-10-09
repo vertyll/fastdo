@@ -51,6 +51,7 @@ Web application for managing projects and their tasks. The repository holds the 
 
 ## Documentation
 
+- [Glossary](./GLOSSARY.md) – the terms, the standards they come from, and where each is explained.
 - [Development Setup](./docs/development-setup.md) – installing, running against a local VEDS, and building.
 - [Architecture](./docs/architecture.md) – how features are laid out and how permissions decide what renders.
 - [Authentication](./docs/authentication.md) – the BFF token handler.
