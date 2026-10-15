@@ -125,7 +125,7 @@ import { SUPPORTED_LANGUAGES } from '../../defs/language.defs';
       }
 
       .mobile-module-item {
-        @apply flex items-center space-x-2 px-3 py-2 hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 text-sm cursor-pointer;
+        @apply flex items-center space-x-2 px-3 py-2 whitespace-nowrap hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200 text-sm cursor-pointer;
       }
 
       .mobile-module-item.active {
