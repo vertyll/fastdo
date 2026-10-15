@@ -6,16 +6,18 @@
     <img alt="" src="https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white">
 </p>
 
+# FastDo
+
 ## Project Assumptions
 
 Web application for managing projects and their tasks. The repository holds the front-end only; the back-end is
 [VEDS](https://github.com/vertyll/veds), reached through its API gateway.
 
-## Link: https://fastdo.vertyll.dev
+## Link: <https://fastdo.vertyll.dev>
 
 ## Technology Stack
 
-### Front-end:
+### Front-end
 
 - Angular (standalone components and signals).
 - TypeScript.
@@ -28,14 +30,14 @@ Web application for managing projects and their tasks. The repository holds the 
 - Vitest.
 - Turborepo.
 
-### Authentication:
+### Authentication
 
 - **Identity provider**: Keycloak (realm `veds`); the application has no login form.
 - **Pattern**: BFF; the VEDS API gateway keeps the tokens, the browser holds only a session cookie.
 - **State**: no token or session in the front-end; the session lives in the gateway, in Redis.
 - **Details**: [Authentication](docs/authentication.md).
 
-### Core front-end:
+### Core front-end
 
 - Components organized by Atomic Design.
 - Light and dark theme.
@@ -44,7 +46,7 @@ Web application for managing projects and their tasks. The repository holds the 
 - Optimistic concurrency and RFC 9457 errors from the back-end are handled in one place.
 - And many other features that can be found in the application code.
 
-### Other:
+### Other
 
 - ESLint for static code analysis.
 - Prettier for code formatting.

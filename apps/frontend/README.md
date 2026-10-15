@@ -1,3 +1,5 @@
+# FastDo front-end
+
 ## Project Assumptions
 
 The FastDo Angular application. See the [repository README](../../README.md) for the overview.
