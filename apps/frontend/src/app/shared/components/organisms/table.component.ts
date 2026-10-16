@@ -33,7 +33,7 @@ import { PaginatorComponent } from '../atoms/paginator.component';
 /**
  * `TruncateConfig` is opt-in per column: omitted means full text, no width limit
  * and no toggle; present — an empty `{}` included — turns truncation on. The
- * rules that look like defects are in `docs/shared-table.md`.
+ * rules that look like defects are in `docs/mechanisms/shared-table.md`.
  */
 export interface TruncateConfig {
   /** Maximum number of characters used to size the cell (CSS `ch` unit)
