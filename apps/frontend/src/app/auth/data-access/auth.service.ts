@@ -23,7 +23,11 @@ export class AuthService {
     this.authorize({});
   }
 
-  public startAccountAction(action: 'UPDATE_PASSWORD' | 'CONFIGURE_TOTP' | 'delete_credential'): void {
+  /**
+   * Sends the reader to one Keycloak page, which returns here when done: changing the password, setting up the second
+   * factor, or removing a credential named by its id, which Keycloak asks to confirm.
+   */
+  public startAccountAction(action: 'UPDATE_PASSWORD' | 'CONFIGURE_TOTP' | `delete_credential:${string}`): void {
     this.authorize({ kc_action: action });
   }
 

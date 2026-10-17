@@ -85,7 +85,8 @@
     "signInHint": "Logowanie odbywa się na stronie dostawcy tożsamości.",
     "signOut": "Wyloguj się",
     "managePassword": "Zmień hasło",
-    "manageTwoFactor": "Uwierzytelnianie dwuskładnikowe"
+    "turnOffTwoFactor": "Wyłącz uwierzytelnianie dwuskładnikowe",
+    "turnOnTwoFactor": "Włącz uwierzytelnianie dwuskładnikowe"
   },
   "Basic": {
     "accept": "Akceptuj",

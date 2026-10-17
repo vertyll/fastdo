@@ -14,8 +14,10 @@ import { ImageComponent } from '../shared/components/organisms/image.component';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ToastService } from '../shared/services/toast.service';
+import { UserApiService } from './data-access/user.api.service';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
+import { SecuritySettings } from './defs/user.defs';
 
 @Component({
   selector: 'app-user-profile',
@@ -142,7 +144,13 @@ import { UserStateService } from './data-access/user.state.service';
               </p>
               <div class="flex flex-wrap gap-2">
                 <app-button (click)="changePassword()">{{ 'Auth.managePassword' | translate }}</app-button>
-                <app-button (click)="configureTwoFactor()">{{ 'Auth.manageTwoFactor' | translate }}</app-button>
+                @if (securitySettings(); as settings) {
+                  <app-button (click)="toggleTwoFactor(settings)">
+                    {{
+                      (settings.twoFactorCredentialId ? 'Auth.turnOffTwoFactor' : 'Auth.turnOnTwoFactor') | translate
+                    }}
+                  </app-button>
+                }
               </div>
             </div>
           </div>
@@ -154,6 +162,7 @@ import { UserStateService } from './data-access/user.state.service';
 export class UserProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
+  private readonly userApiService = inject(UserApiService);
   private readonly authService = inject(AuthService);
   private readonly fileUploadService = inject(FileUploadService);
   private readonly toastService = inject(ToastService);
@@ -165,6 +174,7 @@ export class UserProfileComponent implements OnInit {
   protected readonly user = this.stateService.user;
   protected readonly isEditing = signal(false);
   protected readonly saving = signal(false);
+  protected readonly securitySettings = signal<SecuritySettings | null>(null);
 
   private readonly pendingAvatarFileId = signal<string | null | undefined>(undefined);
 
@@ -185,6 +195,10 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe(() => this.resetForm());
+    this.userApiService.getSecuritySettings().subscribe({
+      next: settings => this.securitySettings.set(settings),
+      error: () => this.securitySettings.set(null),
+    });
   }
 
   protected toggleEdit(): void {
@@ -201,8 +215,9 @@ export class UserProfileComponent implements OnInit {
     this.authService.startAccountAction('UPDATE_PASSWORD');
   }
 
-  protected configureTwoFactor(): void {
-    this.authService.startAccountAction('CONFIGURE_TOTP');
+  protected toggleTwoFactor(settings: SecuritySettings): void {
+    const credentialId = settings.twoFactorCredentialId;
+    this.authService.startAccountAction(credentialId ? `delete_credential:${credentialId}` : 'CONFIGURE_TOTP');
   }
 
   protected onAvatarSelected(file: File): void {

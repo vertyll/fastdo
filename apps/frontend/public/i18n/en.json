@@ -85,7 +85,8 @@
     "signInHint": "Sign-in happens on the identity provider's page.",
     "signOut": "Sign out",
     "managePassword": "Change password",
-    "manageTwoFactor": "Two-factor authentication"
+    "turnOffTwoFactor": "Turn off two-factor authentication",
+    "turnOnTwoFactor": "Turn on two-factor authentication"
   },
   "Basic": {
     "accept": "Accept",
