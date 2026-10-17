@@ -163,3 +163,10 @@ html {
   font-family: system-ui;
   @apply bg-background-primary text-text-primary dark:bg-dark-background-primary dark:text-dark-text-primary;
 }
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
