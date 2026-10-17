@@ -4,10 +4,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeEnum } from '../enums/theme.enum';
 import { LocalStorageService } from './local-storage.service';
 import { THEME_KEY } from '../../app.constants';
-import { getCookie } from '../utils/cookies';
-import { SHARED_THEME_COOKIE, sharedCookieDomain, sharedTheme } from '../utils/sign-in-theme';
-
-const ONE_YEAR = 60 * 60 * 24 * 365;
+import { KeycloakPreferences } from '../../core/keycloak';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +16,7 @@ export class ThemeService {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly document = inject(DOCUMENT);
   private readonly overlayContainer = inject(OverlayContainer);
+  private readonly keycloak = inject(KeycloakPreferences);
 
   private readonly currentThemeSignal = signal<ThemeEnum>(this.defaultTheme);
 
@@ -38,7 +36,7 @@ export class ThemeService {
   public setTheme(theme: ThemeEnum): void {
     this.currentThemeSignal.set(theme);
     this.localStorageService.set(THEME_KEY, theme);
-    this.shareTheme(theme);
+    this.keycloak.themeChosen(theme);
 
     const isDarkTheme = theme === ThemeEnum.Dark;
     const overlayContainerClassList = this.overlayContainer.getContainerElement().classList;
@@ -53,7 +51,7 @@ export class ThemeService {
   }
 
   private initializeTheme(): void {
-    const shared = sharedTheme(getCookie(SHARED_THEME_COOKIE));
+    const shared = this.keycloak.chosenTheme();
     if (shared !== null) {
       this.setTheme(shared);
       return;
@@ -77,14 +75,5 @@ export class ThemeService {
     mediaQuery?.addEventListener('change', e => {
       this.setTheme(e.matches ? ThemeEnum.Dark : ThemeEnum.Light);
     });
-  }
-
-  // Keycloak's pages read the theme from the shared cookie, and write a choice made there into it.
-  private shareTheme(theme: ThemeEnum): void {
-    const domain = sharedCookieDomain(this.document.location.hostname);
-    const secure = this.document.location.protocol === 'https:' ? '; Secure' : '';
-    this.document.cookie = `${SHARED_THEME_COOKIE}=${theme}; Path=/; Max-Age=${ONE_YEAR}; SameSite=Lax${
-      domain === null ? '' : `; Domain=${domain}`
-    }${secure}`;
   }
 }

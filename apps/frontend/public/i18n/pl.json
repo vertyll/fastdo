@@ -140,7 +140,7 @@
     "language": "Język"
   },
   "CookiesBanner": {
-    "text": "FastDo używa wyłącznie niezbędnych plików cookie: sesji logowania i zapamiętania tego komunikatu. Język, motyw i filtry zapisuje w pamięci przeglądarki.",
+    "text": "FastDo używa wyłącznie niezbędnych plików cookie: sesji logowania, zapamiętania tego komunikatu oraz wybranego języka i motywu, wspólnych ze stroną logowania. Filtry zapisuje w pamięci przeglądarki.",
     "understood": "Rozumiem"
   },
   "Dashboard": {
@@ -515,7 +515,7 @@
     "version": "Wersja",
     "effectiveDate": "Data wejścia w życie",
     "lastModified": "Ostatnia modyfikacja",
-    "lastModifiedDate": "03.10.2026",
+    "lastModifiedDate": "17.10.2026",
     "termsSections": [
       {
         "title": "1. Czym jest FastDo",
@@ -569,7 +569,7 @@
       },
       {
         "title": "8. Pliki cookie i pamięć przeglądarki",
-        "content": "Aplikacja używa wyłącznie pliku cookie sesji, niezbędnego do logowania. W pamięci przeglądarki zapisuje tylko wybrany język, motyw i filtry list. Nie używamy analityki ani reklam."
+        "content": "Aplikacja używa wyłącznie niezbędnych plików cookie: sesji, potrzebnej do logowania, oraz wybranego języka i motywu, które dzieli ze stroną logowania w domenie vertyll.dev, żeby obie wyglądały tak samo. W pamięci przeglądarki zapisuje też język, motyw i filtry list. Nie używamy analityki ani reklam."
       }
     ]
   },

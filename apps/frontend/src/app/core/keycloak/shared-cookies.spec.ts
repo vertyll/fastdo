@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { ThemeEnum } from '../enums/theme.enum';
-import { sharedCookieDomain, sharedTheme } from './sign-in-theme';
+import { ThemeEnum } from '../../shared/enums/theme.enum';
+import { sharedCookieDomain, sharedTheme } from './shared-cookies';
 
 describe('sharedCookieDomain', () => {
   it('is the parent domain of a subdomain', () => {

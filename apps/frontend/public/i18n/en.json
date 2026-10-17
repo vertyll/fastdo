@@ -140,7 +140,7 @@
     "language": "Language"
   },
   "CookiesBanner": {
-    "text": "FastDo uses only the cookies it needs: the sign-in session and remembering this notice. Your language, theme and filters stay in browser storage.",
+    "text": "FastDo uses only the cookies it needs: the sign-in session, remembering this notice, and your chosen language and theme, shared with the sign-in page. Your filters stay in browser storage.",
     "understood": "Got it"
   },
   "Dashboard": {
@@ -515,7 +515,7 @@
     "version": "Version",
     "effectiveDate": "Effective Date",
     "lastModified": "Last Modified",
-    "lastModifiedDate": "3 October 2026",
+    "lastModifiedDate": "17 October 2026",
     "termsSections": [
       {
         "title": "1. What FastDo is",
@@ -569,7 +569,7 @@
       },
       {
         "title": "8. Cookies and browser storage",
-        "content": "The application uses only the session cookie it needs for sign-in. Your browser's storage keeps only your chosen language, theme and list filters. There is no analytics and no advertising."
+        "content": "The application uses only the cookies it needs: the session, for signing in, and your chosen language and theme, which it shares with the sign-in page under the vertyll.dev domain so the two look the same. Your browser's storage also keeps your language, theme and list filters. There is no analytics and no advertising."
       }
     ]
   },

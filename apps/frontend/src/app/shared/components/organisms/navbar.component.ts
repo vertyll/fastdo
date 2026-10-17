@@ -33,6 +33,7 @@ import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.comp
 import { configNavModules } from 'src/app/config/config.nav.modules';
 import { environment } from 'src/environments/environment';
 import { SUPPORTED_LANGUAGES } from '../../defs/language.defs';
+import { KeycloakPreferences } from '../../../core/keycloak';
 
 @Component({
   selector: 'app-navbar',
@@ -524,6 +525,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly notificationStateService = inject(NotificationStateService);
 
   private readonly authStateService = inject(AuthStateService);
+  private readonly keycloak = inject(KeycloakPreferences);
 
   private readonly routerSubscription: Subscription;
 
@@ -565,6 +567,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected selectLanguage(lang: string): void {
     this.translateService.use(lang);
     this.localStorageService.set('selected_language', lang);
+    this.keycloak.languageChosen(lang);
     this.closeNotificationDropdown.set(Date.now());
   }
 

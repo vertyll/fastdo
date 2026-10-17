@@ -33,6 +33,18 @@ export default defineConfig(
 
       'prettier/prettier': 'error',
 
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '(^|/)core/keycloak/.+',
+              message: 'Use the keycloak module through what its index exports.',
+            },
+          ],
+        },
+      ],
+
       '@angular-eslint/directive-selector': [
         'error',
         {

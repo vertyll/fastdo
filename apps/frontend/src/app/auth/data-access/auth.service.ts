@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ThemeService } from 'src/app/shared/services/theme.service';
+import { KeycloakPreferences } from '../../core/keycloak';
 import { Session } from '../defs/auth.defs';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
@@ -15,6 +16,7 @@ export class AuthService {
   private readonly authStateService = inject(AuthStateService);
   private readonly themeService = inject(ThemeService);
   private readonly translateService = inject(TranslateService);
+  private readonly keycloak = inject(KeycloakPreferences);
 
   public readonly session = this.authStateService.session;
   public readonly isLoggedIn = this.authStateService.isLoggedIn;
@@ -31,10 +33,7 @@ export class AuthService {
    */
   public startAccountAction(action: 'UPDATE_PASSWORD' | 'CONFIGURE_TOTP' | `delete_credential:${string}`): void {
     // Keycloak shows a signed-in person their account's language, so FastDo's is stored there first.
-    this.authApiService
-      .keepAccountLanguage(this.language())
-      .pipe(catchError(() => of(void 0)))
-      .subscribe(() => this.authorize({ kc_action: action }));
+    this.keycloak.keepAccountLanguage(this.language()).subscribe(() => this.authorize({ kc_action: action }));
   }
 
   public loadSession(): Observable<Session | null> {

@@ -10,3 +10,8 @@ The FastDo Angular application. See the [repository README](../../README.md) for
 - `npm run build` – production build in `dist/`.
 - `npm run test` – unit tests with Vitest.
 - `npm run lint` – ESLint.
+
+## Keycloak
+
+What FastDo shares with Keycloak's pages, the theme and the language, lives in `src/app/core/keycloak`; the rest of
+the application imports only its `index.ts`, and ESLint refuses a deeper import.

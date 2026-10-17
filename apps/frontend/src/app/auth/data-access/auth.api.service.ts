@@ -11,11 +11,6 @@ export class AuthApiService extends HttpApiService {
     return this.http.get<Session | null>(`${this.baseUrl}/auth/session`);
   }
 
-  /** Stores the language on the reader's Keycloak account, which Keycloak's pages show a signed-in person in. */
-  public keepAccountLanguage(language: string): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/auth/me/security/language`, { language });
-  }
-
   public logout(): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/auth/logout`, {});
   }
