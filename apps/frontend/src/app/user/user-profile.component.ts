@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { provideIcons } from '@ng-icons/core';
 import { heroUserCircle } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../auth/data-access/auth.service';
+import { KeycloakAccount, SecuritySettings } from '../core/keycloak';
 import { FileUploadService } from '../file/data-access/file-upload.service';
 import { FileScopeEnum } from '../file/defs/file.defs';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
@@ -14,10 +14,8 @@ import { ImageComponent } from '../shared/components/organisms/image.component';
 import { LOADING_STATE_VALUE } from '../shared/defs/list-state.defs';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { ToastService } from '../shared/services/toast.service';
-import { UserApiService } from './data-access/user.api.service';
 import { UserService } from './data-access/user.service';
 import { UserStateService } from './data-access/user.state.service';
-import { SecuritySettings } from './defs/user.defs';
 
 @Component({
   selector: 'app-user-profile',
@@ -162,8 +160,7 @@ import { SecuritySettings } from './defs/user.defs';
 export class UserProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
-  private readonly userApiService = inject(UserApiService);
-  private readonly authService = inject(AuthService);
+  private readonly keycloakAccount = inject(KeycloakAccount);
   private readonly fileUploadService = inject(FileUploadService);
   private readonly toastService = inject(ToastService);
   private readonly translateService = inject(TranslateService);
@@ -195,10 +192,7 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe(() => this.resetForm());
-    this.userApiService.getSecuritySettings().subscribe({
-      next: settings => this.securitySettings.set(settings),
-      error: () => this.securitySettings.set(null),
-    });
+    this.keycloakAccount.securitySettings().subscribe(settings => this.securitySettings.set(settings));
   }
 
   protected toggleEdit(): void {
@@ -212,12 +206,11 @@ export class UserProfileComponent implements OnInit {
   }
 
   protected changePassword(): void {
-    this.authService.startAccountAction('UPDATE_PASSWORD');
+    this.keycloakAccount.changePassword();
   }
 
   protected toggleTwoFactor(settings: SecuritySettings): void {
-    const credentialId = settings.twoFactorCredentialId;
-    this.authService.startAccountAction(credentialId ? `delete_credential:${credentialId}` : 'CONFIGURE_TOTP');
+    this.keycloakAccount.toggleSecondFactor(settings);
   }
 
   protected onAvatarSelected(file: File): void {

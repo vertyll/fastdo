@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Observable, catchError, of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { AuthStateService } from '../../auth/data-access/auth.state.service';
 import { ThemeEnum } from '../../shared/enums/theme.enum';
 import { KeycloakAccountApi } from './keycloak-account.api';
@@ -37,15 +37,11 @@ export class KeycloakPreferences {
   public languageChosen(language: string): void {
     writeShared(this.document, SHARED_LANGUAGE_COOKIE, language);
     if (this.authState.isLoggedIn()) {
-      this.keepAccountLanguage(language).subscribe();
+      // When Keycloak cannot store it, the choice still holds here.
+      this.accountApi
+        .keepLanguage(language)
+        .pipe(catchError(() => of(void 0)))
+        .subscribe();
     }
-  }
-
-  /**
-   * Stores the language on the signed-in reader's Keycloak account; when Keycloak cannot store it, the choice still
-   * holds here, so the result completes either way.
-   */
-  public keepAccountLanguage(language: string): Observable<void> {
-    return this.accountApi.keepLanguage(language).pipe(catchError(() => of(void 0)));
   }
 }
