@@ -25,3 +25,6 @@ export function sharedCookieDomain(hostname: string): string | null {
 export function signInTheme(value: string | null): ThemeEnum | null {
   return Object.values(ThemeEnum).find(theme => theme === value) ?? null;
 }
+
+/** The cookie Keycloak's pages leave the language chosen there in, for FastDo to take over on the way back. */
+export const SIGN_IN_LANGUAGE_COOKIE: string = 'ui_locale_veds';
