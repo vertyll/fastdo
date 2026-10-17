@@ -22,18 +22,17 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
 import { AuthStateService } from 'src/app/auth/data-access/auth.state.service';
-import { LocalStorageService } from '../../services/local-storage.service';
-import { NotificationStateService } from '../../services/notification-state.service';
-import { NavModule, NavSection } from '../../defs/config.defs';
-import { ThemeSwitcherComponent } from '../atoms/theme-switcher.component';
-import { ToastComponent } from '../atoms/toast.component';
-import { NotificationDropdownComponent } from './notification-dropdown.component';
-import { ButtonComponent } from '../atoms/button.component';
-import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
+import { NotificationStateService } from '../shared/services/notification-state.service';
+import { NavModule, NavSection } from '../shared/defs/config.defs';
+import { ThemeSwitcherComponent } from '../shared/components/atoms/theme-switcher.component';
+import { ToastComponent } from '../shared/components/atoms/toast.component';
+import { NotificationDropdownComponent } from '../shared/components/organisms/notification-dropdown.component';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
+import { DropdownComponent, DropdownMenuDirective } from '../shared/components/atoms/dropdown.component';
 import { configNavModules } from 'src/app/config/config.nav.modules';
-import { environment } from 'src/environments/environment';
-import { SUPPORTED_LANGUAGES } from '../../defs/language.defs';
-import { KeycloakPreferences } from '../../../core/keycloak';
+import { SUPPORTED_LANGUAGES } from '../shared/defs/language.defs';
+import { LanguageService } from '../shared/services/language.service';
+import { KeycloakPages } from '../core/keycloak';
 
 @Component({
   selector: 'app-navbar',
@@ -69,7 +68,7 @@ import { KeycloakPreferences } from '../../../core/keycloak';
   ],
   styles: [
     `
-      @reference "../../../../style.css";
+      @reference "../../style.css";
 
       @keyframes dropdown-enter {
         from {
@@ -518,14 +517,14 @@ import { KeycloakPreferences } from '../../../core/keycloak';
 export class NavbarComponent implements OnInit, OnDestroy {
   public readonly visibleItemsCount = input<number>(2);
 
+  private readonly keycloakPages = inject(KeycloakPages);
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
-  private readonly localStorageService = inject(LocalStorageService);
   private readonly notificationStateService = inject(NotificationStateService);
 
   private readonly authStateService = inject(AuthStateService);
-  private readonly keycloak = inject(KeycloakPreferences);
+  private readonly languageService = inject(LanguageService);
 
   private readonly routerSubscription: Subscription;
 
@@ -561,13 +560,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected getCurrentLanguage(): string {
-    return (this.translateService.getCurrentLang() || environment.defaultLanguage).toUpperCase();
+    return this.languageService.current().toUpperCase();
   }
 
   protected selectLanguage(lang: string): void {
-    this.translateService.use(lang);
-    this.localStorageService.set('selected_language', lang);
-    this.keycloak.languageChosen(lang);
+    this.languageService.choose(lang);
     this.closeNotificationDropdown.set(Date.now());
   }
 
@@ -614,7 +611,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected signIn(): void {
-    this.authService.login();
+    this.keycloakPages.signIn();
   }
 
   protected logout(): void {

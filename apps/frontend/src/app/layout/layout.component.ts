@@ -2,11 +2,11 @@ import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angula
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { CookieBannerComponent } from '../molecules/cookie-banner.component';
-import { ScrollToTopComponent } from '../molecules/scroll-to-top.component';
-import { FooterComponent } from '../organisms/footer.component';
-import { InfoPanelComponent } from '../organisms/info-panel.component';
-import { NavbarComponent } from '../organisms/navbar.component';
+import { CookieBannerComponent } from '../shared/components/molecules/cookie-banner.component';
+import { ScrollToTopComponent } from '../shared/components/molecules/scroll-to-top.component';
+import { FooterComponent } from '../shared/components/organisms/footer.component';
+import { InfoPanelComponent } from '../shared/components/organisms/info-panel.component';
+import { NavbarComponent } from './navbar.component';
 
 @Component({
   selector: 'app-layout',

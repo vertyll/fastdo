@@ -4,7 +4,6 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeEnum } from '../enums/theme.enum';
 import { LocalStorageService } from './local-storage.service';
 import { THEME_KEY } from '../../app.constants';
-import { KeycloakPreferences } from '../../core/keycloak';
 
 @Injectable({
   providedIn: 'root',
@@ -16,27 +15,34 @@ export class ThemeService {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly document = inject(DOCUMENT);
   private readonly overlayContainer = inject(OverlayContainer);
-  private readonly keycloak = inject(KeycloakPreferences);
 
   private readonly currentThemeSignal = signal<ThemeEnum>(this.defaultTheme);
+  private readonly chosenThemeSignal = signal<ThemeEnum | null>(null);
+
+  /** The theme FastDo shows. */
+  public readonly theme = this.currentThemeSignal.asReadonly();
+
+  /** The theme the reader chose, here or elsewhere; `null` while FastDo follows the system's. */
+  public readonly chosenTheme = this.chosenThemeSignal.asReadonly();
 
   constructor() {
     this.initializeTheme();
   }
 
-  public get currentTheme(): ThemeEnum {
-    return this.currentThemeSignal();
-  }
-
   public toggleTheme(): void {
-    const newTheme = this.currentTheme === ThemeEnum.Light ? ThemeEnum.Dark : ThemeEnum.Light;
+    const newTheme = this.theme() === ThemeEnum.Light ? ThemeEnum.Dark : ThemeEnum.Light;
     this.setTheme(newTheme);
   }
 
+  /** Shows the theme the reader chose, here or elsewhere, which from then on no longer follows the system's. */
   public setTheme(theme: ThemeEnum): void {
-    this.currentThemeSignal.set(theme);
+    this.chosenThemeSignal.set(theme);
     this.localStorageService.set(THEME_KEY, theme);
-    this.keycloak.themeChosen(theme);
+    this.applyTheme(theme);
+  }
+
+  private applyTheme(theme: ThemeEnum): void {
+    this.currentThemeSignal.set(theme);
 
     const isDarkTheme = theme === ThemeEnum.Dark;
     const overlayContainerClassList = this.overlayContainer.getContainerElement().classList;
@@ -51,29 +57,21 @@ export class ThemeService {
   }
 
   private initializeTheme(): void {
-    const shared = this.keycloak.chosenTheme();
-    if (shared !== null) {
-      this.setTheme(shared);
-      return;
-    }
+    const savedTheme = this.localStorageService.get<ThemeEnum | null>(THEME_KEY, null);
 
-    const savedTheme = this.localStorageService.get<ThemeEnum>(THEME_KEY, this.defaultTheme);
-
-    if (Object.values(ThemeEnum).includes(savedTheme)) {
+    if (savedTheme !== null && Object.values(ThemeEnum).includes(savedTheme)) {
       this.setTheme(savedTheme);
       return;
     }
 
     const mediaQuery = globalThis.matchMedia?.(this.DARK_MODE_MEDIA_QUERY);
 
-    if (mediaQuery?.matches) {
-      this.setTheme(ThemeEnum.Dark);
-    } else {
-      this.setTheme(ThemeEnum.Light);
-    }
+    this.applyTheme(mediaQuery?.matches ? ThemeEnum.Dark : ThemeEnum.Light);
 
     mediaQuery?.addEventListener('change', e => {
-      this.setTheme(e.matches ? ThemeEnum.Dark : ThemeEnum.Light);
+      if (this.chosenThemeSignal() === null) {
+        this.applyTheme(e.matches ? ThemeEnum.Dark : ThemeEnum.Light);
+      }
     });
   }
 }

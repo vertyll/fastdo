@@ -5,9 +5,9 @@ import { inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { LocalStorageService } from '../../shared/services/local-storage.service';
+import { LanguageService } from '../../shared/services/language.service';
+import { SELECTED_LANGUAGE_KEY } from '../../app.constants';
 import { KeycloakPreferences } from '../keycloak';
-
-const SELECTED_LANGUAGE_KEY = 'selected_language';
 
 export function initializeLanguage(): void {
   registerLocaleData(localePl, 'pl');
@@ -20,22 +20,25 @@ export function initializeLanguage(): void {
   translate.addLangs(environment.availableLanguages);
   translate.setFallbackLang(environment.defaultLanguage);
 
+  inject(LanguageService).start(startingLanguage(translate, storage, keycloak));
+}
+
+/** The language last chosen here or on Keycloak's pages, else the one saved here, else the browser's, else the default. */
+function startingLanguage(
+  translate: TranslateService,
+  storage: LocalStorageService,
+  keycloak: KeycloakPreferences,
+): string {
+  const available = (language: string | null | undefined): language is string =>
+    !!language && environment.availableLanguages.includes(language);
   const shared = keycloak.chosenLanguage();
-  if (shared !== null && environment.availableLanguages.includes(shared)) {
-    translate.use(shared);
-    storage.set(SELECTED_LANGUAGE_KEY, shared);
-    return;
+  if (available(shared)) {
+    return shared;
   }
-
-  const saved = storage.get<string>(SELECTED_LANGUAGE_KEY, '');
-  if (saved && environment.availableLanguages.includes(saved)) {
-    translate.use(saved);
-    return;
+  const saved = storage.get<string | null>(SELECTED_LANGUAGE_KEY, null);
+  if (available(saved)) {
+    return saved;
   }
-
-  const browser = translate.getBrowserLang() || '';
-  const matched = environment.availableLanguages.includes(browser) ? browser : environment.defaultLanguage;
-
-  translate.use(matched);
-  storage.set(SELECTED_LANGUAGE_KEY, matched);
+  const browser = translate.getBrowserLang();
+  return available(browser) ? browser : environment.defaultLanguage;
 }

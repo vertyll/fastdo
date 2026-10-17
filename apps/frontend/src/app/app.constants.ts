@@ -14,3 +14,5 @@ export const COOKIE_EXPIRATION_DAYS: number = 365;
 export const COOKIE_ACCEPTED_VALUE: string = 'true';
 
 export const SCROLL_TO_TOP_THRESHOLD: number = 300;
+
+export const SELECTED_LANGUAGE_KEY = 'selected_language';

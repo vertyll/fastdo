@@ -38,7 +38,7 @@ export default defineConfig(
         {
           patterns: [
             {
-              regex: '(^|/)core/keycloak/.+',
+              regex: '(^|/)keycloak/.+',
               message: 'Use the keycloak module through what its index exports.',
             },
           ],

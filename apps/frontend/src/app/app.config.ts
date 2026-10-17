@@ -7,6 +7,7 @@ import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { initializeLanguage } from './core/i18n/language.initializer';
+import { provideKeycloak } from './core/keycloak';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { languageInterceptor } from './core/interceptors/language.interceptor';
 import { BackendCatalogueLoader } from './core/i18n/backend-catalogue.loader';
@@ -14,6 +15,7 @@ import { TranslatedTitleStrategy } from './core/strategies/translated-title.stra
 import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
 import { AuthService } from './auth/data-access/auth.service';
+import { AuthStateService } from './auth/data-access/auth.state.service';
 import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
 import { ThemeService } from './shared/services/theme.service';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
@@ -36,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       inject(ThemeService);
       return session$;
     }),
+    provideKeycloak(() => inject(AuthStateService).isLoggedIn),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {

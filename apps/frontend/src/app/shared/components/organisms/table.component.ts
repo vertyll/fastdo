@@ -873,7 +873,7 @@ export class TableComponent implements AfterViewChecked, OnDestroy {
   @ContentChild('customTemplate')
   public readonly customTemplate!: TemplateRef<any>;
 
-  protected readonly isDarkMode = computed(() => this.themeService.currentTheme === ThemeEnum.Dark);
+  protected readonly isDarkMode = computed(() => this.themeService.theme() === ThemeEnum.Dark);
   protected readonly isMobile = computed(() => this.platformService.isMobile());
 
   private readonly expandedTexts = signal<ReadonlyMap<string, boolean>>(new Map());

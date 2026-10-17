@@ -16,7 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       class="relative flex items-center justify-center p-2 rounded-md hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary transition-colors duration-200"
       [attr.aria-label]="'Basic.toggleTheme' | translate"
     >
-      @if (themeService.currentTheme === ThemeEnum.Dark) {
+      @if (themeService.theme() === ThemeEnum.Dark) {
         <ng-icon name="heroSun" size="24" class="text-warning-400" />
       } @else {
         <ng-icon name="heroMoon" size="24" class="text-text-muted dark:text-dark-text-muted" />

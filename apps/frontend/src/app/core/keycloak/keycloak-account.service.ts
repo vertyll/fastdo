@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, of } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { AuthService } from '../../auth/data-access/auth.service';
+import { LanguageService } from '../../shared/services/language.service';
 import { KeycloakAccountApi } from './keycloak-account.api';
+import { KeycloakPages } from './keycloak-pages.service';
 import { SecuritySettings } from './security-settings';
 
 /**
@@ -17,11 +16,11 @@ type AccountAction = 'UPDATE_PASSWORD' | 'CONFIGURE_TOTP' | `delete_credential:$
   providedIn: 'root',
 })
 export class KeycloakAccount {
-  private readonly authService = inject(AuthService);
+  private readonly pages = inject(KeycloakPages);
   private readonly accountApi = inject(KeycloakAccountApi);
-  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
 
-  /** The reader's second factor, or `null` when Keycloak could not be asked. */
+  /** The reader's second factor, or `null` when Keycloak could not be asked, so the profile offers neither action. */
   public securitySettings(): Observable<SecuritySettings | null> {
     return this.accountApi.securitySettings().pipe(catchError(() => of(null)));
   }
@@ -36,13 +35,10 @@ export class KeycloakAccount {
     this.start(credentialId ? `delete_credential:${credentialId}` : 'CONFIGURE_TOTP');
   }
 
+  // Keycloak shows a signed-in reader their account's language, so FastDo's is stored there first.
   private start(action: AccountAction): void {
-    // Keycloak shows a signed-in reader their account's language, so FastDo's is stored there first; when Keycloak
-    // cannot store it, the action still opens.
-    const language = this.translateService.getCurrentLang() || environment.defaultLanguage;
     this.accountApi
-      .keepLanguage(language)
-      .pipe(catchError(() => of(void 0)))
-      .subscribe(() => this.authService.authorize({ kc_action: action }));
+      .keepLanguage(this.languageService.current())
+      .subscribe(() => this.pages.open({ kc_action: action }));
   }
 }
