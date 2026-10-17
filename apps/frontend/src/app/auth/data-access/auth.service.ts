@@ -1,10 +1,8 @@
-import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ThemeService } from 'src/app/shared/services/theme.service';
-import { SIGN_IN_THEME_COOKIE, sharedCookieDomain } from 'src/app/shared/utils/sign-in-theme';
 import { Session } from '../defs/auth.defs';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
@@ -17,7 +15,6 @@ export class AuthService {
   private readonly authStateService = inject(AuthStateService);
   private readonly themeService = inject(ThemeService);
   private readonly translateService = inject(TranslateService);
-  private readonly document = inject(DOCUMENT);
 
   public readonly session = this.authStateService.session;
   public readonly isLoggedIn = this.authStateService.isLoggedIn;
@@ -63,23 +60,12 @@ export class AuthService {
   }
 
   private authorize(parameters: Record<string, string>): void {
-    this.leaveThemeForKeycloak();
     const query = new URLSearchParams({
       ...parameters,
       theme: this.themeService.currentTheme,
       ui_locales: this.language(),
     });
     window.location.href = `${environment.apiUrl}/auth/authorize?${query}`;
-  }
-
-  // A signed-in reader's account action reaches Keycloak's page through a redirect that drops `ui_theme`, so the theme
-  // also goes in the cookie Keycloak's pages hand a theme back in.
-  private leaveThemeForKeycloak(): void {
-    const domain = sharedCookieDomain(this.document.location.hostname);
-    const secure = this.document.location.protocol === 'https:' ? '; Secure' : '';
-    this.document.cookie = `${SIGN_IN_THEME_COOKIE}=${this.themeService.currentTheme}; Path=/; Max-Age=86400; SameSite=Lax${
-      domain === null ? '' : `; Domain=${domain}`
-    }${secure}`;
   }
 
   private language(): string {

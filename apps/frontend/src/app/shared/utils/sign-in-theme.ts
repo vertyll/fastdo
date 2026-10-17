@@ -1,7 +1,11 @@
 import { ThemeEnum } from '../enums/theme.enum';
 
-/** The cookie Keycloak's pages leave the theme chosen there in, for FastDo to take over on the way back. */
-export const SIGN_IN_THEME_COOKIE: string = 'ui_theme_veds';
+/**
+ * The theme the reader last chose, in FastDo or on Keycloak's pages, which both read and write: a shared record rather
+ * than a message, so the two agree however the reader moves between them, through a sign-in, a cancelled account
+ * action, the browser's history or another tab.
+ */
+export const SHARED_THEME_COOKIE: string = 'ui_theme_veds';
 
 /**
  * The domain a cookie shared with Keycloak lives under: the parent of this host, such as `vertyll.dev` for
@@ -17,12 +21,12 @@ export function sharedCookieDomain(hostname: string): string | null {
 }
 
 /**
- * The theme Keycloak's pages handed over.
+ * The theme in the shared cookie.
  *
- * @param value - the value of {@link SIGN_IN_THEME_COOKIE}, or `null` when it is absent
+ * @param value - the value of {@link SHARED_THEME_COOKIE}, or `null` when it is absent
  * @returns the theme, or `null` when the value names none FastDo has
  */
-export function signInTheme(value: string | null): ThemeEnum | null {
+export function sharedTheme(value: string | null): ThemeEnum | null {
   return Object.values(ThemeEnum).find(theme => theme === value) ?? null;
 }
 

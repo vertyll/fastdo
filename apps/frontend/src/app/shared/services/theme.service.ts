@@ -5,7 +5,9 @@ import { ThemeEnum } from '../enums/theme.enum';
 import { LocalStorageService } from './local-storage.service';
 import { THEME_KEY } from '../../app.constants';
 import { getCookie } from '../utils/cookies';
-import { SIGN_IN_THEME_COOKIE, sharedCookieDomain, signInTheme } from '../utils/sign-in-theme';
+import { SHARED_THEME_COOKIE, sharedCookieDomain, sharedTheme } from '../utils/sign-in-theme';
+
+const ONE_YEAR = 60 * 60 * 24 * 365;
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +38,7 @@ export class ThemeService {
   public setTheme(theme: ThemeEnum): void {
     this.currentThemeSignal.set(theme);
     this.localStorageService.set(THEME_KEY, theme);
+    this.shareTheme(theme);
 
     const isDarkTheme = theme === ThemeEnum.Dark;
     const overlayContainerClassList = this.overlayContainer.getContainerElement().classList;
@@ -50,9 +53,9 @@ export class ThemeService {
   }
 
   private initializeTheme(): void {
-    const fromSignIn = this.takeSignInTheme();
-    if (fromSignIn !== null) {
-      this.setTheme(fromSignIn);
+    const shared = sharedTheme(getCookie(SHARED_THEME_COOKIE));
+    if (shared !== null) {
+      this.setTheme(shared);
       return;
     }
 
@@ -76,15 +79,12 @@ export class ThemeService {
     });
   }
 
-  // A theme chosen on Keycloak's pages comes back in a cookie, as the sign-in returns to an address that carries
-  // nothing else; it is taken over once.
-  private takeSignInTheme(): ThemeEnum | null {
-    const value = getCookie(SIGN_IN_THEME_COOKIE);
-    if (value === null) {
-      return null;
-    }
+  // Keycloak's pages read the theme from the shared cookie, and write a choice made there into it.
+  private shareTheme(theme: ThemeEnum): void {
     const domain = sharedCookieDomain(this.document.location.hostname);
-    this.document.cookie = `${SIGN_IN_THEME_COOKIE}=; Max-Age=0; Path=/${domain === null ? '' : `; Domain=${domain}`}`;
-    return signInTheme(value);
+    const secure = this.document.location.protocol === 'https:' ? '; Secure' : '';
+    this.document.cookie = `${SHARED_THEME_COOKIE}=${theme}; Path=/; Max-Age=${ONE_YEAR}; SameSite=Lax${
+      domain === null ? '' : `; Domain=${domain}`
+    }${secure}`;
   }
 }
