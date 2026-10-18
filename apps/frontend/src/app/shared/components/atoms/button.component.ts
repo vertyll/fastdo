@@ -15,40 +15,42 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     @if (variant() === 'basic') {
       <button
         mat-button
+        class="!h-auto !min-h-10 !py-2"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
         [attr.aria-label]="title() || null"
         (click)="clicked.emit($event)"
       >
-        <span class="flex items-center justify-center gap-2">
+        <span class="flex items-center justify-center gap-2 text-center">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
     } @else if (variant() === 'stroked') {
       <button
         mat-stroked-button
+        class="!h-auto !min-h-10 !py-2"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
         [attr.aria-label]="title() || null"
         (click)="clicked.emit($event)"
       >
-        <span class="flex items-center justify-center gap-2">
+        <span class="flex items-center justify-center gap-2 text-center">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
     } @else if (variant() === 'danger') {
       <button
         mat-flat-button
-        class="!bg-danger-500 hover:!bg-danger-600 !text-white"
+        class="!h-auto !min-h-10 !py-2 !bg-danger-500 hover:!bg-danger-600 !text-white"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
         [attr.aria-label]="title() || null"
         (click)="clicked.emit($event)"
       >
-        <span class="flex items-center justify-center gap-2">
+        <span class="flex items-center justify-center gap-2 text-center">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
@@ -68,13 +70,14 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     } @else {
       <button
         mat-flat-button
+        class="!h-auto !min-h-10 !py-2"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
         [attr.aria-label]="title() || null"
         (click)="clicked.emit($event)"
       >
-        <span class="flex items-center justify-center gap-2">
+        <span class="flex items-center justify-center gap-2 text-center">
           <ng-container *ngTemplateOutlet="contentTemplate" />
         </span>
       </button>
