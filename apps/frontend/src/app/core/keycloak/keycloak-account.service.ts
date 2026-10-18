@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, catchError, of } from 'rxjs';
 import { LanguageService } from '../../shared/services/language.service';
 import { KeycloakAccountApi } from './keycloak-account.api';
@@ -17,6 +18,7 @@ type AccountAction = 'UPDATE_PASSWORD' | 'CONFIGURE_TOTP' | `delete_credential:$
 })
 export class KeycloakAccount {
   private readonly pages = inject(KeycloakPages);
+  private readonly router = inject(Router);
   private readonly accountApi = inject(KeycloakAccountApi);
   private readonly languageService = inject(LanguageService);
 
@@ -39,6 +41,6 @@ export class KeycloakAccount {
   private start(action: AccountAction): void {
     this.accountApi
       .keepLanguage(this.languageService.current())
-      .subscribe(() => this.pages.open({ kc_action: action }));
+      .subscribe(() => this.pages.open(this.router.url, { kc_action: action }));
   }
 }

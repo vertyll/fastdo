@@ -611,7 +611,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   protected signIn(): void {
-    this.keycloakPages.signIn();
+    this.keycloakPages.signIn(this.router.url);
   }
 
   protected logout(): void {

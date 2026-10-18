@@ -6,7 +6,9 @@ but an `HttpOnly` cookie.
 
 What follows from that, and is worth knowing before changing anything in `src/app/auth`:
 
-- **There is no login form.** Signing in is a redirect to `/auth/authorize`; Keycloak collects the credentials.
+- **There is no login form.** Signing in is a redirect to `/auth/authorize`; Keycloak collects the credentials. It
+  always carries `return_to`, the page the reader is on, so they come back to it: from the sign-in button, from a page
+  that needs a session (`authGuard`), and from a call whose session has ended (`errorInterceptor`).
 - **No token ever reaches JavaScript**, so there is nothing to store, refresh or accidentally log. Requests carry
   `withCredentials: true` and nothing else.
 - **Registration and password changes happen on Keycloak's pages**, reached through `/auth/authorize?kc_action=…`.
