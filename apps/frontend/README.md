@@ -15,5 +15,5 @@ The FastDo Angular application. See the [repository README](../../README.md) for
 
 Keycloak's pages live in `src/app/core/keycloak`: the sign-in in FastDo's theme and language, the account actions
 (password, second factor), and the theme and language shared with those pages both ways. The rest of the application
-imports only its `index.ts`, and ESLint refuses a deeper import. It watches the theme and the language the reader chooses, so
-nothing in `shared` knows it.
+imports only its `index.ts`, and ESLint refuses a deeper import. It watches the theme and the language the reader
+chooses, so nothing in `shared` knows it.
