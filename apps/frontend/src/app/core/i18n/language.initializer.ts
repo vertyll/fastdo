@@ -23,7 +23,9 @@ export function initializeLanguage(): void {
   inject(LanguageService).start(startingLanguage(translate, storage, keycloak));
 }
 
-/** The language last chosen here or on Keycloak's pages, else the one saved here, else the browser's, else the default. */
+/**
+ * The language last chosen here or on Keycloak's pages, else the one saved here, else the browser's, else the default.
+ */
 function startingLanguage(
   translate: TranslateService,
   storage: LocalStorageService,

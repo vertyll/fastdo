@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import { defineConfig } from 'eslint/config';
+import stylistic from '@stylistic/eslint-plugin';
 
 export default defineConfig(
   {
@@ -23,11 +24,13 @@ export default defineConfig(
         'error',
         {
           selector: "CallExpression[callee.name='effect']:not(MethodDefinition[kind='constructor'] *)",
-          message: "Angular signals 'effect()' must be initialized inside the constructor to ensure proper injection context and consistent architecture.",
+          message:
+            "Angular signals 'effect()' must be initialized inside the constructor to ensure proper injection context and consistent architecture.",
         },
         {
           selector: "CallExpression[callee.name='effect'] > ArrowFunctionExpression > BlockStatement[body.length>1]",
-          message: "Don't put complex logic inside effect(). Extract it to a private method (e.g., effect(() => this.handleChanges())).",
+          message:
+            "Don't put complex logic inside effect(). Extract it to a private method (e.g., effect(() => this.handleChanges())).",
         },
       ],
 
@@ -145,7 +148,8 @@ export default defineConfig(
               message: 'Use the keycloak module through what its index exports.',
             },
             {
-              regex: '^(\\.{1,2}/|src/app/)(.*/)?(admin|dashboard|file|home|layout|notification|project|task|terms-and-policies|user)/',
+              regex:
+                '^(\\.{1,2}/|src/app/)(.*/)?(admin|dashboard|file|home|layout|notification|project|task|terms-and-policies|user)/',
               message:
                 'core and shared import no feature; move the code into the feature, or let the feature provide it.',
             },
@@ -167,7 +171,8 @@ export default defineConfig(
               message: 'Use the keycloak module through what its index exports.',
             },
             {
-              regex: '^(\\.{1,2}/|src/app/)(.*/)?(admin|dashboard|file|home|layout|notification|project|task|terms-and-policies|user)/',
+              regex:
+                '^(\\.{1,2}/|src/app/)(.*/)?(admin|dashboard|file|home|layout|notification|project|task|terms-and-policies|user)/',
               message:
                 'core and shared import no feature; move the code into the feature, or let the feature provide it.',
             },
@@ -180,5 +185,12 @@ export default defineConfig(
       ],
     },
   },
+  {
+    // Comments only, as Prettier keeps code to its width but never wraps a comment; last, as the Prettier config
+    // turns line length off.
+    plugins: { '@stylistic': stylistic },
+    rules: {
+      '@stylistic/max-len': ['error', { code: Number.MAX_SAFE_INTEGER, comments: 120, ignoreUrls: true }],
+    },
+  },
 );
-

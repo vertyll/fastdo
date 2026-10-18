@@ -4,8 +4,8 @@ import { LanguageService } from '../../shared/services/language.service';
 import { ThemeService } from '../../shared/services/theme.service';
 
 /**
- * Keycloak's sign-in, reached through the back-end, in FastDo's language and the theme the reader chose, which Keycloak's
- * pages take from the `ui_locales` and `theme` parameters on their first page.
+ * Keycloak's sign-in, reached through the back-end, in FastDo's language and the theme the reader chose, which
+ * Keycloak's pages take from the `ui_locales` and `theme` parameters on their first page.
  */
 @Injectable({
   providedIn: 'root',
