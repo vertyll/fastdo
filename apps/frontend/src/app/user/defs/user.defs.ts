@@ -23,9 +23,3 @@ export type UpdateProfilePayload = {
   phoneNumber?: string | null;
   address?: string | null;
 };
-
-export interface UserStateModel {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-}
