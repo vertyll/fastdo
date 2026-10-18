@@ -93,7 +93,7 @@ import { KeycloakPages } from '../core/keycloak';
       }
 
       .top-nav {
-        @apply h-16 bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary sticky top-0 z-50 px-2.5 transition-colors duration-200;
+        @apply h-16 bg-background-secondary dark:bg-dark-background-secondary border-b border-border-primary dark:border-dark-border-primary sticky top-0 z-50 px-2.5 transition-colors duration-200;
       }
 
       .nav-content {
@@ -133,7 +133,7 @@ import { KeycloakPages } from '../core/keycloak';
       }
 
       .side-nav {
-        @apply hidden md:block w-24 bg-background-primary dark:bg-dark-background-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+        @apply hidden md:block w-24 bg-background-secondary dark:bg-dark-background-secondary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       }
 
       .side-nav-content {
@@ -141,7 +141,7 @@ import { KeycloakPages } from '../core/keycloak';
       }
 
       .mobile-sections {
-        @apply md:hidden bg-background-primary dark:bg-dark-background-primary border-b border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+        @apply md:hidden bg-background-secondary dark:bg-dark-background-secondary border-b border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       }
 
       .mobile-section-item {
