@@ -19,7 +19,7 @@ import {
 } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
-import { AuthStateService } from '../auth/data-access/auth.state.service';
+import { AuthStateService } from '../core/auth/auth.state.service';
 import { WorkLogPanelComponent } from './components/work-log-panel.component';
 import { formatDuration } from './utils/duration';
 import { ButtonComponent } from '../shared/components/atoms/button.component';

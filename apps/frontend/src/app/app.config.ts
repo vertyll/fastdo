@@ -14,10 +14,12 @@ import { BackendCatalogueLoader } from './core/i18n/backend-catalogue.loader';
 import { TranslatedTitleStrategy } from './core/strategies/translated-title.strategy';
 import { ngxsConfig } from './ngxs.config';
 import { FiltersState } from './shared/store/filter/filter.state';
-import { AuthService } from './auth/data-access/auth.service';
-import { AuthStateService } from './auth/data-access/auth.state.service';
-import { NotificationWebSocketService } from './shared/services/notification-websocket.service';
+import { AuthService } from './core/auth/auth.service';
+import { AuthStateService } from './core/auth/auth.state.service';
+import { NotificationWebSocketService } from './notification/data-access/notification-websocket.service';
 import { ThemeService } from './shared/services/theme.service';
+import { ImageSource } from './shared/services/image-source';
+import { FileImageSource } from './file/data-access/file-image.source';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
@@ -39,6 +41,7 @@ export const appConfig: ApplicationConfig = {
       return session$;
     }),
     provideKeycloak(() => inject(AuthStateService).isLoggedIn),
+    { provide: ImageSource, useExisting: FileImageSource },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {

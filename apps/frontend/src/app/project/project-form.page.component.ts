@@ -5,7 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash } from '@ng-icons/heroicons/outline';
 import { Observable, Subject, forkJoin, map, of, switchMap, takeUntil } from 'rxjs';
-import { AuthService } from '../auth/data-access/auth.service';
+import { AuthService } from '../core/auth/auth.service';
 import { HasProjectPermissionDirective } from '../core/directives/has-project-permission.directive';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';

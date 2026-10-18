@@ -5,7 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { UserService } from 'src/app/user/data-access/user.service';
 import { User, UserStateModel } from 'src/app/user/defs/user.defs';
 import * as UserActions from './user.actions';
-import { errorKeyOf } from '../../utils/api-error.utils';
+import { errorKeyOf } from '../../shared/utils/api-error.utils';
 
 @State<UserStateModel>({
   name: 'user',

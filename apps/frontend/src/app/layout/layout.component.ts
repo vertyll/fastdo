@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from 'src/app/auth/data-access/auth.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
 import { CookieBannerComponent } from '../shared/components/molecules/cookie-banner.component';
 import { ScrollToTopComponent } from '../shared/components/molecules/scroll-to-top.component';
 import { FooterComponent } from '../shared/components/organisms/footer.component';

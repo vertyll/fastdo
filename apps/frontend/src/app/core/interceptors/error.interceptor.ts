@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuthStateService } from '../../auth/data-access/auth.state.service';
+import { AuthStateService } from '../auth/auth.state.service';
 import { KeycloakPages } from '../keycloak';
 import { ToastService } from '../../shared/services/toast.service';
 import { errorKeyOf, errorParamsOf, fieldErrorsOf } from '../../shared/utils/api-error.utils';

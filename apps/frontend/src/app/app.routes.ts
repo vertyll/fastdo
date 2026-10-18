@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
-import { ProjectRolePermissionGuard } from './core/guards/project-role-permission.guard';
+import { ProjectRolePermissionGuard } from './project/guards/project-role-permission.guard';
 import { ProjectRolePermissionEnum } from './shared/enums/project-role-permission.enum';
 import { TaskPermissionEnum } from './shared/enums/task-permission.enum';
 
@@ -86,9 +86,7 @@ export const routes: Routes = [
     path: 'notification-settings',
     title: 'PageTitles.notificationSettings',
     loadComponent: () =>
-      import('./shared/components/organisms/notification-settings.component').then(
-        m => m.NotificationSettingsComponent,
-      ),
+      import('./notification/notification-settings.page.component').then(m => m.NotificationSettingsPageComponent),
     canActivate: [authGuard],
   },
   {

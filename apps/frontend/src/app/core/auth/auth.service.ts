@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
-import { Session } from '../defs/auth.defs';
+import { Session } from './auth.defs';
 import { AuthApiService } from './auth.api.service';
 import { AuthStateService } from './auth.state.service';
 

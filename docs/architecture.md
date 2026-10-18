@@ -27,8 +27,14 @@ exposed. `environment.apiUrl` is the single place that address appears.
 | `<feature>/data-access`              | `*.api.service` (HTTP only), `*.service` (orchestration), `*.state.service` (signals) |
 | `<feature>/defs`                     | The types that feature exchanges with the back end                                    |
 | `shared/components`                  | Atoms, molecules and organisms, consumed by every feature                             |
+| `core`                               | The session (`core/auth`), guards, interceptors, i18n and Keycloak's pages            |
 
 State is held in signals on the feature's state service; NGXS carries the cross-cutting slices that outlive a screen.
+
+Dependencies run one way: a feature depends on `core` and `shared`, `core` on `shared`, and `shared` on neither. Where
+shared code needs something a feature knows, such as the address of a stored image, it declares an abstract class
+(`ImageSource`) and the feature provides it in `app.config.ts`. ESLint's `no-restricted-imports` holds these lines on
+every lint.
 
 ## Permissions decide what renders
 

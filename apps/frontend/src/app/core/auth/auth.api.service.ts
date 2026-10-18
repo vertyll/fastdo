@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpApiService } from '../../shared/services/http-api.service';
-import { Session } from '../defs/auth.defs';
+import { Session } from './auth.defs';
 
 @Injectable({
   providedIn: 'root',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { NotificationDto } from '../../defs/notification.defs';
+import { NotificationDto } from '../defs/notification.defs';
 
 @Component({
   selector: 'app-notification-details',

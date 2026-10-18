@@ -132,5 +132,53 @@ export default defineConfig(
       'prettier/prettier': 'error',
     },
   },
+  {
+    // core serves every feature, so it imports none: a feature depends on core, never the reverse.
+    files: ['src/app/core/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '(^|/)keycloak/.+',
+              message: 'Use the keycloak module through what its index exports.',
+            },
+            {
+              regex: '^(\\.{1,2}/|src/app/)(.*/)?(admin|dashboard|file|home|layout|notification|project|task|terms-and-policies|user)/',
+              message:
+                'core and shared import no feature; move the code into the feature, or let the feature provide it.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // shared sits below core and every feature, so it imports neither.
+    files: ['src/app/shared/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '(^|/)keycloak/.+',
+              message: 'Use the keycloak module through what its index exports.',
+            },
+            {
+              regex: '^(\\.{1,2}/|src/app/)(.*/)?(admin|dashboard|file|home|layout|notification|project|task|terms-and-policies|user)/',
+              message:
+                'core and shared import no feature; move the code into the feature, or let the feature provide it.',
+            },
+            {
+              regex: '^(\\.{1,2}/|src/app/)(.*/)?core/',
+              message: 'shared sits below core; move the code into shared, or let core provide it.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );
 

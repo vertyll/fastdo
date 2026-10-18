@@ -20,13 +20,13 @@ import {
 } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, filter } from 'rxjs';
-import { AuthService } from 'src/app/auth/data-access/auth.service';
-import { AuthStateService } from 'src/app/auth/data-access/auth.state.service';
-import { NotificationStateService } from '../shared/services/notification-state.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { AuthStateService } from 'src/app/core/auth/auth.state.service';
+import { NotificationStateService } from '../notification/data-access/notification-state.service';
 import { NavModule, NavSection } from '../shared/defs/config.defs';
 import { ThemeSwitcherComponent } from '../shared/components/atoms/theme-switcher.component';
 import { ToastComponent } from '../shared/components/atoms/toast.component';
-import { NotificationDropdownComponent } from '../shared/components/organisms/notification-dropdown.component';
+import { NotificationDropdownComponent } from '../notification/components/notification-dropdown.component';
 import { ButtonComponent } from '../shared/components/atoms/button.component';
 import { DropdownComponent, DropdownMenuDirective } from '../shared/components/atoms/dropdown.component';
 import { configNavModules } from 'src/app/config/config.nav.modules';

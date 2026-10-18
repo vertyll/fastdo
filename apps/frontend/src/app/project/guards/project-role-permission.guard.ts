@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable, catchError, map, of } from 'rxjs';
-import { ProjectsService } from '../../project/data-access/project.service';
+import { ProjectsService } from '../data-access/project.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectRolePermissionGuard implements CanActivate {

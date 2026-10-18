@@ -1,14 +1,14 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ApiPaginatedResponse } from '../defs/api-response.defs';
+import { ApiPaginatedResponse } from '../../shared/defs/api-response.defs';
 import {
   NotificationDto,
   NotificationSettingsDto,
   UnreadCountDto,
   UpdateNotificationSettingsDto,
 } from '../defs/notification.defs';
-import { HttpApiService } from './http-api.service';
+import { HttpApiService } from '../../shared/services/http-api.service';
 
 const NOTIFICATIONS = '/notifications';
 

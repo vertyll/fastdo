@@ -1,7 +1,7 @@
 import { DestroyRef, Injectable, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, OperatorFunction, catchError, map, of, tap } from 'rxjs';
-import { AuthStateService } from '../../auth/data-access/auth.state.service';
+import { AuthStateService } from '../../core/auth/auth.state.service';
 import {
   NotificationDto,
   NotificationSettingsDto,

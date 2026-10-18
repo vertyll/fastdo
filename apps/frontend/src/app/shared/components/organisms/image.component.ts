@@ -19,7 +19,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import Cropper from 'cropperjs';
 import { ButtonComponent } from 'src/app/shared/components/atoms/button.component';
 import { environment } from 'src/environments/environment';
-import { FileApiService } from 'src/app/file/data-access/file.api.service';
+import { ImageSource } from '../../services/image-source';
 
 export type ImageMode = 'view' | 'preview' | 'edit';
 export type ImageFormat = 'circle' | 'square';
@@ -176,7 +176,7 @@ const CROPPER_TEMPLATE =
 })
 export class ImageComponent implements OnDestroy {
   private readonly baseUrl = environment.apiUrl;
-  private readonly fileApi = inject(FileApiService);
+  private readonly imageSource = inject(ImageSource);
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly mode = input<ImageMode>('view');
@@ -388,10 +388,10 @@ export class ImageComponent implements OnDestroy {
     const fileId = this.fileId();
     if (!fileId) return;
 
-    this.fileApi
-      .requestDownload(fileId)
+    this.imageSource
+      .urlOf(fileId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: response => this.previewUrl.set(response.downloadUrl) });
+      .subscribe({ next: url => this.previewUrl.set(url) });
   }
 
   private handleInitialUrlChange(): void {

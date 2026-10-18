@@ -6,16 +6,16 @@ import { heroBell, heroBellAlert, heroCog6Tooth, heroTrash, heroXMark } from '@n
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EMPTY, catchError, finalize } from 'rxjs';
 import { ProjectsApiService } from 'src/app/project/data-access/project.api.service';
-import { NotificationDto } from '../../defs/notification.defs';
-import { ButtonRoleEnum } from '../../enums/modal.enum';
-import { NotificationTypeEnum } from '../../enums/notification-type.enum';
-import { ToastTypeEnum } from '../../enums/toast-type.enum';
-import { ModalService } from '../../services/modal.service';
-import { NotificationStateService } from '../../services/notification-state.service';
-import { NotificationService } from '../../services/notification.service';
-import { DropdownComponent, DropdownMenuDirective } from '../atoms/dropdown.component';
-import { NotificationDetailsComponent } from '../molecules/notification-details.component';
-import { SpinnerComponent } from '../atoms/spinner.component';
+import { NotificationDto } from '../defs/notification.defs';
+import { ButtonRoleEnum } from '../../shared/enums/modal.enum';
+import { NotificationTypeEnum } from '../defs/notification-type.enum';
+import { ToastTypeEnum } from '../../shared/enums/toast-type.enum';
+import { ModalService } from '../../shared/services/modal.service';
+import { NotificationStateService } from '../data-access/notification-state.service';
+import { NotificationService } from '../../shared/services/notification.service';
+import { DropdownComponent, DropdownMenuDirective } from '../../shared/components/atoms/dropdown.component';
+import { NotificationDetailsComponent } from './notification-details.component';
+import { SpinnerComponent } from '../../shared/components/atoms/spinner.component';
 
 const TASK_NOTIFICATION_TYPES = new Set([
   NotificationTypeEnum.TASK_CREATED,

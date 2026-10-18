@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
 import { map } from 'rxjs';
-import { AuthService } from '../../auth/data-access/auth.service';
-import { AuthStateService } from '../../auth/data-access/auth.state.service';
+import { AuthService } from '../auth/auth.service';
+import { AuthStateService } from '../auth/auth.state.service';
 import { KeycloakPages } from '../keycloak';
 
 /** A page that needs a session sends a signed-out reader to sign in, and back to that page after. */

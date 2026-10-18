@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, effect, inject, signal } from '@angular/core';
 import { Client, IMessage } from '@stomp/stompjs';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AuthStateService } from '../../auth/data-access/auth.state.service';
+import { AuthStateService } from '../../core/auth/auth.state.service';
 import { NotificationDto, NotificationWsEvent } from '../defs/notification.defs';
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';

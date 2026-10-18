@@ -2,17 +2,17 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { NotificationTypeEnum } from '../../enums/notification-type.enum';
-import { ToastTypeEnum } from '../../enums/toast-type.enum';
-import { NotificationStateService } from '../../services/notification-state.service';
-import { NotificationService } from '../../services/notification.service';
-import { ButtonComponent } from '../atoms/button.component';
-import { CheckboxComponent } from '../atoms/checkbox.component';
-import { SpinnerComponent } from '../atoms/spinner.component';
-import { TitleComponent } from '../atoms/title.component';
+import { NotificationTypeEnum } from './defs/notification-type.enum';
+import { ToastTypeEnum } from '../shared/enums/toast-type.enum';
+import { NotificationStateService } from './data-access/notification-state.service';
+import { NotificationService } from '../shared/services/notification.service';
+import { ButtonComponent } from '../shared/components/atoms/button.component';
+import { CheckboxComponent } from '../shared/components/atoms/checkbox.component';
+import { SpinnerComponent } from '../shared/components/atoms/spinner.component';
+import { TitleComponent } from '../shared/components/atoms/title.component';
 
 @Component({
-  selector: 'app-notification-settings',
+  selector: 'app-notification-settings-page',
   imports: [ReactiveFormsModule, TranslatePipe, TitleComponent, ButtonComponent, CheckboxComponent, SpinnerComponent],
   template: `
     <div class="max-w-3xl mx-auto">
@@ -64,7 +64,7 @@ import { TitleComponent } from '../atoms/title.component';
     </div>
   `,
 })
-export class NotificationSettingsComponent implements OnInit {
+export class NotificationSettingsPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);

@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AdDirective } from 'src/app/core/directives/ad.directive';
+import { AdDirective } from '../../directives/ad.directive';
 import { ButtonRoleEnum, ModalInputTypeEnum, ModalSizeEnum } from '../../enums/modal.enum';
 import { InputInvalidPipe } from '../../pipes/input-invalid.pipe';
 import { ModalService } from '../../services/modal.service';
