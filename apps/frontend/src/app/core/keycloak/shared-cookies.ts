@@ -34,7 +34,6 @@ export function sharedTheme(value: string | null): ThemeEnum | null {
   return Object.values(ThemeEnum).find(theme => theme === value) ?? null;
 }
 
-/** Reads a cookie shared with Keycloak's pages. */
 export function readShared(name: string): string | null {
   return getCookie(name);
 }

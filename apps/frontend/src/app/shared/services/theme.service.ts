@@ -19,7 +19,6 @@ export class ThemeService {
   private readonly currentThemeSignal = signal<ThemeEnum>(this.defaultTheme);
   private readonly chosenThemeSignal = signal<ThemeEnum | null>(null);
 
-  /** The theme FastDo shows. */
   public readonly theme = this.currentThemeSignal.asReadonly();
 
   /** The theme the reader chose, here or elsewhere; `null` while FastDo follows the system's. */
