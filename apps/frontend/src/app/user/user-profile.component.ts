@@ -140,7 +140,7 @@ import { UserStateService } from './data-access/user.state.service';
               <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-4">
                 {{ 'Auth.signInHint' | translate }}
               </p>
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <app-button (click)="changePassword()">{{ 'Auth.managePassword' | translate }}</app-button>
                 @if (securitySettings(); as settings) {
                   <app-button (click)="toggleTwoFactor(settings)">

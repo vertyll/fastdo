@@ -18,7 +18,7 @@ import { COOKIE_ACCEPTED_VALUE, COOKIE_EXPIRATION_DAYS, COOKIE_NAME } from 'src/
               'Footer.privacyPolicy' | translate
             }}</a>
           </p>
-          <div class="flex items-center">
+          <div class="flex shrink-0 items-center">
             <app-button (click)="acceptCookies()">
               {{ 'CookiesBanner.understood' | translate }}
             </app-button>

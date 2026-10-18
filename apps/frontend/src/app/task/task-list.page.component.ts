@@ -12,7 +12,7 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroArrowPath, heroClock, heroInformationCircle, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroArrowPath, heroClock, heroInformationCircle, heroPlus, heroTrash } from '@ng-icons/heroicons/outline';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, EMPTY, map, Observable, switchMap, forkJoin } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -56,7 +56,7 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
     NgIconComponent,
     BadgeComponent,
   ],
-  viewProviders: [provideIcons({ heroInformationCircle, heroTrash, heroClock, heroArrowPath })],
+  viewProviders: [provideIcons({ heroInformationCircle, heroTrash, heroClock, heroArrowPath, heroPlus })],
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
@@ -82,12 +82,12 @@ import { TaskPermissionEnum } from '../shared/enums/task-permission.enum';
           }
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <app-button variant="stroked" (click)="refresh()">
-            <ng-icon name="heroArrowPath" size="16" />
-            {{ 'Basic.refresh' | translate }}
+          <app-button variant="icon" [title]="'Basic.refresh' | translate" (click)="refresh()">
+            <ng-icon name="heroArrowPath" size="20" />
           </app-button>
-          <app-button (click)="navigateToAddTask()">
-            {{ 'Task.addTask' | translate }}
+          <app-button [title]="'Task.addTask' | translate" (click)="navigateToAddTask()">
+            <ng-icon name="heroPlus" size="16" />
+            <span class="hidden sm:inline">{{ 'Task.addTask' | translate }}</span>
           </app-button>
         </div>
       </div>

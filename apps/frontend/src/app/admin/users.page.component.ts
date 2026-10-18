@@ -37,9 +37,8 @@ import { AdminUser, Role } from './defs/role.defs';
       <div class="flex flex-wrap items-center justify-between gap-4">
         <app-title [text]="'Admin.users' | translate" />
 
-        <app-button variant="stroked" (clicked)="load()">
-          <ng-icon name="heroArrowPath" size="16" />
-          {{ 'Admin.refresh' | translate }}
+        <app-button variant="icon" [title]="'Admin.refresh' | translate" (clicked)="load()">
+          <ng-icon name="heroArrowPath" size="20" />
         </app-button>
       </div>
 

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, DestroyRef, OnInit, TemplateRef, ViewChild, i
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroArrowPath, heroCalendar, heroEye, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroArrowPath, heroCalendar, heroEye, heroPencil, heroPlus, heroTrash } from '@ng-icons/heroicons/outline';
 import { EMPTY, catchError } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BadgeComponent } from '../shared/components/atoms/badge.component';
@@ -44,12 +44,12 @@ import { ProjectTypeService } from './data-access/project-type.service';
       <div class="flex flex-row items-center justify-between">
         <app-title [text]="'Project.title' | translate"></app-title>
         <div class="flex flex-wrap items-center gap-2">
-          <app-button variant="stroked" (click)="refresh()">
-            <ng-icon name="heroArrowPath" size="16" />
-            {{ 'Basic.refresh' | translate }}
+          <app-button variant="icon" [title]="'Basic.refresh' | translate" (click)="refresh()">
+            <ng-icon name="heroArrowPath" size="20" />
           </app-button>
-          <app-button (click)="navigateToAddProject()">
-            {{ 'Project.addProject' | translate }}
+          <app-button [title]="'Project.addProject' | translate" (click)="navigateToAddProject()">
+            <ng-icon name="heroPlus" size="16" />
+            <span class="hidden sm:inline">{{ 'Project.addProject' | translate }}</span>
           </app-button>
         </div>
       </div>
@@ -93,6 +93,7 @@ import { ProjectTypeService } from './data-access/project-type.service';
       heroCalendar,
       heroEye,
       heroPencil,
+      heroPlus,
       heroTrash,
     }),
   ],

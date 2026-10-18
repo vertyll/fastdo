@@ -6,6 +6,7 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
 
 @Component({
   selector: 'app-button',
+  host: { class: 'inline-flex' },
   imports: [CommonModule, MatButtonModule],
   template: `
     <ng-template #contentTemplate>
@@ -15,7 +16,7 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     @if (variant() === 'basic') {
       <button
         mat-button
-        class="!h-auto !min-h-10 !py-2"
+        class="w-full !h-auto !min-h-10 !py-2"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
@@ -29,7 +30,7 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     } @else if (variant() === 'stroked') {
       <button
         mat-stroked-button
-        class="!h-auto !min-h-10 !py-2"
+        class="w-full !h-auto !min-h-10 !py-2"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
@@ -43,7 +44,7 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     } @else if (variant() === 'danger') {
       <button
         mat-flat-button
-        class="!h-auto !min-h-10 !py-2 !bg-danger-500 hover:!bg-danger-600 !text-white"
+        class="w-full !h-auto !min-h-10 !py-2 !bg-danger-500 hover:!bg-danger-600 !text-white"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"
@@ -70,7 +71,7 @@ export type ButtonVariant = 'basic' | 'flat' | 'stroked' | 'icon' | 'danger';
     } @else {
       <button
         mat-flat-button
-        class="!h-auto !min-h-10 !py-2"
+        class="w-full !h-auto !min-h-10 !py-2"
         [type]="type()"
         [disabled]="disabled()"
         [title]="title()"

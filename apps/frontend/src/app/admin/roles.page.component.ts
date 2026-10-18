@@ -42,13 +42,12 @@ type RoleFilters = {
         <app-title [text]="'Admin.roles' | translate" />
 
         <div class="flex flex-wrap items-center gap-2">
-          <app-button variant="stroked" (clicked)="load()">
-            <ng-icon name="heroArrowPath" size="16" />
-            {{ 'Admin.refresh' | translate }}
+          <app-button variant="icon" [title]="'Admin.refresh' | translate" (clicked)="load()">
+            <ng-icon name="heroArrowPath" size="20" />
           </app-button>
-          <app-button (clicked)="createRole()">
+          <app-button [title]="'Admin.newRole' | translate" (clicked)="createRole()">
             <ng-icon name="heroPlus" size="16" />
-            {{ 'Admin.newRole' | translate }}
+            <span class="hidden sm:inline">{{ 'Admin.newRole' | translate }}</span>
           </app-button>
         </div>
       </div>

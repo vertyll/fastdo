@@ -56,9 +56,8 @@ type TranslationFilters = {
               {{ 'Admin.editSelected' | translate: { count: selectedKeys().size } }}
             </app-button>
           }
-          <app-button variant="stroked" (clicked)="load()">
-            <ng-icon name="heroArrowPath" size="16" />
-            {{ 'Admin.refresh' | translate }}
+          <app-button variant="icon" [title]="'Admin.refresh' | translate" (clicked)="load()">
+            <ng-icon name="heroArrowPath" size="20" />
           </app-button>
           <app-button variant="stroked" (clicked)="exportSpreadsheet()">
             <ng-icon name="heroArrowDownTray" size="16" />
