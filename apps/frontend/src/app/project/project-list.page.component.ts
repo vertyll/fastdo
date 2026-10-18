@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -59,10 +59,10 @@ import { ProjectTypeService } from './data-access/project-type.service';
         @case (listStateValue.SUCCESS) {
           <div class="flex flex-col gap-4">
             <app-table
-              [data]="tableRows"
+              [data]="tableRows()"
               [config]="tableConfig"
               [customTemplates]="customTemplates"
-              [loading]="projectsStateService.state() === listStateValue.LOADING || isFiltersLoading"
+              [loading]="projectsStateService.state() === listStateValue.LOADING || isFiltersLoading()"
               [total]="projectsStateService.pagination().total"
               [pageSize]="projectsStateService.pagination().pageSize"
               [currentPage]="projectsStateService.pagination().page"
@@ -114,8 +114,8 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
   @ViewChild('projectUserRoleTemplate')
   public readonly projectUserRoleTemplate!: TemplateRef<any>;
 
-  protected isFiltersLoading = true;
-  protected tableRows: TableRow[] = [];
+  protected readonly isFiltersLoading = signal(true);
+  protected readonly tableRows = signal<TableRow[]>([]);
   private rawProjects: ProjectListItem[] = [];
   private projectTypesRaw: ProjectType[] = [];
 
@@ -233,7 +233,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateProjectTypeOptions();
       if (this.rawProjects.length > 0) {
-        this.tableRows = this.mapProjectsToTableRows(this.rawProjects);
+        this.tableRows.set(this.mapProjectsToTableRows(this.rawProjects));
       }
     });
   }
@@ -342,11 +342,11 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
       next: types => {
         this.projectTypesRaw = types;
         this.updateProjectTypeOptions();
-        this.isFiltersLoading = false;
+        this.isFiltersLoading.set(false);
       },
       error: err => {
         console.error('Error fetching project types:', err);
-        this.isFiltersLoading = false;
+        this.isFiltersLoading.set(false);
       },
     });
   }
@@ -395,7 +395,7 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
       .pipe(catchError(() => EMPTY))
       .subscribe(response => {
         this.rawProjects = response.items;
-        this.tableRows = this.mapProjectsToTableRows(response.items);
+        this.tableRows.set(this.mapProjectsToTableRows(response.items));
       });
   }
 }

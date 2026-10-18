@@ -133,7 +133,7 @@ import { KeycloakPages } from '../core/keycloak';
       }
 
       .side-nav {
-        @apply hidden md:block w-24 bg-surface-primary dark:bg-dark-surface-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
+        @apply hidden md:block w-24 bg-background-primary dark:bg-dark-background-primary fixed left-0 top-16 bottom-0 border-r border-border-primary dark:border-dark-border-primary transition-colors duration-200;
       }
 
       .side-nav-content {
