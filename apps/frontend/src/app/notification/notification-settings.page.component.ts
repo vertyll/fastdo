@@ -24,10 +24,10 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
             <thead>
               <tr class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
                 <th class="py-2">{{ 'Notifications.type' | translate }}</th>
-                <th class="px-4 py-2 w-44 text-center align-bottom whitespace-nowrap">
+                <th class="px-2 py-2 text-center align-bottom sm:px-4 sm:w-44 sm:whitespace-nowrap">
                   {{ 'Notifications.appNotifications' | translate }}
                 </th>
-                <th class="px-4 py-2 w-44 text-center align-bottom whitespace-nowrap">
+                <th class="px-2 py-2 text-center align-bottom sm:px-4 sm:w-44 sm:whitespace-nowrap">
                   {{ 'Notifications.emailNotifications' | translate }}
                 </th>
               </tr>
@@ -38,10 +38,10 @@ import { TitleComponent } from '../shared/components/atoms/title.component';
                   <td class="py-3 text-sm font-medium">
                     {{ 'Notifications.types.' + type | translate }}
                   </td>
-                  <td class="px-4 py-3 text-center">
+                  <td class="px-2 py-3 text-center sm:px-4">
                     <app-checkbox [control]="control('app', type)" [id]="'app-' + type" />
                   </td>
-                  <td class="px-4 py-3 text-center">
+                  <td class="px-2 py-3 text-center sm:px-4">
                     <app-checkbox [control]="control('email', type)" [id]="'email-' + type" />
                   </td>
                 </tr>
