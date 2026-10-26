@@ -1,5 +1,5 @@
 ARG NODE_IMAGE=node:24-alpine
-ARG NGINX_IMAGE=nginx:1.31-alpine
+ARG NGINX_IMAGE=nginx:mainline-alpine
 
 FROM ${NODE_IMAGE} AS build
 ARG API_URL=http://localhost:8080
