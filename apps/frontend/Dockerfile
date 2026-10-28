@@ -1,11 +1,11 @@
-ARG NODE_IMAGE=node:24-alpine
+ARG NODE_IMAGE=node:26-alpine
 ARG NGINX_IMAGE=nginx:mainline-alpine
 
 FROM ${NODE_IMAGE} AS build
 ARG API_URL=http://localhost:8080
 ARG DOMAIN=localhost:4200
 WORKDIR /workspace
-RUN corepack enable
+RUN npm install --global corepack@0.36.0 && corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/frontend/package.json apps/frontend/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
