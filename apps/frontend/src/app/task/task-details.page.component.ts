@@ -649,9 +649,9 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
   protected goBack(): void {
     const projectId = this.route.snapshot.paramMap.get('id');
     if (projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks']).then();
+      void this.router.navigate(['/projects', projectId, 'tasks']);
     } else {
-      this.router.navigate(['/projects']).then();
+      void this.router.navigate(['/projects']);
     }
   }
 
@@ -705,7 +705,7 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
     const task = this.task();
     const projectId = task?.task.projectId ?? this.route.snapshot.paramMap.get('id');
     if (task && projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.task.id]).then();
+      void this.router.navigate(['/projects', projectId, 'tasks', 'edit', task.task.id]);
     }
   }
 
@@ -1019,9 +1019,9 @@ export class TaskDetailsPageComponent implements OnInit, OnDestroy {
           );
           const projectId = this.route.snapshot.paramMap.get('id');
           if (projectId) {
-            this.router.navigate(['/projects', projectId, 'tasks']).then();
+            void this.router.navigate(['/projects', projectId, 'tasks']);
           } else {
-            this.router.navigate(['/projects']).then();
+            void this.router.navigate(['/projects']);
           }
         },
         error: (error: unknown) => {

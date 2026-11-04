@@ -287,22 +287,22 @@ export class ProjectListPageComponent implements OnInit, AfterViewInit {
 
     switch (action) {
       case 'view':
-        this.navigateToProjectTasks(rowId).then();
+        void this.navigateToProjectTasks(rowId);
         break;
       case 'edit':
-        this.navigateToEditProject(rowId).then();
+        void this.navigateToEditProject(rowId);
         break;
       case 'delete':
         this.deleteProject(rowId, this.getRowVersion(row));
         break;
       case 'tasks':
-        this.navigateToProjectTasks(rowId).then();
+        void this.navigateToProjectTasks(rowId);
         break;
     }
   }
 
   protected onRowClick(row: TableRow): void {
-    this.navigateToProjectTasks(this.getRowId(row)).then();
+    void this.navigateToProjectTasks(this.getRowId(row));
   }
 
   protected deleteProject(id: string, version: number | null): void {

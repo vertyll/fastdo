@@ -506,9 +506,9 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
   protected onCancel(): void {
     const currentProjectId = this.projectId();
     if (currentProjectId) {
-      this.router.navigate(['/projects', currentProjectId, 'tasks']).then();
+      void this.router.navigate(['/projects', currentProjectId, 'tasks']);
     } else {
-      this.router.navigate(['/projects']).then();
+      void this.router.navigate(['/projects']);
     }
   }
 
@@ -673,7 +673,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             this.translateService.instant('Task.addSuccess'),
             ToastTypeEnum.Success,
           );
-          this.router.navigate(['/projects', projectId, 'tasks', 'details', response.id]).then();
+          void this.router.navigate(['/projects', projectId, 'tasks', 'details', response.id]);
         },
         error: (error: unknown) => this.handleSubmissionError(error),
         complete: () => this.submitting.set(false),
@@ -691,7 +691,7 @@ export class TaskFormPageComponent implements OnInit, OnDestroy {
             ToastTypeEnum.Success,
           );
           const task = response;
-          this.router.navigate(['/projects', task.projectId, 'tasks', 'details', task.id]).then();
+          void this.router.navigate(['/projects', task.projectId, 'tasks', 'details', task.id]);
         },
         error: (error: unknown) => this.handleSubmissionError(error),
         complete: () => this.submitting.set(false),

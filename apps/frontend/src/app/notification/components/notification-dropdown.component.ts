@@ -302,7 +302,7 @@ export class NotificationDropdownComponent {
   private navigateToSubject(notification: NotificationDto): void {
     const route = this.routeOf(notification);
     if (route) {
-      this.router.navigate(route).then();
+      void this.router.navigate(route);
     }
   }
 
@@ -329,7 +329,7 @@ export class NotificationDropdownComponent {
 
   protected navigateToSettings(): void {
     this.closeDropdown();
-    this.router.navigate(['/notification-settings']).then();
+    void this.router.navigate(['/notification-settings']);
   }
 
   protected formatDate(value: string): string {

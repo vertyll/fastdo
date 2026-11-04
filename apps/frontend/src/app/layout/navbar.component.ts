@@ -591,22 +591,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const defaultSection = module.sections[0];
     this.currentSection.set(defaultSection.id);
 
-    this.router.navigate([module.route]).then();
+    void this.router.navigate([module.route]);
     this.closeNotificationDropdown.set(Date.now());
   }
 
   protected selectSection(section: NavSection): void {
     this.currentSection.set(section.id);
-    this.router.navigate([section.route]).then();
+    void this.router.navigate([section.route]);
   }
 
   protected navigateToProfile(): void {
-    this.router.navigate(['/user-profile']).then();
+    void this.router.navigate(['/user-profile']);
     this.closeNotificationDropdown.set(Date.now());
   }
 
   protected navigateToNotificationSettings(): void {
-    this.router.navigate(['/notification-settings']).then();
+    void this.router.navigate(['/notification-settings']);
     this.closeNotificationDropdown.set(Date.now());
   }
 
@@ -616,13 +616,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   protected logout(): void {
     this.authService.logout().subscribe(() => {
-      this.router.navigate(['/']).then();
+      void this.router.navigate(['/']);
       this.closeNotificationDropdown.set(Date.now());
     });
   }
 
   protected navigateToHomePage(): void {
-    this.router.navigate(['/']).then();
+    void this.router.navigate(['/']);
   }
 
   private initializeNavigation(): void {

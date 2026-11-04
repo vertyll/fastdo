@@ -525,7 +525,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   protected cancel(): void {
-    this.router.navigate(['/projects']).then();
+    void this.router.navigate(['/projects']);
   }
 
   protected getRequiredOrMinLengthError(control: FormControl): string {
@@ -710,7 +710,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
         next: () => {
           const key = this.isEditMode ? 'Project.updateSuccess' : 'Project.addSuccess';
           this.notificationService.showNotification(this.translateService.instant(key), ToastTypeEnum.Success);
-          this.router.navigate(['/projects']).then();
+          void this.router.navigate(['/projects']);
           this.isSubmitting = false;
         },
         error: (error: unknown) => this.handleSubmitError(error, this.isEditMode),
@@ -875,7 +875,7 @@ export class ProjectFormPageComponent implements OnInit, OnDestroy, AfterViewIni
             ToastTypeEnum.Error,
           );
           this.loading.set(false);
-          this.router.navigate(['/projects']).then();
+          void this.router.navigate(['/projects']);
         },
       });
   }

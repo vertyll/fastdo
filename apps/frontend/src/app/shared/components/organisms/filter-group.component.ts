@@ -453,7 +453,7 @@ export class FilterGroupComponent<T = any> implements OnInit, OnChanges, OnDestr
     formValues: Record<string, unknown>,
     urlParamsNotInForm: Record<string, unknown>,
   ): void {
-    this.router
+    void this.router
       .navigate(['.'], {
         relativeTo: this.route,
         queryParams: { ...urlParamsNotInForm, ...formValues },

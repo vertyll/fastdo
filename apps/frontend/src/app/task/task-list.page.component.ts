@@ -330,10 +330,10 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected navigateToAddTask(): void {
     const currentProjectId = this.projectId();
     if (currentProjectId) {
-      this.router.navigate(['/projects', currentProjectId, 'tasks', 'new']).then();
+      void this.router.navigate(['/projects', currentProjectId, 'tasks', 'new']);
     } else {
       console.error('No projectId available for adding task');
-      this.router.navigate(['/projects']).then();
+      void this.router.navigate(['/projects']);
     }
   }
 
@@ -368,7 +368,7 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
   protected handleTaskClick(task: any): void {
     const projectId = this.projectId();
     if (projectId) {
-      this.router.navigate(['/projects', projectId, 'tasks', 'details', task.id]).then();
+      void this.router.navigate(['/projects', projectId, 'tasks', 'details', task.id]);
     }
   }
 
@@ -405,13 +405,13 @@ export class TaskListPageComponent implements OnInit, AfterViewInit {
 
     switch (event.action) {
       case 'view':
-        this.router.navigate(['/projects', projectId, 'tasks', 'details', event.row.id]).then();
+        void this.router.navigate(['/projects', projectId, 'tasks', 'details', event.row.id]);
         break;
       case 'logWork':
         this.openWorkLog(event.row.id);
         break;
       case 'edit':
-        this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]).then();
+        void this.router.navigate(['/projects', projectId, 'tasks', 'edit', event.row.id]);
         break;
       case 'delete':
         this.modalService.present({
