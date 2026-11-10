@@ -47,7 +47,10 @@ Angular offers two ways to translate and only one can read a catalog an administ
 
 `@angular/localize` freezes the catalog into the bundle, so a correction would never reach anybody. `ngx-translate`
 is used for that reason alone, and pays for it by having to add ICU back: its default parser substitutes `{{param}}`
-and does nothing else, so `ngx-translate-messageformat-compiler` is registered as the `TranslateCompiler`.
+and does nothing else, so `IcuMessageCompiler` (`src/app/core/i18n/icu-message.compiler.ts`) is registered as the
+`TranslateCompiler`. It hands each message to FormatJS `intl-messageformat`, which interprets the parsed message
+rather than generating code, so the page runs without `'unsafe-eval'` in its CSP. A message is parsed once per
+language, on first use, and one that cannot be parsed or formatted is shown as written and logged to the console.
 
 **Both catalogs are ICU, single brace.** `{{param}}` is `ngx-translate`'s own syntax and the compiler does not read
 it — under ICU `{{count}}` renders as `{5}`, braces included. One dialect across both sources is what keeps that from

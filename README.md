@@ -25,7 +25,7 @@ Web application for managing projects and their tasks. The repository holds the 
 - NGXS.
 - Angular Material.
 - Tailwind CSS.
-- ngx-translate with ICU MessageFormat.
+- ngx-translate with ICU MessageFormat, interpreted by FormatJS `intl-messageformat`.
 - STOMP over WebSocket for notifications.
 - Vitest.
 - Turborepo.

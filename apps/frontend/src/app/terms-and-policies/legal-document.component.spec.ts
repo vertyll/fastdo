@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideTranslateCompiler, provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { IcuMessageCompiler } from '../core/i18n/icu-message.compiler';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { LegalDocumentComponent } from './legal-document.component';
 
@@ -11,7 +11,7 @@ describe('LegalDocumentComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideTranslateService(),
-        provideTranslateCompiler(TranslateMessageFormatCompiler),
+        provideTranslateCompiler(IcuMessageCompiler),
       ],
     });
     TestBed.inject(TranslateService).setTranslation('pl', {
@@ -26,7 +26,7 @@ describe('LegalDocumentComponent', () => {
     TestBed.inject(TranslateService).use('pl');
   });
 
-  it('renders every section although the message format compiler turns lists into objects', async () => {
+  it('renders every section although the message compiler turns lists into objects', async () => {
     const fixture = TestBed.createComponent(LegalDocumentComponent);
     fixture.componentRef.setInput('titleKey', 'Legal.title');
     fixture.componentRef.setInput('sectionsKey', 'Legal.sections');

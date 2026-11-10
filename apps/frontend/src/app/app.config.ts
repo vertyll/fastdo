@@ -1,8 +1,9 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideNgIconsConfig, withContentSecurityPolicy } from '@ng-icons/core';
 import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { provideTranslateCompiler, provideTranslateLoader, provideTranslateService } from '@ngx-translate/core';
-import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { IcuMessageCompiler } from './core/i18n/icu-message.compiler';
 import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -32,7 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideStore([FiltersState], ngxsConfig),
     provideTranslateService(),
     provideTranslateLoader(BackendCatalogueLoader),
-    provideTranslateCompiler(TranslateMessageFormatCompiler),
+    provideTranslateCompiler(IcuMessageCompiler),
     provideAppInitializer(() => {
       initializeLanguage();
       const session$ = inject(AuthService).loadSession();
@@ -49,5 +50,7 @@ export const appConfig: ApplicationConfig = {
       },
     },
     provideNativeDateAdapter(),
+    // Icons apply their SVG style through the DOM, as the Content Security Policy refuses style attributes.
+    provideNgIconsConfig({}, withContentSecurityPolicy()),
   ],
 };

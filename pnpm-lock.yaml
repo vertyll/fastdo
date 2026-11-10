@@ -223,9 +223,9 @@ importers:
       cropperjs:
         specifier: ^2.3.1
         version: 2.3.1
-      ngx-translate-messageformat-compiler:
-        specifier: ^7.3.0
-        version: 7.3.0(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(@messageformat/core@3.4.1)(@ngx-translate/core@18.0.0(@angular/common@22.2.3(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2))
+      intl-messageformat:
+        specifier: ^12.1.5
+        version: 12.1.5
       postcss:
         specifier: ^8.5.31
         version: 8.5.31
@@ -494,6 +494,7 @@ packages:
   '@angular/platform-browser-dynamic@22.2.3':
     resolution: {integrity: sha512-+WBe2JjaEeK0NpMlBzV7UBkO+ltUBYTDtMfGYkew2xHdIviITnzXX7yUXijB1Y6jxALgz3jEuJa9iLid8s11rg==}
     engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
+    deprecated: '@angular/platform-browser-dynamic is deprecated. Use `@angular/platform-browser` instead.'
     peerDependencies:
       '@angular/common': 22.2.3
       '@angular/compiler': 22.2.3
@@ -945,6 +946,15 @@ packages:
       '@noble/hashes':
         optional: true
 
+  '@formatjs/fast-memoize@3.1.7':
+    resolution: {integrity: sha512-zXfhLpvA6T7+efdt9JLbBwZ00tT7NsBMDVnDu8rpHeNNv8KfRZAMo2gkG0k9lK/Nzc//3kJ9pImsfuJxk3KhUA==}
+
+  '@formatjs/icu-messageformat-parser@3.5.23':
+    resolution: {integrity: sha512-iB1fYfhtSGd8uH9A8b1m01Ujcv6QtQnJasefP3jPApmz72L/zNipzf3BdoinTMd1xuviVChjUJWL60iTwjUQ+w==}
+
+  '@formatjs/icu-skeleton-parser@2.1.13':
+    resolution: {integrity: sha512-IdAJ9NrHn7AF0zqncD9UpxQozTYyJtbwwrZnJMEKVxTcOOXtVkUb2XYTpNOGTAv58NCsk0rjRB9G+i2SvBmGAQ==}
+
   '@harperfast/extended-iterable@1.0.5':
     resolution: {integrity: sha512-4ScXlphaKEa49RpHmqwATq9QI9aUTdWVYDlJkzxhsD7ShJP+pHCYLznMO9n/wREY8jPjRZ59wLJY6HM5yB5Gkw==}
 
@@ -1193,21 +1203,6 @@ packages:
     resolution: {integrity: sha512-1g7G0knRX2iV/voDu54yxrGqw5Dk0w2oIYb7dgJq8IkOi+m7wbD8Q3QpPFjh0C01G58S88dqGn03len6UPCXsg==}
     cpu: [x64]
     os: [win32]
-
-  '@messageformat/core@3.4.1':
-    resolution: {integrity: sha512-98uXHLDjPe2WZ8Xr05MhFQGfpMRbUcJDEYgjLV5ZBTgnntIkKS0VKGE+g8ug/hbgggyPEAeZBRJryIsBUp1vvw==}
-
-  '@messageformat/date-skeleton@2.0.0-0':
-    resolution: {integrity: sha512-gkCatAK4MYlhjKYWxkfRM6Ql0M1VmA1DK6A9rszUBprZpQox/XqX987AI2w7YoEz0p5DgkPOpI6PK1mW08yNqQ==}
-
-  '@messageformat/number-skeleton@2.0.0-0':
-    resolution: {integrity: sha512-bDrIrVSKwn0sNrbU+N6tjwljV+Zl9pRCR/D9Xim6Q7lLzZ20nFYtuuKOZ3QKisN+vPxa9sTqu3ufJ+uwKNpHbQ==}
-
-  '@messageformat/parser@5.2.0':
-    resolution: {integrity: sha512-sc3hNZ0JtC32GhL5nUgPbh2ilcwji4G+Vmj/vhMd8hZaH//NDOvkfwKK1mFnRWG5h2DpksN8xr/HB5/+vMg3iw==}
-
-  '@messageformat/runtime@3.0.3':
-    resolution: {integrity: sha512-FE0hP0m15+9p/ia5HWQ/JsUSNLcxZkl1jl1HlRrWCiMAsgiulg7AuOFLaBR6dpPqtPWWuApY7VLo3rIAcrgrkA==}
 
   '@modelcontextprotocol/core@2.3.1':
     resolution: {integrity: sha512-laVmIhPGpWi7rG9q+0UigblRN0Hws/Yjlb6qLFtVqryXVLkc4h+yN8z731POD2LnAGQlFe7/tXhUm7Bi0YB91g==}
@@ -1699,12 +1694,6 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
-
-  '@rollup/rollup-linux-x64-gnu@4.46.2':
-    resolution: {integrity: sha512-Jj5a9RUoe5ra+MEyERkDKLwTXVu6s3aACP51nkfnK9wJTraCC8IMe3snOfALkrjTYd2G1ViE1hICj0fZ7ALBPA==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
 
   '@schematics/angular@22.2.4':
     resolution: {integrity: sha512-3yXpeDsn780rk/Pm+2QjoGpvS03doyuB2i8jUt/tNtDatIIVoXUJak3kjPOK3TVorOJX/fTNMjMxDwQzvec2+w==}
@@ -2402,6 +2391,9 @@ packages:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
 
+  intl-messageformat@12.1.5:
+    resolution: {integrity: sha512-quhcDFAxy4wr/GrgWgmMjuegoedNUIxGNLORfXgDgdjuv8cBM88ClLTLXmfYC1roMSR1PPc55yUEkpJ5m67W2g==}
+
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
@@ -2668,9 +2660,6 @@ packages:
   magic-string@1.4.3:
     resolution: {integrity: sha512-z12OxmaPGE0F4xlpGdjuAUckipLpQlTAuAmyGhNoD7ODpYUzvDfvtxUbjM/jwznyP178oju/KDdyi220wNJ0RQ==}
 
-  make-plural@7.5.0:
-    resolution: {integrity: sha512-0booA+aVYyVFoR67JBHdfVk0U08HmrBH2FrtmBqBa+NldlqXv/G2Z9VQuQq6Wgp2jDWdybEWGfBkk1cq5264WA==}
-
   mdn-data@2.27.1:
     resolution: {integrity: sha512-9Yubnt3e8A0OKwxYSXyhLymGW4sCufcLG6VdiDdUGVkPhpqLxlvP5vl1983gQjJl3tqbrM731mjaZaP68AgosQ==}
 
@@ -2681,9 +2670,6 @@ packages:
   minimatch@10.2.6:
     resolution: {integrity: sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==}
     engines: {node: 18 || 20 || >=22}
-
-  moo@0.5.3:
-    resolution: {integrity: sha512-m2fmM2dDm7GZQsY7KK2cme8agi+AAljILjQnof7p1ZMDe6dQ4bdnSMx0cPppudoeNv5hEFQirN6u+O4fDE0IWA==}
 
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
@@ -2710,13 +2696,6 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
-
-  ngx-translate-messageformat-compiler@7.3.0:
-    resolution: {integrity: sha512-bLDlOgyV8BKoxnBM0A4/D9mGxEOlmOavVwPhX/hPtejrKUVc3aWwhbJFUd9lwqVjmWfjb88GaPp46GRXWGfWHw==}
-    peerDependencies:
-      '@angular/core': '>=13.0.0'
-      '@messageformat/core': ^3.2.0
-      '@ngx-translate/core': ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
 
   node-addon-api@6.1.0:
     resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
@@ -2885,9 +2864,6 @@ packages:
 
   rxjs@7.8.2:
     resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
-
-  safe-identifier@0.4.2:
-    resolution: {integrity: sha512-6pNbSMW6OhAi9j+N8V+U715yBQsaWJ7eyEUaOrawX+isg5ZxhUlV1NipNtgaKHmFGiABwt+ZF04Ii+3Xjkg+8w==}
 
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
@@ -4060,6 +4036,14 @@ snapshots:
 
   '@exodus/bytes@1.16.0': {}
 
+  '@formatjs/fast-memoize@3.1.7': {}
+
+  '@formatjs/icu-messageformat-parser@3.5.23':
+    dependencies:
+      '@formatjs/icu-skeleton-parser': 2.1.13
+
+  '@formatjs/icu-skeleton-parser@2.1.13': {}
+
   '@harperfast/extended-iterable@1.0.5':
     optional: true
 
@@ -4239,27 +4223,6 @@ snapshots:
 
   '@lmdb/lmdb-win32-x64@3.5.6':
     optional: true
-
-  '@messageformat/core@3.4.1':
-    dependencies:
-      '@messageformat/date-skeleton': 2.0.0-0
-      '@messageformat/number-skeleton': 2.0.0-0
-      '@messageformat/parser': 5.2.0
-      '@messageformat/runtime': 3.0.3
-      make-plural: 7.5.0
-      safe-identifier: 0.4.2
-
-  '@messageformat/date-skeleton@2.0.0-0': {}
-
-  '@messageformat/number-skeleton@2.0.0-0': {}
-
-  '@messageformat/parser@5.2.0':
-    dependencies:
-      moo: 0.5.3
-
-  '@messageformat/runtime@3.0.3':
-    dependencies:
-      make-plural: 7.5.0
 
   '@modelcontextprotocol/core@2.3.1':
     dependencies:
@@ -4552,9 +4515,6 @@ snapshots:
     optional: true
 
   '@rolldown/pluginutils@1.0.1': {}
-
-  '@rollup/rollup-linux-x64-gnu@4.46.2':
-    optional: true
 
   '@schematics/angular@22.2.4(chokidar@5.0.0)':
     dependencies:
@@ -5258,6 +5218,11 @@ snapshots:
 
   imurmurhash@0.1.4: {}
 
+  intl-messageformat@12.1.5:
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.7
+      '@formatjs/icu-messageformat-parser': 3.5.23
+
   is-extglob@2.1.1: {}
 
   is-fullwidth-code-point@5.1.0:
@@ -5498,8 +5463,6 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  make-plural@7.5.0: {}
-
   mdn-data@2.27.1: {}
 
   mimic-function@5.0.1: {}
@@ -5507,8 +5470,6 @@ snapshots:
   minimatch@10.2.6:
     dependencies:
       brace-expansion: 5.0.12
-
-  moo@0.5.3: {}
 
   mrmime@2.0.1: {}
 
@@ -5536,15 +5497,6 @@ snapshots:
   nanoid@3.3.20: {}
 
   natural-compare@1.4.0: {}
-
-  ngx-translate-messageformat-compiler@7.3.0(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(@messageformat/core@3.4.1)(@ngx-translate/core@18.0.0(@angular/common@22.2.3(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2)):
-    dependencies:
-      '@angular/core': 22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2)
-      '@messageformat/core': 3.4.1
-      '@ngx-translate/core': 18.0.0(@angular/common@22.2.3(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2)
-      tslib: 2.8.1
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu': 4.46.2
 
   node-addon-api@6.1.0:
     optional: true
@@ -5730,8 +5682,6 @@ snapshots:
   rxjs@7.8.2:
     dependencies:
       tslib: 2.8.1
-
-  safe-identifier@0.4.2: {}
 
   safer-buffer@2.1.2: {}
 

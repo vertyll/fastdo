@@ -44,6 +44,15 @@ addresses. Both go into the `Content-Security-Policy` nginx sends with every res
 (`apps/frontend/security-headers.conf`).
 No secret is baked in — the browser holds no credential of its own.
 
+The policy has no `'unsafe-eval'`, `'unsafe-inline'` or `'unsafe-hashes'`. The `<style>` elements Angular and its
+components insert at run time are allowed by a nonce: `src/index.html` carries `ngCspNonce="CSP_NONCE"` on
+`<app-root>`, and nginx replaces the placeholder in every response for `index.html` with `$request_id`, 16 random
+bytes new for every request, which the `style-src` directive of the same response names. `index.html` is sent with
+`Cache-Control: no-store`, since a cached copy would carry a nonce no later policy allows. A `style="…"` attribute
+in a template is refused by this policy, so a template styles through classes or `[style.x]` bindings, which Angular
+applies through the DOM; for the same reason ng-icons is configured with `withContentSecurityPolicy()`
+(`src/app/app.config.ts`), which moves the `style` attribute of each SVG icon onto the element through the DOM.
+
 ## Tasks and caching
 
 Turborepo orchestrates the scripts and caches their results; a repeated build with nothing changed is served from
