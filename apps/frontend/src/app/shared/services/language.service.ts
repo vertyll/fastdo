@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
@@ -12,6 +13,7 @@ import { LocalStorageService } from './local-storage.service';
   providedIn: 'root',
 })
 export class LanguageService {
+  private readonly document = inject(DOCUMENT);
   private readonly translateService = inject(TranslateService);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly language = signal<string | null>(null);
@@ -20,9 +22,10 @@ export class LanguageService {
   /** Each language the reader picks, and only those: not the one FastDo starts in. */
   public readonly chosen$: Observable<string> = this.chosenSubject.asObservable();
 
-  /** Shows FastDo in this language, and keeps it for the next visit. */
+  /** Shows FastDo in this language, names it in the page's `lang` attribute, and keeps it for the next visit. */
   public start(language: string): void {
     this.language.set(language);
+    this.document.documentElement.lang = language;
     this.translateService.use(language);
     this.localStorageService.set(SELECTED_LANGUAGE_KEY, language);
   }

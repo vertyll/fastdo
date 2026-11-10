@@ -140,7 +140,7 @@ jobs:
           push: ${{ github.ref_type == 'tag' }}
           build-args: |
             API_URL=https://api.veds.vertyll.dev
-            DOMAIN=fastdo.vertyll.dev
+            STORAGE_URL=https://s3.vertyll.dev
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.version }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

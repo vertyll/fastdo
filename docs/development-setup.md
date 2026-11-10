@@ -38,7 +38,10 @@ The gateway only accepts browser requests from origins listed in its `applicatio
 pnpm run build
 ```
 
-The production bundle takes the gateway address from the `API_URL` build argument (see `apps/frontend/Dockerfile`).
+The image takes two build arguments, both required (see `apps/frontend/Dockerfile`): `API_URL`, the gateway's address,
+which the production bundle calls, and `STORAGE_URL`, the object storage that serves files through presigned
+addresses. Both go into the `Content-Security-Policy` nginx sends with every response
+(`apps/frontend/security-headers.conf`).
 No secret is baked in — the browser holds no credential of its own.
 
 ## Tasks and caching
