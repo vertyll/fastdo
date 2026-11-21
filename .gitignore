@@ -23,3 +23,5 @@ node_modules/
 
 ### SonarQube ###
 .scannerwork/
+.sonar/
+.sonarlint/
