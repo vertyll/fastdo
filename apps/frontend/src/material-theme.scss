@@ -1,7 +1,5 @@
 @use '@angular/material' as mat;
 
-@include mat.core();
-
 $app-typography: (
   plain-family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   brand-family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
