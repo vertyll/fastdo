@@ -7,6 +7,7 @@ import { IcuMessageCompiler } from './core/i18n/icu-message.compiler';
 import { provideStore } from '@ngxs/store';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { csrfInterceptor } from './core/interceptors/csrf.interceptor';
 import { initializeLanguage } from './core/i18n/language.initializer';
 import { provideKeycloak } from './core/keycloak';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
@@ -27,7 +28,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, languageInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, csrfInterceptor, languageInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
     provideStore([FiltersState], ngxsConfig),

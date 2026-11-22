@@ -9,8 +9,17 @@ What follows from that, and is worth knowing before changing anything in `src/ap
 - **There is no login form.** Signing in is a redirect to `/auth/authorize`; Keycloak collects the credentials. It
   always carries `return_to`, the page the reader is on, so they come back to it: from the sign-in button, from a page
   that needs a session (`authGuard`), and from a call whose session has ended (`errorInterceptor`).
-- **No token ever reaches JavaScript**, so there is nothing to store, refresh or accidentally log. Requests carry
-  `withCredentials: true` and nothing else.
+- **No access token ever reaches JavaScript**, so there is nothing to store, refresh or accidentally log. Requests
+  carry `withCredentials: true`, and writes the CSRF token too.
+- **Every write carries the gateway's CSRF token** in `X-XSRF-TOKEN`, or the gateway refuses it with `403`. The gateway
+  hands the token over in the same header of `GET /auth/session`; `csrfInterceptor` keeps the latest one in memory and
+  adds it to every `POST`, `PUT`, `PATCH` and `DELETE` to `environment.apiUrl`, and to nothing else. A write made
+  before any token arrived, because that first call failed, asks `GET /auth/session` for one first. A write the gateway
+  refuses with `common.csrf_token_invalid`, a token gone stale, is sent once more with a fresh one; writes refused
+  together share one fetch, and a second refusal reaches `errorInterceptor` like any other error. The interceptor sits
+  after `errorInterceptor`, so a refusal the retry fixes is never shown. Angular's own
+  XSRF support does not fit: it reads the token from a cookie and sends it to relative URLs only, while the gateway is
+  another origin, whose cookies this page cannot read.
 - **Registration and password changes happen on Keycloak's pages**, reached through `/auth/authorize?kc_action=…`.
   The gateway only relays actions it recognizes.
 - The signed-in user is whatever `GET /auth/session` returns — `{ userId, email, roles }`.
